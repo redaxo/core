@@ -77,13 +77,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$EXPDIR]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$EXPDIR]]></code>
-      <code><![CDATA[$EXPTABLES]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$EXPTABLE]]></code>
-    </MixedAssignment>
     <NullOperand>
       <code><![CDATA[rex_escape($exportfilename)]]></code>
     </NullOperand>
