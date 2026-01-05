@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Version 5.20.2 – 05.01.2026
+---------------------------
+
+### Bugfixes
+
+* `rex_editor`: in PHP 8.5 kam es teils zu Deprecated-Meldungen (@gharlan)
+* EOL-Daten für PHP/MySQL/MariaDB aktualisiert (@gharlan)
+
+
 Version 5.20.1 – 25.11.2025
 ---------------------------
 
