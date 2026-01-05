@@ -4,8 +4,8 @@
     "require": {
         "composer/ca-bundle": "^1.5.10",
         "enshrined/svg-sanitize": "^0.22",
-        "erusev/parsedown": "^1.7.4",
-        "erusev/parsedown-extra": "^0.8.1",
+        "parsedown/parsedown": "^1.7.5",
+        "parsedown/parsedown-extra": "dev-temp",
         "filp/whoops": "^2.18.4",
         "lbuchs/webauthn": "^2.2.0",
         "psr/http-message": "^1.1",
@@ -41,5 +41,12 @@
         },
         "platform-check": false,
         "prepend-autoloader": false
-    }
+    },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/gharlan/parsedown-extra"
+        }
+    ]
 }

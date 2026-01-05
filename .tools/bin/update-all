@@ -5,8 +5,8 @@ composer update --ansi --no-dev -d redaxo/src/core/
 composer bump --ansi -d redaxo/src/core/
 
 rm -rf redaxo/src/core/vendor/bin/
-rm -rf redaxo/src/core/vendor/erusev/parsedown/test/
-rm -rf redaxo/src/core/vendor/erusev/parsedown-extra/test/
+rm -rf redaxo/src/core/vendor/parsedown/parsedown/.github/
+rm -rf redaxo/src/core/vendor/parsedown/parsedown-extra/test/
 rm -rf redaxo/src/core/vendor/filp/whoops/.github/
 rm -rf redaxo/src/core/vendor/lbuchs/webauthn/_test/
 rm -rf redaxo/src/core/vendor/ramsey/http-range/tests/
@@ -23,6 +23,7 @@ rm -rf redaxo/src/core/vendor/voku/portable-ascii/build/
 
 find redaxo/src/core/vendor -name ".deepsource.toml" -type f -delete
 find redaxo/src/core/vendor -name ".gitattributes" -type f -delete
+find redaxo/src/core/vendor -name ".github" -type d -delete
 find redaxo/src/core/vendor -name ".gitignore" -type f -delete
 find redaxo/src/core/vendor -name ".mailmap" -type f -delete
 find redaxo/src/core/vendor -name ".travis.yml" -type f -delete

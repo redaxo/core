@@ -1,15 +1,26 @@
 {
-    "name": "erusev/parsedown",
+    "name": "parsedown/parsedown",
     "description": "Parser for Markdown.",
     "keywords": ["markdown", "parser"],
-    "homepage": "http://parsedown.org",
+    "homepage": "https://parsedown.org",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Emanuil Rusev",
             "email": "hello@erusev.com",
-            "homepage": "http://erusev.com"
+            "homepage": "https://erusev.com"
+        },
+        {
+            "name": "Aidan Woods",
+            "email": "aidantwoods@gmail.com",
+            "homepage": "https://aidanwoods.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Damien Regad",
+            "email": "dregad@mantisbt.org",
+            "role": "Fork Maintainer"
         }
     ],
     "require": {
@@ -17,7 +28,7 @@
         "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8.35"
+        "phpunit/phpunit": "^4.8|^5.7|^6.5|^7.5|^8.5|^9.6"
     },
     "autoload": {
         "psr-0": {"Parsedown": ""}
