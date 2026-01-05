@@ -24,7 +24,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v4
+                uses: peter-evans/create-or-update-comment@v5
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -33,16 +33,16 @@ jobs:
                     body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 0
             -   name: Checkout on chat commnad
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -64,7 +64,7 @@ jobs:
                 run: vendor/bin/php-cs-fixer list-files --config=.php-cs-fixer.dist.php | xargs -n 250 -P 3 vendor/bin/php-cs-fixer fix --diff --config=.php-cs-fixer.dist.php
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v7
                 if: env.writable == 1
                 with:
                     commit_message: Apply php-cs-fixer changes
@@ -85,13 +85,13 @@ jobs:
 
         steps:
             -   name: Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 1
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 0
 
             -   name: Setup PHP
@@ -108,7 +108,7 @@ jobs:
                 run: vendor/bin/rector process --no-progress-bar
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v7
                 if: env.writable == 1
                 with:
                     commit_message: Apply rector changes

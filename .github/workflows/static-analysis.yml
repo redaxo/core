@@ -24,7 +24,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v4
+                uses: peter-evans/create-or-update-comment@v5
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -36,16 +36,16 @@ jobs:
                         https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 0
             -   name: Checkout on chat commnad
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.4'
+                    php-version: '8.5'
                     extensions: gd, intl, imagick
                     coverage: none # disable xdebug, pcov
 
@@ -77,7 +77,7 @@ jobs:
                 run: git pull --ff-only --no-tags --depth=1
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v7
                 if: failure() && steps.baseline.conclusion != 'skipped' && env.writable == 1
                 with:
                     commit_message: Update psalm baseline
@@ -94,7 +94,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v4
+                uses: peter-evans/create-or-update-comment@v5
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -106,16 +106,16 @@ jobs:
                         https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 0
             -   name: Checkout on chat commnad
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -125,7 +125,7 @@ jobs:
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.4'
+                    php-version: '8.5'
                     extensions: gd, intl, imagick
                     coverage: none # disable xdebug, pcov
 
@@ -147,7 +147,7 @@ jobs:
                 run: git pull --ff-only --no-tags --depth=1
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v7
                 if: failure() && steps.baseline.conclusion != 'skipped' && env.writable == 1
                 with:
                     commit_message: Update psalm taint baseline
@@ -164,7 +164,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v4
+                uses: peter-evans/create-or-update-comment@v5
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -176,10 +176,10 @@ jobs:
                         https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: github.event_name != 'repository_dispatch'
             -   name: Checkout on chat commnad
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -189,7 +189,7 @@ jobs:
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.4'
+                    php-version: '8.5'
                     extensions: gd, intl, imagick, pdo_mysql
                     coverage: none # disable xdebug, pcov
 
@@ -220,7 +220,7 @@ jobs:
                 run: git pull --ff-only --no-tags --depth=1
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v7
                 if: failure() && steps.baseline.conclusion != 'skipped' && env.writable == 1
                 with:
                     commit_message: Update phpstan baseline

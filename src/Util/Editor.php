@@ -68,7 +68,7 @@ class Editor
             $filePath = str_replace(Path::base(), $editorBasepath, $filePath);
         }
 
-        if (str_contains($filePath, '://')) {
+        if (null === $editor || str_contains($filePath, '://')) {
             // don't provide editor urls for paths containing "://", like "rex://..."
             // but they can be converted into an url by the extension point below
         } elseif (isset($this->editors[$editor]) || 'xdebug' === $editor) {

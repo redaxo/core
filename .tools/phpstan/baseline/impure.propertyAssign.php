@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Impure property assignment in pure function Redaxo\\\\Core\\\\View\\\\escape\\(\\)\\.$#',
+    'rawMessage' => 'Impure property assignment in pure function Redaxo\\Core\\View\\escape().',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/escape.php',
 ];

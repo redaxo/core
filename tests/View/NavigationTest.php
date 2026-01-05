@@ -29,6 +29,6 @@ final class NavigationTest extends TestCase
     public function testConstructAnonymousClass(): void
     {
         // no exception
-        new class extends Navigation {}; // @phpstan-ignore expr.resultUnused
+        new class extends Navigation {};
     }
 }

@@ -23,6 +23,7 @@ use function ini_get;
 use function is_array;
 use function is_int;
 use function is_string;
+use function Redaxo\Core\View\escape;
 use function strlen;
 
 use const PATHINFO_EXTENSION;
@@ -62,17 +63,17 @@ final class MediaHandler
         }
 
         if (!MediaPool::isAllowedExtension($data['file']['name'], $allowedExtensions)) {
-            $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . File::extension($data['file']['name']) . '</code>';
+            $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape(File::extension($data['file']['name'])) . '</code>';
             $allowedExtensions = MediaPool::getAllowedExtensions($allowedExtensions);
             $warning .= count($allowedExtensions) > 0
-                    ? '<br />' . I18n::msg('pool_file_allowed_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', $allowedExtensions), ', ') . '</code>'
-                    : '<br />' . I18n::msg('pool_file_banned_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', MediaPool::getBlockedExtensions()), ', ') . '</code>';
+                    ? '<br />' . I18n::msg('pool_file_allowed_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', escape($allowedExtensions)), ', ') . '</code>'
+                    : '<br />' . I18n::msg('pool_file_banned_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', escape(MediaPool::getBlockedExtensions())), ', ') . '</code>';
 
             throw new ApiFunctionException($warning);
         }
 
         if (!MediaPool::isAllowedMimeType($data['file']['path'], $data['file']['name'])) {
-            $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . File::extension($data['file']['name']) . '</code> (<code>' . File::mimeType($data['file']['path']) . '</code>)';
+            $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape(File::extension($data['file']['name'])) . '</code> (<code>' . escape(File::mimeType($data['file']['path'])) . '</code>)';
             throw new ApiFunctionException($warning);
         }
 
@@ -225,7 +226,7 @@ final class MediaHandler
                 || in_array($extensionNew, ['jpg', 'jpeg']) && in_array($extensionOld, ['jpg', 'jpeg'])
             ) {
                 if (!MediaPool::isAllowedMimeType($srcFile, $dstFile)) {
-                    $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . $extensionNew . '</code> (<code>' . ($filetype ?? 'unknown mime type') . '</code>)';
+                    $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape($extensionNew) . '</code> (<code>' . escape($filetype ?? 'unknown mime type') . '</code>)';
                     throw new ApiFunctionException($warning);
                 }
                 if (!File::move($srcFile, $dstFile)) {

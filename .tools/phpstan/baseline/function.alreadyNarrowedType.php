@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Call to function is_array\\(\\) with array\\<non\\-falsy\\-string, int\\|non\\-falsy\\-string\\> will always evaluate to true\\.$#',
+    'rawMessage' => 'Call to function is_array() with array<non-falsy-string, int|non-falsy-string> will always evaluate to true.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaPool/MediaHandler.php',
 ];

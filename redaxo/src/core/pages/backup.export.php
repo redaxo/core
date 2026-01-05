@@ -25,22 +25,25 @@ $error = '';
 $exportfilename = Request::post('exportfilename', 'string');
 $exporttype = Request::post('exporttype', 'string');
 $exportdl = Request::post('exportdl', 'boolean');
-$EXPTABLES = Request::post('EXPTABLES', 'array');
-$EXPDIR = Request::post('EXPDIR', 'array');
+$EXPTABLES = Request::post('EXPTABLES', 'array[string]');
+$EXPDIR = Request::post('EXPDIR', 'array[string]');
 
 if ('' == $exportfilename) {
     $exportfilename = Str::normalize(Core::getServerName()) . '_' . date('Ymd_Hi') . '_rex' . Core::getVersion();
 }
 
-if ($EXPTABLES) {
-    $tables = Sql::factory()->getTables();
+$tables = Sql::factory()->getTables();
+$EXPTABLES = array_intersect($EXPTABLES, $tables);
 
-    foreach ($EXPTABLES as $k => $EXPTABLE) {
-        if (!in_array($EXPTABLE, $tables)) {
-            unset($EXPTABLES[$k]);
-        }
-    }
-}
+$dir = Path::frontend();
+$folders = Finder::factory($dir)
+    ->dirsOnly()
+    ->ignoreDirs('.*')
+    ->ignoreDirs('redaxo')
+;
+$folders = array_keys(iterator_to_array($folders));
+$folders = array_map(Path::basename(...), $folders);
+$EXPDIR = array_intersect($EXPDIR, $folders);
 
 $csrfToken = CsrfToken::factory('backup');
 $export = Request::post('export', 'bool');
@@ -164,7 +167,6 @@ $tableSelect->setId('rex-form-exporttables');
 $tableSelect->setSize(20);
 $tableSelect->setName('EXPTABLES[]');
 $tableSelect->setAttribute('class', 'form-control');
-$tables = Sql::factory()->getTables();
 foreach ($tables as $table) {
     $tableSelect->addOption($table, $table);
     if (in_array($table, [Core::getTable('user'), Core::getTable('user_passkey'), Core::getTable('user_session')], true)) {
@@ -198,20 +200,12 @@ $selDirs->setMultiple();
 $selDirs->setSelected($EXPDIR);
 $selDirs->setStyle('class="form-control"');
 
-$dir = Path::frontend();
-$folders = Finder::factory($dir)
-    ->dirsOnly()
-    ->ignoreDirs('.*')
-    ->ignoreDirs('redaxo')
-;
-$folders = iterator_to_array($folders);
 $countFolders = count($folders);
 if ($countFolders > 4) {
     $selDirs->setSize($countFolders);
 }
-foreach ($folders as $path => $_) {
-    $file = Path::basename($path);
-    $selDirs->addOption($file, $file);
+foreach ($folders as $path) {
+    $selDirs->addOption($path, $path);
 }
 
 $n = [];

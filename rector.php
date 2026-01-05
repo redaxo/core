@@ -113,7 +113,7 @@ return RectorConfig::configure()
         Php80\Identical\StrStartsWithRector::class,
         Php80\NotIdentical\StrContainsRector::class,
         Php80\Switch_\ChangeSwitchToMatchRector::class,
-        Php81\Array_\FirstClassCallableRector::class,
+        Php81\Array_\ArrayToFirstClassCallableRector::class,
         // Php81\Property\ReadOnlyPropertyRector::class,
         // Php82\Class_\ReadOnlyClassRector::class,
         Privatization\Class_\FinalizeTestCaseClassRector::class,

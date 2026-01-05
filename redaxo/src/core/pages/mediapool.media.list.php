@@ -150,7 +150,7 @@ if ($success) {
 }
 
 if (!empty($argUrl['args']['types'])) {
-    echo Message::info(I18n::msg('pool_file_filter') . ' <code>' . $argUrl['args']['types'] . '</code>');
+    echo Message::info(I18n::msg('pool_file_filter') . ' <code>' . escape($argUrl['args']['types']) . '</code>');
 }
 
 // Add Filter to the Query

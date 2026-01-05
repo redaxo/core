@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-// total 361 errors
+// total 363 errors
+
 return ['includes' => [
     __DIR__ . '/argument.templateType.php',
     __DIR__ . '/argument.type.php',
     __DIR__ . '/booleanAnd.rightAlwaysFalse.php',
     __DIR__ . '/catch.neverThrown.php',
+    __DIR__ . '/consistentConstructor.private.php',
     __DIR__ . '/deadCode.unreachable.php',
     __DIR__ . '/function.alreadyNarrowedType.php',
     __DIR__ . '/function.deprecated.php',

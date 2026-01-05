@@ -11,41 +11,40 @@
         "ext-intl": "*",
         "ext-mbstring": "*",
 
-        "composer/ca-bundle": "^1.5.8",
+        "composer/ca-bundle": "^1.5.10",
         "enshrined/svg-sanitize": "^0.22.0",
-        "erusev/parsedown": "^1.7.4",
-        "erusev/parsedown-extra": "^0.8.1",
         "filp/whoops": "^2.18.4",
-        "itsgoingd/clockwork": "^5.3.4",
+        "itsgoingd/clockwork": "^5.3.5",
         "lbuchs/webauthn": "^2.2.0",
-        "phpmailer/phpmailer": "^6.10.0",
+        "parsedown/parsedown": "^1.7.5",
+        "parsedown/parsedown-extra": "dev-temp",
+        "phpmailer/phpmailer": "^6.12.0",
         "psr/log": "^3.0.2",
         "ramsey/http-range": "^1.2.1",
         "scssphp/scssphp": "^1.13.0",
         "splitbrain/php-archive": "^1.4.1",
-        "symfony/console": "^6.4.25",
-        "symfony/http-foundation": "^6.4.25",
-        "symfony/var-dumper": "^6.4.25",
-        "symfony/yaml": "^6.4.25",
+        "symfony/console": "^6.4.31",
+        "symfony/http-foundation": "^6.4.31",
+        "symfony/var-dumper": "^6.4.26",
+        "symfony/yaml": "^6.4.30",
         "voku/anti-xss": "^4.1.42",
         "voku/portable-utf8": "dev-master as 6.0.14-dev"
     },
     "require-dev": {
-        "friendsofredaxo/linter": "1.4.0",
         "jetbrains/phpstorm-attributes": "^1.2",
         "phpstan/extension-installer": "1.4.3",
-        "phpstan/phpstan": "2.1.22",
+        "phpstan/phpstan": "2.1.33",
         "phpstan/phpstan-deprecation-rules": "2.0.3",
-        "phpstan/phpstan-phpunit": "2.0.7",
-        "phpstan/phpstan-symfony": "2.0.7",
-        "phpunit/phpunit": "^10.5.48",
+        "phpstan/phpstan-phpunit": "2.0.11",
+        "phpstan/phpstan-symfony": "2.0.9",
+        "phpunit/phpunit": "^10.5.60",
         "psalm/plugin-phpunit": "0.19.5",
-        "psalm/plugin-symfony": "v5.2.7",
-        "rector/rector": "2.1.5",
-        "redaxo/php-cs-fixer-config": "2.17.0",
+        "psalm/plugin-symfony": "v5.2.8",
+        "rector/rector": "2.3.0",
+        "redaxo/php-cs-fixer-config": "2.19.0",
         "redaxo/psalm-plugin": "2.2.0",
-        "shipmonk/phpstan-baseline-per-identifier": "2.1.6",
-        "vimeo/psalm": "6.13.1"
+        "shipmonk/phpstan-baseline-per-identifier": "2.3.0",
+        "vimeo/psalm": "6.14.3"
     },
     "replace": {
         "symfony/polyfill-ctype": "*",
@@ -175,5 +174,11 @@
         "allow-plugins": {
             "phpstan/extension-installer": true
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/gharlan/parsedown-extra"
+        }
+    ]
 }

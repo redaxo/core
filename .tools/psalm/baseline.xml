@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.13.1@1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51">
+<files psalm-version="6.14.3@d0b040a91f280f071c1abcb1b77ce3822058725a">
   <file src="redaxo/src/addons/debug/boot.php">
     <MixedArgument>
       <code><![CDATA[$query['query']]]></code>
@@ -949,13 +949,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$EXPDIR]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$EXPDIR]]></code>
-      <code><![CDATA[$EXPTABLES]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$EXPTABLE]]></code>
-    </MixedAssignment>
     <NullOperand>
       <code><![CDATA[escape($exportfilename)]]></code>
     </NullOperand>
@@ -1642,6 +1635,9 @@
       <code><![CDATA[$list->getValue('name')]]></code>
       <code><![CDATA[$modulname]]></code>
     </PossiblyNullArgument>
+    <PossiblyNullArrayOffset>
+      <code><![CDATA[$usedIds]]></code>
+    </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$aid]]></code>
     </PossiblyNullOperand>
@@ -2153,6 +2149,9 @@
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$selected]]></code>
     </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$jobs]]></code>
+    </MixedArgumentTypeCoercion>
     <MixedArrayOffset>
       <code><![CDATA[$jobs[$id]]]></code>
     </MixedArrayOffset>
@@ -2203,6 +2202,9 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$login]]></code>
     </ArgumentTypeCoercion>
+    <InvalidArgument>
+      <code><![CDATA[$backups]]></code>
+    </InvalidArgument>
     <MixedArgument>
       <code><![CDATA[$config['db'][1]['host']]]></code>
       <code><![CDATA[$config['db'][1]['login']]]></code>
@@ -2566,6 +2568,7 @@
     </PossiblyNullArgument>
     <PossiblyNullArrayOffset>
       <code><![CDATA[$ctypes]]></code>
+      <code><![CDATA[$maxPriority]]></code>
     </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$CM->getValue('priority')]]></code>
@@ -3612,6 +3615,7 @@
     <MixedArgument>
       <code><![CDATA[$color]]></code>
       <code><![CDATA[$color]]></code>
+      <code><![CDATA[$imagick->getImageBlob()]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$color]]></code>
@@ -3625,7 +3629,6 @@
       <code><![CDATA[$fromPath]]></code>
     </PossiblyFalseOperand>
     <PossiblyNullArgument>
-      <code><![CDATA[$imagick->getImageBlob()]]></code>
       <code><![CDATA[$this->media->getMediaPath()]]></code>
       <code><![CDATA[$this->media->getMediaPath()]]></code>
     </PossiblyNullArgument>
@@ -4025,10 +4028,13 @@
   </file>
   <file src="src/MediaPool/MediaHandler.php">
     <MixedArgumentTypeCoercion>
-      <code><![CDATA[$allowedExtensions]]></code>
       <code><![CDATA[$queryParams]]></code>
-      <code><![CDATA[MediaPool::getBlockedExtensions()]]></code>
+      <code><![CDATA[escape($allowedExtensions)]]></code>
+      <code><![CDATA[escape(MediaPool::getBlockedExtensions())]]></code>
     </MixedArgumentTypeCoercion>
+    <NullOperand>
+      <code><![CDATA[escape(File::mimeType($data['file']['path']))]]></code>
+    </NullOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[$content]]></code>
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
@@ -4037,9 +4043,6 @@
     <PossiblyInvalidOperand>
       <code><![CDATA[$uses]]></code>
     </PossiblyInvalidOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[File::mimeType($data['file']['path'])]]></code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/MediaPool/MediaPool.php">
     <MixedArgument>
@@ -4501,6 +4504,7 @@
     </PossiblyNullArrayAccess>
     <PossiblyNullArrayOffset>
       <code><![CDATA[$replacements]]></code>
+      <code><![CDATA[$replacements]]></code>
     </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$add]]></code>
@@ -4775,6 +4779,9 @@
     <PossiblyFalseArgument>
       <code><![CDATA[fileperms($path)]]></code>
     </PossiblyFalseArgument>
+    <PossiblyNullArrayOffset>
+      <code><![CDATA[$setup]]></code>
+    </PossiblyNullArrayOffset>
   </file>
   <file src="src/SystemReport.php">
     <ArgumentTypeCoercion>

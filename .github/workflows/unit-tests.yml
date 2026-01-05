@@ -22,14 +22,14 @@ jobs:
                     -   php-version: '8.4'
                         db-image: 'mysql:8.0'
                         composer-flags: '--prefer-lowest'
-                    -   php-version: '8.4'
-                        db-image: 'mysql:8.4'
                     -   php-version: '8.5'
+                        db-image: 'mysql:8.4'
+                    -   php-version: '8.6'
                         db-image: 'mysql:latest'
                         composer-flags: '--ignore-platform-req=php'
                     -   php-version: '8.4'
                         db-image: 'mariadb:10.4'
-                    -   php-version: '8.4'
+                    -   php-version: '8.5'
                         db-image: 'mariadb:latest'
 
         # https://docs.github.com/en/free-pro-team@latest/actions/guides/about-service-containers
@@ -47,7 +47,7 @@ jobs:
 
         steps:
             -   name: Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
 
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2

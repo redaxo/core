@@ -6,22 +6,22 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Possibly impure call to function str_replace\\(\\) in pure method Redaxo\\\\Core\\\\Database\\\\Sql\\:\\:escapeLikeWildcards\\(\\)\\.$#',
+    'rawMessage' => 'Possibly impure call to function str_replace() in pure method Redaxo\\Core\\Database\\Sql::escapeLikeWildcards().',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Database/Sql.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Possibly impure call to function preg_match\\(\\) in pure function Redaxo\\\\Core\\\\View\\\\escape\\(\\)\\.$#',
+    'rawMessage' => 'Possibly impure call to function preg_match() in pure function Redaxo\\Core\\View\\escape().',
     'count' => 3,
     'path' => __DIR__ . '/../../../src/View/escape.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Possibly impure call to function preg_replace\\(\\) in pure function Redaxo\\\\Core\\\\View\\\\escape\\(\\)\\.$#',
+    'rawMessage' => 'Possibly impure call to function preg_replace() in pure function Redaxo\\Core\\View\\escape().',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/escape.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Possibly impure call to function preg_replace_callback\\(\\) in pure function Redaxo\\\\Core\\\\View\\\\escape\\(\\)\\.$#',
+    'rawMessage' => 'Possibly impure call to function preg_replace_callback() in pure function Redaxo\\Core\\View\\escape().',
     'count' => 3,
     'path' => __DIR__ . '/../../../src/View/escape.php',
 ];
