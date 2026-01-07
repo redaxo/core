@@ -1965,9 +1965,6 @@
     </MixedReturnStatement>
   </file>
   <file src="src/ApiFunction/ApiFunction.php">
-    <MixedMethodCall>
-      <code><![CDATA[new $apiClass()]]></code>
-    </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[Request::get(self::REQ_CALL_PARAM)]]></code>
     </MixedOperand>
