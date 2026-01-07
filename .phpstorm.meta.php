@@ -16,7 +16,7 @@ override(
 
 expectedReturnValues(\Redaxo\Core\Core::getEnvironment(), 'frontend', 'backend', 'console');
 
-expectedArguments(\rex_extension::register(), 2, \rex_extension::EARLY, \rex_extension::NORMAL, \rex_extension::LATE);
+expectedArguments(Redaxo\Core\ExtensionPoint\Extension::register(), 2, \Redaxo\Core\ExtensionPoint\Extension::EARLY, \Redaxo\Core\ExtensionPoint\Extension::NORMAL, \Redaxo\Core\ExtensionPoint\Extension::LATE);
 
 expectedArguments(\Redaxo\Core\Filesystem\Finder::sort(), 0, \Redaxo\Core\Util\SortableIterator::KEYS, \Redaxo\Core\Util\SortableIterator::VALUES);
 expectedArguments(\Redaxo\Core\Util\SortableIterator::__construct(), 1, \Redaxo\Core\Util\SortableIterator::KEYS, \Redaxo\Core\Util\SortableIterator::VALUES);
@@ -49,14 +49,14 @@ expectedArguments(\Redaxo\Core\View\DataList::setColumnSortable(), 1, 'asc', 'de
 expectedArguments(\Redaxo\Core\Security\Permission::register(), 2, \Redaxo\Core\Security\Permission::GENERAL, \Redaxo\Core\Security\Permission::OPTIONS, \Redaxo\Core\Security\Permission::EXTRAS);
 expectedArguments(\Redaxo\Core\Security\Permission::getAll(), 0, \Redaxo\Core\Security\Permission::GENERAL, \Redaxo\Core\Security\Permission::OPTIONS, \Redaxo\Core\Security\Permission::EXTRAS);
 
-registerArgumentsSet('status_code', \rex_response::HTTP_OK, \rex_response::HTTP_PARTIAL_CONTENT, \rex_response::HTTP_MOVED_PERMANENTLY, \rex_response::HTTP_NOT_MODIFIED, \rex_response::HTTP_MOVED_TEMPORARILY, \rex_response::HTTP_NOT_FOUND, \rex_response::HTTP_FORBIDDEN, \rex_response::HTTP_UNAUTHORIZED, \rex_response::HTTP_RANGE_NOT_SATISFIABLE, \rex_response::HTTP_INTERNAL_ERROR, \rex_response::HTTP_SERVICE_UNAVAILABLE);
-expectedArguments(\rex_response::setStatus(), 0, argumentsSet('status_code'));
-expectedReturnValues(\rex_response::getStatus(), argumentsSet('status_code'));
+registerArgumentsSet('status_code', \Redaxo\Core\Http\Response::HTTP_OK, \Redaxo\Core\Http\Response::HTTP_PARTIAL_CONTENT, \Redaxo\Core\Http\Response::HTTP_MOVED_PERMANENTLY, \Redaxo\Core\Http\Response::HTTP_NOT_MODIFIED, \Redaxo\Core\Http\Response::HTTP_MOVED_TEMPORARILY, \Redaxo\Core\Http\Response::HTTP_NOT_FOUND, \Redaxo\Core\Http\Response::HTTP_FORBIDDEN, \Redaxo\Core\Http\Response::HTTP_UNAUTHORIZED, \Redaxo\Core\Http\Response::HTTP_RANGE_NOT_SATISFIABLE, \Redaxo\Core\Http\Response::HTTP_INTERNAL_ERROR, \Redaxo\Core\Http\Response::HTTP_SERVICE_UNAVAILABLE);
+expectedArguments(\Redaxo\Core\Http\Response::setStatus(), 0, argumentsSet('status_code'));
+expectedReturnValues(\Redaxo\Core\Http\Response::getStatus(), argumentsSet('status_code'));
 
-expectedArguments(\rex_response::preload(), 1, 'audio', 'document', 'embed', 'fetch', 'font', 'image', 'object', 'script', 'style', 'track', 'worker', 'video');
+expectedArguments(\Redaxo\Core\Http\Response::preload(), 1, 'audio', 'document', 'embed', 'fetch', 'font', 'image', 'object', 'script', 'style', 'track', 'worker', 'video');
 
-expectedArguments(\rex_response::sendFile(), 2, 'inline', 'attachment');
-expectedArguments(\rex_response::sendResource(), 4, 'inline', 'attachment');
+expectedArguments(\Redaxo\Core\Http\Response::sendFile(), 2, 'inline', 'attachment');
+expectedArguments(\Redaxo\Core\Http\Response::sendResource(), 4, 'inline', 'attachment');
 
 expectedArguments(\Redaxo\Core\HttpClient\Request::factory(), 1, 80, 443);
 expectedArguments(\Redaxo\Core\HttpClient\ProxyRequest::setDestination(), 1, 80, 443);
