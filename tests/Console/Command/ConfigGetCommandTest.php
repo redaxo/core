@@ -44,9 +44,9 @@ final class ConfigGetCommandTest extends TestCase
         $commandTester = new CommandTester(new ConfigGetCommand());
         $commandTester->execute([
             'config-key' => 'author',
-            '--addon' => 'project', ],
+            '--addon' => 'test', ],
         );
-        self::assertEquals("\"Project Admin\"\n", $commandTester->getDisplay(true));
+        self::assertEquals("\"Test Author\"\n", $commandTester->getDisplay(true));
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 }

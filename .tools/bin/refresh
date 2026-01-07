@@ -20,6 +20,7 @@ fi
 packages="
 debug
 install
+test
 "
 
 for package in $packages; do

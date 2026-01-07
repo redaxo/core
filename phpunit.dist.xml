@@ -33,7 +33,6 @@
             <directory>redaxo/src/core</directory>
             <directory>redaxo/src/addons/debug</directory>
             <directory>redaxo/src/addons/install</directory>
-            <directory>redaxo/src/addons/project</directory>
         </include>
     </source>
 </phpunit>

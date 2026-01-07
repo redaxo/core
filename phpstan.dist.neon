@@ -16,7 +16,6 @@ parameters:
         - redaxo/src/core
         - redaxo/src/addons/debug
         - redaxo/src/addons/install
-        - redaxo/src/addons/project
     # https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Redaxo\Core\View\Fragment

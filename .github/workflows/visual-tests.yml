@@ -92,6 +92,7 @@ jobs:
                     php .tools/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
                     php .tools/bin/console config:set --type boolean debug.enabled true -v
                     php .tools/bin/console config:set --type boolean debug.throw_always_exception true -v
+                    php .tools/bin/console addon:install test -v
 
             -   name: Create user, update config
                 run: |
@@ -101,7 +102,7 @@ jobs:
                 run: |
                     mkdir -p $GITHUB_WORKSPACE/.tools/project/var/data/core/backup && cp -r .github/imports/inital-content-for-visual-tests.sql $GITHUB_WORKSPACE/.tools/project/var/data/core/backup/
                     cp -r .github/imports/media/* $GITHUB_WORKSPACE/.tools/project/public/media/
-                    cp -f .github/imports/README.md $GITHUB_WORKSPACE/redaxo/src/addons/project/README.de.md
+                    cp -f .github/imports/README.md $GITHUB_WORKSPACE/redaxo/src/addons/test/README.de.md
                     php .tools/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=inital-content-for-visual-tests --admin-username=myusername --admin-password=mypassword --ansi -v
             -   name: Install packages
                 run: |

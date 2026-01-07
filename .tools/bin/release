@@ -160,7 +160,6 @@ class rex_release
             $this->addDir($complete, Path::addon($addon), 'redaxo/src/addons/' . $addon);
             $this->addDir($update, Path::addon($addon), 'addons/' . $addon);
         }
-        $this->addDir($complete, Path::addon('project'), 'redaxo/src/addons/project');
 
         $this->addDir($complete, Path::core('assets'), 'assets/core');
 
