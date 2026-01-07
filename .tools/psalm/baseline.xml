@@ -378,18 +378,14 @@
       <code><![CDATA[$ep->getParam('direction')]]></code>
     </MixedOperand>
     <PossiblyInvalidArgument>
-      <code><![CDATA[$REX['BACKEND_FOLDER']]]></code>
-      <code><![CDATA[$REX['BACKEND_FOLDER']]]></code>
-      <code><![CDATA[$REX['HTDOCS_PATH']]]></code>
-      <code><![CDATA[$REX['HTDOCS_PATH']]]></code>
+      <code><![CDATA[$REX['PATH_PROVIDER']]]></code>
+      <code><![CDATA[$REX['URL_PROVIDER']]]></code>
       <code><![CDATA[[MediaManager::class, 'init']]]></code>
     </PossiblyInvalidArgument>
     <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$REX['BACKEND_FOLDER']]]></code>
-      <code><![CDATA[$REX['BACKEND_FOLDER']]]></code>
-      <code><![CDATA[$REX['HTDOCS_PATH']]]></code>
-      <code><![CDATA[$REX['HTDOCS_PATH']]]></code>
+      <code><![CDATA[$REX['PATH_PROVIDER']]]></code>
       <code><![CDATA[$REX['REDAXO']]]></code>
+      <code><![CDATA[$REX['URL_PROVIDER']]]></code>
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="redaxo/src/core/console.php">
@@ -3050,14 +3046,13 @@
     <LessSpecificReturnStatement>
       <code><![CDATA[$this->backend . $file]]></code>
       <code><![CDATA[strtr($this->base . $file, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR)]]></code>
+      <code><![CDATA[strtr($this->core . $file, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR)]]></code>
     </LessSpecificReturnStatement>
     <MoreSpecificReturnType>
       <code><![CDATA[non-empty-string]]></code>
       <code><![CDATA[non-empty-string]]></code>
+      <code><![CDATA[non-empty-string]]></code>
     </MoreSpecificReturnType>
-    <PossiblyFalseOperand>
-      <code><![CDATA[realpath($htdocs)]]></code>
-    </PossiblyFalseOperand>
   </file>
   <file src="src/Filesystem/File.php">
     <FalsableReturnStatement>

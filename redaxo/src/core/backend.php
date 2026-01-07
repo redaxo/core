@@ -144,6 +144,7 @@ if (Core::isSetup()) {
         Response::sendRedirect(Url::backendController(['rex_logged_out' => 1]));
     }
 
+    global $rexUserLoginmessage;
     $rexUserLoginmessage = '';
 
     if (($rexUserLogin || $passkey) && !CsrfToken::factory('backend_login')->isValid()) {

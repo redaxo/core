@@ -1,10 +1,22 @@
 {
-    "name": "redaxo/source",
+    "name": "redaxo/core",
     "type": "library",
-    "description": "REDAXO CMS source repository (for static analysis)",
+    "description": "REDAXO CMS core package",
+    "homepage": "https://redaxo.org",
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Yakamara Media GmbH & Co. KG",
+            "homepage": "https://yakamara.de"
+        },
+        {
+            "name": "REDAXO team & community",
+            "homepage": "https://redaxo.org"
+        }
+    ],
+
     "require": {
-        "php": ">=8.4",
+        "php": "^8.4",
         "ext-ctype": "*",
         "ext-gd": "*",
         "ext-iconv": "*",
@@ -25,6 +37,7 @@
         "splitbrain/php-archive": "^1.4.1",
         "symfony/console": "^6.4.31",
         "symfony/http-foundation": "^6.4.31",
+        "symfony/runtime": "^7.4.1",
         "symfony/var-dumper": "^6.4.26",
         "symfony/yaml": "^6.4.30",
         "voku/anti-xss": "^4.1.42",
@@ -46,6 +59,7 @@
         "shipmonk/phpstan-baseline-per-identifier": "2.3.0",
         "vimeo/psalm": "6.14.3"
     },
+
     "replace": {
         "symfony/polyfill-ctype": "*",
         "symfony/polyfill-iconv": "*",
@@ -58,8 +72,10 @@
         "symfony/polyfill-php80": "*",
         "symfony/polyfill-php81": "*",
         "symfony/polyfill-php82": "*",
-        "symfony/polyfill-php83": "*"
+        "symfony/polyfill-php83": "*",
+        "symfony/polyfill-php84": "*"
     },
+
     "autoload": {
         "psr-4": {
             "Redaxo\\Core\\": "src"
@@ -74,10 +90,12 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Project\\": ".tools/project/src",
             "Redaxo\\Core\\Tests\\": "tests",
             "Redaxo\\Rector\\": ".tools/rector"
         }
     },
+
     "scripts": {
         "clone-addon": ".tools/bin/clone-addon",
         "rebase-to-bugfix": "bash .tools/bin/rebase-to-bugfix",
@@ -165,13 +183,18 @@
         "sa": "Run all static analyses (psalm and phpstan)",
         "check": "Check all (code style, static analysis, unit tests)"
     },
+
     "config": {
-        "optimize-autoloader": true,
+        "platform": {
+            "php": "8.4.5"
+        },
         "sort-packages": true,
         "allow-plugins": {
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "symfony/runtime": true
         }
     },
+
     "repositories": [
         {
             "type": "vcs",

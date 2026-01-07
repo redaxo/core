@@ -78,6 +78,7 @@ use Redaxo\Rector\Rule as RedaxoRule;
 return RectorConfig::configure()
     ->withPaths([
         // restrict to core and core addons, ignore other locally installed addons
+        '.tools/project/',
         'src/',
         'tests/',
         'redaxo/src/core/',
@@ -85,7 +86,7 @@ return RectorConfig::configure()
         'redaxo/src/addons/install/',
     ])
     ->withParallel()
-    ->withPhpVersion(PhpVersion::PHP_83)
+    ->withPhpVersion(PhpVersion::PHP_84)
     ->withPreparedSets(typeDeclarations: false, privatization: true)
     // ->withPhpSets()
     ->withImportNames()

@@ -34,13 +34,10 @@ use Symfony\Component\HttpFoundation\Request as BaseRequest;
 /**
  * REDAXO main boot file.
  *
- * @var array{HTDOCS_PATH: non-empty-string, BACKEND_FOLDER: non-empty-string, REDAXO: bool, LOAD_PAGE?: bool, PATH_PROVIDER?: object, URL_PROVIDER?: object} $REX
- *          HTDOCS_PATH    [Required] Relative path to htdocs directory
- *          BACKEND_FOLDER [Required] Name of backend folder
+ * @var array{REDAXO: bool, PATH_PROVIDER: DefaultPathProvider, URL_PROVIDER: DefaultPathProvider} $REX
  *          REDAXO         [Required] Backend/Frontend flag
- *          LOAD_PAGE      [Optional] Wether the front controller should be loaded or not. Default value is false.
- *          PATH_PROVIDER  [Optional] Custom path provider
- *          URL_PROVIDER   [Optional] Custom url provider
+ *          PATH_PROVIDER  [Required] Path provider
+ *          URL_PROVIDER   [Required] Url provider
  */
 
 define('REX_MIN_PHP_VERSION', '8.4');
@@ -50,7 +47,7 @@ if (version_compare(PHP_VERSION, REX_MIN_PHP_VERSION) < 0) {
     throw new Exception('PHP version >=' . REX_MIN_PHP_VERSION . ' needed!');
 }
 
-foreach (['HTDOCS_PATH', 'BACKEND_FOLDER', 'REDAXO'] as $key) {
+foreach (['REDAXO', 'PATH_PROVIDER', 'URL_PROVIDER'] as $key) {
     if (!isset($REX[$key])) {
         throw new Exception('Missing required global variable $REX[\'' . $key . "']");
     }
@@ -74,28 +71,11 @@ if (ini_get('html_errors')) {
     ini_set('html_errors', '0');
 }
 
-require_once dirname(__DIR__, 3) . '/vendor/autoload.php';
-
-if (isset($REX['PATH_PROVIDER']) && is_object($REX['PATH_PROVIDER'])) {
-    /** @var DefaultPathProvider */
-    $pathProvider = $REX['PATH_PROVIDER'];
-} else {
-    $pathProvider = new DefaultPathProvider($REX['HTDOCS_PATH'], $REX['BACKEND_FOLDER'], true);
-}
-
-Path::init($pathProvider);
-
 // must be called after autoloader to support symfony/polyfill-mbstring
 mb_internal_encoding('UTF-8');
 
-if (isset($REX['URL_PROVIDER']) && is_object($REX['URL_PROVIDER'])) {
-    /** @var DefaultPathProvider */
-    $urlProvider = $REX['URL_PROVIDER'];
-} else {
-    $urlProvider = new DefaultPathProvider($REX['HTDOCS_PATH'], $REX['BACKEND_FOLDER'], false);
-}
-
-Url::init($urlProvider);
+Path::init($REX['PATH_PROVIDER']);
+Url::init($REX['URL_PROVIDER']);
 
 // start timer at the very beginning
 Core::setProperty('timer', new Timer($_SERVER['REQUEST_TIME_FLOAT'] ?? null));
@@ -217,9 +197,4 @@ if (!Core::isSetup()) {
             },
         );
     }
-}
-
-if (isset($REX['LOAD_PAGE']) && $REX['LOAD_PAGE']) {
-    unset($REX);
-    require Path::core(Core::isBackend() ? 'backend.php' : 'frontend.php');
 }

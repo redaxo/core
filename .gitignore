@@ -11,6 +11,9 @@
 /.tools/project/public/*
 !/.tools/project/public/index.php
 !/.tools/project/public/redaxo/
+!/.tools/project/src/
+/.tools/project/src/*
+!/.tools/project/src/Project.php
 
 # Addons
 /redaxo/src/addons/*

@@ -120,7 +120,6 @@ class Setup
             Path::assets(),
             Path::cache(),
             Path::data(),
-            Path::src(),
         ];
 
         $getMod = static function ($path) {

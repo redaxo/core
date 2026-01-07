@@ -13,6 +13,7 @@
 >
     <projectFiles>
         <!-- restrict to core and core addons, ignore other locally installed addons -->
+        <directory name=".tools/project"/>
         <directory name="src"/>
         <directory name="tests"/>
         <directory name="redaxo/src/core"/>
@@ -43,6 +44,7 @@
         <Trace errorLevel="error"/> <!-- https://psalm.dev/docs/running_psalm/issues/Trace/ -->
         <InvalidGlobal>
             <errorLevel type="info">
+                <file name="redaxo/src/core/backend.php"/>
                 <file name="redaxo/src/core/pages/mediapool.php"/>
                 <file name="redaxo/src/core/pages/mediapool.upload.php"/>
                 <file name="redaxo/src/core/pages/login.php"/>

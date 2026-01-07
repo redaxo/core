@@ -269,7 +269,11 @@ final class Path
     public static function relative(string $absPath, ?string $basePath = null): string
     {
         if (null === $basePath) {
-            $basePath = self::base();
+            $basePath = self::$pathprovider->base('');
+            $coreBasePath = self::$pathprovider->coreBase('');
+            if (str_starts_with($basePath, $coreBasePath)) {
+                $basePath = $coreBasePath;
+            }
         }
 
         $basePath = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $basePath);

@@ -7,18 +7,6 @@ use Redaxo\Core\Console\CommandLoader;
 use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
 
-set_time_limit(0);
-
-// setup a minimal exception handler to print early errors,
-// happening before redaxo itself was able to register its ErrorHandler
-set_exception_handler(static function (Throwable $exception): void {
-    fwrite(STDERR, $exception->getMessage() . "\n");
-    fwrite(STDERR, $exception->getTraceAsString() . "\n");
-    exit(254);
-});
-
-require __DIR__ . '/boot.php';
-
 // force debug mode to enable output of notices/warnings and dump() function
 Core::setProperty('debug', true);
 
