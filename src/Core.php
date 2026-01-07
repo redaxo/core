@@ -28,7 +28,7 @@ use function sprintf;
 use const PHP_SESSION_ACTIVE;
 
 /**
- * REX base class for core properties etc.
+ * Base class for core properties etc.
  */
 final class Core
 {
