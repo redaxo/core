@@ -267,8 +267,6 @@ setup_605 = Have fun and good luck!<br />The REDAXO team
 setup_606 = Sign in
 setup_699 = 6 / Hooray
 
-setup_security_msg =
-setup_no_js_security_msg =
 setup_security_no_https = The setup will continue without SSL encryption. It is recommended to use SSL encryption for each call to the front- and backend in order to ensure privacy and data protection.
 setup_security_warn_mod_security = The Apache module "mod_security" is loaded. This can cause problems if not configured correctly.
 setup_security_deprecated_php = The used PHP Version {0} version will no longer receive updates. You should consider upgrading to a newer version.

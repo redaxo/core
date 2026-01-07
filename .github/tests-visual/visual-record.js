@@ -37,17 +37,6 @@ if (myArgs.includes('setup')) {
 }
 const MIN_DIFF_PIXELS = minDiffPixels;
 
-// htaccess ajax checks are subject to race conditions and therefore generated 'random' markup.
-// disable the check to get less visual noise.
-const noHtaccessCheckCookie = {
-    name: 'rex_htaccess_check',
-    value: '1',
-    domain: 'localhost',
-    path: '/',
-    httpOnly: false,
-    secure: false
-};
-
 // all pages
 const allPages = {
     'structure_category_edit.png': START_URL + '?page=structure&category_id=0&article_id=0&clang=1&edit_id=1&function=edit_cat&catstart=0',
@@ -241,7 +230,6 @@ async function main() {
 
     const browser = await playwright.chromium.launch();
     const context = await browser.newContext();
-    await context.addCookies([noHtaccessCheckCookie]);
     let page = await context.newPage();
     // log browser errors into the console
     page.on('console', function(msg) {
