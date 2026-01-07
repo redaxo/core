@@ -16,7 +16,7 @@
 /redaxo/src/addons/*
 !/redaxo/src/addons/debug/
 !/redaxo/src/addons/install/
-!/redaxo/src/addons/project/
+!/redaxo/src/addons/test/
 
 # PhpStorm setting
 /.idea/*

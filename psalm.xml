@@ -18,7 +18,6 @@
         <directory name="redaxo/src/core"/>
         <directory name="redaxo/src/addons/debug"/>
         <directory name="redaxo/src/addons/install"/>
-        <directory name="redaxo/src/addons/project"/>
         <ignoreFiles>
             <directory name="vendor"/>
             <file name=".phpstorm.meta.php" />

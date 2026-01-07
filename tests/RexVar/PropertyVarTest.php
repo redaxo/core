@@ -14,13 +14,13 @@ final class PropertyVarTest extends RexVarTestBase
     protected function setUp(): void
     {
         Core::setProperty('myCoreProperty', 'myCorePropertyValue');
-        Addon::get('project')->setProperty('myPackageProperty', 'myPackagePropertyValue');
+        Addon::get('test')->setProperty('myPackageProperty', 'myPackagePropertyValue');
     }
 
     protected function tearDown(): void
     {
         Core::removeProperty('myCoreProperty');
-        Addon::get('project')->removeProperty('tests');
+        Addon::get('test')->removeProperty('tests');
     }
 
     /** @return list<array{string, string}> */
@@ -28,7 +28,7 @@ final class PropertyVarTest extends RexVarTestBase
     {
         return [
             ['REX_PROPERTY[key=myCoreProperty]', 'myCorePropertyValue'],
-            ['REX_PROPERTY[namespace=project key=myPackageProperty]', 'myPackagePropertyValue'],
+            ['REX_PROPERTY[namespace=test key=myPackageProperty]', 'myPackagePropertyValue'],
         ];
     }
 

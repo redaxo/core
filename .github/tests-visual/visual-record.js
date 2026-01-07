@@ -76,7 +76,7 @@ const allPages = {
     'users_role_add.png': START_URL + '?page=users/roles&func=add&default_value=1',
 
     'packages.png': START_URL + '?page=packages',
-    'packages_help.png': START_URL + '?page=packages&subpage=help&package=project',
+    'packages_help.png': START_URL + '?page=packages&subpage=help&package=test',
 
     'system_settings.png': START_URL + '?page=system/settings',
     'system_lang.png': START_URL + '?page=system/lang',
@@ -342,9 +342,9 @@ async function main() {
             await goToUrlOrThrow(page, START_URL + '?page=packages', { waitUntil: 'load' });
             await Promise.all([
                 page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                page.click('#package-project .rex-table-action > a:first-child') // install
+                page.click('#package-test .rex-table-action > a:first-child') // install
             ]);
-            await createScreenshots(page, 'packages_project_reinstalled.png');
+            await createScreenshots(page, 'packages_test_reinstalled.png');
 
             // test customizer
             await goToUrlOrThrow(page, START_URL + '?page=system/be_style/customizer', { waitUntil: 'load' });

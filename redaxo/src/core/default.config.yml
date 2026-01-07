@@ -70,7 +70,6 @@ setup_addons:
     - install
 system_addons:
     - install
-    - project
 table_prefix: rex_
 temp_prefix: tmp_
 db:

@@ -14,13 +14,13 @@ final class ConfigVarTest extends RexVarTestBase
     protected function setUp(): void
     {
         Core::setConfig('myCoreConfig', 'myCoreConfigValue');
-        Addon::get('project')->setConfig('myPackageConfig', 'myPackageConfigValue');
+        Addon::get('test')->setConfig('myPackageConfig', 'myPackageConfigValue');
     }
 
     protected function tearDown(): void
     {
         Core::removeConfig('myCoreConfig');
-        Addon::get('project')->removeConfig('tests');
+        Addon::get('test')->removeConfig('tests');
     }
 
     /** @return list<array{string, string}> */
@@ -28,7 +28,7 @@ final class ConfigVarTest extends RexVarTestBase
     {
         return [
             ['REX_CONFIG[key=myCoreConfig]', 'myCoreConfigValue'],
-            ['REX_CONFIG[namespace=project key=myPackageConfig]', 'myPackageConfigValue'],
+            ['REX_CONFIG[namespace=test key=myPackageConfig]', 'myPackageConfigValue'],
         ];
     }
 
