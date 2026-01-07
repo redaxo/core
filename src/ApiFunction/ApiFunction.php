@@ -30,9 +30,9 @@ use function sprintf;
  * Inside an api function you might check the preconditions which have to be met (permissions, etc.)
  * and forward the call to an underlying service which does the actual job.
  *
- * There can only be one rex_api_function called per request, but not every request must have an api function.
+ * There can only be one ApiFunction called per request, but not every request must have an api function.
  *
- * The classname of a possible implementation must start with "rex_api" or must be registered explicitly via `rex_api_function::register()`.
+ * The classname of a possible implementation must start with "rex_api" or must be registered explicitly via `ApiFunction::register()`.
  *
  * A api function may also be called by an ajax-request.
  * In fact there might be ajax-requests which do nothing more than triggering an api function.

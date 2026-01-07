@@ -16,7 +16,6 @@ use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
 use Redaxo\Core\MediaPool\Media;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
-use rex_media;
 
 use function assert;
 use function count;
@@ -70,7 +69,7 @@ class MediaManager
     }
 
     /**
-     * Creates a rex_managed_media object for the given file and mediatype.
+     * Creates a MediaManager object for the given file and mediatype.
      * This object might be used to determine the dimension of a image or similar.
      *
      * @param string $type Media type
@@ -562,7 +561,7 @@ class MediaManager
      * @param string $type Media type
      * @param string|Media $file Media file
      * @param int|null $timestamp Last change timestamp of given file, for cache buster parameter
-     *                            (not nessary when the file is given by a `rex_media` object)
+     *                            (not necessary when the file is given by a {@see Media} object)
      *
      * @return string
      */

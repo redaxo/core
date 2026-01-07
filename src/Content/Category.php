@@ -91,7 +91,7 @@ class Category extends StructureElement
 
     /**
      * Return a list of articles in this category
-     * Returns an array of rex_article objects sorted by $priority.
+     * Returns an array of {@see Article} objects sorted by $priority.
      *
      * If $ignore_offlines is set to TRUE,
      * all articles with status 0 will be

@@ -26,7 +26,10 @@ This is useful if variables or CSS properties should be overwritten.
 
 ##### Example
 ```php
-rex_extension::register('BE_STYLE_SCSS_FILES', function(rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('BE_STYLE_SCSS_FILES', function(ExtensionPoint $ep) {
    $files = $ep->getSubject();
    array_unshift($files, '/pfad/zu/meiner/scss-datei');
    return $files;
@@ -38,7 +41,10 @@ Own CSS files can be created via this extension point. When using own styles, fo
 
 ##### Example
 ```php
-rex_extension::register('BE_STYLE_SCSS_FILES', function(rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('BE_STYLE_SCSS_FILES', function(ExtensionPoint $ep) {
    $files = $ep->getSubject();
    $files[] = [
        'scss_files' => 'pfad/zu/scss/dateien',   # Source SCSS files as string or array

@@ -26,7 +26,10 @@ Dies bietet sich an, wenn Variablen oder CSS-Eigenschaften überschrieben werden
 
 ##### Beispiel
 ```php
-rex_extension::register('BE_STYLE_SCSS_FILES', function(rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('BE_STYLE_SCSS_FILES', function(ExtensionPoint $ep) {
    $files = $ep->getSubject();
    array_unshift($files, '/pfad/zu/meiner/scss-datei');
    return $files;
@@ -38,7 +41,10 @@ rex_extension::register('BE_STYLE_SCSS_FILES', function(rex_extension_point $ep)
 
 ##### Beispiel
 ```php
-rex_extension::register('BE_STYLE_SCSS_FILES', function(rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('BE_STYLE_SCSS_FILES', function(ExtensionPoint $ep) {
    $files = $ep->getSubject();
    $files[] = [
        'scss_files' => 'pfad/zu/scss/dateien',   # Quell SCSS Dateien als string oder array

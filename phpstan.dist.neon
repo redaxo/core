@@ -35,7 +35,7 @@ parameters:
         consoleApplicationLoader: .tools/phpstan/console.php
     ignoreErrors:
         - '#^Unsafe usage of new static\(\)#'
-        - '#^Constructor of class (.*Field|rex_form_.*_element) has an unused parameter \$tag.#'
+        - '#^Constructor of class .*Field has an unused parameter \$tag.#'
         - '#^Offset .* on .* always exists#'
         # https://github.com/phpstan/phpstan/issues/10698
         - '#^Parameter \#1 \$extensionPoint of static method Redaxo\\Core\\ExtensionPoint\\Extension\:\:registerPoint\(\) expects Redaxo\\Core\\ExtensionPoint\\ExtensionPoint\<(.+)\>, Redaxo\\Core\\ExtensionPoint\\ExtensionPoint\<\1\> given\.$#'

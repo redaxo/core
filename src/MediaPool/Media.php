@@ -386,7 +386,7 @@ class Media
      */
     public function getValue($value)
     {
-        // damit alte rex_article felder wie copyright, description
+        // damit alte rex_media felder wie copyright, description
         // noch funktionieren
         if (isset($this->$value)) {
             return $this->$value;

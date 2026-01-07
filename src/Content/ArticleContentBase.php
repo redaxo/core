@@ -256,7 +256,7 @@ class ArticleContentBase
     {
         $value = $this->correctValue($value);
 
-        // use same timestamp format like in frontend via `rex_article`
+        // use same timestamp format like in frontend via `ArticleContent`
         if (in_array($value, ['createdate', 'updatedate'], true)) {
             return $this->getSqlInstance()->getDateTimeValue($value);
         }
@@ -275,7 +275,7 @@ class ArticleContentBase
     {
         // damit alte rex_article felder wie teaser, online_from etc
         // noch funktionieren
-        // gleicher BC code nochmals in rex_structure_element::getValue
+        // gleicher BC code nochmals in StructureElement::getValue
         foreach (['', 'art_', 'cat_'] as $prefix) {
             $val = $prefix . $value;
             if ($this->_hasValue($val)) {

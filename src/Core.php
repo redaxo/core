@@ -455,7 +455,7 @@ final class Core
     /**
      * Returns the redaxo version.
      *
-     * @param string $format See {@link rex_formatter::version()}
+     * @param string $format See {@link Formatter::version()}
      */
     public static function getVersion(?string $format = null): string
     {

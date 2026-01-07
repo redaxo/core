@@ -27,17 +27,17 @@ final class I18nTest extends TestCase
         $this->previousLocale = I18n::setLocale('de_de', false);
 
         $content = <<<'LANG'
-            rex_i18n_test_foo = abc def
-            rex_i18n_test_bar =
-            rex_i18n_test_baz = ghi
-            rex_i18n_test_4=abc=def
+            i18n_test_foo = abc def
+            i18n_test_bar =
+            i18n_test_baz = ghi
+            i18n_test_4=abc=def
 
             LANG;
-        $content .= "rex_i18n_test_5   =   abc def   \n";
+        $content .= "i18n_test_5   =   abc def   \n";
 
         File::put($this->getPath() . '/de_de.lang', $content . "\nmy=DE");
 
-        $content .= "\nrex_i18n_test_6 = test6\n";
+        $content .= "\ni18n_test_6 = test6\n";
 
         File::put($this->getPath() . '/en_gb.lang', $content . "\nmy=EN");
     }
@@ -50,44 +50,44 @@ final class I18nTest extends TestCase
 
     private function getPath(): string
     {
-        return Path::addonData('tests', 'lang');
+        return Path::addonData('test', 'lang');
     }
 
     public function testLoadFile(): void
     {
         I18n::addDirectory($this->getPath());
 
-        self::assertSame('abc def', I18n::msg('rex_i18n_test_foo'));
-        self::assertSame('[translate:rex_i18n_test_bar]', I18n::msg('rex_i18n_test_bar'));
-        self::assertSame('ghi', I18n::msg('rex_i18n_test_baz'));
-        self::assertSame('abc=def', I18n::msg('rex_i18n_test_4'));
-        self::assertSame('abc def', I18n::msg('rex_i18n_test_5'));
+        self::assertSame('abc def', I18n::msg('i18n_test_foo'));
+        self::assertSame('[translate:i18n_test_bar]', I18n::msg('i18n_test_bar'));
+        self::assertSame('ghi', I18n::msg('i18n_test_baz'));
+        self::assertSame('abc=def', I18n::msg('i18n_test_4'));
+        self::assertSame('abc def', I18n::msg('i18n_test_5'));
     }
 
     public function testHasMsg(): void
     {
         I18n::addDirectory($this->getPath());
 
-        self::assertTrue(I18n::hasMsg('rex_i18n_test_foo'));
-        self::assertFalse(I18n::hasMsg('rex_i18n_test_bar'));
-        self::assertFalse(I18n::hasMsg('rex_i18n_test_6'));
+        self::assertTrue(I18n::hasMsg('i18n_test_foo'));
+        self::assertFalse(I18n::hasMsg('i18n_test_bar'));
+        self::assertFalse(I18n::hasMsg('i18n_test_6'));
     }
 
     public function testHasMsgOrFallback(): void
     {
         I18n::addDirectory($this->getPath());
 
-        self::assertTrue(I18n::hasMsgOrFallback('rex_i18n_test_foo'));
-        self::assertFalse(I18n::hasMsgOrFallback('rex_i18n_test_bar'));
-        self::assertTrue(I18n::hasMsgOrFallback('rex_i18n_test_6'));
+        self::assertTrue(I18n::hasMsgOrFallback('i18n_test_foo'));
+        self::assertFalse(I18n::hasMsgOrFallback('i18n_test_bar'));
+        self::assertTrue(I18n::hasMsgOrFallback('i18n_test_6'));
     }
 
     public function testGetMsgFallback(): void
     {
         I18n::addDirectory($this->getPath());
 
-        self::assertSame('test6', I18n::msg('rex_i18n_test_6'));
-        self::assertSame('[translate:rex_i18n_test_7]', I18n::msg('rex_i18n_test_7'));
+        self::assertSame('test6', I18n::msg('i18n_test_6'));
+        self::assertSame('[translate:i18n_test_7]', I18n::msg('i18n_test_7'));
     }
 
     public function testGetMsgInLocaleFallback(): void

@@ -29,7 +29,7 @@ final class DirTest extends TestCase
 
     private function getPath(string $file = ''): string
     {
-        return Path::addonData('tests', 'rex_dir_test/' . $file);
+        return Path::addonData('test', 'DirTest/' . $file);
     }
 
     public function testCreate(): void

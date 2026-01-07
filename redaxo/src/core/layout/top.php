@@ -145,12 +145,6 @@ if ($user && $hasNavigation) {
             if (!$pageObj->getHref()) {
                 $pageObj->setHref(Url::backendPage($p));
             }
-            /*
-             if(isset ($REX['ACKEY']['ADDON'][$page]))
-                $item['extra'] = rex_accesskey($name, $REX['ACKEY']['ADDON'][$page]);
-            else
-                $item['extra'] = rex_accesskey($pageArr['title'], $accesskey++);
-            */
 
             $n->addPage($pageObj);
         }

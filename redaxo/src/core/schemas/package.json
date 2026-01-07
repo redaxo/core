@@ -97,7 +97,7 @@
             "additionalProperties": false
         },
         "default_config": {
-            "description": "Default values for rex_config",
+            "description": "Default values for Redaxo\\Core\\Config",
             "type": "object"
         },
         "console_commands": {

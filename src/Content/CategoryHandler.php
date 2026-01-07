@@ -415,7 +415,7 @@ class CategoryHandler
      */
     public static function copyCategory($fromCat, $toCat)
     {
-        // TODO rex_copyCategory implementieren
+        // TODO copyCategory implementieren
     }
 
     /**

@@ -175,13 +175,13 @@ abstract class StructureElement
     }
 
     /**
-     * Return an rex_structure_element object based on an id.
+     * Return a StructureElement object based on an id.
      * The instance will be cached in an instance-pool and therefore re-used by a later call.
      *
      * @param int $id the article id
      * @param int|null $clang the clang id
      *
-     * @return static|null A rex_structure_element instance typed to the late-static binding type of the caller
+     * @return static|null A StructureElement instance typed to the late-static binding type of the caller
      */
     public static function get(int $id, ?int $clang = null): ?static
     {

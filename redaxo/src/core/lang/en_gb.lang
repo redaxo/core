@@ -416,7 +416,6 @@ session_timeout_logout_label = Log out
 session_timeout_login_label = Log in again
 session_timeout_refresh_label = Extend session
 
-# redaxo\include\classes\class.rex_list.php
 list_previous = previous page
 list_next = next page
 list_rows_found = {0} entries found
@@ -1459,7 +1458,7 @@ action_mode_postsave = Executed after saving the module
 action_delete = Delete action
 action_edit = Edit action
 action_add = Add action
-action_hint = All values are available in $REX_ACTION
+action_hint = All values are available in {0}
 action_caption = List of available actions
 actions_added_caption = List of assigned actions
 actions_not_found = No actions found

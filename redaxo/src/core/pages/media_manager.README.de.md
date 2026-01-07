@@ -10,13 +10,15 @@ Das AddOn erlaubt das Anpassen von Grafiken und Handling von Dateien anhand von 
 ### Mittels PHP-Methode
 
 ```php
-$url = rex_media_manager::getUrl($type,$file); 
+use Redaxo\Core\MediaManager\MediaManager;
+
+$url = MediaManager::getUrl($type,$file); 
 ```
 > Der Pfad zum Medium muss nicht angegeben werden.
 
 ### Direkter Auruf per URL 
 
-```php
+```
 index.php?rex_media_type=MediaTypeName&amp;rex_media_file=MediaFileName
 ```
 

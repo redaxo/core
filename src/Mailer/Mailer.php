@@ -454,7 +454,7 @@ class Mailer extends PHPMailer
             }
         }
 
-        // Mail senden via rex_socket
+        // Mail senden via Redaxo\Core\HttpClient
         $mailUrl = "https://graph.microsoft.com/v1.0/users/$from/sendMail";
         $mailSocket = Request::factoryUrl($mailUrl);
         $mailSocket->addHeader('Authorization', 'Bearer ' . $token['access_token']);
