@@ -450,38 +450,6 @@ jQuery(function($){
     $("[autofocus]").trigger("focus");
 });
 
-
-// cookie functions
-
-function setCookie(name, value, expires, path, domain, secure, samesite) {
-    if (typeof expires != undefined && expires == "never") {
-        // never expire means expires in 3000 days
-        expires = new Date();
-        expires.setTime(expires.getTime() + (1000 * 60 * 60 * 24 * 3000));
-        expires = expires.toGMTString();
-    }
-
-    document.cookie = name + "=" + escape(value)
-        + ((expires) ? "; expires=" + expires : "")
-        + ((path) ? "; path=" + path : "")
-        + ((domain) ? "; domain=" + domain : "")
-        + ((secure) ? "; secure" : "")
-        + ((samesite) ? "; samesite=" + samesite : "");
-}
-
-function getCookie(cookieName) {
-    var theCookie = "" + document.cookie;
-    var ind = theCookie.indexOf(cookieName);
-    if (ind == -1 || cookieName == "")
-        return "";
-
-    var ind1 = theCookie.indexOf(';', ind);
-    if (ind1 == -1)
-        ind1 = theCookie.length;
-
-    return unescape(theCookie.substring(ind + cookieName.length + 1, ind1));
-}
-
 // scroll to anchor element + adjust scroll-padding-top
 function scrollToAnchor() {
     if (window.location.hash) {
