@@ -37,10 +37,10 @@ expectedArguments(\Redaxo\Core\Util\Formatter::intlDateTime(), 1, argumentsSet('
 expectedArguments(\Redaxo\Core\Util\Formatter::intDate(), 1, argumentsSet('intl_format'));
 expectedArguments(\Redaxo\Core\Util\Formatter::intlTime(), 1, argumentsSet('intl_format'));
 
-registerArgumentsSet('locale', 'de_de', 'en_gb', 'es_es', 'it_it', 'nl_nl', 'pt_br', 'sv_se');
+registerArgumentsSet('locale', 'de_de', 'en_gb');
 expectedArguments(\Redaxo\Core\Translation\I18n::setLocale(), 0, argumentsSet('locale'));
 expectedReturnValues(\Redaxo\Core\Translation\I18n::getLocale(), argumentsSet('locale'));
-expectedReturnValues(\Redaxo\Core\Translation\I18n::getLanguage(), 'de', 'en', 'es', 'it', 'nl', 'pt', 'sv');
+expectedReturnValues(\Redaxo\Core\Translation\I18n::getLanguage(), 'de', 'en');
 expectedArguments(\Redaxo\Core\Translation\I18n::msgInLocale(), 1, argumentsSet('locale'));
 expectedArguments(\Redaxo\Core\Translation\I18n::rawMsgInLocale(), 1, argumentsSet('locale'));
 

@@ -275,11 +275,6 @@ Asset::addJsFile(Url::coreAssets('js/bootstrap-select.min.js'), [Asset::JS_IMMUT
 $bootstrapSelectLang = [
     'de_de' => 'de_DE',
     'en_gb' => 'en_US',
-    'es_es' => 'de_DE',
-    'it_it' => 'it_IT',
-    'nl_nl' => 'nl_NL',
-    'pt_br' => 'pt_BR',
-    'sv_se' => 'sv_SE',
 ][I18n::getLocale()] ?? 'en_US';
 Asset::addJsFile(Url::coreAssets('js/bootstrap-select-defaults-' . $bootstrapSelectLang . '.min.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/main.js'), [Asset::JS_IMMUTABLE => true]);
