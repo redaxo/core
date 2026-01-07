@@ -32,7 +32,7 @@ use function sprintf;
  *
  * There can only be one ApiFunction called per request, but not every request must have an api function.
  *
- * The classname of a possible implementation must start with "rex_api" or must be registered explicitly via `ApiFunction::register()`.
+ * The ApiFunction classes must be registered explicitly via `ApiFunction::register()`.
  *
  * A api function may also be called by an ajax-request.
  * In fact there might be ajax-requests which do nothing more than triggering an api function.
@@ -129,12 +129,7 @@ abstract class ApiFunction
         $api = Request::request(self::REQ_CALL_PARAM, 'string');
 
         if ($api) {
-            if (isset(self::$functions[$api])) {
-                $apiClass = self::$functions[$api];
-            } else {
-                /** @psalm-taint-escape callable */ // It is intended that the class name suffix is coming from request param
-                $apiClass = 'rex_api_' . $api;
-            }
+            $apiClass = self::$functions[$api];
 
             if (class_exists($apiClass)) {
                 $apiImpl = new $apiClass();
@@ -330,10 +325,6 @@ abstract class ApiFunction
         $name = array_search($class, self::$functions, true);
         if (false !== $name) {
             return $name;
-        }
-
-        if (str_starts_with($class, 'rex_api_')) {
-            return substr($class, 8);
         }
 
         throw new LogicException('The api function "' . $class . '" is not registered.');
