@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-printf "\nUpdate root composer.json and vendor/\n"
+printf "Update root composer.json and vendor/\n"
 .tools/bin/update-tools
 
 printf "\nUpdate redaxo/src/core/assets/jquery.min.js\n"
@@ -12,7 +12,7 @@ curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.min.map > redaxo
 #printf "\nUpdate redaxo/src/core/assets/jquery-pjax.min.js\n"
 #curl -#d output_info=compiled_code -d compilation_level=SIMPLE_OPTIMIZATIONS -d code_url=https://github.com/defunkt/jquery-pjax/raw/master/jquery.pjax.js https://closure-compiler.appspot.com/compile > redaxo/src/core/assets/jquery-pjax.min.js
 
-cp redaxo/src/core/assets/jquery-pjax.min.js assets/core
-cp redaxo/src/core/assets/jquery.js assets/core
-cp redaxo/src/core/assets/jquery.min.js assets/core
-cp redaxo/src/core/assets/jquery.min.map assets/core
+cp redaxo/src/core/assets/jquery-pjax.min.js .tools/project/public/assets/core
+cp redaxo/src/core/assets/jquery.js .tools/project/public/assets/core
+cp redaxo/src/core/assets/jquery.min.js .tools/project/public/assets/core
+cp redaxo/src/core/assets/jquery.min.map .tools/project/public/assets/core

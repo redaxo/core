@@ -3,11 +3,12 @@
 # refreshes the redaxo installation.
 # most of the time this is required when working on the REDAXO sources after checking out a Pull Request via GitHub.com
 
-cp -R redaxo/src/core/assets/* assets/core/
-php -r 'foreach (require "redaxo/src/core/vendor_files.php" as $src => $dst) { $dst = "assets/core/" . $dst; @mkdir(dirname($dst), 0775, true); copy("redaxo/src/core/assets_files/" . $src, $dst); }'
+mkdir -p .tools/project/public/assets/core
+cp -R redaxo/src/core/assets/* .tools/project/public/assets/core/
+php -r 'foreach (require "redaxo/src/core/vendor_files.php" as $src => $dst) { $dst = ".tools/project/public/assets/core/" . $dst; @mkdir(dirname($dst), 0775, true); copy("redaxo/src/core/assets_files/" . $src, $dst); }'
 
-if [ "true" = $(redaxo/bin/console config:get setup) ]; then
-    redaxo/bin/console cache:clear --ansi
+if [ "true" = $(.tools/bin/console config:get setup) ]; then
+    .tools/bin/console cache:clear --ansi
 
     echo "Core/Addons can not be re-installed, because the REDAXO setup is not done yet."
 
@@ -22,11 +23,11 @@ install
 "
 
 for package in $packages; do
-    if redaxo/bin/console addon:list --addon $package --installed-only --error-when-empty --quiet; then
-        redaxo/bin/console addon:install --ansi --re-install $package
+    if .tools/bin/console addon:list --addon $package --installed-only --error-when-empty --quiet; then
+        .tools/bin/console addon:install --ansi --re-install $package
     fi
 done
 
-redaxo/bin/console cache:clear --ansi
+.tools/bin/console cache:clear --ansi
 
 composer update --ansi # update dev-tools

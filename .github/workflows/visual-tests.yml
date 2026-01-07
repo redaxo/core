@@ -89,40 +89,40 @@ jobs:
                 run: |
                     sudo /etc/init.d/mysql start
                     mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo6;'
-                    php redaxo/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
-                    php redaxo/bin/console config:set --type boolean debug.enabled true -v
-                    php redaxo/bin/console config:set --type boolean debug.throw_always_exception true -v
+                    php .tools/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
+                    php .tools/bin/console config:set --type boolean debug.enabled true -v
+                    php .tools/bin/console config:set --type boolean debug.throw_always_exception true -v
 
             -   name: Create user, update config
                 run: |
-                    php redaxo/bin/console user:create myusername mypassword --admin --ansi -v
-                    php redaxo/bin/console config:set error_email 'test@redaxo.invalid' --ansi -v
+                    php .tools/bin/console user:create myusername mypassword --admin --ansi -v
+                    php .tools/bin/console config:set error_email 'test@redaxo.invalid' --ansi -v
             -   name: Import mock data
                 run: |
-                    mkdir -p $GITHUB_WORKSPACE/redaxo/data/core/backup && cp -r .github/imports/inital-content-for-visual-tests.sql $GITHUB_WORKSPACE/redaxo/data/core/backup/
-                    cp -r .github/imports/media/* $GITHUB_WORKSPACE/media/
+                    mkdir -p $GITHUB_WORKSPACE/.tools/project/var/data/core/backup && cp -r .github/imports/inital-content-for-visual-tests.sql $GITHUB_WORKSPACE/.tools/project/var/data/core/backup/
+                    cp -r .github/imports/media/* $GITHUB_WORKSPACE/.tools/project/public/media/
                     cp -f .github/imports/README.md $GITHUB_WORKSPACE/redaxo/src/addons/project/README.de.md
-                    php redaxo/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=inital-content-for-visual-tests --admin-username=myusername --admin-password=mypassword --ansi -v
+                    php .tools/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=inital-content-for-visual-tests --admin-username=myusername --admin-password=mypassword --ansi -v
             -   name: Install packages
                 run: |
-                    php redaxo/bin/console addon:install debug --ansi -v
+                    php .tools/bin/console addon:install debug --ansi -v
 
             -   name: Start php server
                 run: |
-                    cat <<EOF > router.php
+                    cat <<EOF > .tools/project/public/router.php
                     <?php
                     if (preg_match('@redaxo/(?:bin|data|cache|src)@', \$_SERVER['REQUEST_URI'])) http_response_code(403);
                     else return false;
                     EOF
-                    php -S localhost:8080 router.php &
+                    php -S localhost:8080 -t .tools/project/public/ .tools/project/public/router.php &
 
             -   name: Take screenshots (differential)
                 run: |
-                    php redaxo/bin/console config:set setup true -t boolean --ansi -v
-                    php redaxo/bin/console cache:clear --ansi -v
+                    php .tools/bin/console config:set setup true -t boolean --ansi -v
+                    php .tools/bin/console cache:clear --ansi -v
                     node .github/tests-visual/visual-record.js setup
-                    php redaxo/bin/console config:set setup false -t boolean --ansi -v
-                    php redaxo/bin/console cache:clear --ansi -v
+                    php .tools/bin/console config:set setup false -t boolean --ansi -v
+                    php .tools/bin/console cache:clear --ansi -v
                     node .github/tests-visual/visual-record.js
                     git diff --exit-code --name-only .github/tests-visual/
 
