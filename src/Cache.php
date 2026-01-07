@@ -29,7 +29,6 @@ final class Cache
         $finder = Finder::factory(Path::cache())
             ->recursive()
             ->childFirst()
-            ->ignoreFiles(['.htaccess', '.redaxo'], false)
             ->ignoreSystemStuff(false);
         Dir::deleteIterator($finder);
 

@@ -268,8 +268,6 @@ setup_605 = Viel Spaß und Erfolg!<br />Das REDAXO-Team
 setup_606 = zum Login
 setup_699 = 6 / Heureka
 
-setup_security_msg = Mindestens einer der Ordner <code>redaxo/bin</code>, <code>redaxo/cache</code>, <code>redaxo/data</code>, <code>redaxo/src</code> ist unsicher. Gründe hierfür sind häufig, dass die <code>.htaccess</code>-Dateien innerhalb der Ordner nicht übertragen wurden oder der Schutz z.B. für nginx-Server nicht erstellt wurde.
-setup_no_js_security_msg = Prüfe, ob Dateien aus den Ordnern <code>redaxo/bin</code>, <code>redaxo/cache</code>, <code>redaxo/data</code> und <code>redaxo/src</code> direkt aufrufbar sind. Dies darf aus Sicherheitsgründen nicht möglich sein!
 setup_security_no_https = Das Setup wird unverschlüsselt durchgeführt. Frontend und Backend sollten grundsätzlich durch HTTPS verschlüsselt aufgerufen werden, um die Privatsphäre zu schützen und den Datenschutz zu gewährleisten.
 setup_security_warn_mod_security = Das Apache Modul "mod_security" ist geladen. Dies kann bei falscher Konfiguration zu Problemen führen.
 setup_security_deprecated_php = Die verwendete PHP-Version {0} wird nicht mehr vom Hersteller gepflegt und sollte aktualisiert werden.

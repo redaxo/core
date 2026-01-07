@@ -32,45 +32,7 @@ if (count($errorArray) > 0) {
     $buttons = '<a class="btn btn-setup" href="' . $context->getUrl(['step' => 3]) . '">' . I18n::msg('setup_210') . '</a>';
 }
 
-$security = '<div class="rex-js-setup-security-message" style="display:none">' . Message::error(I18n::msg('setup_security_msg') . '<br />' . I18n::msg('setup_no_js_security_msg')) . '</div>';
-$security .= '<noscript>' . Message::error(I18n::msg('setup_no_js_security_msg')) . '</noscript>';
-
-$security .= '<script nonce="' . Response::getNonce() . '">
-
-    jQuery(function($){
-        var allowedUrl = "' . Url::backend('index.php') . '";
-
-        // test url, which is not expected to be accessible
-        // after each expected error, run a request which is expected to succeed.
-        // that way we try to make sure tools like fail2ban dont block the client
-        var urls = [
-            "' . Url::backend('bin/console') . '",
-            allowedUrl,
-            "' . Url::backend('data/.redaxo') . '",
-            allowedUrl,
-            "' . Url::backend('src/core/boot.php') . '",
-            allowedUrl,
-            "' . Url::backend('cache/.redaxo') . '"
-        ];
-
-        // NOTE: we have essentially a copy of this code in checkHtaccess() - see standard.js
-        $.each(urls, function (i, url) {
-            $.ajax({
-                url: url,
-                cache: false,
-                success: function(data) {
-                    if (i % 2 == 0) {
-                        $(".rex-js-setup-security-message").show();
-                        $(".rex-js-setup-section").hide();
-                    }
-                }
-            });
-        });
-
-    })
-
-</script>';
-
+$security = '';
 foreach (Setup::checkPhpSecurity() as $warning) {
     $security .= Message::warning($warning);
 }
