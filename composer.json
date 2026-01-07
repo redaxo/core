@@ -78,9 +78,6 @@
             "Redaxo\\Rector\\": ".tools/rector"
         }
     },
-    "bin": [
-        "redaxo/bin/console"
-    ],
     "scripts": {
         "clone-addon": ".tools/bin/clone-addon",
         "rebase-to-bugfix": "bash .tools/bin/rebase-to-bugfix",

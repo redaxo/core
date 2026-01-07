@@ -1,15 +1,16 @@
 .php-cs-fixer.cache
-/.htaccess
 /composer.lock
 /.phpunit.cache/
-/assets/
-/media/
 /node_modules/
-/redaxo/cache/
-/redaxo/data/
 /releases/
-/resources/
 /vendor/
+
+# Local project for testing
+/.tools/project/*
+!/.tools/project/public/
+/.tools/project/public/*
+!/.tools/project/public/index.php
+!/.tools/project/public/redaxo/
 
 # Addons
 /redaxo/src/addons/*

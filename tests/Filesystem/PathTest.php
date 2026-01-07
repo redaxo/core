@@ -44,9 +44,9 @@ final class PathTest extends TestCase
 
     public function testBasename(): void
     {
-        self::assertSame('config.yml', Path::basename('../redaxo/data/core/config.yml'));
+        self::assertSame('config.yml', Path::basename('../var/data/core/config.yml'));
 
-        self::assertSame('config.yml', Path::basename('..\redaxo\data\core\config.yml'));
+        self::assertSame('config.yml', Path::basename('..\var\data\core\config.yml'));
     }
 
     public function testFindBinaryPath(): void

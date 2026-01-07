@@ -147,6 +147,7 @@ class Setup
 
         $res = [];
         foreach ($writables as $dir) {
+            @Dir::create($dir);
             if (@is_dir($dir)) {
                 $res = array_merge_recursive($res, $func($dir));
             } else {

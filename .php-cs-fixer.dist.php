@@ -20,6 +20,7 @@ $finder = Finder::create()
         __FILE__,
         __DIR__ . '/rector.php',
         $tools . '/bin/clone-addon',
+        $tools . '/bin/console',
         $tools . '/bin/reinstall-core',
         $tools . '/bin/release',
         $tools . '/bin/update-root-composer',
