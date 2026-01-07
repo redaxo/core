@@ -21,7 +21,6 @@ $finder = Finder::create()
         $tools . '/bin/clone-addon',
         $tools . '/bin/console',
         $tools . '/bin/reinstall-core',
-        $tools . '/bin/release',
         $tools . '/bin/update-root-composer',
     ])
 ;

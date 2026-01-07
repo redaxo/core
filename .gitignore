@@ -2,7 +2,6 @@
 /composer.lock
 /.phpunit.cache/
 /node_modules/
-/releases/
 /vendor/
 
 # Local project for testing
