@@ -11,3 +11,14 @@
 
 # To avoid line changes in the test responses for the socket unit tests the response files should be transfered binary
 *.testresp binary
+
+# Exclude non-essential files from dist
+/.* export-ignore
+/.phpstorm.meta.php -export-ignore
+/redaxo/src/addons/test export-ignore
+/tests/ export-ignore
+/docker-compose.yml export-ignore
+/phpstan.dist.neon export-ignore
+/phpunit.dist.xml export-ignore
+/psalm.xml export-ignore
+/rector.php export-ignore

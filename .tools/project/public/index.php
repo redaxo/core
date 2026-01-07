@@ -1,9 +1,7 @@
 <?php
 
-unset($REX);
-$REX['REDAXO'] = false;
-$REX['HTDOCS_PATH'] = './';
-$REX['BACKEND_FOLDER'] = 'redaxo';
-$REX['LOAD_PAGE'] = true;
+use Project\Project;
 
-require $REX['BACKEND_FOLDER'] . '/src/core/boot.php';
+require_once dirname(__DIR__, 3) . '/vendor/autoload_runtime.php';
+
+return static fn (array $context) => new Project('frontend');

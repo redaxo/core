@@ -2,7 +2,10 @@
 
 namespace Redaxo\Core\Filesystem;
 
+use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Exception\InvalidArgumentException;
+use Redaxo\Core\Exception\LogicException;
+use Redaxo\Core\Util\Type;
 
 use const DIRECTORY_SEPARATOR;
 
@@ -13,24 +16,29 @@ class DefaultPathProvider
 {
     /** @var non-empty-string */
     protected readonly string $base;
+    protected readonly string $frontend;
     protected readonly string $backend;
+    /** @var non-empty-string */
+    protected readonly string $core;
     protected readonly bool $provideAbsolutes;
 
     /**
      * Initializes the class.
      *
-     * @param non-empty-string $htdocs Htdocs path
-     * @param non-empty-string $backend Backend folder name
      * @param bool $provideAbsolutes Flag whether to return absolute path, or relative ones
      */
-    public function __construct(string $htdocs, string $backend, bool $provideAbsolutes)
+    public function __construct(AbstractProject $project, bool $provideAbsolutes)
     {
         if ($provideAbsolutes) {
-            $this->base = realpath($htdocs) . '/';
-            $this->backend = $backend;
+            $this->base = Type::string(realpath($project->projectPath)) . '/';
+            $this->frontend = 'public/';
+            $this->backend = $project->backendDirectory;
+            $this->core = Type::string(realpath($project->corePath)) . '/';
         } else {
-            $this->base = $htdocs;
-            $this->backend = str_ends_with($htdocs, '../') ? '' : $htdocs . $backend . '/';
+            $this->base = 'frontend' === $project->environment ? './' : '../';
+            $this->frontend = '';
+            $this->backend = str_ends_with($this->base, '../') ? '' : $this->base . $project->backendDirectory . '/';
+            $this->core = $this->base;
         }
         $this->provideAbsolutes = $provideAbsolutes;
     }
@@ -57,7 +65,7 @@ class DefaultPathProvider
      */
     public function frontend(string $file): string
     {
-        return $this->base($file);
+        return $this->base($this->frontend . $file);
     }
 
     /**
@@ -147,7 +155,17 @@ class DefaultPathProvider
      */
     public function bin(string $file): string
     {
-        return $this->backend('bin/' . $file);
+        return $this->base('bin/' . $file);
+    }
+
+    /**
+     * Returns the path to the var folder.
+     *
+     * @return non-empty-string
+     */
+    public function var(string $file): string
+    {
+        return $this->base('var/' . $file);
     }
 
     /**
@@ -157,7 +175,7 @@ class DefaultPathProvider
      */
     public function data(string $file): string
     {
-        return $this->backend('data/' . $file);
+        return $this->var('data/' . $file);
     }
 
     /**
@@ -188,7 +206,7 @@ class DefaultPathProvider
      */
     public function log(string $file): string
     {
-        return $this->data('log/' . $file);
+        return $this->var('log/' . $file);
     }
 
     /**
@@ -198,7 +216,7 @@ class DefaultPathProvider
      */
     public function cache(string $file): string
     {
-        return $this->backend('cache/' . $file);
+        return $this->var('cache/' . $file);
     }
 
     /**
@@ -223,13 +241,29 @@ class DefaultPathProvider
     }
 
     /**
+     * Returns the path to the base core folder.
+     *
+     * @return non-empty-string
+     *
+     * @psalm-taint-specialize
+     */
+    public function coreBase(string $file): string
+    {
+        if (!$this->provideAbsolutes) {
+            throw new LogicException('Source paths are only available for absolute paths.');
+        }
+
+        return strtr($this->core . $file, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
+    }
+
+    /**
      * Returns the path to the src folder.
      *
      * @return non-empty-string
      */
     public function src(string $file): string
     {
-        return $this->backend('src/' . $file);
+        return $this->coreBase('redaxo/src/' . $file);
     }
 
     /**

@@ -11,6 +11,7 @@ parameters:
         internalTag: false
     paths:
         # restrict to core and core addons, ignore other locally installed addons
+        - .tools/project
         - src
         - tests
         - redaxo/src/core

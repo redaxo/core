@@ -1,17 +1,14 @@
 <?php
 
+use Project\Project;
 use Redaxo\Core\ErrorHandler;
 
-chdir(dirname(__DIR__) . '/redaxo');
+require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-unset($REX);
-$REX['REDAXO'] = true;
-$REX['HTDOCS_PATH'] = '../';
-$REX['BACKEND_FOLDER'] = 'redaxo';
-$REX['LOAD_PAGE'] = false;
+$project = new Project('console');
 
-require dirname(__DIR__) . '/redaxo/src/core/boot.php';
-require dirname(__DIR__) . '/redaxo/src/core/packages.php';
+$project->bootCore();
+$project->bootPackages();
 
 // use original error handlers of the tools
 ErrorHandler::unregister();
