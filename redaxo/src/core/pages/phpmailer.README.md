@@ -142,7 +142,7 @@ The check and if necessary the sending are done in fixed intervals, which can be
 
 Your own events can also trigger the dispatch. You can store this event as type: logevent. 
 
-`rex_logger::factory()->log('logevent', 'Mein Text zum Event');`
+`Logger::factory()->log('logevent', 'Mein Text zum Event');`
 
 ## SMTP-Debug
 
@@ -206,7 +206,10 @@ The following example shows the use of self-signed certificates.
 > By default, the peer is verified. This may lead to problems. The following settings help to avoid this problem.
 
 ```php 
-rex_extension::register('PHPMAILER_CONFIG', function (rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('PHPMAILER_CONFIG', function (ExtensionPoint $ep) {
     $subject = $ep->getSubject();
     // set SMTPOptions
     $subject->SMTPOptions = [
@@ -229,7 +232,10 @@ rex_extension::register('PHPMAILER_CONFIG', function (rex_extension_point $ep) {
 This extension point can be used to check e-mails before they are sent. So a spam filter or a virus scanner could be used at this point for example.
 
 ```php
-rex_extension::register('PHPMAILER_PRE_SEND', function (rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('PHPMAILER_PRE_SEND', function (ExtensionPoint $ep) {
     $subject = $ep->getSubject(); 
     if (str_contains('bad word', $subject->Body) { 
         do_something(); 
@@ -241,10 +247,13 @@ rex_extension::register('PHPMAILER_PRE_SEND', function (rex_extension_point $ep)
 
 The `PHPMAILER_POST_SEND` is useful to perform custom processing steps after sending. 
 
-### Example: Save sent message to IMAP folder: 
+### Example: Save sent message to IMAP folder:
 
 ```php
-rex_extension::register('PHPMAILER_POST_SEND', function (rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('PHPMAILER_POST_SEND', function (ExtensionPoint $ep) {
     $subject = $ep->getSubject(); 
     $host = $subject->Host;
     $port = '993';

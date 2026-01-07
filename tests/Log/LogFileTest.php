@@ -20,7 +20,7 @@ final class LogFileTest extends TestCase
 
     private function getPath(string $file = ''): string
     {
-        return Path::addonData('tests', 'rex_log_file_test/' . $file);
+        return Path::addonData('test', 'LogFileTest/' . $file);
     }
 
     public function testConstruct(): void

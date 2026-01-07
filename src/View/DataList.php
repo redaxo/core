@@ -47,7 +47,7 @@ EXAMPLE USING CUSTOM CALLBACKS WITH setColumnFormat() METHOD:
 function callback_func($params)
 {
     // $params['subject']  current value
-    // $params['list']     rex_list object
+    // $params['list']     List object
     // $params['params']   custom params
 
     return $custom_string; // return value showed in list (note: no htmlspechialchars!)
@@ -143,8 +143,6 @@ class DataList implements UrlProviderInterface
     private ?Pager $pager = null;
 
     /**
-     * Erstellt ein rex_list Objekt.
-     *
      * @param string $query SELECT Statement
      * @param int|self::DISABLE_PAGINATION $rowsPerPage
      * @param string|null $listName Name der Liste

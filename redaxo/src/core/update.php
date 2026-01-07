@@ -8,7 +8,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
 
-// don't use REX_MIN_PHP_VERSION or rex_setup::MIN_* constants here!
+// don't use REX_MIN_PHP_VERSION or Redaxo\Core\Setup\Setup::MIN_* constants here!
 // while updating the core, the constants contain the old min versions from previous core version
 
 if (version_compare(Core::getVersion(), '5.16', '<')) {

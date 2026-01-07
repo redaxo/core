@@ -9,15 +9,17 @@ This AddOn allows the customization of graphics and handling of files based on m
 ### By PHP method
 
 ```php
-$url = rex_url::frontend().rex_media_manager::getUrl($type,$file); 
+use Redaxo\Core\MediaManager\MediaManager;
+
+$url = MediaManager::getUrl($type,$file); 
 ```
 > The path to the medium does not have to be specified.  
 
 
 ### Direct call via URL 
 
-```php
-<?= rex_url::frontend() ?>index.php?rex_media_type=MediaTypeName&amp;rex_media_file=MediaFileName
+```
+index.php?rex_media_type=MediaTypeName&amp;rex_media_file=MediaFileName
 ```
 
 > MediaTypeName = The MediaManager type, MediaFileName = File name of the medium. The path to the medium does not have to be specified.  

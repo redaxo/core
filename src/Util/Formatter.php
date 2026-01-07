@@ -208,7 +208,7 @@ final class Formatter
     /**
      * Formats a string as bytes.
      *
-     * @param array{0?: int, 1?: string, 2?: string}|null $format Same as {@link rex_formatter::number()}
+     * @param array{0?: int, 1?: string, 2?: string}|null $format Same as {@link self::number()}
      */
     public static function bytes(string|int $value, ?array $format = []): string
     {

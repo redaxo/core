@@ -17,7 +17,7 @@ class TestFactory
     /** @return class-string<self> */
     public static function factory(): string
     {
-        // just return the class which was determined using rex_factory_base.
+        // just return the class which was determined using FactoryTrait.
         // this doesn't make sense in real use-cases but eases testing
         return self::getFactoryClass();
     }

@@ -52,7 +52,7 @@ class MediaVar extends RexVar
                     $value = $media->getType();
                 }
             } elseif ($this->hasArg('field') && $field = $this->getParsedArg('field')) {
-                return 'htmlspecialchars(rex_media::get(' . self::quote($value) . ')->getValue(' . $field . '))';
+                return 'htmlspecialchars(\\' . Media::class . '::get(' . self::quote($value) . ')->getValue(' . $field . '))';
             }
         }
 

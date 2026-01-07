@@ -131,7 +131,7 @@ final class Dir
     }
 
     /**
-     * Deletes files and directories by a rex_dir_iterator.
+     * Deletes files and directories by an iterator.
      *
      * @param Traversable<array-key, SplFileInfo> $iterator Iterator, $iterator->current() must return a SplFileInfo-Object
      *

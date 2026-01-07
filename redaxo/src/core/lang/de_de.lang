@@ -449,7 +449,6 @@ password_rule_lowercase = {0} Kleinbuchstabe(n)
 password_rule_digit = {0} Ziffer(n)
 password_rule_symbol = {0} Sonderzeichen
 
-# redaxo\include\classes\class.rex_list.php
 list_previous = vorherige Seite
 list_next = nächste Seite
 list_rows_found = {0} Einträge gefunden

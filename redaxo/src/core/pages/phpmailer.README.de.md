@@ -145,7 +145,7 @@ Der Check und ggf. die Zusendung erfolgen in festen Intervallen, die in den Syst
 
 Eigene Events können den Versand ebenso auslösen dazu kann man im Log den Event als Typ: logevent ablegen. 
 
-`rex_logger::factory()->log('logevent', 'Mein Text zum Event');`
+`Logger::factory()->log('logevent', 'Mein Text zum Event');`
 
 ## SMTP-Debug
 
@@ -213,7 +213,10 @@ Das folgende Beispiel zeigt die Verwendung von selbst signierten Zertifikaten.
 > Per Default wird der Peer verifiziert. Dies kann ggf. zu Problemen führen. Die nachfolgenden Einstellungen helfen, dieses Problem zu umgehen.
 
 ```php 
-rex_extension::register('PHPMAILER_CONFIG', function (rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('PHPMAILER_CONFIG', function (ExtensionPoint $ep) {
     $subject = $ep->getSubject();
     // set SMTPOptions
     $subject->SMTPOptions = [
@@ -236,7 +239,10 @@ rex_extension::register('PHPMAILER_CONFIG', function (rex_extension_point $ep) {
 Dieser Extension-Point bietet sich an um E-Mails vor dem Versand zu überprüfen. So könnte an dieser Stelle ein Spamfilter greifen oder ein Virusscanner eingesetzt werden.
 
 ```php
-rex_extension::register('PHPMAILER_PRE_SEND', function (rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('PHPMAILER_PRE_SEND', function (ExtensionPoint $ep) {
     $subject = $ep->getSubject(); 
     if (str_contains('bad word', $subject->Body) { 
         do_something(); 
@@ -252,7 +258,10 @@ Der `PHPMAILER_POST_SEND` bietet sich an um nach dem Versand noch eigene Verarbe
 
 
 ```php
-rex_extension::register('PHPMAILER_POST_SEND', function (rex_extension_point $ep) {
+use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+
+Extension::register('PHPMAILER_POST_SEND', function (ExtensionPoint $ep) {
     $subject          = $ep->getSubject(); 
     $host             = $subject->Host;
     $port             = '993';

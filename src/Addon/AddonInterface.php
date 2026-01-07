@@ -2,6 +2,8 @@
 
 namespace Redaxo\Core\Addon;
 
+use Redaxo\Core\Util\Formatter;
+
 interface AddonInterface
 {
     /**
@@ -144,7 +146,7 @@ interface AddonInterface
     /**
      * Returns the version.
      *
-     * @param string|null $format See {@link rex_formatter::version()}
+     * @param string|null $format See {@link Formatter::version()}
      */
     public function getVersion(?string $format = null): string;
 

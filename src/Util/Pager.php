@@ -14,8 +14,6 @@ final class Pager
     private ?int $cursor = null;
 
     /**
-     * Constructs a rex_pager.
-     *
      * @param int $rowsPerPage The number of rows which should be displayed on one page
      * @param string $cursorName The name of the parameter used for pagination
      */

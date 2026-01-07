@@ -278,7 +278,7 @@ final class TableTest extends TestCase
 
         $sql = Sql::factory();
         if (Sql::MYSQL === $sql->getDbType() && 8 <= (int) $sql->getDbVersion()) {
-            // In MySQL 8 the display width of integers is simulated by rex_sql_table to the max width.
+            // In MySQL 8 the display width of integers is simulated by Table class to the max width.
             self::assertEquals('int(11)', $table->getColumn('amount')?->getType());
         } else {
             self::assertEquals('int(5)', $table->getColumn('amount')?->getType());

@@ -21,7 +21,7 @@ readonly class SortableIterator implements IteratorAggregate
 
     /**
      * @param Traversable<TKey, TValue> $iterator Inner iterator
-     * @param self::VALUES|self::KEYS|Closure(mixed,mixed):int $sort Sort mode, possible values are rex_sortable_iterator::VALUES (default), rex_sortable_iterator::KEYS or a callable
+     * @param self::VALUES|self::KEYS|Closure(mixed,mixed):int $sort Sort mode, possible values are SortableIterator::VALUES (default), SortableIterator::KEYS or a callable
      */
     public function __construct(
         private Traversable $iterator,
