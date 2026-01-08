@@ -11,8 +11,8 @@ final class ManagedMediaTest extends TestCase
 {
     public function testConstructor(): void
     {
-        $filename = 'CHANGELOG.md';
-        $path = Path::addon('media_manager', $filename);
+        $filename = 'redaxo-logo.svg';
+        $path = Path::coreAssets('images/' . $filename);
 
         $media = new ManagedMedia($path);
 
@@ -21,7 +21,7 @@ final class ManagedMediaTest extends TestCase
         self::assertSame($path, $media->getSourcePath());
 
         $filename = 'non_existing.jpg';
-        $path = Path::addon($filename);
+        $path = Path::coreAssets($filename);
 
         $media = new ManagedMedia($path);
 
