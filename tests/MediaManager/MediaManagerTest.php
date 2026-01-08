@@ -21,7 +21,7 @@ final class MediaManagerTest extends TestCase
         $media = new ManagedMedia(__DIR__ . '/foo.jpg');
         $manager = new MediaManager($media);
 
-        $cachePath = Path::addonCache('media_manager');
+        $cachePath = Path::coreCache('media_manager/');
         $manager->setCachePath($cachePath);
 
         $media->setMediaPath(__DIR__ . '/bar.gif');
