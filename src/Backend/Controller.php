@@ -569,13 +569,13 @@ final class Controller
         }
 
         Timer::measure('Layout: top.php', function () {
-            require Path::core('layout/top.php');
+            require Path::core('pages/layout/top.php');
         });
 
         self::includePath(Type::string($currentPage->getPath()));
 
         Timer::measure('Layout: bottom.php', function () {
-            require Path::core('layout/bottom.php');
+            require Path::core('pages/layout/bottom.php');
         });
     }
 
