@@ -56,8 +56,8 @@ final class MediaPoolTest extends TestCase
         return [
             [false, __FILE__],
             [false, __FILE__, 'foo.md'],
-            [true, __DIR__ . '/../../redaxo/src/core/CHANGELOG.md'],
-            [false, __DIR__ . '/../../redaxo/src/core/CHANGELOG.md', 'foo.txt'],
+            [true, __DIR__ . '/../../README.md'],
+            [false, __DIR__ . '/../../README.md', 'foo.txt'],
         ];
     }
 }
