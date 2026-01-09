@@ -6,7 +6,6 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\LogicException;
-use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Context;
@@ -186,12 +185,6 @@ final class Controller
             ->addSubpage(new Page('customizer', I18n::msg('customizer'))->setSubPath(Path::core('pages/system.be_style.customizer.php')))
             ->addSubpage(new Page('icons', I18n::msg('be_style_icons'))->setSubPath(Path::core('pages/system.be_style.icons.php')))
             ->addSubpage(new Page('help', I18n::msg('be_style_help'))->setSubPath(Path::core('pages/system.be_style.README.md')));
-
-        Extension::register('PACKAGES_INCLUDED', static function () use ($beStylePage) {
-            if (Extension::isRegistered('BE_STYLE_PAGE_CONTENT')) {
-                $beStylePage->addSubpage(new Page('themes', I18n::msg('be_style_themes'))->setSubPath(Path::core('pages/system.be_style.themes.php')));
-            }
-        });
 
         self::$pages['structure'] = new MainPage('system', 'structure', I18n::msg('structure'))
             ->setPath(Path::core('pages/structure.php'))
