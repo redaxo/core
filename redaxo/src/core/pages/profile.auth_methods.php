@@ -6,7 +6,7 @@ if (!isset($userId) || 1 > $userId) {
 }
 
 $list = rex_list::factory('
-    select null as id, NULLIF(password_changed, "0000-00-00 00:00:00") as createdate from ' . rex::getTable('user') . ' where id = ' . (int) $userId . ' AND password IS NOT NULL
+    select null as id, password_changed as createdate from ' . rex::getTable('user') . ' where id = ' . (int) $userId . ' AND password IS NOT NULL
     union
     select id, createdate from ' . rex::getTable('user_passkey') . ' where user_id = ' . (int) $userId . '
 ');

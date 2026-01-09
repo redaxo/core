@@ -41,10 +41,10 @@ $table
     ->ensureColumn(new rex_sql_column('theme', 'varchar(255)', true))
     ->ensureColumn(new rex_sql_column('login_tries', 'tinyint(4)', false, '0'))
     ->ensureGlobalColumns()
-    ->ensureColumn(new rex_sql_column('password_changed', 'datetime'))
+    ->ensureColumn(new rex_sql_column('password_changed', 'datetime', true))
     ->ensureColumn(new rex_sql_column('previous_passwords', 'text'))
     ->ensureColumn(new rex_sql_column('password_change_required', 'tinyint(1)'))
-    ->ensureColumn(new rex_sql_column('lasttrydate', 'datetime'))
+    ->ensureColumn(new rex_sql_column('lasttrydate', 'datetime', true))
     ->ensureColumn(new rex_sql_column('lastlogin', 'datetime', true))
     ->ensureColumn(new rex_sql_column('session_id', 'varchar(255)', true))
     ->ensureColumn(new rex_sql_column('revision', 'int(10) unsigned'))
@@ -58,6 +58,19 @@ if (!$hasPasswordChanged) {
         ->setRawValue('password_changed', 'updatedate')
         ->update();
 }
+
+// Clean up invalid '0000-00-00 00:00:00' datetime values
+rex_sql::factory()
+    ->setTable(rex::getTable('user'))
+    ->setWhere('password_changed = :invalid_date', ['invalid_date' => '0000-00-00 00:00:00'])
+    ->setValue('password_changed', null)
+    ->update();
+
+rex_sql::factory()
+    ->setTable(rex::getTable('user'))
+    ->setWhere('lasttrydate = :invalid_date', ['invalid_date' => '0000-00-00 00:00:00'])
+    ->setValue('lasttrydate', null)
+    ->update();
 
 // The foreign key references a varchar column (passkey id).
 // We always remove the foreign key here, so that it is possible to change the charset of passkey id column.
