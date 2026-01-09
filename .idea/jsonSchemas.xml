@@ -7,15 +7,15 @@
           <value>
             <SchemaInfo>
               <option name="name" value="config.yml" />
-              <option name="relativePathToSchema" value="redaxo/src/core/schemas/config.json" />
-              <option name="schemaVersion" value="JSON Schema version 7" />
+              <option name="relativePathToSchema" value="schemas/config.json" />
+              <option name="schemaVersion" value="JSON Schema 7" />
               <option name="patterns">
                 <list>
                   <Item>
-                    <option name="path" value="redaxo/data/core/config.yml" />
+                    <option name="path" value=".tools/project/var/data/core/config.yml" />
                   </Item>
                   <Item>
-                    <option name="path" value="redaxo/src/core/default.config.yml" />
+                    <option name="path" value="setup/default.config.yml" />
                   </Item>
                 </list>
               </option>
@@ -26,8 +26,8 @@
           <value>
             <SchemaInfo>
               <option name="name" value="package.yml" />
-              <option name="relativePathToSchema" value="redaxo/src/core/schemas/package.json" />
-              <option name="schemaVersion" value="JSON Schema version 7" />
+              <option name="relativePathToSchema" value="schemas/package.json" />
+              <option name="schemaVersion" value="JSON Schema 7" />
               <option name="patterns">
                 <list>
                   <Item>
