@@ -32,7 +32,6 @@
 !/.idea/runConfigurations/
 /.idea/runConfigurations/*
 !/.idea/runConfigurations/phpunit.xml
-!/.idea/scopes/
 
 # VSCode setting
 .vscode
