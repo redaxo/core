@@ -4,6 +4,7 @@ namespace Redaxo\Core\Tests\MediaPool;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\MediaPool\MediaPool;
 
 /** @internal */
@@ -56,8 +57,8 @@ final class MediaPoolTest extends TestCase
         return [
             [false, __FILE__],
             [false, __FILE__, 'foo.md'],
-            [true, __DIR__ . '/../../README.md'],
-            [false, __DIR__ . '/../../README.md', 'foo.txt'],
+            [true, __DIR__ . '/../../SECURITY.md'],
+            [false, __DIR__ . '/../../SECURITY.md', 'foo.txt'],
         ];
     }
 }
