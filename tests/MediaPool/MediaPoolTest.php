@@ -4,7 +4,6 @@ namespace Redaxo\Core\Tests\MediaPool;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\MediaPool\MediaPool;
 
 /** @internal */
