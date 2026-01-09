@@ -11,7 +11,7 @@
 &nbsp;
 
 <p align="center">
-	<a href="https://github.com/redaxo/redaxo/blob/main/redaxo/src/core/CHANGELOG.md">Changelog</a> &nbsp;|&nbsp;
+	<a href="https://github.com/redaxo/redaxo/releases">Changelog</a> &nbsp;|&nbsp;
 	<a href="https://redaxo.org/doku/main">Documentation</a> &nbsp;|&nbsp;
 	<a href="https://friendsofredaxo.github.io/phpdoc/">API&nbsp;Docs</a> &nbsp;|&nbsp;
 	<a href="https://friendsofredaxo.github.io/tricks/">Tricks</a> &nbsp;|&nbsp;
