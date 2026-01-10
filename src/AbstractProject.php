@@ -73,12 +73,12 @@ abstract class AbstractProject implements RunnerInterface
         $REX['PATH_PROVIDER'] = new DefaultPathProvider($this, true);
         $REX['URL_PROVIDER'] = new DefaultPathProvider($this, false);
 
-        require dirname(__DIR__) . '/redaxo/src/core/boot.php';
+        require dirname(__DIR__) . '/boot/core.php';
     }
 
-    final public function bootPackages(): void
+    final public function bootAddons(): void
     {
-        require dirname(__DIR__) . '/redaxo/src/core/packages.php';
+        require dirname(__DIR__) . '/boot/addons.php';
     }
 
     #[Override]
@@ -86,7 +86,7 @@ abstract class AbstractProject implements RunnerInterface
     {
         $this->bootCore();
 
-        require dirname(__DIR__) . '/redaxo/src/core/' . $this->environment . '.php';
+        require dirname(__DIR__) . '/boot/' . $this->environment . '.php';
 
         return 0;
     }

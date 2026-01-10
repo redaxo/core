@@ -601,7 +601,7 @@ Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
 });
 
 // ----- INCLUDE ADDONS
-include_once Path::core('packages.php');
+include_once Path::core('boot/addons.php');
 
 if (Core::getUser() && Core::getConfig('be_style_compile')) {
     Style::compile();

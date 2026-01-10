@@ -38,7 +38,7 @@ if (0 != Core::getConfig('phpmailer_errormail')) {
 }
 
 // ----- INCLUDE ADDONS
-include_once Path::core('packages.php');
+include_once Path::core('boot/addons.php');
 
 // ----- caching end für output filter
 $content = ob_get_clean();

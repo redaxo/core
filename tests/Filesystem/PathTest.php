@@ -31,7 +31,7 @@ final class PathTest extends TestCase
     public static function dataRelative(): array
     {
         return [
-            ['redaxo/src/core/boot.php', Path::core('boot.php')],
+            ['boot/boot.php', Path::core('boot/boot.php')],
             ['/foo/bar/baz', '/foo/bar/baz'],
             ['baz/qux', '/foo/bar/baz/qux', '/foo/bar'],
             ['baz/qux/', '/foo/bar/baz/qux/', '/foo/bar'],
