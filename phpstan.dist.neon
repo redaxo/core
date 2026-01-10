@@ -12,9 +12,12 @@ parameters:
     paths:
         # restrict to core and core addons, ignore other locally installed addons
         - .tools/project
+        - boot
+        - fragments
+        - pages
+        - setup
         - src
         - tests
-        - redaxo/src/core
         - redaxo/src/addons/debug
         - redaxo/src/addons/install
     # https://phpstan.org/config-reference#universal-object-crates
