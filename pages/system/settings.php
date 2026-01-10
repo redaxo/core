@@ -51,9 +51,9 @@ if ($func && !$csrfToken->isValid()) {
 } elseif ('updateassets' == $func && !Core::isLiveMode()) {
     Dir::copy(Path::core('assets'), Path::coreAssets());
 
-    $files = require Path::core('vendor_files.php');
+    $files = require Path::core('assets_src/vendor_files.php');
     foreach ($files as $source => $destination) {
-        File::copy(Path::core('assets_files/' . $source), Path::coreAssets($destination));
+        File::copy(Path::core('assets_src/' . $source), Path::coreAssets($destination));
     }
 
     $success = 'Updated assets';

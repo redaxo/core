@@ -22,14 +22,14 @@ final class Style
         /** @var list<array{root_dir?: string, scss_files: string|list<string>, css_file: string, copy_dest?: string}> */
         $scssFiles = [
             [
-                'root_dir' => Path::core('assets_files/scss/'),
-                'scss_files' => array_merge($scssFiles, [Path::core('assets_files/scss/master.scss')]),
+                'root_dir' => Path::core('assets_src/scss/'),
+                'scss_files' => array_merge($scssFiles, [Path::core('assets_src/scss/master.scss')]),
                 'css_file' => Path::core('assets/css/styles.css'),
                 'copy_dest' => Path::coreAssets('css/styles.css'),
             ],
             [
-                'root_dir' => Path::core('assets_files/scss/'),
-                'scss_files' => Path::core('assets_files/scss/redaxo.scss'),
+                'root_dir' => Path::core('assets_src/scss/'),
+                'scss_files' => Path::core('assets_src/scss/redaxo.scss'),
                 'css_file' => Path::core('assets/css/redaxo.css'),
                 'copy_dest' => Path::coreAssets('css/redaxo.css'),
             ],
