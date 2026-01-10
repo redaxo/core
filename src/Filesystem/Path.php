@@ -270,7 +270,7 @@ final class Path
     {
         if (null === $basePath) {
             $basePath = self::$pathprovider->base('');
-            $coreBasePath = self::$pathprovider->coreBase('');
+            $coreBasePath = self::$pathprovider->core('');
             if (str_starts_with($basePath, $coreBasePath)) {
                 $basePath = $coreBasePath;
             }

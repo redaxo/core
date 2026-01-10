@@ -247,7 +247,7 @@ class DefaultPathProvider
      *
      * @psalm-taint-specialize
      */
-    public function coreBase(string $file): string
+    public function core(string $file): string
     {
         if (!$this->provideAbsolutes) {
             throw new LogicException('Source paths are only available for absolute paths.');
@@ -263,17 +263,7 @@ class DefaultPathProvider
      */
     public function src(string $file): string
     {
-        return $this->coreBase('redaxo/src/' . $file);
-    }
-
-    /**
-     * Returns the path to the actual core.
-     *
-     * @return non-empty-string
-     */
-    public function core(string $file): string
-    {
-        return $this->src('core/' . $file);
+        return $this->core('redaxo/src/' . $file);
     }
 
     /**
