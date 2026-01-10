@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="6.14.3@d0b040a91f280f071c1abcb1b77ce3822058725a">
-  <file src="redaxo/src/core/backend.php">
+  <file src="boot/backend.php">
     <TaintedHtml>
       <code><![CDATA['<script nonce="' . Response::getNonce() . '">
                     var history_article_id = ' . Article::getCurrentId() . ';
@@ -18,7 +18,7 @@
                 </script>']]></code>
     </TaintedTextWithQuotes>
   </file>
-  <file src="redaxo/src/core/fragments/core/fe_ooops.php">
+  <file src="fragments/core/fe_ooops.php">
     <TaintedHtml>
       <code><![CDATA[$this->getVar('content', '')]]></code>
     </TaintedHtml>
@@ -26,7 +26,7 @@
       <code><![CDATA[$this->getVar('content', '')]]></code>
     </TaintedTextWithQuotes>
   </file>
-  <file src="redaxo/src/core/fragments/core/form/search.php">
+  <file src="fragments/core/form/search.php">
     <TaintedHtml>
       <code><![CDATA['<search role="search" class="' . $class . '"' . $id . '>
       <span class="input-group-addon clear-button"><i class="rex-icon rex-icon-search"></i></span>
@@ -42,7 +42,7 @@
 </search>']]></code>
     </TaintedTextWithQuotes>
   </file>
-  <file src="redaxo/src/core/fragments/core/page/docs.php">
+  <file src="fragments/core/page/docs.php">
     <TaintedHtml>
       <code><![CDATA[$this->getVar('content')]]></code>
       <code><![CDATA[$this->getVar('sidebar')]]></code>
@@ -54,7 +54,7 @@
       <code><![CDATA[$this->getVar('toc')]]></code>
     </TaintedTextWithQuotes>
   </file>
-  <file src="redaxo/src/core/fragments/core/page/readme.php">
+  <file src="fragments/core/page/readme.php">
     <TaintedHtml>
       <code><![CDATA[$this->getVar('content')]]></code>
     </TaintedHtml>
@@ -62,7 +62,7 @@
       <code><![CDATA[$this->getVar('content')]]></code>
     </TaintedTextWithQuotes>
   </file>
-  <file src="redaxo/src/core/fragments/core/structure/history/layer.php">
+  <file src="fragments/core/structure/history/layer.php">
     <TaintedHtml>
       <code><![CDATA[$this->getVar('content1iframe')]]></code>
       <code><![CDATA[$this->getVar('content1select')]]></code>

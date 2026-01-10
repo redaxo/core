@@ -79,9 +79,13 @@ return RectorConfig::configure()
     ->withPaths([
         // restrict to core and core addons, ignore other locally installed addons
         '.tools/project/',
+        'assets_src/vendor_files.php',
+        'boot/',
+        'fragments/',
+        'pages/',
+        'setup/',
         'src/',
         'tests/',
-        'redaxo/src/core/',
         'redaxo/src/addons/debug/',
         'redaxo/src/addons/install/',
     ])
