@@ -3,16 +3,16 @@
 printf "Update root composer.json and vendor/\n"
 .tools/bin/update-tools
 
-printf "\nUpdate redaxo/src/core/assets/jquery.min.js\n"
-curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.js > redaxo/src/core/assets/jquery.js
-curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.min.js > redaxo/src/core/assets/jquery.min.js
-curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.min.map > redaxo/src/core/assets/jquery.min.map
+printf "\nUpdate assets/jquery.min.js\n"
+curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.js > assets/jquery.js
+curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.min.js > assets/jquery.min.js
+curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.min.map > assets/jquery.min.map
 
 # Currently we are using last 1.x version of pjax, so we do not want to update to 2.x
-#printf "\nUpdate redaxo/src/core/assets/jquery-pjax.min.js\n"
-#curl -#d output_info=compiled_code -d compilation_level=SIMPLE_OPTIMIZATIONS -d code_url=https://github.com/defunkt/jquery-pjax/raw/master/jquery.pjax.js https://closure-compiler.appspot.com/compile > redaxo/src/core/assets/jquery-pjax.min.js
+#printf "\nUpdate assets/jquery-pjax.min.js\n"
+#curl -#d output_info=compiled_code -d compilation_level=SIMPLE_OPTIMIZATIONS -d code_url=https://github.com/defunkt/jquery-pjax/raw/master/jquery.pjax.js https://closure-compiler.appspot.com/compile > assets/jquery-pjax.min.js
 
-cp redaxo/src/core/assets/jquery-pjax.min.js .tools/project/public/assets/core
-cp redaxo/src/core/assets/jquery.js .tools/project/public/assets/core
-cp redaxo/src/core/assets/jquery.min.js .tools/project/public/assets/core
-cp redaxo/src/core/assets/jquery.min.map .tools/project/public/assets/core
+cp assets/jquery-pjax.min.js .tools/project/public/assets/core
+cp assets/jquery.js .tools/project/public/assets/core
+cp assets/jquery.min.js .tools/project/public/assets/core
+cp assets/jquery.min.map .tools/project/public/assets/core

@@ -4,8 +4,8 @@
 # most of the time this is required when working on the REDAXO sources after checking out a Pull Request via GitHub.com
 
 mkdir -p .tools/project/public/assets/core
-cp -R redaxo/src/core/assets/* .tools/project/public/assets/core/
-php -r 'foreach (require "redaxo/src/core/vendor_files.php" as $src => $dst) { $dst = ".tools/project/public/assets/core/" . $dst; @mkdir(dirname($dst), 0775, true); copy("redaxo/src/core/assets_files/" . $src, $dst); }'
+cp -R assets/* .tools/project/public/assets/core/
+php -r 'foreach (require "assets_src/vendor_files.php" as $src => $dst) { $dst = ".tools/project/public/assets/core/" . $dst; @mkdir(dirname($dst), 0775, true); copy("assets_src/" . $src, $dst); }'
 
 if [ "true" = $(.tools/bin/console config:get setup) ]; then
     .tools/bin/console cache:clear --ansi
