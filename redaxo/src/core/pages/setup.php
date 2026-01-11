@@ -129,7 +129,7 @@ $configFile = Path::coreData('config.yml');
  * } $config
  */
 $config = array_merge(
-    File::getConfig(Path::core('default.config.yml')),
+    File::getConfig(Path::core('setup/default.config.yml')),
     File::getConfig($configFile),
 );
 
