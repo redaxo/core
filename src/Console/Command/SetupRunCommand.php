@@ -103,7 +103,7 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
          * } $config
          */
         $config = array_merge(
-            File::getConfig(Path::core('default.config.yml')),
+            File::getConfig(Path::core('setup/default.config.yml')),
             File::getConfig($configFile),
         );
 

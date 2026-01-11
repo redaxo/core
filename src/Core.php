@@ -562,7 +562,7 @@ final class Core
             $config = File::getCache($cacheFile);
         } else {
             $config = array_merge(
-                File::getConfig(Path::core('default.config.yml')),
+                File::getConfig(Path::core('setup/default.config.yml')),
                 File::getConfig($configFile),
             );
             $config = array_map(static fn (mixed $value) => self::convertYamlTags($value), $config);

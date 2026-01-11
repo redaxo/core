@@ -32,7 +32,7 @@ class Importer
         Core::setProperty('version', Core::getConfig('version'));
 
         try {
-            include Path::core('update.php');
+            include Path::core('setup/update.php');
         } catch (UserMessageException $e) {
             $errMsg .= $e->getMessage();
         } catch (SqlException $e) {
@@ -104,7 +104,7 @@ class Importer
         }
 
         try {
-            include Path::core('install.php');
+            include Path::core('setup/install.php');
         } catch (UserMessageException $e) {
             $errMsg .= $e->getMessage();
         } catch (SqlException $e) {
@@ -127,7 +127,7 @@ class Importer
         $errMsg = '';
 
         try {
-            include Path::core('install.php');
+            include Path::core('setup/install.php');
         } catch (UserMessageException $e) {
             $errMsg .= $e->getMessage();
         } catch (SqlException $e) {

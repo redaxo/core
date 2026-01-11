@@ -119,8 +119,8 @@ class rex_api_install_core_update extends ApiFunction
             //    }
             // }
             $this->checkRequirements($temppath, $version['version'], $updateAddonsConfig);
-            if (is_file($temppath . 'core/update.php')) {
-                include $temppath . 'core/update.php';
+            if (is_file($temppath . 'core/setup/update.php')) {
+                include $temppath . 'core/setup/update.php';
             }
             foreach ($updateAddons as $addonkey => $addon) {
                 if ($addon->isInstalled() && is_file($file = $temppath . 'addons/' . $addonkey . '/' . Addon::FILE_UPDATE)) {

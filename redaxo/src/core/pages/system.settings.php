@@ -60,7 +60,7 @@ if ($func && !$csrfToken->isValid()) {
 } elseif ('debugmode' == $func && !Core::isLiveMode()) {
     $configFile = Path::coreData('config.yml');
     $config = array_merge(
-        File::getConfig(Path::core('default.config.yml')),
+        File::getConfig(Path::core('setup/default.config.yml')),
         File::getConfig($configFile),
     );
 
@@ -77,7 +77,7 @@ if ($func && !$csrfToken->isValid()) {
 } elseif ('updateinfos' == $func) {
     $configFile = Path::coreData('config.yml');
     $config = array_merge(
-        File::getConfig(Path::core('default.config.yml')),
+        File::getConfig(Path::core('setup/default.config.yml')),
         File::getConfig($configFile),
     );
 
