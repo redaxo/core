@@ -38,4 +38,4 @@ $headLine = 'AddOn: ' . $packageId;
 
 echo View::title($headLine, $subtitle);
 
-require __DIR__ . '/packages.' . $subPage . '.php';
+require __DIR__ . '/details.' . $subPage . '.php';

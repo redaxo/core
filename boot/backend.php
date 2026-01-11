@@ -596,7 +596,7 @@ Extension::register('PAGE_CHECKED', MetaInfo::extensionHandler(...));
 Extension::register('BACKUP_BEFORE_DB_IMPORT', MetaInfo::cleanup(...));
 Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
     $subject = $ep->getSubject();
-    $metaSidebar = include Path::core('pages/metainfo.content.php');
+    $metaSidebar = include Path::core('pages/structure/content.metainfo.php');
     return $metaSidebar . $subject;
 });
 

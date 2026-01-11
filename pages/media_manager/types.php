@@ -23,7 +23,7 @@ $typeId = Request::request('type_id', 'int');
 $func = Request::request('func', 'string');
 
 if (Request::request('effects', 'boolean')) {
-    include __DIR__ . '/media_manager.effects.php';
+    include __DIR__ . '/effects.php';
     return;
 }
 

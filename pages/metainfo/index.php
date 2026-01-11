@@ -21,5 +21,5 @@ if ('' === $prefix) {
     Controller::includeCurrentPageSubPath();
 } else {
     $metaTable = MetaInfo::metaTable($prefix);
-    require __DIR__ . '/metainfo.field.php';
+    require __DIR__ . '/field.php';
 }
