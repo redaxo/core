@@ -1280,6 +1280,7 @@
   </file>
   <file src="redaxo/src/addons/mediapool/lib/service_media.php">
     <MixedArgumentTypeCoercion>
+      <code><![CDATA[$countQueryParams]]></code>
       <code><![CDATA[$queryParams]]></code>
       <code><![CDATA[rex_escape($allowedExtensions)]]></code>
       <code><![CDATA[rex_escape(rex_mediapool::getBlockedExtensions())]]></code>
