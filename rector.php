@@ -39,7 +39,7 @@ return RectorConfig::configure()
         Php81\Array_\ArrayToFirstClassCallableRector::class => ['redaxo/src/core/boot.php'],
     ])
     ->withParallel()
-    ->withPhpVersion(PhpVersion::PHP_81)
+    ->withPhpVersion(PhpVersion::PHP_83)
     ->withPreparedSets(privatization: true)
     ->withImportNames()
     ->withRules([

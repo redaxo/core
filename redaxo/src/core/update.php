@@ -5,8 +5,8 @@ use Psr\Log\LogLevel;
 // don't use REX_MIN_PHP_VERSION or rex_setup::MIN_* constants here!
 // while updating the core, the constants contain the old min versions from previous core version
 
-if (PHP_VERSION_ID < 80100) {
-    throw new rex_functional_exception(rex_i18n::msg(rex_string::versionCompare(rex::getVersion(), '5.14.0-dev', '<') ? 'setup_301' : 'setup_201', PHP_VERSION, '8.1'));
+if (PHP_VERSION_ID < 80300) {
+    throw new rex_functional_exception(rex_i18n::msg(rex_string::versionCompare(rex::getVersion(), '5.14.0-dev', '<') ? 'setup_301' : 'setup_201', PHP_VERSION, '8.3'));
 }
 
 $minExtensions = ['ctype', 'fileinfo', 'filter', 'iconv', 'intl', 'mbstring', 'pcre', 'pdo', 'pdo_mysql', 'session', 'tokenizer'];

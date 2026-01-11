@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "749cf98c419b7c5224fccc96887666c3",
+    "content-hash": "988e533a7b1bce611f99040511a95409",
     "packages": [
         {
             "name": "splitbrain/php-archive",
@@ -82,7 +82,7 @@
     "platform": {},
     "platform-dev": {},
     "platform-overrides": {
-        "php": "8.1.13"
+        "php": "8.3.5"
     },
     "plugin-api-version": "2.9.0"
 }

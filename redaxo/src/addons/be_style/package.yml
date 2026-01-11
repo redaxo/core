@@ -12,5 +12,5 @@ console_commands:
     styles:compile: rex_be_style_command_compile
 
 requires:
-    php: '>=8.1'
+    php: '>=8.3'
     redaxo: ^5.13.0

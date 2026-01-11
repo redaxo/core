@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2a5eed42545e0a254aeae9e74a00680a",
+    "content-hash": "e19835eae5d6824ce17c2cbc0894f892",
     "packages": [
         {
             "name": "itsgoingd/clockwork",
@@ -92,7 +92,7 @@
     "platform": {},
     "platform-dev": {},
     "platform-overrides": {
-        "php": "8.1.13"
+        "php": "8.3.5"
     },
     "plugin-api-version": "2.9.0"
 }

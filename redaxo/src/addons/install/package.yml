@@ -22,7 +22,7 @@ page:
 
 requires:
     php:
-        version: '>=8.1'
+        version: '>=8.3'
         extensions: [zlib]
     redaxo: ^5.19.0
 

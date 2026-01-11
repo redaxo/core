@@ -16,6 +16,6 @@ page:
 
 requires:
     php:
-        version: '>=8.1'
+        version: '>=8.3'
         extensions: [zip]
     redaxo: ^5.13.0

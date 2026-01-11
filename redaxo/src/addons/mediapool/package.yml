@@ -67,5 +67,5 @@ image_extensions: [avif, bmp, gif, jpeg, jpg, png, svg, tif, tiff, webp]
 sanitize_svgs: true
 
 requires:
-    php: '>=8.1'
+    php: '>=8.3'
     redaxo: ^5.18.2
