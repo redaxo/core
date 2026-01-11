@@ -1,4 +1,4 @@
-<p align="right">🌎 <a href="https://github.com/redaxo/redaxo/blob/main/README.de.md">Deutsch</a></p>
+<p align="right">🌎 <a href="https://github.com/redaxo/redaxo/blob/6.x/README.de.md">Deutsch</a></p>
 
 <p align="center"><a href="https://redaxo.org"><img src="https://raw.githubusercontent.com/redaxo/redaxo/assets/redaxo-logo.png" alt="REDAXO" width="280px" height="43px"></a></p>
 
@@ -23,7 +23,7 @@
 
 <p align="center">
 	<a href="https://github.com/redaxo/redaxo/releases"><img src="https://img.shields.io/github/release/redaxo/redaxo.svg?style=for-the-badge" alt=""></a>&nbsp;
-	<a href="https://github.com/redaxo/redaxo/blob/main/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-green.svg?longCache=true&style=for-the-badge" alt=""></a>&nbsp;
+	<a href="https://github.com/redaxo/redaxo/blob/6.x/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-green.svg?longCache=true&style=for-the-badge" alt=""></a>&nbsp;
 	<a href="https://github.com/redaxo/redaxo/releases"><img src="https://img.shields.io/github/downloads/redaxo/redaxo/total.svg?style=for-the-badge" alt=""></a>
 </p>
 
