@@ -355,8 +355,11 @@ final class rex_media_service
         if ($pager) {
             $sql->setQuery(str_replace('SELECT m.filename', 'SELECT count(*)', $query), $queryParams);
             $pager->setRowCount((int) $sql->getValue('count(*)'));
+        }
 
-            $query .= ' ORDER BY ' . implode(', ', $orderbys);
+        $query .= ' ORDER BY ' . implode(', ', $orderbys);
+
+        if ($pager) {
             $query .= ' LIMIT ' . $pager->getCursor() . ',' . $pager->getRowsPerPage();
         }
 
