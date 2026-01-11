@@ -85,11 +85,11 @@ $toolbar = Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_TOOLBAR', $to
 // *************************************** Subpage: Media
 
 if ($fileId) {
-    require __DIR__ . '/mediapool.media.detail.php';
+    require __DIR__ . '/media.detail.php';
 }
 
 // *************************************** SUBPAGE: "" -> MEDIEN ANZEIGEN
 
 if (!$fileId) {
-    require __DIR__ . '/mediapool.media.list.php';
+    require __DIR__ . '/media.list.php';
 }

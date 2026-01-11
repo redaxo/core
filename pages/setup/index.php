@@ -57,7 +57,7 @@ if (!Setup::isInitialSetup()) {
 
 // ---------------------------------- Step 1 . Language
 if (1 >= $step) {
-    require Path::core('pages/setup.step1.php');
+    require Path::core('pages/setup/step1.php');
 
     return;
 }
@@ -97,7 +97,7 @@ if (count($errorArray) > 0) {
 }
 
 if (2 === $step) {
-    require Path::core('pages/setup.step2.php');
+    require Path::core('pages/setup/step2.php');
 
     return;
 }
@@ -243,7 +243,7 @@ if ($step > 3) {
 }
 
 if (3 === $step) {
-    require Path::core('pages/setup.step3.php');
+    require Path::core('pages/setup/step3.php');
 
     return;
 }
@@ -310,7 +310,7 @@ if ($step > 4 && '' == !Importer::verifyDbSchema()) {
 }
 
 if (4 === $step) {
-    require Path::core('pages/setup.step4.php');
+    require Path::core('pages/setup/step4.php');
 
     return;
 }
@@ -385,7 +385,7 @@ if (6 === $step) {
 }
 
 if (5 === $step) {
-    require Path::core('pages/setup.step5.php');
+    require Path::core('pages/setup/step5.php');
 
     return;
 }
@@ -393,5 +393,5 @@ if (5 === $step) {
 // ---------------------------------- step 6 . thank you . setup false
 
 if (6 === $step) {
-    require Path::core('pages/setup.step6.php');
+    require Path::core('pages/setup/step6.php');
 }

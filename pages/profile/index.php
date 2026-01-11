@@ -405,5 +405,5 @@ $content .= '
 
 echo $content;
 
-require Path::core('pages/profile.auth_methods.php');
-require Path::core('pages/profile.sessions.php');
+require Path::core('pages/profile/auth_methods.php');
+require Path::core('pages/profile/sessions.php');

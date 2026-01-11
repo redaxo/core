@@ -143,7 +143,7 @@ final class Controller
     public static function getSetupPage(): Page
     {
         $page = new Page('setup', I18n::msg('setup'));
-        $page->setPath(Path::core('pages/setup.php'));
+        $page->setPath(Path::core('pages/setup/index.php'));
         return $page;
     }
 
@@ -158,74 +158,74 @@ final class Controller
     public static function appendLoggedInPages(): void
     {
         self::$pages['profile'] = new Page('profile', I18n::msg('profile'))
-            ->setPath(Path::core('pages/profile.php'))
+            ->setPath(Path::core('pages/profile/index.php'))
             ->setPjax();
 
         self::$pages['credits'] = new Page('credits', I18n::msg('credits'))
             ->setPath(Path::core('pages/credits.php'));
 
-        $logsPage = new Page('log', I18n::msg('logfiles'))->setSubPath(Path::core('pages/system.log.php'));
-        $logsPage->addSubpage(new Page('redaxo', I18n::msg('syslog_redaxo'))->setSubPath(Path::core('pages/system.log.redaxo.php')));
+        $logsPage = new Page('log', I18n::msg('logfiles'))->setSubPath(Path::core('pages/system/log.php'));
+        $logsPage->addSubpage(new Page('redaxo', I18n::msg('syslog_redaxo'))->setSubPath(Path::core('pages/system/log.redaxo.php')));
         if ('' != ini_get('error_log') && @is_readable(ini_get('error_log'))) {
-            $logsPage->addSubpage(new Page('php', I18n::msg('syslog_phperrors'))->setSubPath(Path::core('pages/system.log.external.php')));
+            $logsPage->addSubpage(new Page('php', I18n::msg('syslog_phperrors'))->setSubPath(Path::core('pages/system/log.external.php')));
         }
-        $logsPage->addSubpage(new Page('phpmailer', I18n::msg('phpmailer_title'))->setSubPath(Path::core('pages/phpmailer.log.php')));
+        $logsPage->addSubpage(new Page('phpmailer', I18n::msg('phpmailer_title'))->setSubPath(Path::core('pages/mailer/log.php')));
 
         if ('system' === self::getCurrentPagePart(1) && 'log' === self::getCurrentPagePart(2)) {
             $slowQueryLogPath = Util::slowQueryLogPath();
             if (null !== $slowQueryLogPath && @is_readable($slowQueryLogPath)) {
-                $logsPage->addSubpage(new Page('slow-queries', I18n::msg('syslog_slowqueries'))->setSubPath(Path::core('pages/system.log.slow-queries.php')));
+                $logsPage->addSubpage(new Page('slow_queries', I18n::msg('syslog_slowqueries'))->setSubPath(Path::core('pages/system/log.slow_queries.php')));
             }
         }
 
-        $logsPage->addSubpage(new Page('cronjob', I18n::msg('cronjob_title'))->setSubPath(Path::core('pages/system.log.cronjob.php')));
+        $logsPage->addSubpage(new Page('cronjob', I18n::msg('cronjob_title'))->setSubPath(Path::core('pages/cronjob/log.php')));
 
         $beStylePage = (new Page('be_style', I18n::msg('be_style')));
         $beStylePage
-            ->addSubpage(new Page('customizer', I18n::msg('customizer'))->setSubPath(Path::core('pages/system.be_style.customizer.php')))
-            ->addSubpage(new Page('icons', I18n::msg('be_style_icons'))->setSubPath(Path::core('pages/system.be_style.icons.php')))
-            ->addSubpage(new Page('help', I18n::msg('be_style_help'))->setSubPath(Path::core('pages/system.be_style.README.md')));
+            ->addSubpage(new Page('customizer', I18n::msg('customizer'))->setSubPath(Path::core('pages/system/be_style.customizer.php')))
+            ->addSubpage(new Page('icons', I18n::msg('be_style_icons'))->setSubPath(Path::core('pages/system/be_style.icons.php')))
+            ->addSubpage(new Page('help', I18n::msg('be_style_help'))->setSubPath(Path::core('pages/system/be_style.help.md')));
 
         self::$pages['structure'] = new MainPage('system', 'structure', I18n::msg('structure'))
-            ->setPath(Path::core('pages/structure.php'))
+            ->setPath(Path::core('pages/structure/index.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')
             ->setPrio(10)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-open-category')
         ;
         self::$pages['modules'] = new MainPage('system', 'modules', I18n::msg('modules'))
-            ->setPath(Path::core('pages/structure.modules.php'))
+            ->setPath(Path::core('pages/module/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(40)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-module')
-            ->addSubpage(new Page('modules', I18n::msg('modules'))->setSubPath(Path::core('pages/structure.modules.modules.php')))
-            ->addSubpage(new Page('actions', I18n::msg('actions'))->setSubPath(Path::core('pages/structure.modules.actions.php')))
+            ->addSubpage(new Page('modules', I18n::msg('modules'))->setSubPath(Path::core('pages/module/modules.php')))
+            ->addSubpage(new Page('actions', I18n::msg('actions'))->setSubPath(Path::core('pages/module/actions.php')))
         ;
         self::$pages['templates'] = new MainPage('system', 'templates', I18n::msg('templates'))
-            ->setPath(Path::core('pages/structure.templates.php'))
+            ->setPath(Path::core('pages/template/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(30)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-template')
         ;
         self::$pages['content'] = new MainPage('system', 'content', I18n::msg('content'))
-            ->setPath(Path::core('pages/structure.content.php'))
+            ->setPath(Path::core('pages/structure/content.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')
             ->setPjax(false)
             ->setHidden()
             ->addSubpage(new Page('edit', I18n::msg('edit_mode'))
-                ->setSubPath(Path::core('pages/structure.content.edit.php'))
+                ->setSubPath(Path::core('pages/structure/content.edit.php'))
                 ->setIcon('rex-icon rex-icon-editmode')
                 ->setItemAttr('left', 'true'),
             )
             ->addSubpage(new Page('functions', I18n::msg('metafuncs'))
-                ->setSubPath(Path::core('pages/structure.content.functions.php'))
+                ->setSubPath(Path::core('pages/structure/content.functions.php'))
                 ->setIcon('rex-icon rex-icon-metafuncs'),
             )
         ;
         self::$pages['linkmap'] = new MainPage('system', 'linkmap', I18n::msg('linkmap'))
-            ->setPath(Path::core('pages/structure.linkmap.php'))
+            ->setPath(Path::core('pages/structure/linkmap.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')
             ->setPjax()
             ->setPopup(true)
@@ -233,24 +233,24 @@ final class Controller
         ;
 
         self::$pages['system'] = new MainPage('system', 'system', I18n::msg('system'))
-            ->setPath(Path::core('pages/system.php'))
+            ->setPath(Path::core('pages/system/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(100)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-system')
-            ->addSubpage(new Page('settings', I18n::msg('main_preferences'))->setSubPath(Path::core('pages/system.settings.php')))
-            ->addSubpage(new Page('lang', I18n::msg('languages'))->setSubPath(Path::core('pages/system.clangs.php')))
+            ->addSubpage(new Page('settings', I18n::msg('main_preferences'))->setSubPath(Path::core('pages/system/settings.php')))
+            ->addSubpage(new Page('lang', I18n::msg('languages'))->setSubPath(Path::core('pages/system/clangs.php')))
             ->addSubpage($logsPage)
             ->addSubpage(
                 new Page('report', I18n::msg('system_report'))
-                ->addSubpage(new Page('html', I18n::msg('system_report'))->setSubPath(Path::core('pages/system.report.html.php')))
-                ->addSubpage(new Page('markdown', I18n::msg('system_report_markdown'))->setSubPath(Path::core('pages/system.report.markdown.php'))),
+                ->addSubpage(new Page('html', I18n::msg('system_report'))->setSubPath(Path::core('pages/system/report.html.php')))
+                ->addSubpage(new Page('markdown', I18n::msg('system_report_markdown'))->setSubPath(Path::core('pages/system/report.markdown.php'))),
             )
             ->addSubpage($beStylePage)
             ->addSubpage(new Page('phpinfo', 'phpinfo')
                 ->setHidden(true)
                 ->setHasLayout(false)
-                ->setPath(Path::core('pages/system.phpinfo.php')),
+                ->setPath(Path::core('pages/system/phpinfo.php')),
             )
         ;
 
@@ -262,71 +262,71 @@ final class Controller
                 ->setItemAttr('left', 'true')
                 ->setLinkAttr('data-history-layer', 'open'),
             );
-            self::$pages['system']->addSubpage(new Page('history', I18n::msg('structure_history'))->setSubPath(Path::core('pages/structure.system.history.php')));
+            self::$pages['system']->addSubpage(new Page('history', I18n::msg('structure_history'))->setSubPath(Path::core('pages/system/history.php')));
         }
 
         self::$pages['users'] = new MainPage('system', 'users', I18n::msg('users'))
-            ->setPath(Path::core('pages/users.php'))
+            ->setPath(Path::core('pages/user/index.php'))
             ->setRequiredPermissions('users[]')
             ->setPrio(50)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-user')
             ->addSubpage(
                 new Page('users', I18n::msg('users'))
-                    ->setSubPath(Path::core('pages/users.users.php')),
+                    ->setSubPath(Path::core('pages/user/users.php')),
             )
             ->addSubpage(
                 new Page('roles', I18n::msg('roles'))
-                    ->setSubPath(Path::core('pages/users.roles.php'))
+                    ->setSubPath(Path::core('pages/user/roles.php'))
                     ->setRequiredPermissions('isAdmin'),
             )
         ;
 
         self::$pages['cronjob'] = new MainPage('system', 'cronjob', I18n::msg('cronjob_title'))
-            ->setPath(Path::core('pages/cronjob.php'))
+            ->setPath(Path::core('pages/cronjob/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(80)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-cronjob')
-            ->addSubpage(new Page('cronjobs', I18n::msg('cronjob_title'))->setSubPath(Path::core('pages/cronjob.cronjobs.php')))
-            ->addSubpage(new Page('log', I18n::msg('cronjob_log'))->setSubPath(Path::core('pages/cronjob.log.php')))
+            ->addSubpage(new Page('cronjobs', I18n::msg('cronjob_title'))->setSubPath(Path::core('pages/cronjob/cronjobs.php')))
+            ->addSubpage(new Page('log', I18n::msg('cronjob_log'))->setSubPath(Path::core('pages/cronjob/log.php')))
         ;
 
         self::$pages['mediapool'] = new MainPage('system', 'mediapool', I18n::msg('mediapool'))
-            ->setPath(Path::core('pages/mediapool.php'))
+            ->setPath(Path::core('pages/mediapool/index.php'))
             ->setRequiredPermissions('media/hasMediaPerm')
             ->setPrio(20)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-media')
             ->setPopup('openMediaPool(); return false;')
-            ->addSubpage(new Page('media', I18n::msg('pool_file_list'))->setSubPath(Path::core('pages/mediapool.media.php')))
-            ->addSubpage(new Page('upload', I18n::msg('pool_file_insert'))->setSubPath(Path::core('pages/mediapool.upload.php')))
-            ->addSubpage(new Page('structure', I18n::msg('pool_cat_list'))->setRequiredPermissions('media/hasAll')->setSubPath(Path::core('pages/mediapool.structure.php')))
-            ->addSubpage(new Page('sync', I18n::msg('pool_sync_files'))->setRequiredPermissions('media[sync]')->setSubPath(Path::core('pages/mediapool.sync.php')))
+            ->addSubpage(new Page('media', I18n::msg('pool_file_list'))->setSubPath(Path::core('pages/mediapool/media.php')))
+            ->addSubpage(new Page('upload', I18n::msg('pool_file_insert'))->setSubPath(Path::core('pages/mediapool/upload.php')))
+            ->addSubpage(new Page('structure', I18n::msg('pool_cat_list'))->setRequiredPermissions('media/hasAll')->setSubPath(Path::core('pages/mediapool/structure.php')))
+            ->addSubpage(new Page('sync', I18n::msg('pool_sync_files'))->setRequiredPermissions('media[sync]')->setSubPath(Path::core('pages/mediapool/sync.php')))
         ;
 
         self::$pages['phpmailer'] = new MainPage('system', 'phpmailer', I18n::msg('phpmailer_title'))
-            ->setPath(Path::core('pages/phpmailer.php'))
+            ->setPath(Path::core('pages/mailer/index.php'))
             ->setRequiredPermissions('phpmailer[]')
             ->setPrio(90)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-envelope' . (Core::getConfig('phpmailer_detour_mode') ? ' text-danger' : ''))
-            ->addSubpage(new Page('config', I18n::msg('phpmailer_configuration'))->setSubPath(Path::core('pages/phpmailer.config.php')))
-            ->addSubpage(new Page('log', I18n::msg('phpmailer_logging'))->setSubPath(Path::core('pages/phpmailer.log.php')))
-            ->addSubpage(new Page('archive', I18n::msg('phpmailer_archive'))->setSubPath(Path::core('pages/phpmailer.archive.php')))
-            ->addSubpage(new Page('help', I18n::msg('phpmailer_help'))->setSubPath(Path::core('pages/phpmailer.README.md'))->setItemAttr('class', 'pull-right'))
-            ->addSubpage(new Page('checkmail', I18n::msg('phpmailer_checkmail'))->setSubPath(Path::core('pages/phpmailer.checkmail.php'))->setHidden(true))
+            ->addSubpage(new Page('config', I18n::msg('phpmailer_configuration'))->setSubPath(Path::core('pages/mailer/config.php')))
+            ->addSubpage(new Page('log', I18n::msg('phpmailer_logging'))->setSubPath(Path::core('pages/mailer/log.php')))
+            ->addSubpage(new Page('archive', I18n::msg('phpmailer_archive'))->setSubPath(Path::core('pages/mailer/archive.php')))
+            ->addSubpage(new Page('help', I18n::msg('phpmailer_help'))->setSubPath(Path::core('pages/mailer/help.md'))->setItemAttr('class', 'pull-right'))
+            ->addSubpage(new Page('checkmail', I18n::msg('phpmailer_checkmail'))->setSubPath(Path::core('pages/mailer/checkmail.php'))->setHidden(true))
         ;
 
         self::$pages['backup'] = $backup = new MainPage('system', 'backup', I18n::msg('backup_title'))
-            ->setPath(Path::core('pages/backup.php'))
+            ->setPath(Path::core('pages/backup/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(110)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-backup')
             ->addSubpage(
                 new Page('export', I18n::msg('backup_export'))
-                    ->setSubPath(Path::core('pages/backup.export.php'))
+                    ->setSubPath(Path::core('pages/backup/export.php'))
                     ->setRequiredPermissions('backup[export]'),
             )
         ;
@@ -336,26 +336,26 @@ final class Controller
         }
 
         $backup->addSubpage(new Page('import', I18n::msg('backup_import'))
-            ->addSubpage(new Page('upload', I18n::msg('backup_upload'))->setSubPath(Path::core('pages/backup.import.upload.php')))
-            ->addSubpage(new Page('server', I18n::msg('backup_load_from_server'))->setSubPath(Path::core('pages/backup.import.server.php'))),
+            ->addSubpage(new Page('upload', I18n::msg('backup_upload'))->setSubPath(Path::core('pages/backup/import.upload.php')))
+            ->addSubpage(new Page('server', I18n::msg('backup_load_from_server'))->setSubPath(Path::core('pages/backup/import.server.php'))),
         );
 
         self::$pages['packages'] = new MainPage('system', 'packages', I18n::msg('addons'))
-            ->setPath(Path::core('pages/packages.php'))
+            ->setPath(Path::core('pages/addon/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(60)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-package-addon');
 
         self::$pages['media_manager'] = new MainPage('system', 'media_manager', I18n::msg('media_manager'))
-            ->setPath(Path::core('pages/media_manager.php'))
+            ->setPath(Path::core('pages/media_manager/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(70)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-media')
-            ->addSubpage(new Page('types', I18n::msg('media_manager_subpage_types'))->setSubPath(Path::core('pages/media_manager.types.php')))
-            ->addSubpage(new Page('settings', I18n::msg('media_manager_subpage_config'))->setSubPath(Path::core('pages/media_manager.settings.php')))
-            ->addSubpage(new Page('overview', I18n::msg('media_manager_subpage_desc'))->setSubPath(Path::core('pages/media_manager.README.md')))
+            ->addSubpage(new Page('types', I18n::msg('media_manager_subpage_types'))->setSubPath(Path::core('pages/media_manager/types.php')))
+            ->addSubpage(new Page('settings', I18n::msg('media_manager_subpage_config'))->setSubPath(Path::core('pages/media_manager/settings.php')))
+            ->addSubpage(new Page('overview', I18n::msg('media_manager_subpage_desc'))->setSubPath(Path::core('pages/media_manager/help.md')))
             ->addSubpage(new Page('clear_cache', I18n::msg('media_manager_subpage_clear_cache'))
                 ->setItemAttr('class', 'pull-right')
                 ->setLinkAttr('class', 'btn btn-delete')
@@ -364,7 +364,7 @@ final class Controller
         ;
 
         self::$pages['metainfo'] = new MainPage('system', 'metainfo', I18n::msg('metainfo'))
-            ->setPath(Path::core('pages/metainfo.php'))
+            ->setPath(Path::core('pages/metainfo/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(75)
             ->setPjax()
@@ -373,7 +373,7 @@ final class Controller
             ->addSubpage(new Page('categories', I18n::msg('metainfo_categories')))
             ->addSubpage(new Page('media', I18n::msg('metainfo_media')))
             ->addSubpage(new Page('clangs', I18n::msg('metainfo_clangs')))
-            ->addSubpage(new Page('help', I18n::msg('metainfo_help'))->setSubPath(Path::core('pages/metainfo.README.md')))
+            ->addSubpage(new Page('help', I18n::msg('metainfo_help'))->setSubPath(Path::core('pages/metainfo/help.md')))
         ;
     }
 

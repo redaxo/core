@@ -9,4 +9,4 @@ if (null === $logFile) {
     throw new NotFoundHttpException('Slow query log file not found.');
 }
 
-require_once __DIR__ . '/system.log.external.php';
+require_once __DIR__ . '/log.external.php';

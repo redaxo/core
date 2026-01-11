@@ -572,8 +572,8 @@ if ('' != $fUNCADD || $userId > 0) {
     echo $content;
 
     if ($userId > 0) {
-        require Path::core('pages/profile.auth_methods.php');
-        require Path::core('pages/profile.sessions.php');
+        require Path::core('pages/profile/auth_methods.php');
+        require Path::core('pages/profile/sessions.php');
     }
 }
 
