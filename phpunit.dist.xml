@@ -36,7 +36,7 @@
             <directory suffix="_test.php">redaxo/src/addons/structure/plugins/content/tests</directory>
         </testsuite>
     </testsuites>
-    <source restrictDeprecations="true">
+    <source ignoreIndirectDeprecations="true">
         <include>
             <directory>redaxo/src/core</directory>
             <directory>redaxo/src/addons/backup</directory>
