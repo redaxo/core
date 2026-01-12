@@ -353,10 +353,22 @@ final class rex_media_service
         }
 
         if ($pager) {
-            $sql->setQuery(str_replace('SELECT m.filename', 'SELECT count(*)', $query), $queryParams);
-            $pager->setRowCount((int) $sql->getValue('count(*)'));
+            $countQuery = str_replace('SELECT m.filename', 'SELECT count(*)', $query);
+            $countQueryParams = $queryParams;
 
-            $query .= ' ORDER BY ' . implode(', ', $orderbys);
+            // EP is called twice, once for count query and once for data query
+            $countQuery = rex_extension::registerPoint(new rex_extension_point('MEDIA_LIST_QUERY', $countQuery, [
+                'queryParams' => &$countQueryParams,
+            ]));
+            assert(is_array($countQueryParams)); // @phpstan-ignore function.alreadyNarrowedType
+
+            $sql->setQuery($countQuery, $countQueryParams);
+            $pager->setRowCount((int) $sql->getValue('count(*)'));
+        }
+
+        $query .= ' ORDER BY ' . implode(', ', $orderbys);
+
+        if ($pager) {
             $query .= ' LIMIT ' . $pager->getCursor() . ',' . $pager->getRowsPerPage();
         }
 
@@ -364,8 +376,7 @@ final class rex_media_service
         $query = rex_extension::registerPoint(new rex_extension_point('MEDIA_LIST_QUERY', $query, [
             'queryParams' => &$queryParams,
         ]));
-
-        assert(is_array($queryParams));
+        assert(is_array($queryParams)); // @phpstan-ignore function.alreadyNarrowedType
 
         $items = [];
 
