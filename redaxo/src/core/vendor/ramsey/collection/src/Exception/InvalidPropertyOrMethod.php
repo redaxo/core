@@ -12,13 +12,15 @@
 
 declare(strict_types=1);
 
-namespace Ramsey\Collection\Map;
+namespace Ramsey\Collection\Exception;
+
+use RuntimeException;
 
 /**
- * `AssociativeArrayMap` represents a standard associative array object.
- *
- * @extends AbstractMap<string, mixed>
+ * Thrown when attempting to evaluate a property, method, or array key
+ * that doesn't exist on an element or cannot otherwise be evaluated in the
+ * current context.
  */
-class AssociativeArrayMap extends AbstractMap
+class InvalidPropertyOrMethod extends RuntimeException implements CollectionException
 {
 }

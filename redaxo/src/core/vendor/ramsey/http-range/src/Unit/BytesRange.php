@@ -15,10 +15,9 @@ declare(strict_types=1);
 namespace Ramsey\Http\Range\Unit;
 
 /**
- * An HTTP Range bytes range spec as defined in RFC 7233.
+ * An HTTP Range bytes range unit as defined in RFC 9110.
  *
- * See [RFC 7233 § 2.1](https://tools.ietf.org/html/rfc7233#section-2.1) for the
- * byte-ranges-specifier specification.
+ * @link https://www.rfc-editor.org/rfc/rfc9110.html#section-14.1.2 RFC 9110, section 14.1.2
  */
 class BytesRange extends AbstractUnitRange implements UnitRangeInterface
 {

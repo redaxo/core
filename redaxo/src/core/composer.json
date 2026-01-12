@@ -9,7 +9,7 @@
         "filp/whoops": "^2.18.4",
         "lbuchs/webauthn": "^2.2.0",
         "psr/log": "^3.0.2",
-        "ramsey/http-range": "^1.2.1",
+        "ramsey/http-range": "^2.0.0",
         "symfony/console": "^6.4.31",
         "symfony/http-foundation": "^6.4.31",
         "symfony/var-dumper": "^6.4.26",
