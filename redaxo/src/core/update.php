@@ -49,6 +49,12 @@ if (rex_string::versionCompare($installerVersion, '2.9.2', '<') && rex_string::v
     throw new rex_functional_exception('This update requires at least version <b>2.9.2</b> of the <b>install</b> addon!');
 }
 
+// https://github.com/redaxo/redaxo/pull/6305
+$urlAddon = rex_addon::get('url');
+if ($urlAddon->isInstalled() && rex_string::versionCompare($urlAddon->getVersion(), '2.2.1', '<')) {
+    throw new rex_functional_exception('This update is not compatible to older versions of the <b>url</b> addon, it requires at least version <b>2.2.1</b>!');
+}
+
 $sessionKey = (string) rex::getProperty('instname') . '_backend';
 
 if (rex_string::versionCompare(rex::getVersion(), '5.7.0-beta3', '<')) {
