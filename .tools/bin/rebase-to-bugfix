@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This script is useful when changing the target branch of pull requests from main to bugfix.
+# This script is useful when changing the target branch of pull requests from 5.x to bugfix.
 # 1. Checkout the pull request
 # 2. Call this script via `composer rebase-to-bugfix`
 # 3. Force-push to remote branch
@@ -9,11 +9,11 @@ set -e
 
 branch=$(git symbolic-ref --short HEAD)
 
-git checkout main
+git checkout 5.x
 git pull
 
 git checkout bugfix
 git pull
 
 git checkout $branch
-git rebase --onto bugfix main
+git rebase --onto bugfix 5.x

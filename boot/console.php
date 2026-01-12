@@ -28,7 +28,7 @@ $application->setCommandLoader(new CommandLoader());
 
 // Override default list command to display information, that more commands are available after setup.
 $command = new ListCommand();
-$application->add($command);
+$application->addCommand($command);
 $application->setDefaultCommand($command->getName());
 
 $application->run();

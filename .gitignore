@@ -1,6 +1,5 @@
-.php-cs-fixer.cache
 /composer.lock
-/.phpunit.cache/
+/.tools/.cache/
 /node_modules/
 /vendor/
 

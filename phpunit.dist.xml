@@ -15,7 +15,7 @@
     displayDetailsOnTestsThatTriggerDeprecations="true"
     colors="true"
     stderr="true"
-    cacheDirectory=".phpunit.cache"
+    cacheDirectory=".tools/.cache/phpunit"
 >
     <php>
         <ini name="error_reporting" value="E_ALL"/>
@@ -26,7 +26,7 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <source restrictDeprecations="true">
+    <source ignoreIndirectDeprecations="true">
         <include>
             <directory>src</directory>
             <directory>tests</directory>

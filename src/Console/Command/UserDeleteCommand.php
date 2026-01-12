@@ -26,6 +26,7 @@ final class UserDeleteCommand extends AbstractCommand
         $this
             ->setDescription('Deletes an user by the specified login name.')
             ->addArgument('user', InputArgument::REQUIRED, 'Username', null, static function () {
+                /** @var list<string> */
                 return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
             })
         ;

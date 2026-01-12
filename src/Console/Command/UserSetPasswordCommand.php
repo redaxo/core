@@ -30,6 +30,7 @@ class UserSetPasswordCommand extends AbstractCommand
         $this
             ->setDescription('Sets a new password for a user')
             ->addArgument('user', InputArgument::REQUIRED, 'Username', null, static function () {
+                /** @var list<string> */
                 return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
             })
             ->addArgument('password', InputArgument::OPTIONAL, 'Password')

@@ -468,6 +468,7 @@ class I18n
      * @return non-empty-string the validated locale
      *
      * @psalm-taint-escape file
+     * @psalm-taint-escape include
      */
     private static function validateLocale(string $locale): string
     {

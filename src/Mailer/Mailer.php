@@ -47,8 +47,9 @@ class Mailer extends PHPMailer
 
     public function __construct($exceptions = false)
     {
+        self::setLanguage(I18n::getLanguage(), Path::core('vendor/phpmailer/phpmailer/language/'));
+
         $this->Timeout = 10;
-        $this->setLanguage(I18n::getLanguage(), Path::core('vendor/phpmailer/phpmailer/language/'));
         $this->XMailer = 'REXMailer';
         $this->From = Core::getConfig('phpmailer_from');
         $this->FromName = Core::getConfig('phpmailer_fromname');

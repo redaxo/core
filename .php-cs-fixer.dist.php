@@ -28,4 +28,5 @@ $finder = Finder::create()
 
 return Config::redaxo6()
     ->setFinder($finder)
+    ->setCacheFile(__DIR__ . '/.tools/.cache/php-cs-fixer.cache')
 ;
