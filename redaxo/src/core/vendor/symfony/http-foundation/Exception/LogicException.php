@@ -9,8 +9,11 @@
  * file that was distributed with this source code.
  */
 
-if (\PHP_VERSION_ID < 80300) {
-    class DateException extends Exception
-    {
-    }
+namespace Symfony\Component\HttpFoundation\Exception;
+
+/**
+ * Base LogicException for Http Foundation component.
+ */
+class LogicException extends \LogicException implements ExceptionInterface
+{
 }
