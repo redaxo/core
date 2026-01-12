@@ -198,21 +198,21 @@ class rex_response
         $rangeHeader = rex_request::server('HTTP_RANGE', 'string', null);
         if ($rangeHeader) {
             try {
-                $filesize = filesize($file);
+                $filesize = rex_type::int(filesize($file));
                 $unitFactory = new UnitFactory();
                 $ranges = $unitFactory->getUnit(trim($rangeHeader), $filesize)->getRanges();
                 $handle = fopen($file, 'r');
                 if (is_resource($handle)) {
                     foreach ($ranges as $range) {
                         header('HTTP/1.1 ' . self::HTTP_PARTIAL_CONTENT);
-                        header('Content-Length: ' . $range->getLength());
-                        header('Content-Range: bytes ' . $range->getStart() . '-' . $range->getEnd() . '/' . $filesize);
+                        header('Content-Length: ' . (string) $range->getLength());
+                        header('Content-Range: bytes ' . (string) $range->getStart() . '-' . (string) $range->getEnd() . '/' . $filesize);
 
                         // Don't output more bytes as requested
                         // default chunk size is usually 8192 bytes
-                        $chunkSize = $range->getLength() > 8192 ? 8192 : $range->getLength();
+                        $chunkSize = $range->getLength() > 8192 ? 8192 : (int) $range->getLength();
 
-                        fseek($handle, $range->getStart());
+                        fseek($handle, (int) $range->getStart());
                         while (ftell($handle) < $range->getEnd()) {
                             // Abort on client disconnect.
                             // With ignore_user_abort(true), the script is not aborted on client disconnect.
