@@ -15,7 +15,7 @@
     displayDetailsOnTestsThatTriggerDeprecations="true"
     colors="true"
     stderr="true"
-    cacheDirectory=".phpunit.cache"
+    cacheDirectory=".tools/.cache/phpunit"
 >
     <php>
         <ini name="error_reporting" value="E_ALL"/>

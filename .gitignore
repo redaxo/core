@@ -1,7 +1,6 @@
-.php-cs-fixer.cache
 /.htaccess
 /composer.lock
-/.phpunit.cache/
+/.tools/.cache/
 /assets/
 /media/
 /node_modules/
