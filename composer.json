@@ -34,7 +34,7 @@
         "lbuchs/webauthn": "v2.2.0",
         "parsedown/parsedown": "1.7.5",
         "parsedown/parsedown-extra": "dev-temp",
-        "phpmailer/phpmailer": "v6.12.0",
+        "phpmailer/phpmailer": "v7.0.2",
         "psr/container": "2.0.2",
         "psr/http-message": "1.1",
         "psr/log": "3.0.2",
