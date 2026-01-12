@@ -39,17 +39,17 @@ final class rex_media_service
         }
 
         if (!rex_mediapool::isAllowedExtension($data['file']['name'], $allowedExtensions)) {
-            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_file::extension($data['file']['name']) . '</code>';
+            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape(rex_file::extension($data['file']['name'])) . '</code>';
             $allowedExtensions = rex_mediapool::getAllowedExtensions($allowedExtensions);
             $warning .= count($allowedExtensions) > 0
-                    ? '<br />' . rex_i18n::msg('pool_file_allowed_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', $allowedExtensions), ', ') . '</code>'
-                    : '<br />' . rex_i18n::msg('pool_file_banned_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', rex_mediapool::getBlockedExtensions()), ', ') . '</code>';
+                    ? '<br />' . rex_i18n::msg('pool_file_allowed_mediatypes') . ' <code>' . implode('</code>, <code>', rex_escape($allowedExtensions)) . '</code>'
+                    : '<br />' . rex_i18n::msg('pool_file_banned_mediatypes') . ' <code>' . implode('</code>, <code>', rex_escape(rex_mediapool::getBlockedExtensions())) . '</code>';
 
             throw new rex_api_exception($warning);
         }
 
         if (!rex_mediapool::isAllowedMimeType($data['file']['path'], $data['file']['name'])) {
-            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_file::extension($data['file']['name']) . '</code> (<code>' . rex_file::mimeType($data['file']['path']) . '</code>)';
+            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape(rex_file::extension($data['file']['name'])) . '</code> (<code>' . rex_escape(rex_file::mimeType($data['file']['path'])) . '</code>)';
             throw new rex_api_exception($warning);
         }
 
@@ -202,7 +202,7 @@ final class rex_media_service
                 || in_array($extensionNew, ['jpg', 'jpeg']) && in_array($extensionOld, ['jpg', 'jpeg'])
             ) {
                 if (!rex_mediapool::isAllowedMimeType($srcFile, $dstFile)) {
-                    $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . $extensionNew . '</code> (<code>' . ($filetype ?? 'unknown mime type') . '</code>)';
+                    $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape($extensionNew) . '</code> (<code>' . rex_escape($filetype ?? 'unknown mime type') . '</code>)';
                     throw new rex_api_exception($warning);
                 }
                 if (!rex_file::move($srcFile, $dstFile)) {
@@ -353,10 +353,22 @@ final class rex_media_service
         }
 
         if ($pager) {
-            $sql->setQuery(str_replace('SELECT m.filename', 'SELECT count(*)', $query), $queryParams);
-            $pager->setRowCount((int) $sql->getValue('count(*)'));
+            $countQuery = str_replace('SELECT m.filename', 'SELECT count(*)', $query);
+            $countQueryParams = $queryParams;
 
-            $query .= ' ORDER BY ' . implode(', ', $orderbys);
+            // EP is called twice, once for count query and once for data query
+            $countQuery = rex_extension::registerPoint(new rex_extension_point('MEDIA_LIST_QUERY', $countQuery, [
+                'queryParams' => &$countQueryParams,
+            ]));
+            assert(is_array($countQueryParams)); // @phpstan-ignore function.alreadyNarrowedType
+
+            $sql->setQuery($countQuery, $countQueryParams);
+            $pager->setRowCount((int) $sql->getValue('count(*)'));
+        }
+
+        $query .= ' ORDER BY ' . implode(', ', $orderbys);
+
+        if ($pager) {
             $query .= ' LIMIT ' . $pager->getCursor() . ',' . $pager->getRowsPerPage();
         }
 
@@ -364,8 +376,7 @@ final class rex_media_service
         $query = rex_extension::registerPoint(new rex_extension_point('MEDIA_LIST_QUERY', $query, [
             'queryParams' => &$queryParams,
         ]));
-
-        assert(is_array($queryParams));
+        assert(is_array($queryParams)); // @phpstan-ignore function.alreadyNarrowedType
 
         $items = [];
 

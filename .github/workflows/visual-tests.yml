@@ -23,7 +23,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v4
+                uses: peter-evans/create-or-update-comment@v5
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -32,16 +32,16 @@ jobs:
                     body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: env.writable == 0
             -   name: Checkout on chat commnad
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
             -   name: Setup nodejs
-                uses: actions/setup-node@v4
+                uses: actions/setup-node@v6
                 with:
                     node-version: 23
                     cache: npm
@@ -64,7 +64,7 @@ jobs:
                 id: playwright-version
                 run: echo "PLAYWRIGHT_VERSION=$(node -e "process.stdout.write(require('playwright/package.json').version)")" >> $GITHUB_ENV
             -   name: Cache Playwright browser binaries
-                uses: actions/cache@v4
+                uses: actions/cache@v5
                 id: playwright-cache
                 with:
                     path: ~/.cache/ms-playwright
@@ -76,7 +76,7 @@ jobs:
             -   name: Setup PHP
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.4'
+                    php-version: '8.5'
                     ini-values: 'error_reporting=E_ALL, display_errors=On, display_startup_errors=On'
                     extensions: gd, pdo_mysql
                     coverage: none # disable xdebug, pcov
@@ -130,7 +130,7 @@ jobs:
                     git diff --exit-code --name-only .github/tests-visual/
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v6
+                uses: stefanzweifel/git-auto-commit-action@v7
                 if: failure() && env.writable == 1
                 with:
                     commit_message: Update screenshots

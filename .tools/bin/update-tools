@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 composer require --dev --ansi --fixed --with-all-dependencies \
-    friendsofredaxo/linter \
     phpstan/extension-installer \
     phpstan/phpstan \
     phpstan/phpstan-deprecation-rules \

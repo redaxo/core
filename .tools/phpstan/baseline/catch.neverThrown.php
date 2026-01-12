@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Dead catch \\- Throwable is never thrown in the try block\\.$#',
+    'rawMessage' => 'Dead catch - Throwable is never thrown in the try block.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/tests/util/timer_test.php',
 ];

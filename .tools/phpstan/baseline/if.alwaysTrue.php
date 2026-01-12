@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^If condition is always true\\.$#',
+    'rawMessage' => 'If condition is always true.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/lib/response.php',
 ];
