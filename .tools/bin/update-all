@@ -2,7 +2,7 @@
 
 printf "Update redaxo/src/core/vendor\n"
 composer update --ansi --no-dev -d redaxo/src/core/
-composer bump --ansi -d redaxo/src/core/
+composer outdated --ansi -d redaxo/src/core/
 
 # Path symfony/console Command class for bc
 sed -i '' 's/protected function execute(InputInterface $input, OutputInterface $output): int/protected function execute(InputInterface $input, OutputInterface $output)/' redaxo/src/core/vendor/symfony/console/Command/Command.php
@@ -41,7 +41,7 @@ composer dumpautoload --ansi --no-dev --classmap-authoritative -d redaxo/src/cor
 
 printf "\nUpdate redaxo/src/addons/backup/vendor\n"
 composer update --ansi --no-dev -d redaxo/src/addons/backup/
-composer bump --ansi -d redaxo/src/addons/backup/
+composer outdated --ansi -d redaxo/src/addons/backup/
 
 rm -f redaxo/src/addons/backup/vendor/autoload.php
 rm -rf redaxo/src/addons/backup/vendor/composer/
@@ -56,7 +56,7 @@ find redaxo/src/addons/backup/vendor/splitbrain/php-archive -name "*.md" ! -name
 
 printf "\nUpdate redaxo/src/addons/be_style/vendor\n"
 composer update --ansi --no-dev -d redaxo/src/addons/be_style/
-composer bump --ansi -d redaxo/src/addons/be_style/
+composer outdated --ansi -d redaxo/src/addons/be_style/
 
 rm -f redaxo/src/addons/be_style/vendor/autoload.php
 rm -rf redaxo/src/addons/be_style/vendor/composer/
@@ -68,7 +68,7 @@ find redaxo/src/addons/be_style/vendor/scssphp -name "*.md" ! -name "LICENSE.md"
 
 printf "\nUpdate redaxo/src/addons/debug/vendor\n"
 composer update --ansi --no-dev -d redaxo/src/addons/debug/
-composer bump --ansi -d redaxo/src/addons/debug/
+composer outdated --ansi -d redaxo/src/addons/debug/
 
 rm -f redaxo/src/addons/debug/vendor/autoload.php
 rm -rf redaxo/src/addons/debug/vendor/composer/
@@ -85,7 +85,7 @@ find redaxo/src/addons/debug/vendor -name "*.md" ! -name "LICENSE.md" -type f -d
 
 printf "\nUpdate redaxo/src/addons/phpmailer/vendor\n"
 composer update --ansi --no-dev -d redaxo/src/addons/phpmailer/
-composer bump --ansi -d redaxo/src/addons/phpmailer/
+composer outdated --ansi -d redaxo/src/addons/phpmailer/
 
 rm -f redaxo/src/addons/phpmailer/vendor/autoload.php
 rm -rf redaxo/src/addons/phpmailer/vendor/composer/

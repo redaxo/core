@@ -19,3 +19,5 @@ composer update --ansi
 composer bump --ansi \
     jetbrains/phpstorm-attributes \
     phpunit/phpunit
+
+composer outdated --ansi
