@@ -4,6 +4,9 @@ printf "Update redaxo/src/core/vendor\n"
 composer update --ansi --no-dev -d redaxo/src/core/
 composer bump --ansi -d redaxo/src/core/
 
+# Path symfony/console Command class for bc
+sed -i '' 's/protected function execute(InputInterface $input, OutputInterface $output): int/protected function execute(InputInterface $input, OutputInterface $output)/' redaxo/src/core/vendor/symfony/console/Command/Command.php
+
 rm -rf redaxo/src/core/vendor/bin/
 rm -rf redaxo/src/core/vendor/parsedown/parsedown/.github/
 rm -rf redaxo/src/core/vendor/parsedown/parsedown-extra/test/

@@ -42,7 +42,7 @@
         "ramsey/http-range": "2.0.0",
         "scssphp/scssphp": "v1.13.0",
         "splitbrain/php-archive": "1.4.1",
-        "symfony/console": "v6.4.31",
+        "symfony/console": "v7.4.3",
         "symfony/deprecation-contracts": "v3.6.0",
         "symfony/http-foundation": "v7.4.3",
         "symfony/polyfill-ctype": "*",
