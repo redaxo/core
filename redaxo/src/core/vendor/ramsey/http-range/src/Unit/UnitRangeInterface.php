@@ -26,35 +26,27 @@ interface UnitRangeInterface
 
     /**
      * Returns the start of the range.
-     *
-     * @return mixed
      */
-    public function getStart();
+    public function getStart(): float | int | string;
 
     /**
      * Returns the end of the range.
-     *
-     * @return mixed
      */
-    public function getEnd();
+    public function getEnd(): float | int | string;
 
     /**
      * Returns the length of this range.
      *
      * For example, if the total size is 1200, and the start is 700 and the end
      * is 1199, then the length is 500.
-     *
-     * @return mixed
      */
-    public function getLength();
+    public function getLength(): float | int | string;
 
     /**
      * Returns the total size of the entity this unit range describes.
      *
      * For example, if this unit range describes the bytes in a file, then this
      * returns the total bytes of the file.
-     *
-     * @return mixed
      */
-    public function getTotalSize();
+    public function getTotalSize(): float | int | string;
 }

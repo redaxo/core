@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.13.1@1e3b7f0a8ab32b23197b91107adc0a7ed8a05b51">
+<files psalm-version="6.14.3@d0b040a91f280f071c1abcb1b77ce3822058725a">
   <file src="redaxo/src/addons/backup/lib/backup.php">
     <MixedArgument>
       <code><![CDATA[$column]]></code>
@@ -77,13 +77,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$EXPDIR]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$EXPDIR]]></code>
-      <code><![CDATA[$EXPTABLES]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$EXPTABLE]]></code>
-    </MixedAssignment>
     <NullOperand>
       <code><![CDATA[rex_escape($exportfilename)]]></code>
     </NullOperand>
@@ -201,6 +194,9 @@
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$selected]]></code>
     </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$jobs]]></code>
+    </MixedArgumentTypeCoercion>
     <MixedArrayOffset>
       <code><![CDATA[$jobs[$id]]]></code>
     </MixedArrayOffset>
@@ -1284,19 +1280,20 @@
   </file>
   <file src="redaxo/src/addons/mediapool/lib/service_media.php">
     <MixedArgumentTypeCoercion>
-      <code><![CDATA[$allowedExtensions]]></code>
+      <code><![CDATA[$countQueryParams]]></code>
       <code><![CDATA[$queryParams]]></code>
-      <code><![CDATA[rex_mediapool::getBlockedExtensions()]]></code>
+      <code><![CDATA[rex_escape($allowedExtensions)]]></code>
+      <code><![CDATA[rex_escape(rex_mediapool::getBlockedExtensions())]]></code>
     </MixedArgumentTypeCoercion>
+    <NullOperand>
+      <code><![CDATA[rex_escape(rex_file::mimeType($data['file']['path']))]]></code>
+    </NullOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[$content]]></code>
     </PossiblyFalseArgument>
     <PossiblyInvalidOperand>
       <code><![CDATA[$uses]]></code>
     </PossiblyInvalidOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[rex_file::mimeType($data['file']['path'])]]></code>
-    </PossiblyNullOperand>
   </file>
   <file src="redaxo/src/addons/mediapool/lib/service_media_category.php">
     <MixedArgument>
@@ -2587,6 +2584,7 @@
     </PossiblyNullArgument>
     <PossiblyNullArrayOffset>
       <code><![CDATA[$ctypes]]></code>
+      <code><![CDATA[$maxPriority]]></code>
     </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$CM->getValue('priority')]]></code>
@@ -2823,6 +2821,9 @@
       <code><![CDATA[$list->getValue('name')]]></code>
       <code><![CDATA[$modulname]]></code>
     </PossiblyNullArgument>
+    <PossiblyNullArrayOffset>
+      <code><![CDATA[$usedIds]]></code>
+    </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$aid]]></code>
     </PossiblyNullOperand>
@@ -3995,6 +3996,9 @@
     </MixedAssignment>
   </file>
   <file src="redaxo/src/core/lib/console/setup/run.php">
+    <InvalidArgument>
+      <code><![CDATA[$backups]]></code>
+    </InvalidArgument>
     <MixedArgument>
       <code><![CDATA[$config['db'][1]['host']]]></code>
       <code><![CDATA[$config['db'][1]['login']]]></code>
@@ -4766,20 +4770,14 @@
       <code><![CDATA[string]]></code>
     </InvalidFalsableReturnType>
     <InvalidOperand>
-      <code><![CDATA[$filesize]]></code>
       <code><![CDATA[filesize($file)]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$chunkSize]]></code>
-      <code><![CDATA[$range->getStart()]]></code>
-    </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$preloadFile['file']]]></code>
       <code><![CDATA[$preloadFile['mimeType']]]></code>
       <code><![CDATA[$preloadFile['type']]]></code>
     </MixedArrayAccess>
     <MixedAssignment>
-      <code><![CDATA[$chunkSize]]></code>
       <code><![CDATA[$finish]]></code>
       <code><![CDATA[$preloadFile]]></code>
       <code><![CDATA[$value]]></code>
@@ -4791,9 +4789,6 @@
       <code><![CDATA[$preloadFile['file']]]></code>
       <code><![CDATA[$preloadFile['mimeType']]]></code>
       <code><![CDATA[$preloadFile['type']]]></code>
-      <code><![CDATA[$range->getEnd()]]></code>
-      <code><![CDATA[$range->getLength()]]></code>
-      <code><![CDATA[$range->getStart()]]></code>
       <code><![CDATA[$value]]></code>
     </MixedOperand>
     <PossiblyFalseArgument>
@@ -4801,7 +4796,6 @@
       <code><![CDATA[json_encode($data)]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[$filesize]]></code>
       <code><![CDATA[filesize($file)]]></code>
     </PossiblyFalseOperand>
     <PossiblyNullArgument>
@@ -4893,6 +4887,9 @@
     <PossiblyFalseArgument>
       <code><![CDATA[fileperms($path)]]></code>
     </PossiblyFalseArgument>
+    <PossiblyNullArrayOffset>
+      <code><![CDATA[$setup]]></code>
+    </PossiblyNullArrayOffset>
   </file>
   <file src="redaxo/src/core/lib/sql/schema_dumper.php">
     <RedundantCondition>
@@ -5428,6 +5425,7 @@
       <code><![CDATA[$match[2]]]></code>
     </PossiblyNullArrayAccess>
     <PossiblyNullArrayOffset>
+      <code><![CDATA[$replacements]]></code>
       <code><![CDATA[$replacements]]></code>
     </PossiblyNullArrayOffset>
     <PossiblyNullOperand>

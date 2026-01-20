@@ -30,8 +30,10 @@ class rex_mailer extends PHPMailer
     public function __construct($exceptions = false)
     {
         $addon = rex_addon::get('phpmailer');
+
+        self::setLanguage(rex_i18n::getLanguage(), $addon->getPath('vendor/phpmailer/phpmailer/language/'));
+
         $this->Timeout = 10;
-        $this->setLanguage(rex_i18n::getLanguage(), $addon->getPath('vendor/phpmailer/phpmailer/language/'));
         $this->XMailer = 'REXMailer';
         $this->From = $addon->getConfig('from');
         $this->FromName = $addon->getConfig('fromname');

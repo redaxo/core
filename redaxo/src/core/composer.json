@@ -2,19 +2,18 @@
     "type": "project",
 
     "require": {
-        "composer/ca-bundle": "^1.5.8",
+        "composer/ca-bundle": "^1.5.10",
         "enshrined/svg-sanitize": "^0.22",
-        "erusev/parsedown": "^1.7.4",
-        "erusev/parsedown-extra": "^0.8.1",
+        "parsedown/parsedown": "^1.7.5",
+        "parsedown/parsedown-extra": "dev-temp",
         "filp/whoops": "^2.18.4",
         "lbuchs/webauthn": "^2.2.0",
-        "psr/http-message": "^1.1",
         "psr/log": "^3.0.2",
-        "ramsey/http-range": "^1.2.1",
-        "symfony/console": "^6.4.25",
-        "symfony/http-foundation": "^6.4.25",
-        "symfony/var-dumper": "^6.4.25",
-        "symfony/yaml": "^6.4.25",
+        "ramsey/http-range": "^2.0.0",
+        "symfony/console": "^7.4.3",
+        "symfony/http-foundation": "^7.4.3",
+        "symfony/var-dumper": "^7.4.3",
+        "symfony/yaml": "^7.4.1",
         "voku/anti-xss": "^4.1.42",
         "voku/portable-utf8": "dev-master as 6.0.14-dev"
     },
@@ -29,17 +28,27 @@
         "symfony/polyfill-php73": "*",
         "symfony/polyfill-php74": "*",
         "symfony/polyfill-php80": "*",
-        "symfony/polyfill-php81": "*"
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*",
+        "symfony/polyfill-php83": "*"
     },
 
     "config": {
         "autoloader-suffix": "RedaxoCore",
+        "bump-after-update": true,
         "optimize-autoloader": true,
         "sort-packages": true,
         "platform": {
-            "php": "8.1.13"
+            "php": "8.3.5"
         },
         "platform-check": false,
         "prepend-autoloader": false
-    }
+    },
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/gharlan/parsedown-extra"
+        }
+    ]
 }

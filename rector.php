@@ -36,10 +36,10 @@ return RectorConfig::configure()
         'redaxo/src/addons/debug/vendor',
         'redaxo/src/addons/phpmailer/vendor',
 
-        Php81\Array_\FirstClassCallableRector::class => ['redaxo/src/core/boot.php'],
+        Php81\Array_\ArrayToFirstClassCallableRector::class => ['redaxo/src/core/boot.php'],
     ])
     ->withParallel()
-    ->withPhpVersion(PhpVersion::PHP_81)
+    ->withPhpVersion(PhpVersion::PHP_83)
     ->withPreparedSets(privatization: true)
     ->withImportNames()
     ->withRules([
@@ -63,7 +63,7 @@ return RectorConfig::configure()
         Php80\Identical\StrStartsWithRector::class,
         Php80\NotIdentical\StrContainsRector::class,
         Php80\Switch_\ChangeSwitchToMatchRector::class,
-        Php81\Array_\FirstClassCallableRector::class,
+        Php81\Array_\ArrayToFirstClassCallableRector::class,
         Privatization\Class_\FinalizeTestCaseClassRector::class,
 
         // Own rules

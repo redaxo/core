@@ -15,43 +15,43 @@ declare(strict_types=1);
 namespace Ramsey\Http\Range\Unit;
 
 /**
- * `UnitInterface` defines an interface for HTTP Range units as defined in RFC 7233.
+ * `UnitInterface` defines an interface for HTTP Range units as defined in RFC 9110.
  *
- * See [RFC 7233 § 2](https://tools.ietf.org/html/rfc7233#section-2) for the
- * range-unit specification.
+ * @link https://www.rfc-editor.org/rfc/rfc9110.html#section-14.1 RFC 9110, section 14.1
  */
 interface UnitInterface
 {
     /**
      * Returns the raw range set defined for this unit.
      *
-     * ```
-     * other-range-set = 1*VCHAR
-     * ```
+     *     range-set = 1#range-spec
+     *     range-spec = int-range / suffix-range / other-range
+     *     int-range = first-pos "-" [ last-pos ]
+     *     first-pos = 1*DIGIT
+     *     last-pos = 1*DIGIT
+     *     suffix-range = "-" suffix-length
+     *     suffix-length = 1*DIGIT
+     *     other-range = 1*( %x21-2B / %x2D-7E )
      *
-     * @link https://tools.ietf.org/html/rfc7233#section-3.1 RFC 7233 § 3.1
+     * @link https://www.rfc-editor.org/rfc/rfc9110.html#section-14.1.1 RFC 9110, section 14.1.1
      */
     public function getRangeSet(): string;
 
     /**
-     * Returns the unit token defined for this unit.
+     * Returns the range unit token defined for this unit.
      *
-     * ```
-     * other-range-unit = token
-     * ```
+     *     range-unit = token
      *
-     * @link https://tools.ietf.org/html/rfc7233#section-2.2 RFC 7233 § 2.2
+     * @link https://www.rfc-editor.org/rfc/rfc9110.html#section-14.1.1 RFC 9110, section 14.1.1
      */
     public function getRangeUnit(): string;
 
     /**
      * Returns the raw ranges specifier defined for this unit.
      *
-     * ```
-     * other-ranges-specifier = other-range-unit "=" other-range-set
-     * ```
+     *     ranges-specifier = range-unit "=" range-set
      *
-     * @link https://tools.ietf.org/html/rfc7233#section-3.1 RFC 7233 § 3.1
+     * @link https://www.rfc-editor.org/rfc/rfc9110.html#section-14.1.1 RFC 9110, section 14.1.1
      */
     public function getRangesSpecifier(): string;
 
@@ -65,8 +65,6 @@ interface UnitInterface
      *
      * For example, if this unit describes the bytes in a file, then this
      * returns the total bytes of the file.
-     *
-     * @return mixed
      */
-    public function getTotalSize();
+    public function getTotalSize(): float | int | string;
 }

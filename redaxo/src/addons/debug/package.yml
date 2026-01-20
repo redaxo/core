@@ -1,5 +1,5 @@
 package: debug
-version: '1.3.5'
+version: '1.3.6'
 author: Markus Staab, Marcel Kuhmann, Gregor Harlan
 supportpage: https://github.com/redaxo/redaxo
 
@@ -16,6 +16,6 @@ page:
 
 requires:
     php:
-        version: '>=8.1'
+        version: '>=8.3'
         extensions: [zip]
     redaxo: ^5.13.0

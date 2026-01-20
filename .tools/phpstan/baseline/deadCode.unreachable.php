@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Unreachable statement \\- code above always terminates\\.$#',
+    'rawMessage' => 'Unreachable statement - code above always terminates.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/tests/util/timer_test.php',
 ];

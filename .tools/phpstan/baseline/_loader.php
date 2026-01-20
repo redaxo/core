@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-// total 464 errors
+// total 460 errors
+
 return ['includes' => [
     __DIR__ . '/argument.templateType.php',
     __DIR__ . '/argument.type.php',
@@ -20,6 +21,5 @@ return ['includes' => [
     __DIR__ . '/possiblyImpure.functionCall.php',
     __DIR__ . '/possiblyImpure.methodCall.php',
     __DIR__ . '/return.type.php',
-    __DIR__ . '/throws.unusedType.php',
     __DIR__ . '/varTag.nativeType.php',
 ]];

@@ -34,6 +34,7 @@ class rex_article_content_editor extends rex_article_content
             $sliceId = (int) $artDataSql->getValue(rex::getTablePrefix() . 'article_slice.id');
             $sliceCtype = (int) $artDataSql->getValue(rex::getTablePrefix() . 'article_slice.ctype_id');
             $sliceStatus = (int) $artDataSql->getValue(rex::getTablePrefix() . 'article_slice.status');
+            $sliceRevision = (int) $artDataSql->getValue(rex::getTablePrefix() . 'article_slice.revision');
 
             $moduleInput = (string) $artDataSql->getValue(rex::getTablePrefix() . 'module.input');
             $moduleOutput = (string) $artDataSql->getValue(rex::getTablePrefix() . 'module.output');
@@ -89,6 +90,7 @@ class rex_article_content_editor extends rex_article_content
                 'ctype' => $this->ctype,
                 'module_id' => $moduleId,
                 'slice_id' => $sliceId,
+                'revision' => $sliceRevision,
             ]));
 
             $fragment = new rex_fragment();

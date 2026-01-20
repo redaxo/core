@@ -19,6 +19,7 @@ final class rex_command_user_list extends rex_console_command
         $this
             ->setDescription('List all users or a specific user by login name')
             ->addArgument('user', InputArgument::OPTIONAL, 'Username', null, static function () {
+                /** @var list<string> */
                 return array_column(rex_sql::factory()->getArray('SELECT login FROM' . rex::getTable('user')), 'login');
             });
     }
