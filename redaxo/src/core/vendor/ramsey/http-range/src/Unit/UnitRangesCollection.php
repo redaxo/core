@@ -25,9 +25,6 @@ use Ramsey\Collection\CollectionInterface;
  */
 class UnitRangesCollection extends AbstractCollection implements CollectionInterface
 {
-    /**
-     * Returns the data type of the items allowed in this collection
-     */
     public function getType(): string
     {
         return UnitRangeInterface::class;

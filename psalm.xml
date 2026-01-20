@@ -71,6 +71,7 @@
         <InternalClass errorLevel="info" />
         <InternalMethod errorLevel="info" />
         <InternalProperty errorLevel="info" />
+        <MissingClassConstType errorLevel="info" />
         <MissingClosureParamType errorLevel="info" />
         <MissingClosureReturnType errorLevel="info" />
         <MissingParamType errorLevel="info" />

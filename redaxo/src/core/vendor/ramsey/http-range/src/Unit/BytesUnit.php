@@ -15,36 +15,23 @@ declare(strict_types=1);
 namespace Ramsey\Http\Range\Unit;
 
 /**
- * An HTTP Range bytes unit as defined in RFC 7233.
+ * An HTTP Range bytes unit as defined in RFC 9110.
  *
- * See [RFC 7233 § 2.1](https://tools.ietf.org/html/rfc7233#section-2.1) for the
- * bytes-unit specification.
+ * @link https://www.rfc-editor.org/rfc/rfc9110.html#section-14.1.2 RFC 9110, section 14.1.2
  */
 class BytesUnit extends AbstractUnit implements UnitInterface
 {
-    /**
-     * Returns the "bytes" unit token for this unit.
-     */
     public function getRangeUnit(): string
     {
         return 'bytes';
     }
 
-    /**
-     * Returns a new collection for this range unit.
-     */
     public function newCollection(): UnitRangesCollection
     {
         return new BytesRangesCollection();
     }
 
-    /**
-     * Returns a new unit range for this range unit.
-     *
-     * @param string $range A single range (i.e. `500-999`, `500-`, `-500`).
-     * @param mixed $totalSize The total size of the entity the range describes.
-     */
-    public function newRange(string $range, $totalSize): UnitRangeInterface
+    public function newRange(string $range, float | int | string $totalSize): UnitRangeInterface
     {
         return new BytesRange($range, $totalSize);
     }

@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Possibly impure call to method stdClass\\:\\:__toString\\(\\) in pure function rex_escape\\(\\)\\.$#',
+    'rawMessage' => 'Possibly impure call to method stdClass::__toString() in pure function rex_escape().',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/functions/function_rex_escape.php',
 ];

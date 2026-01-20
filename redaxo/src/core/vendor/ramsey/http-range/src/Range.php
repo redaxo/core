@@ -18,48 +18,30 @@ use Psr\Http\Message\RequestInterface;
 use Ramsey\Http\Range\Exception\NoRangeException;
 use Ramsey\Http\Range\Unit\UnitInterface;
 
-use function count;
 use function trim;
 
 /**
  * `Range` represents an HTTP Range request header.
  *
  * For more information about range requests, see
- * [RFC 7233: HTTP Range Requests](https://tools.ietf.org/html/rfc7233).
+ * [RFC 9110, section 14: Range Requests](https://www.rfc-editor.org/rfc/rfc9110.html#section-14).
  */
-class Range
+readonly class Range
 {
-    private RequestInterface $request;
-
-    /**
-     * @var mixed
-     */
-    private $totalSize;
-
-    private UnitFactoryInterface $unitFactory;
-
     /**
      * Constructs an HTTP Range request header.
      *
      * @param RequestInterface $request A PSR-7-compatible HTTP request.
-     * @param mixed $totalSize The total size of the entity for which a range is
+     * @param float | int | string $totalSize The total size of the entity for which a range is
      *     requested (this may be in bytes, items, etc.).
-     * @param UnitFactoryInterface|null $unitFactory An optional factory to use for
+     * @param UnitFactoryInterface $unitFactory An optional factory to use for
      *     parsing range units.
      */
     public function __construct(
-        RequestInterface $request,
-        $totalSize,
-        ?UnitFactoryInterface $unitFactory = null
+        private RequestInterface $request,
+        private float | int | string $totalSize,
+        private UnitFactoryInterface $unitFactory = new UnitFactory(),
     ) {
-        $this->request = $request;
-        $this->totalSize = $totalSize;
-
-        if ($unitFactory === null) {
-            $unitFactory = new UnitFactory();
-        }
-
-        $this->unitFactory = $unitFactory;
     }
 
     /**
@@ -72,10 +54,8 @@ class Range
 
     /**
      * Returns the total size of the entity for which the range is requested.
-     *
-     * @return mixed
      */
-    public function getTotalSize()
+    public function getTotalSize(): float | int | string
     {
         return $this->totalSize;
     }
@@ -97,8 +77,8 @@ class Range
     {
         $rangeHeader = $this->getRequest()->getHeader('Range');
 
-        if (count($rangeHeader) === 0) {
-            throw new NoRangeException();
+        if ($rangeHeader === [] || trim($rangeHeader[0]) === '') {
+            throw new NoRangeException('The Range header is not present on this request or has no value');
         }
 
         // Use only the first Range header found, for now.

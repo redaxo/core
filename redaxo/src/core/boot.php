@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  *          URL_PROVIDER   [Optional] Custom url provider
  */
 
-define('REX_MIN_PHP_VERSION', '8.1');
+define('REX_MIN_PHP_VERSION', '8.3');
 
 if (version_compare(PHP_VERSION, REX_MIN_PHP_VERSION) < 0) {
     echo 'Ooops, something went wrong!<br>';
@@ -92,7 +92,7 @@ require_once rex_path::core('functions/function_rex_globals.php');
 require_once rex_path::core('functions/function_rex_other.php');
 
 // ----------------- VERSION
-rex::setProperty('version', '5.20.0');
+rex::setProperty('version', '5.21.0-dev');
 
 rex_error_handler::register();
 

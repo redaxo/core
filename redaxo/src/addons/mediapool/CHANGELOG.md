@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.17.1 – 25.11.2025
+---------------------------
+
+### Security
+
+* XSS war möglich via URL-Parameter für die Dateitypeinschränkung im Medienpool (gemeldet von @tehofu) (@gharlan)
+
+
 Version 2.17.0 – 05.09.2025
 ---------------------------
 

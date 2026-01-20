@@ -25,6 +25,6 @@ final class rex_navigation_test extends TestCase
     public function testConstructAnonymousClass(): void
     {
         // no exception
-        new class extends rex_navigation {}; // @phpstan-ignore expr.resultUnused
+        new class extends rex_navigation {};
     }
 }

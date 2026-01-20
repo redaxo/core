@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Ramsey\Http\Range\Exception;
 
-use Exception;
 use Throwable;
 
 /**
@@ -22,33 +21,22 @@ use Throwable;
  */
 class NotSatisfiableException extends HttpRangeException
 {
-    private string $range;
-
-    /**
-     * @var mixed
-     */
-    private $totalSize;
-
     /**
      * Constructs a NotSatisfiableException.
      *
      * @param string $message The exception message.
      * @param string $range The range value parsed from the request.
-     * @param mixed $totalSize The total size of the entity for which the range
-     *     is requested.
+     * @param float | int | string $totalSize The total size of the entity for which the range is requested.
      * @param int $code A custom error code, if applicable.
-     * @param Exception $previous A previous exception, if applicable.
+     * @param Throwable | null $previous A previous exception, if applicable.
      */
     public function __construct(
         string $message,
-        string $range,
-        $totalSize,
+        private readonly string $range,
+        private readonly float | int | string $totalSize,
         int $code = 0,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
     ) {
-        $this->range = $range;
-        $this->totalSize = $totalSize;
-
         parent::__construct($message, $code, $previous);
     }
 
@@ -62,10 +50,8 @@ class NotSatisfiableException extends HttpRangeException
 
     /**
      * Returns the total size of the entity being requested.
-     *
-     * @return mixed
      */
-    public function getTotalSize()
+    public function getTotalSize(): float | int | string
     {
         return $this->totalSize;
     }

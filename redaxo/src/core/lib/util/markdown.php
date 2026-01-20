@@ -161,7 +161,7 @@ final class rex_parsedown extends ParsedownExtra
     /**
      * @return array|null
      */
-    protected function blockSetextHeader($Line, ?array $Block = null)
+    protected function blockSetextHeader($Line, array $Block = [])
     {
         $block = parent::blockSetextHeader($Line, $Block);
 
