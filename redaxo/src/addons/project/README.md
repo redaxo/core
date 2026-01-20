@@ -33,7 +33,7 @@ Now you can replace the links in every module where you want http(s) links to op
 echo my_helpers::links_to_blank($text);
 ```
 
-Additional folders (like `pages/`, `fragments/`, etc.) can be created directly within the project addOn. In the documentation you will find the corresponding notes: https://redaxo.org/doku/main/addon-struktur (German)
+Additional folders (like `pages/`, `fragments/`, etc.) can be created directly within the project addOn. In the documentation you will find the corresponding notes: https://redaxo.org/doku/5.x/addon-struktur (German)
 
 Files
 -------
