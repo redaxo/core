@@ -16,6 +16,12 @@
 .rex-slice .panel-heading > .rex-panel-options {
     float: right;
 }
+.rex-slice .panel-footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+}
 .panel-add,
 .panel-edit {
     @include panel-variant($color-d, #fff, $color-d, $color-d);
@@ -81,13 +87,6 @@
 
 .panel > .rex-nav-pagination {
     background-color: $color-a-lighter;
-}
-
-.rex-slice .panel-footer {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    z-index: 100;
 }
 
 .rex-slice-offline {
