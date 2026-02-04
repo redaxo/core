@@ -1,6 +1,5 @@
-
 .panel-heading {
-    line-height: 1.25;  // 20/16
+    line-height: 1.25; // 20/16
 
     .rex-panel-options {
         margin-top: -2px;
@@ -16,6 +15,12 @@
 }
 .rex-slice .panel-heading > .rex-panel-options {
     float: right;
+}
+.rex-slice .panel-footer {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
 }
 .panel-add,
 .panel-edit {
@@ -80,11 +85,9 @@
     }
 }
 
-
 .panel > .rex-nav-pagination {
     background-color: $color-a-lighter;
 }
-
 
 .rex-slice-offline {
     opacity: 0.8;
@@ -125,10 +128,15 @@
             color: $color-text-light;
         }
     }
-    
+
     .panel-add,
     .panel-edit {
-        @include panel-variant($color-green-1, $color-text-light, $color-green-1, $color-green-1);
+        @include panel-variant(
+            $color-green-1,
+            $color-text-light,
+            $color-green-1,
+            $color-green-1
+        );
 
         .panel-heading[data-toggle] {
             &:hover {

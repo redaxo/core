@@ -25,12 +25,16 @@ body:after {
 }
 
 .rex-slice {
-  iframe, img, svg, video, object, embed {
-    max-width: 100%;
-    height: auto;
-  }
+    iframe,
+    img,
+    svg,
+    video,
+    object,
+    embed {
+        max-width: 100%;
+        height: auto;
+    }
 }
-
 
 #rex-page-setup .bg-success,
 #rex-page-setup .bg-success > a {
@@ -42,16 +46,14 @@ body:after {
     margin-right: 0;
 }
 
-
-
-@media(min-width: $grid-float-breakpoint) {
+@media (min-width: $grid-float-breakpoint) {
     html {
         height: 100%;
     }
-    body, .rex-page {
+    body,
+    .rex-page {
         min-height: 100%;
     }
-
 
     .rex-is-logged-in,
     #rex-page-setup {
@@ -104,7 +106,6 @@ body:after {
             margin-top: -$grid-gutter-width;
         }
     }
-
 }
 
 .rex-global-footer {
@@ -117,39 +118,56 @@ body:after {
     }
 }
 
-@media(max-width: $grid-float-breakpoint-max) {
-
+@media (max-width: $grid-float-breakpoint-max) {
     .rex-page-main {
         @include clearfix();
     }
-
 }
 .rex-page-main-inner {
     padding-left: floor($grid-gutter-width / 2);
     padding-right: floor($grid-gutter-width / 2);
 }
 
-
 // Alternate buttons
 // --------------------------------------------------
 
 .nav-tabs > li > .btn-default {
-    @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
+    @include button-variant(
+        $btn-default-color,
+        $btn-default-bg,
+        $btn-default-border
+    );
 }
 .nav-tabs > li > .btn-primary {
-    @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
+    @include button-variant(
+        $btn-primary-color,
+        $btn-primary-bg,
+        $btn-primary-border
+    );
 }
 .nav-tabs > li > .btn-success {
-    @include button-variant($btn-success-color, $btn-success-bg, $btn-success-border);
+    @include button-variant(
+        $btn-success-color,
+        $btn-success-bg,
+        $btn-success-border
+    );
 }
 .nav-tabs > li > .btn-info {
     @include button-variant($btn-info-color, $btn-info-bg, $btn-info-border);
 }
 .nav-tabs > li > .btn-warning {
-    @include button-variant($btn-warning-color, $btn-warning-bg, $btn-warning-border);
+    @include button-variant(
+        $btn-warning-color,
+        $btn-warning-bg,
+        $btn-warning-border
+    );
 }
 .nav-tabs > li > .btn-danger {
-    @include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-border);
+    @include button-variant(
+        $btn-danger-color,
+        $btn-danger-bg,
+        $btn-danger-border
+    );
 }
 .btn-abort {
     @extend .btn-default;
@@ -234,7 +252,6 @@ body:after {
     }
 }
 .rex-nav-top {
-
     .navbar-toggle {
         display: none;
     }
@@ -242,11 +259,9 @@ body:after {
     .rex-is-popup & {
         min-height: $top-popup-navbar-height;
     }
-
 }
 
 .rex-nav-meta {
-
     li {
         > a {
             display: inline-block;
@@ -271,12 +286,10 @@ body:after {
     font-family: $font-family-monospace;
 }
 
-
 .rex-author,
 .rex-filesize {
     @extend .text-muted;
 }
-
 
 // Wird bei den Kategorie-Metainfos gesetzt
 .form-legend {
@@ -284,7 +297,6 @@ body:after {
     margin-top: 0;
     font-weight: 400;
 }
-
 
 .panel > .alert {
     margin-bottom: 0;
@@ -344,7 +356,8 @@ body:after {
 .rex-state-success {
     background-color: $alert-success-bg;
 
-    &, a {
+    &,
+    a {
         color: $alert-success-text;
     }
 
@@ -357,7 +370,8 @@ body:after {
 .rex-state-notice {
     background-color: $alert-info-bg;
 
-    &, a {
+    &,
+    a {
         color: $alert-info-text;
     }
 
@@ -369,7 +383,8 @@ body:after {
 .rex-state-warning {
     background-color: $alert-warning-bg;
 
-    &, a {
+    &,
+    a {
         color: $alert-warning-text;
     }
 
@@ -382,7 +397,8 @@ body:after {
 .rex-state-error {
     background-color: $alert-danger-bg;
 
-    &, a {
+    &,
+    a {
         color: $alert-danger-text;
     }
 
@@ -410,7 +426,7 @@ body:after {
     right: 0;
     bottom: 0;
     z-index: 2000;
-    background: rgba(#000, .5);
+    background: rgba(#000, 0.5);
 
     .rex-ajax-loader-element1,
     .rex-ajax-loader-element2,
@@ -496,7 +512,6 @@ body:after {
 }
 
 .panel-heading {
-
     @include clearfix();
 
     &[data-toggle] {
@@ -535,12 +550,6 @@ body:after {
     margin-bottom: -(ceil($grid-gutter-width / 2));
     margin-left: -(ceil($grid-gutter-width / 2));
 }
-.rex-slice .panel-footer {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    z-index: 100;
-}
 .rex-range-input-group {
     .input-group-addon:first-child {
         width: 60%;
@@ -575,7 +584,6 @@ body:after {
         text-align: left;
     }
 }
-
 
 .table > thead > tr.mark,
 .table > tfoot > tr.mark,
@@ -615,13 +623,13 @@ body:after {
 
 // correcting bootstrap vendor regarding Quick fix for badges in buttons
 // https://github.com/redaxo/redaxo/blob/80925bba7235e5866c3eb99c881db8ddeab4ee25/redaxo/src/addons/be_style/vendor/bootstrap/assets/stylesheets/bootstrap/_badges.scss#L26
-  .btn & {
+.btn & {
     position: relative;
     top: 0px;
-  }
+}
 
-  .btn-xs &,
-  .btn-group-xs > .btn & {
+.btn-xs &,
+.btn-group-xs > .btn & {
     top: 0;
     padding: 1px 5px;
-  }
+}
