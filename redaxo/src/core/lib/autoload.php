@@ -265,6 +265,7 @@ class rex_autoload
             self::$cacheChanged = true;
         }
         $files = self::$dirs[$dir];
+        $composerClassMap = self::$composerLoader->getClassMap();
         $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dirPath, RecursiveDirectoryIterator::SKIP_DOTS));
         foreach ($iterator as $path => $file) {
             /** @var SplFileInfo $file */
@@ -283,16 +284,15 @@ class rex_autoload
 
             $classes = self::findClasses($path);
             foreach ($classes as $class) {
+                // Force usage of core vendors (via composer autoloader)
+                if (isset($composerClassMap[$class])) {
+                    continue;
+                }
+
                 if (self::SYMFONY_NON_UTF8_CLASS === $class) {
                     $class = self::SYMFONY_NON_UTF8_CLASS_REPLACEMENT;
                 } else {
                     $class = strtolower($class);
-                }
-
-                // Force usage of Parsedown and ParsedownExtra from core vendors (via composer autoloader)
-                // to avoid problems between incompatible version of Parsedown (from addon) and ParsedownExtra (from core)
-                if (in_array($class, ['parsedown', 'parsedownextra'], true)) {
-                    continue;
                 }
 
                 if (!isset(self::$classes[$class])) {

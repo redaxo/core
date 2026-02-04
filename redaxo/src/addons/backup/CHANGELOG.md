@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.9.4 – 05.01.2026
+--------------------------
+
+### Security
+
+* Path Traversal beim Datei-Export verhindert (gemeldet von @lukasz-rybak) (@gharlan)
+
+
 Version 2.9.1 – 09.02.2024
 --------------------------
 

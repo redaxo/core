@@ -11,6 +11,9 @@
 
 namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
 
+use Doctrine\DBAL\Schema\Name\Identifier;
+use Doctrine\DBAL\Schema\Name\UnqualifiedName;
+use Doctrine\DBAL\Schema\PrimaryKeyConstraint;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 
@@ -216,7 +219,7 @@ class PdoSessionHandler extends AbstractSessionHandler
                 $table->addColumn($this->timeCol, Types::INTEGER)->setNotnull(true);
                 break;
             case 'sqlsrv':
-                $table->addColumn($this->idCol, Types::TEXT)->setLength(128)->setNotnull(true);
+                $table->addColumn($this->idCol, Types::STRING)->setLength(128)->setNotnull(true);
                 $table->addColumn($this->dataCol, Types::BLOB)->setNotnull(true);
                 $table->addColumn($this->lifetimeCol, Types::INTEGER)->setUnsigned(true)->setNotnull(true);
                 $table->addColumn($this->timeCol, Types::INTEGER)->setUnsigned(true)->setNotnull(true);
@@ -224,7 +227,13 @@ class PdoSessionHandler extends AbstractSessionHandler
             default:
                 throw new \DomainException(\sprintf('Creating the session table is currently not implemented for PDO driver "%s".', $this->driver));
         }
-        $table->setPrimaryKey([$this->idCol]);
+
+        if (class_exists(PrimaryKeyConstraint::class)) {
+            $table->addPrimaryKeyConstraint(new PrimaryKeyConstraint(null, [new UnqualifiedName(Identifier::unquoted($this->idCol))], true));
+        } else {
+            $table->setPrimaryKey([$this->idCol]);
+        }
+
         $table->addIndex([$this->lifetimeCol], $this->lifetimeCol.'_idx');
     }
 
@@ -236,12 +245,10 @@ class PdoSessionHandler extends AbstractSessionHandler
      * saved in a BLOB. One could also use a shorter inlined varbinary column
      * if one was sure the data fits into it.
      *
-     * @return void
-     *
      * @throws \PDOException    When the table already exists
      * @throws \DomainException When an unsupported PDO driver is used
      */
-    public function createTable()
+    public function createTable(): void
     {
         // connect if we are not yet
         $this->getConnection();
@@ -795,6 +802,12 @@ class PdoSessionHandler extends AbstractSessionHandler
                 rewind($data);
                 $sql = "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) VALUES (:id, EMPTY_BLOB(), :expiry, :time) RETURNING $this->dataCol into :data";
                 break;
+            case 'sqlsrv':
+                $data = fopen('php://memory', 'r+');
+                fwrite($data, $sessionData);
+                rewind($data);
+                $sql = "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) VALUES (:id, :data, :expiry, :time)";
+                break;
             default:
                 $data = $sessionData;
                 $sql = "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) VALUES (:id, :data, :expiry, :time)";
@@ -821,6 +834,12 @@ class PdoSessionHandler extends AbstractSessionHandler
                 fwrite($data, $sessionData);
                 rewind($data);
                 $sql = "UPDATE $this->table SET $this->dataCol = EMPTY_BLOB(), $this->lifetimeCol = :expiry, $this->timeCol = :time WHERE $this->idCol = :id RETURNING $this->dataCol into :data";
+                break;
+            case 'sqlsrv':
+                $data = fopen('php://memory', 'r+');
+                fwrite($data, $sessionData);
+                rewind($data);
+                $sql = "UPDATE $this->table SET $this->dataCol = :data, $this->lifetimeCol = :expiry, $this->timeCol = :time WHERE $this->idCol = :id";
                 break;
             default:
                 $data = $sessionData;
@@ -869,12 +888,16 @@ class PdoSessionHandler extends AbstractSessionHandler
         $mergeStmt = $this->pdo->prepare($mergeSql);
 
         if ('sqlsrv' === $this->driver) {
+            $dataStream = fopen('php://memory', 'r+');
+            fwrite($dataStream, $data);
+            rewind($dataStream);
+
             $mergeStmt->bindParam(1, $sessionId, \PDO::PARAM_STR);
             $mergeStmt->bindParam(2, $sessionId, \PDO::PARAM_STR);
-            $mergeStmt->bindParam(3, $data, \PDO::PARAM_LOB);
+            $mergeStmt->bindParam(3, $dataStream, \PDO::PARAM_LOB);
             $mergeStmt->bindValue(4, time() + $maxlifetime, \PDO::PARAM_INT);
             $mergeStmt->bindValue(5, time(), \PDO::PARAM_INT);
-            $mergeStmt->bindParam(6, $data, \PDO::PARAM_LOB);
+            $mergeStmt->bindParam(6, $dataStream, \PDO::PARAM_LOB);
             $mergeStmt->bindValue(7, time() + $maxlifetime, \PDO::PARAM_INT);
             $mergeStmt->bindValue(8, time(), \PDO::PARAM_INT);
         } else {

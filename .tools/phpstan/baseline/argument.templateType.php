@@ -6,12 +6,12 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type T in call to function rex_escape$#',
+    'rawMessage' => 'Unable to resolve the template type T in call to function rex_escape',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/pages/system.log.external.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type T in call to method static method rex_test_instance_list_pool\\:\\:getInstanceList\\(\\)$#',
+    'rawMessage' => 'Unable to resolve the template type T in call to static method rex_test_instance_list_pool::getInstanceList()',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/tests/base/instance_list_pool_trait_test.php',
 ];

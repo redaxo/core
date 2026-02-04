@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^Impure property assignment in pure function rex_escape\\(\\)\\.$#',
+    'rawMessage' => 'Impure property assignment in pure function rex_escape().',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/functions/function_rex_escape.php',
 ];

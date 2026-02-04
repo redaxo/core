@@ -122,7 +122,7 @@ if ($success) {
 }
 
 if (!empty($argUrl['args']['types'])) {
-    echo rex_view::info(rex_i18n::msg('pool_file_filter') . ' <code>' . $argUrl['args']['types'] . '</code>');
+    echo rex_view::info(rex_i18n::msg('pool_file_filter') . ' <code>' . rex_escape($argUrl['args']['types']) . '</code>');
 }
 
 $addon = rex_addon::require('mediapool');

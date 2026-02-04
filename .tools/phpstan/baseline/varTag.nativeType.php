@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var with type class\\-string is not subtype of native type lowercase\\-string&non\\-falsy\\-string\\.$#',
+    'rawMessage' => 'PHPDoc tag @var with type class-string is not subtype of native type lowercase-string&non-falsy-string.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/lib/var/var.php',
 ];
