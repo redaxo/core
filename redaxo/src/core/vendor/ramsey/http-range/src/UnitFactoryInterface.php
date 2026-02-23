@@ -25,7 +25,7 @@ interface UnitFactoryInterface
      * Returns a parsed unit for the HTTP Range header
      *
      * @param string $rangesSpecifier The original value of the HTTP Range header.
-     * @param mixed $totalSize The total size of the entity described by this unit.
+     * @param float | int | string $totalSize The total size of the entity described by this unit.
      */
-    public function getUnit(string $rangesSpecifier, $totalSize): UnitInterface;
+    public function getUnit(string $rangesSpecifier, float | int | string $totalSize): UnitInterface;
 }

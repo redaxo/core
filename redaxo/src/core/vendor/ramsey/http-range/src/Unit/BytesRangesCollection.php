@@ -23,9 +23,6 @@ use Ramsey\Collection\CollectionInterface;
  */
 class BytesRangesCollection extends UnitRangesCollection implements CollectionInterface
 {
-    /**
-     * Returns the data type of the items allowed in this collection.
-     */
     public function getType(): string
     {
         return BytesRange::class;

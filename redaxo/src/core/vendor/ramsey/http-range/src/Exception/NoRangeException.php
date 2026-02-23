@@ -19,9 +19,4 @@ namespace Ramsey\Http\Range\Exception;
  */
 class NoRangeException extends HttpRangeException
 {
-    /**
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingNativeTypeHint
-     * @var string
-     */
-    protected $message = 'The Range header is not present on this request or has no value.';
 }

@@ -4770,20 +4770,14 @@
       <code><![CDATA[string]]></code>
     </InvalidFalsableReturnType>
     <InvalidOperand>
-      <code><![CDATA[$filesize]]></code>
       <code><![CDATA[filesize($file)]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$chunkSize]]></code>
-      <code><![CDATA[$range->getStart()]]></code>
-    </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$preloadFile['file']]]></code>
       <code><![CDATA[$preloadFile['mimeType']]]></code>
       <code><![CDATA[$preloadFile['type']]]></code>
     </MixedArrayAccess>
     <MixedAssignment>
-      <code><![CDATA[$chunkSize]]></code>
       <code><![CDATA[$finish]]></code>
       <code><![CDATA[$preloadFile]]></code>
       <code><![CDATA[$value]]></code>
@@ -4795,9 +4789,6 @@
       <code><![CDATA[$preloadFile['file']]]></code>
       <code><![CDATA[$preloadFile['mimeType']]]></code>
       <code><![CDATA[$preloadFile['type']]]></code>
-      <code><![CDATA[$range->getEnd()]]></code>
-      <code><![CDATA[$range->getLength()]]></code>
-      <code><![CDATA[$range->getStart()]]></code>
       <code><![CDATA[$value]]></code>
     </MixedOperand>
     <PossiblyFalseArgument>
@@ -4805,7 +4796,6 @@
       <code><![CDATA[json_encode($data)]]></code>
     </PossiblyFalseArgument>
     <PossiblyFalseOperand>
-      <code><![CDATA[$filesize]]></code>
       <code><![CDATA[filesize($file)]]></code>
     </PossiblyFalseOperand>
     <PossiblyNullArgument>
