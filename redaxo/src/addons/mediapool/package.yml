@@ -25,7 +25,7 @@ blocked_extensions: [asp, aspx, bat, cfm, cgi, flv, hh, html, htaccess, htpasswd
 allowed_mime_types:
     avif: [image/avif]
     gif: [image/gif]
-    ics: [text/calendar, text/plain, application/octet-stream]
+    ics: [text/calendar, text/plain
     jpg: [image/jpeg, image/pjpeg]
     jpeg: [image/jpeg, image/pjpeg]
     png: [image/png]
