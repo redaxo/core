@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
         'name' => '__root__',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => '5.x-dev',
+        'version' => '5.9999999.9999999.9999999-dev',
+        'reference' => 'c007569e35038708b9e06fd853a2de236b068f82',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -11,9 +11,9 @@
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => '5.x-dev',
+            'version' => '5.9999999.9999999.9999999-dev',
+            'reference' => 'c007569e35038708b9e06fd853a2de236b068f82',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -37,6 +37,24 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'erusev/parsedown' => array(
+            'pretty_version' => '1.8.0',
+            'version' => '1.8.0.0',
+            'reference' => '96baaad00f71ba04d76e45b4620f54d3beabd6f7',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../erusev/parsedown',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'erusev/parsedown-extra' => array(
+            'pretty_version' => '0.9.0',
+            'version' => '0.9.0.0',
+            'reference' => '5b5b9b9d000792c7ac631aec23a6688e0b6d3dc5',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../erusev/parsedown-extra',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'filp/whoops' => array(
             'pretty_version' => '2.18.4',
             'version' => '2.18.4.0',
@@ -53,26 +71,6 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../lbuchs/webauthn',
             'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'parsedown/parsedown' => array(
-            'pretty_version' => '1.7.5',
-            'version' => '1.7.5.0',
-            'reference' => '6ca5690b0282544416897376abe056601847ddb3',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../parsedown/parsedown',
-            'aliases' => array(),
-            'dev_requirement' => false,
-        ),
-        'parsedown/parsedown-extra' => array(
-            'pretty_version' => 'dev-temp',
-            'version' => 'dev-temp',
-            'reference' => 'e2263e56fbc26bb7e1e0c7d9088fca9f00b3bbea',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../parsedown/parsedown-extra',
-            'aliases' => array(
-                0 => '9999999-dev',
-            ),
             'dev_requirement' => false,
         ),
         'psr/container' => array(

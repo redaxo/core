@@ -161,7 +161,7 @@ final class rex_parsedown extends ParsedownExtra
     /**
      * @return array|null
      */
-    protected function blockSetextHeader($Line, array $Block = [])
+    protected function blockSetextHeader($Line, ?array $Block = null)
     {
         $block = parent::blockSetextHeader($Line, $Block);
 
@@ -231,10 +231,12 @@ final class rex_parsedown extends ParsedownExtra
             return $block;
         }
 
-        [$level] = sscanf($block['element']['name'], 'h%d');
+        $element = rex_type::array($block['element']);
 
-        $plainText = strip_tags($this->{$block['element']['handler']}($block['element']['text']));
-        $plainText = htmlspecialchars_decode($plainText);
+        [$level] = sscanf(rex_type::string($element['name']), 'h%d');
+
+        $plainText = rex_type::string($this->element($element));
+        $plainText = htmlspecialchars_decode(strip_tags($plainText));
 
         if (!isset($block['element']['attributes']['id'])) {
             $baseId = $id = rex_string::normalize($plainText, '-');

@@ -5175,18 +5175,11 @@
     <MixedArgument>
       <code><![CDATA[$block]]></code>
       <code><![CDATA[$block]]></code>
-      <code><![CDATA[$block['element']['name']]]></code>
-      <code><![CDATA[$this->{$block['element']['handler']}($block['element']['text'])]]></code>
     </MixedArgument>
     <MixedArrayAccess>
-      <code><![CDATA[$block['element']['attributes']]]></code>
       <code><![CDATA[$block['element']['attributes']['id']]]></code>
-      <code><![CDATA[$block['element']['handler']]]></code>
-      <code><![CDATA[$block['element']['name']]]></code>
-      <code><![CDATA[$block['element']['text']]]></code>
     </MixedArrayAccess>
     <MixedArrayAssignment>
-      <code><![CDATA[$block['element']['attributes']]]></code>
       <code><![CDATA[$block['element']['attributes']['id']]]></code>
     </MixedArrayAssignment>
     <MixedArrayOffset>

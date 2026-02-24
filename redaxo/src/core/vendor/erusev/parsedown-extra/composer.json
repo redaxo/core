@@ -1,5 +1,5 @@
 {
-    "name": "parsedown/parsedown-extra",
+    "name": "erusev/parsedown-extra",
     "description": "An extension of Parsedown that adds support for Markdown Extra.",
     "keywords": ["markdown", "markdown extra", "parser", "parsedown"],
     "homepage": "https://github.com/erusev/parsedown-extra",
@@ -9,17 +9,23 @@
         {
             "name": "Emanuil Rusev",
             "email": "hello@erusev.com",
-            "homepage": "http://erusev.com"
+            "homepage": "https://erusev.com"
         }
     ],
     "require": {
-        "parsedown/parsedown": "^1.7.5"
+        "erusev/parsedown": "^1.8",
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "ext-mbstring": "*",
+        "php": ">=7.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8.35"
+        "phpunit/phpunit": "^7.5|^8.5|^9.6"
     },
     "autoload": {
-        "psr-0": {"ParsedownExtra": ""}
+        "psr-0": {
+            "ParsedownExtra": ""
+        }
     },
     "autoload-dev": {
         "psr-0": {

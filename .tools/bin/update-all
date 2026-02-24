@@ -8,8 +8,8 @@ composer outdated --ansi -d redaxo/src/core/
 sed -i '' 's/protected function execute(InputInterface $input, OutputInterface $output): int/protected function execute(InputInterface $input, OutputInterface $output)/' redaxo/src/core/vendor/symfony/console/Command/Command.php
 
 rm -rf redaxo/src/core/vendor/bin/
-rm -rf redaxo/src/core/vendor/parsedown/parsedown/.github/
-rm -rf redaxo/src/core/vendor/parsedown/parsedown-extra/test/
+rm -rf redaxo/src/core/vendor/erusev/parsedown/.github/
+rm -rf redaxo/src/core/vendor/erusev/parsedown-extra/.github/
 rm -rf redaxo/src/core/vendor/filp/whoops/.github/
 rm -rf redaxo/src/core/vendor/lbuchs/webauthn/_test/
 rm -rf redaxo/src/core/vendor/ramsey/http-range/tests/

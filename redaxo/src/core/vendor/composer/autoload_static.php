@@ -134,11 +134,11 @@ class ComposerStaticInitRedaxoCore
         array (
             'ParsedownExtra' =>
             array (
-                0 => __DIR__ . '/..' . '/parsedown/parsedown-extra',
+                0 => __DIR__ . '/..' . '/erusev/parsedown-extra',
             ),
             'Parsedown' =>
             array (
-                0 => __DIR__ . '/..' . '/parsedown/parsedown',
+                0 => __DIR__ . '/..' . '/erusev/parsedown',
             ),
         ),
     );
@@ -146,8 +146,8 @@ class ComposerStaticInitRedaxoCore
     public static $classMap = array (
         'Composer\\CaBundle\\CaBundle' => __DIR__ . '/..' . '/composer/ca-bundle/src/CaBundle.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'Parsedown' => __DIR__ . '/..' . '/parsedown/parsedown/Parsedown.php',
-        'ParsedownExtra' => __DIR__ . '/..' . '/parsedown/parsedown-extra/ParsedownExtra.php',
+        'Parsedown' => __DIR__ . '/..' . '/erusev/parsedown/Parsedown.php',
+        'ParsedownExtra' => __DIR__ . '/..' . '/erusev/parsedown-extra/ParsedownExtra.php',
         'Psr\\Container\\ContainerExceptionInterface' => __DIR__ . '/..' . '/psr/container/src/ContainerExceptionInterface.php',
         'Psr\\Container\\ContainerInterface' => __DIR__ . '/..' . '/psr/container/src/ContainerInterface.php',
         'Psr\\Container\\NotFoundExceptionInterface' => __DIR__ . '/..' . '/psr/container/src/NotFoundExceptionInterface.php',
