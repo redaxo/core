@@ -208,11 +208,9 @@ final class rex_parsedown extends ParsedownExtra
             $text = preg_replace('@(<span style="color:[^"]+">)(?:&lt;|<)\?php(?:&nbsp;|\s)@', '$1', $text, 1);
         }
 
-        $element['rawHtml'] = $text;
-        unset($element['text']);
-
         /** @psalm-suppress MixedArrayAssignment */
-        $Block['element']['element'] = $element;
+        $Block['element']['rawHtml'] = $text;
+        unset($Block['element']['element']);
 
         return $Block;
     }
