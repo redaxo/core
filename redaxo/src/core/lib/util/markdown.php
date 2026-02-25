@@ -181,15 +181,13 @@ final class rex_parsedown extends ParsedownExtra
         }
 
         /** @psalm-suppress MixedArrayAccess */
-        if ('language-php' !== ($Block['element']['text']['attributes']['class'] ?? null)) {
+        $element = rex_type::array($Block['element']['element']);
+
+        if ('language-php' !== ($element['attributes']['class'] ?? null)) {
             return $Block;
         }
 
-        /**
-         * @var string $text
-         * @psalm-suppress MixedArrayAccess
-         */
-        $text = $Block['element']['text']['text'];
+        $text = rex_type::string($element['text']);
 
         $missingPhpStart = !str_contains($text, '<?php') && !str_contains($text, '<?=');
         if ($missingPhpStart) {
@@ -210,10 +208,11 @@ final class rex_parsedown extends ParsedownExtra
             $text = preg_replace('@(<span style="color:[^"]+">)(?:&lt;|<)\?php(?:&nbsp;|\s)@', '$1', $text, 1);
         }
 
+        $element['rawHtml'] = $text;
+        unset($element['text']);
+
         /** @psalm-suppress MixedArrayAssignment */
-        $Block['element']['rawHtml'] = $text;
-        /** @psalm-suppress MixedArrayAccess */
-        unset($Block['element']['text'], $Block['element']['handler']);
+        $Block['element']['element'] = $element;
 
         return $Block;
     }
