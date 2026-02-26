@@ -34,4 +34,6 @@ $CONT->setSliceRevision($sliceRevision);
 $CONT->setFunction($function);
 $content = $CONT->getArticle($ctype);
 
-return '' != $content ? '<ul class="rex-slices">' . $content . '</ul>' : '';
+$fragment = new rex_fragment();
+$fragment->setVar('content', $content, false);
+return $fragment->parse('slices.php');
