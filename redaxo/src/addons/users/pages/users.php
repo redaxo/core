@@ -561,12 +561,12 @@ if ($SHOW) {
     $fragment->setVar('value', $query);
     $searchForm = $fragment->parse('core/form/search.php');
     $searchForm = str_replace('<input', '<input name="user_search"', $searchForm);
-    $toolbar = '<form method="POST" action="">'.$searchForm.'</form>';
+    $toolbar = '<form method="POST" action="">' . $searchForm . '</form>';
 
     // use string starting with "_" to have users without role at bottom when sorting by role ASC
     $noRole = '_no_role';
     $separator = "\0,\0";
-    if ($query == ''){
+    if ('' == $query) {
         $list = rex_list::factory('
             SELECT
                 id,
@@ -590,7 +590,7 @@ if ($SHOW) {
                 status,
                 lastlogin
             FROM ' . rex::getTable('user') . ' u
-            WHERE CONCAT(`name`, `login`) LIKE '.$db->escape('%'.$query.'%').'
+            WHERE CONCAT(`name`, `login`) LIKE ' . $db->escape('%' . $query . '%') . '
         ', defaultSort: ['name' => 'asc']);
     }
     $list->addTableAttribute('class', 'table-striped table-hover');
