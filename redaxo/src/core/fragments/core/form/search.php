@@ -22,7 +22,7 @@ if ($this->id) {
     $id = ' id="' . $this->id . '"';
 }
 
-$name = $this->name ?? '';
+$name = (string) $this->getVar('name', '');
 $name = $name ? ' name="' . $name . '"' : '';
 
 echo '<search role="search" class="' . $class . '"' . $id . '>
