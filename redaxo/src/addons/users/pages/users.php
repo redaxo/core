@@ -557,42 +557,34 @@ if ($SHOW) {
     $query = trim(rex_request('user_search', 'string', ''));
     $fragment = new rex_fragment();
     $fragment->setVar('id', 'rex-users-addon-search');
+    $fragment->setVar('name', 'user_search');
     $fragment->setVar('autofocus', !rex_request('function', 'bool'));
     $fragment->setVar('value', $query);
     $searchForm = $fragment->parse('core/form/search.php');
-    $searchForm = str_replace('<input', '<input name="user_search"', $searchForm);
     $toolbar = '<form method="POST" action="">' . $searchForm . '</form>';
+
+    $where = '';
+    if ($query) {
+        $sql = rex_sql::factory();
+        $query = $sql->escape('%' . $sql->escapeLikeWildcards($query) . '%');
+        $where = 'WHERE `name` LIKE ' . $query . ' OR `login` LIKE ' . $query;
+    }
 
     // use string starting with "_" to have users without role at bottom when sorting by role ASC
     $noRole = '_no_role';
     $separator = "\0,\0";
-    if ('' == $query) {
-        $list = rex_list::factory('
-            SELECT
-                id,
-                IF(name <> "", name, login) as name,
-                login,
-                `admin`,
-                IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "' . $separator . '") FROM ' . rex::getTable('user_role') . ' r WHERE FIND_IN_SET(r.id, u.role)), "' . $noRole . '")) as role,
-                status,
-                lastlogin
-            FROM ' . rex::getTable('user') . ' u
-        ', defaultSort: ['name' => 'asc']);
-    } else {
-        $db = rex_sql::factory();
-        $list = rex_list::factory('
-            SELECT
-                id,
-                IF(name <> "", name, login) as name,
-                login,
-                `admin`,
-                IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "' . $separator . '") FROM ' . rex::getTable('user_role') . ' r WHERE FIND_IN_SET(r.id, u.role)), "' . $noRole . '")) as role,
-                status,
-                lastlogin
-            FROM ' . rex::getTable('user') . ' u
-            WHERE CONCAT(`name`, `login`) LIKE ' . $db->escape('%' . $query . '%') . '
-        ', defaultSort: ['name' => 'asc']);
-    }
+    $list = rex_list::factory('
+        SELECT
+            id,
+            IF(name <> "", name, login) as name,
+            login,
+            `admin`,
+            IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "' . $separator . '") FROM ' . rex::getTable('user_role') . ' r WHERE FIND_IN_SET(r.id, u.role)), "' . $noRole . '")) as role,
+            status,
+            lastlogin
+        FROM ' . rex::getTable('user') . ' u
+        ' . $where . '
+    ', defaultSort: ['name' => 'asc']);
     $list->addTableAttribute('class', 'table-striped table-hover');
 
     $tdIcon = '<i class="rex-icon rex-icon-user" title="' . rex_i18n::msg('user_status_active') . '"></i>';
