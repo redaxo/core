@@ -21,7 +21,7 @@
         "psalm/plugin-phpunit": "0.19.5",
         "psalm/plugin-symfony": "v5.3.0",
         "rector/rector": "2.3.8",
-        "redaxo/php-cs-fixer-config": "2.19.0",
+        "redaxo/php-cs-fixer-config": "3.0.0",
         "redaxo/psalm-plugin": "2.2.0",
         "shipmonk/phpstan-baseline-per-identifier": "2.3.0",
         "vimeo/psalm": "6.15.1"
