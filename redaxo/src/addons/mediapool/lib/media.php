@@ -107,9 +107,7 @@ class rex_media
         return static::get((string) $media->getValue('filename'));
     }
 
-    /**
-     * @return list<static>
-     */
+    /** @return list<static> */
     public static function getRootMedia()
     {
         /** @var Closure(string):static $getInstance */
@@ -128,138 +126,104 @@ class rex_media
         });
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @return rex_media_category|null
-     */
+    /** @return rex_media_category|null */
     public function getCategory()
     {
         return rex_media_category::get($this->getCategoryId());
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getCategoryId()
     {
         return $this->category_id;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTitle()
     {
         return $this->title;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getFileName()
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getOriginalFileName()
     {
         return $this->originalname;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getUrl()
     {
         $url = rex_extension::registerPoint(new rex_extension_point('MEDIA_URL_REWRITE', '', ['media' => $this]));
         return $url ?: rex_url::media($this->getFileName());
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public function getWidth()
     {
         return $this->width;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public function getHeight()
     {
         return $this->height;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getSize()
     {
         return $this->size;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getFormattedSize()
     {
         return rex_formatter::bytes($this->getSize());
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getUpdateUser()
     {
         return $this->updateuser;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getUpdateDate()
     {
         return $this->updatedate;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getCreateUser()
     {
         return $this->createuser;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getCreateDate()
     {
         return $this->createdate;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function toImage(array $params = [])
     {
         if (!$this->isImage()) {
@@ -301,9 +265,7 @@ class rex_media
         return sprintf('<a href="%s" title="%s"%s>%s</a>', $this->getUrl(), $this->getValue('med_description'), $attributes, $this->getFileName());
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isImage()
     {
         return self::isImageType($this->getExtension());
@@ -311,67 +273,51 @@ class rex_media
 
     // new functions by vscope
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getExtension()
     {
         return rex_file::extension($this->name);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function fileExists()
     {
         return is_file(rex_path::media($this->getFileName()));
     }
 
     // allowed filetypes
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public static function getDocTypes()
     {
         return rex_addon::get('mediapool')->getProperty('allowed_doctypes');
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function isDocType($type)
     {
         return in_array($type, self::getDocTypes());
     }
 
     // allowed image upload types
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public static function getImageTypes()
     {
         return rex_addon::get('mediapool')->getProperty('image_extensions');
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function isImageType($extension)
     {
         return in_array($extension, self::getImageTypes());
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasValue($value)
     {
         return isset($this->$value) || isset($this->{'med_' . $value});
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public function getValue($value)
     {
         // damit alte rex_article felder wie copyright, description

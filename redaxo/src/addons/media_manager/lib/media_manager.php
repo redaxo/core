@@ -73,9 +73,7 @@ class rex_media_manager
         return $manager;
     }
 
-    /**
-     * @return rex_managed_media
-     */
+    /** @return rex_managed_media */
     public function getMedia()
     {
         return $this->media;
@@ -187,9 +185,7 @@ class rex_media_manager
         return $effects;
     }
 
-    /**
-     * Set base cache directory for generated images.
-     */
+    /** Set base cache directory for generated images. */
     public static function setCacheDirectory(string $path): void
     {
         self::$cacheDirectory = rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
@@ -204,9 +200,7 @@ class rex_media_manager
         $this->cachePath = $path;
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public function getCachePath()
     {
         return $this->cachePath;
@@ -221,9 +215,7 @@ class rex_media_manager
         $this->useCache = $useCache;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isCached()
     {
         $cacheFile = $this->getCacheFilename();
@@ -255,9 +247,7 @@ class rex_media_manager
         return $cachetime >= $filetime;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getCacheFilename()
     {
         assert(null !== $this->cachePath);
@@ -265,17 +255,13 @@ class rex_media_manager
         return $this->cachePath . $this->type . '/' . $this->originalFilename;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getHeaderCacheFilename()
     {
         return $this->getCacheFilename() . '.header';
     }
 
-    /**
-     * @return array{media_path: ?string, media_filename: string, format: string, headers: array<string, string>}|null
-     */
+    /** @return array{media_path: ?string, media_filename: string, format: string, headers: array<string, string>}|null */
     private function getHeaderCache()
     {
         if ($this->cache) {
@@ -340,9 +326,7 @@ class rex_media_manager
         return $counter;
     }
 
-    /**
-     * @return never
-     */
+    /** @return never */
     public function sendMedia()
     {
         rex_extension::registerPoint(new rex_extension_point('MEDIA_MANAGER_BEFORE_SEND', $this, []));
@@ -393,9 +377,7 @@ class rex_media_manager
         exit;
     }
 
-    /**
-     * @return array<class-string<rex_effect_abstract>, string>
-     */
+    /** @return array<class-string<rex_effect_abstract>, string> */
     public static function getSupportedEffects()
     {
         $dirs = [
@@ -437,9 +419,7 @@ class rex_media_manager
         );
     }
 
-    /**
-     * @return class-string<rex_effect_abstract>
-     */
+    /** @return class-string<rex_effect_abstract> */
     private static function getEffectClass(string $effectFile): string
     {
         /** @var class-string<rex_effect_abstract> */
@@ -484,17 +464,13 @@ class rex_media_manager
         return $warning;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function mediaUpdated(rex_extension_point $ep)
     {
         self::deleteCache((string) $ep->getParam('filename'));
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function init()
     {
         // --- handle image request
@@ -513,17 +489,13 @@ class rex_media_manager
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getMediaFile()
     {
         return rex_path::basename(rex_get('rex_media_file', 'string'));
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getMediaType()
     {
         $type = rex_get('rex_media_type', 'string');
@@ -585,9 +557,7 @@ class rex_media_manager
         ]));
     }
 
-    /**
-     * @return array<string, int>
-     */
+    /** @return array<string, int> */
     private static function getTypeCache(): array
     {
         $file = rex_path::addonCache('media_manager', 'types.cache');

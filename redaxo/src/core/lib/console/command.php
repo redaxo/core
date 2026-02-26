@@ -13,9 +13,7 @@ abstract class rex_console_command extends Command
     /** @var rex_package|null */
     protected $package;
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function setPackage(?rex_package $package = null)
     {
         $this->package = $package;
@@ -23,9 +21,7 @@ abstract class rex_console_command extends Command
         return $this;
     }
 
-    /**
-     * @return rex_package|null In core commands it returns `null`, otherwise the corresponding package object
-     */
+    /** @return rex_package|null In core commands it returns `null`, otherwise the corresponding package object */
     public function getPackage()
     {
         return $this->package;
@@ -48,9 +44,7 @@ abstract class rex_console_command extends Command
         }
     }
 
-    /**
-     * @return SymfonyStyle
-     */
+    /** @return SymfonyStyle */
     protected function getStyle(InputInterface $input, OutputInterface $output)
     {
         return new SymfonyStyle($input, $output);

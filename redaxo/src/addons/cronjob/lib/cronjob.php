@@ -62,9 +62,7 @@ abstract class rex_cronjob
         return $this->params[$key] ?? $default;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function getParams()
     {
         return $this->params;
@@ -98,56 +96,42 @@ abstract class rex_cronjob
         $this->message = $message;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMessage()
     {
         return $this->message;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasMessage()
     {
         return !empty($this->message);
     }
 
-    /**
-     * @return bool true on successfull execution, false on error
-     */
+    /** @return bool true on successfull execution, false on error */
     abstract public function execute();
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTypeName()
     {
         // returns the name of the cronjob type
         return $this->getType();
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     final public function getType()
     {
         return static::class;
     }
 
-    /**
-     * @return list<'frontend'|'backend'|'script'>
-     */
+    /** @return list<'frontend'|'backend'|'script'> */
     public function getEnvironments()
     {
         // returns an array of environments in which the cronjob is available
         return ['frontend', 'backend', 'script'];
     }
 
-    /**
-     * @return list<array<string, mixed>>
-     */
+    /** @return list<array<string, mixed>> */
     public function getParamFields()
     {
         // returns an array of parameters which are required for the cronjob

@@ -5,9 +5,7 @@
  */
 class rex_exception extends Exception
 {
-    /**
-     * @param string $message
-     */
+    /** @param string $message */
     public function __construct($message, ?Exception $previous = null)
     {
         parent::__construct($message, 0, $previous);
@@ -29,17 +27,13 @@ class rex_sql_exception extends rex_exception
         $this->sql = $sql;
     }
 
-    /**
-     * @return rex_sql|null
-     */
+    /** @return rex_sql|null */
     public function getSql()
     {
         return $this->sql;
     }
 
-    /**
-     * Returns the mysql native error code.
-     */
+    /** Returns the mysql native error code. */
     public function getErrorCode(): ?int
     {
         $previous = $this->getPrevious();
@@ -74,18 +68,14 @@ class rex_http_exception extends rex_exception
     /** @var string */
     private $httpCode;
 
-    /**
-     * @param string $httpCode
-     */
+    /** @param string $httpCode */
     public function __construct(Exception $cause, $httpCode)
     {
         parent::__construct($cause->getMessage(), $cause);
         $this->httpCode = $httpCode;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getHttpCode()
     {
         return $this->httpCode;

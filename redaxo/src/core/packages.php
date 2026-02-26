@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Packages loading.
- */
+/** Packages loading. */
 
 rex_addon::initialize(!rex::isSetup());
 

@@ -10,9 +10,7 @@ class rex_metainfo_clang_handler extends rex_metainfo_handler
     public const PREFIX = 'clang_';
     public const CONTAINER = 'rex-clang-metainfo';
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function renderToggleButton(rex_extension_point $ep)
     {
         $fields = parent::getSqlFields(self::PREFIX);
@@ -25,9 +23,7 @@ class rex_metainfo_clang_handler extends rex_metainfo_handler
         return $ep->getSubject();
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function handleSave(array $params, rex_sql $sqlFields)
     {
         if ('post' != rex_request_method() || !isset($params['id'])) {
@@ -51,9 +47,7 @@ class rex_metainfo_clang_handler extends rex_metainfo_handler
         return $params;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function buildFilterCondition(array $params) {}
 
     public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType)

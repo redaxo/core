@@ -85,17 +85,13 @@ class rex_plugin extends rex_package implements rex_plugin_interface
         return rex_addon::exists($addon) && rex_addon::get($addon)->pluginExists($plugin);
     }
 
-    /**
-     * @return rex_addon
-     */
+    /** @return rex_addon */
     public function getAddon()
     {
         return $this->addon;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getPackageId()
     {
         return $this->getAddon()->getName() . '/' . $this->getName();

@@ -245,9 +245,7 @@ class rex_install_webservice
         }
     }
 
-    /**
-     * Configures secure SSL options for redaxo.org connections.
-     */
+    /** Configures secure SSL options for redaxo.org connections. */
     private static function configureSecureSsl(rex_socket $socket): void
     {
         $socket->setOptions(['ssl' => [

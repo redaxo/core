@@ -14,9 +14,7 @@ class rex_setup
     public const MIN_MYSQL_VERSION = '5.6';
     public const MIN_MARIADB_VERSION = '10.1';
 
-    /**
-     * no-password placeholder required to support empty passwords/clearing the password.
-     */
+    /** no-password placeholder required to support empty passwords/clearing the password. */
     public const DEFAULT_DUMMY_PASSWORD = '-REDAXO-DEFAULT-DUMMY-PASSWORD-';
 
     public const DB_MODE_SETUP_NO_OVERRIDE = 0;
@@ -321,9 +319,7 @@ class rex_setup
         }
     }
 
-    /**
-     * @return string|false Single-User-Setup URL or `false` on failure
-     */
+    /** @return string|false Single-User-Setup URL or `false` on failure */
     public static function startWithToken()
     {
         $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
@@ -392,9 +388,7 @@ class rex_setup
         return $context;
     }
 
-    /**
-     * Mark the setup as completed.
-     */
+    /** Mark the setup as completed. */
     public static function markSetupCompleted(): bool
     {
         $configFile = rex_path::coreData('config.yml');

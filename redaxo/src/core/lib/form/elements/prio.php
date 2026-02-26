@@ -52,17 +52,13 @@ class rex_form_prio_element extends rex_form_select_element
         $this->labelField = $labelField;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setLabelCallback(callable $labelCallback)
     {
         $this->labelCallback = $labelCallback;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setWhereCondition($whereCondition)
     {
         $this->whereCondition = $whereCondition;
@@ -117,9 +113,7 @@ class rex_form_prio_element extends rex_form_select_element
         return parent::formatElement();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function organizePriorities(rex_extension_point $ep)
     {
         if ($this->table->equals($ep->getParam('form'))) {

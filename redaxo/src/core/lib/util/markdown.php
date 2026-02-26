@@ -16,9 +16,7 @@ class rex_markdown
 
     private function __construct() {}
 
-    /**
-     * @return static
-     */
+    /** @return static */
     public static function factory()
     {
         $class = static::getFactoryClass();
@@ -133,9 +131,7 @@ final class rex_parsedown extends ParsedownExtra
     /** @var array<string, true> */
     private $ids = [];
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function text($text)
     {
         // https://github.com/erusev/parsedown-extra/issues/173
@@ -148,9 +144,7 @@ final class rex_parsedown extends ParsedownExtra
         }
     }
 
-    /**
-     * @return array|null
-     */
+    /** @return array|null */
     protected function blockHeader($Line)
     {
         $block = parent::blockHeader($Line);
@@ -158,9 +152,7 @@ final class rex_parsedown extends ParsedownExtra
         return $this->handleHeader($block);
     }
 
-    /**
-     * @return array|null
-     */
+    /** @return array|null */
     protected function blockSetextHeader($Line, ?array $Block = null)
     {
         $block = parent::blockSetextHeader($Line, $Block);
@@ -168,9 +160,7 @@ final class rex_parsedown extends ParsedownExtra
         return $this->handleHeader($block);
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     protected function blockFencedCodeComplete($Block)
     {
         /** @var array $Block */
@@ -215,9 +205,7 @@ final class rex_parsedown extends ParsedownExtra
         return $Block;
     }
 
-    /**
-     * @return array|null
-     */
+    /** @return array|null */
     private function handleHeader(?array $block = null)
     {
         if (!$this->generateToc) {

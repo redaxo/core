@@ -72,9 +72,7 @@ final class rex_formatter_test extends TestCase
         self::assertSame($expected, $string);
     }
 
-    /**
-     * @return list<array{0: string, 1: string|int|DateTimeInterface|null, 2?: int|array{int, int}|string|null}>
-     */
+    /** @return list<array{0: string, 1: string|int|DateTimeInterface|null, 2?: int|array{int, int}|string|null}> */
     public static function dataIntlDateTime(): array
     {
         return [
@@ -102,9 +100,7 @@ final class rex_formatter_test extends TestCase
         self::assertSame($expected, $string);
     }
 
-    /**
-     * @return list<array{0: string, 1: string|int|DateTimeInterface|null, 2?: int|string|null}>
-     */
+    /** @return list<array{0: string, 1: string|int|DateTimeInterface|null, 2?: int|string|null}> */
     public static function dataIntlDate(): array
     {
         return [
@@ -130,9 +126,7 @@ final class rex_formatter_test extends TestCase
         self::assertSame($expected, $string);
     }
 
-    /**
-     * @return list<array{0: string, 1: string|int|DateTimeInterface|null, 2?: int|string|null}>
-     */
+    /** @return list<array{0: string, 1: string|int|DateTimeInterface|null, 2?: int|string|null}> */
     public static function dataIntlTime(): array
     {
         return [

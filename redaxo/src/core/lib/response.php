@@ -60,9 +60,7 @@ class rex_response
         return self::$httpStatus;
     }
 
-    /**
-     * Returns a request save NONCE für CSP Headers and Implemntations.
-     */
+    /** Returns a request save NONCE für CSP Headers and Implemntations. */
     public static function getNonce(): string
     {
         if (!self::$nonce) {
@@ -83,9 +81,7 @@ class rex_response
         self::$additionalHeaders[$name] = $value;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     private static function sendAdditionalHeaders()
     {
         foreach (self::$additionalHeaders as $name => $value) {
@@ -110,9 +106,7 @@ class rex_response
         ];
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     private static function sendPreloadHeaders()
     {
         foreach (self::$preloadFiles as $preloadFile) {
@@ -616,9 +610,7 @@ class rex_response
         return md5(preg_replace('@<!--DYN-->.*<!--/DYN-->@U', '', $content));
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function enforceHttps()
     {
         if (!rex_request::isHttps()) {

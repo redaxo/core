@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Verwaltung der Content Sprachen.
- */
+/** Verwaltung der Content Sprachen. */
 
 $content = '';
 $message = '';

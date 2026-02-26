@@ -546,9 +546,7 @@ class rex_command_setup_run extends rex_console_command implements rex_command_o
         return 0;
     }
 
-    /**
-     * @return bool|string false|utf8|utf8mb4
-     */
+    /** @return bool|string false|utf8|utf8mb4 */
     private function getDbCharset()
     {
         $charset = $this->input->getOption('db-charset');

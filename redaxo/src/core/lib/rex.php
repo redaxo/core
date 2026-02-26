@@ -315,9 +315,7 @@ class rex
         return PHP_SESSION_ACTIVE == session_status() && rex_session('safemode', 'boolean', false);
     }
 
-    /**
-     * Returns if the live mode is active.
-     */
+    /** Returns if the live mode is active. */
     public static function isLiveMode(): bool
     {
         return (bool) self::getProperty('live_mode');
@@ -512,9 +510,7 @@ class rex
         return rex_type::array(self::getConfig('package-config', []));
     }
 
-    /**
-     * @return list<non-empty-string>
-     */
+    /** @return list<non-empty-string> */
     public static function getPackageOrder(): array
     {
         return rex_type::array(self::getConfig('package-order', []));
@@ -589,9 +585,7 @@ class rex
         return null;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public static function loadConfigYml(): void
     {
         $cacheFile = rex_path::coreCache('config.yml.cache');

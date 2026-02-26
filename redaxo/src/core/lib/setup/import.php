@@ -7,9 +7,7 @@
  */
 class rex_setup_importer
 {
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function updateFromPrevious()
     {
         // ----- vorhandenen seite updaten
@@ -68,18 +66,14 @@ class rex_setup_importer
         return $errMsg;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function databaseAlreadyExists()
     {
         // ----- db schon vorhanden, nichts tun
         return self::reinstallPackages();
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function overrideExisting()
     {
         // ----- volle Datenbank, alte DB löschen / drop
@@ -105,9 +99,7 @@ class rex_setup_importer
         return $errMsg;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function prepareEmptyDb()
     {
         // ----- leere Datenbank neu einrichten
@@ -126,9 +118,7 @@ class rex_setup_importer
         return $errMsg;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function verifyDbSchema()
     {
         $errMsg = '';
@@ -152,9 +142,7 @@ class rex_setup_importer
         }, '>=');
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private static function getRequiredTables()
     {
         return [

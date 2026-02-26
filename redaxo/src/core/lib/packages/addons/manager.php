@@ -7,9 +7,7 @@
  */
 class rex_addon_manager extends rex_package_manager
 {
-    /**
-     * @param rex_addon $addon Addon
-     */
+    /** @param rex_addon $addon Addon */
     protected function __construct(rex_addon $addon)
     {
         parent::__construct($addon, 'addon_');

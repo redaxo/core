@@ -7,9 +7,7 @@
  */
 final class rex_login_policy
 {
-    /**
-     * @param array<string, int|bool> $options
-     */
+    /** @param array<string, int|bool> $options */
     public function __construct(
         private array $options,
     ) {}

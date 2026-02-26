@@ -27,9 +27,7 @@ class rex_be_controller
         self::$pageObject = null;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getCurrentPage()
     {
         return self::$page;
@@ -50,9 +48,7 @@ class rex_be_controller
         return self::$pageParts[$part] ?? $default;
     }
 
-    /**
-     * @return rex_be_page|null
-     */
+    /** @return rex_be_page|null */
     public static function getCurrentPageObject()
     {
         if (!self::$pageObject) {
@@ -90,9 +86,7 @@ class rex_be_controller
         return $obj;
     }
 
-    /**
-     * @return array<string, rex_be_page>
-     */
+    /** @return array<string, rex_be_page> */
     public static function getPages()
     {
         return self::$pages;
@@ -107,9 +101,7 @@ class rex_be_controller
         self::$pages = $pages;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getPageTitle()
     {
         $parts = [];
@@ -126,9 +118,7 @@ class rex_be_controller
         return implode(' · ', $parts);
     }
 
-    /**
-     * @return rex_be_page
-     */
+    /** @return rex_be_page */
     public static function getSetupPage()
     {
         $page = new rex_be_page('setup', rex_i18n::msg('setup'));
@@ -136,9 +126,7 @@ class rex_be_controller
         return $page;
     }
 
-    /**
-     * @return rex_be_page
-     */
+    /** @return rex_be_page */
     public static function getLoginPage()
     {
         $page = new rex_be_page('login', 'Login');
@@ -147,9 +135,7 @@ class rex_be_controller
         return $page;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function appendLoggedInPages()
     {
         self::$pages['profile'] = (new rex_be_page('profile', rex_i18n::msg('profile')))
@@ -203,9 +189,7 @@ class rex_be_controller
             ->setIcon('rex-icon rex-icon-package-addon');
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function appendPackagePages()
     {
         $insertPages = [];
@@ -313,9 +297,7 @@ class rex_be_controller
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     private static function pageAddProperties(rex_be_page $page, array $properties, rex_package $package)
     {
         foreach ($properties as $key => $value) {
@@ -366,9 +348,7 @@ class rex_be_controller
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function checkPagePermissions(rex_user $user)
     {
         $check = static function (rex_be_page $page) use (&$check, $user) {

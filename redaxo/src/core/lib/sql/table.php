@@ -53,9 +53,7 @@ class rex_sql_table
 
     private static ?string $explicitCharset = null;
 
-    /**
-     * @param positive-int $db
-     */
+    /** @param positive-int $db */
     private function __construct(string $name, int $db = 1)
     {
         $this->db = $db;
@@ -189,17 +187,13 @@ class rex_sql_table
         self::baseClearInstance($key);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function exists()
     {
         return !$this->new;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return $this->name;
@@ -241,9 +235,7 @@ class rex_sql_table
         return $this->columns[$name];
     }
 
-    /**
-     * @return array<string, rex_sql_column>
-     */
+    /** @return array<string, rex_sql_column> */
     public function getColumns()
     {
         return $this->columns;
@@ -294,9 +286,7 @@ class rex_sql_table
         return $this;
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function ensurePrimaryIdColumn()
     {
         return $this
@@ -373,9 +363,7 @@ class rex_sql_table
         return $this;
     }
 
-    /**
-     * @return non-empty-list<string>|null Column names
-     */
+    /** @return non-empty-list<string>|null Column names */
     public function getPrimaryKey()
     {
         return $this->primaryKey ?: null;
@@ -429,17 +417,13 @@ class rex_sql_table
         return $this->indexes[$name];
     }
 
-    /**
-     * @return array<string, rex_sql_index>
-     */
+    /** @return array<string, rex_sql_index> */
     public function getIndexes()
     {
         return $this->indexes;
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function addIndex(rex_sql_index $index)
     {
         $name = $index->getName();
@@ -453,9 +437,7 @@ class rex_sql_table
         return $this;
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function ensureIndex(rex_sql_index $index)
     {
         $name = $index->getName();
@@ -546,17 +528,13 @@ class rex_sql_table
         return $this->foreignKeys[$name];
     }
 
-    /**
-     * @return array<string, rex_sql_foreign_key>
-     */
+    /** @return array<string, rex_sql_foreign_key> */
     public function getForeignKeys()
     {
         return $this->foreignKeys;
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function addForeignKey(rex_sql_foreign_key $foreignKey)
     {
         $name = $foreignKey->getName();
@@ -570,9 +548,7 @@ class rex_sql_table
         return $this;
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function ensureForeignKey(rex_sql_foreign_key $foreignKey)
     {
         $name = $foreignKey->getName();

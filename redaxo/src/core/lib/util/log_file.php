@@ -74,9 +74,7 @@ class rex_log_file implements Iterator
         fwrite($this->file, new rex_log_entry(time(), $data) . "\n");
     }
 
-    /**
-     * @return rex_log_entry
-     */
+    /** @return rex_log_entry */
     #[ReturnTypeWillChange]
     public function current()
     {
@@ -87,9 +85,7 @@ class rex_log_file implements Iterator
         return rex_log_entry::createFromString($this->currentLine);
     }
 
-    /**
-     * Reads the log file backwards line by line (each call reads one line).
-     */
+    /** Reads the log file backwards line by line (each call reads one line). */
     #[ReturnTypeWillChange]
     public function next()
     {
@@ -159,9 +155,7 @@ class rex_log_file implements Iterator
         $this->currentLine = $line;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     #[ReturnTypeWillChange]
     public function key()
     {
@@ -217,9 +211,7 @@ class rex_log_entry
     /** @var list<string> */
     private array $data;
 
-    /**
-     * @param list<string|int> $data Log data
-     */
+    /** @param list<string|int> $data Log data */
     public function __construct(int $timestamp, array $data)
     {
         $this->timestamp = $timestamp;
@@ -272,9 +264,7 @@ class rex_log_entry
         return $this->data;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function __toString()
     {
         $data = array_map(static function ($part) {

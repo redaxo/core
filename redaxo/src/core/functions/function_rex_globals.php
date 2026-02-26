@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Getter functions for the superglobals.
- */
+/** Getter functions for the superglobals. */
 
 /**
  * Returns the variable $varname of $_GET and casts the value.

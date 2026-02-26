@@ -32,9 +32,7 @@ class rex_sql_column
         return $this;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isModified()
     {
         return $this->modified;
@@ -52,9 +50,7 @@ class rex_sql_column
         return $this->setModified(true);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return $this->name;
@@ -72,9 +68,7 @@ class rex_sql_column
         return $this->setModified(true);
     }
 
-    /**
-     * @return string The column type, including its size, e.g. int(10) or varchar(255)
-     */
+    /** @return string The column type, including its size, e.g. int(10) or varchar(255) */
     public function getType()
     {
         return $this->type;
@@ -92,9 +86,7 @@ class rex_sql_column
         return $this->setModified(true);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isNullable()
     {
         return $this->nullable;
@@ -112,9 +104,7 @@ class rex_sql_column
         return $this->setModified(true);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public function getDefault()
     {
         return $this->default;
@@ -132,9 +122,7 @@ class rex_sql_column
         return $this->setModified(true);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public function getExtra()
     {
         return $this->extra;
@@ -152,17 +140,13 @@ class rex_sql_column
         return $this->setModified(true);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public function getComment()
     {
         return $this->comment;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function equals(self $column)
     {
         return

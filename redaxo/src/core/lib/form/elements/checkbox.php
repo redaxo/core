@@ -30,9 +30,7 @@ class rex_form_checkbox_element extends rex_form_options_element
         return $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         $values = explode('|', trim($this->getValue() ?? '', '|'));

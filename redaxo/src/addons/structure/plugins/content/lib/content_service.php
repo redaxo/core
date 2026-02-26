@@ -5,9 +5,7 @@
  */
 class rex_content_service
 {
-    /**
-     * @throws rex_api_exception
-     */
+    /** @throws rex_api_exception */
     public static function addSlice(int $articleId, int $clangId, int $ctypeId, int $moduleId, array $data = []): string
     {
         $data['revision'] ??= 0;
@@ -194,9 +192,7 @@ class rex_content_service
         return 1 == $curr->getRows();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function sliceStatus(int $sliceId, int $status)
     {
         $sql = rex_sql::factory();
@@ -376,9 +372,7 @@ class rex_content_service
         return true;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getUser()
     {
         return rex::getUser()?->getLogin() ?? rex::getEnvironment();

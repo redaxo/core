@@ -25,33 +25,25 @@ class rex_structure_perm extends rex_complex_perm
         return false;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasStructurePerm()
     {
         return $this->hasAll() || count($this->perms) > 0;
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function getMountpoints()
     {
         return $this->hasAll() ? [] : $this->perms;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasMountpoints()
     {
         return !$this->hasAll() && count($this->perms) > 0;
     }
 
-    /**
-     * @return list<rex_category>
-     */
+    /** @return list<rex_category> */
     public function getMountpointCategories(): array
     {
         if ($this->hasAll()) {
@@ -83,9 +75,7 @@ class rex_structure_perm extends rex_complex_perm
         return $categories;
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public static function getFieldParams()
     {
         return [

@@ -378,18 +378,14 @@ class rex_category_service
         return $catStatusTypes;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function nextStatus($currentStatus)
     {
         $catStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($catStatusTypes);
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function prevStatus($currentStatus)
     {
         $catStatusTypes = self::statusTypes();
@@ -572,9 +568,7 @@ class rex_category_service
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getUser()
     {
         return rex::getUser()?->getLogin() ?? rex::getEnvironment();

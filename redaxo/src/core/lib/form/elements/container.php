@@ -86,9 +86,7 @@ class rex_form_container_element extends rex_form_element
         return $this->fields;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function prepareInnerFields()
     {
         $values = $this->getValue();
@@ -116,9 +114,7 @@ class rex_form_container_element extends rex_form_element
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         $this->prepareInnerFields();
@@ -147,17 +143,13 @@ class rex_form_container_element extends rex_form_element
         return $format;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getFragment()
     {
         return 'core/form/container.php';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getSaveValue()
     {
         $this->prepareInnerFields();

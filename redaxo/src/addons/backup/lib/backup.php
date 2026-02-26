@@ -10,9 +10,7 @@ class rex_backup
     public const IMPORT_EVENT_PRE = 3;
     public const IMPORT_EVENT_POST = 4;
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getDir()
     {
         $dir = rex_path::addonData('backup');
@@ -21,9 +19,7 @@ class rex_backup
         return $dir;
     }
 
-    /**
-     * @param self::IMPORT_* $importType
-     */
+    /** @param self::IMPORT_* $importType */
     public static function isFilenameValid(int $importType, string $filename): bool
     {
         if (self::IMPORT_ARCHIVE === $importType) {
@@ -461,9 +457,7 @@ class rex_backup
         closedir($handle);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public static function getTables()
     {
         $tables = [];

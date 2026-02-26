@@ -5,17 +5,13 @@
  */
 final class rex_ctype
 {
-    /**
-     * @param positive-int $id
-     */
+    /** @param positive-int $id */
     private function __construct(
         private int $id,
         private string $name,
     ) {}
 
-    /**
-     * @return positive-int
-     */
+    /** @return positive-int */
     public function getId(): int
     {
         return $this->id;
@@ -26,9 +22,7 @@ final class rex_ctype
         return $this->name;
     }
 
-    /**
-     * @return list<rex_ctype>
-     */
+    /** @return list<rex_ctype> */
     public static function forTemplate(int $templateId): array
     {
         $sql = rex_sql::factory();

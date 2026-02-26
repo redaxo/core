@@ -83,9 +83,7 @@ class rex_stream
         return $path;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/streamwrapper.stream-open.php
-     */
+    /** @see https://www.php.net/manual/en/streamwrapper.stream-open.php */
     public function stream_open(string $path, string $mode, int $options, ?string &$openedPath): bool
     {
         if (!isset(self::$nextContent[$path]) || !is_string(self::$nextContent[$path])) {
@@ -99,9 +97,7 @@ class rex_stream
         return true;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/streamwrapper.stream-read.php
-     */
+    /** @see https://www.php.net/manual/en/streamwrapper.stream-read.php */
     public function stream_read(int $count): string
     {
         $ret = substr($this->content, $this->position, $count);
@@ -109,17 +105,13 @@ class rex_stream
         return $ret;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/streamwrapper.stream-eof.php
-     */
+    /** @see https://www.php.net/manual/en/streamwrapper.stream-eof.php */
     public function stream_eof(): bool
     {
         return $this->position >= strlen($this->content);
     }
 
-    /**
-     * @see https://www.php.net/manual/en/streamwrapper.stream-seek.php
-     */
+    /** @see https://www.php.net/manual/en/streamwrapper.stream-seek.php */
     public function stream_seek(int $offset, int $whence = SEEK_SET): bool
     {
         switch ($whence) {
@@ -137,25 +129,19 @@ class rex_stream
         }
     }
 
-    /**
-     * @see https://www.php.net/manual/en/streamwrapper.stream-set-option.php
-     */
+    /** @see https://www.php.net/manual/en/streamwrapper.stream-set-option.php */
     public function stream_set_option(): bool
     {
         return false;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/streamwrapper.stream-tell.php
-     */
+    /** @see https://www.php.net/manual/en/streamwrapper.stream-tell.php */
     public function stream_tell(): int
     {
         return $this->position;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/streamwrapper.stream-flush.php
-     */
+    /** @see https://www.php.net/manual/en/streamwrapper.stream-flush.php */
     public function stream_flush(): bool
     {
         return true;

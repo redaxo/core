@@ -7,9 +7,7 @@
  */
 class rex_api_user_session_status extends rex_api_function
 {
-    /**
-     * @return never
-     */
+    /** @return never */
     public function execute()
     {
         $user = rex::getUser();

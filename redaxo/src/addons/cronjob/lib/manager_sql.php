@@ -18,17 +18,13 @@ class rex_cronjob_manager_sql
         $this->sql = rex_sql::factory();
     }
 
-    /**
-     * @return self
-     */
+    /** @return self */
     public static function factory(?rex_cronjob_manager $manager = null)
     {
         return new self($manager);
     }
 
-    /**
-     * @return rex_cronjob_manager
-     */
+    /** @return rex_cronjob_manager */
     public function getManager()
     {
         if (!is_object($this->manager)) {
@@ -37,9 +33,7 @@ class rex_cronjob_manager_sql
         return $this->manager;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasManager()
     {
         return is_object($this->manager);
@@ -54,17 +48,13 @@ class rex_cronjob_manager_sql
         $this->getManager()->setMessage($message);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMessage()
     {
         return $this->getManager()->getMessage();
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasMessage()
     {
         return $this->getManager()->hasMessage();
@@ -306,9 +296,7 @@ class rex_cronjob_manager_sql
         return $success;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public function getMinNextTime()
     {
         $this->sql->setQuery('
@@ -342,9 +330,7 @@ class rex_cronjob_manager_sql
         return true;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public static function calculateNextTime(array $interval)
     {
         if (empty($interval['minutes']) || empty($interval['hours']) || empty($interval['days']) || empty($interval['weekdays']) || empty($interval['months'])) {

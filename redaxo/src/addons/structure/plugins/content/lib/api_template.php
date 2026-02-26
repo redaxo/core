@@ -16,9 +16,7 @@ class rex_template
         $this->id = (int) $templateId;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function getDefaultId()
     {
         return rex_config::get('structure/content', 'default_template_id', 1);
@@ -38,9 +36,7 @@ class rex_template
         return null;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getId()
     {
         return $this->id;
@@ -57,9 +53,7 @@ class rex_template
         return $this->key;
     }
 
-    /**
-     * @return false|string
-     */
+    /** @return false|string */
     public function getFile()
     {
         if ($this->getId() < 1) {
@@ -99,9 +93,7 @@ class rex_template
         return rex_path::addonCache('structure', 'templates');
     }
 
-    /**
-     * @return false|string|null
-     */
+    /** @return false|string|null */
     public function getTemplate()
     {
         $file = $this->getFile();
@@ -190,9 +182,7 @@ class rex_template
         return $templates;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function hasModule(array $templateAttributes, $ctype, $moduleId)
     {
         $templateModules = $templateAttributes['modules'] ?? [];
@@ -203,9 +193,7 @@ class rex_template
         return is_array($templateModules[$ctype]) && in_array($moduleId, $templateModules[$ctype]);
     }
 
-    /**
-     * @return array<int, string>
-     */
+    /** @return array<int, string> */
     private static function getKeyMapping(): array
     {
         static $mapping;
@@ -226,17 +214,13 @@ class rex_template
         return $mapping = rex_file::getCache($file);
     }
 
-    /**
-     * @return list<rex_ctype>
-     */
+    /** @return list<rex_ctype> */
     public function getCtypes(): array
     {
         return rex_ctype::forTemplate($this->id);
     }
 
-    /**
-     * @return false|string
-     */
+    /** @return false|string */
     public static function templateIsInUse(int $templateId, string $msgKey)
     {
         $check = rex_sql::factory();

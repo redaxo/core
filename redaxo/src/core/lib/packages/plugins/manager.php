@@ -7,9 +7,7 @@
  */
 class rex_plugin_manager extends rex_package_manager
 {
-    /**
-     * @param rex_plugin $plugin Plugin
-     */
+    /** @param rex_plugin $plugin Plugin */
     protected function __construct(rex_plugin $plugin)
     {
         parent::__construct($plugin, 'plugin_');

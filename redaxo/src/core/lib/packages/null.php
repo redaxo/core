@@ -21,9 +21,7 @@ abstract class rex_null_package implements rex_package_interface
         return static::class;
     }
 
-    /**
-     * @return rex_null_addon
-     */
+    /** @return rex_null_addon */
     public function getAddon()
     {
         return rex_null_addon::getInstance();

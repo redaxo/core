@@ -68,17 +68,13 @@ class rex_input_time extends rex_input
         parent::setAttribute($name, $value);
     }
 
-    /**
-     * @return rex_select
-     */
+    /** @return rex_select */
     public function getHourSelect()
     {
         return $this->hourSelect;
     }
 
-    /**
-     * @return rex_select
-     */
+    /** @return rex_select */
     public function getMinuteSelect()
     {
         return $this->minuteSelect;

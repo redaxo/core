@@ -19,9 +19,7 @@
  */
 class rex_var_article extends rex_var
 {
-    /**
-     * Werte für die Ausgabe.
-     */
+    /** Werte für die Ausgabe. */
     protected function getOutput()
     {
         $id = $this->getParsedArg('id', 0, true);
@@ -49,9 +47,7 @@ class rex_var_article extends rex_var
         return false;
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public static function getArticleValue($id, $field, $clang = null)
     {
         if (null === $clang) {
@@ -61,9 +57,7 @@ class rex_var_article extends rex_var
         return rex_escape($article->getValue($field));
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getArticle($id, $ctype = -1, $clang = null)
     {
         if (null === $clang) {

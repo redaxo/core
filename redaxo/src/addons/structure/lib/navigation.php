@@ -67,9 +67,7 @@ class rex_navigation
         self::$factoryCall = false;
     }
 
-    /**
-     * @return static
-     */
+    /** @return static */
     public static function factory()
     {
         $class = self::getFactoryClass();
@@ -252,9 +250,7 @@ class rex_navigation
         return $this;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     private function _setActivePath()
     {
         $articleId = rex_article::getCurrentId();
@@ -442,17 +438,13 @@ class rex_navigation
         return '<ul' . rex_string::buildAttributes($attributes) . ">\n" . implode('', $items) . "</ul>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getBreadcrumbListItemTag(string $item, array $attributes, int $depth): string
     {
         return '<li' . rex_string::buildAttributes($attributes) . '>' . $item . "</li>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getBreadcrumbLinkTag(rex_category $category, string $content, array $attributes, int $depth): string
     {
         if (!isset($attributes['href'])) {
@@ -471,17 +463,13 @@ class rex_navigation
         return '<ul' . rex_string::buildAttributes($attributes) . ">\n" . implode('', $items) . "</ul>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getListItemTag(rex_category $category, string $item, array $attributes, int $depth): string
     {
         return '<li' . rex_string::buildAttributes($attributes) . '>' . $item . "</li>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getLinkTag(rex_category $category, string $content, array $attributes, int $depth): string
     {
         if (!isset($attributes['href'])) {

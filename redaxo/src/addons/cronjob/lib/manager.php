@@ -21,9 +21,7 @@ class rex_cronjob_manager
     /** @var int|null */
     private $id;
 
-    /**
-     * @return self
-     */
+    /** @return self */
     public static function factory()
     {
         return new self();
@@ -38,17 +36,13 @@ class rex_cronjob_manager
         $this->message = $message;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMessage()
     {
         return $this->message;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasMessage()
     {
         return !empty($this->message);
@@ -149,9 +143,7 @@ class rex_cronjob_manager
         $log->add($data);
     }
 
-    /**
-     * @return list<class-string<rex_cronjob>>
-     */
+    /** @return list<class-string<rex_cronjob>> */
     public static function getTypes()
     {
         if (null === self::$types) {
@@ -178,9 +170,7 @@ class rex_cronjob_manager
         self::$types = $types;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getCurrentEnvironment()
     {
         if (defined('REX_CRONJOB_SCRIPT') && REX_CRONJOB_SCRIPT) {

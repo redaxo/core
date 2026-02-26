@@ -241,9 +241,7 @@ class rex_backend_login extends rex_login
         return $this->passkey;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function deleteSession()
     {
         self::startSession();
@@ -270,9 +268,7 @@ class rex_backend_login extends rex_login
         rex_response::sendCookie(self::getStayLoggedInCookieName(), '');
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getStayLoggedInCookieName()
     {
         $instname = rex::getProperty('instname');
@@ -283,9 +279,7 @@ class rex_backend_login extends rex_login
         return 'rex_user_' . sha1($instname);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function hasSession()
     {
         // try to fast-fail, so we dont need to start a session in all cases (which would require a session lock...)

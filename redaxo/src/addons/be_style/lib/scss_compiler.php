@@ -61,9 +61,7 @@ class rex_scss_compiler
         $this->formatter = $value;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function compile()
     {
         // go on even if user "stops" the script by closing the browser, closing the terminal etc.

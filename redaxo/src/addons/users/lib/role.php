@@ -30,9 +30,7 @@ class rex_user_role implements rex_user_role_interface
      */
     private array $complexPerms = [];
 
-    /**
-     * @param list<array> $roles
-     */
+    /** @param list<array> $roles */
     private function __construct(array $roles)
     {
         foreach ($roles as $role) {
@@ -101,9 +99,7 @@ class rex_user_role implements rex_user_role_interface
         return new static($roles);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function removeOrReplaceItem(rex_extension_point $ep)
     {
         $params = $ep->getParams();

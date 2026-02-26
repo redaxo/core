@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Creditsseite. Auflistung der Credits an die Entwickler von REDAXO und den AddOns.
- */
+/** Creditsseite. Auflistung der Credits an die Entwickler von REDAXO und den AddOns. */
 
 echo rex_view::title(rex_i18n::msg('credits'), '');
 

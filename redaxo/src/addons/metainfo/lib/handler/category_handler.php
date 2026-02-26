@@ -10,9 +10,7 @@ class rex_metainfo_category_handler extends rex_metainfo_handler
     public const PREFIX = 'cat_';
     public const CONTAINER = 'rex-structure-category-metainfo';
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function renderToggleButton(rex_extension_point $ep)
     {
         $restrictionsCondition = $this->buildFilterCondition($ep->getParams());
@@ -27,9 +25,7 @@ class rex_metainfo_category_handler extends rex_metainfo_handler
         return $ep->getSubject();
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function handleSave(array $params, rex_sql $sqlFields)
     {
         if ('post' != rex_request_method()) {
@@ -54,9 +50,7 @@ class rex_metainfo_category_handler extends rex_metainfo_handler
         return $params;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function buildFilterCondition(array $params)
     {
         $s = '';

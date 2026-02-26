@@ -26,9 +26,7 @@ class rex_timer
     /** @var float|null */
     private $duration;
 
-    /**
-     * @param float $start Start time
-     */
+    /** @param float $start Start time */
     public function __construct($start = null)
     {
         if ($start) {

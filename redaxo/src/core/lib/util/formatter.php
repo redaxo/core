@@ -7,9 +7,7 @@
  */
 abstract class rex_formatter
 {
-    /**
-     * It's not allowed to create instances of this class.
-     */
+    /** It's not allowed to create instances of this class. */
     private function __construct() {}
 
     /**

@@ -41,9 +41,7 @@ class rex_category_select extends rex_select
         $this->rootId = $rootId;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOptions()
     {
         if ($this->addHomepage) {
@@ -82,9 +80,7 @@ class rex_category_select extends rex_select
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOption(rex_category $cat, $group = null)
     {
         if (!$this->checkPerms || rex::requireUser()->getComplexPerm('structure')->hasCategoryPerm($cat->getId())

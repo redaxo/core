@@ -406,9 +406,7 @@ class rex_path
         return basename($path);
     }
 
-    /**
-     * @return non-empty-string|null
-     */
+    /** @return non-empty-string|null */
     public static function findBinaryPath(string $commandName): ?string
     {
         if (!function_exists('exec')) {

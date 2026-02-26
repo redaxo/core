@@ -74,9 +74,7 @@ class rex_article_content_base
         }
     }
 
-    /**
-     * @return rex_sql
-     */
+    /** @return rex_sql */
     protected function getSqlInstance()
     {
         if (!is_object($this->ARTICLE)) {
@@ -120,17 +118,13 @@ class rex_article_content_base
         $this->clang = $value;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getArticleId()
     {
         return $this->article_id;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getClangId()
     {
         return $this->clang;
@@ -179,9 +173,7 @@ class rex_article_content_base
         $this->template_id = $templateId;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getTemplateId()
     {
         return $this->template_id;
@@ -425,9 +417,7 @@ class rex_article_content_base
 
     // ----- Template inklusive Artikel zurückgeben
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getArticleTemplate()
     {
         if (0 != $this->template_id && 0 != $this->article_id) {
@@ -606,9 +596,7 @@ class rex_article_content_base
         return $result;
     }
 
-    /**
-     * @throws rex_sql_exception
-     */
+    /** @throws rex_sql_exception */
     private function renderSlices(string $articleLimit, string $sliceLimit): void
     {
         $moduleId = rex_request('module_id', 'int');

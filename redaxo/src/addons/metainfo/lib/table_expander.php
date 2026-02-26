@@ -14,9 +14,7 @@ class rex_metainfo_table_expander extends rex_form
     private string $metaPrefix;
     private rex_metainfo_table_manager $tableManager;
 
-    /**
-     * @param 'post'|'get' $method
-     */
+    /** @param 'post'|'get' $method */
     public function __construct(string $metaPrefix, string $metaTable, string $tableName, string $whereCondition, string $method = 'post', bool $debug = false)
     {
         $this->metaPrefix = $metaPrefix;
@@ -223,9 +221,7 @@ class rex_metainfo_table_expander extends rex_form
         return $string;
     }
 
-    /**
-     * @return bool|string
-     */
+    /** @return bool|string */
     protected function validate()
     {
         $fieldName = $this->elementPostValue($this->getFieldsetName(), 'name');

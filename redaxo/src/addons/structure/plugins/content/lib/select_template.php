@@ -26,9 +26,7 @@ class rex_template_select extends rex_select
         parent::__construct();
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         if (!$this->loaded) {
@@ -78,9 +76,7 @@ class rex_template_select extends rex_select
         }
     }
 
-    /**
-     * @return array<int, string>
-     */
+    /** @return array<int, string> */
     public function getTemplates()
     {
         if (null === $this->templates) {

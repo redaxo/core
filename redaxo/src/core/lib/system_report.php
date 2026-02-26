@@ -11,17 +11,13 @@ class rex_system_report
 
     private function __construct() {}
 
-    /**
-     * @return self
-     */
+    /** @return self */
     public static function factory()
     {
         return new self();
     }
 
-    /**
-     * @return array<string, array<string, string|bool>>
-     */
+    /** @return array<string, array<string, string|bool>> */
     public function get()
     {
         $data = [];
@@ -107,9 +103,7 @@ class rex_system_report
         return $data;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function asMarkdown()
     {
         $report = $this->get();
@@ -154,9 +148,7 @@ class rex_system_report
             OUTPUT;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function getBrowser()
     {
         if (!isset($_SERVER['HTTP_USER_AGENT'])) {

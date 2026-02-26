@@ -33,9 +33,7 @@ class rex_metainfo_table_manager
         private int $DBID = 1,
     ) {}
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTableName()
     {
         return $this->tableName;

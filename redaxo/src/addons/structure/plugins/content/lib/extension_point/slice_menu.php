@@ -35,81 +35,61 @@ class rex_extension_point_slice_menu extends rex_extension_point
         parent::__construct(self::NAME);
     }
 
-    /**
-     * @return array{label?: string, url?: string, attributes?: array{class: list<string>, title: string}}
-     */
+    /** @return array{label?: string, url?: string, attributes?: array{class: list<string>, title: string}} */
     public function getMenuEditAction(): array
     {
         return $this->menuEditAction;
     }
 
-    /**
-     * @param array{label?: string, url?: string, attributes?: array{class: list<string>, title: string}} $menuEditAction
-     */
+    /** @param array{label?: string, url?: string, attributes?: array{class: list<string>, title: string}} $menuEditAction */
     public function setMenuEditAction(array $menuEditAction): void
     {
         $this->menuEditAction = $menuEditAction;
     }
 
-    /**
-     * @return array{label?: string, url?: string, attributes?: array{class: list<string>, title: string, data-confirm: string}}
-     */
+    /** @return array{label?: string, url?: string, attributes?: array{class: list<string>, title: string, data-confirm: string}} */
     public function getMenuDeleteAction(): array
     {
         return $this->menuDeleteAction;
     }
 
-    /**
-     * @param array{label?: string, url?: string, attributes?: array{class: list<string>, title: string, data-confirm: string}} $menuDeleteAction
-     */
+    /** @param array{label?: string, url?: string, attributes?: array{class: list<string>, title: string, data-confirm: string}} $menuDeleteAction */
     public function setMenuDeleteAction(array $menuDeleteAction): void
     {
         $this->menuDeleteAction = $menuDeleteAction;
     }
 
-    /**
-     * @return array{label?: string, url?: string, attributes?: array{class: list<string>}}
-     */
+    /** @return array{label?: string, url?: string, attributes?: array{class: list<string>}} */
     public function getMenuStatusAction(): array
     {
         return $this->menuStatusAction;
     }
 
-    /**
-     * @param array{label?: string, url?: string, attributes?: array{class: list<string>}} $menuStatusAction
-     */
+    /** @param array{label?: string, url?: string, attributes?: array{class: list<string>}} $menuStatusAction */
     public function setMenuStatusAction(array $menuStatusAction): void
     {
         $this->menuStatusAction = $menuStatusAction;
     }
 
-    /**
-     * @return array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}}
-     */
+    /** @return array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}} */
     public function getMenuMoveupAction(): array
     {
         return $this->menuMoveupAction;
     }
 
-    /**
-     * @param array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}} $menuMoveupAction
-     */
+    /** @param array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}} $menuMoveupAction */
     public function setMenuMoveupAction(array $menuMoveupAction): void
     {
         $this->menuMoveupAction = $menuMoveupAction;
     }
 
-    /**
-     * @return array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}}
-     */
+    /** @return array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}} */
     public function getMenuMovedownAction(): array
     {
         return $this->menuMovedownAction;
     }
 
-    /**
-     * @param array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}} $menuMovedownAction
-     */
+    /** @param array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class: list<string>, title: string}} $menuMovedownAction */
     public function setMenuMovedownAction(array $menuMovedownAction): void
     {
         $this->menuMovedownAction = $menuMovedownAction;

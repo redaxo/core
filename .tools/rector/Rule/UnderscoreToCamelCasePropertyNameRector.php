@@ -53,17 +53,13 @@ final class UnderscoreToCamelCasePropertyNameRector extends AbstractRector
         ]);
     }
 
-    /**
-     * @return array<class-string<Node>>
-     */
+    /** @return array<class-string<Node>> */
     public function getNodeTypes(): array
     {
         return [ClassLike::class];
     }
 
-    /**
-     * @param ClassLike $node
-     */
+    /** @param ClassLike $node */
     public function refactor(Node $node): ?Node
     {
         $hasChanged = false;
