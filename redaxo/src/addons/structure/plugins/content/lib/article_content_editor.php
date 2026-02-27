@@ -523,9 +523,7 @@ class rex_article_content_editor extends rex_article_content
                     <div class="rex-slice-input">
                         ' . $msg . $this->getStreamOutput('module/' . $moduleId . '/input', $moduleInput) . '
                     </div>
-                </fieldset>
-
-            </form>';
+                </fieldset>';
 
         $fragment = new rex_fragment();
         $fragment->setVar('class', 'edit', false);
