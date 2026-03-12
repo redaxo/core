@@ -67,8 +67,11 @@ function rex_escape($value, $strategy = 'html')
 
         case 'html_simplified':
             $string = rex_escape($string, 'html');
-            return preg_replace('@&lt;(/?(?:b|i|code|kbd|var)|br ?/?)&gt;@i', '<$1>', $string);
-
+   return preg_replace(
+    '@&lt;(/?(?:a|abbr|b|cite|code|dfn|em|i|kbd|mark|s|small|span|strong|sub|sup|u|var)|(?:br) ?/?)&gt;@i',
+    '<$1>',
+    $string
+   );
         case 'js':
             // escape all non-alphanumeric characters
             // into their \x or \uHHHH representations
