@@ -10,6 +10,7 @@ $plugin = rex_plugin::get('structure', 'history');
 
 $historyDate = rex_request('rex_history_date', 'string');
 
+rex_perm::register('history[read]', null, rex_perm::OPTIONS);
 rex_perm::register('history[article_rollback]', null, rex_perm::OPTIONS);
 
 if ('' != $historyDate) {
@@ -40,7 +41,7 @@ if ('' != $historyDate) {
         throw new rex_http_exception(new rex_exception('no permission'), rex_response::HTTP_UNAUTHORIZED);
     }
 
-    if (!$user->hasPerm('history[article_rollback]')) {
+    if (!$user->hasPerm('history[read]')) {
         throw new rex_http_exception(new rex_exception('no permission for the slice version'), rex_response::HTTP_FORBIDDEN);
     }
 
@@ -105,7 +106,7 @@ rex_extension::register(
     },
 );
 
-if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
+if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
     rex_view::addCssFile($plugin->getAssetsUrl('noUiSlider/nouislider.css'));
     rex_view::addJsFile($plugin->getAssetsUrl('noUiSlider/nouislider.js'), [rex_view::JS_IMMUTABLE => true]);
     rex_view::addCssFile($plugin->getAssetsUrl('history.css'));
@@ -113,6 +114,9 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
 
     switch (rex_request('rex_history_function', 'string')) {
         case 'snap':
+            if (!rex::requireUser()->hasPerm('history[article_rollback]')) {
+                throw new rex_http_exception(new rex_exception('no permission for article rollback'), rex_response::HTTP_FORBIDDEN);
+            }
             $articleId = rex_request('history_article_id', 'int');
             $clangId = rex_request('history_clang_id', 'int');
             $historyDate = rex_request('history_date', 'string');
@@ -152,6 +156,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
             $fragment->setVar('content1iframe', $content1iframe, false);
             $fragment->setVar('content2select', $content2select, false);
             $fragment->setVar('content2iframe', $content2iframe, false);
+            $fragment->setVar('allow_rollback', rex::requireUser()->hasPerm('history[article_rollback]'));
 
             echo $fragment->parse('history/layer.php');
             exit;

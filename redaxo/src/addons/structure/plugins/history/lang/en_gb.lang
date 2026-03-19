@@ -8,6 +8,7 @@ structure_history_info_content = <p>The History PlugIn records all changes made 
 structure_history_todos = To do
 structure_history_todos_content = <ul><li>prepare cronjob</li><li>allow History to be turned off</li><li>Build settings, to reduce the number of version. Example: keep only one version after a month/week/day.</li><li>set scaling values for the website</li><li>make the visual appearance prettier similar to Time Machine?</li></ul>
 
+perm_options_history[read] = View article history
 perm_options_history[article_rollback] = Restore article (History)
 
 structure_history_button_delete_history = Delete all snapshots from History

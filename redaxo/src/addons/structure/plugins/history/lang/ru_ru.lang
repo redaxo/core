@@ -8,6 +8,7 @@ structure_history_info_content = <p>Плагин History PlugIn записыва
 structure_history_todos = Сделать
 structure_history_todos_content = <ul><li>Подготовить cronjob</li><li>Разрешить отключение истории</li><li>Настройки сборки, позволяющие уменьшить количество версий. Пример: хранить только одну версию через месяц/неделю/день.</li><li>Установить значения масштабирования для сайта</li><li>Cделать визуальный вид более красивым, похожим на Time Machine?</li></ul>
 
+perm_options_history[read] = Просмотр истории статьи
 perm_options_history[article_rollback] = Восстановить статью (История)
 
 structure_history_button_delete_history = Удаление всех снэпшотов из истории

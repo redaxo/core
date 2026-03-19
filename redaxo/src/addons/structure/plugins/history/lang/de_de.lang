@@ -8,6 +8,7 @@ structure_history_info_content = <p>Ein History PlugIn mit welchem man Änderung
 structure_history_todos = Todos
 structure_history_todos_content = <ul><li>cronjob vorbereiten</li><li>History deaktivierbar machen</li><li>Einstellungen einbauen, um die Anzahl der Version einzuschränken. Z.B. nach einer Woche nur eine Version/Tag behalten. nach einem Monat nur noch eine Version/Monat behalten..</li><li>Skalierungswerte der Webseite setzen</li><li>Darstellung aufhübschen ala Time Machine ?</li></ul>
 
+perm_options_history[read] = Artikel-Historie anzeigen
 perm_options_history[article_rollback] = Artikel wiederherstellen (Historie)
 
 structure_history_button_delete_history = Historie komplett löschen

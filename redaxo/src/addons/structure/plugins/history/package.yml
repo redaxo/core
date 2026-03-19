@@ -12,7 +12,7 @@ pages:
           left: true
         linkAttr:
           data-history-layer: open
-        perm: history[article_rollback]
+        perm: history[read]
     system/history:
         title: translate:history
 

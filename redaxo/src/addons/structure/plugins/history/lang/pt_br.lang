@@ -8,6 +8,7 @@ structure_history_info_content = <p> O PlugIn história grava todas as alteraç�
 structure_history_todos = A ser feito
 structure_history_todos_content = <ul><li>preparar cronjob</li><li>permite que o PlugIn "história" seja desligado</li><li>Criar configurações, para reduzir o número de versão. Exemplo: mantenha apenas uma versão após um mês / semana / diaLi> <li> definir valores de escala para o site </ li> <li>Tornar a aparência mais bonita, semelhante ao Time Machine? </ Li> </ ul>
 
+perm_options_history[read] = Ver histórico do artigo
 perm_options_history[article_rollback] = Restaurar produto (história)
 
 structure_history_button_delete_history = Deletar todos os snapshots do História
