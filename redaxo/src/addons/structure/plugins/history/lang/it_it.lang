@@ -1,9 +1,12 @@
 structure_history =
 structure_history_title_info =
 structure_history_snapshot_reactivate =
+structure_history_snapshot_live_reactivate =
+structure_history_snapshot_draft_reactivate =
 structure_history_snapshot_reactivated =
 structure_history_overview_versions =
 structure_history_current_version =
+structure_history_current_live_version =
 structure_history_info_content =
 structure_history_todos =
 structure_history_todos_content =

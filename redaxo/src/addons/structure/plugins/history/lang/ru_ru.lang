@@ -1,9 +1,12 @@
 structure_history = История
 structure_history_title_info = Краткое пояснение
 structure_history_snapshot_reactivate = Вернуться к этой версии
+structure_history_snapshot_live_reactivate = Применить эту версию к живой версии
+structure_history_snapshot_draft_reactivate = Применить эту версию к рабочей версии
 structure_history_snapshot_reactivated = Версия была изменена
 structure_history_overview_versions = Обзор истории
 structure_history_current_version = Текущая версия
+structure_history_current_live_version = Текущая живая версия
 structure_history_info_content = <p>Плагин History PlugIn записывает все изменения, внесенные в статью, и создает снэпшоты, которые впоследствии можно использовать для восстановления предыдущего состояния конкретной статьи.</p>
 structure_history_todos = Сделать
 structure_history_todos_content = <ul><li>Подготовить cronjob</li><li>Разрешить отключение истории</li><li>Настройки сборки, позволяющие уменьшить количество версий. Пример: хранить только одну версию через месяц/неделю/день.</li><li>Установить значения масштабирования для сайта</li><li>Cделать визуальный вид более красивым, похожим на Time Machine?</li></ul>

@@ -129,13 +129,15 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
             $versions = rex_article_slice_history::getSnapshots($articleId, $clangId);
 
             $select1 = [];
-            $select1[] = '<option value="0" selected="selected" data-revision="0">' . $plugin->i18n('current_version') . '</option>';
-            if (rex_plugin::get('structure', 'version')->isAvailable()) {
+            $versionAvailable = rex_plugin::get('structure', 'version')->isAvailable();
+            $currentVersionLabel = $versionAvailable ? $plugin->i18n('current_live_version') : $plugin->i18n('current_version');
+            $select1[] = '<option value="0" selected="selected" data-revision="0">' . $currentVersionLabel . '</option>';
+            if ($versionAvailable) {
                 $select1[] = '<option value="1" data-revision="1">' . rex_i18n::msg('version_workingversion') . '</option>';
             }
 
             $select2 = [];
-            $select2[] = '<option value="" selected="selected">' . $plugin->i18n('current_version') . '</option>';
+            $select2[] = '<option value="" selected="selected">' . $currentVersionLabel . '</option>';
             foreach ($versions as $version) {
                 $historyInfo = $version['history_date'];
                 if ('' != $version['history_user']) {
@@ -157,6 +159,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
             $fragment->setVar('content2select', $content2select, false);
             $fragment->setVar('content2iframe', $content2iframe, false);
             $fragment->setVar('allow_rollback', rex::requireUser()->hasPerm('history[article_rollback]'));
+            $fragment->setVar('version_available', $versionAvailable);
 
             echo $fragment->parse('history/layer.php');
             exit;
