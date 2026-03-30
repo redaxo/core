@@ -60,19 +60,6 @@ if (str_starts_with($openerInputField, 'REX_LINKLIST_')) {
         JS;
 }
 
-// This function adds a Font Awesome check icon to a list item (link) when the user clicks on it.
-$checkIconFuncBody = <<< JS
-    document.addEventListener('click', function (e) {
-        const item = e.target.closest('.list-with-icon > .list-group-item');
-        if (!item) return;
-        if (item.querySelector('.fa-check')) return;
-        item.insertAdjacentHTML(
-            'beforeend',
-            '<i class="fa-solid fa-check" style="padding-left:5px"></i>'
-        );
-    });
-JS;
-
 // ------------------------ Print JS Functions
 
 $retainEventHandlers = '';
@@ -83,7 +70,18 @@ if (!rex_request::isXmlHttpRequest()) {
 ?>
 <script type="text/javascript" nonce="<?= rex_response::getNonce() ?>">
     <?= $retainEventHandlers ?>
-    <?=$checkIconFuncBody?>
+
+    // This function adds a Font Awesome check icon to a list item (link) when the user clicks on it.
+    document.addEventListener('click', function (e) {
+        const item = e.target.closest('.list-with-icon > .list-group-item');
+        if (!item) return;
+        if (item.querySelector('.fa-check')) return;
+        item.insertAdjacentHTML(
+            'beforeend',
+            '<i class="fa-solid fa-check" style="padding-left:5px"></i>'
+        );
+    });
+
     function insertLink(link,name){
         <?= $funcBody, "\n" ?>
     }
