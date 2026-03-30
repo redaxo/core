@@ -36,4 +36,4 @@ $content = $CONT->getArticle($ctype);
 
 $fragment = new rex_fragment();
 $fragment->setVar('content', $content, false);
-return $fragment->parse('slices.php');
+return $fragment->parse('slice_list.php');
