@@ -3,10 +3,12 @@
  * @var rex_fragment $this
  * @psalm-scope-this rex_fragment
  *
- * @var array{class: list<string>, id?: string} $attributes  HTML attributes for the <li> element
- * @var string $content           The rendered inner HTML of the slice
- * @var string|null $form_action  if set, wraps content in a <form>
- * @var string|null $nonce        if set, renders the jQuery focus <script>
+ * Fragment variables (via $this->...):
+ *
+ * - array{class: list<string>, id?: string} $attributes   HTML attributes for the <li> element
+ * - string                                  $content      The rendered inner HTML of the slice
+ * - string|null                             $form_action  if set, wraps content in a <form>
+ * - string|null                             $nonce        if set, renders the jQuery focus <script>
  */
 
 $attributes = $this->attributes ?? [];
@@ -31,4 +33,3 @@ $attributes = $this->attributes ?? [];
         <?php endif ?>
     <?php endif ?>
 </li>
-
