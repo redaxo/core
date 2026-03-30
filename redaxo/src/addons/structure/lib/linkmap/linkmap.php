@@ -51,7 +51,7 @@ class rex_linkmap_article_list extends rex_linkmap_article_list_renderer
     /** @return string */
     protected function listItem(rex_article $article, $categoryId)
     {
-        $liAttr = ' class="list-group-item"';
+        $liAttr = ' class="list-group-item rex-linkmap-list-item-article"';
         $url = 'javascript:insertLink(\'redaxo://' . $article->getId() . '\',\'' . rex_escape(trim(sprintf('%s [%s]', $article->getName(), $article->getId())), 'js') . '\');';
         return rex_linkmap_tree_renderer::formatLi($article, $categoryId, $this->context, $liAttr, ' href="' . $url . '"') . '</li>' . "\n";
     }
