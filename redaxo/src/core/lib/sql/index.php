@@ -37,9 +37,7 @@ class rex_sql_index
         return $this;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isModified()
     {
         return $this->modified;
@@ -57,9 +55,7 @@ class rex_sql_index
         return $this->setModified(true);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return $this->name;
@@ -77,9 +73,7 @@ class rex_sql_index
         return $this->setModified(true);
     }
 
-    /**
-     * @return self::INDEX|self::UNIQUE|self::FULLTEXT
-     */
+    /** @return self::INDEX|self::UNIQUE|self::FULLTEXT */
     public function getType()
     {
         return $this->type;
@@ -97,17 +91,13 @@ class rex_sql_index
         return $this->setModified(true);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function getColumns()
     {
         return $this->columns;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function equals(self $index)
     {
         return

@@ -7,9 +7,7 @@
  */
 class rex_api_install_core_update extends rex_api_function
 {
-    /**
-     * @return array<int, array{version: string, description: string, path: string, checksum: string}>
-     */
+    /** @return array<int, array{version: string, description: string, path: string, checksum: string}> */
     public static function getVersions()
     {
         return rex_install_webservice::getJson('core');

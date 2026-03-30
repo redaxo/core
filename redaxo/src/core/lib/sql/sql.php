@@ -22,9 +22,7 @@ class rex_sql implements Iterator
     public const ERROR_VIOLATE_UNIQUE_KEY = 1062;
     public const ERRNO_TABLE_OR_VIEW_DOESNT_EXIST = '42S02';
 
-    /**
-     * Default SQL datetime format.
-     */
+    /** Default SQL datetime format. */
     public const FORMAT_DATETIME = 'Y-m-d H:i:s';
 
     /**
@@ -92,9 +90,7 @@ class rex_sql implements Iterator
     /** @var array<positive-int, PDO> */
     protected static $pdo = [];
 
-    /**
-     * @param positive-int $db
-     */
+    /** @param positive-int $db */
     protected function __construct($db = 1)
     {
         $this->flush();
@@ -933,9 +929,7 @@ class rex_sql implements Iterator
         return $qry;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getWhere()
     {
         [$where] = $this->buildWhere();
@@ -1259,9 +1253,7 @@ class rex_sql implements Iterator
         return $this->stmt ? $this->stmt->errorCode() : $this->getConnection()->errorCode();
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getMysqlErrno()
     {
         $errorInfos = $this->stmt ? $this->stmt->errorInfo() : $this->getConnection()->errorInfo();
@@ -1385,9 +1377,7 @@ class rex_sql implements Iterator
         return $this->fieldnames;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function getTablenames()
     {
         $this->fetchMeta();
@@ -1597,9 +1587,7 @@ class rex_sql implements Iterator
         return $this->getConnection()->commit();
     }
 
-    /**
-     * @return bool whether a transaction was already started/is already running
-     */
+    /** @return bool whether a transaction was already started/is already running */
     public function inTransaction()
     {
         return $this->getConnection()->inTransaction();
@@ -1662,18 +1650,14 @@ class rex_sql implements Iterator
         return $this;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/iterator.key.php
-     */
+    /** @see https://www.php.net/manual/en/iterator.key.php */
     #[ReturnTypeWillChange]
     public function key()
     {
         return $this->counter;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/iterator.next.php
-     */
+    /** @see https://www.php.net/manual/en/iterator.next.php */
     #[ReturnTypeWillChange]
     public function next()
     {
@@ -1681,9 +1665,7 @@ class rex_sql implements Iterator
         $this->lastRow = null;
     }
 
-    /**
-     * @see https://www.php.net/manual/en/iterator.valid.php
-     */
+    /** @see https://www.php.net/manual/en/iterator.valid.php */
     #[ReturnTypeWillChange]
     public function valid()
     {

@@ -29,9 +29,7 @@ class rex_system_setting_article_id extends rex_system_setting
         return $field;
     }
 
-    /**
-     * @return string|bool
-     */
+    /** @return string|bool */
     public function setValue($value)
     {
         $value = (int) $value;

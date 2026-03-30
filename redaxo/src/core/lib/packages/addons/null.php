@@ -14,9 +14,7 @@ class rex_null_addon extends rex_null_package implements rex_addon_interface
         return 'addon';
     }
 
-    /**
-     * @return rex_null_plugin
-     */
+    /** @return rex_null_plugin */
     public function getPlugin($plugin)
     {
         return rex_null_plugin::getInstance();

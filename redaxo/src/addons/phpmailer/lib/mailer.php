@@ -22,9 +22,7 @@ class rex_mailer extends PHPMailer
     /** @var bool */
     private $archive;
 
-    /**
-     * used to store information if detour mode is enabled.
-     */
+    /** used to store information if detour mode is enabled. */
     private array $xHeader = [];
 
     public function __construct($exceptions = false)
@@ -108,9 +106,7 @@ class rex_mailer extends PHPMailer
         return parent::addOrEnqueueAnAddress($kind, $address, $name);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function send()
     {
         return rex_timer::measure(__METHOD__, function () {
@@ -164,9 +160,7 @@ class rex_mailer extends PHPMailer
         $this->xHeader = []; // Bereinigung für die nächste Verwendung
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function clearQueuedAddresses($kind)
     {
         parent::clearQueuedAddresses($kind);
@@ -174,9 +168,7 @@ class rex_mailer extends PHPMailer
         unset($this->xHeader[$kind]);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function clearAllRecipients()
     {
         parent::clearAllRecipients();
@@ -236,25 +228,19 @@ class rex_mailer extends PHPMailer
         rex_file::put($archiveFile, $archivedata);
     }
 
-    /**
-     * Path to mail archive folder.
-     */
+    /** Path to mail archive folder. */
     public static function logFolder(): string
     {
         return rex_path::addonData('phpmailer', 'mail_log');
     }
 
-    /**
-     * Path to log file.
-     */
+    /** Path to log file. */
     public static function logFile(): string
     {
         return rex_path::log('mail.log');
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public static function errorMail(): void
     {
         $addon = rex_addon::get('phpmailer');

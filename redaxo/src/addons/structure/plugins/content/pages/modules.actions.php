@@ -53,6 +53,8 @@ if ('delete' == $function && !$csrfToken->isValid()) {
 
 if ('add' == $function || 'edit' == $function) {
     $name = rex_post('name', 'string');
+    $key = trim(rex_post('key', 'string'));
+    $key = '' === $key ? null : $key;
     $previewaction = rex_post('previewaction', 'string');
     $presaveaction = rex_post('presaveaction', 'string');
     $postsaveaction = rex_post('postsaveaction', 'string');
@@ -86,32 +88,42 @@ if ('add' == $function || 'edit' == $function) {
             $postsavemode |= $status;
         }
 
-        $faction->setTable(rex::getTablePrefix() . 'action');
-        $faction->setValue('name', $name);
-        $faction->setValue('preview', $previewaction);
-        $faction->setValue('presave', $presaveaction);
-        $faction->setValue('postsave', $postsaveaction);
-        $faction->setValue('previewmode', $previewmode);
-        $faction->setValue('presavemode', $presavemode);
-        $faction->setValue('postsavemode', $postsavemode);
-        $faction->addGlobalUpdateFields();
+        try {
+            $faction->setTable(rex::getTablePrefix() . 'action');
+            $faction->setValue('name', $name);
+            $faction->setValue('key', $key);
+            $faction->setValue('preview', $previewaction);
+            $faction->setValue('presave', $presaveaction);
+            $faction->setValue('postsave', $postsaveaction);
+            $faction->setValue('previewmode', $previewmode);
+            $faction->setValue('presavemode', $presavemode);
+            $faction->setValue('postsavemode', $postsavemode);
+            $faction->addGlobalUpdateFields();
 
-        if ('add' == $function) {
-            $faction->addGlobalCreateFields();
+            if ('add' == $function) {
+                $faction->addGlobalCreateFields();
 
-            $faction->insert();
-            $success = rex_i18n::msg('action_added');
-        } else {
-            $faction->setWhere(['id' => $actionId]);
+                $faction->insert();
+                $success = rex_i18n::msg('action_added');
+            } else {
+                $faction->setWhere(['id' => $actionId]);
 
-            $faction->update();
-            $success = rex_i18n::msg('action_updated');
-        }
+                $faction->update();
+                $success = rex_i18n::msg('action_updated');
+            }
 
-        if ('' != $goon) {
-            $save = false;
-        } else {
-            $function = '';
+            if ('' != $goon) {
+                $save = false;
+            } else {
+                $function = '';
+            }
+        } catch (rex_sql_exception $e) {
+            if (rex_sql::ERROR_VIOLATE_UNIQUE_KEY === $e->getErrorCode()) {
+                $error = rex_i18n::msg('action_key_exists');
+                $save = false;
+            } else {
+                throw $e;
+            }
         }
     }
 
@@ -123,6 +135,7 @@ if ('add' == $function || 'edit' == $function) {
             $action->setQuery('SELECT * FROM ' . rex::getTablePrefix() . 'action WHERE id=?', [$actionId]);
 
             $name = $action->getValue('name');
+            $key = $action->getValue('key');
             $previewaction = $action->getValue('preview');
             $presaveaction = $action->getValue('presave');
             $postsaveaction = $action->getValue('postsave');
@@ -207,6 +220,12 @@ if ('add' == $function || 'edit' == $function) {
         $n['label'] = '<label for="name">' . rex_i18n::msg('action_name') . '</label>';
         $n['field'] = '<input class="form-control" type="text" id="name" name="name" value="' . rex_escape($name) . '" maxlength="255" />';
         $n['note'] = rex_i18n::msg('translatable');
+        $formElements[] = $n;
+
+        $n = [];
+        $n['label'] = '<label for="key">' . rex_i18n::msg('action_key') . '</label>';
+        $n['field'] = '<input class="form-control" type="text" id="key" name="key" value="' . rex_escape((string) ($key ?? '')) . '" maxlength="191" autocorrect="off" autocapitalize="off" spellcheck="false" />';
+        $n['note'] = rex_i18n::msg('action_key_notice');
         $formElements[] = $n;
 
         $fragment = new rex_fragment();
@@ -418,6 +437,7 @@ if ($OUT) {
                 <tr>
                     <th class="rex-table-icon"><a class="rex-link-expanded" href="' . rex_url::currentBackendPage(['function' => 'add']) . '"' . rex::getAccesskey(rex_i18n::msg('action_create'), 'add') . ' title="' . rex_i18n::msg('action_create') . '"><i class="rex-icon rex-icon-add-action"></i></a></th>
                     <th class="rex-table-id">' . rex_i18n::msg('id') . '</th>
+                    <th>' . rex_i18n::msg('header_action_key') . '</th>
                     <th>' . rex_i18n::msg('action_name') . '</th>
                     <th>' . rex_i18n::msg('action_header_preview') . '</th>
                     <th>' . rex_i18n::msg('action_header_presave') . '</th>
@@ -461,6 +481,7 @@ if ($OUT) {
                         <tr>
                             <td class="rex-table-icon"><a class="rex-link-expanded" href="' . rex_url::currentBackendPage(['action_id' => $sql->getValue('id'), 'function' => 'edit']) . '" title="' . rex_escape($sql->getValue('name')) . '"><i class="rex-icon rex-icon-action"></i></a></td>
                             <td class="rex-table-id" data-title="' . rex_i18n::msg('id') . '">' . (int) $sql->getValue('id') . '</td>
+                            <td data-title="' . rex_i18n::msg('header_action_key') . '">' . rex_escape((string) ($sql->getValue('key') ?? '')) . '</td>
                             <td data-title="' . rex_i18n::msg('action_name') . '"><a class="rex-link-expanded" href="' . rex_url::currentBackendPage(['action_id' => $sql->getValue('id'), 'function' => 'edit']) . '">' . rex_escape($sql->getValue('name')) . '</a></td>
                             <td data-title="' . rex_i18n::msg('action_header_preview') . '">' . implode('/', $previewmode) . '</td>
                             <td data-title="' . rex_i18n::msg('action_header_presave') . '">' . implode('/', $presavemode) . '</td>

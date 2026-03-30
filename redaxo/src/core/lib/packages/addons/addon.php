@@ -78,9 +78,7 @@ class rex_addon extends rex_package implements rex_addon_interface
         return $this;
     }
 
-    /**
-     * @return non-empty-string
-     */
+    /** @return non-empty-string */
     public function getPackageId()
     {
         return $this->getName();

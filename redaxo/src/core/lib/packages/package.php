@@ -40,9 +40,7 @@ abstract class rex_package implements rex_package_interface
      */
     private $propertiesLoaded = false;
 
-    /**
-     * @param non-empty-string $name Name
-     */
+    /** @param non-empty-string $name Name */
     public function __construct($name)
     {
         $this->name = $name;
@@ -121,9 +119,7 @@ abstract class rex_package implements rex_package_interface
         return $parts;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     abstract public function getPackageId();
 
     public function getName()
@@ -367,9 +363,7 @@ abstract class rex_package implements rex_package_interface
         rex_extension::registerPoint(new rex_extension_point_package_cache_deleted($this));
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function enlist()
     {
         $folder = $this->getPath();
@@ -407,9 +401,7 @@ abstract class rex_package implements rex_package_interface
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function boot()
     {
         if (is_readable($this->getPath(self::FILE_BOOT))) {

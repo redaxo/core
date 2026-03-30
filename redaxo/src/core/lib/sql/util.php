@@ -7,9 +7,7 @@
  */
 class rex_sql_util
 {
-    /**
-     * @psalm-taint-escape file
-     */
+    /** @psalm-taint-escape file */
     public static function slowQueryLogPath(): ?string
     {
         $db = rex_sql::factory();
@@ -136,9 +134,7 @@ class rex_sql_util
         return true;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function prepareQuery(string $query)
     {
         // rex::getUser() gibts im Setup nicht

@@ -20,18 +20,14 @@ class rex_be_navigation
     /** @var array<string, list<rex_be_page>> */
     private array $pages = [];
 
-    /**
-     * @return static
-     */
+    /** @return static */
     public static function factory()
     {
         $class = static::getFactoryClass();
         return new $class();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function addPage(rex_be_page $page)
     {
         $blockName = 'default';
@@ -46,9 +42,7 @@ class rex_be_navigation
         $this->pages[$blockName][] = $page;
     }
 
-    /**
-     * @return list<array{navigation: list<array<string, mixed>>, headline: array{title: string}}>
-     */
+    /** @return list<array{navigation: list<array<string, mixed>>, headline: array{title: string}}> */
     public function getNavigation()
     {
         uksort($this->pages, function (string $block1, string $block2) {
@@ -153,9 +147,7 @@ class rex_be_navigation
         return $navigation;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function setActiveElements()
     {
         foreach ($this->pages as $blockPages) {

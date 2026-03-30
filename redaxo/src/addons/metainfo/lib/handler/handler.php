@@ -681,9 +681,7 @@ abstract class rex_metainfo_handler
         return self::renderMetaFields($sqlFields, $params);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function fireCallbacks(rex_sql $sqlFields)
     {
         if (rex::isLiveMode()) {

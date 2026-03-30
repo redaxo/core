@@ -41,9 +41,7 @@ class rex_sql_foreign_key
         return $this;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isModified()
     {
         return $this->modified;
@@ -61,9 +59,7 @@ class rex_sql_foreign_key
         return $this->setModified(true);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return $this->name;
@@ -81,9 +77,7 @@ class rex_sql_foreign_key
         return $this->setModified(true);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTable()
     {
         return $this->table;
@@ -101,9 +95,7 @@ class rex_sql_foreign_key
         return $this->setModified(true);
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function getColumns()
     {
         return $this->columns;
@@ -121,9 +113,7 @@ class rex_sql_foreign_key
         return $this->setModified(true);
     }
 
-    /**
-     * @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL
-     */
+    /** @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL */
     public function getOnUpdate()
     {
         return $this->onUpdate;
@@ -141,17 +131,13 @@ class rex_sql_foreign_key
         return $this->setModified(true);
     }
 
-    /**
-     * @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL
-     */
+    /** @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL */
     public function getOnDelete()
     {
         return $this->onDelete;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function equals(self $index)
     {
         return

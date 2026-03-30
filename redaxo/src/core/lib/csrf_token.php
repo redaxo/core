@@ -29,17 +29,13 @@ class rex_csrf_token
         return new $class($tokenId);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getValue()
     {
         $tokens = self::getTokens();
@@ -55,9 +51,7 @@ class rex_csrf_token
         return $token;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getHiddenField()
     {
         return sprintf('<input type="hidden" name="%s" value="%s"/>', self::PARAM, $this->getValue());
@@ -73,9 +67,7 @@ class rex_csrf_token
         return [self::PARAM => $this->getValue()];
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isValid()
     {
         $tokens = self::getTokens();
@@ -89,9 +81,7 @@ class rex_csrf_token
         return hash_equals($tokens[$this->id], $token);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function remove()
     {
         $tokens = self::getTokens();
@@ -105,9 +95,7 @@ class rex_csrf_token
         rex_set_session(self::getSessionKey(), $tokens);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function removeAll()
     {
         rex_login::startSession();
@@ -116,9 +104,7 @@ class rex_csrf_token
         rex_unset_session(self::getBaseSessionKey() . '_https');
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     private static function getTokens()
     {
         rex_login::startSession();
@@ -126,9 +112,7 @@ class rex_csrf_token
         return rex_session(self::getSessionKey(), 'array');
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getSessionKey()
     {
         // use separate tokens for http/https
@@ -138,17 +122,13 @@ class rex_csrf_token
         return self::getBaseSessionKey() . $suffix;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getBaseSessionKey()
     {
         return 'csrf_tokens_' . rex::getEnvironment();
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function generateToken()
     {
         $bytes = random_bytes(32);

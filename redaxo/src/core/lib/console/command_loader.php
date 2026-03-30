@@ -92,9 +92,7 @@ class rex_console_command_loader implements CommandLoaderInterface
         return isset($this->commands[$name]);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function getNames(): array
     {
         return array_keys($this->commands);

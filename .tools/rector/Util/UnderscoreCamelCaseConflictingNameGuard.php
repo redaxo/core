@@ -25,9 +25,7 @@ final class UnderscoreCamelCaseConflictingNameGuard
         return in_array($propertyRename->getExpectedName(), $conflictingPropertyNames, true);
     }
 
-    /**
-     * @return array<string>
-     */
+    /** @return array<string> */
     public function resolve(ClassLike $classLike): array
     {
         $expectedNames = [];

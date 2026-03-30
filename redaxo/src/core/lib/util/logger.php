@@ -180,9 +180,7 @@ class rex_logger extends AbstractLogger
         };
     }
 
-    /**
-     * @return self
-     */
+    /** @return self */
     public static function factory()
     {
         $class = self::getFactoryClass();

@@ -100,25 +100,19 @@ class rex_input_date extends rex_input
         parent::setAttribute($name, $value);
     }
 
-    /**
-     * @return rex_select
-     */
+    /** @return rex_select */
     public function getDaySelect()
     {
         return $this->daySelect;
     }
 
-    /**
-     * @return rex_select
-     */
+    /** @return rex_select */
     public function getMonthSelect()
     {
         return $this->monthSelect;
     }
 
-    /**
-     * @return rex_select
-     */
+    /** @return rex_select */
     public function getYearSelect()
     {
         return $this->yearSelect;

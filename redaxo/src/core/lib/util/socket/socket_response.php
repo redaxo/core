@@ -50,9 +50,7 @@ class rex_socket_response
         $this->chunked = false !== stripos($this->header, 'transfer-encoding: chunked');
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function decompressContent(bool $decodeContent): self
     {
         $this->decompressContent = $decodeContent;

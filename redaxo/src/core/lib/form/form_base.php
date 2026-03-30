@@ -763,9 +763,7 @@ abstract class rex_form_base
 
     // --------- Form Methods
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     protected function isHeaderElement(rex_form_element $element)
     {
         return 'input' == $element->getTag() && 'hidden' == $element->getAttribute('type');
@@ -798,9 +796,7 @@ abstract class rex_form_base
         return $element instanceof rex_form_raw_element;
     }
 
-    /**
-     * @return list<rex_form_element>
-     */
+    /** @return list<rex_form_element> */
     protected function getHeaderElements()
     {
         $headerElements = [];
@@ -814,9 +810,7 @@ abstract class rex_form_base
         return $headerElements;
     }
 
-    /**
-     * @return list<rex_form_element>
-     */
+    /** @return list<rex_form_element> */
     protected function getFooterElements()
     {
         $footerElements = [];
@@ -830,17 +824,13 @@ abstract class rex_form_base
         return $footerElements;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getFieldsetName()
     {
         return $this->fieldset;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     protected function getFieldsets()
     {
         $fieldsets = [];
@@ -850,9 +840,7 @@ abstract class rex_form_base
         return $fieldsets;
     }
 
-    /**
-     * @return array<string, list<rex_form_element>>
-     */
+    /** @return array<string, list<rex_form_element>> */
     protected function getFieldsetElements()
     {
         $fieldsetElements = [];
@@ -873,9 +861,7 @@ abstract class rex_form_base
         return $fieldsetElements;
     }
 
-    /**
-     * @return array<string, list<rex_form_element>>
-     */
+    /** @return array<string, list<rex_form_element>> */
     protected function getSaveElements()
     {
         $fieldsetElements = [];
@@ -896,9 +882,7 @@ abstract class rex_form_base
         return $fieldsetElements;
     }
 
-    /**
-     * @return rex_form_control_element|null
-     */
+    /** @return rex_form_control_element|null */
     protected function getControlElement()
     {
         foreach ($this->elements as $fieldsetElementsArray) {
@@ -936,9 +920,7 @@ abstract class rex_form_base
         return null;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return $this->name;
@@ -953,9 +935,7 @@ abstract class rex_form_base
         $this->warning = $warning;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getWarning()
     {
         $warning = rex_request($this->getName() . '_warning', 'string');
@@ -976,9 +956,7 @@ abstract class rex_form_base
         $this->message = $message;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMessage()
     {
         $message = rex_request($this->getName() . '_msg', 'string');
@@ -1123,9 +1101,7 @@ abstract class rex_form_base
      */
     abstract protected function save();
 
-    /**
-     * @return bool|int
-     */
+    /** @return bool|int */
     protected function delete()
     {
         throw new BadMethodCallException('delete() is not implemented.');
@@ -1159,9 +1135,7 @@ abstract class rex_form_base
         exit;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         $this->init();
@@ -1303,9 +1277,7 @@ abstract class rex_form_base
         return $s;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

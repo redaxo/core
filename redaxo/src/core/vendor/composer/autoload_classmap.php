@@ -8,8 +8,8 @@ $baseDir = dirname($vendorDir);
 return array(
     'Composer\\CaBundle\\CaBundle' => $vendorDir . '/composer/ca-bundle/src/CaBundle.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'Parsedown' => $vendorDir . '/parsedown/parsedown/Parsedown.php',
-    'ParsedownExtra' => $vendorDir . '/parsedown/parsedown-extra/ParsedownExtra.php',
+    'Parsedown' => $vendorDir . '/erusev/parsedown/Parsedown.php',
+    'ParsedownExtra' => $vendorDir . '/erusev/parsedown-extra/ParsedownExtra.php',
     'Psr\\Container\\ContainerExceptionInterface' => $vendorDir . '/psr/container/src/ContainerExceptionInterface.php',
     'Psr\\Container\\ContainerInterface' => $vendorDir . '/psr/container/src/ContainerInterface.php',
     'Psr\\Container\\NotFoundExceptionInterface' => $vendorDir . '/psr/container/src/NotFoundExceptionInterface.php',

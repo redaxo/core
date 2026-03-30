@@ -102,25 +102,19 @@ class rex_context implements rex_context_provider_interface
         return $this->globalParams;
     }
 
-    /**
-     * Returns whether the given parameter exists.
-     */
+    /** Returns whether the given parameter exists. */
     public function hasParam(string $name): bool
     {
         return isset($this->globalParams[$name]);
     }
 
-    /**
-     * Removes a global parameter.
-     */
+    /** Removes a global parameter. */
     public function removeParam(string $name): void
     {
         unset($this->globalParams[$name]);
     }
 
-    /**
-     * @see rex_context_provider::getHiddenInputFields()
-     */
+    /** @see rex_context_provider::getHiddenInputFields() */
     public function getHiddenInputFields(array $params = [])
     {
         // combine global params with local

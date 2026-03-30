@@ -7,9 +7,7 @@
  */
 abstract class rex_linkmap_tree_renderer
 {
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTree($categoryId)
     {
         $category = rex_category::get($categoryId);
@@ -76,14 +74,10 @@ abstract class rex_linkmap_tree_renderer
         return $ul;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     abstract protected function treeItem(rex_category $cat, $liClasses, $linkClasses, $subHtml, $liIcon);
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function formatLabel(rex_structure_element $OOobject)
     {
         $label = $OOobject->getName();
@@ -99,9 +93,7 @@ abstract class rex_linkmap_tree_renderer
         return $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function formatLi(rex_structure_element $OOobject, $currentCategoryId, rex_context $context, $liAttr = '', $linkAttr = '')
     {
         $linkAttr .= ' class="' . ($OOobject->isOnline() ? 'rex-online' : 'rex-offline') . '"';
@@ -125,9 +117,7 @@ abstract class rex_linkmap_tree_renderer
  */
 abstract class rex_linkmap_article_list_renderer
 {
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getList($categoryId)
     {
         $isRoot = 0 === $categoryId;
@@ -151,9 +141,7 @@ abstract class rex_linkmap_article_list_renderer
         return self::renderList($articles, $categoryId);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function renderList(array $articles, $categoryId)
     {
         $list = '';
@@ -169,8 +157,6 @@ abstract class rex_linkmap_article_list_renderer
         return $list;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     abstract protected function listItem(rex_article $article, $categoryId);
 }

@@ -21,9 +21,7 @@ class rex_select
         $this->init();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function init()
     {
         $this->resetSelected();
@@ -181,9 +179,7 @@ class rex_select
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function resetSelected()
     {
         $this->optionSelected = [];
@@ -283,9 +279,7 @@ class rex_select
         }
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function countOptions()
     {
         return $this->optCount;
@@ -316,9 +310,7 @@ class rex_select
         $this->addOptions($sql->getDBArray($query, [], PDO::FETCH_NUM));
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         $useRexSelectStyle = false;
@@ -368,9 +360,7 @@ class rex_select
         return $ausgabe;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

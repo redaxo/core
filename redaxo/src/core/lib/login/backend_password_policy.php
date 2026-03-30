@@ -37,9 +37,7 @@ class rex_backend_password_policy extends rex_password_policy
      */
     private $blockAccountAfter;
 
-    /**
-     * @deprecated use `factory()` instead
-     */
+    /** @deprecated use `factory()` instead */
     public function __construct()
     {
         /** @var array{no_reuse_of_last?: int, no_reuse_within?: string, force_renew_after?: string, block_account_after?: string} $options */
@@ -66,9 +64,7 @@ class rex_backend_password_policy extends rex_password_policy
         parent::__construct($options);
     }
 
-    /**
-     * @return static
-     */
+    /** @return static */
     public static function factory()
     {
         $class = static::getFactoryClass();

@@ -295,9 +295,7 @@ class rex_article_slice
         return $slices;
     }
 
-    /**
-     * @return rex_article
-     */
+    /** @return rex_article */
     public function getArticle()
     {
         $article = rex_article::get($this->getArticleId());
@@ -413,9 +411,7 @@ class rex_article_slice
         return $this->linklists[$index - 1];
     }
 
-    /**
-     * @return list<int>|null
-     */
+    /** @return list<int>|null */
     public function getLinkListArray(int $index): ?array
     {
         $list = $this->linklists[$index - 1];
@@ -456,9 +452,7 @@ class rex_article_slice
         return $this->medialists[$index - 1];
     }
 
-    /**
-     * @return list<string>|null
-     */
+    /** @return list<string>|null */
     public function getMediaListArray(int $index): ?array
     {
         $list = $this->medialists[$index - 1];

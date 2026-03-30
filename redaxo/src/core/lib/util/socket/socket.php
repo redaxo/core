@@ -110,9 +110,7 @@ class rex_socket
         return static::factory($parts['host'], $parts['port'], $parts['ssl'])->setPath($parts['path']);
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function acceptCompression(): self
     {
         $this->acceptCompression = true;

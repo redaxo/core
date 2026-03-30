@@ -14,9 +14,7 @@
  */
 class rex_var_category extends rex_var
 {
-    /**
-     * Werte für die Ausgabe.
-     */
+    /** Werte für die Ausgabe. */
     protected function getOutput()
     {
         $field = $this->getParsedArg('field');
@@ -30,9 +28,7 @@ class rex_var_category extends rex_var
         return self::class . '::getCategoryValue(' . $categoryId . ', ' . $field . ', ' . $clang . ')';
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public static function getCategoryValue($id, $field, $clang = null)
     {
         if (null === $clang) {

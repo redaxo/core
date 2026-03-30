@@ -554,6 +554,22 @@ if ('' != $fUNCADD || $userId > 0) {
 // ---------------------------------- Userliste
 
 if ($SHOW) {
+    $query = trim(rex_request('user_search', 'string', ''));
+    $fragment = new rex_fragment();
+    $fragment->setVar('id', 'rex-users-addon-search');
+    $fragment->setVar('name', 'user_search');
+    $fragment->setVar('autofocus', !rex_request('function', 'bool'));
+    $fragment->setVar('value', $query);
+    $searchForm = $fragment->parse('core/form/search.php');
+    $toolbar = '<form method="POST" action="">' . $searchForm . '</form>';
+
+    $where = '';
+    if ($query) {
+        $sql = rex_sql::factory();
+        $query = $sql->escape('%' . $sql->escapeLikeWildcards($query) . '%');
+        $where = 'WHERE `name` LIKE ' . $query . ' OR `login` LIKE ' . $query;
+    }
+
     // use string starting with "_" to have users without role at bottom when sorting by role ASC
     $noRole = '_no_role';
     $separator = "\0,\0";
@@ -567,6 +583,7 @@ if ($SHOW) {
             status,
             lastlogin
         FROM ' . rex::getTable('user') . ' u
+        ' . $where . '
     ', defaultSort: ['name' => 'asc']);
     $list->addTableAttribute('class', 'table-striped table-hover');
 
@@ -666,6 +683,7 @@ if ($SHOW) {
 
     $fragment = new rex_fragment();
     $fragment->setVar('title', rex_i18n::msg('user_caption'));
+    $fragment->setVar('options', $toolbar, false);
     $fragment->setVar('content', $content, false);
     $content = $fragment->parse('core/page/section.php');
 

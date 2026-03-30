@@ -53,25 +53,19 @@ class rex_form_select_element extends rex_form_element
         return $this->select->get();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setSeparator($separator)
     {
         $this->separator = $separator;
     }
 
-    /**
-     * @return rex_select
-     */
+    /** @return rex_select */
     public function getSelect()
     {
         return $this->select;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setSelect(rex_select $select)
     {
         $this->select = $select;

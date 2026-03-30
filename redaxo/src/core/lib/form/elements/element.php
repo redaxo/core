@@ -78,18 +78,14 @@ class rex_form_element
         $this->defaultSaveValue = $value;
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public function getSaveValue()
     {
         $value = $this->getValue();
         return '' !== $value ? $value : $this->defaultSaveValue;
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public function getValue()
     {
         return $this->value;
@@ -104,9 +100,7 @@ class rex_form_element
         $this->fieldName = $name;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getFieldName()
     {
         return $this->fieldName;
@@ -121,9 +115,7 @@ class rex_form_element
         $this->label = $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getLabel()
     {
         return $this->label;
@@ -138,17 +130,13 @@ class rex_form_element
         $this->notice = $notice;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getNotice()
     {
         return $this->notice;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTag()
     {
         return $this->tag;
@@ -163,9 +151,7 @@ class rex_form_element
         $this->suffix = $suffix;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getSuffix()
     {
         return $this->suffix;
@@ -180,9 +166,7 @@ class rex_form_element
         $this->prefix = $prefix;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getPrefix()
     {
         return $this->prefix;
@@ -197,9 +181,7 @@ class rex_form_element
         $this->header = $header;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getHeader()
     {
         return $this->header;
@@ -214,9 +196,7 @@ class rex_form_element
         $this->footer = $footer;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getFooter()
     {
         return $this->footer;
@@ -273,9 +253,7 @@ class rex_form_element
         }
     }
 
-    /**
-     * @return array<string, int|string>
-     */
+    /** @return array<string, int|string> */
     public function getAttributes()
     {
         return $this->attributes;
@@ -302,17 +280,13 @@ class rex_form_element
         return str_contains((string) $this->getAttribute('class', ''), 'form-control-static');
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasSeparateEnding()
     {
         return $this->separateEnding;
     }
 
-    /**
-     * @return rex_validator
-     */
+    /** @return rex_validator */
     public function getValidator()
     {
         return $this->validator;
@@ -329,17 +303,13 @@ class rex_form_element
     }
 
     // --------- Element Methods
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function formatClass()
     {
         return $this->getAttribute('class');
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function formatLabel()
     {
         $s = '';
@@ -352,9 +322,7 @@ class rex_form_element
         return $s;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         $attr = '';
@@ -377,9 +345,7 @@ class rex_form_element
         return '<' . $tag . $attr . ' />';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function formatNotice()
     {
         $notice = $this->getNotice();
@@ -398,17 +364,13 @@ class rex_form_element
         return $content;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getFragment()
     {
         return 'core/form/form.php';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function _get()
     {
         $formElements = [];
@@ -429,17 +391,13 @@ class rex_form_element
         return $fragment->parse($this->getFragment());
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         return $this->wrapContent($this->_get());
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

@@ -50,9 +50,7 @@ final class rex_mediapool
         return $newMediaName;
     }
 
-    /**
-     * @return bool|string
-     */
+    /** @return bool|string */
     public static function mediaIsInUse(string $filename)
     {
         $sql = rex_sql::factory();
@@ -103,9 +101,7 @@ final class rex_mediapool
         return false;
     }
 
-    /**
-     * check if mediatpye(extension) is allowed for upload.
-     */
+    /** check if mediatpye(extension) is allowed for upload. */
     public static function isAllowedExtension(string $filename, array $args = []): bool
     {
         $fileExt = mb_strtolower(rex_file::extension($filename));

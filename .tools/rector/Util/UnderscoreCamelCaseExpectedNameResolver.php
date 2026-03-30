@@ -15,9 +15,7 @@ final class UnderscoreCamelCaseExpectedNameResolver
         private readonly NodeNameResolver $nodeNameResolver,
     ) {}
 
-    /**
-     * @param Param|Property $node
-     */
+    /** @param Param|Property $node */
     public function resolve(Node $node): ?string
     {
         $currentName = $this->nodeNameResolver->getName($node);

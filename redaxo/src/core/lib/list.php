@@ -219,9 +219,7 @@ class rex_list implements rex_url_provider_interface
         return new $class($query, $rowsPerPage, $listName, $debug, $db, $defaultSort);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function init()
     {
         // nichts tun
@@ -290,9 +288,7 @@ class rex_list implements rex_url_provider_interface
         $this->noRowsMessage = $message;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getNoRowsMessage()
     {
         return $this->noRowsMessage;
@@ -308,17 +304,13 @@ class rex_list implements rex_url_provider_interface
         $this->params[$name] = $value;
     }
 
-    /**
-     * @return array<string, string|int>
-     */
+    /** @return array<string, string|int> */
     public function getParams()
     {
         return $this->params;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function loadBackendConfig()
     {
         $this->addParam('page', rex_be_controller::getCurrentPage());
@@ -334,9 +326,7 @@ class rex_list implements rex_url_provider_interface
         $this->tableAttributes[$name] = $value;
     }
 
-    /**
-     * @return array<string, string|int>
-     */
+    /** @return array<string, string|int> */
     public function getTableAttributes()
     {
         return $this->tableAttributes;
@@ -352,9 +342,7 @@ class rex_list implements rex_url_provider_interface
         $this->formAttributes[$name] = $value;
     }
 
-    /**
-     * @return array<string, string|int>
-     */
+    /** @return array<string, string|int> */
     public function getFormAttributes()
     {
         return $this->formAttributes;
@@ -371,9 +359,7 @@ class rex_list implements rex_url_provider_interface
         $this->linkAttributes[$columnName][$attrName] = $attrValue;
     }
 
-    /**
-     * @return array<string, string|int>|null
-     */
+    /** @return array<string, string|int>|null */
     public function getLinkAttributes($column, $default = null)
     {
         return $this->linkAttributes[$column] ?? $default;
@@ -501,9 +487,7 @@ class rex_list implements rex_url_provider_interface
         return $this->columnNames;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     protected function getEnabledColumnNames(): array
     {
         $columnNames = [];
@@ -776,9 +760,7 @@ class rex_list implements rex_url_provider_interface
         }
     }
 
-    /**
-     * @return array<int, array>
-     */
+    /** @return array<int, array> */
     public function getTableColumnGroups()
     {
         return $this->tableColumnGroups;
@@ -1116,9 +1098,7 @@ class rex_list implements rex_url_provider_interface
         return $value;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isCustomFormat($format)
     {
         return is_array($format) && isset($format[0]) && 'custom' == $format[0];
@@ -1173,9 +1153,7 @@ class rex_list implements rex_url_provider_interface
         return '';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function _getAttributeString($array)
     {
         $s = '';
@@ -1187,9 +1165,7 @@ class rex_list implements rex_url_provider_interface
         return $s;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getColumnLink($columnName, $columnValue, $params = [])
     {
         $attributes = $this->getLinkAttributes($columnName, []);
@@ -1351,9 +1327,7 @@ class rex_list implements rex_url_provider_interface
         return $s;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

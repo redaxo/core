@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Layout Kopf des Backends.
- */
+/** Layout Kopf des Backends. */
 
 $curPage = rex_be_controller::requireCurrentPageObject();
 $user = rex::getUser();

@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Cronjob Addon - Plugin article_status.
- */
+/** Cronjob Addon - Plugin article_status. */
 
 ?>
 <h3>Plugin Artikel-Status fuer Cronjob Addon</h3>

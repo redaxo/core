@@ -9,9 +9,7 @@ use JetBrains\PhpStorm\Deprecated;
  */
 class rex_password_policy
 {
-    /**
-     * @param array<string, array{min?: int, max?: int}> $options
-     */
+    /** @param array<string, array{min?: int, max?: int}> $options */
     public function __construct(
         private array $options,
     ) {}

@@ -393,18 +393,14 @@ class rex_article_service
         return $artStatusTypes;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function nextStatus($currentStatus)
     {
         $artStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($artStatusTypes);
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function prevStatus($currentStatus)
     {
         $artStatusTypes = self::statusTypes();
@@ -915,9 +911,7 @@ class rex_article_service
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getUser()
     {
         return rex::getUser()?->getLogin() ?? rex::getEnvironment();

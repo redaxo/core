@@ -9,9 +9,7 @@
  */
 class rex_history_login extends rex_backend_login
 {
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function checkTempSession($historyLogin, $historySession, $historyValidtime)
     {
         $userSql = rex_sql::factory($this->DB);
@@ -30,17 +28,13 @@ class rex_history_login extends rex_backend_login
         return false;
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public static function createSessionKey(#[SensitiveParameter] $login, $session, $validtime)
     {
         return password_hash($login . $session . $validtime, PASSWORD_DEFAULT);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function verifySessionKey($key1, $key2)
     {
         return password_verify($key1, $key2);

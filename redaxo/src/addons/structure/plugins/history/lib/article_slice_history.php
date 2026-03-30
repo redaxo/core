@@ -118,9 +118,7 @@ class rex_article_slice_history
         return true;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function clearAllHistory()
     {
         $sql = rex_sql::factory();
@@ -133,9 +131,7 @@ class rex_article_slice_history
         $sql->setQuery('delete from ' . $sql->escapeIdentifier(self::getTable()) . ' where history_date < ?', [$deleteDate->format(rex_sql::FORMAT_DATETIME)]);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function checkTables()
     {
         $slicesTable = rex_sql_table::get(rex::getTable('article_slice'));

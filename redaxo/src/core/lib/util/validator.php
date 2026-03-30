@@ -68,9 +68,7 @@ class rex_validator
         return $this;
     }
 
-    /**
-     * @return list<rex_validation_rule>
-     */
+    /** @return list<rex_validation_rule> */
     public function getRules(): array
     {
         return $this->rules;

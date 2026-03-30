@@ -1,10 +1,6 @@
 <?php
 
 /**
- * Functions.
- */
-
-/**
  * Deletes the cache.
  *
  * @package redaxo\core

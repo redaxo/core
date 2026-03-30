@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.14.3@d0b040a91f280f071c1abcb1b77ce3822058725a">
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
   <file src="redaxo/src/addons/backup/lib/backup.php">
     <MixedArgument>
       <code><![CDATA[$column]]></code>
@@ -2404,6 +2404,18 @@
     <PossiblyNullReference>
       <code><![CDATA[setIsActive]]></code>
     </PossiblyNullReference>
+  </file>
+  <file src="redaxo/src/addons/structure/plugins/content/fragments/slice_list.php">
+    <MixedArgument>
+      <code><![CDATA[$this->content]]></code>
+    </MixedArgument>
+  </file>
+  <file src="redaxo/src/addons/structure/plugins/content/fragments/slice_list_item.php">
+    <MixedArgument>
+      <code><![CDATA[$this->attributes ?? []]]></code>
+      <code><![CDATA[$this->content]]></code>
+      <code><![CDATA[$this->formAction]]></code>
+    </MixedArgument>
   </file>
   <file src="redaxo/src/addons/structure/plugins/content/lib/api_module.php">
     <MixedReturnStatement>
@@ -5175,18 +5187,11 @@
     <MixedArgument>
       <code><![CDATA[$block]]></code>
       <code><![CDATA[$block]]></code>
-      <code><![CDATA[$block['element']['name']]]></code>
-      <code><![CDATA[$this->{$block['element']['handler']}($block['element']['text'])]]></code>
     </MixedArgument>
     <MixedArrayAccess>
-      <code><![CDATA[$block['element']['attributes']]]></code>
       <code><![CDATA[$block['element']['attributes']['id']]]></code>
-      <code><![CDATA[$block['element']['handler']]]></code>
-      <code><![CDATA[$block['element']['name']]]></code>
-      <code><![CDATA[$block['element']['text']]]></code>
     </MixedArrayAccess>
     <MixedArrayAssignment>
-      <code><![CDATA[$block['element']['attributes']]]></code>
       <code><![CDATA[$block['element']['attributes']['id']]]></code>
     </MixedArrayAssignment>
     <MixedArrayOffset>

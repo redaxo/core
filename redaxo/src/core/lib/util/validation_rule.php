@@ -48,9 +48,7 @@ final class rex_validation_rule
         return $this->option;
     }
 
-    /**
-     * Message which is used if this validator type does not match.
-     */
+    /** Message which is used if this validator type does not match. */
     public function getMessage(): ?string
     {
         return $this->message;

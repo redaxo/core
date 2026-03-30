@@ -28,9 +28,7 @@ class rex_form_restrictons_element extends rex_form_select_element
         $this->allCheckboxLabel = $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         $id = $this->getAttribute('id');

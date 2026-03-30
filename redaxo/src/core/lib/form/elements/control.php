@@ -16,9 +16,7 @@ class rex_form_control_element extends rex_form_element
         parent::__construct('', $form);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function _get()
     {
         $s = '';
@@ -91,49 +89,37 @@ class rex_form_control_element extends rex_form_element
         return $s;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function submitted($element)
     {
         return is_object($element) && '' != rex_post($element->getAttribute('name'), 'string');
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function saved()
     {
         return $this->submitted($this->saveElement);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function applied()
     {
         return $this->submitted($this->applyElement);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function deleted()
     {
         return $this->submitted($this->deleteElement);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function resetted()
     {
         return $this->submitted($this->resetElement);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function aborted()
     {
         return $this->submitted($this->abortElement);

@@ -15,9 +15,7 @@ abstract class rex_var_dumper
     private static ?VarCloner $cloner = null;
     private static ?ContextualizedDumper $dumper = null;
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function register()
     {
         VarDumper::setHandler(static function ($var, ?string $label = null) {

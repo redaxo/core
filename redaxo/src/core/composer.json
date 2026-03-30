@@ -2,18 +2,18 @@
     "type": "project",
 
     "require": {
-        "composer/ca-bundle": "^1.5.10",
+        "composer/ca-bundle": "^1.5.11",
         "enshrined/svg-sanitize": "^0.22",
-        "parsedown/parsedown": "^1.7.5",
-        "parsedown/parsedown-extra": "dev-temp",
+        "erusev/parsedown": "^1.8.0",
+        "erusev/parsedown-extra": "^0.9.0",
         "filp/whoops": "^2.18.4",
         "lbuchs/webauthn": "^2.2.0",
         "psr/log": "^3.0.2",
         "ramsey/http-range": "^2.0.0",
-        "symfony/console": "^7.4.3",
-        "symfony/http-foundation": "^7.4.3",
-        "symfony/var-dumper": "^7.4.3",
-        "symfony/yaml": "^7.4.1",
+        "symfony/console": "^7.4.7",
+        "symfony/http-foundation": "^7.4.7",
+        "symfony/var-dumper": "^7.4.6",
+        "symfony/yaml": "^7.4.6",
         "voku/anti-xss": "^4.1.42",
         "voku/portable-utf8": "dev-master as 6.0.14-dev"
     },
@@ -43,12 +43,5 @@
         },
         "platform-check": false,
         "prepend-autoloader": false
-    },
-
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/gharlan/parsedown-extra"
-        }
-    ]
+    }
 }

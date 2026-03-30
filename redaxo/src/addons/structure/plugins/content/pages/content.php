@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Verwaltung der Inhalte. EditierModul / Metadaten ...
- */
+/** Verwaltung der Inhalte. EditierModul / Metadaten ... */
 
 $articleId = rex_request('article_id', 'int');
 $clang = rex_request('clang', 'int');

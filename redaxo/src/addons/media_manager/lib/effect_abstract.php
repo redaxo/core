@@ -17,9 +17,7 @@ abstract class rex_effect_abstract
 
     public function __construct() {}
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setMedia(rex_managed_media $media)
     {
         $this->media = $media;
@@ -34,14 +32,10 @@ abstract class rex_effect_abstract
         $this->params = $params;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     abstract public function execute();
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return static::class;

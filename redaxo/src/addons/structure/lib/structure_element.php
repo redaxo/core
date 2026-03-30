@@ -151,9 +151,7 @@ abstract class rex_structure_element
         return self::$classVars;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function resetClassVars()
     {
         self::$classVars = null;
@@ -450,9 +448,7 @@ abstract class rex_structure_element
         return $link;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function _toAttributeString(array $attributes)
     {
         $attr = '';
@@ -540,9 +536,7 @@ abstract class rex_structure_element
         return $parent ? $parent->getClosestValue($key) : null;
     }
 
-    /**
-     * Returns true if this element and all parents are online.
-     */
+    /** Returns true if this element and all parents are online. */
     public function isOnlineIncludingParents(): bool
     {
         if (!$this->isOnline()) {

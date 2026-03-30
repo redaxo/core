@@ -34,9 +34,7 @@ class rex_media_category_select extends rex_select
         $this->rootId = $rootId;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOptions()
     {
         if (null !== $this->rootId) {
@@ -60,9 +58,7 @@ class rex_media_category_select extends rex_select
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOption(rex_media_category $mediacat, int $parentId = 0)
     {
         if (!$this->checkPerms || rex::requireUser()->getComplexPerm('media')->hasCategoryPerm($mediacat->getId())

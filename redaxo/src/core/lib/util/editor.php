@@ -84,9 +84,7 @@ class rex_editor
         ]));
     }
 
-    /**
-     * @return array<self::EDITOR_*, string>
-     */
+    /** @return array<self::EDITOR_*, string> */
     public function getSupportedEditors()
     {
         return [

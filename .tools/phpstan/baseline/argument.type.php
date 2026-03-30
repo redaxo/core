@@ -2,19 +2,9 @@
 
 declare(strict_types=1);
 
-// total 35 errors
+// total 31 errors
 
 $ignoreErrors = [];
-$ignoreErrors[] = [
-    'rawMessage' => 'Parameter #1 $array of function array_diff expects an array of values castable to string, array<array|bool|float|int|string|null> given.',
-    'count' => 2,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/boot.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Parameter #2 $arrays of function array_diff expects an array of values castable to string, array<array|bool|float|int|string|null> given.',
-    'count' => 2,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/boot.php',
-];
 $ignoreErrors[] = [
     'rawMessage' => 'Parameter #2 $createCallback of static method rex_media::getInstance() expects (callable(mixed ...): (static|null))|null, Closure(mixed): (static|null) given.',
     'count' => 1,

@@ -10,9 +10,7 @@
  */
 class rex_config
 {
-    /**
-     * Flag to indicate if the config was initialized.
-     */
+    /** Flag to indicate if the config was initialized. */
     private static bool $initialized = false;
 
     /**
@@ -22,9 +20,7 @@ class rex_config
      */
     private static $cacheFile;
 
-    /**
-     * Flag which indicates if database needs an update, because settings have changed.
-     */
+    /** Flag which indicates if database needs an update, because settings have changed. */
     private static bool $changed = false;
 
     /**
@@ -233,9 +229,7 @@ class rex_config
         return false;
     }
 
-    /**
-     * Refreshes rex_config by reloading config from db.
-     */
+    /** Refreshes rex_config by reloading config from db. */
     public static function refresh(): void
     {
         if (!self::$initialized) {
@@ -310,9 +304,7 @@ class rex_config
         return false;
     }
 
-    /**
-     * load the config-data from database.
-     */
+    /** load the config-data from database. */
     private static function loadFromDb(): void
     {
         $sql = rex_sql::factory();
@@ -324,9 +316,7 @@ class rex_config
         }
     }
 
-    /**
-     * save config to file-cache.
-     */
+    /** save config to file-cache. */
     private static function generateCache(): void
     {
         if (rex_file::putCache(self::$cacheFile, self::$data) <= 0) {
@@ -334,9 +324,7 @@ class rex_config
         }
     }
 
-    /**
-     * persists the config-data and truncates the file-cache.
-     */
+    /** persists the config-data and truncates the file-cache. */
     public static function save(): void
     {
         // save cache only if changes happened
@@ -359,9 +347,7 @@ class rex_config
         self::$deletedData = [];
     }
 
-    /**
-     * save the config-data into the db.
-     */
+    /** save the config-data into the db. */
     private static function saveToDb(): void
     {
         $sql = rex_sql::factory();

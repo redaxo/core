@@ -58,9 +58,7 @@ class rex_command_cronjob_run extends rex_console_command
         return 0;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     private function executeSingleJob(SymfonyStyle $io, $id)
     {
         $manager = rex_cronjob_manager_sql::factory();

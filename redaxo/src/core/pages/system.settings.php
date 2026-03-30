@@ -271,7 +271,7 @@ $content .= $fragment->parse('core/form/form.php');
 
 foreach (rex_system_setting::getAll() as $setting) {
     $field = $setting->getField();
-    if (!($field instanceof rex_form_element)) {
+    if (!$field instanceof rex_form_element) {
         throw new rex_exception($setting::class . '::getField() must return a rex_form_element!');
     }
     $field->setAttribute('name', 'settings[' . $setting->getKey() . ']');
