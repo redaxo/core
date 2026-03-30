@@ -101,7 +101,6 @@ class rex_article_content_editor extends rex_article_content
 
             $statusName = $sliceStatus ? 'online' : 'offline';
 
-
             $fragment = new rex_fragment();
             $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-output', 'rex-slice-' . $statusName], 'id' => 'slice' . $sliceId], false);
             $fragment->setVar('content', $section, false);
@@ -467,7 +466,7 @@ class rex_article_content_editor extends rex_article_content
 
         $fragment = new rex_fragment();
         $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-add']], false);
-        $fragment->setVar('form_action', rex_url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'clang' => $this->clang, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition, false);
+        $fragment->setVar('formAction', rex_url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'clang' => $this->clang, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition, false);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('slice.php');
     }
@@ -534,7 +533,7 @@ class rex_article_content_editor extends rex_article_content
 
         $fragment = new rex_fragment();
         $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-edit'], 'id' => 'slice' . $sliceId], false);
-        $fragment->setVar('form_action', rex_url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId, false);
+        $fragment->setVar('formAction', rex_url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId, false);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('slice.php');
     }
