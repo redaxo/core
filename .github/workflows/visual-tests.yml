@@ -96,10 +96,10 @@ jobs:
                     php redaxo/bin/console config:set error_email 'test@redaxo.invalid' --ansi -v
             -   name: Import mock data
                 run: |
-                    mkdir -p $GITHUB_WORKSPACE/redaxo/data/addons/backup && cp -r .github/imports/inital-content-for-visual-tests.sql $GITHUB_WORKSPACE/redaxo/data/addons/backup/
-                    cp -r .github/imports/media/* $GITHUB_WORKSPACE/media/
-                    cp -f .github/imports/README.md $GITHUB_WORKSPACE/redaxo/src/addons/project/README.de.md
-                    php redaxo/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=inital-content-for-visual-tests --admin-username=myusername --admin-password=mypassword --ansi -v
+                    mkdir -p $GITHUB_WORKSPACE/redaxo/data/addons/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/redaxo/data/addons/backup/
+                    cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/media/
+                    cp -f .tools/visual-tests/fixtures/README.md $GITHUB_WORKSPACE/redaxo/src/addons/project/README.de.md
+                    php redaxo/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
             -   name: Install packages
                 run: |
                     php redaxo/bin/console package:install phpmailer --ansi -v
@@ -123,12 +123,12 @@ jobs:
                 run: |
                     php redaxo/bin/console config:set setup true -t boolean --ansi -v
                     php redaxo/bin/console cache:clear --ansi -v
-                    node .github/tests-visual/visual-record.js setup
+                    node .tools/visual-tests/visual-record.js setup
                     php redaxo/bin/console config:set setup false -t boolean --ansi -v
                     php redaxo/bin/console cache:clear --ansi -v
-                    node .github/tests-visual/visual-record.js
-                    git add --intent-to-add .github/tests-visual/
-                    git diff --exit-code --name-only .github/tests-visual/
+                    node .tools/visual-tests/visual-record.js
+                    git add --intent-to-add .tools/visual-tests/screenshots/
+                    git diff --exit-code --name-only .tools/visual-tests/screenshots/
 
             -   name: Commit changed files
                 uses: stefanzweifel/git-auto-commit-action@v7
@@ -137,7 +137,7 @@ jobs:
                     commit_message: Update screenshots
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
-                    file_pattern: .github/tests-visual/*
+                    file_pattern: .tools/visual-tests/screenshots/*
                     branch: ${{ github.head_ref }} # repo dispatch needs the target branch
 
             -   name: Remove automerge label

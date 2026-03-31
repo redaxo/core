@@ -5,7 +5,7 @@
  * 2. Make sure a database server is running
  * 3. Make sure a admin-user with login `myusername` and password `mypassword` exists
  * 4. Make sure the REDAXO instance running at START_URL is accessible and login screen appears on the url
- * 5. Start the visual recording with `node .github/tests-visual/visual-record.js`
+ * 5. Start the visual recording with `node .tools/visual-tests/visual-record.js`
  */
 
 import playwright from 'playwright';
@@ -20,7 +20,7 @@ const viewportHeight = 800;
 const START_URL = 'http://localhost:8080/redaxo/index.php';
 const DEBUGGING = false;
 const WORKING_DIR = '.tests-visual/';
-const GOLDEN_SAMPLES_DIR = '.github/tests-visual/';
+const GOLDEN_SAMPLES_DIR = '.tools/visual-tests/screenshots/';
 
 const myArgs = process.argv.slice(2);
 let minDiffPixels = 1;
@@ -167,7 +167,7 @@ async function processScreenshot(page, screenshotName) {
 
     await page.screenshot({ path: WORKING_DIR + screenshotName, fullPage: true, animations: 'disabled' });
 
-    // make sure we only create changes in .github/tests-visual/ on substential screenshot changes.
+    // make sure we only create changes in .tools/visual-tests/screenshots/ on substential screenshot changes.
     // this makes sure to prevent endless loops within the github action
     let diffPixels = countDiffPixels(WORKING_DIR + screenshotName, GOLDEN_SAMPLES_DIR + screenshotName);
     console.log("DIFF-PIXELS: "+ screenshotName + ":" +diffPixels);
