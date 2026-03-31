@@ -2,16 +2,17 @@
 
 namespace Redaxo\Core\Addon;
 
+use Composer\InstalledVersions;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Util;
+use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
-use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Translation\I18n;
@@ -23,6 +24,7 @@ use function extension_loaded;
 use function in_array;
 use function is_array;
 use function is_string;
+use function sprintf;
 
 use const PHP_VERSION;
 
@@ -59,12 +61,6 @@ class AddonManager
     public function install(bool $installDump = true): bool
     {
         try {
-            // check package directory perms
-            $installDir = $this->addon->getPath();
-            if (!Dir::isWritable($installDir)) {
-                throw new UserMessageException($this->i18n('dir_not_writable', $installDir));
-            }
-
             // check package.yml
             $addonFile = $this->addon->getPath(Addon::FILE_PACKAGE);
             if (!is_readable($addonFile)) {
@@ -582,6 +578,7 @@ class AddonManager
     {
         $config = [];
         foreach (Addon::getRegisteredAddons() as $addonName => $addon) {
+            $config[$addonName]['package'] = $addon->package;
             $config[$addonName]['install'] = $addon->isInstalled();
             $config[$addonName]['status'] = $addon->isAvailable();
         }
@@ -592,19 +589,32 @@ class AddonManager
     public static function synchronizeWithFileSystem(): void
     {
         $config = Core::getPackageConfig();
-        $addons = self::readPackageFolder(Path::src('addons'));
-        $registeredAddons = array_keys(Addon::getRegisteredAddons());
-        foreach (array_diff($registeredAddons, $addons) as $addonName) {
-            $manager = self::factory(Addon::require($addonName));
+        $registeredAddons = Addon::getRegisteredAddons();
+
+        $packages = [];
+        foreach (InstalledVersions::getInstalledPackagesByType('redaxo-addon') as $package) {
+            $addon = Path::basename($package);
+
+            if (isset($packages[$addon])) {
+                throw new RuntimeException(sprintf('The composer packages "%s" and "%s" have the same addon name "%s".', $packages[$addon], $package, $addon));
+            }
+
+            $packages[$addon] = $package;
+        }
+
+        foreach (array_diff_key($registeredAddons, $packages) as $addonName => $addon) {
+            $manager = self::factory($addon);
             $manager->_delete();
             unset($config[$addonName]);
         }
-        foreach ($addons as $addonName) {
+        foreach ($packages as $addonName => $package) {
             if (!Addon::exists($addonName)) {
+                $config[$addonName]['package'] = $package;
                 $config[$addonName]['install'] = false;
                 $config[$addonName]['status'] = false;
             } else {
                 $addon = Addon::get($addonName);
+                $config[$addonName]['package'] = $package;
                 $config[$addonName]['install'] = $addon->isInstalled();
                 $config[$addonName]['status'] = $addon->isAvailable();
             }
@@ -613,23 +623,5 @@ class AddonManager
 
         Core::setConfig('package-config', $config);
         Addon::initialize();
-    }
-
-    /**
-     * Returns the subfolders of the given folder.
-     *
-     * @return list<non-empty-string>
-     */
-    private static function readPackageFolder(string $folder): array
-    {
-        $addons = [];
-
-        if (is_dir($folder)) {
-            foreach (Finder::factory($folder)->dirsOnly() as $file) {
-                $addons[] = $file->getBasename();
-            }
-        }
-
-        return $addons;
     }
 }

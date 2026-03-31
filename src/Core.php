@@ -442,7 +442,7 @@ final class Core
     }
 
     /**
-     * @return array<non-empty-string, array{install: bool, status: bool}>
+     * @return array<non-empty-string, array{package: string, install: bool, status: bool}>
      * @psalm-suppress MixedReturnTypeCoercion
      */
     public static function getPackageConfig(): array

@@ -66,8 +66,7 @@ use_last_modified: false
 start_page: structure
 timezone: Europe/Berlin
 http_client_proxy: null
-setup_addons:
-    - install
+setup_addons: []
 table_prefix: rex_
 temp_prefix: tmp_
 db:

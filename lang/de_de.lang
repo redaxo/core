@@ -330,7 +330,6 @@ package_activate = aktivieren
 package_yes = ja
 package_no = nein
 package_caption = Liste der verfügbaren Packages
-addon_dir_not_writable = Der AddOn-Ordner hat keine Schreibrechte!
 package_missing_yml_file = Die package.yml fehlt!
 package_invalid_yml_file = Die package.yml ist invalid:
 package_missing_id = Es fehlt die "package"-Angabe in der package.yml ("package: {0}").

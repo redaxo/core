@@ -2,6 +2,8 @@
 
 namespace Redaxo\Core\Addon;
 
+use Composer\InstalledVersions;
+use OutOfBoundsException;
 use Override;
 use Redaxo\Core\Addon\ExtensionPoint\AddonCacheDeleted;
 use Redaxo\Core\Config;
@@ -44,6 +46,21 @@ final class Addon implements AddonInterface
      */
     private static array $addons = [];
 
+    /** @var non-empty-string */
+    public string $path {
+        get {
+            if (isset($this->path)) {
+                return $this->path;
+            }
+
+            try {
+                return $this->path = realpath(InstalledVersions::getInstallPath($this->name));
+            } catch (OutOfBoundsException) {
+                return $this->path = realpath(InstalledVersions::getRootPackage()['install_path']) . '/vendor/' . $this->package;
+            }
+        }
+    }
+
     /**
      * Properties.
      *
@@ -56,6 +73,7 @@ final class Addon implements AddonInterface
 
     /** @param non-empty-string $name Name of the addon */
     public function __construct(
+        public readonly string $package,
         private readonly string $name,
     ) {}
 
@@ -459,7 +477,7 @@ final class Addon implements AddonInterface
         $addons = self::$addons;
         self::$addons = [];
         foreach ($config as $addonName => $addonConfig) {
-            $addon = $addons[$addonName] ?? new self($addonName);
+            $addon = $addons[$addonName] ?? new self($addonConfig['package'], $addonName);
             $addon->setProperty('install', $addonConfig['install'] ?? false);
             $addon->setProperty('status', $addonConfig['status'] ?? false);
             self::$addons[$addonName] = $addon;

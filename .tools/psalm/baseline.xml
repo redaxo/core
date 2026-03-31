@@ -1901,9 +1901,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/Addon/AddonManager.php">
-    <LessSpecificReturnStatement>
-      <code><![CDATA[$addons]]></code>
-    </LessSpecificReturnStatement>
     <MixedArgument>
       <code><![CDATA[$addonId]]></code>
       <code><![CDATA[$key]]></code>
@@ -1960,9 +1957,6 @@
       <code><![CDATA[$requirements['packages'][$addonId]]]></code>
       <code><![CDATA[$successMessage]]></code>
     </MixedOperand>
-    <MoreSpecificReturnType>
-      <code><![CDATA[list<non-empty-string>]]></code>
-    </MoreSpecificReturnType>
     <PossiblyNullArgument>
       <code><![CDATA[$addon->getPackageId()]]></code>
       <code><![CDATA[$addon->getPackageId()]]></code>
@@ -3044,8 +3038,10 @@
       <code><![CDATA[$this->backend . $file]]></code>
       <code><![CDATA[strtr($this->base . $file, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR)]]></code>
       <code><![CDATA[strtr($this->core . $file, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR)]]></code>
+      <code><![CDATA[strtr(Addon::require($addon)->path . '/' . $file, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR)]]></code>
     </LessSpecificReturnStatement>
     <MoreSpecificReturnType>
+      <code><![CDATA[non-empty-string]]></code>
       <code><![CDATA[non-empty-string]]></code>
       <code><![CDATA[non-empty-string]]></code>
       <code><![CDATA[non-empty-string]]></code>

@@ -1,0 +1,20 @@
+{
+    "name": "redaxo/debug",
+    "description": "REDAXO debug addon",
+    "type": "redaxo-addon",
+    "license": "MIT",
+    "version": "2.0.0-dev",
+
+    "require": {
+        "php": "^8.4",
+        "ext-zip": "*",
+        "redaxo/core": "^6.0@dev",
+        "itsgoingd/clockwork": "^5.3.5"
+    },
+
+    "autoload": {
+        "classmap": [
+            "lib/"
+        ]
+    }
+}
