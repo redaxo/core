@@ -7,17 +7,13 @@ use Redaxo\Core\Database\Sql;
 
 final class ContentSection
 {
-    /**
-     * @param positive-int $id
-     */
+    /** @param positive-int $id */
     private function __construct(
         private int $id,
         private string $name,
     ) {}
 
-    /**
-     * @return positive-int
-     */
+    /** @return positive-int */
     public function getId(): int
     {
         return $this->id;
@@ -28,9 +24,7 @@ final class ContentSection
         return $this->name;
     }
 
-    /**
-     * @return list<self>
-     */
+    /** @return list<self> */
     public static function forTemplate(int $templateId): array
     {
         $sql = Sql::factory();

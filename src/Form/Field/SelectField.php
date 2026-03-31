@@ -55,25 +55,19 @@ class SelectField extends BaseField
         return $this->select->get();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setSeparator($separator)
     {
         $this->separator = $separator;
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getSelect()
     {
         return $this->select;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setSelect(Select $select)
     {
         $this->select = $select;

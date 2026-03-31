@@ -36,9 +36,7 @@ class MetaInfoForm extends Form
     private string $metaPrefix;
     private Table $tableManager;
 
-    /**
-     * @param 'post'|'get' $method
-     */
+    /** @param 'post'|'get' $method */
     public function __construct(string $metaPrefix, string $metaTable, string $tableName, string $whereCondition, string $method = 'post', bool $debug = false)
     {
         $this->metaPrefix = $metaPrefix;
@@ -238,9 +236,7 @@ class MetaInfoForm extends Form
         return $string;
     }
 
-    /**
-     * @return bool|string
-     */
+    /** @return bool|string */
     protected function validate()
     {
         $fieldName = $this->elementPostValue($this->getFieldsetName(), 'name');

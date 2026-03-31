@@ -33,9 +33,7 @@ class Backup
     public const IMPORT_EVENT_PRE = 3;
     public const IMPORT_EVENT_POST = 4;
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getDir()
     {
         $dir = Path::coreData('backup');
@@ -44,9 +42,7 @@ class Backup
         return $dir;
     }
 
-    /**
-     * @param self::IMPORT_* $importType
-     */
+    /** @param self::IMPORT_* $importType */
     public static function isFilenameValid(int $importType, string $filename): bool
     {
         if (self::IMPORT_ARCHIVE === $importType) {
@@ -469,9 +465,7 @@ class Backup
         closedir($handle);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public static function getTables()
     {
         $tables = [];

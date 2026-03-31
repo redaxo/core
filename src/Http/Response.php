@@ -69,9 +69,7 @@ final class Response
         return self::$httpStatus;
     }
 
-    /**
-     * Returns a request save NONCE für CSP Headers and Implemntations.
-     */
+    /** Returns a request save NONCE für CSP Headers and Implemntations. */
     public static function getNonce(): string
     {
         if (!self::$nonce) {

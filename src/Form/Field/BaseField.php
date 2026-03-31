@@ -86,18 +86,14 @@ class BaseField
         $this->defaultSaveValue = $value;
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public function getSaveValue()
     {
         $value = $this->getValue();
         return '' !== $value ? $value : $this->defaultSaveValue;
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public function getValue()
     {
         return $this->value;
@@ -112,9 +108,7 @@ class BaseField
         $this->fieldName = $name;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getFieldName()
     {
         return $this->fieldName;
@@ -129,9 +123,7 @@ class BaseField
         $this->label = $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getLabel()
     {
         return $this->label;
@@ -146,17 +138,13 @@ class BaseField
         $this->notice = $notice;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getNotice()
     {
         return $this->notice;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTag()
     {
         return $this->tag;
@@ -171,9 +159,7 @@ class BaseField
         $this->suffix = $suffix;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getSuffix()
     {
         return $this->suffix;
@@ -188,9 +174,7 @@ class BaseField
         $this->prefix = $prefix;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getPrefix()
     {
         return $this->prefix;
@@ -205,9 +189,7 @@ class BaseField
         $this->header = $header;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getHeader()
     {
         return $this->header;
@@ -222,9 +204,7 @@ class BaseField
         $this->footer = $footer;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getFooter()
     {
         return $this->footer;
@@ -281,9 +261,7 @@ class BaseField
         }
     }
 
-    /**
-     * @return array<string, int|string>
-     */
+    /** @return array<string, int|string> */
     public function getAttributes()
     {
         return $this->attributes;
@@ -310,17 +288,13 @@ class BaseField
         return str_contains((string) $this->getAttribute('class', ''), 'form-control-static');
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasSeparateEnding()
     {
         return $this->separateEnding;
     }
 
-    /**
-     * @return Validator
-     */
+    /** @return Validator */
     public function getValidator()
     {
         return $this->validator;
@@ -337,17 +311,13 @@ class BaseField
     }
 
     // --------- Element Methods
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function formatClass()
     {
         return $this->getAttribute('class');
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function formatLabel()
     {
         $s = '';
@@ -360,9 +330,7 @@ class BaseField
         return $s;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         $attr = '';
@@ -385,9 +353,7 @@ class BaseField
         return '<' . $tag . $attr . ' />';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function formatNotice()
     {
         $notice = $this->getNotice();
@@ -406,17 +372,13 @@ class BaseField
         return $content;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getFragment()
     {
         return 'core/form/form.php';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function _get()
     {
         $formElements = [];
@@ -437,17 +399,13 @@ class BaseField
         return $fragment->parse($this->getFragment());
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         return $this->wrapContent($this->_get());
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

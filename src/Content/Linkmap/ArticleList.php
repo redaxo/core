@@ -22,7 +22,7 @@ class ArticleList extends ArticleListRenderer
      */
     protected function listItem(Article $article, $categoryId)
     {
-        $liAttr = ' class="list-group-item"';
+        $liAttr = ' class="list-group-item rex-linkmap-list-item-article"';
         $url = 'javascript:insertLink(\'redaxo://' . $article->getId() . '\',\'' . escape(trim(sprintf('%s [%s]', $article->getName(), $article->getId())), 'js') . '\');';
         return CategoryTreeRenderer::formatLi($article, $categoryId, $this->context, $liAttr, ' href="' . $url . '"') . '</li>' . "\n";
     }

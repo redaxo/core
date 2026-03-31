@@ -20,9 +20,7 @@ use function Redaxo\Core\View\escape;
  */
 class Importer
 {
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function updateFromPrevious()
     {
         // ----- vorhandenen seite updaten
@@ -81,18 +79,14 @@ class Importer
         return $errMsg;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function databaseAlreadyExists()
     {
         // ----- db schon vorhanden, nichts tun
         return self::reinstallPackages();
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function overrideExisting()
     {
         // ----- volle Datenbank, alte DB löschen / drop
@@ -118,9 +112,7 @@ class Importer
         return $errMsg;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function prepareEmptyDb()
     {
         // ----- leere Datenbank neu einrichten
@@ -139,9 +131,7 @@ class Importer
         return $errMsg;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function verifyDbSchema()
     {
         $errMsg = '';
@@ -155,9 +145,7 @@ class Importer
         return $errMsg;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private static function getRequiredTables()
     {
         return [

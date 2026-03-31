@@ -99,9 +99,7 @@ class AssetsSyncCommand extends AbstractCommand
         return Command::FAILURE;
     }
 
-    /**
-     * @return list{int, int, int}
-     */
+    /** @return list{int, int, int} */
     private function sync(SymfonyStyle $io, string $folder1, string $folder2): array
     {
         $created = $updated = $errored = 0;

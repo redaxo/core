@@ -49,9 +49,7 @@ final class Column
         return $this->setModified(true);
     }
 
-    /**
-     * @return string The column type, including its size, e.g. int(10) or varchar(255)
-     */
+    /** @return string The column type, including its size, e.g. int(10) or varchar(255) */
     public function getType(): string
     {
         return $this->type;

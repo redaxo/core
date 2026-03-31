@@ -94,9 +94,7 @@ class ArticleContentBase
         }
     }
 
-    /**
-     * @return Sql
-     */
+    /** @return Sql */
     protected function getSqlInstance()
     {
         if (!is_object($this->ARTICLE)) {
@@ -140,17 +138,13 @@ class ArticleContentBase
         $this->clang = $value;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getArticleId()
     {
         return $this->article_id;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getClangId()
     {
         return $this->clang;
@@ -190,9 +184,7 @@ class ArticleContentBase
         $this->template_id = $templateId;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getTemplateId()
     {
         return $this->template_id;

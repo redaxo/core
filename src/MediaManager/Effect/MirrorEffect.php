@@ -127,9 +127,7 @@ class MirrorEffect extends AbstractEffect
         ];
     }
 
-    /**
-     * @return GdImage
-     */
+    /** @return GdImage */
     private function imagereflection(&$image, $reflectionHeight, $reflectionOpacity, $transparent, $bgColor)
     {
         $srcHeight = imagesy($image);

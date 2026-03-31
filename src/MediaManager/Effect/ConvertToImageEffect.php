@@ -217,9 +217,7 @@ class ConvertToImageEffect extends AbstractEffect
         ];
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private function getConvertPath()
     {
         $path = '';

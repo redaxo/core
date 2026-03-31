@@ -89,9 +89,7 @@ abstract class AbstractOptionField extends BaseField
         $this->addOptions($sql->getDBArray($query, [], PDO::FETCH_NUM));
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function getOptions()
     {
         return $this->options;

@@ -68,17 +68,13 @@ class Context implements ContextProviderInterface
         return $this->params;
     }
 
-    /**
-     * Returns whether the given parameter exists.
-     */
+    /** Returns whether the given parameter exists. */
     public function hasParam(string $name): bool
     {
         return isset($this->params[$name]);
     }
 
-    /**
-     * Removes a global parameter.
-     */
+    /** Removes a global parameter. */
     public function removeParam(string $name): void
     {
         unset($this->params[$name]);

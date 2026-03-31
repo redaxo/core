@@ -23,9 +23,7 @@ abstract class rex_install_package_download
     /** @var string */
     protected $archive;
 
-    /**
-     * @param non-empty-string $addonkey
-     */
+    /** @param non-empty-string $addonkey */
     public function run(string $addonkey, int $fileId): string
     {
         $this->addonkey = Path::basename($addonkey); // the addonkey is used in file paths
@@ -71,19 +69,13 @@ abstract class rex_install_package_download
         return true;
     }
 
-    /**
-     * @return array<string, array{name: string, author: string, shortdescription: string, description: string, website: string, counter: int, created: string, updated: string, files: array<int, array{version: string, description: string, path: string, checksum: string, counter: int, created: string, updated: string}>}>
-     */
+    /** @return array<string, array{name: string, author: string, shortdescription: string, description: string, website: string, counter: int, created: string, updated: string, files: array<int, array{version: string, description: string, path: string, checksum: string, counter: int, created: string, updated: string}>}> */
     abstract protected function getPackages();
 
-    /**
-     * @return void
-     */
+    /** @return void */
     abstract protected function checkPreConditions();
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     abstract protected function doAction();
 
     private function isCorrectFormat(string $file): bool

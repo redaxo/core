@@ -22,9 +22,7 @@ use function sprintf;
 
 class ContentHandler
 {
-    /**
-     * @throws ApiFunctionException
-     */
+    /** @throws ApiFunctionException */
     public static function addSlice(int $articleId, int $clangId, int $ctypeId, int $moduleId, array $data = []): string
     {
         $data['revision'] ??= 0;
@@ -210,9 +208,7 @@ class ContentHandler
         return 1 == $curr->getRows();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function sliceStatus(int $sliceId, int $status)
     {
         $sql = Sql::factory();
@@ -389,9 +385,7 @@ class ContentHandler
         return true;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getUser()
     {
         return Core::getUser()?->getLogin() ?? Core::getEnvironment();

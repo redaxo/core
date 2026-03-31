@@ -89,9 +89,7 @@ class Editor
         ]));
     }
 
-    /**
-     * @return array<self::EDITOR_*, string>
-     */
+    /** @return array<self::EDITOR_*, string> */
     public function getSupportedEditors(): array
     {
         return [

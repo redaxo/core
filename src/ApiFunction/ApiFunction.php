@@ -145,9 +145,7 @@ abstract class ApiFunction
         return null;
     }
 
-    /**
-     * @param class-string<ApiFunction> $class
-     */
+    /** @param class-string<ApiFunction> $class */
     public static function register(string $name, string $class): void
     {
         self::$functions[$name] = $class;
@@ -236,7 +234,7 @@ abstract class ApiFunction
                 try {
                     $result = $apiFunc->execute();
 
-                    if (!($result instanceof Result)) {
+                    if (!$result instanceof Result) {
                         throw new LogicException('Illegal result returned from api-function ' . Request::get(self::REQ_CALL_PARAM) . '. Expected a instance of ApiFunctionResult but got "' . get_debug_type($result) . '".');
                     }
 
@@ -264,9 +262,7 @@ abstract class ApiFunction
         }
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function hasMessage()
     {
         $apiFunc = self::factory();
@@ -301,9 +297,7 @@ abstract class ApiFunction
         return '<div id="rex-message-container">' . $message . '</div>';
     }
 
-    /**
-     * @return Result|null
-     */
+    /** @return Result|null */
     public function getResult()
     {
         return $this->result;

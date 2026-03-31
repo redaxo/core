@@ -20,9 +20,7 @@ abstract class AbstractEffect
 
     public function __construct() {}
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setMedia(ManagedMedia $media)
     {
         $this->media = $media;
@@ -43,9 +41,7 @@ abstract class AbstractEffect
      */
     abstract public function execute();
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return static::class;

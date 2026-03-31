@@ -2,19 +2,9 @@
 
 declare(strict_types=1);
 
-// total 8 errors
+// total 4 errors
 
 $ignoreErrors = [];
-$ignoreErrors[] = [
-    'rawMessage' => 'Parameter #1 $array of function array_diff expects an array of values castable to string, array<array|bool|float|int|string|null> given.',
-    'count' => 2,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/boot.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Parameter #2 $arrays of function array_diff expects an array of values castable to string, array<array|bool|float|int|string|null> given.',
-    'count' => 2,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/boot.php',
-];
 $ignoreErrors[] = [
     'rawMessage' => 'Parameter #2 $replace of function str_replace expects array<string>|string, list<int> given.',
     'count' => 1,

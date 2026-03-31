@@ -40,9 +40,7 @@ class SelectInput extends AbstractInput
         parent::setAttribute($name, $value);
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getSelect()
     {
         return $this->select;

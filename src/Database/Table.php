@@ -62,9 +62,7 @@ final class Table
     /** @var array<string, string> mapping from current (new) name to existing (old) name in database */
     private array $foreignKeysExisting = [];
 
-    /**
-     * @param positive-int $db
-     */
+    /** @param positive-int $db */
     private function __construct(string $name, int $db = 1)
     {
         $this->db = $db;
@@ -98,11 +96,16 @@ final class Table
                 $type = 'int(10) unsigned';
             }
 
+            $default = $column['default'];
+            if ("''" === $default && in_array($type, ['tinytext', 'text', 'mediumtext', 'longtext', 'tinyblob', 'blob', 'mediumblob', 'longblob'], true)) {
+                $default = '';
+            }
+
             $this->columns[$column['name']] = new Column(
                 $column['name'],
                 $type,
                 'YES' === $column['null'],
-                $column['default'],
+                $default,
                 $column['extra'] ?: null,
                 $column['comment'] ?: null,
             );
@@ -214,9 +217,7 @@ final class Table
         return $this->columns[$name];
     }
 
-    /**
-     * @return array<string, Column>
-     */
+    /** @return array<string, Column> */
     public function getColumns(): array
     {
         return $this->columns;
@@ -324,9 +325,7 @@ final class Table
         return $this;
     }
 
-    /**
-     * @return non-empty-list<string>|null Column names
-     */
+    /** @return non-empty-list<string>|null Column names */
     public function getPrimaryKey(): ?array
     {
         return $this->primaryKey ?: null;
@@ -366,9 +365,7 @@ final class Table
         return $this->indexes[$name];
     }
 
-    /**
-     * @return array<string, Index>
-     */
+    /** @return array<string, Index> */
     public function getIndexes(): array
     {
         return $this->indexes;
@@ -454,9 +451,7 @@ final class Table
         return $this->foreignKeys[$name];
     }
 
-    /**
-     * @return array<string, ForeignKey>
-     */
+    /** @return array<string, ForeignKey> */
     public function getForeignKeys(): array
     {
         return $this->foreignKeys;

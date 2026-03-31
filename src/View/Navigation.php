@@ -260,9 +260,7 @@ class Navigation
         return $this;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     private function _setActivePath()
     {
         $articleId = Article::getCurrentId();
@@ -450,17 +448,13 @@ class Navigation
         return '<ul' . Str::buildAttributes($attributes) . ">\n" . implode('', $items) . "</ul>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getBreadcrumbListItemTag(string $item, array $attributes, int $depth): string
     {
         return '<li' . Str::buildAttributes($attributes) . '>' . $item . "</li>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getBreadcrumbLinkTag(Category $category, string $content, array $attributes, int $depth): string
     {
         if (!isset($attributes['href'])) {
@@ -479,17 +473,13 @@ class Navigation
         return '<ul' . Str::buildAttributes($attributes) . ">\n" . implode('', $items) . "</ul>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getListItemTag(Category $category, string $item, array $attributes, int $depth): string
     {
         return '<li' . Str::buildAttributes($attributes) . '>' . $item . "</li>\n";
     }
 
-    /**
-     * @param array<int|string, int|string|list<string>> $attributes
-     */
+    /** @param array<int|string, int|string|list<string>> $attributes */
     protected function getLinkTag(Category $category, string $content, array $attributes, int $depth): string
     {
         if (!isset($attributes['href'])) {

@@ -46,9 +46,7 @@ class Module
         return $this->key;
     }
 
-    /**
-     * @return array<int, string>
-     */
+    /** @return array<int, string> */
     private static function getKeyMapping(): array
     {
         static $mapping;

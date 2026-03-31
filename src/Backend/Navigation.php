@@ -51,9 +51,7 @@ class Navigation
         $this->pages[$blockName][] = $page;
     }
 
-    /**
-     * @return list<array{navigation: list<array<string, mixed>>, headline: array{title: string}}>
-     */
+    /** @return list<array{navigation: list<array<string, mixed>>, headline: array{title: string}}> */
     public function getNavigation(): array
     {
         uksort($this->pages, function (string $block1, string $block2): int {

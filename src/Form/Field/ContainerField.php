@@ -92,9 +92,7 @@ class ContainerField extends BaseField
         return $this->fields;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function prepareInnerFields()
     {
         $values = $this->getValue();
@@ -122,9 +120,7 @@ class ContainerField extends BaseField
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         $this->prepareInnerFields();
@@ -153,17 +149,13 @@ class ContainerField extends BaseField
         return $format;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getFragment()
     {
         return 'core/form/container.php';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getSaveValue()
     {
         $this->prepareInnerFields();

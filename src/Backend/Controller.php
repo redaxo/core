@@ -108,9 +108,7 @@ final class Controller
         return $obj;
     }
 
-    /**
-     * @return array<string, Page>
-     */
+    /** @return array<string, Page> */
     public static function getPages(): array
     {
         return self::$pages;

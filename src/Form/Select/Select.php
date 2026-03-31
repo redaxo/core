@@ -30,9 +30,7 @@ class Select
         $this->init();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function init()
     {
         $this->resetSelected();
@@ -190,9 +188,7 @@ class Select
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function resetSelected()
     {
         $this->optionSelected = [];
@@ -292,9 +288,7 @@ class Select
         }
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function countOptions()
     {
         return $this->optCount;
@@ -325,9 +319,7 @@ class Select
         $this->addOptions($sql->getDBArray($query, [], PDO::FETCH_NUM));
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         $useRexSelectStyle = false;
@@ -377,9 +369,7 @@ class Select
         return $ausgabe;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

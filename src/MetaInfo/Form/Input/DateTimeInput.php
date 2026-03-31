@@ -68,41 +68,31 @@ class DateTimeInput extends AbstractInput
         parent::setAttribute($name, $value);
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getDaySelect()
     {
         return $this->dateInput->getDaySelect();
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getMonthSelect()
     {
         return $this->dateInput->getMonthSelect();
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getYearSelect()
     {
         return $this->dateInput->getYearSelect();
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getHourSelect()
     {
         return $this->timeInput->getHourSelect();
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getMinuteSelect()
     {
         return $this->timeInput->getMinuteSelect();

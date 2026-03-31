@@ -20,17 +20,13 @@ class LanguagePermission extends ComplexPermission
         return $this->hasAll() || in_array($clangId, $this->perms);
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function count()
     {
         return $this->hasAll() ? Language::count() : count($this->perms);
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function getClangs()
     {
         return $this->hasAll() ? Language::getAllIds() : $this->perms;

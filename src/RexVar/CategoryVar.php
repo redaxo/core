@@ -19,9 +19,7 @@ use function Redaxo\Core\View\escape;
  */
 class CategoryVar extends RexVar
 {
-    /**
-     * Werte für die Ausgabe.
-     */
+    /** Werte für die Ausgabe. */
     protected function getOutput()
     {
         $field = $this->getParsedArg('field');
@@ -35,9 +33,7 @@ class CategoryVar extends RexVar
         return self::class . '::getCategoryValue(' . $categoryId . ', ' . $field . ', ' . $clang . ')';
     }
 
-    /**
-     * @return string|int|null
-     */
+    /** @return string|int|null */
     public static function getCategoryValue($id, $field, $clang = null)
     {
         if (null === $clang) {

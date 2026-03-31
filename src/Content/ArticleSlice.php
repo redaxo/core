@@ -305,9 +305,7 @@ class ArticleSlice
         return $slices;
     }
 
-    /**
-     * @return Article
-     */
+    /** @return Article */
     public function getArticle()
     {
         $article = Article::get($this->getArticleId());
@@ -414,9 +412,7 @@ class ArticleSlice
         return $this->linklists[$index - 1];
     }
 
-    /**
-     * @return list<int>|null
-     */
+    /** @return list<int>|null */
     public function getLinkListArray(int $index): ?array
     {
         $list = $this->linklists[$index - 1];
@@ -457,9 +453,7 @@ class ArticleSlice
         return $this->medialists[$index - 1];
     }
 
-    /**
-     * @return list<string>|null
-     */
+    /** @return list<string>|null */
     public function getMediaListArray(int $index): ?array
     {
         $list = $this->medialists[$index - 1];

@@ -123,9 +123,7 @@ class ArticleSliceHistory
         return true;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function clearAllHistory()
     {
         $sql = Sql::factory();
@@ -138,9 +136,7 @@ class ArticleSliceHistory
         $sql->setQuery('delete from ' . $sql->escapeIdentifier(self::getTable()) . ' where history_date < ?', [$deleteDate->format(Sql::FORMAT_DATETIME)]);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function checkTables()
     {
         $slicesTable = Table::get(Core::getTable('article_slice'));

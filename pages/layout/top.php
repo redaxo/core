@@ -18,9 +18,7 @@ use Redaxo\Core\View\Fragment;
 
 use function Redaxo\Core\View\escape;
 
-/**
- * Layout Kopf des Backends.
- */
+/** Layout Kopf des Backends. */
 
 $curPage = Controller::requireCurrentPageObject();
 $user = Core::getUser();

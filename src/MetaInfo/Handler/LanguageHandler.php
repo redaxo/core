@@ -16,9 +16,7 @@ class LanguageHandler extends AbstractHandler
     public const PREFIX = 'clang_';
     public const CONTAINER = 'rex-clang-metainfo';
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function renderToggleButton(ExtensionPoint $ep)
     {
         $fields = parent::getSqlFields(self::PREFIX);
@@ -31,9 +29,7 @@ class LanguageHandler extends AbstractHandler
         return $ep->getSubject();
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function handleSave(array $params, Sql $sqlFields)
     {
         if ('post' != Request::requestMethod() || !isset($params['id'])) {
@@ -57,9 +53,7 @@ class LanguageHandler extends AbstractHandler
         return $params;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function buildFilterCondition(array $params) {}
 
     public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType)

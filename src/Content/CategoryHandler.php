@@ -384,18 +384,14 @@ class CategoryHandler
         return $catStatusTypes;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function nextStatus($currentStatus)
     {
         $catStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($catStatusTypes);
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function prevStatus($currentStatus)
     {
         $catStatusTypes = self::statusTypes();
@@ -578,9 +574,7 @@ class CategoryHandler
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getUser()
     {
         return Core::getUser()?->getLogin() ?? Core::getEnvironment();

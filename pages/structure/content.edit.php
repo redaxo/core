@@ -2,6 +2,7 @@
 
 use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\Content\ArticleContentEditor;
+use Redaxo\Core\View\Fragment;
 
 assert(isset($articleId) && is_int($articleId));
 assert(isset($clang) && is_int($clang));
@@ -37,4 +38,6 @@ $CONT->setSliceRevision($sliceRevision);
 $CONT->setFunction($function);
 $content = $CONT->getArticle($ctype);
 
-return '' != $content ? '<ul class="rex-slices">' . $content . '</ul>' : '';
+$fragment = new Fragment();
+$fragment->setVar('content', $content, false);
+return $fragment->parse('core/structure/content/slice_list.php');

@@ -34,9 +34,7 @@ class RestrictionField extends SelectField
         $this->allCheckboxLabel = $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         $id = $this->getAttribute('id');

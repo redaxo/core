@@ -128,9 +128,7 @@ class MediaHandler extends AbstractHandler
         return $warning;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function buildFilterCondition(array $params)
     {
         $restrictionsCondition = '';
@@ -162,9 +160,7 @@ class MediaHandler extends AbstractHandler
         return $restrictionsCondition;
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     protected function handleSave(array $params, Sql $sqlFields)
     {
         if ('post' != Request::requestMethod() || !isset($params['id'])) {

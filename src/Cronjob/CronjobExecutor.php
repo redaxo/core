@@ -34,9 +34,7 @@ class CronjobExecutor
     /** @var int|null */
     private $id;
 
-    /**
-     * @return self
-     */
+    /** @return self */
     public static function factory()
     {
         return new self();
@@ -51,17 +49,13 @@ class CronjobExecutor
         $this->message = $message;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMessage()
     {
         return $this->message;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasMessage()
     {
         return !empty($this->message);
@@ -160,9 +154,7 @@ class CronjobExecutor
         $log->add($data);
     }
 
-    /**
-     * @return list<class-string<AbstractType>>
-     */
+    /** @return list<class-string<AbstractType>> */
     public static function getTypes()
     {
         if (null === self::$types) {
@@ -190,9 +182,7 @@ class CronjobExecutor
         self::$types = $types;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getCurrentEnvironment()
     {
         if (defined('REX_CRONJOB_SCRIPT') && REX_CRONJOB_SCRIPT) {

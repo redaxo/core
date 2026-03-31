@@ -18,9 +18,7 @@ class rex_debug_clockwork
     /** @var VanillaClockwork|null */
     private static $instance;
 
-    /**
-     * @psalm-assert VanillaClockwork self::$instance
-     */
+    /** @psalm-assert VanillaClockwork self::$instance */
     private static function init(): void
     {
         $clockwork = VanillaClockwork::init([
@@ -68,9 +66,7 @@ class rex_debug_clockwork
         return Url::backendPage('debug', rex_api_debug::getUrlParams());
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function ensureStoragePath()
     {
         $storagePath = self::getStoragePath();
@@ -79,9 +75,7 @@ class rex_debug_clockwork
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getStoragePath()
     {
         return Addon::require('debug')->getCachePath('clockwork.db');

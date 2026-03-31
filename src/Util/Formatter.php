@@ -25,9 +25,7 @@ use const E_USER_WARNING;
  */
 final class Formatter
 {
-    /**
-     * It's not allowed to create instances of this class.
-     */
+    /** It's not allowed to create instances of this class. */
     private function __construct() {}
 
     /**

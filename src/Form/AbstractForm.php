@@ -726,9 +726,7 @@ abstract class AbstractForm
 
     // --------- Form Methods
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     protected function isHeaderElement(BaseField $element)
     {
         return 'input' == $element->getTag() && 'hidden' == $element->getAttribute('type');
@@ -761,9 +759,7 @@ abstract class AbstractForm
         return $element instanceof RawField;
     }
 
-    /**
-     * @return list<BaseField>
-     */
+    /** @return list<BaseField> */
     protected function getHeaderElements()
     {
         $headerElements = [];
@@ -777,9 +773,7 @@ abstract class AbstractForm
         return $headerElements;
     }
 
-    /**
-     * @return list<BaseField>
-     */
+    /** @return list<BaseField> */
     protected function getFooterElements()
     {
         $footerElements = [];
@@ -793,17 +787,13 @@ abstract class AbstractForm
         return $footerElements;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getFieldsetName()
     {
         return $this->fieldset;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     protected function getFieldsets()
     {
         $fieldsets = [];
@@ -813,9 +803,7 @@ abstract class AbstractForm
         return $fieldsets;
     }
 
-    /**
-     * @return array<string, list<BaseField>>
-     */
+    /** @return array<string, list<BaseField>> */
     protected function getFieldsetElements()
     {
         $fieldsetElements = [];
@@ -836,9 +824,7 @@ abstract class AbstractForm
         return $fieldsetElements;
     }
 
-    /**
-     * @return array<string, list<BaseField>>
-     */
+    /** @return array<string, list<BaseField>> */
     protected function getSaveElements()
     {
         $fieldsetElements = [];
@@ -859,9 +845,7 @@ abstract class AbstractForm
         return $fieldsetElements;
     }
 
-    /**
-     * @return ControlField|null
-     */
+    /** @return ControlField|null */
     protected function getControlElement()
     {
         foreach ($this->elements as $fieldsetElementsArray) {
@@ -899,9 +883,7 @@ abstract class AbstractForm
         return null;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return $this->name;
@@ -916,9 +898,7 @@ abstract class AbstractForm
         $this->warning = $warning;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getWarning()
     {
         $warning = Request::request($this->getName() . '_warning', 'string');
@@ -939,9 +919,7 @@ abstract class AbstractForm
         $this->message = $message;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMessage()
     {
         $message = Request::request($this->getName() . '_msg', 'string');
@@ -1086,9 +1064,7 @@ abstract class AbstractForm
      */
     abstract protected function save();
 
-    /**
-     * @return bool|int
-     */
+    /** @return bool|int */
     protected function delete()
     {
         throw new BadMethodCallException('delete() is not implemented.');
@@ -1122,9 +1098,7 @@ abstract class AbstractForm
         exit;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         $this->init();
@@ -1266,9 +1240,7 @@ abstract class AbstractForm
         return $s;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

@@ -51,9 +51,7 @@ final class BackendLoginTest extends TestCase
         self::assertFalse($login->checkLogin());
     }
 
-    /**
-     * Test if a login is allowed after one failure before.
-     */
+    /** Test if a login is allowed after one failure before. */
     public function testSuccessfullReLogin(): void
     {
         $login = new BackendLogin();
@@ -65,9 +63,7 @@ final class BackendLoginTest extends TestCase
         self::assertTrue($login->checkLogin());
     }
 
-    /**
-     * After LOGIN_TRIES requests, the account should be not accessible for RELOGIN_DELAY seconds.
-     */
+    /** After LOGIN_TRIES requests, the account should be not accessible for RELOGIN_DELAY seconds. */
     public function testSuccessfullReLoginAfterLoginTriesSeconds(): void
     {
         $login = new BackendLogin();

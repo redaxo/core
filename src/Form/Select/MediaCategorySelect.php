@@ -36,9 +36,7 @@ class MediaCategorySelect extends Select
         $this->rootId = $rootId;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOptions()
     {
         if (null !== $this->rootId) {
@@ -62,9 +60,7 @@ class MediaCategorySelect extends Select
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOption(MediaCategory $mediacat, int $parentId = 0)
     {
         if (!$this->checkPerms || Core::requireUser()->getComplexPerm('media')->hasCategoryPerm($mediacat->getId())

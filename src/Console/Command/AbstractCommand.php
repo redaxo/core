@@ -20,9 +20,7 @@ abstract class AbstractCommand extends Command
         $this->addon = $addon;
     }
 
-    /**
-     * @return Addon|null In core commands it returns `null`, otherwise the corresponding addon object
-     */
+    /** @return Addon|null In core commands it returns `null`, otherwise the corresponding addon object */
     public function getAddon(): ?Addon
     {
         return $this->addon;

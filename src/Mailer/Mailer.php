@@ -40,9 +40,7 @@ class Mailer extends PHPMailer
 
     private bool $archive;
 
-    /**
-     * used to store information if detour mode is enabled.
-     */
+    /** used to store information if detour mode is enabled. */
     private array $xHeader = [];
 
     public function __construct($exceptions = false)
@@ -122,9 +120,7 @@ class Mailer extends PHPMailer
         return parent::addOrEnqueueAnAddress($kind, $address, $name);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function send()
     {
         return Timer::measure(__METHOD__, function () {
@@ -176,9 +172,7 @@ class Mailer extends PHPMailer
         $this->xHeader = []; // Bereinigung für die nächste Verwendung
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function clearQueuedAddresses($kind)
     {
         parent::clearQueuedAddresses($kind);
@@ -186,9 +180,7 @@ class Mailer extends PHPMailer
         unset($this->xHeader[$kind]);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function clearAllRecipients()
     {
         parent::clearAllRecipients();
@@ -237,25 +229,19 @@ class Mailer extends PHPMailer
         File::put($archiveFile, $archivedata);
     }
 
-    /**
-     * Path to mail archive folder.
-     */
+    /** Path to mail archive folder. */
     public static function logFolder(): string
     {
         return Path::coreData('phpmailer/mail_log');
     }
 
-    /**
-     * Path to log file.
-     */
+    /** Path to log file. */
     public static function logFile(): string
     {
         return Path::log('mail.log');
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public static function errorMail(): void
     {
         $logFile = Path::log('system.log');

@@ -76,7 +76,7 @@ final class RequestTest extends TestCase
 
         try {
             $method->invoke($socket, 'GET', '/a/path', ['Host' => 'www.example.com', 'Connection' => 'Close'], "body1\r\nbody2");
-        } catch (HttpClientException) { // @phpstan-ignore-line
+        } catch (HttpClientException) {
             // ignore "Missing status code in response header" error in Response class
         }
 

@@ -79,9 +79,7 @@ class LogFile implements Iterator
         fwrite($this->file, new LogEntry(time(), $data) . "\n");
     }
 
-    /**
-     * @return LogEntry
-     */
+    /** @return LogEntry */
     #[ReturnTypeWillChange]
     public function current()
     {
@@ -92,9 +90,7 @@ class LogFile implements Iterator
         return LogEntry::createFromString($this->currentLine);
     }
 
-    /**
-     * Reads the log file backwards line by line (each call reads one line).
-     */
+    /** Reads the log file backwards line by line (each call reads one line). */
     #[ReturnTypeWillChange]
     public function next()
     {
@@ -164,9 +160,7 @@ class LogFile implements Iterator
         $this->currentLine = $line;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     #[ReturnTypeWillChange]
     public function key()
     {

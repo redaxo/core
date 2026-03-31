@@ -14,9 +14,7 @@ use Redaxo\Core\View\View;
 
 use function Redaxo\Core\View\escape;
 
-/**
- * Creditsseite. Auflistung der Credits an die Entwickler von REDAXO und den AddOns.
- */
+/** Creditsseite. Auflistung der Credits an die Entwickler von REDAXO und den AddOns. */
 
 echo View::title(I18n::msg('credits'), '');
 

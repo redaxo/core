@@ -46,9 +46,7 @@ class CategorySelect extends Select
         $this->rootId = $rootId;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOptions()
     {
         if ($this->addHomepage) {
@@ -87,9 +85,7 @@ class CategorySelect extends Select
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addCatOption(Category $cat, $group = null)
     {
         if (!$this->checkPerms || Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($cat->getId())

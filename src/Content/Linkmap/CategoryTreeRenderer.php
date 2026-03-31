@@ -18,9 +18,7 @@ use function Redaxo\Core\View\escape;
  */
 abstract class CategoryTreeRenderer
 {
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTree($categoryId)
     {
         $category = Category::get($categoryId);
@@ -87,14 +85,10 @@ abstract class CategoryTreeRenderer
         return $ul;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     abstract protected function treeItem(Category $cat, $liClasses, $linkClasses, $subHtml, $liIcon);
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function formatLabel(StructureElement $OOobject)
     {
         $label = $OOobject->getName();
@@ -110,9 +104,7 @@ abstract class CategoryTreeRenderer
         return $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function formatLi(StructureElement $OOobject, $currentCategoryId, Context $context, $liAttr = '', $linkAttr = '')
     {
         $linkAttr .= ' class="' . ($OOobject->isOnline() ? 'rex-online' : 'rex-offline') . '"';

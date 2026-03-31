@@ -155,9 +155,7 @@ class rex_install_package_update extends rex_install_package_download
         return null;
     }
 
-    /**
-     * @return string|true
-     */
+    /** @return string|true */
     private function checkRequirements($config)
     {
         $temppath = Path::addon('.new.' . $this->addonkey);

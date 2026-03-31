@@ -22,18 +22,14 @@ class RadioField extends AbstractOptionField
         // Jedes radio bekommt eingenes Label
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function formatLabel()
     {
         // Da Jedes Feld schon ein Label hat, hier nur eine "Ueberschrift" anbringen
         return '<label class="control-label">' . $this->getLabel() . '</label>';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         $value = $this->getValue();

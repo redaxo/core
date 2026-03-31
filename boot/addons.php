@@ -6,10 +6,6 @@ use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Util\Timer;
 
-/**
- * Packages loading.
- */
-
 Addon::initialize(!Core::isSetup());
 
 if (Core::isSetup() || Core::isSafeMode()) {

@@ -14,9 +14,7 @@ use const PASSWORD_DEFAULT;
  */
 class HistoryLogin extends BackendLogin
 {
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function checkTempSession($historyLogin, $historySession, $historyValidtime)
     {
         $userSql = Sql::factory($this->DB);
@@ -35,17 +33,13 @@ class HistoryLogin extends BackendLogin
         return false;
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public static function createSessionKey(#[SensitiveParameter] $login, $session, $validtime)
     {
         return password_hash($login . $session . $validtime, PASSWORD_DEFAULT);
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function verifySessionKey($key1, $key2)
     {
         return password_verify($key1, $key2);

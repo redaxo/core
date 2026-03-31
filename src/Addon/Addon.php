@@ -57,9 +57,7 @@ final class Addon implements AddonInterface
      */
     private bool $propertiesLoaded = false;
 
-    /**
-     * @param non-empty-string $name Name of the addon
-     */
+    /** @param non-empty-string $name Name of the addon */
     public function __construct(
         private readonly string $name,
     ) {}
@@ -114,9 +112,7 @@ final class Addon implements AddonInterface
         return $this->name;
     }
 
-    /**
-     * @return non-empty-string
-     */
+    /** @return non-empty-string */
     #[Override]
     public function getName(): string
     {

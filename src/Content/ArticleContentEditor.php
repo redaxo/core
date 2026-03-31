@@ -13,7 +13,6 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
-use Redaxo\Core\Http\Response;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
@@ -55,6 +54,7 @@ class ArticleContentEditor extends ArticleContent
             $sliceId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.id');
             $sliceCtype = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.ctype_id');
             $sliceStatus = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.status');
+            $sliceRevision = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.revision');
 
             $moduleInput = (string) $artDataSql->getValue(Core::getTablePrefix() . 'module.input');
             $moduleOutput = (string) $artDataSql->getValue(Core::getTablePrefix() . 'module.output');
@@ -110,14 +110,21 @@ class ArticleContentEditor extends ArticleContent
                 'ctype' => $this->ctype,
                 'module_id' => $moduleId,
                 'slice_id' => $sliceId,
+                'revision' => $sliceRevision,
             ]));
 
             $fragment = new Fragment();
             $fragment->setVar('title', $this->getSliceHeading($artDataSql), false);
             $fragment->setVar('options', $this->getSliceMenu($artDataSql), false);
             $fragment->setVar('body', $panel, false);
+            $section = $fragment->parse('core/page/section.php');
+
             $statusName = $sliceStatus ? 'online' : 'offline';
-            $sliceContent .= '<li class="rex-slice rex-slice-output rex-slice-' . $statusName . '" id="slice' . $sliceId . '">' . $fragment->parse('core/page/section.php') . '</li>';
+
+            $fragment = new Fragment();
+            $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-output', 'rex-slice-' . $statusName], 'id' => 'slice' . $sliceId], false);
+            $fragment->setVar('content', $section, false);
+            $sliceContent .= $fragment->parse('core/structure/content/slice_list_item.php');
         }
 
         return $sliceContent;
@@ -351,7 +358,10 @@ class ArticleContentEditor extends ArticleContent
                 'slice_id' => $sliceId,
             ],
         ));
-        return '<li class="rex-slice rex-slice-select" id="slice-add-pos-' . $position . '">' . $select . '</li>';
+        $fragment = new Fragment();
+        $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-select'], 'id' => 'slice-add-pos-' . $position], false);
+        $fragment->setVar('content', $select, false);
+        return $fragment->parse('core/structure/content/slice_list_item.php');
     }
 
     protected function preArticle($articleContent, $moduleId)
@@ -478,20 +488,11 @@ class ArticleContentEditor extends ArticleContent
         $fragment->setVar('footer', $sliceFooter, false);
         $sliceContent = $fragment->parse('core/page/section.php');
 
-        return '
-                <li class="rex-slice rex-slice-add">
-                    <form action="' . Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'clang' => $this->clang, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition . '" method="post" id="REX_FORM" enctype="multipart/form-data">
-                        ' . $sliceContent . '
-                    </form>
-                    <script type="text/javascript" nonce="' . Response::getNonce() . '">
-                         <!--
-                        jQuery(function($) {
-                            $(":input:visible:enabled:not([readonly]):first", $("#REX_FORM")).focus();
-                        });
-                         //-->
-                    </script>
-                </li>
-                ';
+        $fragment = new Fragment();
+        $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-add']], false);
+        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'clang' => $this->clang, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition);
+        $fragment->setVar('content', $sliceContent, false);
+        return $fragment->parse('core/structure/content/slice_list_item.php');
     }
 
     // ----- EDIT Slice
@@ -543,9 +544,7 @@ class ArticleContentEditor extends ArticleContent
                     <div class="rex-slice-input">
                         ' . $msg . $this->getStreamOutput('module/' . $moduleId . '/input', $moduleInput) . '
                     </div>
-                </fieldset>
-
-            </form>';
+                </fieldset>';
 
         $fragment = new Fragment();
         $fragment->setVar('class', 'edit', false);
@@ -555,19 +554,10 @@ class ArticleContentEditor extends ArticleContent
         $fragment->setVar('footer', $sliceFooter, false);
         $sliceContent = $fragment->parse('core/page/section.php');
 
-        return '
-            <li class="rex-slice rex-slice-edit" id="slice' . $sliceId . '">
-                <form enctype="multipart/form-data" action="' . Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId . '" method="post" id="REX_FORM">
-                    ' . $sliceContent . '
-                </form>
-                <script type="text/javascript" nonce="' . Response::getNonce() . '">
-                     <!--
-                    jQuery(function($) {
-                        $(":input:visible:enabled:not([readonly]):first", $("#REX_FORM")).focus();
-                    });
-                     //-->
-                </script>
-            </li>
-            ';
+        $fragment = new Fragment();
+        $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-edit'], 'id' => 'slice' . $sliceId], false);
+        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId);
+        $fragment->setVar('content', $sliceContent, false);
+        return $fragment->parse('core/structure/content/slice_list_item.php');
     }
 }

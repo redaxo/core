@@ -31,9 +31,7 @@ class PermissionSelectField extends SelectField
         $this->checkboxLabel = $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         $field = new CheckboxField('', $this->table);

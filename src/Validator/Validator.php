@@ -59,9 +59,7 @@ class Validator
         return $this;
     }
 
-    /**
-     * @return list<ValidationRule>
-     */
+    /** @return list<ValidationRule> */
     public function getRules(): array
     {
         return $this->rules;

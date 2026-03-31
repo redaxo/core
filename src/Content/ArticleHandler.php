@@ -392,18 +392,14 @@ class ArticleHandler
         return $artStatusTypes;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function nextStatus($currentStatus)
     {
         $artStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($artStatusTypes);
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function prevStatus($currentStatus)
     {
         $artStatusTypes = self::statusTypes();
@@ -914,9 +910,7 @@ class ArticleHandler
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     private static function getUser()
     {
         return Core::getUser()?->getLogin() ?? Core::getEnvironment();

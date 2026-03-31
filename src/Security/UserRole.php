@@ -32,9 +32,7 @@ class UserRole implements UserRoleInterface
      */
     private array $complexPerms = [];
 
-    /**
-     * @param list<array> $roles
-     */
+    /** @param list<array> $roles */
     private function __construct(array $roles)
     {
         foreach ($roles as $role) {
@@ -103,9 +101,7 @@ class UserRole implements UserRoleInterface
         return new static($roles);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function removeOrReplaceItem(ExtensionPoint $ep)
     {
         $params = $ep->getParams();

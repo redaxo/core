@@ -57,9 +57,7 @@ final class Index
         return $this->setModified(true);
     }
 
-    /**
-     * @return self::INDEX|self::UNIQUE|self::FULLTEXT
-     */
+    /** @return self::INDEX|self::UNIQUE|self::FULLTEXT */
     public function getType(): string
     {
         return $this->type;
@@ -75,9 +73,7 @@ final class Index
         return $this->setModified(true);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function getColumns(): array
     {
         return $this->columns;

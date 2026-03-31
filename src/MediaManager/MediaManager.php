@@ -96,9 +96,7 @@ class MediaManager
         return $manager;
     }
 
-    /**
-     * @return ManagedMedia
-     */
+    /** @return ManagedMedia */
     public function getMedia()
     {
         return $this->media;
@@ -211,9 +209,7 @@ class MediaManager
         return $effects;
     }
 
-    /**
-     * Set base cache directory for generated images.
-     */
+    /** Set base cache directory for generated images. */
     public static function setCacheDirectory(string $path): void
     {
         self::$cacheDirectory = rtrim($path, '/\\') . DIRECTORY_SEPARATOR;
@@ -228,9 +224,7 @@ class MediaManager
         $this->cachePath = $path;
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public function getCachePath()
     {
         return $this->cachePath;
@@ -245,9 +239,7 @@ class MediaManager
         $this->useCache = $useCache;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isCached()
     {
         $cacheFile = $this->getCacheFilename();
@@ -279,9 +271,7 @@ class MediaManager
         return $cachetime >= $filetime;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getCacheFilename()
     {
         assert(null !== $this->cachePath);
@@ -289,17 +279,13 @@ class MediaManager
         return $this->cachePath . $this->type . '/' . $this->originalFilename;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getHeaderCacheFilename()
     {
         return $this->getCacheFilename() . '.header';
     }
 
-    /**
-     * @return array{media_path: ?string, media_filename: string, format: string, headers: array<string, string>}|null
-     */
+    /** @return array{media_path: ?string, media_filename: string, format: string, headers: array<string, string>}|null */
     private function getHeaderCache()
     {
         if ($this->cache) {
@@ -364,9 +350,7 @@ class MediaManager
         return $counter;
     }
 
-    /**
-     * @return never
-     */
+    /** @return never */
     public function sendMedia()
     {
         Extension::registerPoint(new ExtensionPoint('MEDIA_MANAGER_BEFORE_SEND', $this, []));
@@ -417,9 +401,7 @@ class MediaManager
         exit;
     }
 
-    /**
-     * @return array<class-string<AbstractEffect>, string>
-     */
+    /** @return array<class-string<AbstractEffect>, string> */
     public static function getSupportedEffects()
     {
         $dirs = [
@@ -463,9 +445,7 @@ class MediaManager
         );
     }
 
-    /**
-     * @return class-string<AbstractEffect>
-     */
+    /** @return class-string<AbstractEffect> */
     private static function getEffectClass(string $effectFile): string
     {
         /** @var class-string<AbstractEffect> */
@@ -510,17 +490,13 @@ class MediaManager
         return $warning;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function mediaUpdated(ExtensionPoint $ep)
     {
         self::deleteCache((string) $ep->getParam('filename'));
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public static function init()
     {
         // --- handle image request
@@ -539,17 +515,13 @@ class MediaManager
         }
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getMediaFile()
     {
         return Path::basename(Request::get('rex_media_file', 'string'));
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public static function getMediaType()
     {
         $type = Request::get('rex_media_type', 'string');
@@ -597,9 +569,7 @@ class MediaManager
         ]));
     }
 
-    /**
-     * @return array<string, int>
-     */
+    /** @return array<string, int> */
     private static function getTypeCache(): array
     {
         $file = Path::coreCache('media_manager/types.cache');

@@ -13,9 +13,7 @@ use Redaxo\Core\Http\Response;
  */
 class UserHasSession extends ApiFunction
 {
-    /**
-     * @return never
-     */
+    /** @return never */
     public function execute()
     {
         if (!Request::isHttps()) {

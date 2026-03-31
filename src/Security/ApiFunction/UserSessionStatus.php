@@ -12,9 +12,7 @@ use Redaxo\Core\Security\BackendLogin;
  */
 class UserSessionStatus extends ApiFunction
 {
-    /**
-     * @return never
-     */
+    /** @return never */
     public function execute()
     {
         $user = Core::getUser();

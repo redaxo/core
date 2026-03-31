@@ -36,9 +36,7 @@ class CheckboxField extends AbstractOptionField
         return $label;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         $values = explode('|', trim($this->getValue() ?? '', '|'));

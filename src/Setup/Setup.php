@@ -46,9 +46,7 @@ class Setup
     public const MIN_MYSQL_VERSION = '8.0';
     public const MIN_MARIADB_VERSION = '10.4';
 
-    /**
-     * no-password placeholder required to support empty passwords/clearing the password.
-     */
+    /** no-password placeholder required to support empty passwords/clearing the password. */
     public const DEFAULT_DUMMY_PASSWORD = '-REDAXO-DEFAULT-DUMMY-PASSWORD-';
 
     public const DB_MODE_SETUP_NO_OVERRIDE = 0;
@@ -345,9 +343,7 @@ class Setup
         }
     }
 
-    /**
-     * @return string|false Single-User-Setup URL or `false` on failure
-     */
+    /** @return string|false Single-User-Setup URL or `false` on failure */
     public static function startWithToken()
     {
         $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
@@ -416,9 +412,7 @@ class Setup
         return $context;
     }
 
-    /**
-     * Mark the setup as completed.
-     */
+    /** Mark the setup as completed. */
     public static function markSetupCompleted(): bool
     {
         $configFile = Path::coreData('config.yml');

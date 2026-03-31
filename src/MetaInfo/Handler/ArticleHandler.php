@@ -17,9 +17,7 @@ class ArticleHandler extends AbstractHandler
 {
     public const PREFIX = 'art_';
 
-    /**
-     * @return array
-     */
+    /** @return array */
     protected function handleSave(array $params, Sql $sqlFields)
     {
         // Nur speichern wenn auch das MetaForm ausgefüllt wurde
@@ -49,9 +47,7 @@ class ArticleHandler extends AbstractHandler
         return $params;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function buildFilterCondition(array $params)
     {
         $restrictionsCondition = '';
@@ -80,9 +76,7 @@ class ArticleHandler extends AbstractHandler
         return $field;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getForm(array $params)
     {
         $OOArt = Article::get($params['id'], $params['clang']);

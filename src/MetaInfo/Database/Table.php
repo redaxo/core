@@ -30,9 +30,7 @@ class Table
         private int $DBID = 1,
     ) {}
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getTableName()
     {
         return $this->tableName;

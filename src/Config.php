@@ -18,9 +18,7 @@ use function is_array;
  */
 final class Config
 {
-    /**
-     * Flag to indicate if the config was initialized.
-     */
+    /** Flag to indicate if the config was initialized. */
     private static bool $initialized = false;
 
     /**
@@ -28,9 +26,7 @@ final class Config
      */
     private static string $cacheFile;
 
-    /**
-     * Flag which indicates if database needs an update, because settings have changed.
-     */
+    /** Flag which indicates if database needs an update, because settings have changed. */
     private static bool $changed = false;
 
     /**
@@ -198,9 +194,7 @@ final class Config
         return false;
     }
 
-    /**
-     * Refreshes Configuration by reloading config from db.
-     */
+    /** Refreshes Configuration by reloading config from db. */
     public static function refresh(): void
     {
         if (!self::$initialized) {
@@ -273,9 +267,7 @@ final class Config
         return false;
     }
 
-    /**
-     * load the config-data from database.
-     */
+    /** load the config-data from database. */
     private static function loadFromDb(): void
     {
         $sql = Sql::factory();
@@ -287,9 +279,7 @@ final class Config
         }
     }
 
-    /**
-     * save config to file-cache.
-     */
+    /** save config to file-cache. */
     private static function generateCache(): void
     {
         if (File::putCache(self::$cacheFile, self::$data) <= 0) {
@@ -297,9 +287,7 @@ final class Config
         }
     }
 
-    /**
-     * persists the config-data and truncates the file-cache.
-     */
+    /** persists the config-data and truncates the file-cache. */
     public static function save(): void
     {
         // save cache only if changes happened
@@ -322,9 +310,7 @@ final class Config
         self::$deletedData = [];
     }
 
-    /**
-     * save the config-data into the db.
-     */
+    /** save the config-data into the db. */
     private static function saveToDb(): void
     {
         $sql = Sql::factory();

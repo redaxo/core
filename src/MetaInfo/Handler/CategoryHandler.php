@@ -18,9 +18,7 @@ class CategoryHandler extends AbstractHandler
     public const PREFIX = 'cat_';
     public const CONTAINER = 'rex-structure-category-metainfo';
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function renderToggleButton(ExtensionPoint $ep)
     {
         $restrictionsCondition = $this->buildFilterCondition($ep->getParams());
@@ -35,9 +33,7 @@ class CategoryHandler extends AbstractHandler
         return $ep->getSubject();
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function handleSave(array $params, Sql $sqlFields)
     {
         if ('post' != Request::requestMethod()) {
@@ -62,9 +58,7 @@ class CategoryHandler extends AbstractHandler
         return $params;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function buildFilterCondition(array $params)
     {
         $s = '';

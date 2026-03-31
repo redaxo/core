@@ -1285,9 +1285,7 @@ class Sql implements Iterator
         return $this->fieldnames;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     public function getTablenames(): array
     {
         $this->fetchMeta();
@@ -1484,9 +1482,7 @@ class Sql implements Iterator
         return $this->getConnection()->commit();
     }
 
-    /**
-     * @return bool whether a transaction was already started/is already running
-     */
+    /** @return bool whether a transaction was already started/is already running */
     public function inTransaction(): bool
     {
         return $this->getConnection()->inTransaction();

@@ -238,9 +238,7 @@ class DataList implements UrlProviderInterface
         return new $class($query, $rowsPerPage, $listName, $debug, $db, $defaultSort);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function init()
     {
         // nichts tun
@@ -309,9 +307,7 @@ class DataList implements UrlProviderInterface
         $this->noRowsMessage = $message;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getNoRowsMessage()
     {
         return $this->noRowsMessage;
@@ -327,17 +323,13 @@ class DataList implements UrlProviderInterface
         $this->params[$name] = $value;
     }
 
-    /**
-     * @return array<string, string|int>
-     */
+    /** @return array<string, string|int> */
     public function getParams()
     {
         return $this->params;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function loadBackendConfig()
     {
         $this->addParam('page', Controller::getCurrentPage());
@@ -353,9 +345,7 @@ class DataList implements UrlProviderInterface
         $this->tableAttributes[$name] = $value;
     }
 
-    /**
-     * @return array<string, string|int>
-     */
+    /** @return array<string, string|int> */
     public function getTableAttributes()
     {
         return $this->tableAttributes;
@@ -371,9 +361,7 @@ class DataList implements UrlProviderInterface
         $this->formAttributes[$name] = $value;
     }
 
-    /**
-     * @return array<string, string|int>
-     */
+    /** @return array<string, string|int> */
     public function getFormAttributes()
     {
         return $this->formAttributes;
@@ -390,9 +378,7 @@ class DataList implements UrlProviderInterface
         $this->linkAttributes[$columnName][$attrName] = $attrValue;
     }
 
-    /**
-     * @return array<string, string|int>|null
-     */
+    /** @return array<string, string|int>|null */
     public function getLinkAttributes($column, $default = null)
     {
         return $this->linkAttributes[$column] ?? $default;
@@ -515,9 +501,7 @@ class DataList implements UrlProviderInterface
         return $this->columnNames;
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     protected function getEnabledColumnNames(): array
     {
         $columnNames = [];
@@ -787,9 +771,7 @@ class DataList implements UrlProviderInterface
         }
     }
 
-    /**
-     * @return array<int, array>
-     */
+    /** @return array<int, array> */
     public function getTableColumnGroups()
     {
         return $this->tableColumnGroups;
@@ -1122,9 +1104,7 @@ class DataList implements UrlProviderInterface
         return $value;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isCustomFormat($format)
     {
         return is_array($format) && isset($format[0]) && 'custom' == $format[0];
@@ -1179,9 +1159,7 @@ class DataList implements UrlProviderInterface
         return '';
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function _getAttributeString($array)
     {
         $s = '';
@@ -1193,9 +1171,7 @@ class DataList implements UrlProviderInterface
         return $s;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getColumnLink($columnName, $columnValue, $params = [])
     {
         $attributes = $this->getLinkAttributes($columnName, []);
@@ -1357,9 +1333,7 @@ class DataList implements UrlProviderInterface
         return $s;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function show()
     {
         echo $this->get();

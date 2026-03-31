@@ -16,9 +16,7 @@ use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
 
-/**
- * Verwaltung der Content Sprachen.
- */
+/** Verwaltung der Content Sprachen. */
 
 $content = '';
 $message = '';

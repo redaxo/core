@@ -27,8 +27,11 @@ if ($this->id) {
     $id = ' id="' . $this->id . '"';
 }
 
+$name = (string) $this->getVar('name', '');
+$name = $name ? ' name="' . $name . '"' : '';
+
 echo '<search role="search" class="' . $class . '"' . $id . '>
       <span class="input-group-addon clear-button"><i class="rex-icon rex-icon-search"></i></span>
-      <input class="form-control" type="text"' . $autofocus . $placeholder . $value . '>
+      <input class="form-control" type="text"' . $name . $autofocus . $placeholder . $value . '>
       <span title="' . $clear . '" class="form-control-clear rex-icon rex-icon-clear form-control-feedback hidden"></span>
 </search>';

@@ -74,17 +74,13 @@ class TimeInput extends AbstractInput
         parent::setAttribute($name, $value);
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getHourSelect()
     {
         return $this->hourSelect;
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getMinuteSelect()
     {
         return $this->minuteSelect;

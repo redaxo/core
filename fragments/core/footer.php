@@ -16,7 +16,7 @@ use Redaxo\Core\View\Fragment;
                 <li><a href="https://www.yakamara.de" target="_blank" rel="noreferrer noopener">yakamara.de</a></li>
                 <li><a href="https://www.redaxo.org" target="_blank" rel="noreferrer noopener">redaxo.org</a></li>
                 <?php if (Core::getUser()?->isAdmin()): ?>
-                    <li><a href="https://www.redaxo.org/doku/main" target="_blank" rel="noreferrer noopener"><?= I18n::msg('footer_doku') ?></a></li>
+                    <li><a href="https://www.redaxo.org/doku/5.x" target="_blank" rel="noreferrer noopener"><?= I18n::msg('footer_doku') ?></a></li>
                 <?php endif ?>
                 <li><a href="<?= Core::getUser() ? Url::backendPage('credits') : 'https://www.redaxo.org/" target="_blank" rel="noreferrer noopener' ?>"><?= I18n::msg('footer_credits') ?></a></li>
                 <li class="rex-js-script-time"><!--DYN--><?= I18n::msg('footer_scripttime', $this->time) ?><!--/DYN--></li>

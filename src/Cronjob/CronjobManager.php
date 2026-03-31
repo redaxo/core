@@ -26,17 +26,13 @@ class CronjobManager
         $this->sql = Sql::factory();
     }
 
-    /**
-     * @return self
-     */
+    /** @return self */
     public static function factory(?CronjobExecutor $executor = null)
     {
         return new self($executor);
     }
 
-    /**
-     * @return CronjobExecutor
-     */
+    /** @return CronjobExecutor */
     public function getExecutor()
     {
         if (!is_object($this->executor)) {
@@ -64,17 +60,13 @@ class CronjobManager
         $this->getExecutor()->setMessage($message);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMessage()
     {
         return $this->getExecutor()->getMessage();
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function hasMessage()
     {
         return $this->getExecutor()->hasMessage();
@@ -317,9 +309,7 @@ class CronjobManager
         return $success;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public function getMinNextTime()
     {
         $this->sql->setQuery('
@@ -353,9 +343,7 @@ class CronjobManager
         return true;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public static function calculateNextTime(array $interval)
     {
         if (empty($interval['minutes']) || empty($interval['hours']) || empty($interval['days']) || empty($interval['weekdays']) || empty($interval['months'])) {

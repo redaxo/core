@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Form\Select\ActionEventSelect;
@@ -67,6 +68,8 @@ if ('delete' == $function && !$csrfToken->isValid()) {
 
 if ('add' == $function || 'edit' == $function) {
     $name = Request::post('name', 'string');
+    $key = trim(Request::post('key', 'string'));
+    $key = '' === $key ? null : $key;
     $previewaction = Request::post('previewaction', 'string');
     $presaveaction = Request::post('presaveaction', 'string');
     $postsaveaction = Request::post('postsaveaction', 'string');
@@ -100,32 +103,42 @@ if ('add' == $function || 'edit' == $function) {
             $postsavemode |= $status;
         }
 
-        $faction->setTable(Core::getTablePrefix() . 'action');
-        $faction->setValue('name', $name);
-        $faction->setValue('preview', $previewaction);
-        $faction->setValue('presave', $presaveaction);
-        $faction->setValue('postsave', $postsaveaction);
-        $faction->setValue('previewmode', $previewmode);
-        $faction->setValue('presavemode', $presavemode);
-        $faction->setValue('postsavemode', $postsavemode);
-        $faction->addGlobalUpdateFields();
+        try {
+            $faction->setTable(Core::getTablePrefix() . 'action');
+            $faction->setValue('name', $name);
+            $faction->setValue('key', $key);
+            $faction->setValue('preview', $previewaction);
+            $faction->setValue('presave', $presaveaction);
+            $faction->setValue('postsave', $postsaveaction);
+            $faction->setValue('previewmode', $previewmode);
+            $faction->setValue('presavemode', $presavemode);
+            $faction->setValue('postsavemode', $postsavemode);
+            $faction->addGlobalUpdateFields();
 
-        if ('add' == $function) {
-            $faction->addGlobalCreateFields();
+            if ('add' == $function) {
+                $faction->addGlobalCreateFields();
 
-            $faction->insert();
-            $success = I18n::msg('action_added');
-        } else {
-            $faction->setWhere(['id' => $actionId]);
+                $faction->insert();
+                $success = I18n::msg('action_added');
+            } else {
+                $faction->setWhere(['id' => $actionId]);
 
-            $faction->update();
-            $success = I18n::msg('action_updated');
-        }
+                $faction->update();
+                $success = I18n::msg('action_updated');
+            }
 
-        if ('' != $goon) {
-            $save = false;
-        } else {
-            $function = '';
+            if ('' != $goon) {
+                $save = false;
+            } else {
+                $function = '';
+            }
+        } catch (SqlException $e) {
+            if (Sql::ERROR_VIOLATE_UNIQUE_KEY === $e->getErrorCode()) {
+                $error = I18n::msg('action_key_exists');
+                $save = false;
+            } else {
+                throw $e;
+            }
         }
     }
 
@@ -137,6 +150,7 @@ if ('add' == $function || 'edit' == $function) {
             $action->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'action WHERE id=?', [$actionId]);
 
             $name = $action->getValue('name');
+            $key = $action->getValue('key');
             $previewaction = $action->getValue('preview');
             $presaveaction = $action->getValue('presave');
             $postsaveaction = $action->getValue('postsave');
@@ -221,6 +235,12 @@ if ('add' == $function || 'edit' == $function) {
         $n['label'] = '<label for="name">' . I18n::msg('action_name') . '</label>';
         $n['field'] = '<input class="form-control" type="text" id="name" name="name" value="' . escape($name) . '" maxlength="255" />';
         $n['note'] = I18n::msg('translatable');
+        $formElements[] = $n;
+
+        $n = [];
+        $n['label'] = '<label for="key">' . I18n::msg('action_key') . '</label>';
+        $n['field'] = '<input class="form-control" type="text" id="key" name="key" value="' . escape((string) ($key ?? '')) . '" maxlength="191" autocorrect="off" autocapitalize="off" spellcheck="false" />';
+        $n['note'] = I18n::msg('action_key_notice');
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -432,6 +452,7 @@ if ($OUT) {
                 <tr>
                     <th class="rex-table-icon"><a class="rex-link-expanded" href="' . Url::currentBackendPage(['function' => 'add']) . '"' . Core::getAccesskey(I18n::msg('action_create'), 'add') . ' title="' . I18n::msg('action_create') . '"><i class="rex-icon rex-icon-add-action"></i></a></th>
                     <th class="rex-table-id">' . I18n::msg('id') . '</th>
+                    <th>' . I18n::msg('header_action_key') . '</th>
                     <th>' . I18n::msg('action_name') . '</th>
                     <th>' . I18n::msg('action_header_preview') . '</th>
                     <th>' . I18n::msg('action_header_presave') . '</th>
@@ -475,6 +496,7 @@ if ($OUT) {
                         <tr>
                             <td class="rex-table-icon"><a class="rex-link-expanded" href="' . Url::currentBackendPage(['action_id' => $sql->getValue('id'), 'function' => 'edit']) . '" title="' . escape($sql->getValue('name')) . '"><i class="rex-icon rex-icon-action"></i></a></td>
                             <td class="rex-table-id" data-title="' . I18n::msg('id') . '">' . (int) $sql->getValue('id') . '</td>
+                            <td data-title="' . I18n::msg('header_action_key') . '">' . escape((string) ($sql->getValue('key') ?? '')) . '</td>
                             <td data-title="' . I18n::msg('action_name') . '"><a class="rex-link-expanded" href="' . Url::currentBackendPage(['action_id' => $sql->getValue('id'), 'function' => 'edit']) . '">' . escape($sql->getValue('name')) . '</a></td>
                             <td data-title="' . I18n::msg('action_header_preview') . '">' . implode('/', $previewmode) . '</td>
                             <td data-title="' . I18n::msg('action_header_presave') . '">' . implode('/', $presavemode) . '</td>

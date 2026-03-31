@@ -128,9 +128,7 @@ final class CommandLoader implements CommandLoaderInterface
         return isset($this->commands[$name]);
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     #[Override]
     public function getNames(): array
     {

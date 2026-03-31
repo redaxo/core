@@ -106,25 +106,19 @@ class DateInput extends AbstractInput
         parent::setAttribute($name, $value);
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getDaySelect()
     {
         return $this->daySelect;
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getMonthSelect()
     {
         return $this->monthSelect;
     }
 
-    /**
-     * @return Select
-     */
+    /** @return Select */
     public function getYearSelect()
     {
         return $this->yearSelect;

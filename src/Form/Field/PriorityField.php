@@ -60,17 +60,13 @@ class PriorityField extends SelectField
         $this->labelField = $labelField;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setLabelCallback(callable $labelCallback)
     {
         $this->labelCallback = $labelCallback;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setWhereCondition($whereCondition)
     {
         $this->whereCondition = $whereCondition;
@@ -116,9 +112,7 @@ class PriorityField extends SelectField
         return parent::formatElement();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function organizePriorities(ExtensionPoint $ep)
     {
         if ($this->table->equals($ep->getParam('form'))) {

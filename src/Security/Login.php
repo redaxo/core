@@ -21,29 +21,19 @@ use const PHP_SESSION_ACTIVE;
 
 class Login
 {
-    /**
-     * Session ID is saved in session under this key for session fixation prevention.
-     */
+    /** Session ID is saved in session under this key for session fixation prevention. */
     public const SESSION_ID = 'REX_SESSID';
-    /**
-     * the timestamp when the session was initially started.
-     */
+    /** the timestamp when the session was initially started. */
     public const SESSION_START_TIME = 'starttime';
     /*
      * a timestamp of the last activiy of the http session.
      */
     public const SESSION_LAST_ACTIVITY = 'STAMP';
-    /**
-     * the id of the user.
-     */
+    /** the id of the user. */
     public const SESSION_USER_ID = 'UID';
-    /**
-     * the encrypted user password.
-     */
+    /** the encrypted user password. */
     public const SESSION_PASSWORD = 'password';
-    /**
-     * the userid of the impersonator user.
-     */
+    /** the userid of the impersonator user. */
     public const SESSION_IMPERSONATOR = 'impersonator';
 
     /** @var positive-int */
@@ -421,9 +411,7 @@ class Login
         $this->setSessionVar(self::SESSION_IMPERSONATOR, $this->impersonator->getValue($this->idColumn));
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function depersonate()
     {
         if (!$this->impersonator) {
@@ -442,17 +430,13 @@ class Login
         $this->setSessionVar(self::SESSION_PASSWORD, $passwordHash);
     }
 
-    /**
-     * @return Sql|User|null
-     */
+    /** @return Sql|User|null */
     public function getUser()
     {
         return $this->user;
     }
 
-    /**
-     * @return Sql|User|null
-     */
+    /** @return Sql|User|null */
     public function getImpersonator()
     {
         return $this->impersonator;

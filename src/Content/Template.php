@@ -24,9 +24,7 @@ class Template
         $this->id = (int) $templateId;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public static function getDefaultId()
     {
         return Core::getConfig('default_template_id', 1);
@@ -46,9 +44,7 @@ class Template
         return null;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getId()
     {
         return $this->id;
@@ -65,9 +61,7 @@ class Template
         return $this->key;
     }
 
-    /**
-     * @return false|string
-     */
+    /** @return false|string */
     public function getFile()
     {
         if ($this->getId() < 1) {
@@ -148,9 +142,7 @@ class Template
         return $templates;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public static function hasModule(array $templateAttributes, $ctype, $moduleId)
     {
         $templateModules = $templateAttributes['modules'] ?? [];
@@ -161,9 +153,7 @@ class Template
         return is_array($templateModules[$ctype]) && in_array($moduleId, $templateModules[$ctype]);
     }
 
-    /**
-     * @return array<int, string>
-     */
+    /** @return array<int, string> */
     private static function getKeyMapping(): array
     {
         static $mapping;
@@ -184,17 +174,13 @@ class Template
         return $mapping = File::getCache($file);
     }
 
-    /**
-     * @return list<ContentSection>
-     */
+    /** @return list<ContentSection> */
     public function getCtypes(): array
     {
         return ContentSection::forTemplate($this->id);
     }
 
-    /**
-     * @return false|string
-     */
+    /** @return false|string */
     public static function templateIsInUse(int $templateId, string $msgKey)
     {
         $check = Sql::factory();

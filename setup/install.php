@@ -35,6 +35,7 @@ Table::get(Core::getTable('config'))
 
 Table::get(Core::getTable('action'))
     ->ensureColumn(new Column('id', 'int(10) unsigned', false, null, 'AUTO_INCREMENT'))
+    ->ensureColumn(new Column('key', 'varchar(191)', true))
     ->ensureColumn(new Column('name', 'varchar(255)'))
     ->ensureColumn(new Column('preview', 'text', true))
     ->ensureColumn(new Column('presave', 'text', true))
@@ -44,6 +45,7 @@ Table::get(Core::getTable('action'))
     ->ensureColumn(new Column('postsavemode', 'tinyint(4)', true))
     ->ensureGlobalColumns()
     ->setPrimaryKey('id')
+    ->ensureIndex(new Index('key', ['key'], Index::UNIQUE))
     ->ensure();
 
 Table::get(Core::getTable('article'))

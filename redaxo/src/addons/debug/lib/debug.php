@@ -22,9 +22,7 @@ class rex_debug
         ErrorHandler::class,
     ];
 
-    /**
-     * @param list<class-string> $ignoredClasses
-     */
+    /** @param list<class-string> $ignoredClasses */
     public static function getTrace(array $ignoredClasses = []): array
     {
         $ignoredClasses = array_merge(self::$ignoreClasses, $ignoredClasses);

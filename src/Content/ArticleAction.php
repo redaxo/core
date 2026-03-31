@@ -55,9 +55,7 @@ class ArticleAction
         ];
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function setRequestValues()
     {
         $request = ['value' => 20, 'media' => 10, 'medialist' => 10, 'link' => 10, 'linklist' => 10];
@@ -103,49 +101,37 @@ class ArticleAction
         }
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function setSave($save)
     {
         $this->save = $save;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function addMessage($message)
     {
         $this->messages[] = $message;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function getSave()
     {
         return $this->save;
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function getMessages()
     {
         return $this->messages;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getEvent()
     {
         return $this->event;
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function setValue($id, $value)
     {
         if ($id < 1 || $id > 20) {
@@ -154,9 +140,7 @@ class ArticleAction
         $this->sql->setValue('value' . $id, $value);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function setMedia($id, $value)
     {
         if ($id < 1 || $id > 10) {
@@ -165,9 +149,7 @@ class ArticleAction
         $this->sql->setValue('media' . $id, $value);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function setMediaList($id, $value)
     {
         if ($id < 1 || $id > 10) {
@@ -176,9 +158,7 @@ class ArticleAction
         $this->sql->setValue('medialist' . $id, $value);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function setLink($id, $value)
     {
         if ($id < 1 || $id > 10) {
@@ -187,9 +167,7 @@ class ArticleAction
         $this->sql->setValue('link' . $id, $value);
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     protected function setLinkList($id, $value)
     {
         if ($id < 1 || $id > 10) {
@@ -198,41 +176,31 @@ class ArticleAction
         $this->sql->setValue('linklist' . $id, $value);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     protected function getValue($id)
     {
         return $this->sql->getValue('value' . $id);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     protected function getMedia($id)
     {
         return $this->sql->getValue('media' . $id);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     protected function getMediaList($id)
     {
         return $this->sql->getValue('medialist' . $id);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     protected function getLink($id)
     {
         return $this->sql->getValue('link' . $id);
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     protected function getLinkList($id)
     {
         return $this->sql->getValue('linklist' . $id);

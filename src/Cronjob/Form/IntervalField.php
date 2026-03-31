@@ -44,9 +44,7 @@ class IntervalField extends BaseField
         $this->value = json_encode($value);
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     public function getIntervalElements()
     {
         return $this->intervalElements;
@@ -70,9 +68,7 @@ class IntervalField extends BaseField
         return json_encode($save);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function formatElement()
     {
         /** @return iterable<int, string> */
@@ -201,9 +197,7 @@ class IntervalField extends BaseField
         return $field;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getFragment()
     {
         return 'core/form/container.php';

@@ -73,9 +73,7 @@ final class ForeignKey
         return $this->setModified(true);
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function getColumns(): array
     {
         return $this->columns;
@@ -91,9 +89,7 @@ final class ForeignKey
         return $this->setModified(true);
     }
 
-    /**
-     * @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL
-     */
+    /** @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL */
     public function getOnUpdate(): string
     {
         return $this->onUpdate;
@@ -109,9 +105,7 @@ final class ForeignKey
         return $this->setModified(true);
     }
 
-    /**
-     * @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL
-     */
+    /** @return self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL */
     public function getOnDelete(): string
     {
         return $this->onDelete;

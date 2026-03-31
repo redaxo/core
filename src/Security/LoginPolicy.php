@@ -8,9 +8,7 @@ use function array_key_exists;
 
 final class LoginPolicy
 {
-    /**
-     * @param array<string, int|bool> $options
-     */
+    /** @param array<string, int|bool> $options */
     public function __construct(
         private array $options,
     ) {}

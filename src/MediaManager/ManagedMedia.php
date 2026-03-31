@@ -61,9 +61,7 @@ class ManagedMedia
     /** @var string */
     private $format;
 
-    /**
-     * @param string $mediaPath
-     */
+    /** @param string $mediaPath */
     public function __construct($mediaPath)
     {
         $this->setMediaPath($mediaPath);
@@ -100,9 +98,7 @@ class ManagedMedia
         $this->sourcePath = $mediaPath;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getMediaFilename()
     {
         return $this->media;
@@ -127,9 +123,7 @@ class ManagedMedia
         $this->header[$name] = $value;
     }
 
-    /**
-     * @return array<string, string>
-     */
+    /** @return array<string, string> */
     public function getHeader()
     {
         return $this->header;
@@ -205,9 +199,7 @@ class ManagedMedia
         $this->refreshImageDimensions();
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     public function refreshImageDimensions()
     {
         if ($this->asImage) {
@@ -227,9 +219,7 @@ class ManagedMedia
         $this->image['height'] = isset($size[1]) ? (int) $size[1] : null;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getFormat()
     {
         return $this->format;
@@ -321,9 +311,7 @@ class ManagedMedia
         return $this->asImage || is_file($this->sourcePath);
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function getImageSource()
     {
         if (!isset($this->image['src'])) {
@@ -358,9 +346,7 @@ class ManagedMedia
         return ob_get_clean();
     }
 
-    /**
-     * @return GdImage
-     */
+    /** @return GdImage */
     public function getImage()
     {
         if (!isset($this->image['src'])) {
@@ -403,9 +389,7 @@ class ManagedMedia
         return $this->sourcePath;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getSource()
     {
         if ($this->asImage) {
@@ -435,17 +419,13 @@ class ManagedMedia
         return $this->image[$name] ?? $default;
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public function getWidth()
     {
         return $this->image['width'];
     }
 
-    /**
-     * @return int|null
-     */
+    /** @return int|null */
     public function getHeight()
     {
         return $this->image['height'];

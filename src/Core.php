@@ -309,9 +309,7 @@ final class Core
         return PHP_SESSION_ACTIVE == session_status() && Http\Request::session('safemode', 'boolean', false);
     }
 
-    /**
-     * Returns if the live mode is active.
-     */
+    /** Returns if the live mode is active. */
     public static function isLiveMode(): bool
     {
         return (bool) self::getProperty('live_mode');
@@ -477,9 +475,7 @@ final class Core
         return Type::array(self::getConfig('package-config', []));
     }
 
-    /**
-     * @return list<non-empty-string>
-     */
+    /** @return list<non-empty-string> */
     public static function getPackageOrder(): array
     {
         return Type::array(self::getConfig('package-order', []));
@@ -549,9 +545,7 @@ final class Core
         return null;
     }
 
-    /**
-     * @internal
-     */
+    /** @internal */
     public static function loadConfigYml(): void
     {
         $cacheFile = Path::coreCache('config.yml.cache');

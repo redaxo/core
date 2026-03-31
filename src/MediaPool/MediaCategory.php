@@ -76,9 +76,7 @@ class MediaCategory
         });
     }
 
-    /**
-     * @return list<self>
-     */
+    /** @return list<self> */
     public static function getRootCategories()
     {
         return self::getChildCategories(0);
@@ -108,25 +106,19 @@ class MediaCategory
         });
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getName()
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getPath()
     {
         return $this->path;
@@ -144,49 +136,37 @@ class MediaCategory
         return array_values(array_map('intval', $p));
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getUpdateUser()
     {
         return $this->updateuser;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getUpdateDate()
     {
         return $this->updatedate;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function getCreateUser()
     {
         return $this->createuser;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getCreateDate()
     {
         return $this->createdate;
     }
 
-    /**
-     * @return int
-     */
+    /** @return int */
     public function getParentId()
     {
         return $this->parentId;
     }
 
-    /**
-     * @return self|null
-     */
+    /** @return self|null */
     public function getParent()
     {
         return self::get($this->getParentId());
@@ -233,17 +213,13 @@ class MediaCategory
         return in_array($anObj, $tree);
     }
 
-    /**
-     * @return list<self>
-     */
+    /** @return list<self> */
     public function getChildren()
     {
         return self::getChildCategories($this->getId());
     }
 
-    /**
-     * @return list<Media>
-     */
+    /** @return list<Media> */
     public function getMedia(): array
     {
         $id = $this->getId();
@@ -262,9 +238,7 @@ class MediaCategory
         });
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function isParent(self $mediaCat)
     {
         return $this->getParentId() == $mediaCat->getId();

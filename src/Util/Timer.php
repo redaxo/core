@@ -22,9 +22,7 @@ final class Timer
     private float $start;
     private ?float $duration = null;
 
-    /**
-     * @param float|null $start Start time
-     */
+    /** @param float|null $start Start time */
     public function __construct(?float $start = null)
     {
         if ($start) {

@@ -23,9 +23,7 @@ final class Parsedown extends ParsedownExtra
     /** @var array<string, true> */
     private array $ids = [];
 
-    /**
-     * @return string
-     */
+    /** @return string */
     #[Override]
     public function text($text)
     {
@@ -39,9 +37,7 @@ final class Parsedown extends ParsedownExtra
         }
     }
 
-    /**
-     * @return array|null
-     */
+    /** @return array|null */
     #[Override]
     protected function blockHeader($Line)
     {
@@ -50,20 +46,16 @@ final class Parsedown extends ParsedownExtra
         return $this->handleHeader($block);
     }
 
-    /**
-     * @return array|null
-     */
+    /** @return array|null */
     #[Override]
-    protected function blockSetextHeader($Line, array $Block = [])
+    protected function blockSetextHeader($Line, ?array $Block = null)
     {
         $block = parent::blockSetextHeader($Line, $Block);
 
         return $this->handleHeader($block);
     }
 
-    /**
-     * @return array
-     */
+    /** @return array */
     #[Override]
     protected function blockFencedCodeComplete($Block)
     {
@@ -75,15 +67,13 @@ final class Parsedown extends ParsedownExtra
         }
 
         /** @psalm-suppress MixedArrayAccess */
-        if ('language-php' !== ($Block['element']['text']['attributes']['class'] ?? null)) {
+        $element = Type::array($Block['element']['element']);
+
+        if ('language-php' !== ($element['attributes']['class'] ?? null)) {
             return $Block;
         }
 
-        /**
-         * @var string $text
-         * @psalm-suppress MixedArrayAccess
-         */
-        $text = $Block['element']['text']['text'];
+        $text = Type::string($element['text']);
 
         $missingPhpStart = !str_contains($text, '<?php') && !str_contains($text, '<?=');
         if ($missingPhpStart) {
@@ -106,8 +96,7 @@ final class Parsedown extends ParsedownExtra
 
         /** @psalm-suppress MixedArrayAssignment */
         $Block['element']['rawHtml'] = $text;
-        /** @psalm-suppress MixedArrayAccess */
-        unset($Block['element']['text'], $Block['element']['handler']);
+        unset($Block['element']['element']);
 
         return $Block;
     }
@@ -122,10 +111,12 @@ final class Parsedown extends ParsedownExtra
             return $block;
         }
 
-        [$level] = sscanf($block['element']['name'], 'h%d');
+        $element = Type::array($block['element']);
 
-        $plainText = strip_tags($this->{$block['element']['handler']}($block['element']['text']));
-        $plainText = htmlspecialchars_decode($plainText);
+        [$level] = sscanf(Type::string($element['name']), 'h%d');
+
+        $plainText = Type::string($this->element($element));
+        $plainText = htmlspecialchars_decode(strip_tags($plainText));
 
         if (!isset($block['element']['attributes']['id'])) {
             $baseId = $id = Str::normalize($plainText, '-');

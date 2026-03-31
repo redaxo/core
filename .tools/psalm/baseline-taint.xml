@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.14.3@d0b040a91f280f071c1abcb1b77ce3822058725a">
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
   <file src="boot/backend.php">
     <TaintedHtml>
       <code><![CDATA['<script nonce="' . Response::getNonce() . '">
@@ -30,14 +30,14 @@
     <TaintedHtml>
       <code><![CDATA['<search role="search" class="' . $class . '"' . $id . '>
       <span class="input-group-addon clear-button"><i class="rex-icon rex-icon-search"></i></span>
-      <input class="form-control" type="text"' . $autofocus . $placeholder . $value . '>
+      <input class="form-control" type="text"' . $name . $autofocus . $placeholder . $value . '>
       <span title="' . $clear . '" class="form-control-clear rex-icon rex-icon-clear form-control-feedback hidden"></span>
 </search>']]></code>
     </TaintedHtml>
     <TaintedTextWithQuotes>
       <code><![CDATA['<search role="search" class="' . $class . '"' . $id . '>
       <span class="input-group-addon clear-button"><i class="rex-icon rex-icon-search"></i></span>
-      <input class="form-control" type="text"' . $autofocus . $placeholder . $value . '>
+      <input class="form-control" type="text"' . $name . $autofocus . $placeholder . $value . '>
       <span title="' . $clear . '" class="form-control-clear rex-icon rex-icon-clear form-control-feedback hidden"></span>
 </search>']]></code>
     </TaintedTextWithQuotes>

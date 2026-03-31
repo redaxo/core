@@ -33,9 +33,7 @@ class TemplateSelect extends Select
         parent::__construct();
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function get()
     {
         if (!$this->loaded) {
@@ -84,9 +82,7 @@ class TemplateSelect extends Select
         }
     }
 
-    /**
-     * @return array<int, string>
-     */
+    /** @return array<int, string> */
     public function getTemplates()
     {
         if (null === $this->templates) {

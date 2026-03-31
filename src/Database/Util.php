@@ -18,9 +18,7 @@ final readonly class Util
 {
     private function __construct() {}
 
-    /**
-     * @psalm-taint-escape file
-     */
+    /** @psalm-taint-escape file */
     public static function slowQueryLogPath(): ?string
     {
         $db = Sql::factory();

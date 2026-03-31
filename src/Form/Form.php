@@ -101,9 +101,7 @@ class Form extends AbstractForm
         return new $class($tableName, $fieldset, $whereCondition, $method, $debug, $db);
     }
 
-    /**
-     * Laedt die Konfiguration die noetig ist um Form im REDAXO Backend zu verwenden.
-     */
+    /** Laedt die Konfiguration die noetig ist um Form im REDAXO Backend zu verwenden. */
     protected function loadBackendConfig()
     {
         parent::loadBackendConfig();
@@ -224,17 +222,13 @@ class Form extends AbstractForm
         return 'edit' == $this->mode;
     }
 
-    /**
-     * @return non-empty-string
-     */
+    /** @return non-empty-string */
     public function getTableName()
     {
         return $this->tableName;
     }
 
-    /**
-     * @return Sql
-     */
+    /** @return Sql */
     public function getSql()
     {
         return $this->sql;
@@ -277,9 +271,7 @@ class Form extends AbstractForm
         return $fieldValue;
     }
 
-    /**
-     * Sets the sql fields `updateuser`, `updatedate`, `createuser` and `createdate` (if available).
-     */
+    /** Sets the sql fields `updateuser`, `updatedate`, `createuser` and `createdate` (if available). */
     private function setGlobalSqlFields(Sql $saveSql): void
     {
         $fieldnames = $this->sql->getFieldnames();
@@ -390,9 +382,7 @@ class Form extends AbstractForm
         return $sql->getMysqlErrno();
     }
 
-    /**
-     * @return bool|int
-     */
+    /** @return bool|int */
     protected function delete()
     {
         $deleteSql = Sql::factory($this->db);

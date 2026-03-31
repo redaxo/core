@@ -24,9 +24,7 @@ class SqlException extends RuntimeException implements Exception
         return $this->sql;
     }
 
-    /**
-     * Returns the mysql native error code.
-     */
+    /** Returns the mysql native error code. */
     public function getErrorCode(): ?int
     {
         $previous = $this->getPrevious();

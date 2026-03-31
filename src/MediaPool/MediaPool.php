@@ -64,9 +64,7 @@ final class MediaPool
         return $newMediaName;
     }
 
-    /**
-     * @return bool|string
-     */
+    /** @return bool|string */
     public static function mediaIsInUse(string $filename)
     {
         $sql = Sql::factory();
@@ -117,9 +115,7 @@ final class MediaPool
         return false;
     }
 
-    /**
-     * check if mediatpye(extension) is allowed for upload.
-     */
+    /** check if mediatpye(extension) is allowed for upload. */
     public static function isAllowedExtension(string $filename, array $args = []): bool
     {
         $fileExt = mb_strtolower(File::extension($filename));
