@@ -37,9 +37,7 @@ final readonly class ValidationRule
         return $this->type;
     }
 
-    /**
-     * Type specific option.
-     */
+    /** Type specific option. */
     public function getOption(): mixed
     {
         return $this->option;

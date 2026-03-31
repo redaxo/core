@@ -19,9 +19,7 @@ final class Path
 
     private function __construct() {}
 
-    /**
-     * Initializes the class.
-     */
+    /** Initializes the class. */
     public static function init(DefaultPathProvider $pathProvider): void
     {
         self::$pathprovider = $pathProvider;

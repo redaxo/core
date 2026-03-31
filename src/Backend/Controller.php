@@ -86,9 +86,7 @@ final class Controller
         return Type::notNull(self::getCurrentPageObject());
     }
 
-    /**
-     * @param string|list<string> $page
-     */
+    /** @param string|list<string> $page */
     public static function getPageObject(string|array $page): ?Page
     {
         if (!is_array($page)) {
@@ -114,9 +112,7 @@ final class Controller
         return self::$pages;
     }
 
-    /**
-     * @param array<string, Page> $pages
-     */
+    /** @param array<string, Page> $pages */
     public static function setPages(array $pages): void
     {
         self::$pages = $pages;
@@ -553,9 +549,7 @@ final class Controller
         }
     }
 
-    /**
-     * Includes the current page. A page may be provided by the core or an addon.
-     */
+    /** Includes the current page. A page may be provided by the core or an addon. */
     public static function includeCurrentPage(): void
     {
         $currentPage = self::requireCurrentPageObject();

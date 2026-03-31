@@ -41,17 +41,13 @@ class Result
         $this->requiresReboot = $requiresReboot;
     }
 
-    /**
-     * @return bool
-     */
+    /** @return bool */
     public function requiresReboot()
     {
         return $this->requiresReboot;
     }
 
-    /**
-     * @return string|null
-     */
+    /** @return string|null */
     public function getFormattedMessage()
     {
         if (null === $this->message) {
@@ -84,9 +80,7 @@ class Result
         return $this->succeeded;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function toJSON()
     {
         return Type::string(json_encode([

@@ -103,9 +103,7 @@ class Media
         });
     }
 
-    /**
-     * @return static|null
-     */
+    /** @return static|null */
     public static function forId(int $mediaId): ?self
     {
         $media = Sql::factory();

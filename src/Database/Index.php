@@ -47,9 +47,7 @@ final class Index
         return $this->name;
     }
 
-    /**
-     * @param self::INDEX|self::UNIQUE|self::FULLTEXT $type
-     */
+    /** @param self::INDEX|self::UNIQUE|self::FULLTEXT $type */
     public function setType(string $type): self
     {
         $this->type = $type;
@@ -63,9 +61,7 @@ final class Index
         return $this->type;
     }
 
-    /**
-     * @param list<string> $columns
-     */
+    /** @param list<string> $columns */
     public function setColumns(array $columns): self
     {
         $this->columns = $columns;

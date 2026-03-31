@@ -223,25 +223,19 @@ final class Core
         return $exists;
     }
 
-    /**
-     * Returns if the setup is active.
-     */
+    /** Returns if the setup is active. */
     public static function isSetup(): bool
     {
         return Setup::isEnabled();
     }
 
-    /**
-     * Returns if the environment is the backend.
-     */
+    /** Returns if the environment is the backend. */
     public static function isBackend(): bool
     {
         return (bool) self::getProperty('redaxo', false);
     }
 
-    /**
-     * Returns if the environment is the frontend.
-     */
+    /** Returns if the environment is the frontend. */
     public static function isFrontend(): bool
     {
         if (self::getConsole()) {
@@ -264,9 +258,7 @@ final class Core
         return self::isBackend() ? 'backend' : 'frontend';
     }
 
-    /**
-     * Returns if the debug mode is active.
-     */
+    /** Returns if the debug mode is active. */
     public static function isDebugMode(): bool
     {
         if (self::isLiveMode()) {
@@ -293,9 +285,7 @@ final class Core
         return $flags;
     }
 
-    /**
-     * Returns if the safe mode is active.
-     */
+    /** Returns if the safe mode is active. */
     public static function isSafeMode(): bool
     {
         if (!self::isBackend() || self::isLiveMode()) {
@@ -353,9 +343,7 @@ final class Core
         return self::getProperty('temp_prefix');
     }
 
-    /**
-     * Returns the current user.
-     */
+    /** Returns the current user. */
     public static function getUser(): ?User
     {
         return self::getProperty('user');
@@ -377,9 +365,7 @@ final class Core
         return $user;
     }
 
-    /**
-     * Returns the current impersonator user.
-     */
+    /** Returns the current impersonator user. */
     public static function getImpersonator(): ?User
     {
         $login = self::$properties['login'] ?? null;
@@ -387,9 +373,7 @@ final class Core
         return $login ? $login->getImpersonator() : null;
     }
 
-    /**
-     * Returns the console application.
-     */
+    /** Returns the console application. */
     public static function getConsole(): ?Application
     {
         return self::getProperty('console', null);
@@ -406,9 +390,7 @@ final class Core
         return $request;
     }
 
-    /**
-     * @param positive-int $db
-     */
+    /** @param positive-int $db */
     public static function getDbConfig(int $db = 1): DatabaseConfiguration
     {
         $config = self::getProperty('db', null);
@@ -422,9 +404,7 @@ final class Core
         return new DatabaseConfiguration($config[$db]);
     }
 
-    /**
-     * Returns the server URL.
-     */
+    /** Returns the server URL. */
     public static function getServer(?string $protocol = null): string
     {
         if (null === $protocol) {
@@ -434,17 +414,13 @@ final class Core
         return $protocol ? $protocol . '://' . $server : $server;
     }
 
-    /**
-     * Returns the server name.
-     */
+    /** Returns the server name. */
     public static function getServerName(): string
     {
         return self::getProperty('servername');
     }
 
-    /**
-     * Returns the error email.
-     */
+    /** Returns the error email. */
     public static function getErrorEmail(): string
     {
         return self::getProperty('error_email');
@@ -500,17 +476,13 @@ final class Core
         return ' title="' . $title . '"';
     }
 
-    /**
-     * Returns the file perm.
-     */
+    /** Returns the file perm. */
     public static function getFilePerm(): int
     {
         return (int) self::getProperty('fileperm', 0o664);
     }
 
-    /**
-     * Returns the dir perm.
-     */
+    /** Returns the dir perm. */
     public static function getDirPerm(): int
     {
         return (int) self::getProperty('dirperm', 0o775);

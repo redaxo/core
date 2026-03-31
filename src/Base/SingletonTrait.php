@@ -15,9 +15,7 @@ trait SingletonTrait
 
     private function __construct() {}
 
-    /**
-     * Returns the singleton instance.
-     */
+    /** Returns the singleton instance. */
     public static function getInstance(): static
     {
         $class = static::class;

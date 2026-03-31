@@ -22,9 +22,7 @@ final class Pager
         private readonly string $cursorName = 'start',
     ) {}
 
-    /**
-     * Sets the row count.
-     */
+    /** Sets the row count. */
     public function setRowCount(int $rowCount): void
     {
         $this->rowCount = $rowCount;
@@ -94,9 +92,7 @@ final class Pager
         return $this->cursor;
     }
 
-    /**
-     * Validates the cursor.
-     */
+    /** Validates the cursor. */
     public function validateCursor(int $cursor): int
     {
         // $cursor innerhalb des zulässigen Zahlenbereichs?
@@ -109,25 +105,19 @@ final class Pager
         return $cursor;
     }
 
-    /**
-     * Returns the name of the parameter which is used for pagination.
-     */
+    /** Returns the name of the parameter which is used for pagination. */
     public function getCursorName(): string
     {
         return $this->cursorName;
     }
 
-    /**
-     * Returns the first page for pagination.
-     */
+    /** Returns the first page for pagination. */
     public function getFirstPage(): int
     {
         return 0;
     }
 
-    /**
-     * Returns the previous page in respect to the current page.
-     */
+    /** Returns the previous page in respect to the current page. */
     public function getPrevPage(): int
     {
         $prevPage = $this->getCurrentPage() - 1;
@@ -137,9 +127,7 @@ final class Pager
         return $prevPage;
     }
 
-    /**
-     * Returns the number of the current page.
-     */
+    /** Returns the number of the current page. */
     public function getCurrentPage(): int
     {
         $cursor = $this->cursor ?? Request::request($this->cursorName, 'int', null);
@@ -151,9 +139,7 @@ final class Pager
         return (int) ($cursor / $this->rowsPerPage);
     }
 
-    /**
-     * Returns the number of the next page in respect to the current page.
-     */
+    /** Returns the number of the next page in respect to the current page. */
     public function getNextPage(): int
     {
         $nextPage = $this->getCurrentPage() + 1;
@@ -163,9 +149,7 @@ final class Pager
         return $nextPage;
     }
 
-    /**
-     * Return the page number of the last page.
-     */
+    /** Return the page number of the last page. */
     public function getLastPage(): int
     {
         return (int) (ceil((int) $this->rowCount / $this->rowsPerPage) - 1);

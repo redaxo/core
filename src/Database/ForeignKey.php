@@ -63,9 +63,7 @@ final class ForeignKey
         return $this->table;
     }
 
-    /**
-     * @param array<string, string> $columns Mapping of locale column to column in foreign table
-     */
+    /** @param array<string, string> $columns Mapping of locale column to column in foreign table */
     public function setColumns(array $columns): self
     {
         $this->columns = $columns;
@@ -79,9 +77,7 @@ final class ForeignKey
         return $this->columns;
     }
 
-    /**
-     * @param self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL $onUpdate
-     */
+    /** @param self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL $onUpdate */
     public function setOnUpdate(string $onUpdate): self
     {
         $this->onUpdate = $onUpdate;
@@ -95,9 +91,7 @@ final class ForeignKey
         return $this->onUpdate;
     }
 
-    /**
-     * @param self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL $onDelete
-     */
+    /** @param self::RESTRICT|self::NO_ACTION|self::CASCADE|self::SET_NULL $onDelete */
     public function setOnDelete(string $onDelete): self
     {
         $this->onDelete = $onDelete;

@@ -12,9 +12,7 @@ final class Style
 {
     private function __construct() {}
 
-    /**
-     * Converts Backend SCSS files to CSS.
-     */
+    /** Converts Backend SCSS files to CSS. */
     public static function compile(): void
     {
         $scssFiles = Extension::registerPoint(new ExtensionPoint('BE_STYLE_SCSS_FILES', []));

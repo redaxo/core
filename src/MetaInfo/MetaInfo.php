@@ -161,9 +161,7 @@ class MetaInfo
         return $tableManager->addColumn($name, $fieldDbType, $fieldDbLength, $default);
     }
 
-    /**
-     * @return bool|string
-     */
+    /** @return bool|string */
     public static function deleteField(string|int $fieldIdOrName)
     {
         // Löschen anhand der FieldId

@@ -49,9 +49,7 @@ final class Response
     private static array $preloadFiles = [];
     private static string $nonce = '';
 
-    /**
-     * Sets the HTTP Status code.
-     */
+    /** Sets the HTTP Status code. */
     public static function setStatus(string $httpStatus): void
     {
         if (str_contains($httpStatus, "\n")) {
@@ -61,9 +59,7 @@ final class Response
         self::$httpStatus = $httpStatus;
     }
 
-    /**
-     * Returns the HTTP Status code.
-     */
+    /** Returns the HTTP Status code. */
     public static function getStatus(): string
     {
         return self::$httpStatus;
@@ -78,9 +74,7 @@ final class Response
         return self::$nonce;
     }
 
-    /**
-     * Set a http response header. A existing header with the same name will be overridden.
-     */
+    /** Set a http response header. A existing header with the same name will be overridden. */
     public static function setHeader(string $name, string $value): void
     {
         self::$additionalHeaders[$name] = $value;
@@ -93,9 +87,7 @@ final class Response
         }
     }
 
-    /**
-     * Set a file to be preload via http link header.
-     */
+    /** Set a file to be preload via http link header. */
     public static function preload(string $file, string $type, string $mimeType): void
     {
         self::$preloadFiles[] = [
@@ -346,9 +338,7 @@ final class Response
         self::sendContent(json_encode($data), 'application/json', $lastModified, $etag);
     }
 
-    /**
-     * Cleans all output buffers.
-     */
+    /** Cleans all output buffers. */
     public static function cleanOutputBuffers(): void
     {
         while (ob_get_level()) {
@@ -356,18 +346,14 @@ final class Response
         }
     }
 
-    /**
-     * Sends the content type header.
-     */
+    /** Sends the content type header. */
     public static function sendContentType(?string $contentType = null): void
     {
         header('Content-Type: ' . ($contentType ?: 'text/html; charset=utf-8'));
         self::$sentContentType = true;
     }
 
-    /**
-     * Sends the cache control header.
-     */
+    /** Sends the cache control header. */
     public static function sendCacheControl(string $cacheControl = 'must-revalidate, proxy-revalidate, private, no-cache, max-age=0'): void
     {
         header('Cache-Control: ' . $cacheControl);

@@ -63,9 +63,7 @@ class Finder implements IteratorAggregate, Countable
         return new $class($dir);
     }
 
-    /**
-     * Activate/Deactivate recursive directory scanning.
-     */
+    /** Activate/Deactivate recursive directory scanning. */
     public function recursive(bool $recursive = true): static
     {
         $this->recursive = $recursive;
@@ -73,9 +71,7 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
-    /**
-     * Fetch directory contents before recurse its subdirectories.
-     */
+    /** Fetch directory contents before recurse its subdirectories. */
     public function selfFirst(): static
     {
         $this->recursiveMode = RecursiveIteratorIterator::SELF_FIRST;
@@ -83,9 +79,7 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
-    /**
-     * Fetch child directories before their parent directory.
-     */
+    /** Fetch child directories before their parent directory. */
     public function childFirst(): static
     {
         $this->recursiveMode = RecursiveIteratorIterator::CHILD_FIRST;
@@ -93,9 +87,7 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
-    /**
-     * Fetch files only.
-     */
+    /** Fetch files only. */
     public function filesOnly(): static
     {
         $this->recursiveMode = RecursiveIteratorIterator::LEAVES_ONLY;
@@ -103,9 +95,7 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
-    /**
-     * Fetch dirs only.
-     */
+    /** Fetch dirs only. */
     public function dirsOnly(): static
     {
         $this->dirsOnly = true;
@@ -149,9 +139,7 @@ class Finder implements IteratorAggregate, Countable
         return $this;
     }
 
-    /**
-     * Ignores system stuff (like .DS_Store, .svn, .git etc.).
-     */
+    /** Ignores system stuff (like .DS_Store, .svn, .git etc.). */
     public function ignoreSystemStuff(bool $ignoreSystemStuff = true): static
     {
         $this->ignoreSystemStuff = $ignoreSystemStuff;

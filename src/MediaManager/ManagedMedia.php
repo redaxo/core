@@ -431,9 +431,7 @@ class ManagedMedia
         return $this->image['height'];
     }
 
-    /**
-     * @return void
-     */
+    /** @return void */
     private function fixOrientation()
     {
         if (!isset($this->image['src'])) {

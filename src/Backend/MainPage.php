@@ -7,9 +7,7 @@ class MainPage extends Page
     private string $block;
     private int $prio = 0;
 
-    /**
-     * @param string $block Navigation block
-     */
+    /** @param string $block Navigation block */
     public function __construct(string $block, string $key, string $title)
     {
         $this->block = $block;
@@ -29,9 +27,7 @@ class MainPage extends Page
         return $this;
     }
 
-    /**
-     * Returns the navigation block.
-     */
+    /** Returns the navigation block. */
     public function getBlock(): string
     {
         return $this->block;
@@ -49,9 +45,7 @@ class MainPage extends Page
         return $this;
     }
 
-    /**
-     * Returns the priority.
-     */
+    /** Returns the priority. */
     public function getPrio(): int
     {
         return $this->prio;

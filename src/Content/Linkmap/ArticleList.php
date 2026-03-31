@@ -17,9 +17,7 @@ class ArticleList extends ArticleListRenderer
         private Context $context,
     ) {}
 
-    /**
-     * @return string
-     */
+    /** @return string */
     protected function listItem(Article $article, $categoryId)
     {
         $liAttr = ' class="list-group-item rex-linkmap-list-item-article"';

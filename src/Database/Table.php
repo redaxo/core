@@ -223,9 +223,7 @@ final class Table
         return $this->columns;
     }
 
-    /**
-     * @param string|null $afterColumn Column name or `Table::FIRST`
-     */
+    /** @param string|null $afterColumn Column name or `Table::FIRST` */
     public function addColumn(Column $column, ?string $afterColumn = null): self
     {
         $name = $column->getName();
@@ -241,9 +239,7 @@ final class Table
         return $this;
     }
 
-    /**
-     * @param string|null $afterColumn Column name or `Table::FIRST`
-     */
+    /** @param string|null $afterColumn Column name or `Table::FIRST` */
     public function ensureColumn(Column $column, ?string $afterColumn = null): self
     {
         $name = $column->getName();
@@ -272,9 +268,7 @@ final class Table
         ;
     }
 
-    /**
-     * @param string|null $afterColumn Column name or `Table::FIRST`
-     */
+    /** @param string|null $afterColumn Column name or `Table::FIRST` */
     public function ensureGlobalColumns(?string $afterColumn = null): self
     {
         return $this
@@ -331,9 +325,7 @@ final class Table
         return $this->primaryKey ?: null;
     }
 
-    /**
-     * @param string|list<string>|null $columns Column name(s)
-     */
+    /** @param string|list<string>|null $columns Column name(s) */
     public function setPrimaryKey(string|array|null $columns): self
     {
         if (is_array($columns) && !$columns) {
@@ -523,9 +515,7 @@ final class Table
         return $this;
     }
 
-    /**
-     * Ensures that the table exists with the given definition.
-     */
+    /** Ensures that the table exists with the given definition. */
     public function ensure(): void
     {
         if ($this->new) {
@@ -566,9 +556,7 @@ final class Table
         $this->alter();
     }
 
-    /**
-     * Drops the table if it exists.
-     */
+    /** Drops the table if it exists. */
     public function drop(): void
     {
         if (!$this->new) {
@@ -583,9 +571,7 @@ final class Table
         $this->primaryKeyExisting = [];
     }
 
-    /**
-     * Creates the table.
-     */
+    /** Creates the table. */
     public function create(): void
     {
         if (!$this->new) {
@@ -624,9 +610,7 @@ final class Table
         $this->resetModified();
     }
 
-    /**
-     * Alters the table.
-     */
+    /** Alters the table. */
     public function alter(): void
     {
         if ($this->new) {

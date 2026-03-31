@@ -12,9 +12,7 @@ use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
 
-/**
- * PHPMailer Archive Management.
- */
+/** PHPMailer Archive Management. */
 
 $func = Request::request('func', 'string');
 $message = '';

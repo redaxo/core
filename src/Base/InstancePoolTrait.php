@@ -72,9 +72,7 @@ trait InstancePoolTrait
         unset(self::$instances[$class][$key]);
     }
 
-    /**
-     * Clears the instance pool.
-     */
+    /** Clears the instance pool. */
     public static function clearInstancePool(): void
     {
         $calledClass = static::class;

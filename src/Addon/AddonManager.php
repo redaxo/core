@@ -37,18 +37,14 @@ class AddonManager
         protected readonly Addon $addon,
     ) {}
 
-    /**
-     * Creates the manager for the addon.
-     */
+    /** Creates the manager for the addon. */
     public static function factory(Addon $addon): static
     {
         $class = static::getFactoryClass();
         return new $class($addon);
     }
 
-    /**
-     * Returns the message.
-     */
+    /** Returns the message. */
     public function getMessage(): string
     {
         return $this->message;
@@ -352,9 +348,7 @@ class AddonManager
         return $this->i18n('wrong_dir_name', $addonName);
     }
 
-    /**
-     * Checks whether the requirements are met.
-     */
+    /** Checks whether the requirements are met. */
     public function checkRequirements(): bool
     {
         $requirements = $this->addon->getProperty('requires', []);
@@ -420,9 +414,7 @@ class AddonManager
         return true;
     }
 
-    /**
-     * Checks whether the addon requirement is met.
-     */
+    /** Checks whether the addon requirement is met. */
     public function checkPackageRequirement(string $addonId): bool
     {
         $requirements = $this->addon->getProperty('requires', []);
@@ -471,9 +463,7 @@ class AddonManager
         return true;
     }
 
-    /**
-     * Checks whether the addon is in conflict with other packages.
-     */
+    /** Checks whether the addon is in conflict with other packages. */
     public function checkConflicts(): bool
     {
         $state = [];
@@ -509,9 +499,7 @@ class AddonManager
         return false;
     }
 
-    /**
-     * Checks whether the addon is in conflict with another package.
-     */
+    /** Checks whether the addon is in conflict with another package. */
     public function checkPackageConflict(string $addonId): bool
     {
         $conflicts = $this->addon->getProperty('conflicts', []);
@@ -531,9 +519,7 @@ class AddonManager
         return true;
     }
 
-    /**
-     * Checks if another addon which is activated, depends on the given package.
-     */
+    /** Checks if another addon which is activated, depends on the given package. */
     public function checkDependencies(): bool
     {
         $i18nPrefix = 'package_dependencies_error_';
@@ -574,9 +560,7 @@ class AddonManager
         return I18n::msg($fullKey, ...$replacements);
     }
 
-    /**
-     * Generates the addon order.
-     */
+    /** Generates the addon order. */
     public static function generatePackageOrder(): void
     {
         /** @var list<string> $early */
@@ -623,9 +607,7 @@ class AddonManager
         Core::setConfig('package-order', array_merge($early, $normal, array_keys($requires), $late));
     }
 
-    /**
-     * Saves the addon config.
-     */
+    /** Saves the addon config. */
     protected static function saveConfig(): void
     {
         $config = [];
@@ -636,9 +618,7 @@ class AddonManager
         Core::setConfig('package-config', $config);
     }
 
-    /**
-     * Synchronizes the addons with the file system.
-     */
+    /** Synchronizes the addons with the file system. */
     public static function synchronizeWithFileSystem(): void
     {
         $config = Core::getPackageConfig();

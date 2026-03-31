@@ -309,9 +309,7 @@ final class Formatter
         return $value;
     }
 
-    /**
-     * Avoid widows in a string.
-     */
+    /** Avoid widows in a string. */
     public static function widont(string $value): string
     {
         // Sollte ein Wort allein auf einer Zeile vorkommen, wird dies unterbunden

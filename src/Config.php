@@ -21,9 +21,7 @@ final class Config
     /** Flag to indicate if the config was initialized. */
     private static bool $initialized = false;
 
-    /**
-     * path to the cache file.
-     */
+    /** path to the cache file. */
     private static string $cacheFile;
 
     /** Flag which indicates if database needs an update, because settings have changed. */
@@ -212,9 +210,7 @@ final class Config
         self::$deletedData = [];
     }
 
-    /**
-     * initilizes the Configuration class.
-     */
+    /** initilizes the Configuration class. */
     private static function init(): void
     {
         if (self::$initialized) {
@@ -238,9 +234,7 @@ final class Config
         self::$initialized = true;
     }
 
-    /**
-     * load the config-data.
-     */
+    /** load the config-data. */
     private static function load(): void
     {
         // check if we can load the config from the filesystem

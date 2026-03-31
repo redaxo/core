@@ -117,9 +117,7 @@ abstract class ApiFunction
      */
     abstract public function execute();
 
-    /**
-     * Returns the api function instance which is bound to the current request, or null if no api function was bound.
-     */
+    /** Returns the api function instance which is bound to the current request, or null if no api function was bound. */
     public static function factory(): ?self
     {
         if (self::$instance) {

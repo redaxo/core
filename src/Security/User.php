@@ -256,9 +256,7 @@ class User
         self::$roleClass = $class;
     }
 
-    /**
-     * Removes the instance of the given key.
-     */
+    /** Removes the instance of the given key. */
     public static function clearInstance(int|string $key): void
     {
         $user = static::getInstance($key);

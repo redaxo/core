@@ -11,9 +11,7 @@ class LogEntry
     /** @var list<string> */
     private array $data;
 
-    /**
-     * @param list<string|int> $data Log data
-     */
+    /** @param list<string|int> $data Log data */
     public function __construct(int $timestamp, array $data)
     {
         $this->timestamp = $timestamp;
@@ -59,9 +57,7 @@ class LogEntry
         return $this->data;
     }
 
-    /**
-     * @return string
-     */
+    /** @return string */
     public function __toString()
     {
         $data = array_map(static function ($part) {

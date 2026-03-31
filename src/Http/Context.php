@@ -89,9 +89,7 @@ class Context implements ContextProviderInterface
         return self::array2inputStr($params);
     }
 
-    /**
-     * Returns a Context instance containing all GET and POST parameters.
-     */
+    /** Returns a Context instance containing all GET and POST parameters. */
     public static function restore(): self
     {
         // $_REQUEST contains some server specific globals, therefore we merge GET and POST manually
@@ -99,18 +97,14 @@ class Context implements ContextProviderInterface
         return new self($_GET + $_POST);
     }
 
-    /**
-     * Returns a Context instance containing all GET parameters.
-     */
+    /** Returns a Context instance containing all GET parameters. */
     public static function fromGet(): self
     {
         /** @psalm-suppress InvalidArgument */
         return new self($_GET);
     }
 
-    /**
-     * Returns a Context instance containing all POST parameters.
-     */
+    /** Returns a Context instance containing all POST parameters. */
     public static function fromPost(): self
     {
         /** @psalm-suppress InvalidArgument */

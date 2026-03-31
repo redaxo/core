@@ -173,9 +173,7 @@ class Sql implements Iterator
         return self::$pdo[$this->DBID];
     }
 
-    /**
-     * @param string $host the host. might optionally include a port.
-     */
+    /** @param string $host the host. might optionally include a port. */
     protected static function createConnection(
         #[SensitiveParameter] string $host,
         #[SensitiveParameter] string $database,
@@ -322,9 +320,7 @@ class Sql implements Iterator
         return $this;
     }
 
-    /**
-     * Setzt Debugmodus an/aus.
-     */
+    /** Setzt Debugmodus an/aus. */
     public function setDebug(bool $debug = true): static
     {
         $this->debug = $debug;
@@ -523,9 +519,7 @@ class Sql implements Iterator
         return $this;
     }
 
-    /**
-     * Returns whether values are set inside this Sql object.
-     */
+    /** Returns whether values are set inside this Sql object. */
     public function hasValues(): bool
     {
         return [] !== $this->values;
@@ -733,9 +727,7 @@ class Sql implements Iterator
         return $value ? strtotime($value) : null;
     }
 
-    /**
-     * @return scalar|null
-     */
+    /** @return scalar|null */
     protected function fetchValue(string $column): string|int|float|bool|null
     {
         if (isset($this->values[$column])) {
@@ -831,9 +823,7 @@ class Sql implements Iterator
         return $this->rows;
     }
 
-    /**
-     * Gibt die Anzahl der Felder/Spalten zurueck.
-     */
+    /** Gibt die Anzahl der Felder/Spalten zurueck. */
     public function getFields(): int
     {
         return $this->stmt ? $this->stmt->columnCount() : 0;
@@ -954,9 +944,7 @@ class Sql implements Iterator
         return $this;
     }
 
-    /**
-     * @throws SqlException
-     */
+    /** @throws SqlException */
     public function insertOrUpdate(): static
     {
         if ($this->records) {
@@ -1014,9 +1002,7 @@ class Sql implements Iterator
         return $this;
     }
 
-    /**
-     * Stellt alle Werte auf den Ursprungszustand zurueck.
-     */
+    /** Stellt alle Werte auf den Ursprungszustand zurueck. */
     private function flush(): static
     {
         $this->values = [];
@@ -1050,9 +1036,7 @@ class Sql implements Iterator
         return $this;
     }
 
-    /**
-     * Prueft ob das Resultset weitere Datensaetze enthaelt.
-     */
+    /** Prueft ob das Resultset weitere Datensaetze enthaelt. */
     public function hasNext(): bool
     {
         return $this->counter < $this->rows;
@@ -1074,9 +1058,7 @@ class Sql implements Iterator
         return $this;
     }
 
-    /**
-     * Gibt die letzte InsertId zurueck.
-     */
+    /** Gibt die letzte InsertId zurueck. */
     public function getLastId(): int
     {
         if (null === $this->lastInsertId) {
@@ -1161,9 +1143,7 @@ class Sql implements Iterator
         return $this->stmt->fetchAll($fetchType);
     }
 
-    /**
-     * Gibt die zuletzt aufgetretene Fehlernummer zurueck.
-     */
+    /** Gibt die zuletzt aufgetretene Fehlernummer zurueck. */
     public function getErrno(): ?string
     {
         return $this->stmt ? $this->stmt->errorCode() : $this->getConnection()->errorCode();
@@ -1190,9 +1170,7 @@ class Sql implements Iterator
         return $errorInfos[2];
     }
 
-    /**
-     * Prueft, ob ein Fehler aufgetreten ist.
-     */
+    /** Prueft, ob ein Fehler aufgetreten ist. */
     public function hasError(): bool
     {
         return 0 != $this->getErrno();
@@ -1407,9 +1385,7 @@ class Sql implements Iterator
         return implode(', ', $values);
     }
 
-    /**
-     * @param string|null $user the name of the user who created the dataset. Defaults to the current user
-     */
+    /** @param string|null $user the name of the user who created the dataset. Defaults to the current user */
     public function addGlobalUpdateFields(?string $user = null): static
     {
         if (!$user) {
@@ -1422,9 +1398,7 @@ class Sql implements Iterator
         return $this;
     }
 
-    /**
-     * @param string|null $user the name of the user who updated the dataset. Defaults to the current user
-     */
+    /** @param string|null $user the name of the user who updated the dataset. Defaults to the current user */
     public function addGlobalCreateFields(?string $user = null): static
     {
         if (!$user) {
@@ -1908,9 +1882,7 @@ class Sql implements Iterator
         return $options;
     }
 
-    /**
-     * @throws SqlException
-     */
+    /** @throws SqlException */
     private function setMultiRecordQuery(string $verb, bool $onDuplicateKeyUpdate = false): static
     {
         $fields = [];

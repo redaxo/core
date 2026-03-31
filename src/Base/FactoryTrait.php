@@ -67,9 +67,7 @@ trait FactoryTrait
         return self::$factoryClasses[static::class] ?? null;
     }
 
-    /**
-     * Returns if the class has a custom factory class.
-     */
+    /** Returns if the class has a custom factory class. */
     public static function hasFactoryClass(): bool
     {
         return isset(self::$factoryClasses[static::class]);

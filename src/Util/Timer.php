@@ -77,17 +77,13 @@ final class Timer
         ];
     }
 
-    /**
-     * Resets the timer.
-     */
+    /** Resets the timer. */
     public function reset(): void
     {
         $this->start = microtime(true);
     }
 
-    /**
-     * Stops the timer.
-     */
+    /** Stops the timer. */
     public function stop(): void
     {
         $this->duration = microtime(true) - $this->start;

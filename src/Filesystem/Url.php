@@ -20,9 +20,7 @@ final class Url
 
     private function __construct() {}
 
-    /**
-     * Initializes the class.
-     */
+    /** Initializes the class. */
     public static function init(DefaultPathProvider $pathProvider): void
     {
         self::$pathprovider = $pathProvider;
@@ -106,9 +104,7 @@ final class Url
         return self::backendPage(Controller::getCurrentPage(), $params);
     }
 
-    /**
-     * Returns the url to the article.
-     */
+    /** Returns the url to the article. */
     public static function article(?int $id = null, ?int $clang = null, array $params = []): string
     {
         $clang = (int) $clang;

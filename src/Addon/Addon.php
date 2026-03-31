@@ -52,9 +52,7 @@ final class Addon implements AddonInterface
      */
     private array $properties = [];
 
-    /**
-     * Flag whether the properties of package.yml are loaded.
-     */
+    /** Flag whether the properties of package.yml are loaded. */
     private bool $propertiesLoaded = false;
 
     /** @param non-empty-string $name Name of the addon */
@@ -103,9 +101,7 @@ final class Addon implements AddonInterface
         return isset(self::$addons[$addon]);
     }
 
-    /**
-     * @return non-empty-string
-     */
+    /** @return non-empty-string */
     #[Override]
     public function getPackageId(): string
     {
@@ -279,9 +275,7 @@ final class Addon implements AddonInterface
         return I18n::msg($key, ...$replacements);
     }
 
-    /**
-     * Loads the properties of package.yml.
-     */
+    /** Loads the properties of package.yml. */
     public function loadProperties(bool $force = false): void
     {
         $file = $this->getPath(self::FILE_PACKAGE);
@@ -374,9 +368,7 @@ final class Addon implements AddonInterface
         return $license ?: null;
     }
 
-    /**
-     * Clears the cache of the addon.
-     */
+    /** Clears the cache of the addon. */
     public function clearCache(): void
     {
         $cacheDir = $this->getCachePath();
@@ -476,9 +468,7 @@ final class Addon implements AddonInterface
         return $addons;
     }
 
-    /**
-     * Initializes all addons.
-     */
+    /** Initializes all addons. */
     public static function initialize(bool $dbExists = true): void
     {
         if ($dbExists) {

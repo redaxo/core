@@ -129,9 +129,7 @@ final class Request
         unset($_SESSION[self::getSessionNamespace()][$varname]);
     }
 
-    /**
-     * clear redaxo session contents within the current namespace (the session itself stays alive).
-     */
+    /** clear redaxo session contents within the current namespace (the session itself stays alive). */
     public static function clearSession(): void
     {
         if (PHP_SESSION_ACTIVE != session_status()) {
@@ -244,9 +242,7 @@ final class Request
         return 'true' == Core::getRequest()->headers->get('X-Pjax');
     }
 
-    /**
-     * Returns true when the current request is a PJAX-Request and the requested container matches the given $containerId.
-     */
+    /** Returns true when the current request is a PJAX-Request and the requested container matches the given $containerId. */
     public static function isPJAXContainer(string $containerId): bool
     {
         if (!self::isPJAXRequest()) {

@@ -49,17 +49,13 @@ class Page
         $this->title = $title;
     }
 
-    /**
-     * Returns the page key.
-     */
+    /** Returns the page key. */
     public function getKey(): string
     {
         return $this->key;
     }
 
-    /**
-     * Returns the full page path.
-     */
+    /** Returns the full page path. */
     public function getFullKey(): string
     {
         return $this->fullKey;
@@ -77,9 +73,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns the title.
-     */
+    /** Returns the title. */
     public function getTitle(): string
     {
         return $this->title;
@@ -114,9 +108,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether the page is a popup.
-     */
+    /** Returns whether the page is a popup. */
     public function isPopup(): bool
     {
         if (null !== $this->popup) {
@@ -142,17 +134,13 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether the page has a custom href.
-     */
+    /** Returns whether the page has a custom href. */
     public function hasHref(): bool
     {
         return (bool) $this->href;
     }
 
-    /**
-     * Returns the page href.
-     */
+    /** Returns the page href. */
     public function getHref(): string
     {
         if ($this->href) {
@@ -161,9 +149,7 @@ class Page
         return Url::backendPage($this->getFirstSubpagesLeaf()->getFullKey());
     }
 
-    /**
-     * Sets an item attribute.
-     */
+    /** Sets an item attribute. */
     public function setItemAttr(string $name, string|int $value): static
     {
         $this->itemAttr[$name] = (string) $value;
@@ -188,17 +174,13 @@ class Page
         return $this->itemAttr[$name] ?? $default;
     }
 
-    /**
-     * Removes an item attribute.
-     */
+    /** Removes an item attribute. */
     public function removeItemAttr(string $name): void
     {
         unset($this->itemAttr[$name]);
     }
 
-    /**
-     * Adds an item class.
-     */
+    /** Adds an item class. */
     public function addItemClass(string $class): static
     {
         $classAttr = $this->getItemAttr('class');
@@ -209,17 +191,13 @@ class Page
         return $this;
     }
 
-    /**
-     * Removes an item class.
-     */
+    /** Removes an item class. */
     public function removeItemClass(string $class): void
     {
         $this->setItemAttr('class', preg_replace('/\b' . preg_quote($class, '/') . '\b/', '', $this->getItemAttr('class')));
     }
 
-    /**
-     * Sets an link attribute.
-     */
+    /** Sets an link attribute. */
     public function setLinkAttr(string $name, string|int $value): static
     {
         $this->linkAttr[$name] = (string) $value;
@@ -227,9 +205,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Removes an link attribute.
-     */
+    /** Removes an link attribute. */
     public function removeLinkAttr(string $name): void
     {
         unset($this->linkAttr[$name]);
@@ -252,9 +228,7 @@ class Page
         return $this->linkAttr[$name] ?? $default;
     }
 
-    /**
-     * Adds an link class.
-     */
+    /** Adds an link class. */
     public function addLinkClass(string $class): static
     {
         $classAttr = $this->getLinkAttr('class');
@@ -265,9 +239,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Removes an link class.
-     */
+    /** Removes an link class. */
     public function removeLinkClass(string $class): void
     {
         $this->setLinkAttr('class', preg_replace('/\b' . preg_quote($class, '/') . '\b/', '', $this->getLinkAttr('class')));
@@ -285,17 +257,13 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether a path is set.
-     */
+    /** Returns whether a path is set. */
     public function hasPath(): bool
     {
         return !empty($this->path) || $this->parent && $this->parent->hasPath();
     }
 
-    /**
-     * Returns the path which will be included directly by the core.
-     */
+    /** Returns the path which will be included directly by the core. */
     public function getPath(): ?string
     {
         if (!empty($this->path)) {
@@ -316,17 +284,13 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether a subpath is set.
-     */
+    /** Returns whether a subpath is set. */
     public function hasSubPath(): bool
     {
         return !empty($this->subPath);
     }
 
-    /**
-     * Returns the subpath which should be used by packages to include this page inside their main page.
-     */
+    /** Returns the subpath which should be used by packages to include this page inside their main page. */
     public function getSubPath(): ?string
     {
         return $this->subPath;
@@ -368,9 +332,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns the subpage for the given key.
-     */
+    /** Returns the subpage for the given key. */
     public function getSubpage(string $key): ?self
     {
         return $this->subpages[$key] ?? null;
@@ -386,9 +348,7 @@ class Page
         return $this->subpages;
     }
 
-    /**
-     * Returns the first leaf of the subpages tree.
-     */
+    /** Returns the first leaf of the subpages tree. */
     public function getFirstSubpagesLeaf(): self
     {
         $page = $this;
@@ -410,9 +370,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether the page is active.
-     */
+    /** Returns whether the page is active. */
     public function isActive(): bool
     {
         if (null !== $this->isActive) {
@@ -427,9 +385,7 @@ class Page
         return false;
     }
 
-    /**
-     * Returns the parent page object.
-     */
+    /** Returns the parent page object. */
     public function getParent(): ?self
     {
         return $this->parent;
@@ -447,9 +403,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether the page is hidden.
-     */
+    /** Returns whether the page is hidden. */
     public function isHidden(): bool
     {
         return $this->hidden;
@@ -467,9 +421,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether tha page has layout.
-     */
+    /** Returns whether tha page has layout. */
     public function hasLayout(): bool
     {
         return $this->hasLayout && (!$this->parent || $this->parent->hasLayout());
@@ -487,9 +439,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether the page has a navigation.
-     */
+    /** Returns whether the page has a navigation. */
     public function hasNavigation(): bool
     {
         return $this->hasNavigation && (!$this->parent || $this->parent->hasNavigation());
@@ -507,9 +457,7 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns whether the page allows pjax.
-     */
+    /** Returns whether the page allows pjax. */
     public function allowsPjax(): bool
     {
         if (null !== $this->pjax) {
@@ -533,17 +481,13 @@ class Page
         return $this;
     }
 
-    /**
-     * Returns the icon.
-     */
+    /** Returns the icon. */
     public function getIcon(): ?string
     {
         return $this->icon;
     }
 
-    /**
-     * Returns whether the page has an icon.
-     */
+    /** Returns whether the page has an icon. */
     public function hasIcon(): bool
     {
         return !empty($this->icon);
@@ -572,9 +516,7 @@ class Page
         return $this->requiredPermissions;
     }
 
-    /**
-     * Checks whether the given user has permission for the page.
-     */
+    /** Checks whether the given user has permission for the page. */
     public function checkPermission(User $user): bool
     {
         foreach ($this->requiredPermissions as $perm) {

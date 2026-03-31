@@ -44,18 +44,14 @@ class Editor
     // we expect instantiation via factory()
     final private function __construct() {}
 
-    /**
-     * Creates a Editor instance.
-     */
+    /** Creates a Editor instance. */
     public static function factory(): static
     {
         $class = static::getFactoryClass();
         return new $class();
     }
 
-    /**
-     * @param int|numeric-string $line
-     */
+    /** @param int|numeric-string $line */
     public function getUrl(string $filePath, int|string $line): ?string
     {
         $editor = $this->getName();

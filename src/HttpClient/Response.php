@@ -72,73 +72,55 @@ final class Response
         return $this;
     }
 
-    /**
-     * Returns the HTTP status code, e.g. 200.
-     */
+    /** Returns the HTTP status code, e.g. 200. */
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
-    /**
-     * Returns the HTTP status message, e.g. "OK".
-     */
+    /** Returns the HTTP status message, e.g. "OK". */
     public function getStatusMessage(): string
     {
         return $this->statusMessage;
     }
 
-    /**
-     * Returns wether the status is "200 OK".
-     */
+    /** Returns wether the status is "200 OK". */
     public function isOk(): bool
     {
         return 200 == $this->statusCode;
     }
 
-    /**
-     * Returns wether the status class is "Informational".
-     */
+    /** Returns wether the status class is "Informational". */
     public function isInformational(): bool
     {
         return $this->statusCode >= 100 && $this->statusCode < 200;
     }
 
-    /**
-     * Returns wether the status class is "Success".
-     */
+    /** Returns wether the status class is "Success". */
     public function isSuccessful(): bool
     {
         return $this->statusCode >= 200 && $this->statusCode < 300;
     }
 
-    /**
-     * Returns wether the status class is "Redirection".
-     */
+    /** Returns wether the status class is "Redirection". */
     public function isRedirection(): bool
     {
         return $this->statusCode >= 300 && $this->statusCode < 400;
     }
 
-    /**
-     * Returns wether the status class is "Client Error".
-     */
+    /** Returns wether the status class is "Client Error". */
     public function isClientError(): bool
     {
         return $this->statusCode >= 400 && $this->statusCode < 500;
     }
 
-    /**
-     * Returns wether the status class is "Server Error".
-     */
+    /** Returns wether the status class is "Server Error". */
     public function isServerError(): bool
     {
         return $this->statusCode >= 500 && $this->statusCode < 600;
     }
 
-    /**
-     * Returns whether the status is invalid.
-     */
+    /** Returns whether the status is invalid. */
     public function isInvalid(): bool
     {
         return $this->statusCode < 100 || $this->statusCode >= 600;
@@ -215,9 +197,7 @@ final class Response
         return fread($this->stream, $length);
     }
 
-    /**
-     * Returns the entire body.
-     */
+    /** Returns the entire body. */
     public function getBody(): string
     {
         if (null === $this->body) {

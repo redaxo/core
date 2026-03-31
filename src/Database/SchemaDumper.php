@@ -14,9 +14,7 @@ use function strlen;
  */
 final readonly class SchemaDumper
 {
-    /**
-     * Dumps the schema for the given table as php code (using `Table`).
-     */
+    /** Dumps the schema for the given table as php code (using `Table`). */
     public function dumpTable(Table $table): string
     {
         $code = '\\' . Table::class . '::get(' . $this->tableName($table->getName()) . ')';

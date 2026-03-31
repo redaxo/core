@@ -19,9 +19,7 @@ class ConfigForm extends AbstractForm
     /** @var string */
     private $namespace;
 
-    /**
-     * @param string $namespace `Config` namespace, usually the package key
-     */
+    /** @param string $namespace `Config` namespace, usually the package key */
     protected function __construct(string $namespace, ?string $fieldset = null, bool $debug = false)
     {
         parent::__construct($fieldset, md5($namespace . (string) $fieldset), 'post', $debug);
@@ -34,9 +32,7 @@ class ConfigForm extends AbstractForm
         }
     }
 
-    /**
-     * @param string $namespace `Config` namespace, usually the package key
-     */
+    /** @param string $namespace `Config` namespace, usually the package key */
     public static function factory(string $namespace, ?string $fieldset = null, bool $debug = false): static
     {
         $class = static::getFactoryClass();

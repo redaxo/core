@@ -77,9 +77,7 @@ class Template
         return $file;
     }
 
-    /**
-     * @return false|string|null
-     */
+    /** @return false|string|null */
     public function getTemplate()
     {
         $file = $this->getFile();

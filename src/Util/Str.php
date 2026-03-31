@@ -196,9 +196,7 @@ final class Str
         return $attr;
     }
 
-    /**
-     * Highlights a string.
-     */
+    /** Highlights a string. */
     public static function highlight(string $string): string
     {
         $text = highlight_string($string, true);

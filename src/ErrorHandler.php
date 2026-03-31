@@ -45,9 +45,7 @@ final class ErrorHandler
 
     private function __construct() {}
 
-    /**
-     * Registers the class as php-error/exception handler.
-     */
+    /** Registers the class as php-error/exception handler. */
     public static function register(): void
     {
         if (self::$registered) {
@@ -61,9 +59,7 @@ final class ErrorHandler
         register_shutdown_function([self::class, 'shutdown']);
     }
 
-    /**
-     * Unregisters the logger instance as php-error/exception handler.
-     */
+    /** Unregisters the logger instance as php-error/exception handler. */
     public static function unregister(): void
     {
         if (!self::$registered) {
@@ -77,9 +73,7 @@ final class ErrorHandler
         // unregister of shutdown function is not possible
     }
 
-    /**
-     * Handles the given Exception.
-     */
+    /** Handles the given Exception. */
     public static function handleException(Throwable $exception): never
     {
         try {
@@ -132,9 +126,7 @@ final class ErrorHandler
         exit(1);
     }
 
-    /**
-     * @return array{string, string}
-     */
+    /** @return array{string, string} */
     private static function renderWhoops(Throwable $exception): array
     {
         $whoops = new Run();
@@ -361,9 +353,7 @@ final class ErrorHandler
         return true;
     }
 
-    /**
-     * Shutdown-handler which is called at the very end of the request.
-     */
+    /** Shutdown-handler which is called at the very end of the request. */
     public static function shutdown(): void
     {
         // catch fatal/parse errors

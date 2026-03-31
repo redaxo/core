@@ -82,9 +82,7 @@ class MediaCategory
         return self::getChildCategories(0);
     }
 
-    /**
-     * @return list<self>
-     */
+    /** @return list<self> */
     protected static function getChildCategories(int $parentId): array
     {
         // for $parentId=0 root categories will be returned, so abort here for $parentId<0 only

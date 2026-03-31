@@ -32,9 +32,7 @@ final class SystemReport
         return new self();
     }
 
-    /**
-     * @return array<string, array<string, string|bool>>
-     */
+    /** @return array<string, array<string, string|bool>> */
     public function get(): array
     {
         $data = [];

@@ -18,9 +18,7 @@ final class Cache
 {
     private function __construct() {}
 
-    /**
-     * Deletes the cache.
-     */
+    /** Deletes the cache. */
     public static function delete(): string
     {
         // close logger, so the logfile can also be deleted

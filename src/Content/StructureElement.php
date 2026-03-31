@@ -217,9 +217,7 @@ abstract class StructureElement
         });
     }
 
-    /**
-     * @return list<static>
-     */
+    /** @return list<static> */
     protected static function getChildElements(int $parentId, string $listType, bool $ignoreOfflines = false, ?int $clang = null): array
     {
         // for $parentId=0 root elements will be returned, so abort here for $parentId<0 only

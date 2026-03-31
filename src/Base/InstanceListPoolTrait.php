@@ -84,9 +84,7 @@ trait InstanceListPoolTrait
         unset(self::$instanceLists[$key]);
     }
 
-    /**
-     * Clears the instance list pool.
-     */
+    /** Clears the instance list pool. */
     public static function clearInstanceListPool(): void
     {
         self::$instanceLists = [];

@@ -83,9 +83,7 @@ class Request
         $this->addHeader('Connection', 'Close');
     }
 
-    /**
-     * @see Request::factoryUrl()
-     */
+    /** @see Request::factoryUrl() */
     public static function factory(string $host, int $port = 443, bool $ssl = true): static
     {
         if (self::class === static::class && ($proxy = Core::getProperty('http_client_proxy'))) {
@@ -118,9 +116,7 @@ class Request
         return $this;
     }
 
-    /**
-     * @return $this
-     */
+    /** @return $this */
     public function setPath(string $path): static
     {
         $this->path = $path;

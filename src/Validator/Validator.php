@@ -65,9 +65,7 @@ class Validator
         return $this->rules;
     }
 
-    /**
-     * Checks whether the given value matches all added validators.
-     */
+    /** Checks whether the given value matches all added validators. */
     public function isValid(string $value): bool
     {
         $this->message = null;
@@ -86,25 +84,19 @@ class Validator
         return true;
     }
 
-    /**
-     * Returns the message.
-     */
+    /** Returns the message. */
     public function getMessage(): ?string
     {
         return $this->message;
     }
 
-    /**
-     * Checks whether the value is not empty.
-     */
+    /** Checks whether the value is not empty. */
     public function notEmpty(string $value): bool
     {
         return '' !== $value;
     }
 
-    /**
-     * Checks whether the value is from the given type.
-     */
+    /** Checks whether the value is from the given type. */
     public function type(string $value, string $type): bool
     {
         return match ($type) {
@@ -114,49 +106,37 @@ class Validator
         };
     }
 
-    /**
-     * Checks whether the value has the given min length.
-     */
+    /** Checks whether the value has the given min length. */
     public function minLength(string $value, int $minLength): bool
     {
         return mb_strlen($value) >= $minLength;
     }
 
-    /**
-     * Checks whether the value has the given max value.
-     */
+    /** Checks whether the value has the given max value. */
     public function maxLength(string $value, int $maxLength): bool
     {
         return mb_strlen($value) <= $maxLength;
     }
 
-    /**
-     * Checks whether the value is equal or greater than the given min value.
-     */
+    /** Checks whether the value is equal or greater than the given min value. */
     public function min(string $value, int $min): bool
     {
         return $value >= $min;
     }
 
-    /**
-     * Checks whether the value is equal or lower than the given max value.
-     */
+    /** Checks whether the value is equal or lower than the given max value. */
     public function max(string $value, int $max): bool
     {
         return $value <= $max;
     }
 
-    /**
-     * Checks whether the value is an URL.
-     */
+    /** Checks whether the value is an URL. */
     public function url(string $value): bool
     {
         return $this->match($value, '@^\w+://(?:[\w-]+\.)*[\w-]+(?::\d+)?(?:/.*)?$@u');
     }
 
-    /**
-     * Checks whether the value is an email address.
-     */
+    /** Checks whether the value is an email address. */
     public function email(string $value): bool
     {
         return $this->match($value, '/^[\w.-]+@[\w.-]+\.[a-z]{2,}$/ui');
