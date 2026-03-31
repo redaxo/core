@@ -117,7 +117,7 @@ jobs:
                     if (preg_match('@redaxo/(?:bin|data|cache|src)@', \$_SERVER['REQUEST_URI'])) http_response_code(403);
                     else return false;
                     EOF
-                    php -S localhost:8080 router.php &
+                    PHP_CLI_SERVER_WORKERS=4 php -S localhost:8080 router.php &
 
             -   name: Take screenshots (differential)
                 run: |
@@ -127,6 +127,7 @@ jobs:
                     php redaxo/bin/console config:set setup false -t boolean --ansi -v
                     php redaxo/bin/console cache:clear --ansi -v
                     node .github/tests-visual/visual-record.js
+                    git add --intent-to-add .github/tests-visual/
                     git diff --exit-code --name-only .github/tests-visual/
 
             -   name: Commit changed files
