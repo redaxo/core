@@ -355,21 +355,12 @@ async function main() {
             ]);
 
             // test debug
-            /*const interceptClockworkRequest = request => {
-                const url = request.url();
-                if (url.indexOf('rex-api-call=debug') !== -1) {
-                    console.log('ABORT REQUEST:', url);
-                    request.abort();
-                    return;
-                }
-                request.continue();
-            };
-            await page.setRequestInterception(true);
-            page.on('request', interceptClockworkRequest);
+            const debugApiPattern = /rex-api-call=debug/;
+            const abortDebugApi = route => route.abort();
+            await page.route(debugApiPattern, abortDebugApi);
             await goToUrlOrThrow(page, START_URL + '?page=debug', { waitUntil: 'load' });
             await createScreenshots(page, 'debug_clockwork.png');
-            await page.setRequestInterception(false);
-            page.off('request', interceptClockworkRequest);*/
+            await page.unroute(debugApiPattern, abortDebugApi);
 
             // test customizer
             await goToUrlOrThrow(page, START_URL + '?page=packages', { waitUntil: 'load' });
