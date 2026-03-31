@@ -388,6 +388,7 @@ async function main() {
                     page.waitForNavigation({ waitUntil: 'load' }),
                     page.click('.btn[href*="rex-api-call=metainfo_default_fields_create"]') // install default fields
                 ]);
+                await page.waitForSelector('.alert-success');
                 await createScreenshots(page, 'metainfo_' + type + '.png');
             }
 
