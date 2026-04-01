@@ -299,44 +299,14 @@ class AddonManager
         return false;
     }
 
-    /**
-     * Deletes a addon.
-     *
-     * @return bool TRUE on success, FALSE on error
-     */
-    public function delete(): bool
+    /** Cleans up a addon that was removed from the filesystem. */
+    protected function _delete(): void
     {
-        $state = $this->_delete();
-        self::synchronizeWithFileSystem();
-        return $state;
-    }
-
-    /**
-     * Deletes a addon.
-     *
-     * @return bool TRUE on success, FALSE on error
-     */
-    protected function _delete(bool $ignoreState = false): bool
-    {
-        // if addon is installed, uninstall it first
-        if ($this->addon->isInstalled() && !$this->uninstall() && !$ignoreState) {
-            // message is set by uninstall()
-            return false;
-        }
-
-        if (!Dir::delete($this->addon->getPath()) && !$ignoreState) {
-            $this->message = $this->i18n('not_deleted', $this->addon->getName());
-            return false;
-        }
-
-        if (!$ignoreState) {
-            static::saveConfig();
-            $this->message = $this->i18n('deleted', $this->addon->getName());
+        if ($this->addon->isInstalled()) {
+            $this->uninstall();
         }
 
         $this->addon->clearCache();
-
-        return true;
     }
 
     protected function wrongPackageId(string $addonName): string
@@ -622,7 +592,7 @@ class AddonManager
         $registeredAddons = array_keys(Addon::getRegisteredAddons());
         foreach (array_diff($registeredAddons, $addons) as $addonName) {
             $manager = self::factory(Addon::require($addonName));
-            $manager->_delete(true);
+            $manager->_delete();
             unset($config[$addonName]);
         }
         foreach ($addons as $addonName) {

@@ -27,7 +27,7 @@ final class AddonOperation extends ApiFunction
         }
 
         $function = Request::request('function', 'string');
-        if (!in_array($function, ['install', 'uninstall', 'activate', 'deactivate', 'delete'])) {
+        if (!in_array($function, ['install', 'uninstall', 'activate', 'deactivate'])) {
             throw new ApiFunctionException('Unknown package function "' . $function . '"!');
         }
         $packageId = Request::request('package', 'string');
@@ -35,7 +35,6 @@ final class AddonOperation extends ApiFunction
         if ('uninstall' == $function && !$package->isInstalled()
             || 'activate' == $function && $package->isAvailable()
             || 'deactivate' == $function && !$package->isAvailable()
-            || 'delete' == $function && !BaseAddon::exists($packageId)
         ) {
             return new Result(true);
         }

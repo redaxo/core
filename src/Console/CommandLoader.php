@@ -7,7 +7,6 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Console\Command\AbstractCommand;
 use Redaxo\Core\Console\Command\AddonActivateCommand;
 use Redaxo\Core\Console\Command\AddonDeactivateCommand;
-use Redaxo\Core\Console\Command\AddonDeleteCommand;
 use Redaxo\Core\Console\Command\AddonInstallCommand;
 use Redaxo\Core\Console\Command\AddonListCommand;
 use Redaxo\Core\Console\Command\AddonRunUpdateScriptCommand;
@@ -65,7 +64,6 @@ final class CommandLoader implements CommandLoaderInterface
                 'db:dump-schema' => DatabaseDumpSchemaCommand::class,
                 'addon:activate' => AddonActivateCommand::class,
                 'addon:deactivate' => AddonDeactivateCommand::class,
-                'addon:delete' => AddonDeleteCommand::class,
                 'addon:list' => AddonListCommand::class,
                 'addon:install' => AddonInstallCommand::class,
                 'addon:run-update-script' => AddonRunUpdateScriptCommand::class,
