@@ -425,7 +425,6 @@ return RectorConfig::configure()
         new MethodCallRename(Addon\Addon::class, 'getInstalledPackages', 'getInstalledAddons'),
         new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getAvailableAddons'),
         new MethodCallRename(Addon\Addon::class, 'getSetupPackages', 'getSetupAddons'),
-        new MethodCallRename(Addon\Addon::class, 'getSystemPackages', 'getSystemAddons'),
         new MethodCallRename(Console\Command\AbstractCommand::class, 'getPackage', 'getAddon'),
         new MethodCallRename(Console\Command\AbstractCommand::class, 'setPackage', 'setAddon'),
 

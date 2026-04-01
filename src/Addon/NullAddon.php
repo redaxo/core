@@ -118,12 +118,6 @@ final class NullAddon implements AddonInterface
     }
 
     #[Override]
-    public function isSystemPackage(): false
-    {
-        return false;
-    }
-
-    #[Override]
     public function getAuthor(?string $default = null): ?string
     {
         return $default;

@@ -24,10 +24,6 @@ class AddonDeleteCommand extends AbstractCommand
                 $packageNames = [];
 
                 foreach (Addon::getRegisteredAddons() as $package) {
-                    if ($package->isSystemPackage()) {
-                        continue;
-                    }
-
                     $packageNames[] = $package->getPackageId();
                 }
 

@@ -106,7 +106,7 @@ class Importer
         }
 
         if ('' == $errMsg) {
-            $errMsg .= self::installAddons(true);
+            self::prepareAddons();
         }
 
         return $errMsg;
@@ -126,7 +126,7 @@ class Importer
             $errMsg .= 'SQL error: ' . $e->getMessage();
         }
 
-        $errMsg .= self::installAddons();
+        self::prepareAddons();
 
         return $errMsg;
     }
@@ -187,59 +187,13 @@ class Importer
         return $errMsg;
     }
 
-    // -------------------------- System AddOns prüfen
-
-    private static function installAddons(bool $uninstallBefore = false, bool $installDump = true): string
+    private static function prepareAddons(): void
     {
-        $addonErr = '';
         AddonManager::synchronizeWithFileSystem();
-
-        if ($uninstallBefore) {
-            foreach (array_reverse(Addon::getSystemAddons()) as $package) {
-                $manager = AddonManager::factory($package);
-                $state = $manager->uninstall($installDump);
-
-                if (!$state) {
-                    $addonErr .= '<li>' . $package->getPackageId() . '<ul><li>' . $manager->getMessage() . '</li></ul></li>';
-                }
-            }
-        }
-        foreach (Core::getProperty('system_addons') as $packageRepresentation) {
-            $state = true;
-            $package = Addon::require($packageRepresentation);
-            $manager = AddonManager::factory($package);
-
-            if (!$package->isInstalled()) {
-                $state = $manager->install($installDump);
-            }
-
-            if (!$state) {
-                $addonErr .= '<li>' . escape($package->getPackageId()) . '<ul><li>' . $manager->getMessage() . '</li></ul></li>';
-            }
-
-            if ($state && !$package->isAvailable()) {
-                $state = $manager->activate();
-
-                if (!$state) {
-                    $addonErr .= '<li>' . escape($package->getPackageId()) . '<ul><li>' . $manager->getMessage() . '</li></ul></li>';
-                }
-            }
-        }
-
-        if ('' != $addonErr) {
-            $addonErr = '<ul class="rex-ul1">
-            <li>
-            <h3 class="rex-hl3">' . I18n::msg('setup_413') . '</h3>
-            <ul>' . $addonErr . '</ul>
-            </li>
-            </ul>';
-        }
 
         // force to save config at this point
         // otherwise it would be saved in shutdown function and maybe would replace config changes made by db import in between
         Config::save();
-
-        return $addonErr;
     }
 
     private static function reinstallPackages(): string

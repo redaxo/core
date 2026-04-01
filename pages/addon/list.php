@@ -59,7 +59,7 @@ $getLink = static function (Addon $package, $function, $icon = '', $confirm = fa
 $getTableRow = static function (Addon $package) use ($getLink) {
     $packageId = $package->getPackageId();
 
-    $delete = $package->isSystemPackage() ? '<small class="text-muted">' . I18n::msg('addon_systemaddon') . '</small>' : $getLink($package, 'delete', 'rex-icon-package-delete', true);
+    $delete = $getLink($package, 'delete', 'rex-icon-package-delete', true);
 
     $uninstall = '&nbsp;';
     if ($package->isInstalled()) {
@@ -82,8 +82,6 @@ $getTableRow = static function (Addon $package) use ($getLink) {
         $class .= ' rex-package-not-installed';
     }
     $name = '<span class="rex-addon-name">' . escape($package->getName()) . '</span>';
-
-    $class .= $package->isSystemPackage() ? ' rex-system-addon' : '';
 
     // --------------------------------------------- API MESSAGES
     if (($package->getPackageId() == Request::get('package', 'string') && ApiFunction::hasMessage()) || ($package->getPackageId() == Request::get('mark', 'string'))) {

@@ -130,13 +130,6 @@ interface AddonInterface
     public function isInstalled(): bool;
 
     /**
-     * Returns if it is a system addon.
-     *
-     * @psalm-assert-if-true =Addon $this
-     */
-    public function isSystemPackage(): bool;
-
-    /**
      * Returns the author.
      *
      * @param string|null $default Default value, will be returned if the property isn't set

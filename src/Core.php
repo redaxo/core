@@ -186,7 +186,6 @@ final class Core
      *      ($key is 'backend_login_policy' ? array<string, bool|int> :
      *      ($key is 'db' ? array<int, string[]> :
      *      ($key is 'setup' ? bool|array<string, int> :
-     *      ($key is 'system_addons' ? non-empty-string[] :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
      *      )))))))))))))))))))))))))))

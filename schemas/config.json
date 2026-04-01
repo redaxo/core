@@ -315,14 +315,6 @@
                 "pattern": "^[^/]+$"
             }
         },
-        "system_addons": {
-            "description": "Addons marked as system addons (installed in setup and not deletable)",
-            "type": "array",
-            "items": {
-                "type": "string",
-                "pattern": "^[^/]+$"
-            }
-        },
         "table_prefix": {
             "description": "Table prefix for the database",
             "type": "string",

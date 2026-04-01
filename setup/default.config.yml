@@ -68,8 +68,6 @@ timezone: Europe/Berlin
 http_client_proxy: null
 setup_addons:
     - install
-system_addons:
-    - install
 table_prefix: rex_
 temp_prefix: tmp_
 db:

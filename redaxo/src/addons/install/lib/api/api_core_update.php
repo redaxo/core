@@ -110,12 +110,6 @@ class rex_api_install_core_update extends ApiFunction
                     }
                 }
             }
-            // $config = File::getConfig($temppath . 'core/default.config.yml');
-            // foreach ($config['system_addons'] as $addonkey) {
-            //    if (is_dir($temppath . 'addons/' . $addonkey) && Addon::exists($addonkey)) {
-            //        $updateAddons[$addonkey] = Addon::get($addonkey);
-            //    }
-            // }
             $this->checkRequirements($temppath, $version['version'], $updateAddonsConfig);
             if (is_file($temppath . 'core/setup/update.php')) {
                 include $temppath . 'core/setup/update.php';

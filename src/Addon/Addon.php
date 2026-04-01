@@ -146,12 +146,6 @@ final class Addon implements AddonInterface
     }
 
     #[Override]
-    public function isSystemPackage(): bool
-    {
-        return in_array($this->name, Core::getProperty('system_addons'));
-    }
-
-    #[Override]
     public function setConfig(string|array $key, mixed $value = null): bool
     {
         return Config::set($this->name, $key, $value);
@@ -445,22 +439,6 @@ final class Addon implements AddonInterface
     {
         $addons = [];
         foreach ((array) Core::getProperty('setup_addons', []) as $addon) {
-            if (self::exists($addon)) {
-                $addons[$addon] = self::require($addon);
-            }
-        }
-        return $addons;
-    }
-
-    /**
-     * Returns the system addons.
-     *
-     * @return array<non-empty-string, self>
-     */
-    public static function getSystemAddons(): array
-    {
-        $addons = [];
-        foreach ((array) Core::getProperty('system_addons', []) as $addon) {
             if (self::exists($addon)) {
                 $addons[$addon] = self::require($addon);
             }
