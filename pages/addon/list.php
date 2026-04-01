@@ -36,7 +36,7 @@ $content = '
                 <th colspan="2">' . I18n::msg('package_hinformation') . '</th>
                 <th class="rex-table-action">' . I18n::msg('package_hinstall') . '</th>
                 <th class="rex-table-action">' . I18n::msg('package_hactive') . '</th>
-                <th class="rex-table-action" colspan="2">' . I18n::msg('package_hdelete') . '</th>
+                <th class="rex-table-action">' . I18n::msg('package_hdelete') . '</th>
             </tr>
         </thead>
         <tbody>';
@@ -58,8 +58,6 @@ $getLink = static function (Addon $package, $function, $icon = '', $confirm = fa
 
 $getTableRow = static function (Addon $package) use ($getLink) {
     $packageId = $package->getPackageId();
-
-    $delete = $getLink($package, 'delete', 'rex-icon-package-delete', true);
 
     $uninstall = '&nbsp;';
     if ($package->isInstalled()) {
@@ -114,7 +112,6 @@ $getTableRow = static function (Addon $package) use ($getLink) {
                     <td class="rex-table-action">' . $install . '</td>
                     <td class="rex-table-action">' . $status . '</td>
                     <td class="rex-table-action">' . $uninstall . '</td>
-                    <td class="rex-table-action">' . $delete . '</td>
                 </tr>' . "\n   ";
 };
 

@@ -199,7 +199,6 @@ return RectorConfig::configure()
         'rex_command_list' => Console\Command\ListCommand::class,
         'rex_command_package_activate' => Console\Command\AddonActivateCommand::class,
         'rex_command_package_deactivate' => Console\Command\AddonDeactivateCommand::class,
-        'rex_command_package_delete' => Console\Command\AddonDeleteCommand::class,
         'rex_command_package_list' => Console\Command\AddonListCommand::class,
         'rex_command_package_install' => Console\Command\AddonInstallCommand::class,
         'rex_command_package_run_update_script' => Console\Command\AddonRunUpdateScriptCommand::class,
