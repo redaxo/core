@@ -45,20 +45,12 @@
     <MixedArgument>
       <code><![CDATA[$excludedTables]]></code>
       <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$sqlFile]]></code>
       <code><![CDATA[$this->getParam('delete_interval')]]></code>
       <code><![CDATA[$this->getParam('mailaddress')]]></code>
     </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$backup]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedArrayOffset>
-      <code><![CDATA[$backups[$sqlFile]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$excludedTables]]></code>
       <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$sqlFile]]></code>
     </MixedAssignment>
     <PossiblyFalseArgument>
       <code><![CDATA[glob(rex_path::addonData('backup', '*' . $ext . '.gz'), GLOB_NOSORT)]]></code>

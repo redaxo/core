@@ -51,42 +51,63 @@ class rex_cronjob_export extends rex_cronjob
                 }
             }
 
-            if ($this->getParam('delete_interval')) {
+            if ($this->getParam('delete_interval') || $this->getParam('delete_max_age')) {
+                /** @var list<string> $allSqlfiles */
                 $allSqlfiles = array_merge(
                     glob(rex_path::addonData('backup', '*' . $ext), GLOB_NOSORT),
                     glob(rex_path::addonData('backup', '*' . $ext . '.gz'), GLOB_NOSORT),
                 );
-                $backups = [];
-                $limit = strtotime('-1 month'); // Generelle Vorhaltezeit: 1 Monat
-
-                foreach ($allSqlfiles as $sqlFile) {
-                    $timestamp = filectime($sqlFile);
-
-                    if ($timestamp > $limit) {
-                        // wenn es die generelle Vorhaltezeit unterschreitet
-                        continue;
-                    }
-
-                    $backups[$sqlFile] = $timestamp;
-                }
-
-                asort($backups, SORT_NUMERIC);
-
-                $step = '';
                 $countDeleted = 0;
 
-                foreach ($backups as $backup => $timestamp) {
-                    $stepLast = $step;
-                    $step = date($this->getParam('delete_interval'), (int) $timestamp);
+                if ($this->getParam('delete_interval')) {
+                    $backups = [];
+                    $limit = strtotime('-1 month'); // Generelle Vorhaltezeit: 1 Monat
 
-                    if ($stepLast !== $step) {
-                        // wenn es zu diesem Interval schon ein Backup gibt
-                        continue;
+                    foreach ($allSqlfiles as $sqlFile) {
+                        $timestamp = filectime($sqlFile);
+
+                        if ($timestamp > $limit) {
+                            // wenn es die generelle Vorhaltezeit unterschreitet
+                            continue;
+                        }
+
+                        $backups[$sqlFile] = $timestamp;
                     }
 
-                    // dann löschen
-                    rex_file::delete($backup);
-                    ++$countDeleted;
+                    asort($backups, SORT_NUMERIC);
+
+                    $step = '';
+
+                    foreach ($backups as $backup => $timestamp) {
+                        $stepLast = $step;
+                        $step = date($this->getParam('delete_interval'), (int) $timestamp);
+
+                        if ($stepLast !== $step) {
+                            // wenn es zu diesem Interval schon ein Backup gibt
+                            continue;
+                        }
+
+                        // dann löschen
+                        rex_file::delete($backup);
+                        ++$countDeleted;
+                    }
+                }
+
+                if ($this->getParam('delete_max_age')) {
+                    $maxAgeLimit = strtotime('-' . (int) $this->getParam('delete_max_age') . ' months');
+
+                    foreach ($allSqlfiles as $sqlFile) {
+                        if (!is_file($sqlFile)) {
+                            continue;
+                        }
+
+                        $timestamp = filectime($sqlFile);
+
+                        if ($timestamp < $maxAgeLimit) {
+                            rex_file::delete($sqlFile);
+                            ++$countDeleted;
+                        }
+                    }
                 }
 
                 if ($countDeleted) {
@@ -184,6 +205,21 @@ class rex_cronjob_export extends rex_cronjob
                 'YM' => rex_i18n::msg('backup_delete_interval_monthly'), ],
             'default' => 'YW',
             'notice' => rex_i18n::msg('backup_delete_interval_notice'),
+        ];
+
+        $fields[] = [
+            'label' => rex_i18n::msg('backup_delete_max_age'),
+            'name' => 'delete_max_age',
+            'type' => 'select',
+            'options' => [
+                '0' => rex_i18n::msg('backup_delete_max_age_off'),
+                '3' => rex_i18n::msg('backup_delete_max_age_3months'),
+                '6' => rex_i18n::msg('backup_delete_max_age_6months'),
+                '12' => rex_i18n::msg('backup_delete_max_age_12months'),
+                '24' => rex_i18n::msg('backup_delete_max_age_24months'),
+            ],
+            'default' => '0',
+            'notice' => rex_i18n::msg('backup_delete_max_age_notice'),
         ];
 
         return $fields;
