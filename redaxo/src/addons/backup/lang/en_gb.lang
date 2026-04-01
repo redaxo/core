@@ -64,6 +64,13 @@ backup_delete_interval_off = Off
 backup_delete_interval_weekly = Keep one backup per week
 backup_delete_interval_monthly = Keep one backup per month
 backup_delete_interval_notice = Only backups older than one month will be deleted, and file name must end with <code>.cronjob.sql</code>.
+backup_delete_max_age = Delete backups permanently after
+backup_delete_max_age_off = Off
+backup_delete_max_age_3months = 3 months
+backup_delete_max_age_6months = 6 months
+backup_delete_max_age_12months = 12 months
+backup_delete_max_age_24months = 24 months
+backup_delete_max_age_notice = Backups older than the selected period will be permanently deleted – including those kept weekly/monthly.
 
 backup_exclude_tables = Exclude from backup
 backup_exclude_tables_notice = The selected tables will not be backed up. Tables with a prefix of <code>rex_tmp_*</code> will be excluded automatically.
