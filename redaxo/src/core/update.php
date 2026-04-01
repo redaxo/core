@@ -39,7 +39,7 @@ if (rex_string::versionCompare($dbVersion, $minVersion, '<')) {
 
 // Since R5.7 we require at least R5.4 because of some `rex_sql_table` and `rex_sql::addRecord` usages in core addons
 if (rex_string::versionCompare(rex::getVersion(), '5.6', '<')) {
-    throw new rex_functional_exception(sprintf('The REDAXO version "%s" is too old for this update, please update to 5.6.5 before.', rex::getVersion()));
+    throw new rex_functional_exception(sprintf('The REDAXO version "%s" is too old for this update, please update to 5.6.5 before.', rex_escape(rex::getVersion())));
 }
 
 // Installer >= 2.9.2 required because of https://github.com/redaxo/redaxo/pull/4922
