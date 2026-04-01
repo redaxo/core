@@ -161,8 +161,8 @@
     "scripts-descriptions": {
         "clone-addon": "Clone given addon (by user/repo or github url) into addon directory",
         "rebase-to-bugfix": "Rebase current branch onto bugfix",
-        "refresh": "Refresh local instance (refresh core assets, re-install system addons, clear cache, update dev tools)",
-        "update:all": "Update all vendor libs (php and js) in core, system addons and dev tools",
+        "refresh": "Refresh local instance (refresh core assets, re-install core, clear cache, update dev tools)",
+        "update:all": "Update all vendor libs (php and js) in core and dev tools",
         "update:tools": "Update dev tools",
         "cs-fixer": "Fix code style via php-cs-fixer",
         "cs-fixer:no-cache": "Fix code style via php-cs-fixer (without cache)",

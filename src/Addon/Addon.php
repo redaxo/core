@@ -19,7 +19,6 @@ use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
 use function assert;
-use function in_array;
 use function is_bool;
 use function sprintf;
 
@@ -143,12 +142,6 @@ final class Addon implements AddonInterface
     public function getCachePath(string $file = ''): string
     {
         return Path::addonCache($this->name, $file);
-    }
-
-    #[Override]
-    public function isSystemPackage(): bool
-    {
-        return in_array($this->name, Core::getProperty('system_addons'));
     }
 
     #[Override]
@@ -445,22 +438,6 @@ final class Addon implements AddonInterface
     {
         $addons = [];
         foreach ((array) Core::getProperty('setup_addons', []) as $addon) {
-            if (self::exists($addon)) {
-                $addons[$addon] = self::require($addon);
-            }
-        }
-        return $addons;
-    }
-
-    /**
-     * Returns the system addons.
-     *
-     * @return array<non-empty-string, self>
-     */
-    public static function getSystemAddons(): array
-    {
-        $addons = [];
-        foreach ((array) Core::getProperty('system_addons', []) as $addon) {
             if (self::exists($addon)) {
                 $addons[$addon] = self::require($addon);
             }

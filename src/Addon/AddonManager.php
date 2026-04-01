@@ -306,10 +306,6 @@ class AddonManager
      */
     public function delete(): bool
     {
-        if ($this->addon->isSystemPackage()) {
-            $this->message = $this->i18n('systempackage_delete_not_allowed');
-            return false;
-        }
         $state = $this->_delete();
         self::synchronizeWithFileSystem();
         return $state;
