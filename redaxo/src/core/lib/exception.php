@@ -59,7 +59,7 @@ class rex_sql_could_not_connect_exception extends rex_sql_exception {}
 class rex_functional_exception extends rex_exception
 {
     /** @psalm-taint-sink html $message */
-    public function __construct($message, ?Exception $previous = null)
+    public function __construct(string $message, ?Exception $previous = null)
     {
         parent::__construct($message, $previous);
     }

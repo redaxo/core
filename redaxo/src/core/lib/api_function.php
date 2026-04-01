@@ -413,7 +413,7 @@ class rex_api_result
 class rex_api_exception extends rex_exception
 {
     /** @psalm-taint-sink html $message */
-    public function __construct($message, ?Exception $previous = null)
+    public function __construct(string $message, ?Exception $previous = null)
     {
         parent::__construct($message, $previous);
     }
