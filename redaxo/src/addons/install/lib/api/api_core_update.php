@@ -30,7 +30,7 @@ class rex_api_install_core_update extends rex_api_function
         }
         $version = $versions[$versionId];
         if (!rex_version::compare($version['version'], rex::getVersion(), '>')) {
-            throw new rex_api_exception(sprintf('Existing version of Core (%s) is newer than %s', rex::getVersion(), $version['version']));
+            throw new rex_api_exception(rex_escape(sprintf('Existing version of Core (%s) is newer than %s', rex::getVersion(), $version['version'])));
         }
         if (!is_writable(rex_path::core())) {
             throw new rex_functional_exception($installAddon->i18n('warning_directory_not_writable', rex_path::core()));

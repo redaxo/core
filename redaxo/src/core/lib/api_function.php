@@ -316,6 +316,8 @@ class rex_api_result
     /**
      * @param bool $succeeded flag indicating if the api function was executed successfully
      * @param string|null $message optional message which will be visible to the end-user
+     *
+     * @psalm-taint-sink html $message
      */
     public function __construct(
         private $succeeded,
@@ -408,4 +410,11 @@ class rex_api_result
  *
  * @package redaxo\core
  */
-class rex_api_exception extends rex_exception {}
+class rex_api_exception extends rex_exception
+{
+    /** @psalm-taint-sink html $message */
+    public function __construct(string $message, ?Exception $previous = null)
+    {
+        parent::__construct($message, $previous);
+    }
+}

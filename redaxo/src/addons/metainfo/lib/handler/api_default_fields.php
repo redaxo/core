@@ -32,7 +32,7 @@ class rex_api_metainfo_default_fields_create extends rex_api_function
                 ];
                 break;
             default:
-                throw new rex_api_exception(sprintf('metainfo type "%s" does not have default field.', $type));
+                throw new rex_api_exception(sprintf('metainfo type "%s" does not have default field.', rex_escape($type)));
         }
 
         $existing = rex_sql::factory()->getArray('SELECT name FROM ' . rex::getTable('metainfo_field') . ' WHERE name LIKE ?', [$prefix]);

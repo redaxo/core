@@ -129,7 +129,9 @@ abstract class rex_package_manager
                 $this->package->includeFile(rex_package::FILE_INSTALL);
                 $successMessage = $this->package->getProperty('successmsg', '');
 
-                if ('' != ($instmsg = $this->package->getProperty('installmsg', ''))) {
+                /** @psalm-taint-escape html */
+                $instmsg = (string) $this->package->getProperty('installmsg', '');
+                if ('' != $instmsg) {
                     throw new rex_functional_exception($instmsg);
                 }
                 if (!$this->package->isInstalled()) {
@@ -210,7 +212,9 @@ abstract class rex_package_manager
 
                 $this->package->includeFile(rex_package::FILE_UNINSTALL);
 
-                if ('' != ($instmsg = $this->package->getProperty('installmsg', ''))) {
+                /** @psalm-taint-escape html */
+                $instmsg = (string) $this->package->getProperty('installmsg', '');
+                if ('' != $instmsg) {
                     throw new rex_functional_exception($instmsg);
                 }
                 if ($this->package->isInstalled()) {
