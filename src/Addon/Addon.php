@@ -19,7 +19,6 @@ use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
 use function assert;
-use function in_array;
 use function is_bool;
 use function sprintf;
 
