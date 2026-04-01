@@ -52,6 +52,7 @@ class rex_cronjob_export extends rex_cronjob
             }
 
             if ($this->getParam('delete_interval') || $this->getParam('delete_max_age')) {
+                /** @var list<string> $allSqlfiles */
                 $allSqlfiles = array_merge(
                     glob(rex_path::addonData('backup', '*' . $ext), GLOB_NOSORT),
                     glob(rex_path::addonData('backup', '*' . $ext . '.gz'), GLOB_NOSORT),
