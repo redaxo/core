@@ -57,7 +57,7 @@ jobs:
                     tools: cs2pr
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: Fix code style
                 if: env.writable == 1
@@ -101,7 +101,7 @@ jobs:
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: Fix code style
                 if: env.writable == 1

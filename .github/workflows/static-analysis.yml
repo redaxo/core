@@ -60,7 +60,7 @@ jobs:
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: Run psalm analysis
                 if: github.event_name != 'repository_dispatch'
@@ -130,7 +130,7 @@ jobs:
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: Run psalm taint analysis
                 if: github.event_name != 'repository_dispatch'
@@ -194,7 +194,7 @@ jobs:
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: Setup REDAXO
                 run: |
