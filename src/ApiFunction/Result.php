@@ -26,6 +26,8 @@ class Result
     /**
      * @param bool $succeeded flag indicating if the api function was executed successfully
      * @param string|null $message optional message which will be visible to the end-user
+     *
+     * @psalm-taint-sink html $message
      */
     public function __construct(
         private $succeeded,
