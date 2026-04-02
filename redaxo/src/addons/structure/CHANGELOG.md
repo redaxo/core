@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 2.20.0 – XX.XX.2026
+---------------------------
+
+### Neu
+
+* Actions: Optional können eindeutige Schlüssel vergeben werden (ähnlich wie bei Templates/Modulen) (@skerbis)
+* Linkmap: Visuelles Feedback bei Linkübernahme in Linklist (@Hasan-Alherek)
+* EP `SLICE_BE_PREVIEW`: Slice-Revision wird mit als Param übergeben (@ynamite)
+* Markup für die Slice-Ausgabe im Backend in Fragmente ausgelagert (@marcohanke)
+
+
 Version 2.19.0 – 05.09.2025
 ---------------------------
 

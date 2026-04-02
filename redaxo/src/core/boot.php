@@ -92,7 +92,7 @@ require_once rex_path::core('functions/function_rex_globals.php');
 require_once rex_path::core('functions/function_rex_other.php');
 
 // ----------------- VERSION
-rex::setProperty('version', '5.21.0-dev');
+rex::setProperty('version', '5.21.0-beta1');
 
 rex_error_handler::register();
 

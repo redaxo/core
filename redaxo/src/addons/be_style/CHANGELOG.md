@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 3.8.0 – XX.XX.2026
+--------------------------
+
+* Login-Seite: Neues Hintergrundbild (@tbaddade, @gharlan)
+* Multiple-Selects: Häkchen für ausgewählte Optionen erscheint links vom Text statt ganz rechts (@tbaddade, @gharlan)
+* Moduleingabe: Sticky footer (Übernehmen-/Speichern-Button) (@ynamite)
+
+
 Version 3.7.0 – 05.09.2025
 --------------------------
 

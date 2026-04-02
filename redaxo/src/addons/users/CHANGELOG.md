@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.12.0 – XX.XX.2026
+---------------------------
+
+### Neu
+
+* Suche für Benutzerverwaltung (@akuehnis)
+
+
 Version 2.10.0 – 28.02.2023
 ---------------------------
 

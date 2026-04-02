@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.10.0 – XX.XX.2026
+---------------------------
+
+### Neu
+
+* Backup-Cronjob: Ältere Backups können nach auswählbarem Zeitraum komplett gelöscht werden (@gharlan)
+
+
 Version 2.9.4 – 05.01.2026
 --------------------------
 

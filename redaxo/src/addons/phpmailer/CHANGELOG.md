@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.17.0 – XX.XX.2026
+---------------------------
+
+### Neu
+
+* Update auf PHPMailer 7 (@gharlan)
+
+
 Version 2.16.0 – 05.09.2025
 ---------------------------
 

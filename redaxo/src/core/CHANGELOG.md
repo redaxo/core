@@ -1,6 +1,27 @@
 Changelog
 =========
 
+Version 5.21.0 – XX.XX.2026
+---------------------------
+
+### Security
+
+* Escaping in Exception-Messages korrigiert (gemeldet von @NumberOreo1) (@gharlan)
+
+### Neu
+
+* Neue PHP-Mindestversion 8.3 (@gharlan)
+* Symfony-Components von 6.4 auf 7.4 aktualisiert + weitere Vendor-Updates (@gharlan)
+* Autoloader: Vendor-Klassen aus dem Core werden bevorzugt geladen (@gharlan)
+* Console-Setup: DB-Passwort kann behalten werden ohne erneute Eingabe (@gharlan)
+* `rex_file`: `getMimeType` liefert spezifische Mime-Types für `csv`, `html`, `json`, `md`, `xml`, `ics`, `vcf` (@gharlan)
+
+### Bugfixes
+
+* `rex_sql_table`: Default-Wert bei `TEXT`-Spalten wird normalisiert für bessere Kompatibilität zwischen MariaDB und MySQL (@gharlan)
+* `rex_dir`: Methode `create` ist robuster bzgl. gleichzeitiger Prozesse (@gharlan)
+
+
 Version 5.20.2 – 05.01.2026
 ---------------------------
 
