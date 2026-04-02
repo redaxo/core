@@ -14,6 +14,10 @@ env:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     php-cs-fixer:
         runs-on: ubuntu-latest
@@ -41,7 +45,7 @@ jobs:
             -   name: Checkout fork
                 uses: actions/checkout@v6
                 if: env.writable == 0
-            -   name: Checkout on chat commnad
+            -   name: Checkout on chat command
                 uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
@@ -57,7 +61,7 @@ jobs:
                     tools: cs2pr
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: Fix code style
                 if: env.writable == 1
@@ -101,7 +105,7 @@ jobs:
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@v4
 
             -   name: Fix code style
                 if: env.writable == 1

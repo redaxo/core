@@ -9,6 +9,7 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 
+use function Redaxo\Core\View\escape;
 use function sprintf;
 
 /**
@@ -29,7 +30,7 @@ class UserImpersonate extends ApiFunction
 
         $user = Core::requireUser();
         if (!$user->isAdmin()) {
-            throw new ApiFunctionException(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->getLogin()));
+            throw new ApiFunctionException(escape(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->getLogin())));
         }
 
         Core::getProperty('login')->impersonate((int) $impersonate);

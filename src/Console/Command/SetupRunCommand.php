@@ -201,6 +201,10 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
 
         $io->section('Database information');
 
+        $previousHost = $config['db'][1]['host'] ?? null;
+        $previousLogin = $config['db'][1]['login'] ?? null;
+        $previousPassword = $config['db'][1]['password'] ?? null;
+
         do {
             $config['db'][1]['host'] = $this->getOptionOrAsk(
                 'MySQL Host',
@@ -217,16 +221,28 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
                 $requiredValue,
             );
 
-            $q = new Question('Password');
-            $q->setHidden(true);
+            $keepPassword = false;
+            if ($previousPassword
+                && $config['db'][1]['host'] === $previousHost
+                && $config['db'][1]['login'] === $previousLogin
+                && null === $input->getOption('db-password')
+                && $input->isInteractive()
+            ) {
+                $keepPassword = $io->confirm('Keep existing database password?', true);
+            }
 
-            $config['db'][1]['password'] = $this->getOptionOrAsk(
-                $q,
-                'db-password',
-                '',
-                'Using database password *secret*',
-                null,
-            );
+            if (!$keepPassword) {
+                $q = new Question('Password');
+                $q->setHidden(true);
+
+                $config['db'][1]['password'] = (string) $this->getOptionOrAsk(
+                    $q,
+                    'db-password',
+                    '',
+                    'Using database password *secret*',
+                    null,
+                );
+            }
 
             $config['db'][1]['name'] = $this->getOptionOrAsk(
                 'Database name',

@@ -39,7 +39,14 @@ final class Dir
             return false;
         }
 
-        if (self::isWritable($parent) && mkdir($dir, Core::getDirPerm())) {
+        if (!self::isWritable($parent)) {
+            return false;
+        }
+
+        // suppress "File exists" warning in case of concurrent processes
+        @mkdir($dir, Core::getDirPerm());
+
+        if (is_dir($dir)) {
             @chmod($dir, Core::getDirPerm());
             return true;
         }

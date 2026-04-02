@@ -14,6 +14,10 @@ env:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     visual-tests:
         runs-on: ubuntu-latest
@@ -40,7 +44,7 @@ jobs:
             -   name: Checkout fork
                 uses: actions/checkout@v6
                 if: env.writable == 0
-            -   name: Checkout on chat commnad
+            -   name: Checkout on chat command
                 uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
@@ -100,10 +104,10 @@ jobs:
                     php .tools/bin/console config:set error_email 'test@redaxo.invalid' --ansi -v
             -   name: Import mock data
                 run: |
-                    mkdir -p $GITHUB_WORKSPACE/.tools/project/var/data/core/backup && cp -r .github/imports/inital-content-for-visual-tests.sql $GITHUB_WORKSPACE/.tools/project/var/data/core/backup/
-                    cp -r .github/imports/media/* $GITHUB_WORKSPACE/.tools/project/public/media/
-                    cp -f .github/imports/README.md $GITHUB_WORKSPACE/redaxo/src/addons/test/README.de.md
-                    php .tools/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=inital-content-for-visual-tests --admin-username=myusername --admin-password=mypassword --ansi -v
+                    mkdir -p $GITHUB_WORKSPACE/.tools/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/.tools/project/var/data/core/backup/
+                    cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/.tools/project/public/media/
+                    cp -f .tools/visual-tests/fixtures/README.md $GITHUB_WORKSPACE/redaxo/src/addons/test/README.de.md
+                    php .tools/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
             -   name: Install packages
                 run: |
                     php .tools/bin/console addon:install debug --ansi -v
@@ -115,17 +119,18 @@ jobs:
                     if (preg_match('@redaxo/(?:bin|data|cache|src)@', \$_SERVER['REQUEST_URI'])) http_response_code(403);
                     else return false;
                     EOF
-                    php -S localhost:8080 -t .tools/project/public/ .tools/project/public/router.php &
+                    PHP_CLI_SERVER_WORKERS=4 php -S localhost:8080 -t .tools/project/public/ .tools/project/public/router.php &
 
             -   name: Take screenshots (differential)
                 run: |
                     php .tools/bin/console config:set setup true -t boolean --ansi -v
                     php .tools/bin/console cache:clear --ansi -v
-                    node .github/tests-visual/visual-record.js setup
+                    node .tools/visual-tests/visual-record.js setup
                     php .tools/bin/console config:set setup false -t boolean --ansi -v
                     php .tools/bin/console cache:clear --ansi -v
-                    node .github/tests-visual/visual-record.js
-                    git diff --exit-code --name-only .github/tests-visual/
+                    node .tools/visual-tests/visual-record.js
+                    git add --intent-to-add .tools/visual-tests/screenshots/
+                    git diff --exit-code --name-only .tools/visual-tests/screenshots/
 
             -   name: Commit changed files
                 uses: stefanzweifel/git-auto-commit-action@v7
@@ -134,8 +139,14 @@ jobs:
                     commit_message: Update screenshots
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
-                    file_pattern: .github/tests-visual/*
+                    file_pattern: .tools/visual-tests/screenshots/*
                     branch: ${{ github.head_ref }} # repo dispatch needs the target branch
+
+            -   name: Disable auto-merge
+                if: failure() && env.writable == 1 && (github.event.pull_request.number || github.event.client_payload.pull_request.number)
+                env:
+                    GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+                run: gh pr merge --disable-auto "${{ github.event.pull_request.number || github.event.client_payload.pull_request.number }}"
 
             -   name: Remove automerge label
                 uses: actions-ecosystem/action-remove-labels@v1

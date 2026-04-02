@@ -9,7 +9,10 @@ use Throwable;
  */
 final class UserMessageException extends \Exception implements Exception
 {
-    /** @pure */
+    /**
+     * @pure
+     * @psalm-taint-sink html $message
+     */
     public function __construct(string $message, ?Throwable $previous = null)
     {
         /** @psalm-suppress ImpureMethodCall */

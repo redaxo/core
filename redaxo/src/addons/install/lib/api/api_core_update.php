@@ -19,6 +19,8 @@ use Redaxo\Core\Log\Logger;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
 
+use function Redaxo\Core\View\escape;
+
 /**
  * @internal
  */
@@ -47,7 +49,7 @@ class rex_api_install_core_update extends ApiFunction
         }
         $version = $versions[$versionId];
         if (!Version::compare($version['version'], Core::getVersion(), '>')) {
-            throw new ApiFunctionException(sprintf('Existing version of Core (%s) is newer than %s', Core::getVersion(), $version['version']));
+            throw new ApiFunctionException(escape(sprintf('Existing version of Core (%s) is newer than %s', Core::getVersion(), $version['version'])));
         }
         if (!is_writable(Path::core())) {
             throw new UserMessageException($installAddon->i18n('warning_directory_not_writable', Path::core()));

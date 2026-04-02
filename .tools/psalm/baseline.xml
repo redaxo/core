@@ -1906,8 +1906,6 @@
     </LessSpecificReturnStatement>
     <MixedArgument>
       <code><![CDATA[$addonId]]></code>
-      <code><![CDATA[$instmsg]]></code>
-      <code><![CDATA[$instmsg]]></code>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$requirements['packages'][$addonId]]]></code>
       <code><![CDATA[$requirements['packages'][$addonId]]]></code>
@@ -2230,7 +2228,6 @@
       <code><![CDATA[$config['db'][1]['host']]]></code>
       <code><![CDATA[$config['db'][1]['login']]]></code>
       <code><![CDATA[$config['db'][1]['name']]]></code>
-      <code><![CDATA[$config['db'][1]['password']]]></code>
       <code><![CDATA[$config['error_email']]]></code>
       <code><![CDATA[$config['lang']]]></code>
       <code><![CDATA[$config['server']]]></code>
@@ -2859,20 +2856,12 @@
     <MixedArgument>
       <code><![CDATA[$excludedTables]]></code>
       <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$sqlFile]]></code>
       <code><![CDATA[$this->getParam('delete_interval')]]></code>
       <code><![CDATA[$this->getParam('mailaddress')]]></code>
     </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$backup]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedArrayOffset>
-      <code><![CDATA[$backups[$sqlFile]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$excludedTables]]></code>
       <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$sqlFile]]></code>
     </MixedAssignment>
     <PossiblyFalseArgument>
       <code><![CDATA[glob(Path::coreData('backup/*' . $ext . '.gz'), GLOB_NOSORT)]]></code>

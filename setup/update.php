@@ -8,11 +8,13 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
 
+use function Redaxo\Core\View\escape;
+
 // don't use REX_MIN_PHP_VERSION or Redaxo\Core\Setup\Setup::MIN_* constants here!
 // while updating the core, the constants contain the old min versions from previous core version
 
 if (version_compare(Core::getVersion(), '5.16', '<')) {
-    throw new UserMessageException(sprintf('The REDAXO version "%s" is too old for this update, please update to 5.16 before.', Core::getVersion()));
+    throw new UserMessageException(sprintf('The REDAXO version "%s" is too old for this update, please update to 5.16 before.', escape(Core::getVersion())));
 }
 
 if (PHP_VERSION_ID < 80400) {

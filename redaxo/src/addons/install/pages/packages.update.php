@@ -199,8 +199,10 @@ if ($core && !empty($coreVersions)) {
             $availVers = escape($file['version']);
             if (Version::isUnstable($availVers)) {
                 $availVers = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . $availVers;
+                $availableVersions[] = '<span class="label label-warning">' . $availVers . '</span> ';
+            } else {
+                $availableVersions[] = '<span class="label label-success">' . $availVers . '</span> ';
             }
-            $availableVersions[] = $availVers;
         }
         $url = Url::currentBackendPage(['core' => 1]);
 
@@ -215,7 +217,7 @@ if ($core && !empty($coreVersions)) {
                 <td data-title="' . $package->i18n('key') . '"><a class="rex-link-expanded" href="' . $url . '">core</a></td>
                 <td data-title="' . $package->i18n('name') . '">REDAXO Core</td>
                 <td data-title="' . $package->i18n('existing_version') . '">' . $coreVersion . '</td>
-                <td data-title="' . $package->i18n('available_versions') . '">' . implode(', ', $availableVersions) . '</td>
+                <td data-title="' . $package->i18n('available_versions') . '">' . implode('', $availableVersions) . '</td>
             </tr>';
     }
 

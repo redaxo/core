@@ -42,7 +42,7 @@ final class MediaPoolTest extends TestCase
         $allowedMimeTypes = MediaPool::getAllowedMimeTypes();
 
         MediaPool::setAllowedMimeTypes([
-            'md' => ['text/plain'],
+            'md' => ['text/markdown'],
         ]);
 
         self::assertSame($expected, MediaPool::isAllowedMimeType($path, $filename));

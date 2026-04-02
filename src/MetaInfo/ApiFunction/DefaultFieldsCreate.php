@@ -12,6 +12,7 @@ use Redaxo\Core\MetaInfo\MetaInfo;
 use Redaxo\Core\Translation\I18n;
 
 use function is_string;
+use function Redaxo\Core\View\escape;
 use function sprintf;
 
 /**
@@ -44,7 +45,7 @@ class DefaultFieldsCreate extends ApiFunction
                 ];
                 break;
             default:
-                throw new ApiFunctionException(sprintf('metainfo type "%s" does not have default field.', $type));
+                throw new ApiFunctionException(sprintf('metainfo type "%s" does not have default field.', escape($type)));
         }
 
         $existing = Sql::factory()->getArray('SELECT name FROM ' . Core::getTable('metainfo_field') . ' WHERE name LIKE ?', [$prefix]);

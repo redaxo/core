@@ -13,6 +13,7 @@ use Redaxo\Core\Http\Request;
 use Redaxo\Core\Util\Type;
 
 use function in_array;
+use function Redaxo\Core\View\escape;
 
 /**
  * @internal
@@ -28,7 +29,7 @@ final class AddonOperation extends ApiFunction
 
         $function = Request::request('function', 'string');
         if (!in_array($function, ['install', 'uninstall', 'activate', 'deactivate'])) {
-            throw new ApiFunctionException('Unknown package function "' . $function . '"!');
+            throw new ApiFunctionException('Unknown package function "' . escape($function) . '"!');
         }
         $packageId = Request::request('package', 'string');
         $package = BaseAddon::get($packageId);
@@ -40,7 +41,7 @@ final class AddonOperation extends ApiFunction
         }
 
         if (!$package instanceof BaseAddon) {
-            throw new ApiFunctionException('Package "' . $packageId . '" doesn\'t exists!');
+            throw new ApiFunctionException('Package "' . escape($packageId) . '" doesn\'t exists!');
         }
         $reinstall = 'install' === $function && $package->isInstalled();
         $manager = AddonManager::factory($package);

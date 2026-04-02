@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.14.0 – XX.XX.2026
+---------------------------
+
+### Bugfixes
+
+* Layout der verfügbaren Core-Versionen an Layout der Addon-Versionen angepasst (@gharlan)
+
+
 Version 2.13.1 – 05.09.2025
 ---------------------------
 

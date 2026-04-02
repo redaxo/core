@@ -12,6 +12,8 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Exception\YamlParseException;
 use Redaxo\Core\Util\Version;
 
+use function Redaxo\Core\View\escape;
+
 /**
  * @internal
  *
@@ -30,13 +32,13 @@ class rex_install_package_update extends rex_install_package_download
     protected function checkPreConditions()
     {
         if (!Addon::exists($this->addonkey)) {
-            throw new UserMessageException(sprintf('AddOn "%s" does not exist!', $this->addonkey));
+            throw new UserMessageException(escape(sprintf('AddOn "%s" does not exist!', $this->addonkey)));
         }
         $addon = Addon::get($this->addonkey);
         assert($addon instanceof Addon);
         $this->addon = $addon;
         if (!Version::compare($this->file['version'], $this->addon->getVersion(), '>')) {
-            throw new UserMessageException(sprintf('Existing version of AddOn "%s" (%s) is newer than %s', $this->addonkey, $this->addon->getVersion(), $this->file['version']));
+            throw new UserMessageException(escape(sprintf('Existing version of AddOn "%s" (%s) is newer than %s', $this->addonkey, $this->addon->getVersion(), $this->file['version'])));
         }
     }
 

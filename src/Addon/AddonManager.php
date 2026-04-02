@@ -109,7 +109,9 @@ class AddonManager
                 $this->addon->includeFile(Addon::FILE_INSTALL);
                 $successMessage = $this->addon->getProperty('successmsg', '');
 
-                if ('' != ($instmsg = $this->addon->getProperty('installmsg', ''))) {
+                /** @psalm-taint-escape html */
+                $instmsg = (string) $this->addon->getProperty('installmsg', '');
+                if ('' != $instmsg) {
                     throw new UserMessageException($instmsg);
                 }
                 if (!$this->addon->isInstalled()) {
@@ -187,7 +189,9 @@ class AddonManager
 
                 $this->addon->includeFile(Addon::FILE_UNINSTALL);
 
-                if ('' != ($instmsg = $this->addon->getProperty('installmsg', ''))) {
+                /** @psalm-taint-escape html */
+                $instmsg = (string) $this->addon->getProperty('installmsg', '');
+                if ('' != $instmsg) {
                     throw new UserMessageException($instmsg);
                 }
                 if ($this->addon->isInstalled()) {

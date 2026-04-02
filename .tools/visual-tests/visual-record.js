@@ -5,7 +5,7 @@
  * 2. Make sure a database server is running
  * 3. Make sure a admin-user with login `myusername` and password `mypassword` exists
  * 4. Make sure the REDAXO instance running at START_URL is accessible and login screen appears on the url
- * 5. Start the visual recording with `node .github/tests-visual/visual-record.js`
+ * 5. Start the visual recording with `node .tools/visual-tests/visual-record.js`
  */
 
 import playwright from 'playwright';
@@ -20,7 +20,7 @@ const viewportHeight = 800;
 const START_URL = 'http://localhost:8080/redaxo/index.php';
 const DEBUGGING = false;
 const WORKING_DIR = '.tests-visual/';
-const GOLDEN_SAMPLES_DIR = '.github/tests-visual/';
+const GOLDEN_SAMPLES_DIR = '.tools/visual-tests/screenshots/';
 
 const myArgs = process.argv.slice(2);
 let minDiffPixels = 1;
@@ -60,7 +60,6 @@ const allPages = {
     'modules_actions_add.png': START_URL + '?page=modules/actions&function=add',
 
     'users_users.png': START_URL + '?page=users/users',
-    'users_edit.png': START_URL + '?page=users/users&user_id=1',
     'users_roles.png': START_URL + '?page=users/roles',
     'users_role_add.png': START_URL + '?page=users/roles&func=add&default_value=1',
 
@@ -113,6 +112,7 @@ function countDiffPixels(img1path, img2path ) {
 async function processScreenshot(page, screenshotName) {
     mkdirp.sync(WORKING_DIR);
 
+    await page.waitForSelector('body');
     await page.evaluate(() => {
         // disable spellchecker to prevent red wavy underlines in inputs
         document.documentElement.setAttribute('spellcheck', 'false');
@@ -156,7 +156,7 @@ async function processScreenshot(page, screenshotName) {
 
     await page.screenshot({ path: WORKING_DIR + screenshotName, fullPage: true, animations: 'disabled' });
 
-    // make sure we only create changes in .github/tests-visual/ on substential screenshot changes.
+    // make sure we only create changes in .tools/visual-tests/screenshots/ on substential screenshot changes.
     // this makes sure to prevent endless loops within the github action
     let diffPixels = countDiffPixels(WORKING_DIR + screenshotName, GOLDEN_SAMPLES_DIR + screenshotName);
     console.log("DIFF-PIXELS: "+ screenshotName + ":" +diffPixels);
@@ -166,19 +166,10 @@ async function processScreenshot(page, screenshotName) {
 }
 
 async function createScreenshots(page, screenshotName) {
-    await createLightScreenshot(page, screenshotName);
-    await createDarkScreenshot(page, screenshotName);
-}
-
-async function createLightScreenshot(page, screenshotName) {
     await page.emulateMedia({ colorScheme: 'light' });
-    await page.waitForTimeout(200); // wait for UI update
     await processScreenshot(page, screenshotName);
-}
 
-async function createDarkScreenshot(page, screenshotName) {
     await page.emulateMedia({ colorScheme: 'dark' });
-    await page.waitForTimeout(200); // wait for UI update
     await processScreenshot(page, screenshotName.replace('.png', '--dark.png'));
 }
 
@@ -186,8 +177,10 @@ async function logIntoBackend(page, username = 'myusername', password = '91dfd9d
     await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
     await page.type('#rex-id-login-user', username);
     await page.type('#rex-id-login-password', password); // sha1('mypassword')
-    await page.$eval('#rex-form-login', form => form.submit());
-    await page.waitForTimeout(200);
+    await Promise.all([
+        page.waitForNavigation({ waitUntil: 'load' }),
+        page.$eval('#rex-form-login', form => form.submit()),
+    ]);
 }
 
 async function goToUrlOrThrow(page, url, options, maxretries = 5) {
@@ -220,18 +213,9 @@ async function goToUrlOrThrow(page, url, options, maxretries = 5) {
     }
 }
 
-async function main() {
-    const options = { args: ['--no-sandbox', '--disable-setuid-sandbox', '--font-render-hinting=none'], headless: 'new' };
+const CONCURRENCY = 4;
 
-    if (DEBUGGING) {
-        // see https://developers.google.com/web/tools/puppeteer/debugging
-        options.headless = false;
-    }
-
-    const browser = await playwright.chromium.launch();
-    const context = await browser.newContext();
-    let page = await context.newPage();
-    // log browser errors into the console
+function setupPageConsoleLogging(page) {
     page.on('console', function(msg) {
         const text = msg.text();
         if (text.indexOf("Unrecognized feature: 'interest-cohort'.") !== -1) {
@@ -251,12 +235,56 @@ async function main() {
 
         console.log('BROWSER-CONSOLE:', text);
     });
+}
 
+async function createWorker(browser) {
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    setupPageConsoleLogging(page);
     await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+    await logIntoBackend(page);
+    return { context, page };
+}
+
+async function processAllPagesParallel(browser) {
+    const entries = Object.entries(allPages);
+
+    // create workers sequentially to avoid race conditions during login (cache dir creation)
+    const workers = [];
+    for (let i = 0; i < CONCURRENCY; i++) {
+        workers.push(await createWorker(browser));
+    }
+
+    let index = 0;
+
+    async function runWorker(page) {
+        while (index < entries.length) {
+            const currentIndex = index++;
+            const [fileName, url] = entries[currentIndex];
+            await goToUrlOrThrow(page, url, { waitUntil: 'load' });
+            await createScreenshots(page, fileName);
+        }
+    }
+
+    await Promise.all(workers.map(({ page }) => runWorker(page)));
+
+    // close worker contexts
+    await Promise.all(workers.map(({ context }) => context.close()));
+}
+
+async function main() {
+    const browser = await playwright.chromium.launch(
+        DEBUGGING ? { headless: false } : {}
+    );
+    const context = await browser.newContext();
 
     switch (true) {
 
-        case isSetup:
+        case isSetup: {
+            let page = await context.newPage();
+            setupPageConsoleLogging(page);
+            await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+
             // setup step 1
             await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
             await createScreenshots(page, 'setup.png');
@@ -265,7 +293,6 @@ async function main() {
             for (var step = 2; step <= 5; step++) {
                 // step 2: wait until `networkidle0` to finish AJAX requests, see https://github.com/puppeteer/puppeteer/blob/main/docs/api.md#pagegotourl-options
                 await goToUrlOrThrow(page, START_URL + '?page=setup&lang=de_de&step=' + step, { waitUntil: step === 2 ? 'networkidle0' : 'load'});
-                await page.waitForTimeout(200); // slight buffer for CSS animations or :focus styles etc.
                 await createScreenshots(page, 'setup_' + step + '.png');
             }
 
@@ -275,9 +302,15 @@ async function main() {
             await page.waitForTimeout(200);
             await createScreenshots(page, 'setup_6.png');
 
+            await page.close();
             break;
+        }
 
-        default:
+        default: {
+            let page = await context.newPage();
+            setupPageConsoleLogging(page);
+            await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+
             // login page
             await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
             await page.waitForSelector('.rex-background--ready');
@@ -288,43 +321,33 @@ async function main() {
             await logIntoBackend(page);
             await createScreenshots(page, 'index.png');
 
-            // run through all pages
-            for (var fileName in allPages) {
-                const url = allPages[fileName]
-                await goToUrlOrThrow(page, url, { waitUntil: 'load' });
+            // run through all pages in parallel
+            await processAllPagesParallel(browser);
 
-                await page.waitForTimeout(200); // slight buffer for CSS animations or :focus styles etc.
-                await createScreenshots(page, fileName);
-            }
+            // the following steps have side effects and must run sequentially on a single page
+
+            await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
+            await createScreenshots(page, 'users_edit.png');
 
             // test safe mode
             await goToUrlOrThrow(page, START_URL + '?page=system/settings', { waitUntil: 'load' });
             await Promise.all([
-                page.waitForNavigation(),
+                page.waitForNavigation({ waitUntil: 'load' }),
                 page.click('.btn-safemode-activate') // enable safe mode
             ]);
             await createScreenshots(page, 'system_settings_safemode.png');
             await Promise.all([
-                page.waitForNavigation(),
+                page.waitForNavigation({ waitUntil: 'load' }),
                 page.click('.btn-safemode-deactivate') // disable safe mode again
             ]);
 
             // test debug
-            /*const interceptClockworkRequest = request => {
-                const url = request.url();
-                if (url.indexOf('rex-api-call=debug') !== -1) {
-                    console.log('ABORT REQUEST:', url);
-                    request.abort();
-                    return;
-                }
-                request.continue();
-            };
-            await page.setRequestInterception(true);
-            page.on('request', interceptClockworkRequest);
+            const debugApiPattern = /rex-api-call=debug/;
+            const abortDebugApi = route => route.abort();
+            await page.route(debugApiPattern, abortDebugApi);
             await goToUrlOrThrow(page, START_URL + '?page=debug', { waitUntil: 'load' });
             await createScreenshots(page, 'debug_clockwork.png');
-            await page.setRequestInterception(false);
-            page.off('request', interceptClockworkRequest);*/
+            await page.unroute(debugApiPattern, abortDebugApi);
 
             // reinstall addon
             await goToUrlOrThrow(page, START_URL + '?page=packages', { waitUntil: 'load' });
@@ -336,16 +359,16 @@ async function main() {
 
             // test customizer
             await goToUrlOrThrow(page, START_URL + '?page=system/be_style/customizer', { waitUntil: 'load' });
-            await page.waitForTimeout(200); // slight buffer for CSS animations or :focus styles etc.
             await createScreenshots(page, 'system_customizer.png');
 
             // metainfo
             for (const type of ['articles', 'media']) {
                 await goToUrlOrThrow(page, START_URL + '?page=metainfo/' + type, { waitUntil: 'load' });
                 await Promise.all([
-                    page.waitForNavigation(),
+                    page.waitForNavigation({ waitUntil: 'load' }),
                     page.click('.btn[href*="rex-api-call=metainfo_default_fields_create"]') // install default fields
                 ]);
+                await page.waitForSelector('.alert-success');
                 await createScreenshots(page, 'metainfo_' + type + '.png');
             }
 
@@ -355,10 +378,11 @@ async function main() {
             await page.waitForTimeout(200); // wait for bg image to fade in
             await createScreenshots(page, 'logout.png');
 
+            await page.close();
             break;
+        }
     }
 
-    await page.close();
     await context.close();
     await browser.close();
 
