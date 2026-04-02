@@ -295,6 +295,7 @@ class rex_file
             'ics' => 'text/calendar',
             'js' => 'application/javascript',
             'json' => 'application/json',
+            'md' => 'text/markdown',
             'svg' => 'image/svg+xml',
             'vcf' => 'text/vcard',
             'vtt' => 'text/vtt',

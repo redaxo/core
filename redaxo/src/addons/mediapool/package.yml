@@ -48,6 +48,7 @@ allowed_mime_types:
     ppsx: [application/vnd.openxmlformats-officedocument.presentationml.slideshow]
     rtf: [application/rtf]
     txt: [text/plain, application/octet-stream]
+    md: [text/markdown]
     csv: [text/csv, application/octet-stream]
     ics: [text/calendar]
     vcf: [text/vcard]
