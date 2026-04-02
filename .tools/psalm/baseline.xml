@@ -4028,7 +4028,6 @@
       <code><![CDATA[$config['db'][1]['host']]]></code>
       <code><![CDATA[$config['db'][1]['login']]]></code>
       <code><![CDATA[$config['db'][1]['name']]]></code>
-      <code><![CDATA[$config['db'][1]['password']]]></code>
       <code><![CDATA[$config['error_email']]]></code>
       <code><![CDATA[$config['lang']]]></code>
       <code><![CDATA[$config['server']]]></code>
