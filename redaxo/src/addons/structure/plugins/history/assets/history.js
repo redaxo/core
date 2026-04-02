@@ -226,6 +226,7 @@
             this.currentFrame = $('#content-history-iframe-1', this.el);
             this.targetFrame = $('#content-history-iframe-2', this.el);
             this.submit = $('[data-history-layer="snap"]', this.el);
+            this.submitDraft = $('[data-history-layer="snap_draft"]', this.el);
             this.cancel = $('[data-history-layer="cancel"]', this.el);
 
             // fix layout for browsers having flexbox issues (Safari < 11 most notably)
@@ -255,6 +256,7 @@
             this.selectPrev.on('click', $.proxy(this.onSelectPrev, this));
             this.selectNext.on('click', $.proxy(this.onSelectNext, this));
             this.submit.on('click', $.proxy(this.onSubmit, this));
+            this.submitDraft.on('click', $.proxy(this.onSubmitDraft, this));
             this.cancel.on('click', $.proxy(this.onCancel, this));
 
             if (this.sliderSelect) {
@@ -307,6 +309,33 @@
             var historyDate = that.dates.getCurrent().historyDate;
             debug.log('submit: ' + historyDate);
             $.when(this.snapVersion(historyDate).then(function () {
+                that.remove();
+
+                // reload redaxo page
+                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&clang_id=' + that.clangId + '&ctype=' + that.ctypeId;
+                $.pjax({url: url, container: '#rex-js-page-main-content', fragment: '#rex-js-page-main-content'})
+            }));
+        },
+
+        /**
+         * on submit draft button toggle
+         */
+        onSubmitDraft: function () {
+            var that = this;
+            var historyDate = that.dates.getCurrent().historyDate;
+            var confirmMsg = this.submitDraft.data('draft-warning');
+            if (confirmMsg && !window.confirm(confirmMsg)) {
+                return;
+            }
+            if (!historyDate) { // "Current live version" is selected: copy live → draft via version addon
+                that.remove();
+                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&clang=' + that.clangId + '&ctype=' + that.ctypeId + '&rex_version_func=copy_live_to_work';
+                debug.log('copy live to draft: ' + url);
+                $.pjax({url: url, container: '#rex-js-page-main-content', fragment: '#rex-js-page-main-content'});
+                return;
+            }
+            debug.log('submit draft: ' + historyDate);
+            $.when(this.snapDraftVersion(historyDate).then(function () {
                 that.remove();
 
                 // reload redaxo page
@@ -449,6 +478,25 @@
                 debug.info('snap success');
             }).fail(function (jqXHR, textStatus) {
                 debug.error('snap failure: ' + textStatus);
+            });
+        },
+
+        /**
+         * snap history to draft version
+         *
+         * @param date
+         * @returns {*}
+         */
+        snapDraftVersion: function (date) {
+            var url = 'index.php?rex_history_function=snap_draft&history_article_id=' + this.articleId + '&history_clang_id=' + this.clangId + '&history_date=' + date;
+            debug.info('snap draft version: ' + url);
+            return $.ajax({
+                url: url,
+                context: document.body
+            }).done(function () {
+                debug.info('snap draft success');
+            }).fail(function (jqXHR, textStatus) {
+                debug.error('snap draft failure: ' + textStatus);
             });
         }
     };

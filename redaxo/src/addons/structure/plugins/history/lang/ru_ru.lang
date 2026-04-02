@@ -3,6 +3,7 @@ structure_history_title_info = Краткое пояснение
 structure_history_snapshot_reactivate = Вернуться к этой версии
 structure_history_snapshot_live_reactivate = Применить эту версию к живой версии
 structure_history_snapshot_draft_reactivate = Применить эту версию к рабочей версии
+structure_history_draft_warning = Внимание: Рабочая версия не версионируется. Восстановление выбранной версии в рабочую версию безвозвратно перезапишет её текущее содержимое. Вы уверены?
 structure_history_snapshot_reactivated = Версия была изменена
 structure_history_overview_versions = Обзор истории
 structure_history_current_version = Текущая версия
@@ -12,7 +13,8 @@ structure_history_todos = Сделать
 structure_history_todos_content = <ul><li>Подготовить cronjob</li><li>Разрешить отключение истории</li><li>Настройки сборки, позволяющие уменьшить количество версий. Пример: хранить только одну версию через месяц/неделю/день.</li><li>Установить значения масштабирования для сайта</li><li>Cделать визуальный вид более красивым, похожим на Time Machine?</li></ul>
 
 perm_options_history[read] = Просмотр истории статьи
-perm_options_history[article_rollback] = Восстановить статью (История)
+perm_options_history[article_rollback] = Восстановить предыдущие снэпшоты статьи (История)
+perm_options_history[article_draft_rollback] = Восстановить предыдущие снэпшоты статьи в рабочую версию (История)
 
 structure_history_button_delete_history = Удаление всех снэпшотов из истории
 structure_history_deleted = Все снэпшоты были удалены

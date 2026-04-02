@@ -12,6 +12,9 @@ $historyDate = rex_request('rex_history_date', 'string');
 
 rex_perm::register('history[read]', null, rex_perm::OPTIONS);
 rex_perm::register('history[article_rollback]', null, rex_perm::OPTIONS);
+if (rex_plugin::get('structure', 'version')->isAvailable()) {
+    rex_perm::register('history[article_draft_rollback]', null, rex_perm::OPTIONS);
+}
 
 if ('' != $historyDate) {
     $historySession = rex_request('rex_history_session', 'string');
@@ -123,6 +126,18 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
             rex_article_slice_history::restoreSnapshot($historyDate, $articleId, $clangId);
 
             // no break
+        case 'snap_draft':
+            if ('snap_draft' === rex_request('rex_history_function', 'string')) {
+                if (!rex::requireUser()->hasPerm('history[article_draft_rollback]')) {
+                    throw new rex_http_exception(new rex_exception('no permission for draft rollback'), rex_response::HTTP_FORBIDDEN);
+                }
+                $articleId = rex_request('history_article_id', 'int');
+                $clangId = rex_request('history_clang_id', 'int');
+                $historyDate = rex_request('history_date', 'string');
+                rex_article_slice_history::restoreDraftSnapshot($historyDate, $articleId, $clangId);
+            }
+
+            // no break
         case 'layer':
             $articleId = rex_request('history_article_id', 'int');
             $clangId = rex_request('history_clang_id', 'int');
@@ -159,6 +174,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
             $fragment->setVar('content2select', $content2select, false);
             $fragment->setVar('content2iframe', $content2iframe, false);
             $fragment->setVar('allow_rollback', rex::requireUser()->hasPerm('history[article_rollback]'));
+            $fragment->setVar('allow_draft_rollback', $versionAvailable && rex::requireUser()->hasPerm('history[article_draft_rollback]'));
             $fragment->setVar('version_available', $versionAvailable);
 
             echo $fragment->parse('history/layer.php');
