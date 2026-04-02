@@ -6,7 +6,7 @@ on:
 
 jobs:
     slash-command-dispatch:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
         timeout-minutes: 30
         if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/')
 

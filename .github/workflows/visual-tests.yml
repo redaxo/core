@@ -14,6 +14,10 @@ env:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     visual-tests:
         runs-on: ubuntu-latest
@@ -40,7 +44,7 @@ jobs:
             -   name: Checkout fork
                 uses: actions/checkout@v6
                 if: env.writable == 0
-            -   name: Checkout on chat commnad
+            -   name: Checkout on chat command
                 uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
@@ -139,6 +143,12 @@ jobs:
                     commit_user_email: rex-bot@users.noreply.github.com
                     file_pattern: .tools/visual-tests/screenshots/*
                     branch: ${{ github.head_ref }} # repo dispatch needs the target branch
+
+            -   name: Disable auto-merge
+                if: failure() && env.writable == 1 && (github.event.pull_request.number || github.event.client_payload.pull_request.number)
+                env:
+                    GH_TOKEN: ${{ secrets.BOT_TOKEN }}
+                run: gh pr merge --disable-auto "${{ github.event.pull_request.number || github.event.client_payload.pull_request.number }}"
 
             -   name: Remove automerge label
                 uses: actions-ecosystem/action-remove-labels@v1
