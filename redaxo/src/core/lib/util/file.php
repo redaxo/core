@@ -290,9 +290,15 @@ class rex_file
 
         return match (strtolower(self::extension($file))) {
             'css' => 'text/css',
+            'csv' => 'text/csv',
+            'html' => 'text/html',
+            'ics' => 'text/calendar',
             'js' => 'application/javascript',
+            'json' => 'application/json',
             'svg' => 'image/svg+xml',
+            'vcf' => 'text/vcard',
             'vtt' => 'text/vtt',
+            'xml' => 'text/xml',
             default => $mimeType,
         };
     }
