@@ -44,7 +44,7 @@ jobs:
             -   name: Checkout fork
                 uses: actions/checkout@v6
                 if: env.writable == 0
-            -   name: Checkout on chat commnad
+            -   name: Checkout on chat command
                 uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
@@ -114,7 +114,7 @@ jobs:
             -   name: Checkout fork
                 uses: actions/checkout@v6
                 if: env.writable == 0
-            -   name: Checkout on chat commnad
+            -   name: Checkout on chat command
                 uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
@@ -178,7 +178,7 @@ jobs:
             -   name: Checkout
                 uses: actions/checkout@v6
                 if: github.event_name != 'repository_dispatch'
-            -   name: Checkout on chat commnad
+            -   name: Checkout on chat command
                 uses: actions/checkout@v6
                 if: github.event_name == 'repository_dispatch'
                 with:
