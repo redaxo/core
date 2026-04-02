@@ -39,7 +39,7 @@ final class rex_mediapool_test extends TestCase
         $allowedMimeTypes = rex_mediapool::getAllowedMimeTypes();
 
         rex_mediapool::setAllowedMimeTypes([
-            'md' => ['text/plain'],
+            'md' => ['text/markdown'],
         ]);
 
         self::assertSame($expected, rex_mediapool::isAllowedMimeType($path, $filename));
