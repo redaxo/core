@@ -8,6 +8,10 @@ jobs:
     slash-command-dispatch:
         runs-on: ubuntu-slim
         timeout-minutes: 30
+        permissions:
+            contents: read
+            issues: read
+            pull-requests: read
         if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/')
 
         steps:
