@@ -29,6 +29,20 @@
     background-color: $color-d-lighter;
 }
 
+// bootstrap-select: checkmarks links statt rechts anzeigen
+.bootstrap-select.show-tick .dropdown-menu {
+    .selected span.check-mark {
+        right: auto;
+        left: 8px;
+        top: 7px;
+    }
+
+    li a span.text {
+        margin-right: 0;
+        margin-left: 12px;
+    }
+}
+
 // ----------------------------------------------------------------------------
 
 @mixin _dark-dropdowns {
