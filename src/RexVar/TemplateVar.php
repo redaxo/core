@@ -45,13 +45,7 @@ class TemplateVar extends RexVar
     {
         ob_start(); // will be closed in getTemplateOutput()
 
-        $tmpl = new Template($id);
-        $tmpl = $tmpl->getTemplate();
-        if ($article) {
-            $tmpl = $article->replaceCommonVars($tmpl, $id);
-        }
-
-        return Stream::factory('template/' . $id, $tmpl);
+        return Stream::factory('template/' . $id, new Template($id)->getTemplate());
     }
 
     /**
