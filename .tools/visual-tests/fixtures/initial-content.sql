@@ -30,7 +30,7 @@ INSERT IGNORE INTO `rex_module` VALUES
 
 # update existing default template
 REPLACE INTO `rex_template` VALUES
-(1,NULL,'Default','REX_ARTICLE[]',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername','{\"ctype\":{\"1\":\"ctype1\",\"2\":\"ctype2\"},\"modules\":{\"1\":{\"all\":\"1\"},\"2\":{\"all\":\"1\"}},\"categories\":{\"all\":\"1\"}}');
+(1,NULL,'Default','<?= $this->getArticle() ?>',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername','{\"ctype\":{\"1\":\"ctype1\",\"2\":\"ctype2\"},\"modules\":{\"1\":{\"all\":\"1\"},\"2\":{\"all\":\"1\"}},\"categories\":{\"all\":\"1\"}}');
 
 INSERT INTO `rex_media_manager_type` VALUES
 (4,0,'test','','2021-10-30 12:05:41','myusername','2021-10-30 12:05:41','myusername');

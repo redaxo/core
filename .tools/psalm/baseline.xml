@@ -4362,26 +4362,6 @@
       <code><![CDATA[$metaTables[$prefix]]]></code>
     </PossiblyNullArrayAccess>
   </file>
-  <file src="src/RexVar/ArticleVar.php">
-    <MixedArgument>
-      <code><![CDATA[$clang]]></code>
-      <code><![CDATA[$clang]]></code>
-      <code><![CDATA[$ctype]]></code>
-      <code><![CDATA[$field]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-    </MixedArgument>
-    <PossiblyNullReference>
-      <code><![CDATA[getValue]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/RexVar/CategoryVar.php">
-    <MixedArgument>
-      <code><![CDATA[$clang]]></code>
-      <code><![CDATA[$field]]></code>
-      <code><![CDATA[$id]]></code>
-    </MixedArgument>
-  </file>
   <file src="src/RexVar/LinkListVar.php">
     <MixedArgument>
       <code><![CDATA[$value]]></code>
