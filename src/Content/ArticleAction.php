@@ -18,8 +18,12 @@ class ArticleAction
     public const PRESAVE = 'presave';
     public const POSTSAVE = 'postsave';
 
-    /** @var int */
-    private $moduleId;
+    protected readonly int $moduleId;
+    protected readonly int $articleId;
+    protected readonly int $clangId;
+    protected readonly int $ctypeId;
+    protected readonly int $sliceId;
+
     /** @var string */
     private $event;
     /** @var int */
@@ -30,8 +34,6 @@ class ArticleAction
     private $messages = [];
     /** @var Sql */
     private $sql;
-    /** @var array{search: list<string>, replace: list<int>} */
-    private $vars;
 
     public function __construct($moduleId, $function, Sql $sql)
     {
@@ -45,14 +47,11 @@ class ArticleAction
             $this->mode = 1;
         }
         $this->sql = $sql;
-        $this->vars['search'] = ['REX_ARTICLE_ID', 'REX_CLANG_ID', 'REX_CTYPE_ID', 'REX_MODULE_ID', 'REX_SLICE_ID'];
-        $this->vars['replace'] = [
-            Request::request('article_id', 'int'),
-            Request::request('clang', 'int'),
-            Request::request('ctype', 'int'),
-            Request::request('module_id', 'int'),
-            1 == $this->mode ? 0 : Request::request('slice_id', 'int'),
-        ];
+
+        $this->articleId = Request::request('article_id', 'int');
+        $this->clangId = Request::request('clang', 'int');
+        $this->ctypeId = Request::request('ctype', 'int');
+        $this->sliceId = 1 == $this->mode ? 0 : Request::request('slice_id', 'int');
     }
 
     /** @return void */
@@ -93,7 +92,6 @@ class ArticleAction
 
         foreach ($ga as $row) {
             $action = (string) $row->getValue('code');
-            $action = str_replace($this->vars['search'], $this->vars['replace'], $action);
             $action = RexVar::parse($action, RexVar::ENV_BACKEND | RexVar::ENV_INPUT, 'action', $this->sql);
 
             $articleId = (int) $row->getValue('id');
