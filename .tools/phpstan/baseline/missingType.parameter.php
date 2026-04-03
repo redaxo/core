@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 112 errors
+// total 103 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -394,51 +394,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MetaInfo\\Form\\Input\\AbstractInput::getAttribute() has parameter $default with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MetaInfo/Form/Input/AbstractInput.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\ArticleVar::getArticle() has parameter $clang with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/ArticleVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\ArticleVar::getArticle() has parameter $ctype with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/ArticleVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\ArticleVar::getArticle() has parameter $id with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/ArticleVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\ArticleVar::getArticleValue() has parameter $clang with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/ArticleVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\ArticleVar::getArticleValue() has parameter $field with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/ArticleVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\ArticleVar::getArticleValue() has parameter $id with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/ArticleVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\CategoryVar::getCategoryValue() has parameter $clang with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/CategoryVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\CategoryVar::getCategoryValue() has parameter $field with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/CategoryVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\CategoryVar::getCategoryValue() has parameter $id with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/CategoryVar.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\RexVar\\LinkListVar::getWidget() has parameter $name with no type specified.',

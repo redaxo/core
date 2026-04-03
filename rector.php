@@ -342,8 +342,6 @@ return RectorConfig::configure()
         'rex_validator' => Validator\Validator::class,
         'rex_validation_rule' => Validator\ValidationRule::class,
         'rex_var' => RexVar\RexVar::class,
-        'rex_var_article' => RexVar\ArticleVar::class,
-        'rex_var_category' => RexVar\CategoryVar::class,
         'rex_var_link' => RexVar\LinkVar::class,
         'rex_var_linklist' => RexVar\LinkListVar::class,
         'rex_var_media' => RexVar\MediaVar::class,
