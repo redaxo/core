@@ -2373,7 +2373,6 @@
     </PossiblyFalseArgument>
     <PossiblyNullArgument>
       <code><![CDATA[$TEMPLATE->getTemplate()]]></code>
-      <code><![CDATA[$template->getKey()]]></code>
     </PossiblyNullArgument>
   </file>
   <file src="src/Content/ArticleContentEditor.php">
@@ -4502,15 +4501,10 @@
   </file>
   <file src="src/RexVar/TemplateVar.php">
     <PossiblyFalseArgument>
-      <code><![CDATA[$tmpl]]></code>
-      <code><![CDATA[$tmpl]]></code>
+      <code><![CDATA[new Template($id)->getTemplate()]]></code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument>
-      <code><![CDATA[$id]]></code>
-    </PossiblyInvalidArgument>
     <PossiblyNullArgument>
-      <code><![CDATA[$tmpl]]></code>
-      <code><![CDATA[$tmpl]]></code>
+      <code><![CDATA[new Template($id)->getTemplate()]]></code>
     </PossiblyNullArgument>
   </file>
   <file src="src/RexVar/ValueVar.php">

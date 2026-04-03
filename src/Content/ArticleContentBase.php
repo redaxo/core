@@ -442,9 +442,7 @@ class ArticleContentBase
                 $TEMPLATE = new Template($this->template_id);
 
                 Timer::measure('Template: ' . ($TEMPLATE->getKey() ?? $TEMPLATE->getId()), function () use ($TEMPLATE) {
-                    $tplContent = $this->replaceCommonVars($TEMPLATE->getTemplate());
-
-                    require Stream::factory('template/' . $this->template_id, $tplContent);
+                    require Stream::factory('template/' . $this->template_id, $TEMPLATE->getTemplate());
                 });
             } finally {
                 $CONTENT = ob_get_clean();
@@ -493,36 +491,6 @@ class ArticleContentBase
      */
     protected function replaceVars(Sql $sql, $content)
     {
-        $content = $this->replaceCommonVars($content);
-        $content = str_replace(
-            [
-                'REX_MODULE_ID',
-                'REX_MODULE_KEY',
-                'REX_SLICE_ID',
-                'REX_CTYPE_ID',
-            ],
-            [
-                (string) $sql->getValue('module_id'),
-                (string) $sql->getValue(Core::getTable('module') . '.key'),
-                (string) $sql->getValue(Core::getTable('article_slice') . '.id'),
-                (string) $sql->getValue('ctype_id'),
-            ],
-            $content,
-        );
-
-        $content = $this->replaceObjectVars($sql, $content);
-
-        return $content;
-    }
-
-    // ----- REX_VAR Ersetzungen
-
-    /**
-     * @param string $content
-     * @return string
-     */
-    protected function replaceObjectVars(Sql $sql, $content)
-    {
         $sliceId = $sql->getValue(Core::getTablePrefix() . 'article_slice.id');
 
         if ('edit' == $this->mode) {
@@ -535,58 +503,6 @@ class ArticleContentBase
         }
 
         return RexVar::parse($content, $env, 'module', $sql);
-    }
-
-    // ---- Artikelweite globale variablen werden ersetzt
-
-    /**
-     * @param string $content
-     * @param int|null $templateId
-     * @return string
-     */
-    public function replaceCommonVars($content, $templateId = null)
-    {
-        /** @var int|string|null $userId */
-        static $userId = null;
-        /** @var string|null $userLogin */
-        static $userLogin = null;
-
-        // UserId gibts nur im Backend
-        if (null === $userId || null === $userLogin) {
-            if ($user = Core::getUser()) {
-                $userId = $user->getId();
-                $userLogin = $user->getLogin();
-            } else {
-                $userId = '';
-                $userLogin = '';
-            }
-        }
-
-        if (!$templateId) {
-            $templateId = $this->getTemplateId();
-        }
-
-        // calculating the key takes an additional sql query... execute the query only when we are sure the var is used
-        if (str_contains($content, 'REX_TEMPLATE_KEY')) {
-            $template = new Template($templateId);
-            $content = str_replace('REX_TEMPLATE_KEY', $template->getKey(), $content);
-        }
-
-        return str_replace([
-            'REX_ARTICLE_ID',
-            'REX_CATEGORY_ID',
-            'REX_CLANG_ID',
-            'REX_TEMPLATE_ID',
-            'REX_USER_ID',
-            'REX_USER_LOGIN',
-        ], [
-            $this->article_id,
-            $this->category_id,
-            $this->clang,
-            $templateId,
-            $userId,
-            $userLogin,
-        ], $content);
     }
 
     /**
