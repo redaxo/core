@@ -590,7 +590,34 @@ class AddonManager
     {
         $config = Core::getPackageConfig();
         $registeredAddons = Addon::getRegisteredAddons();
+        $packages = self::getComposerPackages();
 
+        foreach (array_diff_key($registeredAddons, $packages) as $addonName => $addon) {
+            $manager = self::factory($addon);
+            $manager->_delete();
+            unset($config[$addonName]);
+        }
+        foreach ($packages as $addonName => $package) {
+            if (!Addon::exists($addonName)) {
+                $config[$addonName]['install'] = false;
+                $config[$addonName]['status'] = false;
+            } else {
+                $addon = Addon::get($addonName);
+                $config[$addonName]['install'] = $addon->isInstalled();
+                $config[$addonName]['status'] = $addon->isAvailable();
+            }
+        }
+        ksort($config);
+
+        Core::setConfig('package-config', $config);
+        Addon::initialize();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getComposerPackages(): array
+    {
         $packages = [];
         foreach (InstalledVersions::getInstalledPackagesByType('redaxo-addon') as $package) {
             $addon = Path::basename($package);
@@ -602,26 +629,6 @@ class AddonManager
             $packages[$addon] = $package;
         }
 
-        foreach (array_diff_key($registeredAddons, $packages) as $addonName => $addon) {
-            $manager = self::factory($addon);
-            $manager->_delete();
-            unset($config[$addonName]);
-        }
-        foreach ($packages as $addonName => $package) {
-            if (!Addon::exists($addonName)) {
-                $config[$addonName]['package'] = $package;
-                $config[$addonName]['install'] = false;
-                $config[$addonName]['status'] = false;
-            } else {
-                $addon = Addon::get($addonName);
-                $config[$addonName]['package'] = $package;
-                $config[$addonName]['install'] = $addon->isInstalled();
-                $config[$addonName]['status'] = $addon->isAvailable();
-            }
-        }
-        ksort($config);
-
-        Core::setConfig('package-config', $config);
-        Addon::initialize();
+        return $packages;
     }
 }

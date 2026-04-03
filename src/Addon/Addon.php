@@ -474,10 +474,17 @@ final class Addon implements AddonInterface
                 $config[(string) $addon]['install'] = false;
             }
         }
+
+        $composerPackages = AddonManager::getComposerPackages();
+
         $addons = self::$addons;
         self::$addons = [];
         foreach ($config as $addonName => $addonConfig) {
-            $addon = $addons[$addonName] ?? new self($addonConfig['package'], $addonName);
+            if (!isset($composerPackages[$addonName])) {
+                continue;
+            }
+
+            $addon = $addons[$addonName] ?? new self($composerPackages[$addonName], $addonName);
             $addon->setProperty('install', $addonConfig['install'] ?? false);
             $addon->setProperty('status', $addonConfig['status'] ?? false);
             self::$addons[$addonName] = $addon;
