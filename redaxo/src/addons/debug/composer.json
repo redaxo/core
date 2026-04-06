@@ -8,7 +8,7 @@
     "require": {
         "php": "^8.4",
         "ext-zip": "*",
-        "redaxo/core": "^6.0@dev",
+        "redaxo/core": "@dev",
         "itsgoingd/clockwork": "^5.3.5"
     },
 

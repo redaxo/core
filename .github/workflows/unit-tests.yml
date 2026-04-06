@@ -6,9 +6,6 @@ on:
     pull_request:
         types: [opened, synchronize, reopened, ready_for_review]
 
-env:
-    COMPOSER_ROOT_VERSION: 6.x-dev
-
 permissions:
     contents: read
 

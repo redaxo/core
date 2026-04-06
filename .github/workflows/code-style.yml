@@ -10,7 +10,6 @@ on:
 
 env:
     writable: ${{ (github.event_name == 'repository_dispatch' || github.ref == 'refs/heads/temp' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') && 1 || 0 }}
-    COMPOSER_ROOT_VERSION: 6.x-dev
 
 permissions:
     contents: read
