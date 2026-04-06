@@ -7,6 +7,6 @@
 
     "require": {
         "php": "^8.4",
-        "redaxo/core": "^6.0@dev"
+        "redaxo/core": "@dev"
     }
 }
