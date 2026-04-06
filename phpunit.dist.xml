@@ -31,7 +31,6 @@
             <directory>src</directory>
             <directory>tests</directory>
             <directory>redaxo/src/addons/debug</directory>
-            <directory>redaxo/src/addons/install</directory>
         </include>
     </source>
 </phpunit>

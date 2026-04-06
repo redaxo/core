@@ -21,7 +21,6 @@
         <directory name="src"/>
         <directory name="tests"/>
         <directory name="redaxo/src/addons/debug"/>
-        <directory name="redaxo/src/addons/install"/>
         <ignoreFiles>
             <directory name="vendor"/>
             <file name=".phpstorm.meta.php" />

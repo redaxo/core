@@ -101,7 +101,7 @@
     @extend .fa-folder;
 }
 .rex-icon-category-without-elements {
-    @extend .fa-regular;    
+    @extend .fa-regular;
     @extend .fa-folder;
 }
 .rex-icon-clear {
@@ -179,10 +179,6 @@
 .rex-icon-info {
     @extend .fa-solid;
     @extend .fa-circle-info;
-}
-.rex-icon-install {
-    @extend .fa-solid;
-    @extend .fa-key;
 }
 .rex-icon-language {
     @extend .fa-solid;

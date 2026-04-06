@@ -13,7 +13,6 @@ $finder = Finder::create()
         __DIR__ . '/src',
         __DIR__ . '/tests',
         __DIR__ . '/redaxo/src/addons/debug',
-        __DIR__ . '/redaxo/src/addons/install',
     ])
     ->append([
         __FILE__,

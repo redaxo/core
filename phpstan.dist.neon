@@ -19,7 +19,6 @@ parameters:
         - src
         - tests
         - redaxo/src/addons/debug
-        - redaxo/src/addons/install
     # https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Redaxo\Core\View\Fragment
@@ -42,9 +41,6 @@ parameters:
         - '#^Offset .* on .* always exists#'
         # https://github.com/phpstan/phpstan/issues/10698
         - '#^Parameter \#1 \$extensionPoint of static method Redaxo\\Core\\ExtensionPoint\\Extension\:\:registerPoint\(\) expects Redaxo\\Core\\ExtensionPoint\\ExtensionPoint\<(.+)\>, Redaxo\\Core\\ExtensionPoint\\ExtensionPoint\<\1\> given\.$#'
-        -
-            message: '#^Method .* throws checked exception Redaxo\\Core\\Exception\\UserMessageException but it''s missing from the PHPDoc @throws tag\.$#'
-            path: redaxo/src/addons/install/*
         -
             identifier: missingType.checkedException
             path: tests/*

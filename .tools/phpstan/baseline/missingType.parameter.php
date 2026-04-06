@@ -2,14 +2,9 @@
 
 declare(strict_types=1);
 
-// total 103 errors
+// total 102 errors
 
 $ignoreErrors = [];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_install_package_update::checkRequirements() has parameter $config with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/package/package_update.php',
-];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleAction::__construct() has parameter $function with no type specified.',
     'count' => 1,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 205 errors
+// total 194 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -34,61 +34,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Property rex_extension_debug::$listeners type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/debug/lib/extensions/extension_debug.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_api_install_core_update::checkRequirements() has parameter $addons with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/api/api_core_update.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'PHPDoc tag @var for variable $conflicts has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/api/api_core_update.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'PHPDoc tag @var for variable $requirements has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/api/api_core_update.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'PHPDoc tag @var for variable $conflicts has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/package/package_update.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'PHPDoc tag @var for variable $requirements has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/package/package_update.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_install_webservice::getCache() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/webservice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_install_webservice::getJson() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/webservice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_install_webservice::post() has parameter $data with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/webservice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_install_webservice::setCache() has parameter $data with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/webservice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'PHPDoc tag @var for variable $cache has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/webservice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property rex_install_webservice::$cache type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/webservice.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Backend\\Controller::pageAddProperties() has parameter $properties with no value type specified in iterable type array.',
