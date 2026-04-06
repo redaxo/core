@@ -22,13 +22,13 @@
         "ext-iconv": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
+        "composer-runtime-api": "^2",
 
         "composer/ca-bundle": "^1.5.11",
         "enshrined/svg-sanitize": "^0.22.0",
         "erusev/parsedown": "^1.8.0",
         "erusev/parsedown-extra": "^0.9.0",
         "filp/whoops": "^2.18.4",
-        "itsgoingd/clockwork": "^5.3.5",
         "lbuchs/webauthn": "^2.2.0",
         "phpmailer/phpmailer": "^7.0.2",
         "psr/log": "^3.0.2",
@@ -54,8 +54,10 @@
         "psalm/plugin-phpunit": "0.19.6",
         "psalm/plugin-symfony": "v5.3.0",
         "rector/rector": "2.3.9",
+        "redaxo/debug": "^2.0@dev",
         "redaxo/php-cs-fixer-config": "3.0.0",
         "redaxo/psalm-plugin": "2.2.0",
+        "redaxo/test": "^1.0@dev",
         "shipmonk/phpstan-baseline-per-identifier": "2.3.0",
         "vimeo/psalm": "6.16.1"
     },
@@ -76,12 +78,15 @@
         "symfony/polyfill-php84": "*"
     },
 
+    "conflict": {
+        "composer/installers": "*"
+    },
+
     "autoload": {
         "psr-4": {
             "Redaxo\\Core\\": "src"
         },
         "classmap": [
-            "redaxo/src/addons/debug/lib/",
             "redaxo/src/addons/install/lib/"
         ],
         "files": [
@@ -191,5 +196,16 @@
             "phpstan/extension-installer": true,
             "symfony/runtime": true
         }
-    }
+    },
+
+    "repositories": [
+        {
+            "type": "path",
+            "url": "redaxo/src/addons/debug"
+        },
+        {
+            "type": "path",
+            "url": "redaxo/src/addons/test"
+        }
+    ]
 }

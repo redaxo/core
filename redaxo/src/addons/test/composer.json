@@ -1,0 +1,12 @@
+{
+    "name": "redaxo/test",
+    "description": "REDAXO test addon",
+    "type": "redaxo-addon",
+    "license": "MIT",
+    "version": "1.0.0-dev",
+
+    "require": {
+        "php": "^8.4",
+        "redaxo/core": "^6.0@dev"
+    }
+}

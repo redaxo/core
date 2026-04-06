@@ -24,9 +24,7 @@ class ScssCompiler
 
     public function __construct()
     {
-        $this->root_dir = Path::addon('be_style');
-        $this->scss_file = Path::addon('be_style', 'assets') . 'styles.scss';
-        $this->css_file = Path::addon('be_style', 'assets') . 'styles.css';
+        $this->root_dir = Path::core('assets_src/scss');
     }
 
     /**

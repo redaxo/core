@@ -26,10 +26,8 @@ class AssetsSyncCommand extends AbstractCommand
         $this
             ->setDescription('Sync assets within the assets-dir with the sources-dir')
             ->setHelp(sprintf(
-                'Sync folders and files of /%s with /%s respectively /%s folders',
+                'Sync folders and files of /%s with source assets folders',
                 rtrim(Path::relative(Path::assets()), '/'),
-                Path::relative(Path::addon('my-addon', 'assets')),
-                Path::relative(Path::core('assets')),
             ))
         ;
     }

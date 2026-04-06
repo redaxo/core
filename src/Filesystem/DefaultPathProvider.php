@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Filesystem;
 
 use Redaxo\Core\AbstractProject;
+use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Util\Type;
@@ -271,9 +272,15 @@ class DefaultPathProvider
      *
      * @param non-empty-string $addon
      * @return non-empty-string
+     *
+     * @psalm-taint-specialize
      */
     public function addon(string $addon, string $file): string
     {
-        return $this->src('addons/' . $addon . '/' . $file);
+        if (!$this->provideAbsolutes) {
+            throw new LogicException('Source paths are only available for absolute paths.');
+        }
+
+        return strtr(Addon::require($addon)->path . '/' . $file, '/\\', DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
     }
 }
