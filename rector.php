@@ -87,7 +87,6 @@ return RectorConfig::configure()
         'src/',
         'tests/',
         'redaxo/src/addons/debug/',
-        'redaxo/src/addons/install/',
     ])
     ->withParallel()
     ->withPhpVersion(PhpVersion::PHP_84)

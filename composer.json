@@ -86,9 +86,6 @@
         "psr-4": {
             "Redaxo\\Core\\": "src"
         },
-        "classmap": [
-            "redaxo/src/addons/install/lib/"
-        ],
         "files": [
             "src/View/escape.php"
         ]
