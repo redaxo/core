@@ -149,14 +149,6 @@
                             "description": "Directory path used to save session data (session.save_path)",
                             "type": ["null", "string"]
                         },
-                        "sid_length": {
-                            "description": "Length of session ID string (session.sid_length)",
-                            "type": ["null", "integer"]
-                        },
-                        "sid_bits_per_character": {
-                            "description": "Number of bits in encoded session ID character (session.sid_bits_per_character)",
-                            "type": ["null", "integer"]
-                        },
                         "cookie": {
                             "type": "object",
                             "properties": {
