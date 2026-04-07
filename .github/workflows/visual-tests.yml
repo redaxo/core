@@ -94,10 +94,6 @@ jobs:
                     php redaxo/bin/console config:set --type boolean debug.enabled true -v
                     php redaxo/bin/console config:set --type boolean debug.throw_always_exception true -v
 
-            -   name: Create user, update config
-                run: |
-                    php redaxo/bin/console user:create myusername mypassword --admin --ansi -v
-                    php redaxo/bin/console config:set error_email 'test@redaxo.invalid' --ansi -v
             -   name: Import mock data
                 run: |
                     mkdir -p $GITHUB_WORKSPACE/redaxo/data/addons/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/redaxo/data/addons/backup/
