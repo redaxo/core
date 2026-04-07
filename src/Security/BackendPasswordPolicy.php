@@ -94,12 +94,11 @@ class BackendPasswordPolicy extends PasswordPolicy
             return true;
         }
 
-        $password = sha1($password);
         $previousPasswords = Type::array(json_decode($previousPasswords, true));
         $previousPasswords = $this->cleanUpPreviousPasswords($previousPasswords);
 
         foreach ($previousPasswords as $previousPassword) {
-            if (BackendLogin::passwordVerify($password, $previousPassword[0], true)) {
+            if (BackendLogin::passwordVerify($password, $previousPassword[0])) {
                 return I18n::msg('password_already_used');
             }
         }

@@ -139,13 +139,12 @@ class Login
      *
      * @param string $login
      * @param string $password
-     * @param bool $isPreHashed
      * @return void
      */
-    public function setLogin(#[SensitiveParameter] $login, #[SensitiveParameter] $password, $isPreHashed = false)
+    public function setLogin(#[SensitiveParameter] $login, #[SensitiveParameter] $password)
     {
         $this->userLogin = $login;
-        $this->userPassword = $isPreHashed ? $password : sha1($password);
+        $this->userPassword = $password;
     }
 
     /**
@@ -283,7 +282,7 @@ class Login
                 $this->user = Sql::factory($this->DB);
 
                 $this->user->setQuery($this->loginQuery, [':login' => $this->userLogin]);
-                if (1 == $this->user->getRows() && self::passwordVerify($this->userPassword, (string) $this->user->getValue($this->passwordColumn), true)) {
+                if (1 == $this->user->getRows() && static::passwordVerify($this->userPassword, (string) $this->user->getValue($this->passwordColumn))) {
                     $ok = true;
                     static::regenerateSessionId();
                     $this->setSessionVar(self::SESSION_START_TIME, time());
@@ -601,37 +600,17 @@ class Login
         return $cookieParams;
     }
 
-    /**
-     * Verschlüsselt den übergebnen String.
-     *
-     * @param string $password
-     * @param bool $isPreHashed
-     * @return string Returns the hashed password
-     */
-    public static function passwordHash(#[SensitiveParameter] $password, $isPreHashed = false)
+    public static function passwordHash(#[SensitiveParameter] string $password): string
     {
-        $password = $isPreHashed ? $password : sha1($password);
-
         return password_hash($password, PASSWORD_DEFAULT);
     }
 
-    /**
-     * @param string $password
-     * @param string $hash
-     * @param bool $isPreHashed
-     * @return bool returns TRUE if the password and hash match, or FALSE otherwise
-     */
-    public static function passwordVerify(#[SensitiveParameter] $password, #[SensitiveParameter] $hash, $isPreHashed = false)
+    public static function passwordVerify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash): bool
     {
-        $password = $isPreHashed ? $password : sha1($password);
         return password_verify($password, $hash);
     }
 
-    /**
-     * @param string $hash
-     * @return bool returns TRUE if the hash should be rehashed to match the given algo and options, or FALSE otherwise
-     */
-    public static function passwordNeedsRehash(#[SensitiveParameter] $hash)
+    public static function passwordNeedsRehash(#[SensitiveParameter] string $hash): bool
     {
         return password_needs_rehash($hash, PASSWORD_DEFAULT);
     }

@@ -40,14 +40,14 @@ final class BackendLoginTest extends TestCase
     public function testSuccessfullLogin(): void
     {
         $login = new BackendLogin();
-        $login->setLogin(self::LOGIN, self::PASSWORD, false);
+        $login->setLogin(self::LOGIN, self::PASSWORD);
         self::assertTrue($login->checkLogin());
     }
 
     public function testFailedLogin(): void
     {
         $login = new BackendLogin();
-        $login->setLogin(self::LOGIN, 'somethingwhichisnotcorrect', false);
+        $login->setLogin(self::LOGIN, 'somethingwhichisnotcorrect');
         self::assertFalse($login->checkLogin());
     }
 
@@ -56,10 +56,10 @@ final class BackendLoginTest extends TestCase
     {
         $login = new BackendLogin();
 
-        $login->setLogin(self::LOGIN, 'somethingwhichisnotcorrect', false);
+        $login->setLogin(self::LOGIN, 'somethingwhichisnotcorrect');
         self::assertFalse($login->checkLogin());
 
-        $login->setLogin(self::LOGIN, self::PASSWORD, false);
+        $login->setLogin(self::LOGIN, self::PASSWORD);
         self::assertTrue($login->checkLogin());
     }
 
@@ -70,32 +70,32 @@ final class BackendLoginTest extends TestCase
         $tries = $login->getLoginPolicy()->getMaxTriesUntilDelay();
 
         for ($i = 0; $i < $tries; ++$i) {
-            $login->setLogin(self::LOGIN, 'somethingwhichisnotcorrect', false);
+            $login->setLogin(self::LOGIN, 'somethingwhichisnotcorrect');
             self::assertFalse($login->checkLogin());
         }
 
         // we need to re-create login-objects because the time component is static in their sql queries
         $login = new BackendLogin();
-        $login->setLogin(self::LOGIN, self::PASSWORD, false);
+        $login->setLogin(self::LOGIN, self::PASSWORD);
         self::assertFalse($login->checkLogin(), 'account locked after fast login attempts');
 
         sleep(1);
 
         $login = new BackendLogin();
-        $login->setLogin(self::LOGIN, self::PASSWORD, false);
+        $login->setLogin(self::LOGIN, self::PASSWORD);
         self::assertFalse($login->checkLogin(), 'even seconds later account is locked');
 
         sleep($login->getLoginPolicy()->getReloginDelay() + 1);
 
         $login = new BackendLogin();
-        $login->setLogin(self::LOGIN, self::PASSWORD, false);
+        $login->setLogin(self::LOGIN, self::PASSWORD);
         self::assertTrue($login->checkLogin(), 'after waiting the account should be unlocked');
     }
 
     public function testLogout(): void
     {
         $login = new BackendLogin();
-        $login->setLogin(self::LOGIN, self::PASSWORD, false);
+        $login->setLogin(self::LOGIN, self::PASSWORD);
         self::assertTrue($login->checkLogin());
         $login->setLogout(true);
         self::assertFalse($login->checkLogin());

@@ -53,7 +53,7 @@ if ('' != $rexUserLoginmessage) {
 
 $content .= '
     <fieldset>
-        <input type="hidden" name="javascript" value="0" id="javascript" />';
+';
 
 $formElements = [];
 
@@ -132,15 +132,6 @@ $content = '
 <script type="text/javascript" nonce="' . Response::getNonce() . '">
      <!--
     jQuery(function($) {
-        $("#rex-form-login")
-            .submit(function(){
-                var pwInp = $("#rex-id-login-password");
-                if(pwInp.val() != "") {
-                    $("#rex-form-login").append(\'<input type="hidden" name="\'+pwInp.attr("name")+\'" value="\'+Sha1.hash(pwInp.val())+\'" />\');
-                }
-        });
-
-        $("#javascript").val("1");
         ' . $js . '
     });
      //-->
