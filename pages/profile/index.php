@@ -13,7 +13,6 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Security\CsrfToken;
-use Redaxo\Core\Security\Login;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Security\WebAuthn;
 use Redaxo\Core\Translation\I18n;
@@ -158,7 +157,7 @@ if (Request::post('upd_psw_button', 'bool')) {
     } elseif ($passwordChangeRequired && $userpsw === $userpswNew1) {
         $error = I18n::msg('password_not_changed');
     } else {
-        $userpswNew1 = Login::passwordHash($userpswNew1);
+        $userpswNew1 = BackendLogin::passwordHash($userpswNew1);
 
         $updateuser = Sql::factory();
         $updateuser->setTable(Core::getTablePrefix() . 'user');
