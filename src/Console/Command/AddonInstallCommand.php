@@ -28,7 +28,7 @@ class AddonInstallCommand extends AbstractCommand
 
                 foreach (Addon::getRegisteredAddons() as $package) {
                     // allow all packages, because we support --re-intall for already installed ones
-                    $packageNames[] = $package->getPackageId();
+                    $packageNames[] = $package->name;
                 }
 
                 return $packageNames;
@@ -56,9 +56,9 @@ class AddonInstallCommand extends AbstractCommand
         if ($package->isInstalled() && !$input->getOption('re-install')) {
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
-            $question = new ConfirmationQuestion('Addon "' . $package->getPackageId() . '" is already installed. Should it be reinstalled? (y/n) ', false);
+            $question = new ConfirmationQuestion('Addon "' . $package->name . '" is already installed. Should it be reinstalled? (y/n) ', false);
             if (!$helper->ask($input, $output, $question)) {
-                $io->success('Addon "' . $package->getPackageId() . '" wasn\'t reinstalled');
+                $io->success('Addon "' . $package->name . '" wasn\'t reinstalled');
                 return Command::SUCCESS;
             }
         }

@@ -22,18 +22,6 @@ final class NullAddon implements AddonInterface
     use SingletonTrait;
 
     #[Override]
-    public function getName(): string
-    {
-        return self::class;
-    }
-
-    #[Override]
-    public function getPackageId(): null
-    {
-        return null;
-    }
-
-    #[Override]
     public function getPath(string $file = ''): never
     {
         throw new LogicException(sprintf('Calling %s on %s is not allowed', __FUNCTION__, self::class));

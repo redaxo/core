@@ -74,6 +74,7 @@ use Redaxo\Core\Util;
 use Redaxo\Core\Validator;
 use Redaxo\Core\View;
 use Redaxo\Rector\Rule as RedaxoRule;
+use Redaxo\Rector\ValueObject\MethodCallToPropertyFetch;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -509,6 +510,10 @@ return RectorConfig::configure()
         new FuncCallToStaticCall('rex_getUrl', Filesystem\Url::class, 'article'),
 
         new FuncCallToStaticCall('rex_delete_cache', Cache::class, 'delete'),
+    ])
+    ->withConfiguredRule(RedaxoRule\MethodCallToPropertyFetchRector::class, [
+        new MethodCallToPropertyFetch(Addon\Addon::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Addon\Addon::class, 'getPackageId', 'name'),
     ])
     ->withConfiguredRule(ArgumentRemoverRector::class, [
         new ArgumentRemover(Util\Str::class, 'buildQuery', 1, null),

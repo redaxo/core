@@ -789,7 +789,7 @@
   <file src="pages/addon/list.php">
     <MixedArgumentTypeCoercion>
       <code><![CDATA[[
-        'package' => $package->getPackageId(),
+        'package' => $package->name,
         'function' => $function,
     ] + AddonOperation::getUrlParams()]]></code>
     </MixedArgumentTypeCoercion>

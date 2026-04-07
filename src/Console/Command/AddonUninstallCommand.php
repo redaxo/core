@@ -28,7 +28,7 @@ class AddonUninstallCommand extends AbstractCommand
                         continue;
                     }
 
-                    $packageNames[] = $package->getPackageId();
+                    $packageNames[] = $package->name;
                 }
 
                 return $packageNames;

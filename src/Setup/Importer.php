@@ -211,7 +211,7 @@ class Importer
             $manager = AddonManager::factory($package);
 
             if (!$manager->install()) {
-                $error .= '<li>' . escape($package->getPackageId()) . '<ul><li>' . $manager->getMessage() . '</li></ul></li>';
+                $error .= '<li>' . escape($package->name) . '<ul><li>' . $manager->getMessage() . '</li></ul></li>';
             }
         }
 

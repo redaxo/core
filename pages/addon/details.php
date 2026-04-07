@@ -10,7 +10,7 @@ use Redaxo\Core\View\View;
 
 $package = Addon::require(Request::request('package', 'string'));
 $subPage = Request::request('subpage', 'string');
-$packageId = $package->getPackageId();
+$packageId = $package->name;
 
 $hasChangelog = is_readable($package->getPath('CHANGELOG.md'));
 

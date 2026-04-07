@@ -409,7 +409,7 @@ final class Controller
     {
         if (is_array($page) && isset($page['title']) && (false !== ($page['live_mode'] ?? null) || !Core::isLiveMode())) {
             $pageArray = $page;
-            $pageKey = $pageKey ?: $package->getName();
+            $pageKey = $pageKey ?: $package->name;
             if ($createMainPage || isset($pageArray['main']) && $pageArray['main']) {
                 $page = new MainPage('addons', $pageKey, $pageArray['title']);
             } else {

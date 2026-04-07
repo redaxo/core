@@ -7,20 +7,6 @@ use Redaxo\Core\Util\Formatter;
 interface AddonInterface
 {
     /**
-     * Returns the name of the addon.
-     *
-     * @return non-empty-string Name
-     */
-    public function getName(): string;
-
-    /**
-     * Returns the addon ID.
-     *
-     * @return non-empty-string|null
-     */
-    public function getPackageId(): ?string;
-
-    /**
      * Returns the base path.
      *
      * @return non-empty-string
