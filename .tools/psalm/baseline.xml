@@ -1730,7 +1730,6 @@
   </file>
   <file src="src/Addon/AddonManager.php">
     <MixedArgument>
-      <code><![CDATA[$addonId]]></code>
       <code><![CDATA[$key]]></code>
     </MixedArgument>
     <MixedArrayOffset>
@@ -1738,7 +1737,6 @@
       <code><![CDATA[$requires[$id]]]></code>
     </MixedArrayOffset>
     <MixedAssignment>
-      <code><![CDATA[$addonId]]></code>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$load]]></code>
       <code><![CDATA[$normal[]]]></code>
