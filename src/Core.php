@@ -145,7 +145,7 @@ final class Core
                 break;
             case 'version':
                 if (!is_string($value) || !preg_match('/^\d+(?:\.\d+)*(?:\.x)*(?:-\w+)?$/', $value)) {
-                    throw new InvalidArgumentException('"' . $key . '" property: expecting $value to be a valid version string.');
+                    throw new InvalidArgumentException(sprintf('"%s" property: expecting $value to be a valid version string, got %s.', $key, is_string($value) ? '"' . $value . '"' : get_debug_type($value)));
                 }
                 break;
         }
