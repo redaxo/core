@@ -39,63 +39,6 @@
                 "$ref": "#/definitions/page"
             }
         },
-        "requires": {
-            "description": "Package requirements",
-            "type": "object",
-            "properties": {
-                "php": {
-                    "description": "Required php version constraint and/or required php extensions",
-                    "oneOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "object",
-                            "properties": {
-                                "version": {
-                                    "description": "Required php version constraint",
-                                    "type": "string"
-                                },
-                                "extensions": {
-                                    "description": "Array of required php extension names",
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    }
-                                }
-                            },
-                            "additionalProperties": false
-                        }
-                    ]
-                },
-                "redaxo": {
-                    "description": "Required REDAXO version constraint",
-                    "type": "string"
-                },
-                "packages": {
-                    "description": "Required packages with version constraints",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            },
-            "additionalProperties": false
-        },
-        "conflicts": {
-            "description": "Package conflicts",
-            "type": "object",
-            "properties": {
-                "packages": {
-                    "description": "Conflicted packages with version constraints",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            },
-            "additionalProperties": false
-        },
         "default_config": {
             "description": "Default values for Redaxo\\Core\\Config",
             "type": "object"
@@ -111,14 +54,6 @@
             "description": "Loading position",
             "enum": ["early", "normal", "late"],
             "default": "normal"
-        },
-        "installer_ignore": {
-            "description": "Directories/files that should be ignored by installer",
-            "type": "array",
-            "items": {
-                "type": "string",
-                "pattern": "^[^/]+$"
-            }
         }
     },
     "additionalProperties": true,

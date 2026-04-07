@@ -89,40 +89,4 @@ final class VersionTest extends TestCase
 
         self::assertNull(Version::gitHash(__DIR__, 'foo/bar'));
     }
-
-    #[DataProvider('dataMatchVersionConstraints')]
-    public function testMatchVersionConstraints(bool $expected, string $version, string $constraints): void
-    {
-        self::assertSame($expected, Version::matchesConstraints($version, $constraints));
-    }
-
-    /** @return list<array{bool, string, string}> */
-    public static function dataMatchVersionConstraints(): array
-    {
-        return [
-            [true, '1.0.4', '1.0.4'],
-            [false, '1.0.4', '1.0.5'],
-            [true, '1.0.4', '*'],
-            [true, '2.5.3', '2.*'],
-            [false, '1.1', '2.*'],
-            [false, '13.0', '12.*'],
-            [false, '1.1', '1.2.*'],
-            [false, '1.3', '1.2.*'],
-            [true, '1.2.1', '1.2.*'],
-            [false, '1.0.4', '>=1.1'],
-            [false, '1.1.0-beta1', '>=1.1'],
-            [true, '1.1.0', '>=1.1'],
-            [true, '2.0', '>=1.1'],
-            [false, '3.0', '>=1.1, <3.0'],
-            [false, '1.0', '^1.0.3'],
-            [true, '1.0.3', '^1.0.3'],
-            [true, '1.9', '^1.0.3'],
-            [false, '2.0', '^1.0.3'],
-            [false, '2.0-beta1', '^1.0.3'],
-            [true, '1.0.3', '~1.0.3'],
-            [true, '1.0.5', '~1.0.3'],
-            [false, '1.1', '~1.0.3'],
-            [false, '1.1-beta1', '~1.0.3'],
-        ];
-    }
 }
