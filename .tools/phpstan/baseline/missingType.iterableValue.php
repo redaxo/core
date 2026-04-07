@@ -8,32 +8,32 @@ $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_debug::getTrace() return type has no value type specified in iterable type array.',
     'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/lib/debug.php',
+    'path' => __DIR__ . '/../../../addons/debug/lib/debug.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_extension_debug::getExtensionPoints() return type has no value type specified in iterable type array.',
     'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/lib/extensions/extension_debug.php',
+    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_extension_debug::getExtensions() return type has no value type specified in iterable type array.',
     'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/lib/extensions/extension_debug.php',
+    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Property rex_extension_debug::$extensionPoints type has no value type specified in iterable type array.',
     'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/lib/extensions/extension_debug.php',
+    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Property rex_extension_debug::$extensions type has no value type specified in iterable type array.',
     'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/lib/extensions/extension_debug.php',
+    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Property rex_extension_debug::$listeners type has no value type specified in iterable type array.',
     'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/debug/lib/extensions/extension_debug.php',
+    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Backend\\Controller::pageAddProperties() has parameter $properties with no value type specified in iterable type array.',

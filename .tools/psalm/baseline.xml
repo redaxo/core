@@ -1,5 +1,135 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
+  <file src="addons/debug/boot.php">
+    <MixedArgument>
+      <code><![CDATA[$query['query']]]></code>
+      <code><![CDATA[rex_debug_clockwork::getInstance()->getRequest()->id]]></code>
+    </MixedArgument>
+    <MixedArrayAccess>
+      <code><![CDATA[$query['duration']]]></code>
+      <code><![CDATA[$query['query']]]></code>
+    </MixedArrayAccess>
+    <MixedAssignment>
+      <code><![CDATA[$ep]]></code>
+      <code><![CDATA[$query]]></code>
+      <code><![CDATA[$req]]></code>
+    </MixedAssignment>
+    <MixedMethodCall>
+      <code><![CDATA[counters]]></code>
+      <code><![CDATA[event]]></code>
+      <code><![CDATA[finalize]]></code>
+      <code><![CDATA[storeRequest]]></code>
+      <code><![CDATA[storeRequest]]></code>
+      <code><![CDATA[table]]></code>
+      <code><![CDATA[table]]></code>
+      <code><![CDATA[title]]></code>
+      <code><![CDATA[userData]]></code>
+    </MixedMethodCall>
+    <MixedOperand>
+      <code><![CDATA[$req->databaseDeletes]]></code>
+      <code><![CDATA[$req->databaseInserts]]></code>
+      <code><![CDATA[$req->databaseOthers]]></code>
+      <code><![CDATA[$req->databaseSelects]]></code>
+      <code><![CDATA[$req->databaseSlowQueries]]></code>
+      <code><![CDATA[$req->databaseUpdates]]></code>
+    </MixedOperand>
+    <MixedPropertyAssignment>
+      <code><![CDATA[$req]]></code>
+      <code><![CDATA[$req]]></code>
+      <code><![CDATA[$req]]></code>
+      <code><![CDATA[$req]]></code>
+      <code><![CDATA[$req]]></code>
+      <code><![CDATA[$req]]></code>
+      <code><![CDATA[$req]]></code>
+      <code><![CDATA[$req]]></code>
+    </MixedPropertyAssignment>
+    <MixedPropertyFetch>
+      <code><![CDATA[$clockwork->getRequest()->time]]></code>
+      <code><![CDATA[$req->databaseDeletes]]></code>
+      <code><![CDATA[$req->databaseInserts]]></code>
+      <code><![CDATA[$req->databaseOthers]]></code>
+      <code><![CDATA[$req->databaseQueries]]></code>
+      <code><![CDATA[$req->databaseSelects]]></code>
+      <code><![CDATA[$req->databaseSlowQueries]]></code>
+      <code><![CDATA[$req->databaseUpdates]]></code>
+      <code><![CDATA[rex_debug_clockwork::getInstance()->getRequest()->id]]></code>
+    </MixedPropertyFetch>
+    <PossiblyFalseArgument>
+      <code><![CDATA[$index]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyNullArgument>
+      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
+    </PossiblyNullArgument>
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
+      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
+    </PossiblyUndefinedArrayOffset>
+  </file>
+  <file src="addons/debug/install.php">
+    <PossiblyFalseArgument>
+      <code><![CDATA[$index]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyNullArgument>
+      <code><![CDATA[$index]]></code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="addons/debug/lib/debug.php">
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$trace[$i + 1]['class']]]></code>
+    </PossiblyUndefinedArrayOffset>
+  </file>
+  <file src="addons/debug/lib/debug_clockwork.php">
+    <MixedAssignment>
+      <code><![CDATA[$clockwork]]></code>
+      <code><![CDATA[self::$instance]]></code>
+    </MixedAssignment>
+    <MixedMethodCall>
+      <code><![CDATA[addDataSource]]></code>
+      <code><![CDATA[getClockwork]]></code>
+    </MixedMethodCall>
+    <MixedReturnStatement>
+      <code><![CDATA[self::getHelper()->getClockwork()]]></code>
+    </MixedReturnStatement>
+    <PossiblyNullArgument>
+      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
+    </PossiblyNullArgument>
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$_SERVER['HTTP_HOST']]]></code>
+      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
+    </PossiblyUndefinedArrayOffset>
+  </file>
+  <file src="addons/debug/lib/extensions/extension_debug.php">
+    <MixedArrayAssignment>
+      <code><![CDATA[self::$listeners[$ep][]]]></code>
+    </MixedArrayAssignment>
+    <MixedAssignment>
+      <code><![CDATA[$data['listeners']]]></code>
+    </MixedAssignment>
+    <MixedOperand>
+      <code><![CDATA[$trace['file']]]></code>
+      <code><![CDATA[$trace['line']]]></code>
+    </MixedOperand>
+  </file>
+  <file src="addons/debug/lib/extensions/logger_debug.php">
+    <MixedArgument>
+      <code><![CDATA[rex_debug::getTrace()['trace']]]></code>
+    </MixedArgument>
+    <MixedAssignment>
+      <code><![CDATA[$levelType]]></code>
+      <code><![CDATA[$trace]]></code>
+    </MixedAssignment>
+  </file>
+  <file src="addons/debug/lib/extensions/sql_debug.php">
+    <MixedMethodCall>
+      <code><![CDATA[addDatabaseQuery]]></code>
+      <code><![CDATA[addDatabaseQuery]]></code>
+    </MixedMethodCall>
+    <PossiblyUndefinedArrayOffset>
+      <code><![CDATA[$trace[$i]['line']]]></code>
+      <code><![CDATA[$trace[0]['file']]]></code>
+      <code><![CDATA[$trace[0]['line']]]></code>
+    </PossiblyUndefinedArrayOffset>
+  </file>
   <file src="boot/backend.php">
     <InvalidOperand>
       <code><![CDATA[strtotime($version['history_date'])]]></code>
@@ -1582,136 +1712,6 @@
       <code><![CDATA[isAdmin]]></code>
     </PossiblyNullReference>
   </file>
-  <file src="redaxo/src/addons/debug/boot.php">
-    <MixedArgument>
-      <code><![CDATA[$query['query']]]></code>
-      <code><![CDATA[rex_debug_clockwork::getInstance()->getRequest()->id]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$query['duration']]]></code>
-      <code><![CDATA[$query['query']]]></code>
-    </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$ep]]></code>
-      <code><![CDATA[$query]]></code>
-      <code><![CDATA[$req]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[counters]]></code>
-      <code><![CDATA[event]]></code>
-      <code><![CDATA[finalize]]></code>
-      <code><![CDATA[storeRequest]]></code>
-      <code><![CDATA[storeRequest]]></code>
-      <code><![CDATA[table]]></code>
-      <code><![CDATA[table]]></code>
-      <code><![CDATA[title]]></code>
-      <code><![CDATA[userData]]></code>
-    </MixedMethodCall>
-    <MixedOperand>
-      <code><![CDATA[$req->databaseDeletes]]></code>
-      <code><![CDATA[$req->databaseInserts]]></code>
-      <code><![CDATA[$req->databaseOthers]]></code>
-      <code><![CDATA[$req->databaseSelects]]></code>
-      <code><![CDATA[$req->databaseSlowQueries]]></code>
-      <code><![CDATA[$req->databaseUpdates]]></code>
-    </MixedOperand>
-    <MixedPropertyAssignment>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$req]]></code>
-    </MixedPropertyAssignment>
-    <MixedPropertyFetch>
-      <code><![CDATA[$clockwork->getRequest()->time]]></code>
-      <code><![CDATA[$req->databaseDeletes]]></code>
-      <code><![CDATA[$req->databaseInserts]]></code>
-      <code><![CDATA[$req->databaseOthers]]></code>
-      <code><![CDATA[$req->databaseQueries]]></code>
-      <code><![CDATA[$req->databaseSelects]]></code>
-      <code><![CDATA[$req->databaseSlowQueries]]></code>
-      <code><![CDATA[$req->databaseUpdates]]></code>
-      <code><![CDATA[rex_debug_clockwork::getInstance()->getRequest()->id]]></code>
-    </MixedPropertyFetch>
-    <PossiblyFalseArgument>
-      <code><![CDATA[$index]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
-    </PossiblyNullArgument>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
-      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="redaxo/src/addons/debug/install.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$index]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$index]]></code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="redaxo/src/addons/debug/lib/debug.php">
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$trace[$i + 1]['class']]]></code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="redaxo/src/addons/debug/lib/debug_clockwork.php">
-    <MixedAssignment>
-      <code><![CDATA[$clockwork]]></code>
-      <code><![CDATA[self::$instance]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[addDataSource]]></code>
-      <code><![CDATA[getClockwork]]></code>
-    </MixedMethodCall>
-    <MixedReturnStatement>
-      <code><![CDATA[self::getHelper()->getClockwork()]]></code>
-    </MixedReturnStatement>
-    <PossiblyNullArgument>
-      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
-    </PossiblyNullArgument>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$_SERVER['HTTP_HOST']]]></code>
-      <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="redaxo/src/addons/debug/lib/extensions/extension_debug.php">
-    <MixedArrayAssignment>
-      <code><![CDATA[self::$listeners[$ep][]]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$data['listeners']]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$trace['file']]]></code>
-      <code><![CDATA[$trace['line']]]></code>
-    </MixedOperand>
-  </file>
-  <file src="redaxo/src/addons/debug/lib/extensions/logger_debug.php">
-    <MixedArgument>
-      <code><![CDATA[rex_debug::getTrace()['trace']]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$levelType]]></code>
-      <code><![CDATA[$trace]]></code>
-    </MixedAssignment>
-  </file>
-  <file src="redaxo/src/addons/debug/lib/extensions/sql_debug.php">
-    <MixedMethodCall>
-      <code><![CDATA[addDatabaseQuery]]></code>
-      <code><![CDATA[addDatabaseQuery]]></code>
-    </MixedMethodCall>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$trace[$i]['line']]]></code>
-      <code><![CDATA[$trace[0]['file']]]></code>
-      <code><![CDATA[$trace[0]['line']]]></code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
   <file src="src/Addon/Addon.php">
     <MixedArgument>
       <code><![CDATA[$value]]></code>
@@ -1810,9 +1810,6 @@
     </MixedAssignment>
   </file>
   <file src="src/Backend/Controller.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[str_replace($package->getPath(), '', $path)]]></code>
-    </ArgumentTypeCoercion>
     <MixedArgument>
       <code><![CDATA[$addon->getProperty('page')]]></code>
       <code><![CDATA[$page]]></code>

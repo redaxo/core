@@ -118,7 +118,7 @@ async function processScreenshot(page, screenshotName) {
         document.documentElement.setAttribute('spellcheck', 'false');
         // hide blinking cursor/icon
         // disable animations / transitions
-        // disable box-shadow on navbar to prevent visual noise by https://github.com/redaxo/redaxo/blob/7fc26b402f7e92bde87347b5b7a82522d6385e04/redaxo/src/addons/be_style/assets/js/redaxo.js#L211-L222
+        // disable box-shadow on navbar to prevent visual noise by https://github.com/redaxo/redaxo/blob/120950020f35e9158030513744835c936e527bc6/assets/js/redaxo.js#L211-L222
 
         document.body.insertAdjacentHTML('beforeend', `<style type="text/css">input { caret-color: transparent !important; } * { animation: initial !important; transition: none !important; mix-blend-mode: unset !important;} .navbar {box-shadow: none !important; } body {font-family: sans-serif;} #rex-js-main-sidebar{opacity: 1 !important;} #rex-js-nav-top{position: absolute; transform: none !important;}</style>`);
     });

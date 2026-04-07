@@ -15,7 +15,7 @@
 # Exclude non-essential files from dist
 /.* export-ignore
 /.phpstorm.meta.php -export-ignore
-/redaxo/src/addons/test export-ignore
+/addons/ export-ignore
 /tests/ export-ignore
 /docker-compose.yml export-ignore
 /phpstan.dist.neon export-ignore

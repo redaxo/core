@@ -12,15 +12,14 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <!-- restrict to core and core addons, ignore other locally installed addons -->
         <directory name=".tools/project"/>
+        <directory name="addons"/>
         <directory name="boot"/>
         <directory name="fragments"/>
         <directory name="pages"/>
         <directory name="setup"/>
         <directory name="src"/>
         <directory name="tests"/>
-        <directory name="redaxo/src/addons/debug"/>
         <ignoreFiles>
             <directory name="vendor"/>
             <file name=".phpstorm.meta.php" />

@@ -199,16 +199,6 @@ final class Path
     }
 
     /**
-     * Returns the path to the src folder.
-     *
-     * @return non-empty-string
-     */
-    public static function src(string $file = ''): string
-    {
-        return self::$pathprovider->src($file);
-    }
-
-    /**
      * Returns the path to the actual core.
      *
      * @return non-empty-string

@@ -77,8 +77,8 @@ use Redaxo\Rector\Rule as RedaxoRule;
 
 return RectorConfig::configure()
     ->withPaths([
-        // restrict to core and core addons, ignore other locally installed addons
         '.tools/project/',
+        'addons',
         'assets_src/vendor_files.php',
         'boot/',
         'fragments/',
@@ -86,7 +86,6 @@ return RectorConfig::configure()
         'setup/',
         'src/',
         'tests/',
-        'redaxo/src/addons/debug/',
     ])
     ->withParallel()
     ->withPhpVersion(PhpVersion::PHP_84)

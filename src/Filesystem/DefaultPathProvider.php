@@ -258,16 +258,6 @@ class DefaultPathProvider
     }
 
     /**
-     * Returns the path to the src folder.
-     *
-     * @return non-empty-string
-     */
-    public function src(string $file): string
-    {
-        return $this->core('redaxo/src/' . $file);
-    }
-
-    /**
      * Returns the base path to the folder of the given addon.
      *
      * @param non-empty-string $addon

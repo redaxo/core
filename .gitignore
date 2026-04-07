@@ -13,11 +13,6 @@
 /.tools/project/src/*
 !/.tools/project/src/Project.php
 
-# Addons
-/redaxo/src/addons/*
-!/redaxo/src/addons/debug/
-!/redaxo/src/addons/test/
-
 # PhpStorm setting
 /.idea/*
 !/.idea/encodings.xml

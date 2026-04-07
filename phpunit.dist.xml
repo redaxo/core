@@ -28,9 +28,9 @@
     </testsuites>
     <source ignoreIndirectDeprecations="true">
         <include>
+            <directory>addons</directory>
             <directory>src</directory>
             <directory>tests</directory>
-            <directory>redaxo/src/addons/debug</directory>
         </include>
     </source>
 </phpunit>
