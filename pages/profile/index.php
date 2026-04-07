@@ -10,9 +10,9 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Form\Select\Select;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Security\CsrfToken;
-use Redaxo\Core\Security\Login;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Security\WebAuthn;
 use Redaxo\Core\Translation\I18n;
@@ -126,7 +126,7 @@ if ($update && !$error) {
 
 $verifyLogin = static function () use ($user, $login, $userpsw, $webauthn): bool|string {
     if (!$login->getPasskey()) {
-        if (!$userpsw || !Login::passwordVerify($userpsw, $user->getValue('password'))) {
+        if (!$userpsw || !BackendLogin::passwordVerify($userpsw, $user->getValue('password'))) {
             return I18n::msg('user_psw_verify_error');
         }
 
@@ -157,7 +157,7 @@ if (Request::post('upd_psw_button', 'bool')) {
     } elseif ($passwordChangeRequired && $userpsw === $userpswNew1) {
         $error = I18n::msg('password_not_changed');
     } else {
-        $userpswNew1 = Login::passwordHash($userpswNew1);
+        $userpswNew1 = BackendLogin::passwordHash($userpswNew1);
 
         $updateuser = Sql::factory();
         $updateuser->setTable(Core::getTablePrefix() . 'user');

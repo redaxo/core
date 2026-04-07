@@ -150,9 +150,7 @@ if (Core::isSetup()) {
     if (($rexUserLogin || $passkey) && !CsrfToken::factory('backend_login')->isValid()) {
         $loginCheck = I18n::msg('csrf_token_invalid');
     } else {
-        // the server side encryption of pw is only required
-        // when not already encrypted by client using javascript
-        $login->setLogin($rexUserLogin, $rexUserPsw, Request::post('javascript', 'boolean'));
+        $login->setLogin($rexUserLogin, $rexUserPsw);
         $login->setPasskey('' === $passkey ? null : $passkey);
         $login->setStayLoggedIn($rexUserStayLoggedIn);
         $loginCheck = $login->checkLogin();
@@ -234,7 +232,6 @@ Asset::addJsFile(Url::coreAssets('jquery.min.js'), [Asset::JS_IMMUTABLE => true]
 Asset::addJsFile(Url::coreAssets('jquery-ui.custom.min.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('jquery-pjax.min.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('standard.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('sha1.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('clipboard-copy-element.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE]);
 

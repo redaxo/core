@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Security;
 
 use DateTimeImmutable;
+use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
@@ -27,6 +28,8 @@ class BackendLogin extends Login
     public const SESSION_STAY_LOGGED_IN = 'stay_logged_in';
 
     private const SESSION_PASSWORD_CHANGE_REQUIRED = 'password_change_required';
+
+    private static ?string $legacySha1Hash = null;
 
     private string $tableName;
     private ?string $passkey = null;
@@ -144,7 +147,7 @@ class BackendLogin extends Login
                 $password = $this->user->getValue('password');
                 if ($password && $this->userLogin && $this->userPassword && self::passwordNeedsRehash($password)) {
                     $add .= 'password = ?, ';
-                    $params[] = $password = self::passwordHash($this->userPassword, true);
+                    $params[] = $password = self::passwordHash($this->userPassword);
                 }
                 array_push($params, Sql::datetime(), Sql::datetime(), session_id(), $this->getSessionVar(self::SESSION_USER_ID));
                 $sql->setQuery('UPDATE ' . $this->tableName . ' SET ' . $add . 'login_tries=0, lasttrydate=?, lastlogin=?, session_id=? WHERE id=? LIMIT 1', $params);
@@ -337,6 +340,32 @@ class BackendLogin extends Login
             return $user;
         }
         return null;
+    }
+
+    #[Override]
+    public static function passwordVerify(#[SensitiveParameter] string $password, #[SensitiveParameter] string $hash): bool
+    {
+        if (parent::passwordVerify($password, $hash)) {
+            return true;
+        }
+
+        // Fallback for legacy passwords from REDAXO 5.x which were sha1-prehashed
+        if (password_verify(sha1($password), $hash)) {
+            self::$legacySha1Hash = $hash;
+            return true;
+        }
+
+        return false;
+    }
+
+    #[Override]
+    public static function passwordNeedsRehash(#[SensitiveParameter] string $hash): bool
+    {
+        if ($hash === self::$legacySha1Hash) {
+            return true;
+        }
+
+        return parent::passwordNeedsRehash($hash);
     }
 
     /**
