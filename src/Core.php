@@ -438,6 +438,13 @@ final class Core
 
         if (!$version) {
             $version = Type::string(InstalledVersions::getPrettyVersion('redaxo/core'));
+
+            // On feature branches Composer returns "dev-<branch>", which is not
+            // a meaningful version. Fall back to a generic dev version.
+            if (str_starts_with($version, 'dev-')) {
+                $version = '6.x-dev';
+            }
+
             self::setProperty('version', $version);
         }
 
