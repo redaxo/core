@@ -26,6 +26,7 @@ use function is_callable;
 use function is_string;
 use function sprintf;
 
+use const DIRECTORY_SEPARATOR;
 use const EXTR_SKIP;
 
 final class Controller
@@ -623,22 +624,21 @@ final class Controller
      */
     private static function includePath(string $path, array $context = []): mixed
     {
-        return Timer::measure('Page: ' . Path::relative($path, Path::src()), function () use ($path, $context) {
-            $pattern = '@' . preg_quote(Path::src('addons/'), '@') . '([^/\\\]+)@';
-
-            if (!preg_match($pattern, $path, $matches)) {
-                $__context = $context;
-                $__path = $path;
-
-                unset($context, $path, $pattern, $matches);
-
-                extract($__context, EXTR_SKIP);
-
-                return include $__path;
+        return Timer::measure('Page: ' . Path::relative($path), function () use ($path, $context) {
+            foreach (Addon::getAvailableAddons() as $addon) {
+                if (str_starts_with($path, $addon->path . DIRECTORY_SEPARATOR)) {
+                    return $addon->includeFile($path, $context);
+                }
             }
 
-            $package = Addon::get($matches[1]);
-            return $package->includeFile(str_replace($package->getPath(), '', $path), $context);
+            $__context = $context;
+            $__path = $path;
+
+            unset($context, $path, $addon);
+
+            extract($__context, EXTR_SKIP);
+
+            return include $__path;
         });
     }
 }

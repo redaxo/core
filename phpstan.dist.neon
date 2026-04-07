@@ -10,15 +10,14 @@ parameters:
     featureToggles:
         internalTag: false
     paths:
-        # restrict to core and core addons, ignore other locally installed addons
         - .tools/project
+        - addons
         - boot
         - fragments
         - pages
         - setup
         - src
         - tests
-        - redaxo/src/addons/debug
     # https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Redaxo\Core\View\Fragment

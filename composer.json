@@ -99,7 +99,6 @@
     },
 
     "scripts": {
-        "clone-addon": ".tools/bin/clone-addon",
         "rebase-to-bugfix": "bash .tools/bin/rebase-to-bugfix",
         "refresh": "bash .tools/bin/refresh",
         "update:all": "bash .tools/bin/update-all",
@@ -161,7 +160,6 @@
         ]
     },
     "scripts-descriptions": {
-        "clone-addon": "Clone given addon (by user/repo or github url) into addon directory",
         "rebase-to-bugfix": "Rebase current branch onto bugfix",
         "refresh": "Refresh local instance (refresh core assets, re-install core, clear cache, update dev tools)",
         "update:all": "Update all vendor libs (php and js) in core and dev tools",
@@ -196,13 +194,7 @@
     },
 
     "repositories": [
-        {
-            "type": "path",
-            "url": "redaxo/src/addons/debug"
-        },
-        {
-            "type": "path",
-            "url": "redaxo/src/addons/test"
-        }
+        {"type": "path", "url": "addons/debug"},
+        {"type": "path", "url": "addons/test"}
     ]
 }

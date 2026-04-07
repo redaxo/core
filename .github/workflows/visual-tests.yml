@@ -106,7 +106,7 @@ jobs:
                 run: |
                     mkdir -p $GITHUB_WORKSPACE/.tools/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/.tools/project/var/data/core/backup/
                     cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/.tools/project/public/media/
-                    cp -f .tools/visual-tests/fixtures/README.md $GITHUB_WORKSPACE/redaxo/src/addons/test/README.de.md
+                    cp -f .tools/visual-tests/fixtures/README.md $GITHUB_WORKSPACE/addons/test/README.de.md
                     php .tools/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
             -   name: Install packages
                 run: |
