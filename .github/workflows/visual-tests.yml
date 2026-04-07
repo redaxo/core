@@ -137,7 +137,7 @@ jobs:
                     commit_message: Update screenshots
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
-                    file_pattern: .tools/visual-tests/screenshots/*
+                    file_pattern: .tools/visual-tests/screenshots/
                     branch: ${{ github.head_ref }} # repo dispatch needs the target branch
 
             -   name: Disable auto-merge
