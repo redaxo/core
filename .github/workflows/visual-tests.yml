@@ -127,8 +127,8 @@ jobs:
                     php redaxo/bin/console config:set setup false -t boolean --ansi -v
                     php redaxo/bin/console cache:clear --ansi -v
                     node .tools/visual-tests/visual-record.js
-                    git add --intent-to-add .tools/visual-tests/screenshots/
-                    git diff --exit-code --name-only .tools/visual-tests/screenshots/
+                    git add .tools/visual-tests/screenshots/
+                    git diff --cached --exit-code --name-only .tools/visual-tests/screenshots/
 
             -   name: Commit changed files
                 uses: stefanzweifel/git-auto-commit-action@v7
