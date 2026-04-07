@@ -1732,64 +1732,23 @@
     <MixedArgument>
       <code><![CDATA[$addonId]]></code>
       <code><![CDATA[$key]]></code>
-      <code><![CDATA[$requirements['packages'][$addonId]]]></code>
-      <code><![CDATA[$requirements['packages'][$addonId]]]></code>
-      <code><![CDATA[$requirements['php']['version']]]></code>
-      <code><![CDATA[$requirements['php']['version']]]></code>
-      <code><![CDATA[$requirements['redaxo']]]></code>
-      <code><![CDATA[$requirements['redaxo']]]></code>
     </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$addon]]></code>
-      <code><![CDATA[$addon]]></code>
-      <code><![CDATA[$addonId]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedArrayAccess>
-      <code><![CDATA[$conflicts['packages']]]></code>
-      <code><![CDATA[$conflicts['packages']]]></code>
-      <code><![CDATA[$conflicts['packages'][$addonId]]]></code>
-      <code><![CDATA[$conflicts['packages'][$this->addon->getPackageId()]]]></code>
-      <code><![CDATA[$requirements['packages']]]></code>
-      <code><![CDATA[$requirements['packages']]]></code>
-      <code><![CDATA[$requirements['packages']]]></code>
-      <code><![CDATA[$requirements['packages']]]></code>
-      <code><![CDATA[$requirements['packages'][$addonId]]]></code>
-      <code><![CDATA[$requirements['packages'][$addonId]]]></code>
-      <code><![CDATA[$requirements['packages'][$addonId]]]></code>
-      <code><![CDATA[$requirements['packages'][$addonId]]]></code>
-    </MixedArrayAccess>
     <MixedArrayOffset>
       <code><![CDATA[$ps[$id]]]></code>
       <code><![CDATA[$requires[$id]]]></code>
     </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$addonId]]></code>
-      <code><![CDATA[$conflicts]]></code>
-      <code><![CDATA[$conflicts]]></code>
-      <code><![CDATA[$conflicts]]></code>
-      <code><![CDATA[$constraints]]></code>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$load]]></code>
       <code><![CDATA[$normal[]]]></code>
       <code><![CDATA[$reinstall]]></code>
-      <code><![CDATA[$req]]></code>
-      <code><![CDATA[$reqExt]]></code>
-      <code><![CDATA[$reqP]]></code>
-      <code><![CDATA[$requirements]]></code>
-      <code><![CDATA[$requirements]]></code>
-      <code><![CDATA[$requirements]]></code>
       <code><![CDATA[$successMessage]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[$requirements['packages'][$addonId]]]></code>
       <code><![CDATA[$successMessage]]></code>
     </MixedOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$addon->getPackageId()]]></code>
-      <code><![CDATA[$addon->getPackageId()]]></code>
-      <code><![CDATA[$addon->getPackageId()]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Addon/NullAddon.php">
     <MixedReturnStatement>
@@ -4730,9 +4689,6 @@
     <InvalidFalsableReturnType>
       <code><![CDATA[list<string>]]></code>
     </InvalidFalsableReturnType>
-    <MixedArgument>
-      <code><![CDATA[$pos]]></code>
-    </MixedArgument>
   </file>
   <file src="src/View/Asset.php">
     <MixedAssignment>

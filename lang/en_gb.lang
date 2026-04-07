@@ -337,18 +337,8 @@ package_wrong_dir_name = Directory name does not match the name in package.yml "
 package_is_addon = The package has to be installed as AddOn "<b>{0}</b>"!
 package_install_cant_copy_files = An error occurred when copying the /assets folder!
 package_install_cant_delete_files = An error occurred when deleting the /assets folder!
-package_search_in_installer = Search for "{0}" in Installer
 package_jump_to = Jump to "{0}"
-package_requirement_wrong_format = The dependencies in package.yml must be in a valid array format!
-package_requirement_error_redaxo_version = This version of REDAXO (<b>{0}</b>) does not match the specified version requirements <b>{1}</b>!
-package_requirement_error_php_version = The PHP version (<b>{0}</b>) does not match the specified version requirements <b>{1}</b>!
-package_requirement_error_php_extension = The PHP extension module <b>{0}</b> is required!
 package_requirement_error_addon = The AddOn <b>{0}</b> is required!
-package_requirement_error_addon_version = The AddOn <b>{0}</b> (version <b>{1}</b>) does not match the specified version requirements <b>{2}</b>!
-package_conflict_error_addon = Cannot be activated together with AddOn <b>{0}</b>!
-package_conflict_error_addon_version = Cannot be activated together with AddOn <b>{0}</b> with the version requirements <b>{1}</b>!
-package_reverse_conflict_error_addon = Cannot be activated together with AddOn <b>{0}</b>!
-package_reverse_conflict_error_addon_version = Cannot be activated together with AddOn <b>{0}</b> with the version requirements <b>{1}</b>!
 package_dependencies_error_addon = Required from AddOn <b>{0}</b>!
 
 # src\core\pages\credits.php

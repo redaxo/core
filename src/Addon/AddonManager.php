@@ -18,15 +18,12 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Exception\YamlParseException;
 use Redaxo\Core\Util\Str;
-use Redaxo\Core\Util\Version;
+use Redaxo\Core\Util\Type;
 
-use function extension_loaded;
 use function in_array;
-use function is_array;
-use function is_string;
 use function sprintf;
 
-use const PHP_VERSION;
+use const JSON_THROW_ON_ERROR;
 
 class AddonManager
 {
@@ -86,9 +83,6 @@ class AddonManager
             $message = '';
             if (!$this->checkRequirements()) {
                 $message = $this->message;
-            }
-            if (!$this->checkConflicts()) {
-                $message .= $this->message;
             }
             if ($message) {
                 throw new UserMessageException($message);
@@ -244,9 +238,6 @@ class AddonManager
             if (!$this->checkRequirements()) {
                 $state .= $this->message;
             }
-            if (!$this->checkConflicts()) {
-                $state .= $this->message;
-            }
             $state = $state ?: true;
 
             if (true === $state) {
@@ -314,148 +305,22 @@ class AddonManager
         return $this->i18n('wrong_dir_name', $addonName);
     }
 
-    /** Checks whether the requirements are met. */
+    /** Checks whether the required addons are available. */
     public function checkRequirements(): bool
     {
-        $requirements = $this->addon->getProperty('requires', []);
-
-        if (!is_array($requirements)) {
-            $this->message = $this->i18n('requirement_wrong_format');
-
-            return false;
-        }
-
-        if (!$this->checkRedaxoRequirement(Core::getVersion())) {
-            return false;
-        }
-
         $state = [];
 
-        if (isset($requirements['php'])) {
-            if (!is_array($requirements['php'])) {
-                $requirements['php'] = ['version' => $requirements['php']];
-            }
-            if (isset($requirements['php']['version']) && !Version::matchesConstraints(PHP_VERSION, $requirements['php']['version'])) {
-                $state[] = $this->i18n('requirement_error_php_version', PHP_VERSION, $requirements['php']['version']);
-            }
-            if (isset($requirements['php']['extensions']) && $requirements['php']['extensions']) {
-                $extensions = (array) $requirements['php']['extensions'];
-                foreach ($extensions as $reqExt) {
-                    if (is_string($reqExt) && !extension_loaded($reqExt)) {
-                        $state[] = $this->i18n('requirement_error_php_extension', $reqExt);
-                    }
-                }
-            }
-        }
-
-        if (empty($state)) {
-            if (isset($requirements['packages']) && is_array($requirements['packages'])) {
-                foreach ($requirements['packages'] as $addon => $_) {
-                    if (!$this->checkPackageRequirement($addon)) {
-                        $state[] = $this->message;
-                    }
-                }
-            }
-        }
-
-        if (empty($state)) {
-            return true;
-        }
-        $this->message = implode('<br />', $state);
-        return false;
-    }
-
-    /**
-     * Checks whether the redaxo requirement is met.
-     *
-     * @param string $redaxoVersion REDAXO version
-     */
-    public function checkRedaxoRequirement(string $redaxoVersion): bool
-    {
-        $requirements = $this->addon->getProperty('requires', []);
-        if (isset($requirements['redaxo']) && !Version::matchesConstraints($redaxoVersion, $requirements['redaxo'])) {
-            $this->message = $this->i18n('requirement_error_redaxo_version', $redaxoVersion, $requirements['redaxo']);
-            return false;
-        }
-        return true;
-    }
-
-    /** Checks whether the addon requirement is met. */
-    public function checkPackageRequirement(string $addonId): bool
-    {
-        $requirements = $this->addon->getProperty('requires', []);
-        if (!isset($requirements['packages'][$addonId])) {
-            return true;
-        }
-        $addon = Addon::get($addonId);
-        $requiredVersion = '';
-        if (!$addon->isAvailable()) {
-            if ('' != $requirements['packages'][$addonId]) {
-                $requiredVersion = ' ' . $requirements['packages'][$addonId];
-            }
-
-            if (!Addon::exists($addonId)) {
-                $jumpToInstaller = '';
-                if (Addon::get('install')->isAvailable()) {
-                    // addon need to be downloaded via installer
-                    $installUrl = Url::backendPage('install/packages/add', ['addonkey' => $addonId]);
-
-                    $jumpToInstaller = ' <a href="' . $installUrl . '"><i class="rex-icon fa-arrow-circle-right" title="' . $this->i18n('search_in_installer', $addonId) . '"></i></a>';
-                }
-
-                $this->message = $this->i18n('requirement_error_addon', $addonId . $requiredVersion) . $jumpToInstaller;
-                return false;
-            }
-
-            $jumpPackageUrl = '#package-' . Str::normalize($addonId, '-', '_');
-            if ('packages' !== Controller::getCurrentPage()) {
-                // error while update/install within install-addon. x-link to packages core page
-                $jumpPackageUrl = Url::backendPage('packages') . $jumpPackageUrl;
-            }
-
-            $this->message = $this->i18n('requirement_error_addon', $addonId . $requiredVersion) . ' <a href="' . $jumpPackageUrl . '"><i class="rex-icon fa-arrow-circle-right" title="' . $this->i18n('jump_to', $addonId) . '"></i></a>';
-            return false;
-        }
-
-        if (!Version::matchesConstraints($addon->getVersion(), $requirements['packages'][$addonId])) {
-            $this->message = $this->i18n(
-                'requirement_error_addon_version',
-                $addon->getPackageId(),
-                $addon->getVersion(),
-                $requirements['packages'][$addonId],
-            );
-            return false;
-        }
-        return true;
-    }
-
-    /** Checks whether the addon is in conflict with other packages. */
-    public function checkConflicts(): bool
-    {
-        $state = [];
-        $conflicts = $this->addon->getProperty('conflicts', []);
-
-        if (isset($conflicts['packages']) && is_array($conflicts['packages'])) {
-            foreach ($conflicts['packages'] as $addon => $_) {
-                if (!$this->checkPackageConflict($addon)) {
-                    $state[] = $this->message;
-                }
-            }
-        }
-
-        foreach (Addon::getAvailableAddons() as $addon) {
-            $conflicts = $addon->getProperty('conflicts', []);
-
-            if (!isset($conflicts['packages'][$this->addon->getPackageId()])) {
+        foreach (self::getRequiredAddons($this->addon) as $addonName) {
+            if (Addon::get($addonName)->isAvailable()) {
                 continue;
             }
 
-            $constraints = $conflicts['packages'][$this->addon->getPackageId()];
-            if (!is_string($constraints) || !$constraints || '*' === $constraints) {
-                $state[] = $this->i18n('reverse_conflict_error_addon', $addon->getPackageId());
-            } elseif (Version::matchesConstraints($this->addon->getVersion(), $constraints)) {
-                $state[] = $this->i18n('reverse_conflict_error_addon_version', $addon->getPackageId(), $constraints);
+            $jumpPackageUrl = '#package-' . Str::normalize($addonName, '-', '_');
+            if ('packages' !== Controller::getCurrentPage()) {
+                $jumpPackageUrl = Url::backendPage('packages') . $jumpPackageUrl;
             }
+
+            $state[] = $this->i18n('requirement_error_addon', $addonName) . ' <a href="' . $jumpPackageUrl . '"><i class="rex-icon fa-arrow-circle-right" title="' . $this->i18n('jump_to', $addonName) . '"></i></a>';
         }
 
         if (empty($state)) {
@@ -463,26 +328,6 @@ class AddonManager
         }
         $this->message = implode('<br />', $state);
         return false;
-    }
-
-    /** Checks whether the addon is in conflict with another package. */
-    public function checkPackageConflict(string $addonId): bool
-    {
-        $conflicts = $this->addon->getProperty('conflicts', []);
-        $addon = Addon::get($addonId);
-        if (!isset($conflicts['packages'][$addonId]) || !$addon->isAvailable()) {
-            return true;
-        }
-        $constraints = $conflicts['packages'][$addonId];
-        if (!is_string($constraints) || !$constraints || '*' === $constraints) {
-            $this->message = $this->i18n('conflict_error_addon', $addon->getPackageId());
-            return false;
-        }
-        if (Version::matchesConstraints($addon->getVersion(), $constraints)) {
-            $this->message = $this->i18n('conflict_error_addon_version', $addon->getPackageId(), $constraints);
-            return false;
-        }
-        return true;
     }
 
     /** Checks if another addon which is activated, depends on the given package. */
@@ -496,8 +341,7 @@ class AddonManager
                 continue;
             }
 
-            $requirements = $addon->getProperty('requires', []);
-            if (isset($requirements['packages'][$this->addon->getPackageId()])) {
+            if (in_array($this->addon->getPackageId(), self::getRequiredAddons($addon))) {
                 $state[] = I18n::msg($i18nPrefix . 'addon', $addon->getPackageId());
             }
         }
@@ -556,13 +400,9 @@ class AddonManager
             } elseif ('late' === $load) {
                 $late[] = $id;
             } else {
-                $req = $addon->getProperty('requires');
-                if (isset($req['packages']) && is_array($req['packages'])) {
-                    foreach ($req['packages'] as $addonId => $reqP) {
-                        $addon = Addon::get($addonId);
-                        if (!in_array($addonId, $normal) && !in_array($addon->getProperty('load'), ['early', 'late'])) {
-                            $requires[$id][$addonId] = true;
-                        }
+                foreach (self::getRequiredAddons($addon) as $addonId) {
+                    if (!in_array($addonId, $normal) && !in_array(Addon::get($addonId)->getProperty('load'), ['early', 'late'])) {
+                        $requires[$id][$addonId] = true;
                     }
                 }
                 if (!isset($requires[$id])) {
@@ -628,5 +468,38 @@ class AddonManager
         }
 
         return $packages;
+    }
+
+    /**
+     * Returns the addon names that the given addon requires via composer.json.
+     *
+     * @return list<string>
+     */
+    private static function getRequiredAddons(Addon $addon): array
+    {
+        $composerJson = File::get($addon->getPath('composer.json'));
+        if (!$composerJson) {
+            return [];
+        }
+
+        $composerJson = Type::array(json_decode($composerJson, true, flags: JSON_THROW_ON_ERROR));
+
+        /** @var array<string, array<mixed>> $require */
+        $require = Type::array($composerJson['require'] ?? []);
+        if (!$require) {
+            return [];
+        }
+
+        $addonPackages = self::getComposerPackages();
+        $addonsByPackage = array_flip($addonPackages);
+
+        $requiredAddons = [];
+        foreach (array_keys($require) as $packageName) {
+            if (isset($addonsByPackage[$packageName])) {
+                $requiredAddons[] = $addonsByPackage[$packageName];
+            }
+        }
+
+        return $requiredAddons;
     }
 }
