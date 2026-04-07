@@ -57,7 +57,7 @@ $credits .= '<dl class="dl-horizontal">';
 $credits .= '<dt>' . I18n::msg('credits_name') . '</dt><dd>' . escape($name) . '</dd>';
 
 if ($version) {
-    $credits .= '<dt>' . I18n::msg('credits_version') . '</dt><dd>' . $version . '</dd>';
+    $credits .= '<dt>' . I18n::msg('credits_version') . '</dt><dd>' . escape($version) . '</dd>';
 }
 if ($author) {
     $credits .= '<dt>' . I18n::msg('credits_author') . '</dt><dd>' . escape($author) . '</dd>';

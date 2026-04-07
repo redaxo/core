@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core;
 
+use Composer\InstalledVersions;
 use Redaxo\Core\Console\Application;
 use Redaxo\Core\Database\Configuration as DatabaseConfiguration;
 use Redaxo\Core\Exception\InvalidArgumentException;
@@ -143,8 +144,8 @@ final class Core
                 }
                 break;
             case 'version':
-                if (!is_string($value) || !preg_match('/^\d+(?:\.\d+)*(?:-\w+)?$/', $value)) {
-                    throw new InvalidArgumentException('"' . $key . '" property: expecting $value to be a valid version string.');
+                if (!is_string($value) || !preg_match('/^\d+(?:\.\d+)*(?:\.x)*(?:-\w+)?$/', $value)) {
+                    throw new InvalidArgumentException(sprintf('"%s" property: expecting $value to be a valid version string, got %s.', $key, is_string($value) ? '"' . $value . '"' : get_debug_type($value)));
                 }
                 break;
         }
@@ -434,6 +435,18 @@ final class Core
     {
         /** @psalm-taint-escape file */
         $version = self::getProperty('version');
+
+        if (!$version) {
+            $version = Type::string(InstalledVersions::getPrettyVersion('redaxo/core'));
+
+            // On feature branches Composer returns "dev-<branch>", which is not
+            // a meaningful version. Fall back to a generic dev version.
+            if (str_starts_with($version, 'dev-')) {
+                $version = '6.x-dev';
+            }
+
+            self::setProperty('version', $version);
+        }
 
         if ($format) {
             return Formatter::version($version, $format);

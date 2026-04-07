@@ -1,8 +1,3 @@
-package: debug
-version: '2.0.0-dev'
-author: Markus Staab, Marcel Kuhmann, Gregor Harlan
-supportpage: https://github.com/redaxo/redaxo
-
 load: early
 
 page:

@@ -21,11 +21,14 @@ use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
 use function assert;
+use function is_array;
 use function is_bool;
+use function is_string;
 use function sprintf;
 
 use const DIRECTORY_SEPARATOR;
 use const EXTR_SKIP;
+use const JSON_THROW_ON_ERROR;
 
 final class Addon implements AddonInterface
 {
@@ -70,6 +73,9 @@ final class Addon implements AddonInterface
 
     /** Flag whether the properties of package.yml are loaded. */
     private bool $propertiesLoaded = false;
+
+    /** @var array<string, mixed>|null */
+    private ?array $composerJson = null;
 
     private function __construct(
         /** @var non-empty-string Composer package name */
@@ -218,15 +224,30 @@ final class Addon implements AddonInterface
     #[Override]
     public function getAuthor(?string $default = null): ?string
     {
-        $author = (string) $this->getProperty('author', '');
+        $composerJson = $this->getComposerJson();
 
-        return '' === $author ? $default : $author;
+        /** @var array<string, array{name?: string}> $authors */
+        $authors = $composerJson['authors'] ?? [];
+        if (!$authors) {
+            return $default;
+        }
+
+        $names = array_filter(array_column($authors, 'name'));
+
+        return $names ? implode(', ', $names) : $default;
     }
 
     #[Override]
     public function getVersion(?string $format = null): string
     {
-        $version = (string) $this->getProperty('version');
+        $version = $this->getProperty('version');
+
+        if (null === $version) {
+            $version = InstalledVersions::getPrettyVersion($this->package) ?? '';
+            $this->setProperty('version', $version);
+        }
+
+        Type::string($version);
 
         if ($format) {
             return Formatter::version($version, $format);
@@ -237,9 +258,18 @@ final class Addon implements AddonInterface
     #[Override]
     public function getSupportPage(?string $default = null): ?string
     {
-        $supportPage = (string) $this->getProperty('supportpage', '');
+        $composerJson = $this->getComposerJson();
 
-        return '' === $supportPage ? $default : $supportPage;
+        $homepage = Type::string($composerJson['homepage'] ?? '');
+        if ('' === $homepage) {
+            return $default;
+        }
+
+        if (!preg_match('@^https?://@i', $homepage)) {
+            return 'https://' . $homepage;
+        }
+
+        return $homepage;
     }
 
     #[Override]
@@ -347,9 +377,13 @@ final class Addon implements AddonInterface
 
     public function getLicense(): ?string
     {
-        $license = trim((string) $this->getProperty('license', ''));
+        /** @var string|list<string>|null $license */
+        $license = $this->getComposerJson()['license'] ?? null;
+        if (is_array($license)) {
+            return implode(', ', $license);
+        }
 
-        if ('' !== $license) {
+        if (is_string($license) && $license) {
             return $license;
         }
 
@@ -359,7 +393,7 @@ final class Addon implements AddonInterface
             fclose($f);
 
             if (preg_match('/^The MIT License(?: \(MIT\))$/i', $license)) {
-                return 'MIT License';
+                return 'MIT';
             }
         }
 
@@ -476,6 +510,28 @@ final class Addon implements AddonInterface
             $addon->setProperty('status', $addonConfig['status'] ?? false);
             self::$addons[$addonName] = $addon;
         }
+    }
+
+    /**
+     * Returns the parsed composer.json of the addon.
+     *
+     * @return array<string, mixed>
+     */
+    public function getComposerJson(): array
+    {
+        if (null !== $this->composerJson) {
+            return $this->composerJson;
+        }
+
+        $json = File::get($this->getPath('composer.json'));
+        if (!$json) {
+            return $this->composerJson = [];
+        }
+
+        /** @var array<string, mixed> $composerJson */
+        $composerJson = Type::array(json_decode($json, true, flags: JSON_THROW_ON_ERROR));
+
+        return $this->composerJson = $composerJson;
     }
 
     /**

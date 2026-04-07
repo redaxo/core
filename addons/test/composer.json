@@ -4,6 +4,17 @@
     "type": "redaxo-addon",
     "license": "MIT",
     "version": "1.0.0-dev",
+    "homepage": "https://github.com/redaxo/redaxo",
+    "authors": [
+        {
+            "name": "Yakamara Media GmbH & Co. KG",
+            "homepage": "https://yakamara.de"
+        },
+        {
+            "name": "REDAXO team & community",
+            "homepage": "https://redaxo.org"
+        }
+    ],
 
     "require": {
         "php": "^8.4",

@@ -86,9 +86,6 @@ I18n::addDirectory(Path::core('lang'));
 // add core base-fragmentpath to fragmentloader
 Fragment::addDirectory(Path::core('fragments/'));
 
-// ----------------- VERSION
-Core::setProperty('version', '6.0.0-dev');
-
 ErrorHandler::register();
 
 Core::loadConfigYml();
