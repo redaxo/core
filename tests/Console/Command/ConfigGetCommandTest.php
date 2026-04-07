@@ -46,7 +46,7 @@ final class ConfigGetCommandTest extends TestCase
             'config-key' => 'author',
             '--addon' => 'test', ],
         );
-        self::assertEquals("\"Test Author\"\n", $commandTester->getDisplay(true));
+        self::assertEquals("\"Yakamara Media GmbH & Co. KG, REDAXO team & community\"\n", $commandTester->getDisplay(true));
         self::assertEquals(0, $commandTester->getStatusCode());
     }
 }

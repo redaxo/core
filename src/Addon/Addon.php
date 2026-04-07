@@ -240,7 +240,14 @@ final class Addon implements AddonInterface
     #[Override]
     public function getVersion(?string $format = null): string
     {
-        $version = InstalledVersions::getPrettyVersion($this->package) ?? '';
+        $version = $this->getProperty('version');
+
+        if (null === $version) {
+            $version = InstalledVersions::getPrettyVersion($this->package) ?? '';
+            $this->setProperty('version', $version);
+        }
+
+        Type::string($version);
 
         if ($format) {
             return Formatter::version($version, $format);

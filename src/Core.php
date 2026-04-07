@@ -144,7 +144,7 @@ final class Core
                 }
                 break;
             case 'version':
-                if (!is_string($value) || !preg_match('/^\d+(?:\.\d+)*(?:-\w+)?$/', $value)) {
+                if (!is_string($value) || !preg_match('/^\d+(?:\.\d+)*(?:\.x)*(?:-\w+)?$/', $value)) {
                     throw new InvalidArgumentException('"' . $key . '" property: expecting $value to be a valid version string.');
                 }
                 break;
@@ -434,7 +434,12 @@ final class Core
     public static function getVersion(?string $format = null): string
     {
         /** @psalm-taint-escape file */
-        $version = Type::string(InstalledVersions::getPrettyVersion('redaxo/core'));
+        $version = self::getProperty('version');
+
+        if (!$version) {
+            $version = Type::string(InstalledVersions::getPrettyVersion('redaxo/core'));
+            self::setProperty('version', $version);
+        }
 
         if ($format) {
             return Formatter::version($version, $format);

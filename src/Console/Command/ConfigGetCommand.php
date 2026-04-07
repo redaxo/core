@@ -47,7 +47,14 @@ class ConfigGetCommand extends AbstractCommand implements StandaloneInterface
         if ('core' === $package) {
             $config = Core::getProperty($propertyKey);
         } else {
-            $config = Addon::get($package)->getProperty($propertyKey);
+            $addon = Addon::require($package);
+            $config = match ($propertyKey) {
+                'author' => $addon->getAuthor(),
+                'version' => $addon->getVersion(),
+                'supportpage' => $addon->getSupportPage(),
+                'license' => $addon->getLicense(),
+                default => $addon->getProperty($propertyKey),
+            };
         }
 
         if (null === $config) {
