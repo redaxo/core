@@ -92,7 +92,7 @@ $content .= '
         <tbody>';
 
 foreach (Addon::getAvailableAddons() as $package) {
-    $helpUrl = Url::backendPage('packages', ['subpage' => 'help', 'package' => $package->getPackageId()]);
+    $helpUrl = Url::backendPage('packages', ['subpage' => 'help', 'package' => $package->name]);
 
     $license = '';
     if (is_readable($licenseFile = $package->getPath('LICENSE.md')) || is_readable($licenseFile = $package->getPath('LICENSE'))) {
@@ -104,7 +104,7 @@ foreach (Addon::getAvailableAddons() as $package) {
             $firstLine = 'MIT License';
         }
 
-        $license = '<a href="' . Url::backendPage('packages', ['subpage' => 'license', 'package' => $package->getPackageId()]) . '"><i class="rex-icon rex-icon-license"></i> ' . escape($firstLine) . '</a>';
+        $license = '<a href="' . Url::backendPage('packages', ['subpage' => 'license', 'package' => $package->name]) . '"><i class="rex-icon rex-icon-license"></i> ' . escape($firstLine) . '</a>';
     }
 
     $packageVersion = escape($package->getVersion());
@@ -115,10 +115,10 @@ foreach (Addon::getAvailableAddons() as $package) {
     $content .= '
             <tr class="rex-package-is-addon">
                 <td class="rex-table-icon"><i class="rex-icon rex-icon-package-addon"></i></td>
-                <td data-title="' . I18n::msg('credits_name') . '">' . $package->getName() . ' </td>
+                <td data-title="' . I18n::msg('credits_name') . '">' . $package->name . ' </td>
                 <td data-title="' . I18n::msg('credits_version') . '">' . $packageVersion . '</td>
                 <td class="rex-table-slimmer" data-title="' . I18n::msg('credits_help') . '">
-                    <a href="' . $helpUrl . '" title="' . I18n::msg('credits_open_help_file') . ' ' . escape($package->getName()) . '"><i class="rex-icon rex-icon-help"></i> ' . I18n::msg('credits_help') . ' <span class="sr-only">' . escape($package->getName()) . '</span></a>
+                    <a href="' . $helpUrl . '" title="' . I18n::msg('credits_open_help_file') . ' ' . escape($package->name) . '"><i class="rex-icon rex-icon-help"></i> ' . I18n::msg('credits_help') . ' <span class="sr-only">' . escape($package->name) . '</span></a>
                 </td>
                 <td class="rex-table-slim" data-title="' . I18n::msg('credits_supportpage') . '">';
     if ($supportpage = $package->getSupportPage()) {

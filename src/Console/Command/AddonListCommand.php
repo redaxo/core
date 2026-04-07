@@ -53,7 +53,7 @@ class AddonListCommand extends AbstractCommand
         $rows = [];
         foreach ($packages as $package) {
             $rowdata = [
-                'addon-id' => $package->getPackageId(),
+                'addon-id' => $package->name,
                 'author' => $package->getAuthor(),
                 'version' => $package->getVersion(),
                 'installed' => $package->isInstalled(),
@@ -66,11 +66,11 @@ class AddonListCommand extends AbstractCommand
                 $rowdata['activated'] = $rowdata['activated'] ? 'yes' : 'no';
             }
 
-            if (null !== $packageId && $packageId !== $package->getPackageId()) {
+            if (null !== $packageId && $packageId !== $package->name) {
                 continue;
             }
 
-            if (null !== $search && false === stripos($package->getPackageId(), $search)) {
+            if (null !== $search && false === stripos($package->name, $search)) {
                 continue;
             }
 

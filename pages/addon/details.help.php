@@ -14,7 +14,7 @@ use function Redaxo\Core\View\escape;
 $content = '';
 
 $package = Addon::require(Request::request('package', 'string'));
-$name = $package->getPackageId();
+$name = $package->name;
 $version = $package->getVersion();
 $author = $package->getAuthor();
 $supportPage = $package->getSupportPage();

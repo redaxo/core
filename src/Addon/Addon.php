@@ -71,10 +71,11 @@ final class Addon implements AddonInterface
     /** Flag whether the properties of package.yml are loaded. */
     private bool $propertiesLoaded = false;
 
-    /** @param non-empty-string $name Name of the addon */
-    public function __construct(
+    private function __construct(
+        /** @var non-empty-string Composer package name */
         public readonly string $package,
-        private readonly string $name,
+        /** @var non-empty-string Name of the addon */
+        public readonly string $name,
     ) {}
 
     /**
@@ -116,20 +117,6 @@ final class Addon implements AddonInterface
     public static function exists(string $addon): bool
     {
         return isset(self::$addons[$addon]);
-    }
-
-    /** @return non-empty-string */
-    #[Override]
-    public function getPackageId(): string
-    {
-        return $this->name;
-    }
-
-    /** @return non-empty-string */
-    #[Override]
-    public function getName(): string
-    {
-        return $this->name;
     }
 
     #[Override]

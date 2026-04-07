@@ -44,11 +44,11 @@ $content = '
 $getLink = static function (Addon $package, $function, $icon = '', $confirm = false, $key = null) {
     $onclick = '';
     if ($confirm) {
-        $onclick = ' data-confirm="' . I18n::msg('addon_' . $function . '_question', $package->getName()) . '"';
+        $onclick = ' data-confirm="' . I18n::msg('addon_' . $function . '_question', $package->name) . '"';
     }
     $text = I18n::msg('package_' . ($key ?: $function));
     $url = Url::currentBackendPage([
-        'package' => $package->getPackageId(),
+        'package' => $package->name,
         'function' => $function,
     ] + AddonOperation::getUrlParams());
 
@@ -57,7 +57,7 @@ $getLink = static function (Addon $package, $function, $icon = '', $confirm = fa
 };
 
 $getTableRow = static function (Addon $package) use ($getLink) {
-    $packageId = $package->getPackageId();
+    $packageId = $package->name;
 
     $uninstall = '&nbsp;';
     if ($package->isInstalled()) {
@@ -79,10 +79,10 @@ $getTableRow = static function (Addon $package) use ($getLink) {
     } else {
         $class .= ' rex-package-not-installed';
     }
-    $name = '<span class="rex-addon-name">' . escape($package->getName()) . '</span>';
+    $name = '<span class="rex-addon-name">' . escape($package->name) . '</span>';
 
     // --------------------------------------------- API MESSAGES
-    if (($package->getPackageId() == Request::get('package', 'string') && ApiFunction::hasMessage()) || ($package->getPackageId() == Request::get('mark', 'string'))) {
+    if (($package->name == Request::get('package', 'string') && ApiFunction::hasMessage()) || ($package->name == Request::get('mark', 'string'))) {
         $class = ' mark';
     }
 
@@ -106,7 +106,7 @@ $getTableRow = static function (Addon $package) use ($getLink) {
                     <td data-title="' . I18n::msg('package_hname') . '">' . $name . '</td>
                     <td data-title="' . I18n::msg('package_hversion') . '">' . $version . '</td>
                     <td class="rex-table-slim" data-title="' . I18n::msg('package_hhelp') . '">
-                        <a class="rex-link-expanded" href="' . Url::currentBackendPage(['subpage' => 'help', 'package' => $packageId]) . '" data-pjax-scroll-to="0" title="' . I18n::msg('package_help') . ' ' . escape($package->getName()) . '"><i class="rex-icon rex-icon-help"></i> ' . I18n::msg('package_hhelp') . ' <span class="sr-only">' . escape($package->getName()) . '</span></a>
+                        <a class="rex-link-expanded" href="' . Url::currentBackendPage(['subpage' => 'help', 'package' => $packageId]) . '" data-pjax-scroll-to="0" title="' . I18n::msg('package_help') . ' ' . escape($package->name) . '"><i class="rex-icon rex-icon-help"></i> ' . I18n::msg('package_hhelp') . ' <span class="sr-only">' . escape($package->name) . '</span></a>
                     </td>
                     <td class="rex-table-width-6" data-title="' . I18n::msg('package_hlicense') . '">' . ($license ?? '') . '</td>
                     <td class="rex-table-action">' . $install . '</td>

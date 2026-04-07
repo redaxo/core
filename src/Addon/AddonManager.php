@@ -70,9 +70,9 @@ class AddonManager
             }
             $addonId = $this->addon->getProperty('package');
             if (null === $addonId) {
-                throw new UserMessageException($this->i18n('missing_id', $this->addon->getPackageId()));
+                throw new UserMessageException($this->i18n('missing_id', $this->addon->name));
             }
-            if ($addonId != $this->addon->getPackageId()) {
+            if ($addonId != $this->addon->name) {
                 throw new UserMessageException($this->wrongPackageId($addonId));
             }
             if (null === $this->addon->getProperty('version')) {
@@ -137,7 +137,7 @@ class AddonManager
                 }
             }
 
-            $this->message = $this->i18n($reinstall ? 'reinstalled' : 'installed', $this->addon->getName());
+            $this->message = $this->i18n($reinstall ? 'reinstalled' : 'installed', $this->addon->name);
             if ($successMessage) {
                 $this->message .= ' ' . $successMessage;
             }
@@ -150,7 +150,7 @@ class AddonManager
         }
 
         $this->addon->setProperty('install', false);
-        $this->message = $this->i18n('no_install', $this->addon->getName()) . '<br />' . $this->message;
+        $this->message = $this->i18n('no_install', $this->addon->name) . '<br />' . $this->message;
 
         return false;
     }
@@ -204,10 +204,10 @@ class AddonManager
             // clear cache of addon
             $this->addon->clearCache();
 
-            Config::removeNamespace($this->addon->getPackageId());
+            Config::removeNamespace($this->addon->name);
 
             static::saveConfig();
-            $this->message = $this->i18n('uninstalled', $this->addon->getName());
+            $this->message = $this->i18n('uninstalled', $this->addon->name);
 
             return true;
         } catch (UserMessageException $e) {
@@ -221,7 +221,7 @@ class AddonManager
             $this->addon->setProperty('status', true);
         }
         static::saveConfig();
-        $this->message = $this->i18n('no_uninstall', $this->addon->getName()) . '<br />' . $this->message;
+        $this->message = $this->i18n('no_uninstall', $this->addon->name) . '<br />' . $this->message;
 
         return false;
     }
@@ -248,17 +248,17 @@ class AddonManager
                 self::generatePackageOrder();
             }
         } else {
-            $state = $this->i18n('not_installed', $this->addon->getName());
+            $state = $this->i18n('not_installed', $this->addon->name);
         }
 
         if (true !== $state) {
             // error while config generation, rollback addon status
             $this->addon->setProperty('status', false);
-            $this->message = $this->i18n('no_activation', $this->addon->getName()) . '<br />' . $state;
+            $this->message = $this->i18n('no_activation', $this->addon->name) . '<br />' . $state;
             return false;
         }
 
-        $this->message = $this->i18n('activated', $this->addon->getName());
+        $this->message = $this->i18n('activated', $this->addon->name);
         return true;
     }
 
@@ -282,11 +282,11 @@ class AddonManager
                 self::generatePackageOrder();
             }
 
-            $this->message = $this->i18n('deactivated', $this->addon->getName());
+            $this->message = $this->i18n('deactivated', $this->addon->name);
             return true;
         }
 
-        $this->message = $this->i18n('no_deactivation', $this->addon->getName()) . '<br />' . $this->message;
+        $this->message = $this->i18n('no_deactivation', $this->addon->name) . '<br />' . $this->message;
         return false;
     }
 
@@ -341,8 +341,8 @@ class AddonManager
                 continue;
             }
 
-            if (in_array($this->addon->getPackageId(), self::getRequiredAddons($addon))) {
-                $state[] = I18n::msg($i18nPrefix . 'addon', $addon->getPackageId());
+            if (in_array($this->addon->name, self::getRequiredAddons($addon))) {
+                $state[] = I18n::msg($i18nPrefix . 'addon', $addon->name);
             }
         }
 
@@ -393,7 +393,7 @@ class AddonManager
             }
         };
         foreach (Addon::getAvailableAddons() as $addon) {
-            $id = $addon->getPackageId();
+            $id = $addon->name;
             $load = $addon->getProperty('load');
             if ('early' === $load) {
                 $early[] = $id;
@@ -453,7 +453,7 @@ class AddonManager
         Addon::initialize();
     }
 
-    /** @return array<string, string> */
+    /** @return array<non-empty-string, non-empty-string> */
     public static function getComposerPackages(): array
     {
         $packages = [];
@@ -467,6 +467,7 @@ class AddonManager
             $packages[$addon] = $package;
         }
 
+        /** @var array<non-empty-string, non-empty-string> */
         return $packages;
     }
 

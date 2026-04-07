@@ -89,7 +89,7 @@ final class CommandLoader implements CommandLoaderInterface
             }
 
             if (!is_array($commands)) {
-                throw new RuntimeException('Expecting "console_commands" property to be an array, got "' . gettype($commands) . '" from package.yml of "' . $addon->getName() . '"');
+                throw new RuntimeException('Expecting "console_commands" property to be an array, got "' . gettype($commands) . '" from package.yml of "' . $addon->name . '"');
             }
 
             foreach ($commands as $command => $class) {

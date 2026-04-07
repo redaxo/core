@@ -27,7 +27,7 @@ class AddonRunUpdateScriptCommand extends AbstractCommand
                         continue;
                     }
 
-                    $packageNames[] = $package->getPackageId();
+                    $packageNames[] = $package->name;
                 }
 
                 return $packageNames;
