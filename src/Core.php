@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core;
 
+use Composer\InstalledVersions;
 use Redaxo\Core\Console\Application;
 use Redaxo\Core\Database\Configuration as DatabaseConfiguration;
 use Redaxo\Core\Exception\InvalidArgumentException;
@@ -433,7 +434,7 @@ final class Core
     public static function getVersion(?string $format = null): string
     {
         /** @psalm-taint-escape file */
-        $version = self::getProperty('version');
+        $version = Type::string(InstalledVersions::getPrettyVersion('redaxo/core'));
 
         if ($format) {
             return Formatter::version($version, $format);

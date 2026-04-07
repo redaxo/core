@@ -3,26 +3,7 @@
     "$id": "https://redaxo.org/schemas/package.json",
     "title": "JSON schema for REDAXO package.yml",
     "type": "object",
-    "required": ["package", "version"],
     "properties": {
-        "package": {
-            "description": "The name of the addon",
-            "type": "string"
-        },
-        "version": {
-            "description": "Package version",
-            "type": "string",
-            "default": "1.0.0-dev"
-        },
-        "author": {
-            "description": "Package author",
-            "type": "string"
-        },
-        "supportpage": {
-            "description": "Package supportpage",
-            "type": "string",
-            "default": "https://github.com/user/repo"
-        },
         "page": {
             "description": "Main page",
             "$ref": "#/definitions/main-page"

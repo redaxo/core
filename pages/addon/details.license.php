@@ -14,6 +14,8 @@ if (is_readable($package->getPath('LICENSE.md'))) {
     $license = Markdown::factory()->parse(File::require($package->getPath('LICENSE.md')));
 } elseif (is_readable($package->getPath('LICENSE'))) {
     $license = nl2br(file_get_contents($package->getPath('LICENSE')));
+} else {
+    $license = $package->getLicense();
 }
 
 if ($license) {

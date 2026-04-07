@@ -23,8 +23,6 @@ use Redaxo\Core\Util\Type;
 use function in_array;
 use function sprintf;
 
-use const JSON_THROW_ON_ERROR;
-
 class AddonManager
 {
     use FactoryTrait;
@@ -60,23 +58,10 @@ class AddonManager
         try {
             // check package.yml
             $addonFile = $this->addon->getPath(Addon::FILE_PACKAGE);
-            if (!is_readable($addonFile)) {
-                throw new UserMessageException($this->i18n('missing_yml_file'));
-            }
             try {
                 File::getConfig($addonFile);
             } catch (YamlParseException $e) {
                 throw new UserMessageException($this->i18n('invalid_yml_file') . ' ' . $e->getMessage());
-            }
-            $addonId = $this->addon->getProperty('package');
-            if (null === $addonId) {
-                throw new UserMessageException($this->i18n('missing_id', $this->addon->name));
-            }
-            if ($addonId != $this->addon->name) {
-                throw new UserMessageException($this->wrongPackageId($addonId));
-            }
-            if (null === $this->addon->getProperty('version')) {
-                throw new UserMessageException($this->i18n('missing_version'));
             }
 
             // check requirements and conflicts
@@ -300,11 +285,6 @@ class AddonManager
         $this->addon->clearCache();
     }
 
-    protected function wrongPackageId(string $addonName): string
-    {
-        return $this->i18n('wrong_dir_name', $addonName);
-    }
-
     /** Checks whether the required addons are available. */
     public function checkRequirements(): bool
     {
@@ -478,15 +458,8 @@ class AddonManager
      */
     private static function getRequiredAddons(Addon $addon): array
     {
-        $composerJson = File::get($addon->getPath('composer.json'));
-        if (!$composerJson) {
-            return [];
-        }
-
-        $composerJson = Type::array(json_decode($composerJson, true, flags: JSON_THROW_ON_ERROR));
-
         /** @var array<string, array<mixed>> $require */
-        $require = Type::array($composerJson['require'] ?? []);
+        $require = Type::array($addon->getComposerJson()['require'] ?? []);
         if (!$require) {
             return [];
         }
