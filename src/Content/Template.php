@@ -8,6 +8,8 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Stream;
+use Redaxo\Core\Util\Timer;
 
 use function assert;
 use function in_array;
@@ -86,6 +88,13 @@ class Template
         }
 
         return File::get($file);
+    }
+
+    public function render(): string
+    {
+        return Timer::measure('Template: ' . ($this->getKey() ?? $this->id), function () {
+            return File::getOutput(Stream::factory('template/' . $this->id, $this->getTemplate() ?: ''));
+        });
     }
 
     /**

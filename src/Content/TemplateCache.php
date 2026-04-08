@@ -7,7 +7,6 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
-use Redaxo\Core\RexVar\RexVar;
 
 use function function_exists;
 
@@ -33,11 +32,8 @@ class TemplateCache
             throw new RuntimeException('Template with id "' . $id . '" does not exist.');
         }
 
-        $content = $sql->getValue('content');
-        $content = RexVar::parse($content, RexVar::ENV_FRONTEND, 'template');
-
         $path = self::getPath($id);
-        if (!File::put($path, $content)) {
+        if (!File::put($path, $sql->getValue('content'))) {
             throw new RuntimeException('Unable to generate template "' . $id . '".');
         }
 

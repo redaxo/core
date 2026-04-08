@@ -345,7 +345,6 @@ return RectorConfig::configure()
         'rex_var_linklist' => RexVar\LinkListVar::class,
         'rex_var_media' => RexVar\MediaVar::class,
         'rex_var_medialist' => RexVar\MediaListVar::class,
-        'rex_var_template' => RexVar\TemplateVar::class,
         'rex_var_value' => RexVar\ValueVar::class,
         'rex_version' => Util\Version::class,
         'rex_article' => Content\Article::class,
