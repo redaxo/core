@@ -10,7 +10,7 @@ if (!defined('REX_MIN_PHP_VERSION')) {
     require dirname(__DIR__, 2) . '/redaxo/src/core/boot.php';
 
     // initialize autoloader before phpstan autoload wrapper is active
-    // https://github.com/redaxo/redaxo/pull/4369#issuecomment-770195916
+    // https://github.com/redaxo/core/pull/4369#issuecomment-770195916
     class_exists(rex_backend_login::class);
 }
 

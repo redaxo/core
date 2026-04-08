@@ -14,7 +14,7 @@ use Composer\Autoload\ClassLoader;
  */
 class rex_autoload
 {
-    // see https://github.com/redaxo/redaxo/issues/5780
+    // see https://github.com/redaxo/core/issues/5780
     private const SYMFONY_NON_UTF8_CLASS = "\xA9";
 
     private const SYMFONY_NON_UTF8_CLASS_REPLACEMENT = 'rexsymfonycachevaluewrappernonutf8class';

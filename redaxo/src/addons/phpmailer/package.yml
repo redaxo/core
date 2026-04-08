@@ -1,7 +1,7 @@
 package: phpmailer
 version: '2.17.0-beta1'
 author: 'Markus Staab, Thomas Skerbis, Jan Kristinus, Brent R. Matzelle'
-supportpage: https://github.com/redaxo/redaxo
+supportpage: https://github.com/redaxo/core
 
 page:
     title: PHPMailer

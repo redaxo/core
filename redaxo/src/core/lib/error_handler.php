@@ -254,7 +254,7 @@ abstract class rex_error_handler
             }
 
             $bugBodyCompressed = rex_type::string(preg_replace('/ {2,}/u', ' ', $bugBody)); // replace multiple spaces with one space
-            $reportBugLink = '<a class="rex-report-bug" href="https://github.com/redaxo/redaxo/issues/new?labels=' . rex_escape($bugLabel, 'url') . '&title=' . rex_escape($bugTitle, 'url') . '&body=' . rex_escape($bugBodyCompressed, 'url') . '" rel="noopener noreferrer" target="_blank">Report a REDAXO bug</a>';
+            $reportBugLink = '<a class="rex-report-bug" href="https://github.com/redaxo/core/issues/new?labels=' . rex_escape($bugLabel, 'url') . '&title=' . rex_escape($bugTitle, 'url') . '&body=' . rex_escape($bugBodyCompressed, 'url') . '" rel="noopener noreferrer" target="_blank">Report a REDAXO bug</a>';
         }
 
         $url = rex::isFrontend() ? rex_url::frontendController() : rex_url::backendController();

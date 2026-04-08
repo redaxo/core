@@ -24,7 +24,7 @@ final class rex_request_test extends TestCase
             [null, null, 'int', null],
             ['foo', null, 'int', 'foo'],
             ['foo', 'foo', 'string', 'bar'],
-            ['', ['foo', 'bar'], 'string', 'qux'], // https://github.com/redaxo/redaxo/issues/2900
+            ['', ['foo', 'bar'], 'string', 'qux'], // https://github.com/redaxo/core/issues/2900
             ['foo', 'x', ['foo', 'bar']],
             ['baz', 'x', ['foo', 'bar'], 'baz'],
             [null, 'x', ['foo', 'bar'], null],

@@ -23,7 +23,7 @@ class rex_system_report
         $data = [];
 
         $rexVersion = rex::getVersion();
-        $hash = rex_version::gitHash(rex_path::base(), 'redaxo/redaxo');
+        $hash = rex_version::gitHash(rex_path::base(), 'redaxo/core');
         if ($hash) {
             $rexVersion .= '#' . $hash;
         }

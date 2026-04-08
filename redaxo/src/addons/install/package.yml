@@ -1,7 +1,7 @@
 package: install
 version: '2.14.0-beta1'
 author: Gregor Harlan
-supportpage: https://github.com/redaxo/redaxo
+supportpage: https://github.com/redaxo/core
 
 page:
     title: 'translate:title'
