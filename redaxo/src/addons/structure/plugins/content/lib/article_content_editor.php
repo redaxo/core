@@ -13,6 +13,8 @@ class rex_article_content_editor extends rex_article_content
     /** @var int */
     private $sliceAddPosition = 0;
 
+    private ?rex_article_slice $currentSlice = null;
+
     /**
      * @param int|null $articleId
      * @param int|null $clang
@@ -377,6 +379,7 @@ class rex_article_content_editor extends rex_article_content
         // ----- add module im edit mode
         if ('edit' == $this->mode) {
             if ('add' == $this->function && $this->slice_id == $behindlastSliceId) {
+                ++$this->sliceAddPosition;
                 $sliceContent = $this->addSlice($behindlastSliceId, $moduleId);
             } else {
                 // ----- BLOCKAUSWAHL - SELECT
@@ -418,8 +421,12 @@ class rex_article_content_editor extends rex_article_content
         $action->exec(rex_article_action::PREVIEW);
         // ----- / PRE VIEW ACTION
 
+        $this->currentSlice = rex_article_slice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleId, $this->sliceAddPosition, $this->slice_revision);
+
         $moduleInput = $this->replaceVars($initDataSql, (string) $MOD->getValue('input'));
         $moduleInput = $this->getStreamOutput('module/' . $moduleId . '/input', $moduleInput);
+
+        $this->currentSlice = null;
 
         $msg = '';
         if ('' != $this->warning) {
@@ -536,5 +543,10 @@ class rex_article_content_editor extends rex_article_content
         $fragment->setVar('formAction', rex_url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId, false);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('slice_list_item.php');
+    }
+
+    public function getCurrentSlice(): rex_article_slice
+    {
+        return $this->currentSlice ?? parent::getCurrentSlice();
     }
 }

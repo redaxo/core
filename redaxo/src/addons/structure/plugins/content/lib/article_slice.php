@@ -53,6 +53,36 @@ class rex_article_slice
     ) {}
 
     /** @internal  */
+    public static function forNewSlice(
+        int $articleId,
+        int $clang,
+        int $ctype,
+        int $moduleId,
+        int $priority,
+        int $revision,
+    ): self {
+        return new self(
+            0,
+            $articleId,
+            $clang,
+            $ctype,
+            $moduleId,
+            $priority,
+            1,
+            $time = time(),
+            $time,
+            $user = rex::requireUser()->getLogin(),
+            $user,
+            $revision,
+            array_fill(0, 20, null),
+            array_fill(0, 10, null),
+            array_fill(0, 10, null),
+            array_fill(0, 10, null),
+            array_fill(0, 10, null),
+        );
+    }
+
+    /** @internal  */
     public static function fromSql(rex_sql $sql): self
     {
         $table = rex::getTable('article_slice');
