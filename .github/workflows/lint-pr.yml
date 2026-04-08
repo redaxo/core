@@ -8,7 +8,7 @@ permissions:
     pull-requests: write
 
 jobs:
-    validate:
+    lint:
         runs-on: ubuntu-slim
         timeout-minutes: 5
 
