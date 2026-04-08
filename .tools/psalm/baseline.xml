@@ -2470,10 +2470,10 @@
   </file>
   <file src="src/Content/TemplateCache.php">
     <ArgumentTypeCoercion>
-      <code><![CDATA[$content]]></code>
+      <code><![CDATA[$sql->getValue('content')]]></code>
     </ArgumentTypeCoercion>
     <PossiblyNullArgument>
-      <code><![CDATA[$content]]></code>
+      <code><![CDATA[$sql->getValue('content')]]></code>
     </PossiblyNullArgument>
   </file>
   <file src="src/Core.php">
@@ -4256,14 +4256,6 @@
       <code><![CDATA[$this->getParsedArg('prefix')]]></code>
       <code><![CDATA[$this->getParsedArg('suffix')]]></code>
     </PossiblyNullOperand>
-  </file>
-  <file src="src/RexVar/TemplateVar.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[new Template($id)->getTemplate()]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[new Template($id)->getTemplate()]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/RexVar/ValueVar.php">
     <MixedArgument>
