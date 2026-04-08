@@ -1,7 +1,7 @@
 ---
 name: "\U0001F41E Report an error or problem"
 about: Before you start, check whether a similar issue was already reported. Search via https://github.com/redaxo/core/issues
-labels: Bug
+labels: bug
 
 ---
 

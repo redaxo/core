@@ -71,7 +71,7 @@ jobs:
                 uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
                 if: env.writable == 1
                 with:
-                    commit_message: Apply php-cs-fixer changes
+                    commit_message: 'style: apply php-cs-fixer changes'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
                     branch: ${{ github.head_ref }} # repo dispatch needs the target branch
@@ -115,7 +115,7 @@ jobs:
                 uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
                 if: env.writable == 1
                 with:
-                    commit_message: Apply rector changes
+                    commit_message: 'refactor: apply rector changes'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
 
