@@ -3,62 +3,13 @@
 namespace Redaxo\Core\RexVar;
 
 use Redaxo\Core\Core;
-use Redaxo\Core\MediaPool\Media;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 
-use function in_array;
 use function Redaxo\Core\View\escape;
 
-/**
- * REX_MEDIA[1].
- *
- * Attribute:
- *   - category  => Kategorie in die beim oeffnen des Medienpools gesprungen werden soll
- *   - types     => Filter für Dateiendungen die im Medienpool zur Auswahl stehen sollen
- *   - preview   => Bei Bildertypen ein Vorschaubild einblenden
- *   - output    => "mimetype": Mimetype des Bildes ausgeben
- */
-class MediaVar extends RexVar
+final readonly class MediaVar
 {
-    protected function getOutput()
-    {
-        $id = $this->getArg('id', 0, true);
-        if (!in_array($this->getContext(), ['module', 'action']) || !is_numeric($id) || $id < 1 || $id > 10) {
-            return false;
-        }
-
-        $value = $this->getContextData()->getValue('media' . $id);
-
-        if ($this->hasArg('isset') && $this->getArg('isset')) {
-            return $value ? 'true' : 'false';
-        }
-
-        if ($this->hasArg('widget') && $this->getArg('widget')) {
-            if (!$this->environmentIs(self::ENV_INPUT)) {
-                return false;
-            }
-            $args = [];
-            foreach (['category', 'preview', 'types'] as $key) {
-                if ($this->hasArg($key)) {
-                    $args[$key] = $this->getArg($key);
-                }
-            }
-            $value = self::getWidget($id, 'REX_INPUT_MEDIA[' . $id . ']', $value, $args);
-        } else {
-            if ($this->hasArg('output') && 'mimetype' == $this->getArg('output')) {
-                $media = Media::get($value);
-                if ($media) {
-                    $value = $media->getType();
-                }
-            } elseif ($this->hasArg('field') && $field = $this->getParsedArg('field')) {
-                return 'htmlspecialchars(\\' . Media::class . '::get(' . self::quote($value) . ')->getValue(' . $field . '))';
-            }
-        }
-
-        return self::quote($value);
-    }
-
     /**
      * @param int|string $id
      * @return string

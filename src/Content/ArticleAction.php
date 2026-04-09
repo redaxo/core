@@ -6,7 +6,6 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Http\Request;
-use Redaxo\Core\RexVar\RexVar;
 use Redaxo\Core\Util\Stream;
 
 use function in_array;
@@ -92,8 +91,6 @@ class ArticleAction
 
         foreach ($ga as $row) {
             $action = (string) $row->getValue('code');
-            $action = RexVar::parse($action, RexVar::ENV_BACKEND | RexVar::ENV_INPUT, 'action', $this->sql);
-
             $articleId = (int) $row->getValue('id');
             require Stream::factory('action/' . $articleId . '/' . $type, $action);
         }

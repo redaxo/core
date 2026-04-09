@@ -9,47 +9,11 @@ use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 
-use function in_array;
 use function Redaxo\Core\View\escape;
 use function sprintf;
 
-/**
- * REX_LINKLIST[1].
- *
- * Attribute:
- *   - category  => Kategorie in die beim oeffnen der Linkmap gesprungen werden soll
- */
-class LinkListVar extends RexVar
+final readonly class LinkListVar
 {
-    protected function getOutput()
-    {
-        $id = $this->getArg('id', 0, true);
-        if (!in_array($this->getContext(), ['module', 'action']) || !is_numeric($id) || $id < 1 || $id > 10) {
-            return false;
-        }
-
-        $value = $this->getContextData()->getValue('linklist' . $id);
-
-        if ($this->hasArg('isset') && $this->getArg('isset')) {
-            return $value ? 'true' : 'false';
-        }
-
-        if ($this->hasArg('widget') && $this->getArg('widget')) {
-            if (!$this->environmentIs(self::ENV_INPUT)) {
-                return false;
-            }
-            $args = [];
-            foreach (['category'] as $key) {
-                if ($this->hasArg($key)) {
-                    $args[$key] = $this->getArg($key);
-                }
-            }
-            $value = self::getWidget($id, 'REX_INPUT_LINKLIST[' . $id . ']', $value, $args);
-        }
-
-        return self::quote($value);
-    }
-
     /**
      * @param int|string $id
      * @return string

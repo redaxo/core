@@ -114,9 +114,6 @@ override(
 
 expectedArguments(\Redaxo\Core\Validator\Validator::add(), 0, 'notEmpty', 'type', 'minLength', 'maxLength', 'min', 'max', 'url', 'email', 'match', 'notMatch', 'values', 'custom');
 
-expectedArguments(\Redaxo\Core\RexVar\RexVar::parse(), 1, \Redaxo\Core\RexVar\RexVar::ENV_BACKEND | \Redaxo\Core\RexVar\RexVar::ENV_FRONTEND | \Redaxo\Core\RexVar\RexVar::ENV_INPUT | \Redaxo\Core\RexVar\RexVar::ENV_OUTPUT);
-expectedArguments(\Redaxo\Core\RexVar\RexVar::environmentIs(), 0, \Redaxo\Core\RexVar\RexVar::ENV_BACKEND | \Redaxo\Core\RexVar\RexVar::ENV_FRONTEND | \Redaxo\Core\RexVar\RexVar::ENV_INPUT | \Redaxo\Core\RexVar\RexVar::ENV_OUTPUT);
-
 expectedArguments(\Redaxo\Core\View\Asset::addCssFile(), 1, 'all', 'print', 'screen', 'speech');
 
 expectedArguments(\Symfony\Component\Console\Command\Command::addArgument(), 1, \Symfony\Component\Console\Input\InputArgument::REQUIRED, \Symfony\Component\Console\Input\InputArgument::OPTIONAL, \Symfony\Component\Console\Input\InputArgument::IS_ARRAY);
