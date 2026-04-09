@@ -11,4 +11,4 @@ updates:
             github-actions: { patterns: ['*'] }
         labels: []
         commit-message:
-            prefix: ci
+            prefix: ci(deps)

@@ -24,12 +24,12 @@ jobs:
                         refactor
                         perf
                         test
-                        deps
                         ci
                         chore
                         revert
+                    scopes: |
+                        deps
                     requireScope: false
-                    disallowScopes: true
                     subjectPattern: ^.+$
 
             -   uses: bcoe/conventional-release-labels@886f696738527c7be444262c327c89436dfb95a8 # v1.3.1
