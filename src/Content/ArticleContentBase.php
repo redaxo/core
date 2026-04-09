@@ -11,7 +11,6 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
-use Redaxo\Core\RexVar\RexVar;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Stream;
 use Redaxo\Core\Util\Timer;
@@ -321,7 +320,7 @@ class ArticleContentBase
                 'slice_data' => $artDataSql,
             ],
         ));
-        $output = $this->replaceVars($artDataSql, $output);
+
         $moduleId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'module.id');
 
         return $this->getStreamOutput('module/' . $moduleId . '/output', $output);
@@ -481,28 +480,6 @@ class ArticleContentBase
         }
 
         return $CONTENT;
-    }
-
-    // ----- Modulvariablen werden ersetzt
-
-    /**
-     * @param string $content
-     * @return string
-     */
-    protected function replaceVars(Sql $sql, $content)
-    {
-        $sliceId = $sql->getValue(Core::getTablePrefix() . 'article_slice.id');
-
-        if ('edit' == $this->mode) {
-            $env = RexVar::ENV_BACKEND;
-            if (('add' == $this->function && null == $sliceId) || ('edit' == $this->function && $sliceId == $this->slice_id)) {
-                $env |= RexVar::ENV_INPUT;
-            }
-        } else {
-            $env = RexVar::ENV_FRONTEND;
-        }
-
-        return RexVar::parse($content, $env, 'module', $sql);
     }
 
     /**

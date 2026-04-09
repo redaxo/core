@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 194 errors
+// total 192 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -671,11 +671,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/RexVar/MediaVar.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\RexVar::toArray() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/RexVar.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Security\\ComplexPermission::getFieldParams() return type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Security/ComplexPermission.php',
@@ -854,11 +849,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Tests\\MediaPool\\MediaPoolTest::testIsAllowedExtension() has parameter $args with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../tests/MediaPool/MediaPoolTest.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Tests\\RexVar\\RexVarTest::varCallback() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/RexVar/RexVarTest.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Tests\\Security\\PasswordPolicyTest::testCheck() has parameter $options with no value type specified in iterable type array.',

@@ -6,48 +6,10 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 
-use function in_array;
 use function Redaxo\Core\View\escape;
 
-/**
- * REX_MEDIALIST[1].
- *
- * Attribute:
- *   - category  => Kategorie in die beim oeffnen des Medienpools gesprungen werden soll
- *   - types     => Filter für Dateiendungen die im Medienpool zur Auswahl stehen sollen
- *   - preview   => Bei Bildertypen ein Vorschaubild einblenden
- */
-class MediaListVar extends RexVar
+final readonly class MediaListVar
 {
-    protected function getOutput()
-    {
-        $id = $this->getArg('id', 0, true);
-        if (!in_array($this->getContext(), ['module', 'action']) || !is_numeric($id) || $id < 1 || $id > 10) {
-            return false;
-        }
-
-        $value = $this->getContextData()->getValue('medialist' . $id);
-
-        if ($this->hasArg('isset') && $this->getArg('isset')) {
-            return $value ? 'true' : 'false';
-        }
-
-        if ($this->hasArg('widget') && $this->getArg('widget')) {
-            if (!$this->environmentIs(self::ENV_INPUT)) {
-                return false;
-            }
-            $args = [];
-            foreach (['category', 'preview', 'types'] as $key) {
-                if ($this->hasArg($key)) {
-                    $args[$key] = $this->getArg($key);
-                }
-            }
-            $value = self::getWidget($id, 'REX_INPUT_MEDIALIST[' . $id . ']', $value, $args);
-        }
-
-        return self::quote($value);
-    }
-
     /**
      * @param int|string $id
      * @return string

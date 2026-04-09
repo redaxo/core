@@ -97,12 +97,10 @@ class ArticleContentEditor extends ArticleContent
                     $action->exec(ArticleAction::PREVIEW);
                     // ----- / PRE VIEW ACTION
 
-                    $moduleInput = $this->replaceVars($artDataSql, $moduleInput);
                     return $sliceContent . $this->editSlice($sliceId, $moduleInput, $sliceCtype, $moduleId, $artDataSql);
                 }
             }
             // Modulinhalt ausgeben
-            $moduleOutput = $this->replaceVars($artDataSql, $moduleOutput);
             $content = $this->getWrappedModuleOutput($moduleId, $moduleOutput);
 
             // EP for changing the module preview
@@ -447,8 +445,7 @@ class ArticleContentEditor extends ArticleContent
 
         $this->currentSlice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleId, $this->sliceAddPosition, $this->slice_revision);
 
-        $moduleInput = $this->replaceVars($initDataSql, (string) $MOD->getValue('input'));
-        $moduleInput = $this->getStreamOutput('module/' . $moduleId . '/input', $moduleInput);
+        $moduleInput = $this->getStreamOutput('module/' . $moduleId . '/input', (string) $MOD->getValue('input'));
 
         $this->currentSlice = null;
 

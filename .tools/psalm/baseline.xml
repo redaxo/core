@@ -4143,14 +4143,7 @@
   <file src="src/RexVar/LinkListVar.php">
     <MixedArgument>
       <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getValue]]></code>
-    </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$value]]></code>
@@ -4162,17 +4155,10 @@
   <file src="src/RexVar/LinkVar.php">
     <MixedArgument>
       <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getValue]]></code>
-    </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
+      <code><![CDATA[$value]]></code>
     </MixedOperand>
     <PossiblyNullReference>
       <code><![CDATA[getId]]></code>
@@ -4182,15 +4168,10 @@
     <MixedArgument>
       <code><![CDATA[$avalue]]></code>
       <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$avalue]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getValue]]></code>
-    </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$value]]></code>
@@ -4199,80 +4180,17 @@
   <file src="src/RexVar/MediaVar.php">
     <MixedArgument>
       <code><![CDATA[$avalue]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$aname]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$avalue]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getValue]]></code>
-    </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$value]]></code>
     </MixedOperand>
-  </file>
-  <file src="src/RexVar/RexVar.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$key]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[self::$contextData]]></code>
-    </MixedAssignment>
-    <PossiblyNullArgument>
-      <code><![CDATA[$arg]]></code>
-      <code><![CDATA[$match[0]]]></code>
-      <code><![CDATA[$match[1]]]></code>
-      <code><![CDATA[$match[2]]]></code>
-      <code><![CDATA[$match[2]]]></code>
-      <code><![CDATA[$string]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess>
-      <code><![CDATA[$match[0]]]></code>
-      <code><![CDATA[$match[1]]]></code>
-      <code><![CDATA[$match[2]]]></code>
-      <code><![CDATA[$match[2]]]></code>
-    </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset>
-      <code><![CDATA[$replacements]]></code>
-      <code><![CDATA[$replacements]]></code>
-    </PossiblyNullArrayOffset>
-    <PossiblyNullOperand>
-      <code><![CDATA[$add]]></code>
-      <code><![CDATA[$match[0]]]></code>
-      <code><![CDATA[$match[0]]]></code>
-      <code><![CDATA[$then]]></code>
-      <code><![CDATA[$then]]></code>
-      <code><![CDATA[$this->getParsedArg($key)]]></code>
-      <code><![CDATA[$this->getParsedArg('callback')]]></code>
-      <code><![CDATA[$this->getParsedArg('ifempty')]]></code>
-      <code><![CDATA[$this->getParsedArg('prefix')]]></code>
-      <code><![CDATA[$this->getParsedArg('suffix')]]></code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/RexVar/ValueVar.php">
-    <MixedArgument>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getValue]]></code>
-    </MixedMethodCall>
-    <PossiblyInvalidArgument>
-      <code><![CDATA[$value]]></code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/Security/ApiFunction/UserHasSession.php">
     <MixedArgument>
@@ -4915,21 +4833,6 @@
       <code><![CDATA[file_get_contents(__DIR__ . '/ResponseTestFiles/response_chunked_gzip.testresp')]]></code>
       <code><![CDATA[zlib_encode($body, ZLIB_ENCODING_DEFLATE)]]></code>
       <code><![CDATA[zlib_encode($body, ZLIB_ENCODING_GZIP)]]></code>
-    </PossiblyFalseArgument>
-  </file>
-  <file src="tests/RexVar/RexVarTest.php">
-    <MixedArgument>
-      <code><![CDATA[$params['class']]]></code>
-      <code><![CDATA[$params['content']]]></code>
-      <code><![CDATA[$params['subject']]]></code>
-      <code><![CDATA[$params['suffix']]]></code>
-      <code><![CDATA[$params['var']]]></code>
-    </MixedArgument>
-    <PossiblyFalseArgument>
-      <code><![CDATA[json_encode($array)]]></code>
-      <code><![CDATA[json_encode($array)]]></code>
-      <code><![CDATA[json_encode($array)]]></code>
-      <code><![CDATA[json_encode($array)]]></code>
     </PossiblyFalseArgument>
   </file>
   <file src="tests/Security/PasswordPolicyTest.php">
