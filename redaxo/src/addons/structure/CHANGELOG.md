@@ -1,7 +1,7 @@
 Changelog
 =========
 
-Version 2.20.0 – XX.XX.2026
+Version 2.20.0 – 09.04.2026
 ---------------------------
 
 ### Neu
@@ -10,6 +10,10 @@ Version 2.20.0 – XX.XX.2026
 * Linkmap: Visuelles Feedback bei Linkübernahme in Linklist (@Hasan-Alherek)
 * EP `SLICE_BE_PREVIEW`: Slice-Revision wird mit als Param übergeben (@ynamite)
 * Markup für die Slice-Ausgabe im Backend in Fragmente ausgelagert (@marcohanke)
+
+### Bugfixes
+
+* Block hinzufügen: `$this->getCurrentSlice()` liefert korrektes (weitgehend leeres) Slice-Objekt (@gharlan)
 
 
 Version 2.19.0 – 05.09.2025

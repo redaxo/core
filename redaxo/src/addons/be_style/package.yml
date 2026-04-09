@@ -1,5 +1,5 @@
 package: be_style
-version: '3.8.0-beta1'
+version: '3.8.0'
 author: 'Jan Kristinus, Markus Staab, Thomas Blum'
 supportpage: https://github.com/redaxo/core
 

@@ -1,5 +1,5 @@
 package: debug
-version: '1.4.0-beta1'
+version: '1.4.0'
 author: Markus Staab, Marcel Kuhmann, Gregor Harlan
 supportpage: https://github.com/redaxo/core
 

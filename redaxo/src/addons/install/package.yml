@@ -1,5 +1,5 @@
 package: install
-version: '2.14.0-beta1'
+version: '2.14.0'
 author: Gregor Harlan
 supportpage: https://github.com/redaxo/core
 

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-Version 3.8.0 – XX.XX.2026
+Version 3.8.0 – 09.04.2026
 --------------------------
 
 * Login-Seite: Neues Hintergrundbild (@tbaddade, @gharlan)
