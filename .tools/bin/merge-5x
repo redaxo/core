@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# This script merges the 5.x branch into 6.x and auto resolves some conflicts
+
+set -e
+
+git fetch origin
+git checkout 6.x
+git pull
+
+git merge origin/5.x --no-commit -X find-renames=15% || [[ $? -le 1 ]]
+
+# Auto-resolve conflicts in visual test screenshots and phpstan/psalm baselines (keep 6.x version)
+git diff --name-only --diff-filter=U | grep -E '\.tools/(visual-tests/screenshots/|phpstan/baseline/|psalm/baseline)' | while read -r file; do
+    git checkout --ours "$file"
+    git add "$file"
+done
+
+for dir in core addons/backup addons/be_style addons/cronjob addons/media_manager addons/mediapool addons/metainfo addons/phpmailer addons/structure addons/users; do
+    git rm --ignore-unmatch -r "redaxo/src/$dir/vendor/"
+    git rm --ignore-unmatch "redaxo/src/$dir/CHANGELOG.md"
+    git rm --ignore-unmatch "redaxo/src/$dir/composer.lock"
+done
+
+git rm --ignore-unmatch -r "redaxo/src/addons/install/"
+
+echo ""
+echo "Please resolve all remaining conflicts manually."
+echo ""
+read -r -p "All conflicts resolved? (y/n) " answer
+
+if [[ "$answer" != "y" ]]; then
+    echo "Aborted."
+    exit 1
+fi
+
+git commit --no-edit -m "Merge branch '5.x' into 6.x"
+
+.tools/bin/console assets:compile-styles
+composer cs-fixer
+composer sa
+
+# git push --force origin HEAD:temp
