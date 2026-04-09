@@ -40,6 +40,7 @@ parameters:
         - '#^Unsafe usage of new static\(\)#'
         - '#^Constructor of class rex_form_.*_element has an unused parameter \$tag.#'
         - '#^Offset .* on .* always exists#'
+        -   identifiers: [possiblyImpure.functionCall, possiblyImpure.methodCall]
         -
             message: '#\bPdo\\Mysql\b#'
             identifier: class.notFound

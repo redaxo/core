@@ -128,7 +128,6 @@
         "phpstan": "phpstan analyse --ansi -v",
         "phpstan:baseline": [
             "phpstan --generate-baseline=.tools/phpstan/baseline/_loader.php -v",
-            "find .tools/phpstan/baseline/ -type f -not -name _loader.php -delete",
             "split-phpstan-baseline .tools/phpstan/baseline/_loader.php",
             "@cs-fixer .tools/phpstan/baseline"
         ],

@@ -225,8 +225,14 @@ class rex_user
      * @param string $key Complex perm key
      *
      * @return rex_complex_perm|null Complex perm
-     * @phpstan-return rex_media_perm|rex_structure_perm|rex_module_perm|rex_clang_perm|null
-     * @psalm-return rex_complex_perm|null
+     * @phpstan-return (
+     *      $key is 'media' ? rex_media_perm :
+     *      ($key is 'structure' ? rex_structure_perm :
+     *      ($key is 'modules' ? rex_module_perm :
+     *      ($key is 'clang' ? rex_clang_perm :
+     *      rex_complex_perm|null
+     *      ))))
+     *  )
      */
     public function getComplexPerm($key)
     {
