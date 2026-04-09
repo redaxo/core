@@ -70,7 +70,7 @@ class Version
      *
      * @param string $path A local filesystem path
      * @param string|null $repo If given, the version hash is returned only if the remote repository matches the
-     *                          given github repo (e.g. `redaxo/redaxo`)
+     *                          given github repo (e.g. `redaxo/core`)
      */
     public static function gitHash($path, ?string $repo = null): ?string
     {

@@ -74,7 +74,7 @@ final class Type
                     return (float) $var;
 
                 case 'string':
-                    if (is_array($var)) { // https://github.com/redaxo/redaxo/issues/2900
+                    if (is_array($var)) { // https://github.com/redaxo/core/issues/2900
                         return '';
                     }
                     return (string) $var;

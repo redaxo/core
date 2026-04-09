@@ -1,17 +1,17 @@
-<p align="right">🌎 <a href="https://github.com/redaxo/redaxo/blob/6.x/README.md">English</a></p>
+<p align="right">🌎 <a href="https://github.com/redaxo/core/blob/6.x/README.md">English</a></p>
 
-<p align="center"><a href="https://redaxo.org"><img src="https://raw.githubusercontent.com/redaxo/redaxo/assets/redaxo-logo.png" alt="REDAXO" width="280px" height="43px"></a></p>
+<p align="center"><a href="https://redaxo.org"><img src="https://raw.githubusercontent.com/redaxo/core/assets/redaxo-logo.png" alt="REDAXO" width="280px" height="43px"></a></p>
 
 <h3 align="center">Content-Management seit 2004. Einfach, flexibel, sinnvoll.</h3>
 
 <p align="center"><a href="https://redaxo.org">REDAXO</a> bietet dir ein einfach zu erlernendes Website-Framework. Es ermöglicht, Inhalte über beliebige Module aufzubauen, deren Ein- und Ausgabe du vollständig kontrollieren kannst. Es ist mehrsprachig, enorm erweiterbar und passt sich deinem Arbeitsablauf an.</p>
 
-<p align="center"><img src="https://raw.githubusercontent.com/redaxo/redaxo/assets/redaxo_02.png" width="100%" alt="Screenshots"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/redaxo/core/assets/redaxo_02.png" width="100%" alt="Screenshots"></p>
 
 &nbsp;
 
 <p align="center">
-	<a href="https://github.com/redaxo/redaxo/releases">Changelog</a> &nbsp;|&nbsp;
+	<a href="https://github.com/redaxo/core/releases">Changelog</a> &nbsp;|&nbsp;
 	<a href="https://redaxo.org/doku/5.x">Documentation</a> &nbsp;|&nbsp;
 	<a href="https://friendsofredaxo.github.io/phpdoc/">API&nbsp;Docs</a> &nbsp;|&nbsp;
 	<a href="https://friendsofredaxo.github.io/tricks/">Tricks</a> &nbsp;|&nbsp;
@@ -22,9 +22,9 @@
 </p>
 
 <p align="center">
-	<a href="https://github.com/redaxo/redaxo/releases"><img src="https://img.shields.io/github/release/redaxo/redaxo.svg?style=for-the-badge" alt=""></a>&nbsp;
-	<a href="https://github.com/redaxo/redaxo/blob/6.x/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-green.svg?longCache=true&style=for-the-badge" alt=""></a>&nbsp;
-	<a href="https://github.com/redaxo/redaxo/releases"><img src="https://img.shields.io/github/downloads/redaxo/redaxo/total.svg?style=for-the-badge" alt=""></a>
+	<a href="https://github.com/redaxo/core/releases"><img src="https://img.shields.io/github/release/redaxo/core.svg?style=for-the-badge" alt=""></a>&nbsp;
+	<a href="https://github.com/redaxo/core/blob/6.x/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-green.svg?longCache=true&style=for-the-badge" alt=""></a>&nbsp;
+	<a href="https://github.com/redaxo/core/releases"><img src="https://img.shields.io/github/downloads/redaxo/core/total.svg?style=for-the-badge" alt=""></a>
 </p>
 
 <br>
@@ -37,7 +37,7 @@ __REDAXO und die Community kennenlernen:__
 
 ### 1. Das CMS installieren und die Demos testen
 
-Das ist vermutlich die beste Möglichkeit, REDAXO kennenzulernen: Installiere das [neueste Release](https://github.com/redaxo/redaxo/releases), melde dich im Adminbereich an und benutze das eingebaute _Installer_-AddOn, um eine der Demo-Websites einzurichten. Für Einsteiger bietet sich die »Basisdemo« (Suche nach `demo_base`) an, die alle wichtigen Themen im Umgang mit REDAXO erklärt.
+Das ist vermutlich die beste Möglichkeit, REDAXO kennenzulernen: Installiere das [neueste Release](https://github.com/redaxo/core/releases), melde dich im Adminbereich an und benutze das eingebaute _Installer_-AddOn, um eine der Demo-Websites einzurichten. Für Einsteiger bietet sich die »Basisdemo« (Suche nach `demo_base`) an, die alle wichtigen Themen im Umgang mit REDAXO erklärt.
 
 Aktuelle Demo-Websites: [Basis](https://github.com/FriendsOfREDAXO/demo_base), [Community](https://github.com/FriendsOfREDAXO/demo_community), [OnePage](https://github.com/FriendsOfREDAXO/demo_onepage), [FullPage](https://github.com/FriendsOfREDAXO/demo_fullpage).
 
@@ -57,7 +57,7 @@ Bist du noch nicht drauf? [So kannst du deinen Eintrag hinzufügen](https://gith
 
 Um am Core und an den Core-Addons zu entwickeln, setze das Projekt mit diesen Schritten lokal auf:
 
-- Klone das Repository: `git clone https://github.com/redaxo/redaxo redaxo && cd redaxo`
+- Klone das Repository: `git clone https://github.com/redaxo/core redaxo && cd redaxo`
 - Installiere die für die Entwicklung verwendeten Tools über [Composer](https://getcomposer.org): `composer install`
 - Du kannst die hinterlegte Docker-Konfiguration nutzen, um eine lokale Entwicklungsumgebung zu starten: `docker-compose up -d`. Falls du einen anderen Port als den Standardport 80 benötigst, ergänze die Angabe so: `REDAXO_PORT=8080 docker-compose up -d`.
 
@@ -70,7 +70,7 @@ REDAXO wurde von [Yakamara](https://www.yakamara.de) (Frankfurt am Main 🇩🇪
 &nbsp;
 
 <p align="center">
-    <a href="https://shepherd.dev/github/redaxo/redaxo">
-         <img src="https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fshepherd.dev%2Fgithub%2Fredaxo%2Fredaxo%2Fcoverage" alt="Psalm coverage">
+    <a href="https://shepherd.dev/github/redaxo/core">
+         <img src="https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Fshepherd.dev%2Fgithub%2Fredaxo%2Fcore%2Fcoverage" alt="Psalm coverage">
     </a>
 </p>

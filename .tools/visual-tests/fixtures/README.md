@@ -1,7 +1,7 @@
 <br/>
 <div align="center">
     <a href="https://github.com/github_username/repo_name">
-        <img src="https://raw.githubusercontent.com/redaxo/redaxo/assets/redaxo-logo.png" alt="REDAXO" width="280px" height="43px">
+        <img src="https://raw.githubusercontent.com/redaxo/core/assets/redaxo-logo.png" alt="REDAXO" width="280px" height="43px">
     </a>
 
 <h1>Project title</h1>
@@ -154,7 +154,7 @@ Alternatively,
 
 If you want to embed images, this is how you do it:
 
-![Logo of REDAXO](https://raw.githubusercontent.com/redaxo/redaxo/assets/redaxo-logo.png)
+![Logo of REDAXO](https://raw.githubusercontent.com/redaxo/core/assets/redaxo-logo.png)
 
 
 ### Quotes
@@ -202,4 +202,4 @@ if (isAwesome) {
 | cell 2.1 | cell 2.2 | cell 2.3 |
 
 
-[product-screenshot]: https://raw.githubusercontent.com/redaxo/redaxo/assets/redaxo_02.png
+[product-screenshot]: https://raw.githubusercontent.com/redaxo/core/assets/redaxo_02.png

@@ -202,7 +202,7 @@ $dbconfig = Core::getDbConfig(1);
 
 $rexVersion = Core::getVersion();
 if (str_contains($rexVersion, '-dev')) {
-    $hash = Version::gitHash(Path::base(), 'redaxo/redaxo');
+    $hash = Version::gitHash(Path::base(), 'redaxo/core');
     if ($hash) {
         $rexVersion .= '#' . $hash;
     }

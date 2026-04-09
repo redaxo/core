@@ -50,10 +50,10 @@
         "phpstan/phpstan-deprecation-rules": "2.0.4",
         "phpstan/phpstan-phpunit": "2.0.16",
         "phpstan/phpstan-symfony": "2.0.15",
-        "phpunit/phpunit": "^12.5.15",
+        "phpunit/phpunit": "^12.5.17 || ^13.1.1",
         "psalm/plugin-phpunit": "0.19.6",
         "psalm/plugin-symfony": "v5.3.0",
-        "rector/rector": "2.3.9",
+        "rector/rector": "2.4.1",
         "redaxo/debug": "^2.0@dev",
         "redaxo/php-cs-fixer-config": "3.0.0",
         "redaxo/psalm-plugin": "2.2.0",
@@ -112,7 +112,6 @@
         "phpstan": "phpstan analyse --ansi -v",
         "phpstan:baseline": [
             "phpstan --generate-baseline=.tools/phpstan/baseline/_loader.php -v",
-            "find .tools/phpstan/baseline/ -type f -not -name _loader.php -delete",
             "split-phpstan-baseline .tools/phpstan/baseline/_loader.php",
             "@cs-fixer .tools/phpstan/baseline"
         ],

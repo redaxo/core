@@ -63,6 +63,36 @@ class ArticleSlice
     ) {}
 
     /** @internal  */
+    public static function forNewSlice(
+        int $articleId,
+        int $clang,
+        int $ctype,
+        int $moduleId,
+        int $priority,
+        int $revision,
+    ): self {
+        return new self(
+            0,
+            $articleId,
+            $clang,
+            $ctype,
+            $moduleId,
+            $priority,
+            1,
+            $time = time(),
+            $time,
+            $user = Core::requireUser()->getLogin(),
+            $user,
+            $revision,
+            array_fill(0, 20, null),
+            array_fill(0, 10, null),
+            array_fill(0, 10, null),
+            array_fill(0, 10, null),
+            array_fill(0, 10, null),
+        );
+    }
+
+    /** @internal  */
     public static function fromSql(Sql $sql): self
     {
         $table = Core::getTable('article_slice');

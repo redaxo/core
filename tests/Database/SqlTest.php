@@ -503,7 +503,7 @@ final class SqlTest extends TestCase
     {
         $this->testInsertRow();
 
-        // https://github.com/redaxo/redaxo/issues/5518
+        // https://github.com/redaxo/core/issues/5518
         Sql::closeConnection();
 
         $sql = Sql::factory();

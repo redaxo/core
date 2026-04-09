@@ -1,0 +1,44 @@
+name: Lint PR
+
+on:
+    pull_request_target:
+        types: [opened, edited, synchronize]
+
+permissions:
+    pull-requests: write
+
+jobs:
+    lint:
+        runs-on: ubuntu-slim
+        timeout-minutes: 5
+
+        steps:
+            -   uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+                env:
+                    GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+                with:
+                    types: |
+                        feat
+                        fix
+                        docs
+                        refactor
+                        perf
+                        test
+                        ci
+                        chore
+                        revert
+                    scopes: |
+                        deps
+                    requireScope: false
+                    subjectPattern: ^.+$
+
+            -   uses: bcoe/conventional-release-labels@886f696738527c7be444262c327c89436dfb95a8 # v1.3.1
+                with:
+                    token: ${{ secrets.BOT_TOKEN }}
+                    type_labels: |
+                        {
+                            "feat": "feature",
+                            "fix": "bug",
+                            "breaking": "breaking"
+                        }
+                    ignored_types: '[]'

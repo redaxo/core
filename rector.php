@@ -479,7 +479,7 @@ return RectorConfig::configure()
         new FuncCallToStaticCall('rex_mediapool_Uploadform', View\View::class, 'mediaPoolMediaForm'),
         new FuncCallToStaticCall('rex_mediapool_Syncform', View\View::class, 'mediaPoolMediaForm'),
 
-        // additional adjustments necessary afterward, see https://github.com/redaxo/redaxo/pull/5918/files
+        // additional adjustments necessary afterward, see https://github.com/redaxo/core/pull/5918/files
         new FuncCallToStaticCall('rex_mediapool_saveMedia', MediaPool\MediaPool::class, 'addMedia'), // different params
         new FuncCallToStaticCall('rex_mediapool_updateMedia', MediaPool\MediaPool::class, 'updateMedia'), // different params
         new FuncCallToStaticCall('rex_mediapool_syncFile', MediaPool\MediaPool::class, 'addMedia'), // different params

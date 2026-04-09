@@ -251,7 +251,7 @@ final class SelectTest extends TestCase
         self::assertStringStartsWith("Unknown column 'idx' in ", $error);
 
         $exception = null;
-        Sql::closeConnection(); // https://github.com/redaxo/redaxo/pull/5272#discussion_r935793505
+        Sql::closeConnection(); // https://github.com/redaxo/core/pull/5272#discussion_r935793505
         $sql = Sql::factory();
         try {
             $sql->setQuery('SELECT * FROM non_existing_table');

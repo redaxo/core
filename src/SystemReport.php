@@ -38,7 +38,7 @@ final class SystemReport
         $data = [];
 
         $rexVersion = Core::getVersion();
-        $hash = Version::gitHash(Path::base(), 'redaxo/redaxo');
+        $hash = Version::gitHash(Path::base(), 'redaxo/core');
         if ($hash) {
             $rexVersion .= '#' . $hash;
         }

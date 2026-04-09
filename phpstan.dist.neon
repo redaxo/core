@@ -40,6 +40,7 @@ parameters:
         - '#^Offset .* on .* always exists#'
         # https://github.com/phpstan/phpstan/issues/10698
         - '#^Parameter \#1 \$extensionPoint of static method Redaxo\\Core\\ExtensionPoint\\Extension\:\:registerPoint\(\) expects Redaxo\\Core\\ExtensionPoint\\ExtensionPoint\<(.+)\>, Redaxo\\Core\\ExtensionPoint\\ExtensionPoint\<\1\> given\.$#'
+        -   identifiers: [possiblyImpure.functionCall, possiblyImpure.methodCall]
         -
             identifier: missingType.checkedException
             path: tests/*

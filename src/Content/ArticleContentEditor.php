@@ -33,6 +33,8 @@ class ArticleContentEditor extends ArticleContent
     /** @var int */
     private $sliceAddPosition = 0;
 
+    private ?ArticleSlice $currentSlice = null;
+
     /**
      * @param int|null $articleId
      * @param int|null $clang
@@ -401,6 +403,7 @@ class ArticleContentEditor extends ArticleContent
         // ----- add module im edit mode
         if ('edit' == $this->mode) {
             if ('add' == $this->function && $this->slice_id == $behindlastSliceId) {
+                ++$this->sliceAddPosition;
                 $sliceContent = $this->addSlice($behindlastSliceId, $moduleId);
             } else {
                 // ----- BLOCKAUSWAHL - SELECT
@@ -442,8 +445,12 @@ class ArticleContentEditor extends ArticleContent
         $action->exec(ArticleAction::PREVIEW);
         // ----- / PRE VIEW ACTION
 
+        $this->currentSlice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleId, $this->sliceAddPosition, $this->slice_revision);
+
         $moduleInput = $this->replaceVars($initDataSql, (string) $MOD->getValue('input'));
         $moduleInput = $this->getStreamOutput('module/' . $moduleId . '/input', $moduleInput);
+
+        $this->currentSlice = null;
 
         $msg = '';
         if ('' != $this->warning) {
@@ -559,5 +566,10 @@ class ArticleContentEditor extends ArticleContent
         $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
+    }
+
+    public function getCurrentSlice(): ArticleSlice
+    {
+        return $this->currentSlice ?? parent::getCurrentSlice();
     }
 }

@@ -265,7 +265,7 @@ final class ErrorHandler
             }
 
             $bugBodyCompressed = Type::string(preg_replace('/ {2,}/u', ' ', $bugBody)); // replace multiple spaces with one space
-            $reportBugLink = '<a class="rex-report-bug" href="https://github.com/redaxo/redaxo/issues/new?labels=' . escape($bugLabel, 'url') . '&title=' . escape($bugTitle, 'url') . '&body=' . escape($bugBodyCompressed, 'url') . '" rel="noopener noreferrer" target="_blank">Report a REDAXO bug</a>';
+            $reportBugLink = '<a class="rex-report-bug" href="https://github.com/redaxo/core/issues/new?labels=' . escape($bugLabel, 'url') . '&title=' . escape($bugTitle, 'url') . '&body=' . escape($bugBodyCompressed, 'url') . '" rel="noopener noreferrer" target="_blank">Report a REDAXO bug</a>';
         }
 
         $url = Core::isFrontend() ? Url::frontendController() : Url::backendController();

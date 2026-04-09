@@ -28,7 +28,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v5
+                uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -40,16 +40,16 @@ jobs:
                         https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 0
             -   name: Checkout on chat command
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -57,14 +57,14 @@ jobs:
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
             -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
+                uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
                 with:
                     php-version: '8.5'
                     extensions: gd, intl, imagick
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v4
+                uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
             -   name: Run psalm analysis
                 if: github.event_name != 'repository_dispatch'
@@ -81,10 +81,10 @@ jobs:
                 run: git pull --ff-only --no-tags --depth=1
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v7
+                uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
                 if: failure() && steps.baseline.conclusion != 'skipped' && env.writable == 1
                 with:
-                    commit_message: Update psalm baseline
+                    commit_message: 'chore: update psalm baseline'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
                     file_pattern: .tools/psalm/baseline.xml
@@ -98,7 +98,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v5
+                uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -110,16 +110,16 @@ jobs:
                         https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 0
             -   name: Checkout on chat command
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -127,14 +127,14 @@ jobs:
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
             -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
+                uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
                 with:
                     php-version: '8.5'
                     extensions: gd, intl, imagick
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v4
+                uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
             -   name: Run psalm taint analysis
                 if: github.event_name != 'repository_dispatch'
@@ -151,10 +151,10 @@ jobs:
                 run: git pull --ff-only --no-tags --depth=1
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v7
+                uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
                 if: failure() && steps.baseline.conclusion != 'skipped' && env.writable == 1
                 with:
-                    commit_message: Update psalm taint baseline
+                    commit_message: 'chore: update psalm taint baseline'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
                     file_pattern: .tools/psalm/baseline-taint.xml
@@ -168,7 +168,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v5
+                uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -180,10 +180,10 @@ jobs:
                         https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: github.event_name != 'repository_dispatch'
             -   name: Checkout on chat command
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -191,14 +191,14 @@ jobs:
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
             -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
+                uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
                 with:
                     php-version: '8.5'
                     extensions: gd, intl, imagick, pdo_mysql
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v4
+                uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
             -   name: Setup REDAXO
                 run: |
@@ -224,10 +224,10 @@ jobs:
                 run: git pull --ff-only --no-tags --depth=1
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v7
+                uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
                 if: failure() && steps.baseline.conclusion != 'skipped' && env.writable == 1
                 with:
-                    commit_message: Update phpstan baseline
+                    commit_message: 'chore: update phpstan baseline'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
                     file_pattern: .tools/phpstan/baseline/*.php
