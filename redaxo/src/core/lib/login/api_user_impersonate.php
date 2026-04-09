@@ -20,7 +20,7 @@ class rex_api_user_impersonate extends rex_api_function
 
         $user = rex::requireUser();
         if (!$user->isAdmin()) {
-            throw new rex_api_exception(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->getLogin()));
+            throw new rex_api_exception(rex_escape(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->getLogin())));
         }
 
         rex::getProperty('login')->impersonate((int) $impersonate);

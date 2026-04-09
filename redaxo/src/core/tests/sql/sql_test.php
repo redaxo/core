@@ -491,7 +491,7 @@ final class rex_sql_test extends TestCase
     {
         $this->testInsertRow();
 
-        // https://github.com/redaxo/redaxo/issues/5518
+        // https://github.com/redaxo/core/issues/5518
         rex_sql::closeConnection();
 
         $sql = rex_sql::factory();

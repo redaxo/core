@@ -14,6 +14,10 @@ env:
 permissions:
     contents: read
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     php-cs-fixer:
         runs-on: ubuntu-latest
@@ -24,7 +28,7 @@ jobs:
 
         steps:
             -   name: Add action run link to trigger comment
-                uses: peter-evans/create-or-update-comment@v5
+                uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -33,16 +37,16 @@ jobs:
                     body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 0
-            -   name: Checkout on chat commnad
-                uses: actions/checkout@v6
+            -   name: Checkout on chat command
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -50,24 +54,24 @@ jobs:
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
             -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
+                uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
                 with:
                     php-version: '8.3'
                     coverage: none # disable xdebug, pcov
                     tools: cs2pr
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
             -   name: Fix code style
                 if: env.writable == 1
                 run: vendor/bin/php-cs-fixer list-files --config=.php-cs-fixer.dist.php | xargs -n 250 -P 3 vendor/bin/php-cs-fixer fix --diff --config=.php-cs-fixer.dist.php
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v7
+                uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
                 if: env.writable == 1
                 with:
-                    commit_message: Apply php-cs-fixer changes
+                    commit_message: 'style: apply php-cs-fixer changes'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
                     branch: ${{ github.head_ref }} # repo dispatch needs the target branch
@@ -85,33 +89,33 @@ jobs:
 
         steps:
             -   name: Checkout
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 1
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@v6
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
                 if: env.writable == 0
 
             -   name: Setup PHP
-                uses: shivammathur/setup-php@v2
+                uses: shivammathur/setup-php@accd6127cb78bee3e8082180cb391013d204ef9f # 2.37.0
                 with:
                     php-version: '8.3'
                     coverage: none # disable xdebug, pcov
 
             -   name: Composer install
-                uses: ramsey/composer-install@v3
+                uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
             -   name: Fix code style
                 if: env.writable == 1
                 run: vendor/bin/rector process --no-progress-bar
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@v7
+                uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
                 if: env.writable == 1
                 with:
-                    commit_message: Apply rector changes
+                    commit_message: 'refactor: apply rector changes'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
 

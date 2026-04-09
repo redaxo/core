@@ -42,7 +42,7 @@ select.form-control {
 }
 
 // workaround for select issues (Safari 15)
-// https://github.com/redaxo/redaxo/issues/4792
+// https://github.com/redaxo/core/issues/4792
 // TODO: check if workaround can be removed with newer Safari releases
 :not(.rex-select-style) select.form-control {
     white-space: normal;
@@ -274,7 +274,7 @@ label.required::after {
 }
 
 // align form-control heights with button heights (bootstrap issue)
-// https://github.com/redaxo/redaxo/issues/3962
+// https://github.com/redaxo/core/issues/3962
 .form-control {
     height: auto;
 }

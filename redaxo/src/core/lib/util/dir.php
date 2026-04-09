@@ -30,7 +30,14 @@ class rex_dir
             return false;
         }
 
-        if (self::isWritable($parent) && mkdir($dir, rex::getDirPerm())) {
+        if (!self::isWritable($parent)) {
+            return false;
+        }
+
+        // suppress "File exists" warning in case of concurrent processes
+        @mkdir($dir, rex::getDirPerm());
+
+        if (is_dir($dir)) {
             @chmod($dir, rex::getDirPerm());
             return true;
         }

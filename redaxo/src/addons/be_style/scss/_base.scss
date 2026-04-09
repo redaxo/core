@@ -608,7 +608,7 @@ body:after {
 }
 
 // correcting bootstrap vendor regarding Quick fix for badges in buttons
-// https://github.com/redaxo/redaxo/blob/80925bba7235e5866c3eb99c881db8ddeab4ee25/redaxo/src/addons/be_style/vendor/bootstrap/assets/stylesheets/bootstrap/_badges.scss#L26
+// https://github.com/redaxo/core/blob/80925bba7235e5866c3eb99c881db8ddeab4ee25/redaxo/src/addons/be_style/vendor/bootstrap/assets/stylesheets/bootstrap/_badges.scss#L26
   .btn & {
     position: relative;
     top: 0px;

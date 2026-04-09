@@ -151,7 +151,7 @@ abstract class rex_linkmap_article_list_renderer
             }
 
             if ('' != $list) {
-                $list = '<ul class="list-group rex-linkmap-list-group">' . $list . '</ul>';
+                $list = '<ul class="list-group rex-linkmap-list-group list-with-icon">' . $list . '</ul>';
             }
         }
         return $list;

@@ -4,15 +4,20 @@ on:
     issue_comment:
         types: [created]
 
+permissions:
+    contents: read
+    issues: read
+    pull-requests: read
+
 jobs:
     slash-command-dispatch:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-slim
         timeout-minutes: 30
         if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/')
 
         steps:
             -   name: Slash Command Dispatch
-                uses: peter-evans/slash-command-dispatch@v5
+                uses: peter-evans/slash-command-dispatch@9bdcd7914ec1b75590b790b844aa3b8eee7c683a # v5.0.2
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
                     reaction-token: ${{ secrets.BOT_TOKEN }}

@@ -71,11 +71,23 @@ if (!rex_request::isXmlHttpRequest()) {
 <script type="text/javascript" nonce="<?= rex_response::getNonce() ?>">
     <?= $retainEventHandlers ?>
 
+    // This function adds a Font Awesome check icon to a list item (link) when the user clicks on it.
+    $(document).on('rex:ready', function (event, container) {
+        container.get(0).querySelectorAll('.rex-linkmap-list-item-article').forEach(function (item) {
+            item.querySelector('a').addEventListener('click', function (e) {
+                if (item.querySelector('.fa-check')) return;
+                item.insertAdjacentHTML(
+                    'beforeend',
+                    '<i class="fa-solid fa-check" style="padding-left:5px"></i>'
+                );
+            });
+        });
+    });
+
     function insertLink(link,name){
         <?= $funcBody, "\n" ?>
     }
 </script>
-
 <?php
 
 $isRoot = 0 === $categoryId;

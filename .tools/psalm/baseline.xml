@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="6.15.1@28dc127af1b5aecd52314f6f645bafc10d0e11f9">
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
   <file src="redaxo/src/addons/backup/lib/backup.php">
     <MixedArgument>
       <code><![CDATA[$column]]></code>
@@ -45,20 +45,12 @@
     <MixedArgument>
       <code><![CDATA[$excludedTables]]></code>
       <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$sqlFile]]></code>
       <code><![CDATA[$this->getParam('delete_interval')]]></code>
       <code><![CDATA[$this->getParam('mailaddress')]]></code>
     </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$backup]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedArrayOffset>
-      <code><![CDATA[$backups[$sqlFile]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$excludedTables]]></code>
       <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$sqlFile]]></code>
     </MixedAssignment>
     <PossiblyFalseArgument>
       <code><![CDATA[glob(rex_path::addonData('backup', '*' . $ext . '.gz'), GLOB_NOSORT)]]></code>
@@ -2405,6 +2397,18 @@
       <code><![CDATA[setIsActive]]></code>
     </PossiblyNullReference>
   </file>
+  <file src="redaxo/src/addons/structure/plugins/content/fragments/slice_list.php">
+    <MixedArgument>
+      <code><![CDATA[$this->content]]></code>
+    </MixedArgument>
+  </file>
+  <file src="redaxo/src/addons/structure/plugins/content/fragments/slice_list_item.php">
+    <MixedArgument>
+      <code><![CDATA[$this->attributes ?? []]]></code>
+      <code><![CDATA[$this->content]]></code>
+      <code><![CDATA[$this->formAction]]></code>
+    </MixedArgument>
+  </file>
   <file src="redaxo/src/addons/structure/plugins/content/lib/api_module.php">
     <MixedReturnStatement>
       <code><![CDATA[$mapping]]></code>
@@ -4024,7 +4028,6 @@
       <code><![CDATA[$config['db'][1]['host']]]></code>
       <code><![CDATA[$config['db'][1]['login']]]></code>
       <code><![CDATA[$config['db'][1]['name']]]></code>
-      <code><![CDATA[$config['db'][1]['password']]]></code>
       <code><![CDATA[$config['error_email']]]></code>
       <code><![CDATA[$config['lang']]]></code>
       <code><![CDATA[$config['server']]]></code>
@@ -4619,8 +4622,6 @@
     </LessSpecificReturnStatement>
     <MixedArgument>
       <code><![CDATA[$args]]></code>
-      <code><![CDATA[$instmsg]]></code>
-      <code><![CDATA[$instmsg]]></code>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$packageId]]></code>

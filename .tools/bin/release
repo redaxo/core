@@ -15,13 +15,12 @@ class rex_release
 {
     private static $addons = ['backup', 'be_style', 'cronjob', 'debug', 'install', 'media_manager', 'mediapool', 'metainfo', 'phpmailer', 'structure', 'users'];
 
-    private $version;
     private $path;
 
-    public function __construct($version)
-    {
-        $this->version = $version;
-    }
+    public function __construct(
+        private string $version,
+        private int $releaseId,
+    ) {}
 
     public function create()
     {
@@ -128,8 +127,9 @@ class rex_release
         $complete = new ZipArchive();
         $update = new ZipArchive();
 
-        $complete->open($this->path . '/redaxo_' . $this->version . '.zip', ZipArchive::CREATE);
-        $update->open($this->path . '/redaxo_update_' . $this->version . '.zip', ZipArchive::CREATE);
+        $completePath = $this->path . '/' . $this->releaseId . '.full.zip';
+        $complete->open($completePath, ZipArchive::CREATE);
+        $update->open($this->path . '/' . $this->releaseId . '.update.zip', ZipArchive::CREATE);
 
         $files = [
             'assets/.redaxo',
@@ -175,6 +175,8 @@ class rex_release
 
         $complete->close();
         $update->close();
+
+        rex_file::copy($completePath, $this->path . '/redaxo_' . $this->version . '.zip');
     }
 
     private function addDir(ZipArchive $zip, $dir, $base)
@@ -219,6 +221,9 @@ class rex_release
 if (!isset($argv[1])) {
     exit('Missing version' . PHP_EOL);
 }
+if (!isset($argv[2])) {
+    exit('Missing release id (for redaxo.org)' . PHP_EOL);
+}
 
-$release = new rex_release($argv[1]);
+$release = new rex_release($argv[1], $argv[2]);
 $release->create();

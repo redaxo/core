@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Version 2.18.0 – XX.XX.2026
+---------------------------
+
+### Neu
+
+* Erlaubte Mime-Types: `ics`, `vcf` und `md` ergänzt (@skerbis, @gharlan)
+
+### Bugfixes
+
+* `rex_media_service`: `getList` hat sie Sortierung nicht angewandt, wenn kein Pager übergeben wurde (@gharlan)
+* EP `MEDIA_LIST_QUERY` wird bei Paginierung auch für die Count-Query getriggert (@aeberhard, @gharlan)
+
+
 Version 2.17.1 – 25.11.2025
 ---------------------------
 

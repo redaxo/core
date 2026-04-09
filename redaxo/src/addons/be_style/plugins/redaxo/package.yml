@@ -1,7 +1,7 @@
 package: be_style/redaxo
-version: '3.7.0'
+version: '3.8.0-beta1'
 author: 'Ralph Zumkeller, Thomas Blum'
-supportpage: https://github.com/redaxo/redaxo
+supportpage: https://github.com/redaxo/core
 compile: 0
 
 requires:
