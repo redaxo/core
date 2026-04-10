@@ -160,8 +160,7 @@ class FilterSharpenEffect extends AbstractEffect
                 }
             }
         }
-        imagedestroy($imgCanvas);
-        imagedestroy($imgBlur);
+
         $this->media->setImage($gdimage);
     }
 
