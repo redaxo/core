@@ -137,7 +137,6 @@
     <MixedArgument>
       <code><![CDATA[$userAgent]]></code>
       <code><![CDATA[$userAgent]]></code>
-      <code><![CDATA[$version['history_date']]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[[
@@ -147,27 +146,13 @@
             'ctype' => $params['ctype'],
         ]]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedArrayAccess>
-      <code><![CDATA[$version['history_date']]]></code>
-      <code><![CDATA[$version['history_date']]]></code>
-      <code><![CDATA[$version['history_date']]]></code>
-      <code><![CDATA[$version['history_date']]]></code>
-      <code><![CDATA[$version['history_user']]]></code>
-      <code><![CDATA[$version['history_user']]]></code>
-    </MixedArrayAccess>
     <MixedAssignment>
-      <code><![CDATA[$historyInfo]]></code>
       <code><![CDATA[$metaSidebar]]></code>
       <code><![CDATA[$subject]]></code>
       <code><![CDATA[$userAgent]]></code>
-      <code><![CDATA[$version]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$metaSidebar]]></code>
-      <code><![CDATA[$version['history_date']]]></code>
-      <code><![CDATA[$version['history_user']]]></code>
-      <code><![CDATA[escape($historyInfo)]]></code>
-      <code><![CDATA[escape($version['history_date'])]]></code>
     </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[$CONTENT]]></code>
@@ -1451,6 +1436,7 @@
   <file src="pages/structure/content.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$moduleId]]></code>
+      <code><![CDATA[$moduleId]]></code>
     </ArgumentTypeCoercion>
     <MixedArgument>
       <code><![CDATA[$ctypes]]></code>
@@ -1458,8 +1444,6 @@
       <code><![CDATA[$val]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
-      <code><![CDATA[$action->getMessages()]]></code>
-      <code><![CDATA[$messages]]></code>
       <code><![CDATA[[$articleId, $clang, $ctype, $sliceRevision]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
@@ -1474,6 +1458,7 @@
       <code><![CDATA[$navigation['navigation']]]></code>
     </PossiblyInvalidArrayAccess>
     <PossiblyNullArgument>
+      <code><![CDATA[$moduleId]]></code>
       <code><![CDATA[$moduleId]]></code>
     </PossiblyNullArgument>
     <PossiblyNullReference>
@@ -2087,43 +2072,21 @@
   </file>
   <file src="src/Content/ArticleAction.php">
     <LessSpecificReturnStatement>
-      <code><![CDATA[$this->sql->getValue('link' . $id)]]></code>
-      <code><![CDATA[$this->sql->getValue('linklist' . $id)]]></code>
-      <code><![CDATA[$this->sql->getValue('media' . $id)]]></code>
-      <code><![CDATA[$this->sql->getValue('medialist' . $id)]]></code>
-      <code><![CDATA[$this->sql->getValue('value' . $id)]]></code>
+      <code><![CDATA[$this->sql->getValue('link' . $index)]]></code>
+      <code><![CDATA[$this->sql->getValue('linklist' . $index)]]></code>
+      <code><![CDATA[$this->sql->getValue('media' . $index)]]></code>
+      <code><![CDATA[$this->sql->getValue('medialist' . $index)]]></code>
+      <code><![CDATA[$this->sql->getValue('value' . $index)]]></code>
     </LessSpecificReturnStatement>
     <MixedArgument>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
       <code><![CDATA[$values[$i]]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$this->event]]></code>
-      <code><![CDATA[$this->moduleId]]></code>
-      <code><![CDATA[$this->save]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-    </MixedOperand>
     <MoreSpecificReturnType>
-      <code><![CDATA[string|null]]></code>
-      <code><![CDATA[string|null]]></code>
-      <code><![CDATA[string|null]]></code>
-      <code><![CDATA[string|null]]></code>
-      <code><![CDATA[string|null]]></code>
+      <code><![CDATA[?int]]></code>
+      <code><![CDATA[?string]]></code>
+      <code><![CDATA[?string]]></code>
+      <code><![CDATA[?string]]></code>
+      <code><![CDATA[?string]]></code>
     </MoreSpecificReturnType>
   </file>
   <file src="src/Content/ArticleCache.php">
@@ -2240,13 +2203,6 @@
     </NoValue>
   </file>
   <file src="src/Content/ArticleSlice.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$params]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedReturnStatement>
-      <code><![CDATA[$this->$index ?? null]]></code>
-      <code><![CDATA[$this->$index ?? null]]></code>
-    </MixedReturnStatement>
     <PossiblyNullArgument>
       <code><![CDATA[$data['link']]]></code>
       <code><![CDATA[$data['linklist']]]></code>
@@ -4765,16 +4721,6 @@
     <PossiblyFalsePropertyAssignmentValue>
       <code><![CDATA[file_get_contents($configPath)]]></code>
     </PossiblyFalsePropertyAssignmentValue>
-  </file>
-  <file src="tests/Content/ArticleSliceTest.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getNextSlice]]></code>
-      <code><![CDATA[getPreviousSlice]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="tests/Content/CategoryTest.php">
     <MixedArgumentTypeCoercion>

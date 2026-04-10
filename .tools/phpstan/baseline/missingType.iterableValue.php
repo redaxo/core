@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 192 errors
+// total 186 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -46,16 +46,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Backend/Controller.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleAction::getMessages() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ArticleAction.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property Redaxo\\Core\\Content\\ArticleAction::$messages type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ArticleAction.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Property Redaxo\\Core\\Content\\ArticleContentBase::$template_attributes type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/ArticleContentBase.php',
@@ -79,26 +69,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleHandler::reqKey() has parameter $array with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/ArticleHandler.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleSlice::getSliceWhere() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ArticleSlice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleSlice::getSlicesWhere() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ArticleSlice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleSlice::getValueArray() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ArticleSlice.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleSliceHistory::getSnapshots() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ArticleSliceHistory.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\CategoryHandler::addCategory() has parameter $data with no value type specified in iterable type array.',

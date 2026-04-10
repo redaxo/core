@@ -11,50 +11,51 @@ use Redaxo\Core\Util\Stream;
 use function in_array;
 use function is_array;
 
-class ArticleAction
+final class ArticleAction
 {
-    public const PREVIEW = 'preview';
-    public const PRESAVE = 'presave';
-    public const POSTSAVE = 'postsave';
+    public const int ADD = 1;
+    public const int EDIT = 2;
+    public const int DELETE = 4;
 
-    protected readonly int $moduleId;
-    protected readonly int $articleId;
-    protected readonly int $clangId;
-    protected readonly int $ctypeId;
-    protected readonly int $sliceId;
+    public const string PREVIEW = 'preview';
+    public const string PRESAVE = 'presave';
+    public const string POSTSAVE = 'postsave';
 
-    /** @var string */
-    private $event;
-    /** @var int */
-    private $mode;
-    /** @var bool */
-    private $save = true;
-    /** @var array */
-    private $messages = [];
-    /** @var Sql */
-    private $sql;
+    public readonly int $articleId;
+    public readonly int $clangId;
+    public readonly int $ctypeId;
+    public readonly int $sliceId;
 
-    public function __construct($moduleId, $function, Sql $sql)
-    {
-        $this->moduleId = $moduleId;
-        $this->event = $function;
-        if ('edit' == $function) {
-            $this->mode = 2;
-        } elseif ('delete' == $function) {
-            $this->mode = 4;
+    /** @param self::ADD|self::EDIT|self::DELETE $mode */
+    public readonly int $mode;
+
+    public bool $save = true;
+
+    /** @var list<string> */
+    public private(set) array $messages = [];
+
+    /** @internal */
+    public function __construct(
+        public readonly int $moduleId,
+        public readonly string $event,
+        private readonly Sql $sql,
+    ) {
+        if ('edit' == $event) {
+            $this->mode = self::EDIT;
+        } elseif ('delete' == $event) {
+            $this->mode = self::DELETE;
         } else {
-            $this->mode = 1;
+            $this->mode = self::ADD;
         }
-        $this->sql = $sql;
 
         $this->articleId = Request::request('article_id', 'int');
         $this->clangId = Request::request('clang', 'int');
         $this->ctypeId = Request::request('ctype', 'int');
-        $this->sliceId = 1 == $this->mode ? 0 : Request::request('slice_id', 'int');
+        $this->sliceId = self::ADD === $this->mode ? 0 : Request::request('slice_id', 'int');
     }
 
-    /** @return void */
-    public function setRequestValues()
+    /** @internal */
+    public function setRequestValues(): void
     {
         $request = ['value' => 20, 'media' => 10, 'medialist' => 10, 'link' => 10, 'linklist' => 10];
         foreach ($request as $key => $max) {
@@ -73,11 +74,8 @@ class ArticleAction
         }
     }
 
-    /**
-     * @param self::PREVIEW|self::PRESAVE|self::POSTSAVE $type
-     * @return void
-     */
-    public function exec($type)
+    /** @param self::PREVIEW|self::PRESAVE|self::POSTSAVE $type */
+    public function exec(string $type): void
     {
         if (!in_array($type, [self::PREVIEW, self::PRESAVE, self::POSTSAVE])) {
             throw new InvalidArgumentException('$type must be ArticleAction::PREVIEW, ::PRESAVE or ::POSTSAVE.');
@@ -96,108 +94,68 @@ class ArticleAction
         }
     }
 
-    /** @return void */
-    protected function setSave($save)
-    {
-        $this->save = $save;
-    }
-
-    /** @return void */
-    protected function addMessage($message)
+    public function addMessage(string $message): void
     {
         $this->messages[] = $message;
     }
 
-    /** @return bool */
-    public function getSave()
+    /** @param int<1, 20> $index */
+    public function setValue(int $index, string $value): void
     {
-        return $this->save;
+        $this->sql->setValue('value' . $index, $value);
     }
 
-    /** @return array */
-    public function getMessages()
+    /** @param int<1, 10> $index */
+    public function setMedia(int $index, string $value): void
     {
-        return $this->messages;
+        $this->sql->setValue('media' . $index, $value);
     }
 
-    /** @return string */
-    public function getEvent()
+    /** @param int<1, 10> $index */
+    public function setMediaList(int $index, string $value): void
     {
-        return $this->event;
+        $this->sql->setValue('medialist' . $index, $value);
     }
 
-    /** @return void */
-    protected function setValue($id, $value)
+    /** @param int<1, 10> $index */
+    public function setLink(int $index, int $value): void
     {
-        if ($id < 1 || $id > 20) {
-            throw new InvalidArgumentException('ID for REX_VALUE out of range (1..20)');
-        }
-        $this->sql->setValue('value' . $id, $value);
+        $this->sql->setValue('link' . $index, $value);
     }
 
-    /** @return void */
-    protected function setMedia($id, $value)
+    /** @param int<1, 10> $index */
+    public function setLinkList(int $index, string $value): void
     {
-        if ($id < 1 || $id > 10) {
-            throw new InvalidArgumentException('ID for REX_MEDIA out of range (1..10)');
-        }
-        $this->sql->setValue('media' . $id, $value);
+        $this->sql->setValue('linklist' . $index, $value);
     }
 
-    /** @return void */
-    protected function setMediaList($id, $value)
+    /** @param int<1, 20> $index */
+    public function getValue(int $index): ?string
     {
-        if ($id < 1 || $id > 10) {
-            throw new InvalidArgumentException('ID for REX_MEDIALIST out of range (1..10)');
-        }
-        $this->sql->setValue('medialist' . $id, $value);
+        return $this->sql->getValue('value' . $index);
     }
 
-    /** @return void */
-    protected function setLink($id, $value)
+    /** @param int<1, 10> $index */
+    public function getMedia(int $index): ?string
     {
-        if ($id < 1 || $id > 10) {
-            throw new InvalidArgumentException('ID for REX_LINK out of range (1..10)');
-        }
-        $this->sql->setValue('link' . $id, $value);
+        return $this->sql->getValue('media' . $index);
     }
 
-    /** @return void */
-    protected function setLinkList($id, $value)
+    /** @param int<1, 10> $index */
+    public function getMediaList(int $index): ?string
     {
-        if ($id < 1 || $id > 10) {
-            throw new InvalidArgumentException('ID for REX_LINKLIST out of range (1..10)');
-        }
-        $this->sql->setValue('linklist' . $id, $value);
+        return $this->sql->getValue('medialist' . $index);
     }
 
-    /** @return string|null */
-    protected function getValue($id)
+    /** @param int<1, 10> $index */
+    public function getLink(int $index): ?int
     {
-        return $this->sql->getValue('value' . $id);
+        return $this->sql->getValue('link' . $index);
     }
 
-    /** @return string|null */
-    protected function getMedia($id)
+    /** @param int<1, 10> $index */
+    public function getLinkList(int $index): ?string
     {
-        return $this->sql->getValue('media' . $id);
-    }
-
-    /** @return string|null */
-    protected function getMediaList($id)
-    {
-        return $this->sql->getValue('medialist' . $id);
-    }
-
-    /** @return string|null */
-    protected function getLink($id)
-    {
-        return $this->sql->getValue('link' . $id);
-    }
-
-    /** @return string|null */
-    protected function getLinkList($id)
-    {
-        return $this->sql->getValue('linklist' . $id);
+        return $this->sql->getValue('linklist' . $index);
     }
 }
