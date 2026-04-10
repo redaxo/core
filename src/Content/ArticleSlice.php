@@ -9,63 +9,44 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Language\Language;
 
 use function is_array;
-use function is_int;
 use function sprintf;
 
-/**
- * The ArticleSlice class is an object wrapper over the database table rex_article_slice.
- * Together with Article and Category it provides an object oriented
- * Framework for accessing vital parts of your website.
- * This framework can be used in Modules, Templates and PHP-Slices!
- */
-class ArticleSlice
+final readonly class ArticleSlice
 {
-    protected const ORDER_ASC = 'ASC';
-    protected const ORDER_DESC = 'DESC';
+    private const string ORDER_ASC = 'ASC';
+    private const string ORDER_DESC = 'DESC';
 
     /**
-     * @param int $id
-     * @param int $articleId
-     * @param int $clang
-     * @param int $ctype
-     * @param int $moduleId
-     * @param int $priority
-     * @param int $status
-     * @param int $createdate
-     * @param int $updatedate
-     * @param string $createuser
-     * @param string $updateuser
-     * @param int $revision
      * @param array<int, string|null> $values
      * @param array<int, string|null> $media
      * @param array<int, string|null> $medialists
      * @param array<int, string|null> $links
      * @param array<int, string|null> $linklists
      */
-    protected function __construct(
-        private $id,
-        private $articleId,
-        private $clang,
-        private $ctype,
-        private $moduleId,
-        private $priority,
-        private $status,
-        private $createdate,
-        private $updatedate,
-        private $createuser,
-        private $updateuser,
-        private $revision,
-        private $values,
-        private $media,
-        private $medialists,
-        private $links,
-        private $linklists,
+    private function __construct(
+        public int $id,
+        public int $articleId,
+        public int $clangId,
+        public int $contentSectionId,
+        public int $moduleId,
+        public int $priority,
+        public int $status,
+        public int $createdate,
+        public int $updatedate,
+        public string $createuser,
+        public string $updateuser,
+        public int $revision,
+        private array $values,
+        private array $media,
+        private array $medialists,
+        private array $links,
+        private array $linklists,
     ) {}
 
     /** @internal  */
     public static function forNewSlice(
         int $articleId,
-        int $clang,
+        int $clangId,
         int $ctype,
         int $moduleId,
         int $priority,
@@ -74,7 +55,7 @@ class ArticleSlice
         return new self(
             0,
             $articleId,
-            $clang,
+            $clangId,
             $ctype,
             $moduleId,
             $priority,
@@ -126,48 +107,26 @@ class ArticleSlice
         );
     }
 
-    /**
-     * Return an ArticleSlice by its id.
-     *
-     * @param int $anId
-     * @param false|int $clang
-     * @param int $revision
-     *
-     * @return self|null
-     */
-    public static function getArticleSliceById($anId, $clang = false, $revision = 0)
+    public static function getArticleSliceById(int $id, ?int $clang = null, int $revision = 0): ?self
     {
-        if (false === $clang) {
-            $clang = Language::getCurrentId();
-        }
+        $clang ??= Language::getCurrentId();
 
         return self::getSliceWhere(
             'id=? AND clang_id=? and revision=?',
-            [$anId, $clang, $revision],
+            [$id, $clang, $revision],
         );
     }
 
     /**
      * Return the first slice for an article.
-     * This can then be used to iterate over all the
-     * slices in the order as they appear using the
-     * getNextSlice() function.
-     *
-     * @param int $anArticleId
-     * @param false|int $clang
-     * @param int $revision
-     * @param bool $ignoreOfflines
-     *
-     * @return self|null
+     * This can then be used to iterate over all the slices in the order as they appear using the getNextSlice() function.
      */
-    public static function getFirstSliceForArticle($anArticleId, $clang = false, $revision = 0, $ignoreOfflines = false)
+    public static function getFirstSliceForArticle(int $articleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): ?self
     {
-        if (false === $clang) {
-            $clang = Language::getCurrentId();
-        }
+        $clang ??= Language::getCurrentId();
 
         foreach (range(1, 20) as $ctype) {
-            $slice = self::getFirstSliceForCtype($ctype, $anArticleId, $clang, $revision, $ignoreOfflines);
+            $slice = self::getFirstSliceForCtype($ctype, $articleId, $clang, $revision, $ignoreOfflines);
             if (null !== $slice) {
                 return $slice;
             }
@@ -176,26 +135,14 @@ class ArticleSlice
         return null;
     }
 
-    /**
-     * Returns the first slice of the given ctype of an article.
-     *
-     * @param int $ctype
-     * @param int $anArticleId
-     * @param false|int $clang
-     * @param int $revision
-     * @param bool $ignoreOfflines
-     *
-     * @return self|null
-     */
-    public static function getFirstSliceForCtype($ctype, $anArticleId, $clang = false, $revision = 0, $ignoreOfflines = false)
+    /** Returns the first slice of the given ctype of an article. */
+    public static function getFirstSliceForCtype(int $ctype, int $articleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): ?self
     {
-        if (false === $clang) {
-            $clang = Language::getCurrentId();
-        }
+        $clang ??= Language::getCurrentId();
 
         return self::getSliceWhere(
             'article_id=? AND clang_id=? AND ctype_id=? AND priority=1 AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$anArticleId, $clang, $ctype, $revision],
+            [$articleId, $clang, $ctype, $revision],
         );
     }
 
@@ -203,74 +150,46 @@ class ArticleSlice
      * Return all slices for an article that have a certain
      * clang or revision.
      *
-     * @param int $anArticleId
-     * @param false|int $clang
-     * @param int $revision
-     * @param bool $ignoreOfflines
-     *
      * @return list<self>
      */
-    public static function getSlicesForArticle($anArticleId, $clang = false, $revision = 0, $ignoreOfflines = false)
+    public static function getSlicesForArticle(int $articleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): array
     {
-        if (false === $clang) {
-            $clang = Language::getCurrentId();
-        }
+        $clang ??= Language::getCurrentId();
 
         return self::getSlicesWhere(
             'article_id=? AND clang_id=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$anArticleId, $clang, $revision],
+            [$articleId, $clang, $revision],
         );
     }
 
     /**
-     * Return all slices for an article that have a certain
-     * module type.
-     *
-     * @param int $anArticleId
-     * @param int $aModuletypeId
-     * @param false|int $clang
-     * @param int $revision
-     * @param bool $ignoreOfflines
+     * Return all slices for an article that have a certain module type.
      *
      * @return list<self>
      */
-    public static function getSlicesForArticleOfType($anArticleId, $aModuletypeId, $clang = false, $revision = 0, $ignoreOfflines = false)
+    public static function getSlicesForArticleOfType(int $articleId, int $moduleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): array
     {
-        if (false === $clang) {
-            $clang = Language::getCurrentId();
-        }
+        $clang ??= Language::getCurrentId();
 
         return self::getSlicesWhere(
             'article_id=? AND clang_id=? AND module_id=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$anArticleId, $clang, $aModuletypeId, $revision],
+            [$articleId, $clang, $moduleId, $revision],
         );
     }
 
-    /**
-     * Return the next slice for this article.
-     *
-     * @param bool $ignoreOfflines
-     *
-     * @return self|null
-     */
-    public function getNextSlice($ignoreOfflines = false)
+    public function getNextSlice(bool $ignoreOfflines = false): ?self
     {
         return self::getSliceWhere(
             'priority ' . ($ignoreOfflines ? '>=' : '=') . ' ? AND article_id=? AND clang_id = ? AND ctype_id = ? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$this->priority + 1, $this->articleId, $this->clang, $this->ctype, $this->revision],
+            [$this->priority + 1, $this->articleId, $this->clangId, $this->contentSectionId, $this->revision],
         );
     }
 
-    /**
-     * @param bool $ignoreOfflines
-     *
-     * @return self|null
-     */
-    public function getPreviousSlice($ignoreOfflines = false)
+    public function getPreviousSlice(bool $ignoreOfflines = false): ?self
     {
         return self::getSliceWhere(
             'priority ' . ($ignoreOfflines ? '<=' : '=') . ' ? AND article_id=? AND clang_id = ? AND ctype_id = ? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$this->priority - 1, $this->articleId, $this->clang, $this->ctype, $this->revision],
+            [$this->priority - 1, $this->articleId, $this->clangId, $this->contentSectionId, $this->revision],
             self::ORDER_DESC,
         );
     }
@@ -278,27 +197,25 @@ class ArticleSlice
     /**
      * Gibt den Slice formatiert zurück.
      *
-     * @since 4.1 - 29.05.2008
      * @see ArticleContent::getSlice()
-     *
-     * @return string
      */
-    public function getSlice()
+    public function getSlice(): string
     {
         $art = new ArticleContent();
-        $art->setArticleId($this->getArticleId());
-        $art->setClang($this->getClangId());
-        $art->setSliceRevision($this->getRevision());
-        return $art->getSlice($this->getId());
+        $art->setArticleId($this->articleId);
+        $art->setClang($this->clangId);
+        $art->setSliceRevision($this->revision);
+        return $art->getSlice($this->id);
     }
 
     /**
      * @param literal-string $where
+     * @param array<scalar|null> $params
      * @param self::ORDER_* $orderDirection
      *
      * @return self|null
      */
-    protected static function getSliceWhere($where, array $params = [], string $orderDirection = self::ORDER_ASC)
+    private static function getSliceWhere(string $where, array $params = [], string $orderDirection = self::ORDER_ASC)
     {
         $slices = self::getSlicesWhere($where, $params, $orderDirection, 1);
         return $slices[0] ?? null;
@@ -306,11 +223,12 @@ class ArticleSlice
 
     /**
      * @param literal-string $where
+     * @param array<scalar|null> $params
      * @param self::ORDER_* $orderDirection
      *
      * @return list<self>
      */
-    protected static function getSlicesWhere($where, array $params = [], string $orderDirection = 'ASC', ?int $limit = null)
+    private static function getSlicesWhere(string $where, array $params = [], string $orderDirection = self::ORDER_ASC, ?int $limit = null)
     {
         $sql = Sql::factory();
         // $sql->setDebug();
@@ -335,68 +253,27 @@ class ArticleSlice
         return $slices;
     }
 
-    /** @return Article */
-    public function getArticle()
+    public function getArticle(): Article
     {
-        $article = Article::get($this->getArticleId());
+        $article = Article::get($this->articleId);
 
         if (!$article) {
-            throw new LogicException(sprintf('Article with id=%d not found.', $this->getArticleId()));
+            throw new LogicException(sprintf('Article with id=%d not found.', $this->articleId));
         }
 
         return $article;
     }
 
-    /** @return int */
-    public function getArticleId()
+    /** @param int<1, 20> $index */
+    public function getValue(int $index): ?string
     {
-        return $this->articleId;
-    }
-
-    /** @return int */
-    public function getClangId()
-    {
-        return $this->clang;
-    }
-
-    /** @return int */
-    public function getCtype()
-    {
-        return $this->ctype;
-    }
-
-    /** @return int */
-    public function getRevision()
-    {
-        return $this->revision;
-    }
-
-    /** @return int */
-    public function getModuleId()
-    {
-        return $this->moduleId;
-    }
-
-    /** @return int */
-    public function getId()
-    {
-        return $this->id;
+        return $this->values[$index - 1];
     }
 
     /**
-     * @template T of int|string
-     * @param T $index
-     * @return (T is int ? string|null : int|string|null)
+     * @param int<1, 20> $index
+     * @return array<mixed>|null
      */
-    public function getValue($index)
-    {
-        if (is_int($index)) {
-            return $this->values[(int) $index - 1];
-        }
-
-        return $this->$index ?? null;
-    }
-
     public function getValueArray(int $index): ?array
     {
         $value = $this->values[$index - 1];
@@ -411,22 +288,16 @@ class ArticleSlice
         return is_array($value) ? $value : null;
     }
 
-    /**
-     * @param int $index
-     * @return int|null
-     */
-    public function getLink($index)
+    /** @param int<1, 10> $index */
+    public function getLink(int $index): ?int
     {
         $link = $this->links[$index - 1];
 
         return null === $link ? null : (int) $link;
     }
 
-    /**
-     * @param int $index
-     * @return string|null
-     */
-    public function getLinkUrl($index)
+    /** @param int<1, 10> $index */
+    public function getLinkUrl(int $index): ?string
     {
         $link = $this->getLink($index);
 
@@ -434,15 +305,18 @@ class ArticleSlice
     }
 
     /**
-     * @param int $index
-     * @return string|null liefert kommaseparierten String
+     * @param int<1, 10> $index
+     * @return string|null comma separated list
      */
-    public function getLinkList($index)
+    public function getLinkList(int $index): ?string
     {
         return $this->linklists[$index - 1];
     }
 
-    /** @return list<int>|null */
+    /**
+     * @param int<1, 10> $index
+     * @return list<int>|null
+     */
     public function getLinkListArray(int $index): ?array
     {
         $list = $this->linklists[$index - 1];
@@ -454,20 +328,14 @@ class ArticleSlice
         return array_map('intval', explode(',', $list));
     }
 
-    /**
-     * @param int $index
-     * @return string|null
-     */
-    public function getMedia($index)
+    /** @param int<1, 10> $index */
+    public function getMedia(int $index): ?string
     {
         return $this->media[$index - 1];
     }
 
-    /**
-     * @param int $index
-     * @return string|null
-     */
-    public function getMediaUrl($index)
+    /** @param int<1, 10> $index */
+    public function getMediaUrl(int $index): ?string
     {
         $media = $this->getMedia($index);
 
@@ -475,15 +343,18 @@ class ArticleSlice
     }
 
     /**
-     * @param int $index
-     * @return string|null liefert kommaseparierten String
+     * @param int<1, 10> $index
+     * @return string|null comma separated list
      */
-    public function getMediaList($index)
+    public function getMediaList(int $index): ?string
     {
         return $this->medialists[$index - 1];
     }
 
-    /** @return list<string>|null */
+    /**
+     * @param int<1, 10> $index
+     * @return list<string>|null
+     */
     public function getMediaListArray(int $index): ?array
     {
         $list = $this->medialists[$index - 1];
@@ -495,15 +366,9 @@ class ArticleSlice
         return explode(',', $list);
     }
 
-    /** @return int */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
     public function isOnline(): bool
     {
-        return 1 == $this->status;
+        return 1 === $this->status;
     }
 
     /**

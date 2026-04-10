@@ -168,11 +168,11 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                 $action = new ArticleAction($moduleId, $function, $newsql);
                 $action->setRequestValues();
                 $action->exec(ArticleAction::PRESAVE);
-                $actionMessage = implode('<br />', $action->getMessages());
+                $actionMessage = implode('<br />', $action->messages);
                 // ----- / PRE SAVE ACTION
 
                 // Werte werden aus den REX_ACTIONS übernommen wenn SAVE=true
-                if (!$action->getSave()) {
+                if (!$action->save) {
                     // ----- DONT SAVE/UPDATE SLICE
                     if ('' != $actionMessage) {
                         $warning = $actionMessage;
@@ -326,7 +326,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
 
                     // ----- POST SAVE ACTION [ADD/EDIT/DELETE]
                     $action->exec(ArticleAction::POSTSAVE);
-                    if ($messages = $action->getMessages()) {
+                    if ($messages = $action->messages) {
                         $info .= '<br />' . implode('<br />', $messages);
                     }
                     // ----- / POST SAVE ACTION

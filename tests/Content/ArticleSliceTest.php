@@ -29,7 +29,6 @@ final class ArticleSliceTest extends TestCase
         self::assertNotNull($slice);
         self::assertSame('foo', $slice->getValue(1));
         self::assertNull($slice->getValue(2));
-        self::assertSame(1, $slice->getValue('priority'));
     }
 
     public function testGetNextSlice(): void
@@ -42,8 +41,9 @@ final class ArticleSliceTest extends TestCase
 
         $slice = ArticleSlice::getArticleSliceById($id);
 
-        self::assertSame($next, $slice->getNextSlice()->getId());
-        self::assertSame($nextOnline, $slice->getNextSlice(true)->getId());
+        self::assertNotNull($slice);
+        self::assertSame($next, $slice->getNextSlice()?->id);
+        self::assertSame($nextOnline, $slice->getNextSlice(true)?->id);
     }
 
     public function testGetPreviousSlice(): void
@@ -56,8 +56,9 @@ final class ArticleSliceTest extends TestCase
 
         $slice = ArticleSlice::getArticleSliceById($id);
 
-        self::assertSame($previous, $slice->getPreviousSlice()->getId());
-        self::assertSame($previousOnline, $slice->getPreviousSlice(true)->getId());
+        self::assertNotNull($slice);
+        self::assertSame($previous, $slice->getPreviousSlice()?->id);
+        self::assertSame($previousOnline, $slice->getPreviousSlice(true)?->id);
     }
 
     private function addSlice(int $priority, int $status): int

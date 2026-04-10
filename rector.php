@@ -424,7 +424,6 @@ return RectorConfig::configure()
         new MethodCallRename(Security\PasswordPolicy::class, 'getRule', 'getDescription'),
 
         new MethodCallRename(Content\ArticleContentBase::class, 'getClang', 'getClangId'),
-        new MethodCallRename(Content\ArticleSlice::class, 'getClang', 'getClangId'),
         new MethodCallRename(Content\StructureElement::class, 'getClang', 'getClangId'),
 
         new MethodCallRename(MediaManager\ManagedMedia::class, 'getImageWidth', 'getWidth'),
@@ -511,6 +510,21 @@ return RectorConfig::configure()
     ->withConfiguredRule(RedaxoRule\MethodCallToPropertyFetchRector::class, [
         new MethodCallToPropertyFetch(Addon\Addon::class, 'getName', 'name'),
         new MethodCallToPropertyFetch(Addon\Addon::class, 'getPackageId', 'name'),
+
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getClang', 'clangId'),
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getCtype', 'contentSectionId'),
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getModuleId', 'moduleId'),
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getRevision', 'revision'),
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getPriority', 'priority'),
+
+        new MethodCallToPropertyFetch(Content\ArticleAction::class, 'getEvent', 'event'),
+        new MethodCallToPropertyFetch(Content\ArticleAction::class, 'getSave', 'save'), // todo setter
+        new MethodCallToPropertyFetch(Content\ArticleAction::class, 'getMessages', 'messages'),
+
+        new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
     ])
     ->withConfiguredRule(ArgumentRemoverRector::class, [
         new ArgumentRemover(Util\Str::class, 'buildQuery', 1, null),

@@ -10,27 +10,21 @@ use Redaxo\Core\Database\Table;
 use function count;
 use function in_array;
 
-class ArticleSliceHistory
+final class ArticleSliceHistory
 {
+    private function __construct() {}
+
     /**
      * @return non-empty-string
-     *
      * @phpstandba-inference-placeholder 'rex_article_slice_history'
      */
-    public static function getTable()
+    public static function getTable(): string
     {
         return Core::getTablePrefix() . 'article_slice_history';
     }
 
-    /**
-     * Only Snapshots from LiveVersion.
-     *
-     * @param int $articleId
-     * @param int $clangId
-     * @param string $historyType
-     * @return void
-     */
-    public static function makeSnapshot($articleId, $clangId, $historyType)
+    /** Only Snapshots from LiveVersion. */
+    public static function makeSnapshot(int $articleId, int $clangId, string $historyType): void
     {
         self::checkTables();
 
@@ -62,29 +56,19 @@ class ArticleSliceHistory
         }
     }
 
-    /**
-     * @param int $articleId
-     * @param int $clangId
-     *
-     * @return array
-     */
-    public static function getSnapshots($articleId, $clangId)
+    /** @return list<array{history_date: string, history_type: string, history_user: string}> */
+    public static function getSnapshots(int $articleId, int $clangId): array
     {
         $sql = Sql::factory();
+
+        /** @var list<array{history_date: string, history_type: string, history_user: string}> */
         return $sql->getArray(
             'select distinct history_date, history_type, history_user from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and clang_id=? and revision=? order by history_date desc',
             [$articleId, $clangId, 0],
         );
     }
 
-    /**
-     * @param string $historyDate
-     * @param int $articleId
-     * @param int $clangId
-     *
-     * @return bool
-     */
-    public static function restoreSnapshot($historyDate, $articleId, $clangId)
+    public static function restoreSnapshot(string $historyDate, int $articleId, int $clangId): bool
     {
         self::checkTables();
 
@@ -123,8 +107,7 @@ class ArticleSliceHistory
         return true;
     }
 
-    /** @return void */
-    public static function clearAllHistory()
+    public static function clearAllHistory(): void
     {
         $sql = Sql::factory();
         $sql->setQuery('delete from ' . $sql->escapeIdentifier(self::getTable()));
@@ -136,8 +119,7 @@ class ArticleSliceHistory
         $sql->setQuery('delete from ' . $sql->escapeIdentifier(self::getTable()) . ' where history_date < ?', [$deleteDate->format(Sql::FORMAT_DATETIME)]);
     }
 
-    /** @return void */
-    public static function checkTables()
+    public static function checkTables(): void
     {
         $slicesTable = Table::get(Core::getTable('article_slice'));
         $historyTable = Table::get(self::getTable());

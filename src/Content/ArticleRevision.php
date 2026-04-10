@@ -9,20 +9,18 @@ use Redaxo\Core\Exception\InvalidArgumentException;
 use function is_array;
 use function sprintf;
 
-class ArticleRevision
+final class ArticleRevision
 {
-    public const LIVE = 0; // live revision
-    public const WORK = 1; // working copy
+    public const int LIVE = 0; // live revision
+    public const int WORK = 1; // working copy
+
+    private function __construct() {}
 
     /**
-     * @param int $articleId
-     * @param int $clang
      * @param self::LIVE|self::WORK $fromRevisionId
      * @param self::LIVE|self::WORK $toRevisionId
-     *
-     * @return bool
      */
-    public static function copyContent($articleId, $clang, $fromRevisionId, $toRevisionId)
+    public static function copyContent(int $articleId, int $clang, int $fromRevisionId, int $toRevisionId): bool
     {
         if ($fromRevisionId == $toRevisionId) {
             return false;
@@ -59,14 +57,8 @@ class ArticleRevision
         return true;
     }
 
-    /**
-     * @param int $articleId
-     * @param int $clang
-     * @param self::WORK $fromRevisionId
-     *
-     * @return true
-     */
-    public static function clearContent($articleId, $clang, $fromRevisionId)
+    /** @param self::WORK $fromRevisionId */
+    public static function clearContent(int $articleId, int $clang, int $fromRevisionId): true
     {
         if (self::WORK != $fromRevisionId) {
             throw new InvalidArgumentException(sprintf('Revision "%s" can not be cleared, only the working version (%d).', $fromRevisionId, self::WORK));
