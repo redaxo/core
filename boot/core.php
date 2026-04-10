@@ -40,7 +40,7 @@ use Symfony\Component\HttpFoundation\Request as BaseRequest;
  *          URL_PROVIDER   [Required] Url provider
  */
 
-define('REX_MIN_PHP_VERSION', '8.4');
+define('REX_MIN_PHP_VERSION', '8.5');
 
 if (version_compare(PHP_VERSION, REX_MIN_PHP_VERSION) < 0) {
     echo 'Ooops, something went wrong!<br>';

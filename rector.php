@@ -89,7 +89,7 @@ return RectorConfig::configure()
         'tests/',
     ])
     ->withParallel()
-    ->withPhpVersion(PhpVersion::PHP_84)
+    ->withPhpVersion(PhpVersion::PHP_85)
     ->withPreparedSets(typeDeclarations: false, privatization: true)
     // ->withPhpSets()
     ->withImportNames()
