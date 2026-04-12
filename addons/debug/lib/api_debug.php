@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Response;
@@ -8,6 +9,7 @@ use Redaxo\Core\Http\Response;
 /**
  * @internal
  */
+#[AsApiFunction('debug')]
 class rex_api_debug extends ApiFunction
 {
     public function execute()

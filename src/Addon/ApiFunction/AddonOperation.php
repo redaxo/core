@@ -6,6 +6,7 @@ use Override;
 use Redaxo\Core\Addon\Addon as BaseAddon;
 use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Core;
@@ -18,6 +19,7 @@ use function Redaxo\Core\View\escape;
 /**
  * @internal
  */
+#[AsApiFunction('addon_operation')]
 final class AddonOperation extends ApiFunction
 {
     #[Override]

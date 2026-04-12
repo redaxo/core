@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Security\ApiFunction;
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Url;
@@ -15,6 +16,7 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsApiFunction('user_impersonate')]
 class UserImpersonate extends ApiFunction
 {
     /** @return never */
