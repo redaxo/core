@@ -42,8 +42,5 @@ parameters:
         - '#^Offset .* on .* always exists#'
         -   identifiers: [possiblyImpure.functionCall, possiblyImpure.methodCall]
         -
-            message: '#\bPdo\\Mysql\b#'
-            identifier: class.notFound
-        -
             message: '#.*deprecated.*#'
             path: '*/update.php'
