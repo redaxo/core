@@ -5,9 +5,9 @@ use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\Navigation;
 use Redaxo\Core\Backend\Page;
 use Redaxo\Core\Content\Article;
-use Redaxo\Core\Content\ArticleAction;
 use Redaxo\Core\Content\ArticleCache;
 use Redaxo\Core\Content\ArticleSlice;
+use Redaxo\Core\Content\ArticleSliceAction;
 use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Content\Template;
@@ -165,9 +165,9 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                 // $newsql->setDebug();
 
                 // ----- PRE SAVE ACTION [ADD/EDIT/DELETE]
-                $action = new ArticleAction($moduleId, $function, $newsql);
+                $action = new ArticleSliceAction($moduleId, $function, $newsql);
                 $action->setRequestValues();
-                $action->exec(ArticleAction::PRESAVE);
+                $action->exec(ArticleSliceAction::PRESAVE);
                 $actionMessage = implode('<br />', $action->messages);
                 // ----- / PRE SAVE ACTION
 
@@ -186,7 +186,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                         $actionMessage .= '<br />';
                     }
 
-                    // clone sql object to preserve values in sql object given to ArticleAction
+                    // clone sql object to preserve values in sql object given to ArticleSliceAction
                     // otherwise the POSTSAVE action did not have access to values
                     $newsql = clone $newsql;
 
@@ -325,7 +325,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                     ]));
 
                     // ----- POST SAVE ACTION [ADD/EDIT/DELETE]
-                    $action->exec(ArticleAction::POSTSAVE);
+                    $action->exec(ArticleSliceAction::POSTSAVE);
                     if ($messages = $action->messages) {
                         $info .= '<br />' . implode('<br />', $messages);
                     }
