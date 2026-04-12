@@ -12,3 +12,5 @@ $project->bootAddons();
 
 // use original error handlers of the tools
 ErrorHandler::unregister();
+
+return $project;
