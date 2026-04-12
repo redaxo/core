@@ -69,12 +69,12 @@ class CategoryHandler extends AbstractHandler
             // Alle Metafelder des Pfades sind erlaubt
             foreach ($OOCat->getPathAsArray() as $pathElement) {
                 if ('' != $pathElement) {
-                    $s .= ' OR `p`.`restrictions` LIKE "%|' . $pathElement . '|%"';
+                    $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
                 }
             }
 
             // Auch die Kategorie selbst kann Metafelder haben
-            $s .= ' OR `p`.`restrictions` LIKE "%|' . $params['id'] . '|%"';
+            $s .= ' OR FIND_IN_SET(' . $params['id'] . ', `p`.`restrictions`)';
         }
 
         return 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ')';

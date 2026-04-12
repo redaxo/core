@@ -3791,6 +3791,12 @@
     </InvalidArgument>
   </file>
   <file src="src/MetaInfo/Form/Field/RestrictionField.php">
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$value]]></code>
+    </MixedArgumentTypeCoercion>
+    <MixedAssignment>
+      <code><![CDATA[$this->value]]></code>
+    </MixedAssignment>
     <PossiblyInvalidOperand>
       <code><![CDATA[$id]]></code>
       <code><![CDATA[$id]]></code>
