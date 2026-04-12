@@ -184,7 +184,6 @@
     <MixedArgument>
       <code><![CDATA[$articleId]]></code>
       <code><![CDATA[$clangId]]></code>
-      <code><![CDATA[$ep->getParam('file')]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$articleId]]></code>
@@ -1199,117 +1198,6 @@
       <code><![CDATA[!is_string($metaTable)]]></code>
     </TypeDoesNotContainType>
   </file>
-  <file src="pages/module/actions.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$actionName]]></code>
-      <code><![CDATA[['action_id' => $sql->getValue('id'), 'function' => 'delete'] + $csrfToken->getUrlParams()]]></code>
-      <code><![CDATA[['action_id' => $sql->getValue('id'), 'function' => 'edit']]]></code>
-      <code><![CDATA[['action_id' => $sql->getValue('id'), 'function' => 'edit']]]></code>
-      <code><![CDATA[['action_id' => $sql->getValue('id'), 'function' => 'edit']]]></code>
-      <code><![CDATA[['function' => 'edit', 'module_id' => $del->getValue('ma.module_id')]]]></code>
-    </ArgumentTypeCoercion>
-    <InvalidOperand>
-      <code><![CDATA[$sql->getValue('postsavemode')]]></code>
-      <code><![CDATA[$sql->getValue('presavemode')]]></code>
-      <code><![CDATA[$sql->getValue('previewmode')]]></code>
-    </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$postsavemode]]></code>
-      <code><![CDATA[$presavemode]]></code>
-      <code><![CDATA[$previewmode]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$postsavemode]]></code>
-      <code><![CDATA[$presavemode]]></code>
-      <code><![CDATA[$previewmode]]></code>
-      <code><![CDATA[$status]]></code>
-      <code><![CDATA[$status]]></code>
-      <code><![CDATA[$status]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$status]]></code>
-      <code><![CDATA[$status]]></code>
-      <code><![CDATA[$status]]></code>
-    </MixedOperand>
-    <NullOperand>
-      <code><![CDATA[escape($del->getValue('m.name'))]]></code>
-      <code><![CDATA[escape($name)]]></code>
-      <code><![CDATA[escape($postsaveaction)]]></code>
-      <code><![CDATA[escape($presaveaction)]]></code>
-      <code><![CDATA[escape($previewaction)]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-    </NullOperand>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$postsavestatus]]></code>
-      <code><![CDATA[$presavestatus]]></code>
-      <code><![CDATA[$previewstatus]]></code>
-      <code><![CDATA[$var]]></code>
-      <code><![CDATA[$var]]></code>
-      <code><![CDATA[$var]]></code>
-    </PossiblyInvalidOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$actionName]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand>
-      <code><![CDATA[$postsavestatus]]></code>
-      <code><![CDATA[$presavestatus]]></code>
-      <code><![CDATA[$previewstatus]]></code>
-      <code><![CDATA[$sql->getValue('postsavemode')]]></code>
-      <code><![CDATA[$sql->getValue('presavemode')]]></code>
-      <code><![CDATA[$sql->getValue('previewmode')]]></code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="pages/module/modules.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$aid]]></code>
-      <code><![CDATA[$clangId]]></code>
-      <code><![CDATA[$clangId]]></code>
-      <code><![CDATA[$gaa->getValue('id')]]></code>
-      <code><![CDATA[$gaa->getValue('name')]]></code>
-      <code><![CDATA[$gc->getValue(Core::getTablePrefix() . 'article.id')]]></code>
-      <code><![CDATA[$gma->getValue('name')]]></code>
-      <code><![CDATA[$list->getValue('name')]]></code>
-      <code><![CDATA[$modulname]]></code>
-      <code><![CDATA[['action_id' => $actionId, 'function' => 'edit']]]></code>
-      <code><![CDATA[['article_id' => $aid, 'clang' => $clangId, 'ctype' => $ctype]]]></code>
-      <code><![CDATA[['module_id' => $moduleId, 'function_action' => 'delete', 'function' => 'edit', 'iaction_id' => $iactionId] + $csrfToken->getUrlParams()]]></code>
-    </ArgumentTypeCoercion>
-    <InvalidArrayOffset>
-      <code><![CDATA[$usedIds[$list->getValue('id')]]]></code>
-    </InvalidArrayOffset>
-    <InvalidOperand>
-      <code><![CDATA[$aid]]></code>
-    </InvalidOperand>
-    <NullOperand>
-      <code><![CDATA[escape($ausgabe)]]></code>
-      <code><![CDATA[escape($eingabe)]]></code>
-      <code><![CDATA[escape($mkey)]]></code>
-      <code><![CDATA[escape($mname)]]></code>
-    </NullOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$aid]]></code>
-      <code><![CDATA[$clangId]]></code>
-      <code><![CDATA[$error]]></code>
-      <code><![CDATA[$error]]></code>
-      <code><![CDATA[$gaa->getValue('id')]]></code>
-      <code><![CDATA[$gaa->getValue('name')]]></code>
-      <code><![CDATA[$gc->getValue(Core::getTablePrefix() . 'article.id')]]></code>
-      <code><![CDATA[$gma->getValue('name')]]></code>
-      <code><![CDATA[$list->getValue('name')]]></code>
-      <code><![CDATA[$modulname]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayOffset>
-      <code><![CDATA[$usedIds]]></code>
-    </PossiblyNullArrayOffset>
-    <PossiblyNullOperand>
-      <code><![CDATA[$aid]]></code>
-    </PossiblyNullOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getCode]]></code>
-      <code><![CDATA[getName]]></code>
-    </PossiblyNullReference>
-  </file>
   <file src="pages/profile/auth_methods.php">
     <InvalidOperand>
       <code><![CDATA[escape($id)]]></code>
@@ -1590,40 +1478,6 @@
     <PossiblyNullArgument>
       <code><![CDATA[$editor->getName()]]></code>
       <code><![CDATA[Core::getConfig('phpmailer_errormail', 1)]]></code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="pages/template/index.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$templatename]]></code>
-    </ArgumentTypeCoercion>
-    <MixedArgument>
-      <code><![CDATA[$cc]]></code>
-      <code><![CDATA[$jj]]></code>
-      <code><![CDATA[$modules[$i]]]></code>
-    </MixedArgument>
-    <MixedArrayAssignment>
-      <code><![CDATA[$ctypes[]]]></code>
-      <code><![CDATA[$modules[$k]['all']]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$categories]]></code>
-      <code><![CDATA[$cc]]></code>
-      <code><![CDATA[$ctypes]]></code>
-      <code><![CDATA[$j]]></code>
-      <code><![CDATA[$jj]]></code>
-      <code><![CDATA[$modules]]></code>
-      <code><![CDATA[$name]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[escape($name)]]></code>
-    </MixedOperand>
-    <NullOperand>
-      <code><![CDATA[escape($template)]]></code>
-      <code><![CDATA[escape($templatekey)]]></code>
-      <code><![CDATA[escape($templatename)]]></code>
-    </NullOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$templatename]]></code>
     </PossiblyNullArgument>
   </file>
   <file src="pages/user/roles.php">
