@@ -26,7 +26,17 @@ class RestrictionField extends SelectField
     {
         parent::__construct('', $form, $attributes);
 
+        $this->setSeparator(',');
         $this->setNotice(I18n::msg('ctrl'));
+    }
+
+    /** @return void */
+    public function setValue($value)
+    {
+        if (is_array($value)) {
+            $value = implode(',', $value);
+        }
+        $this->value = $value;
     }
 
     public function setAllCheckboxLabel(string $label): void
