@@ -5,6 +5,9 @@ namespace Redaxo\Core;
 use Override;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\DefaultPathProvider;
+use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\View\Fragment;
 use ReflectionObject;
 use Symfony\Component\Runtime\RunnerInterface;
 use Throwable;
@@ -12,6 +15,7 @@ use Throwable;
 use function dirname;
 use function sprintf;
 
+use const DIRECTORY_SEPARATOR;
 use const STDERR;
 
 abstract class AbstractProject implements RunnerInterface
@@ -54,6 +58,8 @@ abstract class AbstractProject implements RunnerInterface
         public readonly string $environment,
     ) {}
 
+    public function boot(): void {}
+
     final public function bootCore(): void
     {
         if ('console' === $this->environment) {
@@ -79,6 +85,18 @@ abstract class AbstractProject implements RunnerInterface
     final public function bootAddons(): void
     {
         require dirname(__DIR__) . '/boot/addons.php';
+    }
+
+    final public function enlist(): void
+    {
+        $folder = Path::base('/');
+
+        if (is_readable($folder . 'lang')) {
+            I18n::addDirectory($folder . 'lang');
+        }
+        if (is_readable($folder . 'fragments')) {
+            Fragment::addDirectory($folder . 'fragments' . DIRECTORY_SEPARATOR);
+        }
     }
 
     #[Override]
