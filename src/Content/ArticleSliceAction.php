@@ -11,7 +11,7 @@ use Redaxo\Core\Util\Stream;
 use function in_array;
 use function is_array;
 
-final class ArticleAction
+final class ArticleSliceAction
 {
     public const int ADD = 1;
     public const int EDIT = 2;
@@ -78,7 +78,7 @@ final class ArticleAction
     public function exec(string $type): void
     {
         if (!in_array($type, [self::PREVIEW, self::PRESAVE, self::POSTSAVE])) {
-            throw new InvalidArgumentException('$type must be ArticleAction::PREVIEW, ::PRESAVE or ::POSTSAVE.');
+            throw new InvalidArgumentException('$type must be ArticleSliceAction::PREVIEW, ::PRESAVE or ::POSTSAVE.');
         }
 
         $this->messages = [];
