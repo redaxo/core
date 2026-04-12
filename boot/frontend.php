@@ -112,10 +112,9 @@ if (Core::getConfig('article_history', false)) {
 
                 $sliceDate = ' AND ' . Core::getTablePrefix() . 'article_slice.history_date = ' . $escapeSql->escape($historyDate);
 
-                return 'SELECT ' . Core::getTablePrefix() . 'module.id, ' . Core::getTablePrefix() . 'module.key,' . Core::getTablePrefix() . 'module.name, ' . Core::getTablePrefix() . 'module.output, ' . Core::getTablePrefix() . 'module.input, ' . Core::getTablePrefix() . 'article_slice.*, ' . Core::getTablePrefix() . 'article.parent_id
+                return 'SELECT ' . Core::getTablePrefix() . 'article_slice.*, ' . Core::getTablePrefix() . 'article.parent_id
                     FROM
                         ' . ArticleSliceHistory::getTable() . ' as ' . Core::getTablePrefix() . 'article_slice
-                    LEFT JOIN ' . Core::getTablePrefix() . 'module ON ' . Core::getTablePrefix() . 'article_slice.module_id=' . Core::getTablePrefix() . 'module.id
                     LEFT JOIN ' . Core::getTablePrefix() . 'article ON ' . Core::getTablePrefix() . 'article_slice.article_id=' . Core::getTablePrefix() . 'article.id
                     WHERE
                         ' . Core::getTablePrefix() . "article_slice.clang_id='" . $article->getClangId() . "' AND

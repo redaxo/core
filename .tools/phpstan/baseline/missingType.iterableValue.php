@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 178 errors
+// total 176 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -44,11 +44,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Backend\\Controller::pageCreate() has parameter $page with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Backend/Controller.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property Redaxo\\Core\\Content\\ArticleContentBase::$template_attributes type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ArticleContentBase.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleHandler::addArticle() has parameter $data with no value type specified in iterable type array.',
@@ -164,11 +159,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::toLink() has parameter $sorroundAttributes with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Template::hasModule() has parameter $templateAttributes with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/Template.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Cronjob\\CronjobExecutor::tryExecute() has parameter $params with no value type specified in iterable type array.',

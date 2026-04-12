@@ -2,6 +2,8 @@
 
 namespace Redaxo\Core\Form\Select;
 
+use Collator;
+use Locale;
 use Redaxo\Core\Content\Template;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
@@ -16,7 +18,7 @@ class TemplateSelect extends Select
     private $loaded = false;
     /** @var int|null */
     private $categoryId;
-    /** @var array<int, string>|null */
+    /** @var array<string, Template>|null */
     private $templates;
     /** @var int */
     private $clangId;
@@ -40,11 +42,14 @@ class TemplateSelect extends Select
             $templates = $this->getTemplates();
 
             if (count($templates) > 0) {
-                foreach ($templates as $templateId => $templateName) {
-                    $this->addOption($templateName, $templateId);
+                $templateNames = array_map(static fn (Template $template) => I18n::translate($template->name), $templates);
+                new Collator(Locale::getDefault())->asort($templateNames);
+
+                foreach ($templateNames as $templateKey => $templateName) {
+                    $this->addOption($templateName, $templateKey);
                 }
             } else {
-                $this->addOption(I18n::msg('option_no_template'), '0');
+                $this->addOption(I18n::msg('option_no_template'), '');
             }
 
             $this->loaded = true;
@@ -58,46 +63,39 @@ class TemplateSelect extends Select
     {
         $selected = null;
 
-        // Inherit template_id from start article
+        // Inherit template from start article
         if ($this->categoryId > 0) {
             $sql = Sql::factory();
-            $sql->setQuery('SELECT template_id FROM ' . Core::getTable('article') . ' WHERE id = ? AND clang_id = ? AND startarticle = 1', [
+            $sql->setQuery('SELECT template FROM ' . Core::getTable('article') . ' WHERE id = ? AND clang_id = ? AND startarticle = 1', [
                 $this->categoryId,
                 $this->clangId,
             ]);
             if (1 == $sql->getRows()) {
-                $selected = $sql->getValue('template_id');
+                $selected = $sql->getValue('template');
             }
         }
 
         $templates = $this->getTemplates();
         if (!$selected || !isset($templates[$selected])) {
-            $selected = Template::getDefaultId();
+            $selected = Template::getDefaultKey();
         }
 
-        if ($selected && isset($templates[$selected])) {
+        if (null !== $selected && isset($templates[$selected])) {
             parent::setSelected($selected);
         }
     }
 
-    /** @return array<int, string> */
-    public function getTemplates()
+    /** @return array<string, Template> */
+    public function getTemplates(): array
     {
-        if (null === $this->templates) {
-            $this->templates = [];
-
-            if (null !== $this->categoryId) {
-                $templates = Template::getTemplatesForCategory($this->categoryId);
-            } else {
-                $templates = Sql::factory()->getArray('SELECT id, name FROM ' . Core::getTable('template') . ' WHERE active = 1 ORDER BY name');
-                $templates = array_column($templates, 'name', 'id');
-            }
-
-            foreach ($templates as $templateId => $templateName) {
-                $this->templates[$templateId] = I18n::translate($templateName, false);
-            }
+        if (null !== $this->templates) {
+            return $this->templates;
         }
 
-        return $this->templates;
+        if (null === $this->categoryId) {
+            return $this->templates = Template::getAll();
+        }
+
+        return $this->templates = Template::getTemplatesForCategory($this->categoryId);
     }
 }

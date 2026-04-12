@@ -108,14 +108,12 @@ if ($func && !$csrfToken->isValid()) {
                 Core::setConfig($key, $value);
                 break;
 
-            case 'default_template_id':
-                $value = (int) $value;
-                $sql = Sql::factory();
-                $sql->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'template WHERE id=? AND active=1', [$value]);
-                if (1 != $sql->getRows() && 0 != $value) {
-                    $error[] = I18n::msg('system_setting_default_template_id_invalid');
+            case 'default_template':
+                $value = (string) $value;
+                if ('' !== $value && !Template::exists($value)) {
+                    $error[] = I18n::msg('system_setting_default_template_invalid');
                 }
-                Core::setConfig('default_template_id', $value);
+                Core::setConfig('default_template', '' !== $value ? $value : null);
                 break;
 
             case 'article_history':
@@ -342,17 +340,22 @@ $content .= $field->get();
 
 $field = new SelectField();
 $field->setAttribute('class', 'form-control selectpicker');
-$field->setAttribute('name', 'settings[default_template_id]');
-$field->setLabel(I18n::msg('system_setting_default_template_id'));
+$field->setAttribute('name', 'settings[default_template]');
+$field->setLabel(I18n::msg('system_setting_default_template'));
 $select = $field->getSelect();
 $select->setSize(1);
-$select->setSelected(Template::getDefaultId());
+$defaultTemplate = Template::getDefaultKey();
+if (null !== $defaultTemplate) {
+    $select->setSelected($defaultTemplate);
+}
 
 $templates = Template::getTemplatesForCategory(0);
 if (empty($templates)) {
-    $select->addOption(I18n::msg('option_no_template'), 0);
+    $select->addOption(I18n::msg('option_no_template'), '');
 } else {
-    $select->addArrayOptions(array_map(I18n::translate(...), $templates));
+    foreach ($templates as $key => $template) {
+        $select->addOption(I18n::translate($template->name), $key);
+    }
 }
 $content .= $field->get();
 

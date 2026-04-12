@@ -6,6 +6,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\Url;
+use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
 
 use function is_array;
@@ -28,7 +29,7 @@ final readonly class ArticleSlice
         public int $articleId,
         public int $clangId,
         public int $contentSectionId,
-        public int $moduleId,
+        public string $moduleKey,
         public int $priority,
         public int $status,
         public int $createdate,
@@ -48,7 +49,7 @@ final readonly class ArticleSlice
         int $articleId,
         int $clangId,
         int $ctype,
-        int $moduleId,
+        string $moduleKey,
         int $priority,
         int $revision,
     ): self {
@@ -57,7 +58,7 @@ final readonly class ArticleSlice
             $articleId,
             $clangId,
             $ctype,
-            $moduleId,
+            $moduleKey,
             $priority,
             1,
             $time = time(),
@@ -91,7 +92,7 @@ final readonly class ArticleSlice
             (int) $sql->getValue($table . '.article_id'),
             (int) $sql->getValue($table . '.clang_id'),
             (int) $sql->getValue($table . '.ctype_id'),
-            (int) $sql->getValue($table . '.module_id'),
+            (string) $sql->getValue($table . '.module'),
             (int) $sql->getValue($table . '.priority'),
             (int) $sql->getValue($table . '.status'),
             (int) $sql->getDateTimeValue($table . '.createdate'),
@@ -105,6 +106,66 @@ final readonly class ArticleSlice
             $data['link'],
             $data['linklist'],
         );
+    }
+
+    /**
+     * Returns a copy of this slice with the slice fields (`value*`, `media*`, `medialist*`, `link*`, `linklist*`)
+     * overridden by the current `REX_INPUT_*` request values. Fields without a matching request entry are reset to `null`.
+     *
+     * Use this to show the user's pending form input in the edit form (e.g. when an in-form action like
+     * "add row" re-submits before the slice has been persisted).
+     *
+     * @internal
+     */
+    public function withRequestValues(): self
+    {
+        $lists = self::readRequestValues();
+
+        return new self(
+            $this->id,
+            $this->articleId,
+            $this->clangId,
+            $this->contentSectionId,
+            $this->moduleKey,
+            $this->priority,
+            $this->status,
+            $this->createdate,
+            $this->updatedate,
+            $this->createuser,
+            $this->updateuser,
+            $this->revision,
+            $lists['value'],
+            $lists['media'],
+            $lists['medialist'],
+            $lists['link'],
+            $lists['linklist'],
+        );
+    }
+
+    /**
+     * Reads `REX_INPUT_VALUE`, `REX_INPUT_MEDIA`, `REX_INPUT_MEDIALIST`, `REX_INPUT_LINK`, `REX_INPUT_LINKLIST`
+     * from the current request and returns them as fixed-size lists (20 entries for `value`, 10 for the rest).
+     * Slots without a matching request entry are `null`; array values are JSON-encoded so they match the storage format.
+     *
+     * @return array{value: list<?string>, media: list<?string>, medialist: list<?string>, link: list<?string>, linklist: list<?string>}
+     * @internal
+     */
+    public static function readRequestValues(): array
+    {
+        $result = [];
+        foreach (['value' => 20, 'media' => 10, 'medialist' => 10, 'link' => 10, 'linklist' => 10] as $key => $max) {
+            /** @var array<int, string|int|null> $requestValues */
+            $requestValues = Request::request('REX_INPUT_' . strtoupper($key), 'array');
+            $list = [];
+            for ($i = 1; $i <= $max; ++$i) {
+                $value = $requestValues[$i] ?? null;
+                $list[] = is_array($value) ? json_encode($value) : (null === $value ? null : (string) $value);
+            }
+            $result[$key] = $list;
+        }
+
+        /** @var array{value: list<?string>, media: list<?string>, medialist: list<?string>, link: list<?string>, linklist: list<?string>} */
+        return $result;
     }
 
     public static function getArticleSliceById(int $id, ?int $clang = null, int $revision = 0): ?self
@@ -167,13 +228,13 @@ final readonly class ArticleSlice
      *
      * @return list<self>
      */
-    public static function getSlicesForArticleOfType(int $articleId, int $moduleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): array
+    public static function getSlicesForArticleOfType(int $articleId, string $moduleKey, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): array
     {
         $clang ??= Language::getCurrentId();
 
         return self::getSlicesWhere(
-            'article_id=? AND clang_id=? AND module_id=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$articleId, $clang, $moduleId, $revision],
+            'article_id=? AND clang_id=? AND module=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
+            [$articleId, $clang, $moduleKey, $revision],
         );
     }
 
@@ -373,16 +434,16 @@ final readonly class ArticleSlice
 
     /**
      * @internal
-     * @param array{id: int, articleId: int, clang: int, ctype: int, moduleId: int, priority: int, status: int, createdate: int, updatedate: int, createuser: string, updateuser: string, revision: int, values: array<int, string|null>, media: array<int, string|null>, medialists: array<int, string|null>, links: array<int, string|null>, linklists: array<int, string|null>} $data
+     * @param array{id: int, articleId: int, clangId: int, contentSectionId: int, moduleKey: string, priority: int, status: int, createdate: int, updatedate: int, createuser: string, updateuser: string, revision: int, values: array<int, string|null>, media: array<int, string|null>, medialists: array<int, string|null>, links: array<int, string|null>, linklists: array<int, string|null>} $data
      */
     public static function __set_state(array $data): self
     {
         return new self(
             $data['id'],
             $data['articleId'],
-            $data['clang'],
-            $data['ctype'],
-            $data['moduleId'],
+            $data['clangId'],
+            $data['contentSectionId'],
+            $data['moduleKey'],
             $data['priority'],
             $data['status'],
             $data['createdate'],

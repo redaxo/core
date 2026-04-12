@@ -70,7 +70,7 @@ final class ArticleSliceTest extends TestCase
                 'article_id' => self::FAKE_ID,
                 'clang_id' => 1,
                 'ctype_id' => 1,
-                'module_id' => self::FAKE_ID,
+                'module' => 'test',
                 'revision' => 0,
                 'priority' => $priority,
                 'status' => $status,

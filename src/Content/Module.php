@@ -2,68 +2,68 @@
 
 namespace Redaxo\Core\Content;
 
-use Redaxo\Core\Filesystem\File;
+use Redaxo\Core\ClassDiscovery;
 
-use function assert;
-
-class Module
+abstract class Module
 {
-    private int $id;
-    private ?string $key = '';
+    /** @var array<string, self>|null */
+    private static ?array $instances = null;
 
-    public function __construct(int $moduleId)
+    public function __construct(
+        /** Unique key, used as DB reference in rex_article_slice.module. */
+        public readonly string $key,
+        public readonly string $name,
+    ) {}
+
+    /**
+     * Get a module by key or FQCN.
+     *
+     * @param string|class-string<self> $keyOrClass
+     */
+    public static function get(string $keyOrClass): ?self
     {
-        $this->id = $moduleId;
+        $all = self::getAll();
+
+        /** @var ?self */
+        return $all[$keyOrClass]
+            // FQCN lookup
+            ?? array_find($all, static fn (self $module) => $module instanceof $keyOrClass);
     }
 
-    public static function forKey(string $moduleKey): ?self
+    /**
+     * Check if a module exists by key or FQCN.
+     *
+     * @param string|class-string<self> $keyOrClass
+     */
+    public static function exists(string $keyOrClass): bool
     {
-        $mapping = self::getKeyMapping();
+        return null !== self::get($keyOrClass);
+    }
 
-        if (false !== $id = array_search($moduleKey, $mapping, true)) {
-            $module = new self($id);
-            $module->key = $moduleKey;
-
-            return $module;
+    /** @return array<string, self> */
+    public static function getAll(): array
+    {
+        if (null !== self::$instances) {
+            return self::$instances;
         }
 
-        return null;
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
-
-    public function getKey(): ?string
-    {
-        // key will never be empty string in the db
-        if ('' === $this->key) {
-            $this->key = self::getKeyMapping()[$this->id] ?? null;
-            assert('' !== $this->key);
+        $instances = [];
+        foreach (ClassDiscovery::getInstance()->discoverByAttribute(AsModule::class, self::class) as $class => $attribute) {
+            $instances[$attribute->key] = new $class($attribute->key, $attribute->name);
         }
 
-        return $this->key;
+        return self::$instances = $instances;
     }
 
-    /** @return array<int, string> */
-    private static function getKeyMapping(): array
-    {
-        static $mapping;
+    /** Render the backend edit form. */
+    abstract public function input(ArticleSlice $slice): string;
 
-        if (null !== $mapping) {
-            return $mapping;
-        }
+    /** Render the frontend output. */
+    abstract public function output(ArticleSlice $slice): string;
 
-        $file = ModuleCache::getKeyMappingPath();
-        $mapping = File::getCache($file, null);
+    /** Called before slice data is saved to DB. */
+    public function onPresave(ArticleSliceAction $action): void {}
 
-        if (null !== $mapping) {
-            return $mapping;
-        }
-
-        ModuleCache::generateKeyMapping();
-
-        return $mapping = File::getCache($file);
-    }
+    /** Called after slice data is saved to DB. */
+    public function onPostsave(ArticleSliceAction $action): void {}
 }

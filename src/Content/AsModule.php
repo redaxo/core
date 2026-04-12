@@ -2,11 +2,13 @@
 
 namespace Redaxo\Core\Content;
 
-final readonly class ContentSection
+use Attribute;
+
+#[Attribute(Attribute::TARGET_CLASS)]
+final readonly class AsModule
 {
     public function __construct(
-        /** @var positive-int */
-        public int $id,
+        public string $key,
         public string $name,
     ) {}
 }

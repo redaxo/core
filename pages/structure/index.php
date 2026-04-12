@@ -14,6 +14,7 @@ use Redaxo\Core\Content\ArticleHandler;
 use Redaxo\Core\Content\Category;
 use Redaxo\Core\Content\CategoryHandler;
 use Redaxo\Core\Content\StructureContext;
+use Redaxo\Core\Content\Template;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -345,12 +346,9 @@ $echo = '';
 
 $templateSelect = new TemplateSelect($categoryId, $clang);
 if ($structureContext->getCategoryId() > 0 || (0 == $structureContext->getCategoryId() && !$user->getComplexPerm('structure')->hasMountpoints())) {
-    $templateSelect->setName('template_id');
+    $templateSelect->setName('template');
     $templateSelect->setSize(1);
     $templateSelect->setStyle('class="form-control selectpicker"');
-
-    $templateNames = $templateSelect->getTemplates();
-    $templateNames[0] = I18n::msg('template_default_name');
 
     // --------------------- ARTIKEL LIST
     $artAddLink = '';
@@ -479,7 +477,7 @@ if ($structureContext->getCategoryId() > 0 || (0 == $structureContext->getCatego
         // --------------------- ARTIKEL EDIT FORM
 
         if ($canEdit && 'edit_art' == $structureContext->getFunction() && $sql->getValue('id') == $structureContext->getArticleId() && $structureContext->hasCategoryPermission()) {
-            $templateSelect->setSelected($sql->getValue('template_id'));
+            $templateSelect->setSelected((string) $sql->getValue('template'));
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">' . $templateSelect->get() . '</td>';
 
             $echo .= '<tr class="mark' . $classStartarticle . ' ' . $trStatusClass . '">
@@ -539,8 +537,8 @@ if ($structureContext->getCategoryId() > 0 || (0 == $structureContext->getCatego
 
             $editModeUrl = $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $sql->getValue('id'), 'mode' => 'edit']);
 
-            $tmplTd = '';
-            $tmpl = escape($templateNames[(int) $sql->getValue('template_id')] ?? '');
+            $tmplKey = (string) $sql->getValue('template');
+            $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? I18n::translate($t->name) : '');
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">
             <div class="rex-truncate rex-truncate-target" title="' . $tmpl . '" >' . $tmpl . '</div></td>';
 
@@ -562,7 +560,8 @@ if ($structureContext->getCategoryId() > 0 || (0 == $structureContext->getCatego
             $artStatusClass = $artStatusTypes[$status][1];
             $artStatusIcon = $artStatusTypes[$status][2];
 
-            $tmpl = escape($templateNames[$sql->getValue('template_id')] ?? '');
+            $tmplKey = (string) $sql->getValue('template');
+            $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? I18n::translate($t->name) : '');
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">
             <div class="rex-truncate rex-truncate-target" title="' . $tmpl . '" >' . $tmpl . '</div></td>';
 

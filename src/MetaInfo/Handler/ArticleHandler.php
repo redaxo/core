@@ -63,7 +63,7 @@ class ArticleHandler extends AbstractHandler
                 }
             }
 
-            $t = ' OR FIND_IN_SET(' . $OOArt->getValue('template_id') . ', `p`.`templates`)';
+            $t = ' OR FIND_IN_SET(' . Sql::factory()->escape($OOArt->getTemplateKey() ?? '') . ', `p`.`templates`)';
 
             $restrictionsCondition = 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ') AND (`p`.`templates` = "" OR `p`.`templates` IS NULL ' . $t . ')';
         }

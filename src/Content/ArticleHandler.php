@@ -51,10 +51,10 @@ class ArticleHandler
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (!isset($templates[$data['template_id']])) {
-            $data['template_id'] = 0;
+        if (!isset($templates[$data['template']])) {
+            $data['template'] = null;
             if (count($templates) > 0) {
-                $data['template_id'] = key($templates);
+                $data['template'] = key($templates);
             }
         }
 
@@ -86,7 +86,7 @@ class ArticleHandler
             $AART->setValue('path', $path);
             $AART->setValue('startarticle', 0);
             $AART->setValue('status', 0);
-            $AART->setValue('template_id', $data['template_id']);
+            $AART->setValue('template', $data['template']);
             $AART->addGlobalCreateFields($user);
             $AART->addGlobalUpdateFields($user);
 
@@ -105,7 +105,7 @@ class ArticleHandler
                 'parent_id' => $data['category_id'],
                 'priority' => $data['priority'],
                 'path' => $path,
-                'template_id' => $data['template_id'],
+                'template_key' => $data['template'],
                 'data' => $data,
             ]));
         }
@@ -143,10 +143,10 @@ class ArticleHandler
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (!isset($templates[$data['template_id']])) {
-            $data['template_id'] = 0;
+        if (!isset($templates[$data['template']])) {
+            $data['template'] = null;
             if (count($templates) > 0) {
-                $data['template_id'] = key($templates);
+                $data['template'] = key($templates);
             }
         }
 
@@ -164,7 +164,7 @@ class ArticleHandler
         $EA->setTable(Core::getTablePrefix() . 'article');
         $EA->setWhere(['id' => $articleId, 'clang_id' => $clang]);
         $EA->setValue('name', $data['name']);
-        $EA->setValue('template_id', $data['template_id']);
+        $EA->setValue('template', $data['template']);
         $EA->setValue('priority', $data['priority']);
         $EA->addGlobalUpdateFields(self::getUser());
 
@@ -200,7 +200,7 @@ class ArticleHandler
             'parent_id' => $data['category_id'],
             'priority' => $data['priority'],
             'path' => $data['path'],
-            'template_id' => $data['template_id'],
+            'template_key' => $data['template'],
             'data' => $data,
         ]));
 
@@ -238,7 +238,7 @@ class ArticleHandler
                     'status' => $Art->getValue('status'),
                     'priority' => $Art->getValue('priority'),
                     'path' => $Art->getValue('path'),
-                    'template_id' => $Art->getValue('template_id'),
+                    'template_key' => $Art->getValue('template'),
                 ]));
 
                 $Art->next();
@@ -294,7 +294,7 @@ class ArticleHandler
                 'status' => $ART->getValue('status'),
                 'priority' => $ART->getValue('priority'),
                 'path' => $ART->getValue('path'),
-                'template_id' => $ART->getValue('template_id'),
+                'template_key' => $ART->getValue('template'),
             ]));
 
             if (1 == $ART->getValue('startarticle')) {

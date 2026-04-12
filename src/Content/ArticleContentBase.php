@@ -12,8 +12,8 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Stream;
 use Redaxo\Core\Util\Timer;
+use Redaxo\Core\Util\Type;
 
 use function assert;
 use function in_array;
@@ -34,10 +34,7 @@ class ArticleContentBase
     /** @var bool */
     public $debug = false;
 
-    /** @var int */
-    public $template_id = 0;
-    /** @var array */
-    public $template_attributes;
+    public ?string $template = null;
 
     /** @var int */
     protected $category_id;
@@ -163,30 +160,26 @@ class ArticleContentBase
         $sql->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE ' . Core::getTablePrefix() . 'article.id=? AND clang_id=?', [$articleId, $this->clang]);
 
         if (1 == $sql->getRows()) {
-            $this->template_id = (int) $this->getValue('template_id');
+            $template = $this->getValue('template');
+            $this->template = $template ? (string) $template : null;
             $this->category_id = (int) $this->getValue('category_id');
             return true;
         }
 
         $this->article_id = 0;
-        $this->template_id = 0;
+        $this->template = null;
         $this->category_id = 0;
         return false;
     }
 
-    /**
-     * @param int $templateId
-     * @return void
-     */
-    public function setTemplateId($templateId)
+    public function setTemplateKey(?string $templateKey): void
     {
-        $this->template_id = $templateId;
+        $this->template = $templateKey;
     }
 
-    /** @return int */
-    public function getTemplateId()
+    public function getTemplateKey(): ?string
     {
-        return $this->template_id;
+        return $this->template;
     }
 
     /**
@@ -305,15 +298,24 @@ class ArticleContentBase
      * Outputs a slice.
      *
      * @param Sql $artDataSql A Sql instance containing all slice and module data
-     * @param int $moduleIdToAdd The id of the module, which was selected using the ModuleSelect
-     *
-     * @return string
+     * @param string $moduleKeyToAdd The key of the module, which was selected using the ModuleSelect
      */
-    protected function outputSlice(Sql $artDataSql, $moduleIdToAdd)
+    protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
+        $moduleKey = (string) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.module');
+        $slice = ArticleSlice::fromSql($artDataSql);
+
+        $module = Module::get($moduleKey);
+
+        if (null === $module) {
+            return '';
+        }
+
+        $output = $module->output($slice);
+
         $output = Extension::registerPoint(new ExtensionPoint(
             'SLICE_OUTPUT',
-            (string) $artDataSql->getValue(Core::getTablePrefix() . 'module.output'),
+            $output,
             [
                 'article_id' => $this->article_id,
                 'clang' => $this->clang,
@@ -321,9 +323,7 @@ class ArticleContentBase
             ],
         ));
 
-        $moduleId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'module.id');
-
-        return $this->getStreamOutput('module/' . $moduleId . '/output', $output);
+        return $output;
     }
 
     public function getCurrentSlice(): ArticleSlice
@@ -397,29 +397,15 @@ class ArticleContentBase
         return $CONTENT;
     }
 
-    /**
-     * Method which gets called, before the slices of the article are processed.
-     *
-     * @param string $articleContent The content of the article
-     * @param int $moduleId A module id
-     *
-     * @return string
-     */
-    protected function preArticle($articleContent, $moduleId)
+    /** Method which gets called, before the slices of the article are processed. */
+    protected function preArticle(string $articleContent, string $moduleKey): string
     {
         // nichts tun
         return $articleContent;
     }
 
-    /**
-     * Method which gets called, after all slices have been processed.
-     *
-     * @param string $articleContent The content of the article
-     * @param int $moduleId A module id
-     *
-     * @return string
-     */
-    protected function postArticle($articleContent, $moduleId)
+    /** Method which gets called, after all slices have been processed. */
+    protected function postArticle(string $articleContent, string $moduleKey): string
     {
         // nichts tun
         return $articleContent;
@@ -433,15 +419,21 @@ class ArticleContentBase
      */
     public function getArticleTemplate()
     {
-        if (0 != $this->template_id && 0 != $this->article_id) {
+        if (null !== $this->template && 0 != $this->article_id) {
+            $template = Template::get($this->template);
+
+            if (null === $template) {
+                return 'no template';
+            }
+
             ob_start();
             try {
                 ob_implicit_flush(false);
 
-                $TEMPLATE = new Template($this->template_id);
+                Timer::measure('Template: ' . $template->key, function () use ($template) {
+                    Type::instanceOf($this, ArticleContent::class);
 
-                Timer::measure('Template: ' . ($TEMPLATE->getKey() ?? $TEMPLATE->getId()), function () use ($TEMPLATE) {
-                    require Stream::factory('template/' . $this->template_id, $TEMPLATE->getTemplate());
+                    echo $template->render($this);
                 });
             } finally {
                 $CONTENT = ob_get_clean();
@@ -451,35 +443,6 @@ class ArticleContentBase
         }
 
         return 'no template';
-    }
-
-    /**
-     * @param string $path
-     * @param string $content
-     * @return string
-     */
-    protected function getStreamOutput($path, $content)
-    {
-        if (!$this->eval) {
-            $key = 'EOD_' . strtoupper(sha1((string) time()));
-            return "require \\Redaxo\\Core\\Util\\Stream::factory('$path', <<<'$key'\n$content\n$key);\n";
-        }
-
-        ob_start();
-        try {
-            ob_implicit_flush(false);
-
-            $__stream = Stream::factory($path, $content);
-
-            $sandbox = function () use ($__stream) {
-                require $__stream;
-            };
-            $sandbox();
-        } finally {
-            $CONTENT = ob_get_clean();
-        }
-
-        return $CONTENT;
     }
 
     /**
@@ -505,17 +468,15 @@ class ArticleContentBase
 
     private function renderSlices(string $articleLimit, string $sliceLimit): void
     {
-        $moduleId = Request::request('module_id', 'int');
+        $moduleKey = Request::request('module', 'string', '');
 
         // ---------- alle teile/slices eines artikels auswaehlen
         $prefix = Core::getTablePrefix();
         $query = <<<SQL
             SELECT
-                {$prefix}module.id, {$prefix}module.key, {$prefix}module.name, {$prefix}module.output, {$prefix}module.input,
                 {$prefix}article_slice.*,
                 {$prefix}article.parent_id
             FROM {$prefix}article_slice
-            LEFT JOIN {$prefix}module ON {$prefix}article_slice.module_id = {$prefix}module.id
             LEFT JOIN {$prefix}article ON {$prefix}article_slice.article_id = {$prefix}article.id
             WHERE
                 {$prefix}article_slice.clang_id = {$this->clang} AND
@@ -534,7 +495,7 @@ class ArticleContentBase
 
         // pre hook
         $articleContent = '';
-        $articleContent = $this->preArticle($articleContent, $moduleId);
+        $articleContent = $this->preArticle($articleContent, $moduleKey);
 
         // ---------- SLICES AUSGEBEN
 
@@ -547,7 +508,12 @@ class ArticleContentBase
             for ($i = 0; $i < $rows; ++$i) {
                 $sliceId = (int) $artDataSql->getValue($prefix . 'article_slice.id');
                 $sliceCtypeId = (int) $artDataSql->getValue($prefix . 'article_slice.ctype_id');
-                $sliceModuleId = (int) $artDataSql->getValue($prefix . 'module.id');
+                /**
+                 * Module key from internal DB table, safe to embed in generated cache code.
+                 * @psalm-taint-escape html
+                 * @psalm-taint-escape has_quotes
+                 */
+                $sliceModuleKey = (string) $artDataSql->getValue($prefix . 'article_slice.module');
 
                 // ----- ctype unterscheidung
                 if ('edit' != $this->mode && !$this->eval) {
@@ -560,13 +526,18 @@ class ArticleContentBase
 
                     $slice = ArticleSlice::fromSql($artDataSql);
                     $articleContent .= '$this->currentSlice = ' . var_export($slice, true) . ";\n";
+                    $articleContent .= 'echo \\' . Module::class . '::get(' . var_export($sliceModuleKey, true) . ')?->output($this->getCurrentSlice()) ?? \'\';' . "\n";
                 }
 
                 // ------------- EINZELNER SLICE - AUSGABE
-                $sliceContent = $this->outputSlice(
-                    $artDataSql,
-                    $moduleId,
-                );
+                if ('edit' == $this->mode || $this->eval) {
+                    $sliceContent = $this->outputSlice(
+                        $artDataSql,
+                        $moduleKey,
+                    );
+                } else {
+                    $sliceContent = '';
+                }
                 // --------------- ENDE EINZELNER SLICE
 
                 // --------------- EP: SLICE_SHOW
@@ -578,7 +549,7 @@ class ArticleContentBase
                             'article_id' => $this->article_id,
                             'clang' => $this->clang,
                             'ctype' => $sliceCtypeId,
-                            'module_id' => $sliceModuleId,
+                            'module_key' => $sliceModuleKey,
                             'slice_id' => $sliceId,
                             'function' => $this->function,
                             'function_slice_id' => $this->slice_id,
@@ -607,7 +578,7 @@ class ArticleContentBase
         }
 
         // ----- post hook
-        $articleContent = $this->postArticle($articleContent, $moduleId);
+        $articleContent = $this->postArticle($articleContent, $moduleKey);
 
         // -------------------------- schreibe content
         echo $articleContent;

@@ -62,12 +62,12 @@ class ArticleContent extends ArticleContentBase
         $rexArticle = Article::get($articleId, $this->clang);
         if ($rexArticle instanceof Article) {
             $this->category_id = $rexArticle->getCategoryId();
-            $this->template_id = $rexArticle->getTemplateId();
+            $this->template = $rexArticle->getTemplateKey();
             return true;
         }
 
         $this->article_id = 0;
-        $this->template_id = 0;
+        $this->template = null;
         $this->category_id = 0;
         return false;
     }

@@ -10,8 +10,6 @@
 !/.tools/project/public/index.php
 !/.tools/project/public/redaxo/
 !/.tools/project/src/
-/.tools/project/src/*
-!/.tools/project/src/Project.php
 
 # PhpStorm setting
 /.idea/*
