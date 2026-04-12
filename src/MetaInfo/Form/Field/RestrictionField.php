@@ -8,6 +8,8 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\MetaInfo\Form\MetaInfoForm;
 use Redaxo\Core\Translation\I18n;
 
+use function is_array;
+
 /**
  * @internal
  */
