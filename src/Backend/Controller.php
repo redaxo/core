@@ -188,22 +188,6 @@ final class Controller
             ->setPjax()
             ->setIcon('rex-icon rex-icon-open-category')
         ;
-        self::$pages['modules'] = new MainPage('system', 'modules', I18n::msg('modules'))
-            ->setPath(Path::core('pages/module/index.php'))
-            ->setRequiredPermissions('isAdmin')
-            ->setPrio(40)
-            ->setPjax()
-            ->setIcon('rex-icon rex-icon-module')
-            ->addSubpage(new Page('modules', I18n::msg('modules'))->setSubPath(Path::core('pages/module/modules.php')))
-            ->addSubpage(new Page('actions', I18n::msg('actions'))->setSubPath(Path::core('pages/module/actions.php')))
-        ;
-        self::$pages['templates'] = new MainPage('system', 'templates', I18n::msg('templates'))
-            ->setPath(Path::core('pages/template/index.php'))
-            ->setRequiredPermissions('isAdmin')
-            ->setPrio(30)
-            ->setPjax()
-            ->setIcon('rex-icon rex-icon-template')
-        ;
         self::$pages['content'] = new MainPage('system', 'content', I18n::msg('content'))
             ->setPath(Path::core('pages/structure/content.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')

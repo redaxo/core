@@ -157,20 +157,6 @@ if (!Core::isSetup()) {
         Core::setProperty('article_id', $articleId);
     }
 
-    Extension::register('EDITOR_URL', static function (ExtensionPoint $ep) {
-        $urls = [
-            'template' => ['templates', 'template_id'],
-            'module' => ['modules/modules', 'module_id'],
-            'action' => ['modules/actions', 'action_id'],
-        ];
-
-        if (preg_match('@^rex:///(template|module|action)/(\d+)@', $ep->getParam('file'), $match)) {
-            return Url::backendPage($urls[$match[1]][0], ['function' => 'edit', $urls[$match[1]][1] => $match[2]]);
-        }
-
-        return null;
-    });
-
     if (Core::getConfig('article_history', false)) {
         Extension::register(
             ['ART_SLICES_COPY', 'SLICE_ADD', 'SLICE_UPDATE', 'SLICE_MOVE', 'SLICE_DELETE'],
