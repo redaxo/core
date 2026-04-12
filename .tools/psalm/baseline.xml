@@ -1819,6 +1819,12 @@
       <code><![CDATA[gzgets($fpIn, 1024 * 512)]]></code>
     </PossiblyFalseOperand>
   </file>
+  <file src="src/ClassDiscovery.php">
+    <MixedReturnStatement>
+      <code><![CDATA[array_first(ClassLoader::getRegisteredLoaders())
+            ?? throw new RuntimeException('Composer ClassLoader not found.')]]></code>
+    </MixedReturnStatement>
+  </file>
   <file src="src/Config.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$cfg->getValue('value')]]></code>

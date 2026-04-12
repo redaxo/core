@@ -3,10 +3,9 @@
 namespace Redaxo\Core\ApiFunction;
 
 use BadMethodCallException;
-use Redaxo\Core\Addon\ApiFunction\AddonOperation;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\Base\FactoryTrait;
-use Redaxo\Core\Content\ApiFunction as ContentApiFunction;
+use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Core;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Http\Context;
@@ -14,8 +13,6 @@ use Redaxo\Core\Http\Exception\HttpException;
 use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
-use Redaxo\Core\MetaInfo\ApiFunction\DefaultFieldsCreate;
-use Redaxo\Core\Security\ApiFunction as SecurityApiFunction;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
 use Redaxo\Core\Translation\I18n;
@@ -65,36 +62,11 @@ abstract class ApiFunction
     protected $result;
 
     /**
-     * Explicitly registered api functions.
+     * Discovered and registered api functions.
      *
-     * @var array<string, class-string<ApiFunction>>
+     * @var array<string, class-string<self>>|null
      */
-    private static $functions = [
-        'addon_operation' => AddonOperation::class,
-        'article_add' => ContentApiFunction\ArticleAdd::class,
-        'article_copy' => ContentApiFunction\ArticleCopy::class,
-        'article_delete' => ContentApiFunction\ArticleDelete::class,
-        'article_edit' => ContentApiFunction\ArticleEdit::class,
-        'article_move' => ContentApiFunction\ArticleMove::class,
-        'article_slice_move' => ContentApiFunction\ArticleSliceMove::class,
-        'article_slice_status_change' => ContentApiFunction\ArticleSliceStatusChange::class,
-        'article_status_change' => ContentApiFunction\ArticleStatusChange::class,
-        'article_to_category' => ContentApiFunction\ArticleToCategory::class,
-        'article_to_startarticle' => ContentApiFunction\ArticleToStartArticle::class,
-        'category_add' => ContentApiFunction\CategoryAdd::class,
-        'category_delete' => ContentApiFunction\CategoryDelete::class,
-        'category_edit' => ContentApiFunction\CategoryEdit::class,
-        'category_move' => ContentApiFunction\CategoryMove::class,
-        'category_status_change' => ContentApiFunction\CategoryStatusChange::class,
-        'category_to_article' => ContentApiFunction\CategoryToArticle::class,
-        'content_copy' => ContentApiFunction\ContentCopy::class,
-        'metainfo_default_fields_create' => DefaultFieldsCreate::class,
-        'user_has_session' => SecurityApiFunction\UserHasSession::class,
-        'user_impersonate' => SecurityApiFunction\UserImpersonate::class,
-        'user_remove_auth_method' => SecurityApiFunction\UserRemoveAuthMethod::class,
-        'user_remove_session' => SecurityApiFunction\UserRemoveSession::class,
-        'user_session_status' => SecurityApiFunction\UserSessionStatus::class,
-    ];
+    private static ?array $functions = null;
 
     /**
      * The api function which is bound to the current request.
@@ -127,7 +99,11 @@ abstract class ApiFunction
         $api = Request::request(self::REQ_CALL_PARAM, 'string');
 
         if ($api) {
-            $apiClass = self::$functions[$api];
+            $apiClass = self::loadFunctions()[$api] ?? null;
+
+            if (null === $apiClass) {
+                throw new NotFoundHttpException('API function "' . $api . '" is not registered.');
+            }
 
             if (class_exists($apiClass)) {
                 $apiImpl = new $apiClass();
@@ -146,6 +122,7 @@ abstract class ApiFunction
     /** @param class-string<ApiFunction> $class */
     public static function register(string $name, string $class): void
     {
+        self::loadFunctions();
         self::$functions[$name] = $class;
     }
 
@@ -312,9 +289,24 @@ abstract class ApiFunction
         return false;
     }
 
+    /** @return array<string, class-string<ApiFunction>> */
+    private static function loadFunctions(): array
+    {
+        if (null !== self::$functions) {
+            return self::$functions;
+        }
+
+        $functions = [];
+        foreach (ClassDiscovery::getInstance()->discoverByAttribute(AsApiFunction::class, self::class) as $class => $attribute) {
+            $functions[$attribute->name] = $class;
+        }
+
+        return self::$functions = $functions;
+    }
+
     private static function getName(string $class): string
     {
-        $name = array_search($class, self::$functions, true);
+        $name = array_search($class, self::loadFunctions(), true);
         if (false !== $name) {
             return $name;
         }

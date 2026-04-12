@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Content\ApiFunction;
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Content\CategoryHandler;
@@ -12,6 +13,7 @@ use Redaxo\Core\Http\Request;
 /**
  * @internal
  */
+#[AsApiFunction('category_add')]
 class CategoryAdd extends ApiFunction
 {
     public function execute()

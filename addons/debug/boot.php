@@ -19,8 +19,6 @@ use Redaxo\Core\Util\Timer;
 
 use function Redaxo\Core\View\escape;
 
-ApiFunction::register('debug', rex_api_debug::class);
-
 if (!rex_debug_clockwork::isRexDebugEnabled() || 'debug' === Request::get(ApiFunction::REQ_CALL_PARAM)) {
     return;
 }
