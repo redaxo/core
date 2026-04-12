@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 276 errors
+// total 271 errors
 
 return ['includes' => [
     __DIR__ . '/argument.templateType.php',

@@ -23,7 +23,7 @@ use function sprintf;
 class ContentHandler
 {
     /** @throws ApiFunctionException */
-    public static function addSlice(int $articleId, int $clangId, int $ctypeId, int $moduleId, array $data = []): string
+    public static function addSlice(int $articleId, int $clangId, int $ctypeId, string $moduleKey, array $data = []): string
     {
         $data['revision'] ??= 0;
 
@@ -43,7 +43,7 @@ class ContentHandler
         $sql->setValue('article_id', $articleId);
         $sql->setValue('clang_id', $clangId);
         $sql->setValue('ctype_id', $ctypeId);
-        $sql->setValue('module_id', $moduleId);
+        $sql->setValue('module', $moduleKey);
 
         foreach ($data as $key => $value) {
             $sql->setValue($key, $value);
@@ -77,7 +77,7 @@ class ContentHandler
             'page' => Controller::getCurrentPage(),
             'ctype' => $ctypeId,
             'category_id' => $article->getCategoryId(),
-            'module_id' => $moduleId,
+            'module_key' => $moduleKey,
             'article_revision' => 0,
             'slice_revision' => $data['revision'],
         ]));

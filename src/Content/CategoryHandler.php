@@ -65,9 +65,9 @@ class CategoryHandler
             // TemplateId vom Startartikel der jeweiligen Sprache vererben
             $sql = Sql::factory();
             // $sql->setDebug();
-            $sql->setQuery('select clang_id,template_id from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1', [$categoryId]);
+            $sql->setQuery('select clang_id,template from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1', [$categoryId]);
             for ($i = 0; $i < $sql->getRows(); $i++, $sql->next()) {
-                $startpageTemplates[(int) $sql->getValue('clang_id')] = $sql->getValue('template_id');
+                $startpageTemplates[(int) $sql->getValue('clang_id')] = $sql->getValue('template');
             }
         }
 
@@ -79,22 +79,15 @@ class CategoryHandler
         // Kategorie in allen Sprachen anlegen
         $AART = Sql::factory();
         foreach (Language::getAllIds() as $key) {
-            $templateId = Template::getDefaultId();
+            $templateKey = Template::getDefaultKey();
             if (isset($startpageTemplates[$key]) && '' != $startpageTemplates[$key]) {
-                $templateId = $startpageTemplates[$key];
+                $templateKey = $startpageTemplates[$key];
             }
 
             // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
             // oder leer setzen.
-            if (!isset($templates[$templateId])) {
-                $templateId = 0;
-                if (count($templates) > 0) {
-                    $templateId = key($templates);
-                }
-            }
-
-            if (!isset($templateId)) {
-                $templateId = 0;
+            if (null === $templateKey || !isset($templates[$templateKey])) {
+                $templateKey = count($templates) > 0 ? key($templates) : null;
             }
 
             $AART->setTable(Core::getTablePrefix() . 'article');
@@ -105,7 +98,7 @@ class CategoryHandler
             }
 
             $AART->setValue('clang_id', $key);
-            $AART->setValue('template_id', $templateId);
+            $AART->setValue('template', $templateKey);
             $AART->setValue('name', $data['name']);
             $AART->setValue('catname', $data['catname']);
             $AART->setValue('catpriority', $data['catpriority']);

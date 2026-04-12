@@ -41,8 +41,7 @@ abstract class StructureElement
     /** @var string */
     protected $catname = '';
 
-    /** @var int */
-    protected $template_id = 0;
+    protected ?string $template = null;
 
     /** @var string */
     protected $path = '';
@@ -81,7 +80,7 @@ abstract class StructureElement
                 continue;
             }
 
-            if (in_array($var, ['id', 'parent_id', 'clang_id', 'template_id', 'priority', 'catpriority', 'status', 'createdate', 'updatedate'], true)) {
+            if (in_array($var, ['id', 'parent_id', 'clang_id', 'priority', 'catpriority', 'status', 'createdate', 'updatedate'], true)) {
                 $this->$var = (int) $params[$var];
             } elseif ('startarticle' === $var) {
                 $this->$var = (bool) $params[$var];
@@ -391,14 +390,9 @@ abstract class StructureElement
         return 1 == $this->status;
     }
 
-    /**
-     * Returns the template id.
-     *
-     * @return int
-     */
-    public function getTemplateId()
+    public function getTemplateKey(): ?string
     {
-        return $this->template_id;
+        return $this->template;
     }
 
     /**
@@ -408,7 +402,7 @@ abstract class StructureElement
      */
     public function hasTemplate()
     {
-        return $this->template_id > 0;
+        return null !== $this->template;
     }
 
     /**

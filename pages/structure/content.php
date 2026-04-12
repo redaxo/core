@@ -10,6 +10,7 @@ use Redaxo\Core\Content\ArticleSlice;
 use Redaxo\Core\Content\ArticleSliceAction;
 use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
+use Redaxo\Core\Content\Module;
 use Redaxo\Core\Content\Template;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
@@ -36,7 +37,6 @@ $clang = Language::exists($clang) ? $clang : Language::getStartId();
 
 $articleRevision = 0;
 $sliceRevision = 0;
-$templateAttributes = [];
 
 $warning = '';
 $globalWarning = '';
@@ -45,12 +45,8 @@ $globalInfo = '';
 
 $article = Sql::factory();
 $article->setQuery('
-        SELECT
-            article.*, template.attributes as template_attributes
-        FROM
-            ' . Core::getTablePrefix() . 'article as article
-        LEFT JOIN ' . Core::getTablePrefix() . 'template as template
-            ON template.id=article.template_id
+        SELECT article.*
+        FROM ' . Core::getTablePrefix() . 'article as article
         WHERE
             article.id=?
             AND clang_id=?', [$articleId, $clang]);
@@ -61,13 +57,12 @@ if (1 !== $article->getRows()) {
     return;
 }
 
-// ----- ctype holen
-$templateAttributes = $article->getArrayValue('template_attributes');
-
-$ctypes = $templateAttributes['ctype'] ?? []; // ctypes - aus dem template
+$templateKey = (string) $article->getValue('template');
+$template = Template::get($templateKey);
+$contentSections = $template?->getContentSections() ?? [];
 
 $ctype = Request::request('ctype', 'int', 1);
-if (!array_key_exists($ctype, $ctypes)) {
+if ($ctype < 2 || !$template?->hasContentSection($ctype)) {
     $ctype = 1;
 }
 
@@ -125,20 +120,21 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
         // ----- check module
 
         $CM = Sql::factory();
-        $moduleId = null;
+        $moduleKey = null;
         if ('edit' == $function || 'delete' == $function) {
             // edit/ delete
-            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice LEFT JOIN ' . Core::getTablePrefix() . 'module ON ' . Core::getTablePrefix() . 'article_slice.module_id=' . Core::getTablePrefix() . 'module.id WHERE ' . Core::getTablePrefix() . 'article_slice.id=? AND clang_id=?', [$sliceId, $clang]);
+            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=? AND clang_id=?', [$sliceId, $clang]);
             if (1 == $CM->getRows()) {
-                $moduleId = $CM->getValue('' . Core::getTablePrefix() . 'article_slice.module_id');
+                $moduleKey = (string) $CM->getValue('module');
             }
         } else {
             // add
-            $moduleId = Request::post('module_id', 'int');
-            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'module WHERE id=?', [$moduleId]);
+            $moduleKey = Request::post('module', 'string');
         }
 
-        if (1 != $CM->getRows()) {
+        $module = $moduleKey ? Module::get($moduleKey) : null;
+
+        if (null === $module || null === $moduleKey) {
             // ------------- MODUL IST NICHT VORHANDEN
             $globalWarning = I18n::msg('module_not_found');
             $sliceId = 0;
@@ -147,11 +143,11 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
             // ------------- MODUL IST VORHANDEN
 
             // ----- RECHTE AM MODUL ?
-            if ('delete' != $function && !Template::hasModule($templateAttributes, $ctype, $moduleId)) {
+            if ('delete' != $function && !Template::checkModuleAllowed($templateKey, $ctype, $moduleKey)) {
                 $globalWarning = I18n::msg('no_rights_to_this_function');
                 $sliceId = 0;
                 $function = '';
-            } elseif (!$user->getComplexPerm('modules')->hasPerm($moduleId)) {
+            } elseif (!$user->getComplexPerm('modules')->hasPerm($moduleKey)) {
                 // ----- RECHTE AM MODUL: NEIN
                 $globalWarning = I18n::msg('no_rights_to_this_function');
                 $sliceId = 0;
@@ -165,9 +161,16 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                 // $newsql->setDebug();
 
                 // ----- PRE SAVE ACTION [ADD/EDIT/DELETE]
-                $action = new ArticleSliceAction($moduleId, $function, $newsql);
+                $mode = match ($function) {
+                    'edit' => ArticleSliceAction::EDIT,
+                    'delete' => ArticleSliceAction::DELETE,
+                    default => ArticleSliceAction::ADD,
+                };
+                $action = new ArticleSliceAction($mode, $articleId, $clang, $ctype, $sliceId, $newsql);
+
                 $action->setRequestValues();
-                $action->exec(ArticleSliceAction::PRESAVE);
+
+                $module->onPresave($action);
                 $actionMessage = implode('<br />', $action->messages);
                 // ----- / PRE SAVE ACTION
 
@@ -187,7 +190,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                     }
 
                     // clone sql object to preserve values in sql object given to ArticleSliceAction
-                    // otherwise the POSTSAVE action did not have access to values
+                    // otherwise the postsave hook did not have access to values
                     $newsql = clone $newsql;
 
                     // ----- SAVE/UPDATE SLICE
@@ -210,7 +213,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                             $priority = $prevSlice->getValue('priority');
 
                             $newsql->setValue('article_id', $articleId);
-                            $newsql->setValue('module_id', $moduleId);
+                            $newsql->setValue('module', $moduleKey);
                             $newsql->setValue('clang_id', $clang);
                             $newsql->setValue('ctype_id', $ctype);
                             $newsql->setValue('revision', $sliceRevision);
@@ -237,7 +240,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                                 'page' => Controller::getCurrentPage(),
                                 'ctype' => $ctype,
                                 'category_id' => $categoryId,
-                                'module_id' => $moduleId,
+                                'module_key' => $moduleKey,
                                 'article_revision' => &$articleRevision,
                                 'slice_revision' => &$sliceRevision,
                             ];
@@ -275,7 +278,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                                 'page' => Controller::getCurrentPage(),
                                 'ctype' => $ctype,
                                 'category_id' => $categoryId,
-                                'module_id' => $moduleId,
+                                'module_key' => $moduleKey,
                                 'article_revision' => &$articleRevision,
                                 'slice_revision' => &$sliceRevision,
                             ];
@@ -297,7 +300,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                                 'page' => Controller::getCurrentPage(),
                                 'ctype' => $ctype,
                                 'category_id' => $categoryId,
-                                'module_id' => $moduleId,
+                                'module_key' => $moduleKey,
                                 'article_revision' => &$articleRevision,
                                 'slice_revision' => &$sliceRevision,
                             ];
@@ -325,7 +328,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                     ]));
 
                     // ----- POST SAVE ACTION [ADD/EDIT/DELETE]
-                    $action->exec(ArticleSliceAction::POSTSAVE);
+                    $module->onPostsave($action);
                     if ($messages = $action->messages) {
                         $info .= '<br />' . implode('<br />', $messages);
                     }
@@ -345,15 +348,14 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
 
     $editPage = Controller::getPageObject('content/edit');
 
-    foreach ($ctypes as $key => $val) {
-        $key = (int) $key;
+    foreach (count($contentSections) > 1 ? $contentSections : [] as $section) {
         $hasSlice = true;
-        if ($ctype != $key) {
-            $hasSlice = null !== ArticleSlice::getFirstSliceForCtype($key, $articleId, $clang);
+        if ($ctype != $section->id) {
+            $hasSlice = null !== ArticleSlice::getFirstSliceForCtype($section->id, $articleId, $clang);
         }
-        $editPage->addSubpage(new Page('ctype' . $key, I18n::translate($val))
-            ->setHref(['page' => 'content/edit', 'article_id' => $articleId, 'clang' => $clang, 'ctype' => $key])
-            ->setIsActive($ctype == $key)
+        $editPage->addSubpage(new Page('ctype' . $section->id, $section->name)
+            ->setHref(['page' => 'content/edit', 'article_id' => $articleId, 'clang' => $clang, 'ctype' => $section->id])
+            ->setIsActive($ctype == $section->id)
             ->setItemAttr('class', $hasSlice ? '' : 'rex-empty'),
         );
     }
@@ -435,7 +437,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
     ]));
 
     // ------------------------------------------ START: MODULE EDITIEREN/ADDEN ETC.
-    $contentMain .= Controller::includeCurrentPageSubPath(compact('info', 'warning', 'templateAttributes', 'article', 'articleId', 'categoryId', 'clang', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'));
+    $contentMain .= Controller::includeCurrentPageSubPath(compact('info', 'warning', 'article', 'articleId', 'categoryId', 'clang', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'));
     // ------------------------------------------ END: AUSGABE
 
     // ----- EXTENSION POINT

@@ -16,7 +16,6 @@ use Redaxo\Core\Http\Request;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
-use Redaxo\Core\View\View;
 
 use function count;
 use function Redaxo\Core\View\escape;
@@ -27,7 +26,7 @@ use function sprintf;
  */
 class ArticleContentEditor extends ArticleContent
 {
-    /** @var array<int, list<array{name: string, id: int, key: string}>> */
+    /** @var array<int, list<array{name: string, key: string}>> */
     private $MODULESELECT;
 
     /** @var int */
@@ -44,13 +43,13 @@ class ArticleContentEditor extends ArticleContent
         parent::__construct($articleId, $clang);
     }
 
-    protected function outputSlice(Sql $artDataSql, $moduleIdToAdd)
+    protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
         if ('edit' != $this->mode) {
             // ----- wenn mode nicht edit
             $sliceContent = parent::outputSlice(
                 $artDataSql,
-                $moduleIdToAdd,
+                $moduleKeyToAdd,
             );
         } else {
             $sliceId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.id');
@@ -58,20 +57,19 @@ class ArticleContentEditor extends ArticleContent
             $sliceStatus = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.status');
             $sliceRevision = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.revision');
 
-            $moduleInput = (string) $artDataSql->getValue(Core::getTablePrefix() . 'module.input');
-            $moduleOutput = (string) $artDataSql->getValue(Core::getTablePrefix() . 'module.output');
-            $moduleId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'module.id');
+            $moduleKey = (string) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.module');
+            $module = Module::get($moduleKey);
 
             // ----- add select box einbauen
             $sliceContent = $this->getModuleSelect($sliceId);
 
             if ('add' == $this->function && $this->slice_id == $sliceId) {
-                $sliceContent .= $this->addSlice($sliceId, $moduleIdToAdd);
+                $sliceContent .= $this->addSlice($sliceId, $moduleKeyToAdd);
             }
 
             $panel = '';
             // ----- Display message at current slice
-            // if(rex::requireUser()->getComplexPerm('modules')->hasPerm($moduleId)) {
+            // if(rex::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
             if ('add' != $this->function && $this->slice_id == $sliceId) {
                 $msg = '';
                 if ('' != $this->warning) {
@@ -85,36 +83,38 @@ class ArticleContentEditor extends ArticleContent
             // }
 
             // ----- EDIT/DELETE BLOCK - Wenn Rechte vorhanden
-            if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleId)) {
+            if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
                 if ('edit' == $this->function && $this->slice_id == $sliceId) {
                     // **************** Aktueller Slice
 
-                    // ----- PRE VIEW ACTION [EDIT]
-                    $action = new ArticleSliceAction($moduleId, 'edit', $artDataSql);
+                    $slice = ArticleSlice::fromSql($artDataSql);
                     if ('post' == Request::requestMethod() && 'edit' == Request::request('function', 'string')) {
-                        $action->setRequestValues();
+                        $slice = $slice->withRequestValues();
                     }
-                    $action->exec(ArticleSliceAction::PREVIEW);
-                    // ----- / PRE VIEW ACTION
 
-                    return $sliceContent . $this->editSlice($sliceId, $moduleInput, $sliceCtype, $moduleId, $artDataSql);
+                    return $sliceContent . $this->editSlice($sliceId, $slice, $sliceCtype, $moduleKey, $artDataSql);
                 }
             }
             // Modulinhalt ausgeben
-            $content = $this->getWrappedModuleOutput($moduleId, $moduleOutput);
+            if (null !== $module) {
+                $slice = ArticleSlice::fromSql($artDataSql);
+                $content = $module->output($slice);
+            } else {
+                $content = '';
+            }
 
             // EP for changing the module preview
             $panel .= Extension::registerPoint(new ExtensionPoint('SLICE_BE_PREVIEW', $content, [
                 'article_id' => $this->article_id,
                 'clang' => $this->clang,
                 'ctype' => $this->ctype,
-                'module_id' => $moduleId,
+                'module_key' => $moduleKey,
                 'slice_id' => $sliceId,
                 'revision' => $sliceRevision,
             ]));
 
             $fragment = new Fragment();
-            $fragment->setVar('title', $this->getSliceHeading($artDataSql), false);
+            $fragment->setVar('title', $this->getSliceHeading($moduleKey), false);
             $fragment->setVar('options', $this->getSliceMenu($artDataSql), false);
             $fragment->setVar('body', $panel, false);
             $section = $fragment->parse('core/page/section.php');
@@ -130,16 +130,11 @@ class ArticleContentEditor extends ArticleContent
         return $sliceContent;
     }
 
-    /**
-     * Returns the slice heading.
-     *
-     * @param Sql $artDataSql Sql instance containing all the slice and module information
-     *
-     * @return string
-     */
-    private function getSliceHeading(Sql $artDataSql)
+    /** Returns the slice heading. */
+    private function getSliceHeading(string $moduleKey): string
     {
-        return I18n::translate((string) $artDataSql->getValue(Core::getTablePrefix() . 'module.name'));
+        $module = Module::get($moduleKey);
+        return null !== $module ? I18n::translate($module->name) : $moduleKey;
     }
 
     /**
@@ -155,8 +150,8 @@ class ArticleContentEditor extends ArticleContent
         $sliceCtype = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.ctype_id');
         $sliceStatus = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.status');
 
-        $moduleId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'module.id');
-        $moduleName = I18n::translate((string) $artDataSql->getValue(Core::getTablePrefix() . 'module.name'));
+        $moduleKey = (string) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.module');
+        $moduleName = $this->getSliceHeading($moduleKey);
 
         $context = new Context([
             'page' => Controller::getCurrentPage(),
@@ -174,8 +169,8 @@ class ArticleContentEditor extends ArticleContent
         $menuStatusAction = [];
         $menuMoveupAction = [];
         $menuMovedownAction = [];
-        if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleId)) {
-            $templateHasModule = Template::hasModule($this->template_attributes, $this->ctype, $moduleId);
+        if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
+            $templateHasModule = !$this->template || Template::checkModuleAllowed($this->template, $this->ctype, $moduleKey);
             if ($templateHasModule) {
                 // edit
                 $item = [];
@@ -245,9 +240,9 @@ class ArticleContentEditor extends ArticleContent
             $this->article_id,
             $this->clang,
             $sliceCtype,
-            $moduleId,
+            $moduleKey,
             $sliceId,
-            Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleId),
+            Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey),
         ));
 
         $actionItems = [];
@@ -288,22 +283,7 @@ class ArticleContentEditor extends ArticleContent
             $headerRight .= $fragment->parse('core/structure/content/slice_menu_move.php');
         }
 
-        // $header_right = $header_right != '' ? '<div class="col-md-4 text-right">' . $header_right . '</div>' : '';
-
         return $headerRight;
-    }
-
-    /**
-     * Wraps the output of a module.
-     *
-     * @param int $moduleId The id of the module
-     * @param string $moduleOutput The output of the module
-     *
-     * @return string
-     */
-    private function getWrappedModuleOutput($moduleId, $moduleOutput)
-    {
-        return $this->getStreamOutput('module/' . (int) $moduleId . '/output', $moduleOutput);
     }
 
     /**
@@ -328,10 +308,9 @@ class ArticleContentEditor extends ArticleContent
         if (isset($this->MODULESELECT[$this->ctype])) {
             foreach ($this->MODULESELECT[$this->ctype] as $module) {
                 $item = [];
-                $item['id'] = (int) $module['id'];
                 $item['key'] = $module['key'];
                 $item['title'] = escape($module['name']);
-                $item['href'] = $context->getUrl(['module_id' => $module['id']]) . '#slice-add-pos-' . $position;
+                $item['href'] = $context->getUrl(['module' => $module['key']]) . '#slice-add-pos-' . $position;
                 /**
                  * It is intended to pass raw values to fragment here.
                  * @psalm-taint-escape html
@@ -364,36 +343,29 @@ class ArticleContentEditor extends ArticleContent
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }
 
-    protected function preArticle($articleContent, $moduleId)
+    protected function preArticle(string $articleContent, string $moduleKey): string
     {
         // ---------- moduleselect: nur module nehmen auf die der user rechte hat
         if ('edit' == $this->mode) {
-            $MODULE = Sql::factory();
-            $modules = $MODULE->getArray('select * from ' . Core::getTablePrefix() . 'module order by name');
-
-            $templateCtypes = $this->template_attributes['ctype'] ?? [];
-            // wenn keine ctyes definiert sind, gibt es immer den CTYPE=1
-            if (0 == count($templateCtypes)) {
-                $templateCtypes = [1 => 'default'];
-            }
+            $template = $this->template ? Template::get($this->template) : null;
+            $contentSections = $template?->getContentSections() ?? [new ContentSection(1, 'Content')];
 
             $this->MODULESELECT = [];
-            foreach ($templateCtypes as $ctId => $ctName) {
-                foreach ($modules as $m) {
-                    $id = (int) $m['id'];
-                    if (Core::requireUser()->getComplexPerm('modules')->hasPerm($id)) {
-                        if (Template::hasModule($this->template_attributes, $ctId, $id)) {
-                            $this->MODULESELECT[$ctId][] = ['name' => I18n::translate((string) $m['name'], false), 'id' => $id, 'key' => (string) $m['key']];
+            foreach ($contentSections as $section) {
+                foreach (Module::getAll() as $module) {
+                    if (Core::requireUser()->getComplexPerm('modules')->hasPerm($module->key)) {
+                        if (!$template || $template->isModuleAllowed($section, $module)) {
+                            $this->MODULESELECT[$section->id][] = ['name' => I18n::translate($module->name), 'key' => $module->key];
                         }
                     }
                 }
             }
         }
 
-        return parent::preArticle($articleContent, $moduleId);
+        return parent::preArticle($articleContent, $moduleKey);
     }
 
-    protected function postArticle($articleContent, $moduleId)
+    protected function postArticle(string $articleContent, string $moduleKey): string
     {
         // special identifier for the slot behind the last slice
         $behindlastSliceId = -1;
@@ -402,7 +374,7 @@ class ArticleContentEditor extends ArticleContent
         if ('edit' == $this->mode) {
             if ('add' == $this->function && $this->slice_id == $behindlastSliceId) {
                 ++$this->sliceAddPosition;
-                $sliceContent = $this->addSlice($behindlastSliceId, $moduleId);
+                $sliceContent = $this->addSlice($behindlastSliceId, $moduleKey);
             } else {
                 // ----- BLOCKAUSWAHL - SELECT
                 $sliceContent = $this->getModuleSelect($behindlastSliceId);
@@ -413,39 +385,18 @@ class ArticleContentEditor extends ArticleContent
         return $articleContent;
     }
 
-    // ----- ADD Slice
-
-    /**
-     * @param int $sliceId
-     * @param int $moduleId
-     * @return string
-     */
-    protected function addSlice($sliceId, $moduleId)
+    protected function addSlice(int $sliceId, string $moduleKey): string
     {
-        $sliceId = (int) $sliceId;
-        $moduleId = (int) $moduleId;
+        $module = Module::get($moduleKey);
 
-        $MOD = Sql::factory();
-        $MOD->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'module WHERE id="' . $moduleId . '"');
-
-        if (1 != $MOD->getRows()) {
+        if (null === $module) {
             return Message::error(I18n::msg('module_doesnt_exist'));
         }
 
-        $initDataSql = Sql::factory();
-        $initDataSql
-            ->setValue('module_id', $moduleId)
-            ->setValue('ctype_id', $this->ctype);
+        $this->currentSlice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->slice_revision)
+            ->withRequestValues();
 
-        // ----- PRE VIEW ACTION [ADD]
-        $action = new ArticleSliceAction($moduleId, 'add', $initDataSql);
-        $action->setRequestValues();
-        $action->exec(ArticleSliceAction::PREVIEW);
-        // ----- / PRE VIEW ACTION
-
-        $this->currentSlice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleId, $this->sliceAddPosition, $this->slice_revision);
-
-        $moduleInput = $this->getStreamOutput('module/' . $moduleId . '/input', (string) $MOD->getValue('input'));
+        $moduleInput = $module->input($this->currentSlice);
 
         $this->currentSlice = null;
 
@@ -475,7 +426,7 @@ class ArticleContentEditor extends ArticleContent
                 <fieldset>
                     <legend>' . I18n::msg('add_block') . '</legend>
                     <input type="hidden" name="function" value="add" />
-                    <input type="hidden" name="module_id" value="' . $moduleId . '" />
+                    <input type="hidden" name="module" value="' . escape($moduleKey) . '" />
                     <input type="hidden" name="save" value="1" />
 
                     <div class="rex-slice-input">
@@ -487,7 +438,7 @@ class ArticleContentEditor extends ArticleContent
         $fragment = new Fragment();
         $fragment->setVar('before', $msg, false);
         $fragment->setVar('class', 'add', false);
-        $fragment->setVar('title', I18n::msg('module') . ': ' . I18n::translate((string) $MOD->getValue('name')), false);
+        $fragment->setVar('title', I18n::msg('module') . ': ' . I18n::translate($module->name), false);
         $fragment->setVar('body', $panel, false);
         $fragment->setVar('footer', $sliceFooter, false);
         $sliceContent = $fragment->parse('core/page/section.php');
@@ -499,16 +450,7 @@ class ArticleContentEditor extends ArticleContent
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }
 
-    // ----- EDIT Slice
-    /**
-     * @param int $sliceId
-     * @param string $moduleInput
-     * @param int $ctypeId
-     * @param int $moduleId
-     * @param Sql $artDataSql
-     * @return string
-     */
-    protected function editSlice($sliceId, $moduleInput, $ctypeId, $moduleId, $artDataSql)
+    protected function editSlice(int $sliceId, ArticleSlice $slice, int $ctypeId, string $moduleKey, Sql $artDataSql): string
     {
         $msg = '';
         if ($this->slice_id == $sliceId) {
@@ -538,21 +480,24 @@ class ArticleContentEditor extends ArticleContent
         $fragment->setVar('elements', $formElements, false);
         $sliceFooter = $fragment->parse('core/form/submit.php');
 
+        $module = Module::get($moduleKey);
+        $moduleInput = $module ? $module->input($slice) : '';
+
         $panel = '
                 <fieldset>
                     <legend>' . I18n::msg('edit_block') . '</legend>
-                    <input type="hidden" name="module_id" value="' . $moduleId . '" />
+                    <input type="hidden" name="module" value="' . escape($moduleKey) . '" />
                     <input type="hidden" name="save" value="1" />
                     <input type="hidden" name="update" value="0" />
 
                     <div class="rex-slice-input">
-                        ' . $msg . $this->getStreamOutput('module/' . $moduleId . '/input', $moduleInput) . '
+                        ' . $msg . $moduleInput . '
                     </div>
                 </fieldset>';
 
         $fragment = new Fragment();
         $fragment->setVar('class', 'edit', false);
-        $fragment->setVar('title', $this->getSliceHeading($artDataSql), false);
+        $fragment->setVar('title', $this->getSliceHeading($moduleKey), false);
         $fragment->setVar('options', $this->getSliceMenu($artDataSql), false);
         $fragment->setVar('body', $panel, false);
         $fragment->setVar('footer', $sliceFooter, false);

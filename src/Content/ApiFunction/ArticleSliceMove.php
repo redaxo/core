@@ -8,6 +8,7 @@ use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ContentHandler;
+use Redaxo\Core\Content\Module;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Http\Request;
@@ -45,14 +46,18 @@ class ArticleSliceMove extends ApiFunction
 
         // modul und rechte vorhanden ?
         $CM = Sql::factory();
-        $CM->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice left join ' . Core::getTablePrefix() . 'module on ' . Core::getTablePrefix() . 'article_slice.module_id=' . Core::getTablePrefix() . 'module.id where ' . Core::getTablePrefix() . 'article_slice.id=? and clang_id=?', [$sliceId, $clang]);
+        $CM->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where id=? and clang_id=?', [$sliceId, $clang]);
         if (1 != $CM->getRows()) {
             throw new ApiFunctionException(I18n::msg('module_not_found'));
         }
-        $moduleId = (int) $CM->getValue(Core::getTablePrefix() . 'article_slice.module_id');
+
+        $moduleKey = (string) $CM->getValue(Core::getTablePrefix() . 'article_slice.module');
+        if (!Module::exists($moduleKey)) {
+            throw new ApiFunctionException(I18n::msg('module_not_found'));
+        }
 
         // ----- RECHTE AM MODUL ?
-        if ($user->getComplexPerm('modules')->hasPerm($moduleId)) {
+        if ($user->getComplexPerm('modules')->hasPerm($moduleKey)) {
             $message = ContentHandler::moveSlice($sliceId, $clang, $direction);
         } else {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));

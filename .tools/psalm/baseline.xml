@@ -1295,12 +1295,6 @@
       <code><![CDATA[escape($article->getValue('createuser'))]]></code>
       <code><![CDATA[escape($article->getValue('updateuser'))]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$ctypes]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$ctypes]]></code>
-    </MixedAssignment>
     <PossiblyNullOperand>
       <code><![CDATA[escape($article->getValue('createuser'))]]></code>
       <code><![CDATA[escape($article->getValue('updateuser'))]]></code>
@@ -1311,33 +1305,18 @@
     </PossiblyNullReference>
   </file>
   <file src="pages/structure/content.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$moduleId]]></code>
-      <code><![CDATA[$moduleId]]></code>
-    </ArgumentTypeCoercion>
     <MixedArgument>
-      <code><![CDATA[$ctypes]]></code>
       <code><![CDATA[$sliceRevision]]></code>
-      <code><![CDATA[$val]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[[$articleId, $clang, $ctype, $sliceRevision]]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$ctypes]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$val]]></code>
-    </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[Controller::includeCurrentPageSubPath(compact('info', 'warning', 'templateAttributes', 'article', 'articleId', 'categoryId', 'clang', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'))]]></code>
+      <code><![CDATA[Controller::includeCurrentPageSubPath(compact('info', 'warning', 'article', 'articleId', 'categoryId', 'clang', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'))]]></code>
     </MixedOperand>
     <PossiblyInvalidArrayAccess>
       <code><![CDATA[$navigation['navigation']]]></code>
     </PossiblyInvalidArrayAccess>
-    <PossiblyNullArgument>
-      <code><![CDATA[$moduleId]]></code>
-      <code><![CDATA[$moduleId]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullReference>
       <code><![CDATA[addSubpage]]></code>
       <code><![CDATA[getCategoryId]]></code>
@@ -1346,7 +1325,6 @@
   </file>
   <file src="pages/structure/index.php">
     <ArgumentTypeCoercion>
-      <code><![CDATA[$sql->getValue('template_id')]]></code>
       <code><![CDATA[$structureContext->getMountpoints()]]></code>
       <code><![CDATA[$structureContext->getMountpoints()]]></code>
       <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->getArtStart(), 'art_status' => $artStatusKey] + ArticleStatusChange::getUrlParams()]]></code>
@@ -1356,9 +1334,6 @@
       <code><![CDATA[['page' => 'content/edit', 'article_id' => $sql->getValue('id'), 'mode' => 'edit']]]></code>
       <code><![CDATA[['page' => 'content/edit', 'article_id' => $sql->getValue('id')]]]></code>
     </ArgumentTypeCoercion>
-    <InvalidArrayOffset>
-      <code><![CDATA[$templateNames[$sql->getValue('template_id')]]]></code>
-    </InvalidArrayOffset>
     <InvalidOperand>
       <code><![CDATA[$sql->getValue('id')]]></code>
     </InvalidOperand>
@@ -1379,12 +1354,6 @@
       <code><![CDATA[escape($sql->getValue('priority'))]]></code>
       <code><![CDATA[escape($sql->getValue('priority'))]]></code>
     </NullOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$sql->getValue('template_id')]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayOffset>
-      <code><![CDATA[$templateNames]]></code>
-    </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$sql->getValue('id')]]></code>
     </PossiblyNullOperand>
@@ -1914,35 +1883,18 @@
   <file src="src/Content/ArticleContentBase.php">
     <FalsableReturnStatement>
       <code><![CDATA[$CONTENT]]></code>
-      <code><![CDATA[$CONTENT]]></code>
     </FalsableReturnStatement>
     <InvalidFalsableReturnType>
-      <code><![CDATA[string]]></code>
       <code><![CDATA[string]]></code>
     </InvalidFalsableReturnType>
     <PossiblyFalseArgument>
       <code><![CDATA[$CONTENT]]></code>
-      <code><![CDATA[$TEMPLATE->getTemplate()]]></code>
     </PossiblyFalseArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$TEMPLATE->getTemplate()]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Content/ArticleContentEditor.php">
-    <MixedArgument>
-      <code><![CDATA[$templateCtypes]]></code>
-    </MixedArgument>
-    <MixedArrayOffset>
-      <code><![CDATA[$this->MODULESELECT[$ctId]]]></code>
-    </MixedArrayOffset>
-    <MixedAssignment>
-      <code><![CDATA[$ctId]]></code>
-      <code><![CDATA[$ctName]]></code>
-      <code><![CDATA[$templateCtypes]]></code>
-    </MixedAssignment>
-    <MixedPropertyTypeCoercion>
-      <code><![CDATA[$this->MODULESELECT]]></code>
-    </MixedPropertyTypeCoercion>
+    <ArgumentTypeCoercion>
+      <code><![CDATA[$this->ctype]]></code>
+    </ArgumentTypeCoercion>
   </file>
   <file src="src/Content/ArticleHandler.php">
     <ArgumentTypeCoercion>
@@ -1968,15 +1920,15 @@
       <code><![CDATA[$data['priority']]]></code>
       <code><![CDATA[$data['priority']]]></code>
       <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$data['template_id']]]></code>
-      <code><![CDATA[$data['template_id']]]></code>
+      <code><![CDATA[$data['template']]]></code>
+      <code><![CDATA[$data['template']]]></code>
       <code><![CDATA[$id]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedArgument>
     <MixedArrayOffset>
-      <code><![CDATA[$templates[$data['template_id']]]]></code>
-      <code><![CDATA[$templates[$data['template_id']]]]></code>
+      <code><![CDATA[$templates[$data['template']]]]></code>
+      <code><![CDATA[$templates[$data['template']]]]></code>
     </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$data['path']]]></code>
@@ -2007,8 +1959,8 @@
       <code><![CDATA[getCategoryId]]></code>
     </PossiblyNullReference>
     <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$data['template_id']]]></code>
-      <code><![CDATA[$data['template_id']]]></code>
+      <code><![CDATA[$data['template']]]></code>
+      <code><![CDATA[$data['template']]]></code>
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Content/ArticleRevision.php">
@@ -2040,9 +1992,6 @@
       <code><![CDATA[$this->sql->getValue('medialist' . $index)]]></code>
       <code><![CDATA[$this->sql->getValue('value' . $index)]]></code>
     </LessSpecificReturnStatement>
-    <MixedArgument>
-      <code><![CDATA[$values[$i]]]></code>
-    </MixedArgument>
     <MoreSpecificReturnType>
       <code><![CDATA[?int]]></code>
       <code><![CDATA[?string]]></code>
@@ -2059,7 +2008,7 @@
       <code><![CDATA[['id' => $ArtSql->getValue('id'), 'startarticle' => '0', 'clang_id' => $clang]]]></code>
     </InvalidArgument>
     <InvalidArrayOffset>
-      <code><![CDATA[$templates[$templateId]]]></code>
+      <code><![CDATA[$templates[$templateKey]]]></code>
     </InvalidArrayOffset>
     <InvalidOperand>
       <code><![CDATA[$fcat->getValue('path')]]></code>
@@ -2178,13 +2127,14 @@
       <code><![CDATA[$linkAttr]]></code>
     </MixedOperand>
   </file>
-  <file src="src/Content/Module.php">
-    <MixedReturnStatement>
-      <code><![CDATA[$mapping]]></code>
-    </MixedReturnStatement>
+  <file src="src/Content/ModulePermission.php">
     <MixedReturnTypeCoercion>
-      <code><![CDATA[$mapping]]></code>
-      <code><![CDATA[$mapping = File::getCache($file)]]></code>
+      <code><![CDATA[[
+            'label' => I18n::msg('modules'),
+            'all_label' => I18n::msg('all_modules'),
+            'options' => $options,
+        ]]]></code>
+      <code><![CDATA[array]]></code>
     </MixedReturnTypeCoercion>
   </file>
   <file src="src/Content/StructureContext.php">
@@ -2212,34 +2162,9 @@
     </MixedReturnStatement>
   </file>
   <file src="src/Content/Template.php">
-    <MixedArrayOffset>
-      <code><![CDATA[$templateModules[$ctype]]]></code>
-    </MixedArrayOffset>
-    <MixedAssignment>
-      <code><![CDATA[$categories]]></code>
-      <code><![CDATA[$categories]]></code>
-      <code><![CDATA[$templateModules]]></code>
-    </MixedAssignment>
     <MixedReturnStatement>
-      <code><![CDATA[$mapping]]></code>
-      <code><![CDATA[Core::getConfig('default_template_id', 1)]]></code>
-      <code><![CDATA[Core::getConfig('default_template_id', 1)]]></code>
+      <code><![CDATA[array_find($this->getContentSections(), static fn (ContentSection $s) => $s->id === $id)]]></code>
     </MixedReturnStatement>
-    <MixedReturnTypeCoercion>
-      <code><![CDATA[$mapping]]></code>
-      <code><![CDATA[$mapping = File::getCache($file)]]></code>
-    </MixedReturnTypeCoercion>
-    <NullableReturnStatement>
-      <code><![CDATA[Core::getConfig('default_template_id', 1)]]></code>
-    </NullableReturnStatement>
-  </file>
-  <file src="src/Content/TemplateCache.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$sql->getValue('content')]]></code>
-    </ArgumentTypeCoercion>
-    <PossiblyNullArgument>
-      <code><![CDATA[$sql->getValue('content')]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Core.php">
     <LessSpecificReturnStatement>
@@ -2918,13 +2843,6 @@
     <MixedAssignment>
       <code><![CDATA[$templateName]]></code>
     </MixedAssignment>
-    <MixedPropertyTypeCoercion>
-      <code><![CDATA[$this->templates]]></code>
-    </MixedPropertyTypeCoercion>
-    <MixedReturnTypeCoercion>
-      <code><![CDATA[$this->templates]]></code>
-      <code><![CDATA[array<int, string>]]></code>
-    </MixedReturnTypeCoercion>
   </file>
   <file src="src/Http/Context.php">
     <InvalidOperand>
@@ -3768,12 +3686,6 @@
     <MixedMethodCall>
       <code><![CDATA[setValue]]></code>
     </MixedMethodCall>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$OOArt->getValue('template_id')]]></code>
-    </PossiblyInvalidOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$OOArt->getValue('template_id')]]></code>
-    </PossiblyNullOperand>
     <PossiblyNullReference>
       <code><![CDATA[getCategoryId]]></code>
       <code><![CDATA[getPathAsArray]]></code>

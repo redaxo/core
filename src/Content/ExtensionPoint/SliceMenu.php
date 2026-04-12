@@ -33,7 +33,7 @@ class SliceMenu extends ExtensionPoint
         private int $articleId,
         private int $clang,
         private int $ctype,
-        private int $moduleId,
+        private string $moduleKey,
         private int $sliceId,
         private bool $hasPerm,
     ) {
@@ -112,7 +112,7 @@ class SliceMenu extends ExtensionPoint
                 'article_id' => $this->articleId,
                 'clang' => $this->clang,
                 'ctype' => $this->ctype,
-                'module_id' => $this->moduleId,
+                'module_key' => $this->moduleKey,
                 'slice_id' => $this->sliceId,
                 'perm' => $this->hasPerm,
             ],
@@ -156,9 +156,9 @@ class SliceMenu extends ExtensionPoint
         return $this->ctype;
     }
 
-    public function getModuleId(): int
+    public function getModuleKey(): string
     {
-        return $this->moduleId;
+        return $this->moduleKey;
     }
 
     public function getSliceId(): int

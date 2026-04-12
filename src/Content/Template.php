@@ -2,246 +2,148 @@
 
 namespace Redaxo\Core\Content;
 
+use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Filesystem\File;
-use Redaxo\Core\Filesystem\Url;
-use Redaxo\Core\Language\Language;
-use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Stream;
-use Redaxo\Core\Util\Timer;
+use Redaxo\Core\Util\Type;
 
-use function assert;
-use function in_array;
-use function is_array;
-use function Redaxo\Core\View\escape;
-
-class Template
+abstract class Template
 {
-    private int $id;
-    private ?string $key = '';
+    /** @var array<string, self>|null */
+    private static ?array $instances = null;
 
-    public function __construct($templateId)
+    public function __construct(
+        /** Unique key, used as DB reference in rex_article.template. */
+        public readonly string $key,
+        public readonly string $name,
+    ) {}
+
+    public static function getDefaultKey(): ?string
     {
-        $this->id = (int) $templateId;
-    }
-
-    /** @return int */
-    public static function getDefaultId()
-    {
-        return Core::getConfig('default_template_id', 1);
-    }
-
-    public static function forKey(string $templateKey): ?self
-    {
-        $mapping = self::getKeyMapping();
-
-        if (false !== $id = array_search($templateKey, $mapping, true)) {
-            $template = new self($id);
-            $template->key = $templateKey;
-
-            return $template;
-        }
-
-        return null;
-    }
-
-    /** @return int */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function getKey(): ?string
-    {
-        // key will never be empty string in the db
-        if ('' === $this->key) {
-            $this->key = self::getKeyMapping()[$this->id] ?? null;
-            assert('' !== $this->key);
-        }
-
-        return $this->key;
-    }
-
-    /** @return false|string */
-    public function getFile()
-    {
-        if ($this->getId() < 1) {
-            return false;
-        }
-
-        $file = TemplateCache::getPath($this->id);
-
-        if (!is_file($file)) {
-            TemplateCache::generate($this->id);
-        }
-
-        return $file;
-    }
-
-    /** @return false|string|null */
-    public function getTemplate()
-    {
-        $file = $this->getFile();
-        if (!$file) {
-            return false;
-        }
-
-        return File::get($file);
-    }
-
-    public function render(): string
-    {
-        return Timer::measure('Template: ' . ($this->getKey() ?? $this->id), function () {
-            return File::getOutput(Stream::factory('template/' . $this->id, $this->getTemplate() ?: ''));
-        });
+        return Type::nullOrString(Core::getConfig('default_template'));
     }
 
     /**
-     * Returns an array containing all templates which are available for the given category_id.
-     * if the category_id is non-positive all templates in the system are returned.
-     * if the category_id is invalid an empty array is returned.
+     * Get a template by key or FQCN.
      *
-     * @param int $categoryId
-     * @param bool $ignoreInactive
-     *
-     * @return array<int, string>
+     * @param string|class-string<self> $keyOrClass
      */
-    public static function getTemplatesForCategory($categoryId, $ignoreInactive = true)
+    public static function get(string $keyOrClass): ?self
     {
-        $templates = [];
-        $tSql = Sql::factory();
-        $where = $ignoreInactive ? ' WHERE active=1' : '';
-        $tSql->setQuery('select id,name,attributes from ' . Core::getTablePrefix() . 'template' . $where . ' order by name');
+        $all = self::getAll();
 
-        if ($categoryId < 1) {
-            // Alle globalen Templates
-            foreach ($tSql as $row) {
-                $attributes = $row->getArrayValue('attributes');
-                $categories = $attributes['categories'] ?? [];
-                if (!is_array($categories) || (isset($categories['all']) && 1 == $categories['all'])) {
-                    $templates[(int) $row->getValue('id')] = (string) $row->getValue('name');
-                }
-            }
-        } else {
-            if ($c = Category::get($categoryId)) {
-                $path = $c->getPathAsArray();
-                $path[] = $categoryId;
-                foreach ($tSql as $row) {
-                    $attributes = $row->getArrayValue('attributes');
-                    $categories = $attributes['categories'] ?? [];
-                    // template ist nicht kategoriespezifisch -> includen
-                    if (!is_array($categories) || (isset($categories['all']) && 1 == $categories['all'])) {
-                        $templates[(int) $row->getValue('id')] = (string) $row->getValue('name');
-                    } else {
-                        // template ist auf kategorien beschraenkt..
-                        // nachschauen ob eine davon im pfad der aktuellen kategorie liegt
-                        foreach ($path as $p) {
-                            if (in_array($p, $categories)) {
-                                $templates[(int) $row->getValue('id')] = (string) $row->getValue('name');
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $templates;
+        /** @var ?self */
+        return $all[$keyOrClass]
+            // FQCN lookup
+            ?? array_find($all, static fn (self $template) => $template instanceof $keyOrClass);
     }
 
-    /** @return bool */
-    public static function hasModule(array $templateAttributes, $ctype, $moduleId)
+    /**
+     * Check if a template exists by key or FQCN.
+     *
+     * @param string|class-string<self> $keyOrClass
+     */
+    public static function exists(string $keyOrClass): bool
     {
-        $templateModules = $templateAttributes['modules'] ?? [];
-        if (!isset($templateModules[$ctype]['all']) || 1 == $templateModules[$ctype]['all']) {
+        return null !== self::get($keyOrClass);
+    }
+
+    /** @return array<string, self> */
+    public static function getAll(): array
+    {
+        if (null !== self::$instances) {
+            return self::$instances;
+        }
+
+        $instances = [];
+        foreach (ClassDiscovery::getInstance()->discoverByAttribute(AsTemplate::class, self::class) as $class => $attribute) {
+            $instances[$attribute->key] = new $class($attribute->key, $attribute->name);
+        }
+
+        return self::$instances = $instances;
+    }
+
+    /**
+     * Returns all templates available for the given category.
+     *
+     * @return array<string, self>
+     */
+    public static function getTemplatesForCategory(?int $categoryId): array
+    {
+        $category = $categoryId > 0 ? Category::get($categoryId) : null;
+
+        return array_filter(
+            self::getAll(),
+            static fn (self $template) => $template->isAllowedInCategory($category),
+        );
+    }
+
+    /**
+     * Check if a module is allowed in a given content section of a template (resolves keys to objects).
+     *
+     * @param positive-int $contentSectionId
+     * @internal
+     */
+    public static function checkModuleAllowed(string $templateKey, int $contentSectionId, string $moduleKey): bool
+    {
+        $template = self::get($templateKey);
+
+        if (null === $template) {
             return true;
         }
 
-        return is_array($templateModules[$ctype]) && in_array($moduleId, $templateModules[$ctype]);
-    }
+        $module = Module::get($moduleKey);
 
-    /** @return array<int, string> */
-    private static function getKeyMapping(): array
-    {
-        static $mapping;
-
-        if (null !== $mapping) {
-            return $mapping;
-        }
-
-        $file = TemplateCache::getKeyMappingPath();
-        $mapping = File::getCache($file, null);
-
-        if (null !== $mapping) {
-            return $mapping;
-        }
-
-        TemplateCache::generateKeyMapping();
-
-        return $mapping = File::getCache($file);
-    }
-
-    /** @return list<ContentSection> */
-    public function getCtypes(): array
-    {
-        return ContentSection::forTemplate($this->id);
-    }
-
-    /** @return false|string */
-    public static function templateIsInUse(int $templateId, string $msgKey)
-    {
-        $check = Sql::factory();
-        $check->setQuery('
-            SELECT article.id, article.clang_id, template.name
-            FROM ' . Core::getTable('article') . ' article
-            LEFT JOIN ' . Core::getTable('template') . ' template ON article.template_id=template.id
-            WHERE article.template_id=?
-            LIMIT 20
-        ', [$templateId]);
-
-        if (!$check->getRows()) {
+        if (null === $module) {
             return false;
         }
-        $templateInUseMessage = '';
-        $error = '';
-        $templatename = $check->getRows() ? $check->getValue('template.name') : null;
-        while ($check->hasNext()) {
-            $aid = (int) $check->getValue('article.id');
-            $clangId = (int) $check->getValue('article.clang_id');
-            $article = Article::get($aid, $clangId);
-            if (null == $article) {
-                continue;
-            }
-            $label = $article->getName() . ' [' . $aid . ']';
-            if (Language::count() > 1) {
-                $clang = Language::get($clangId);
-                if (null == $clang) {
-                    continue;
-                }
-                $label .= ' [' . $clang->getCode() . ']';
-            }
 
-            $templateInUseMessage .= '<li><a href="' . Url::backendPage('content', ['article_id' => $aid, 'clang' => $clangId]) . '">' . escape($label) . '</a></li>';
-            $check->next();
+        $section = $template->getContentSection($contentSectionId);
+
+        if (null === $section) {
+            return true;
         }
 
-        if (null == $templatename) {
-            $check->setQuery('SELECT name FROM ' . Core::getTable('template') . ' WHERE id = ' . $templateId);
-            $templatename = $check->getValue('name');
-        }
-
-        if ('' != $templateInUseMessage && null != $templatename) {
-            $error .= I18n::msg($msgKey, (string) $templatename);
-            $error .= '<ul>' . $templateInUseMessage . '</ul>';
-        }
-
-        return $error;
+        return $template->isModuleAllowed($section, $module);
     }
 
-    public static function exists(int $templateId): bool
+    /** @return non-empty-list<ContentSection> */
+    public function getContentSections(): array
     {
-        $sql = Sql::factory();
-        $sql->setQuery('SELECT 1 FROM ' . Core::getTable('template') . ' WHERE id = ?', [$templateId]);
-        return 1 === $sql->getRows();
+        return [new ContentSection(1, 'Content')];
     }
+
+    /**
+     * Whether this template is available in the given category.
+     * `null` means root level (articles without a category).
+     * The default implementation allows the template everywhere.
+     *
+     * Override this to restrict to specific categories.
+     */
+    public function isAllowedInCategory(?Category $category): bool
+    {
+        return true;
+    }
+
+    /**
+     * Whether the given module is allowed in the given content section of this template.
+     * The default implementation allows all modules everywhere.
+     */
+    public function isModuleAllowed(ContentSection $section, Module $module): bool
+    {
+        return true;
+    }
+
+    /** @param positive-int $id */
+    final public function getContentSection(int $id): ?ContentSection
+    {
+        return array_find($this->getContentSections(), static fn (ContentSection $s) => $s->id === $id);
+    }
+
+    /** @param positive-int $id */
+    final public function hasContentSection(int $id): bool
+    {
+        return null !== $this->getContentSection($id);
+    }
+
+    abstract public function render(ArticleContent $article): string;
 }

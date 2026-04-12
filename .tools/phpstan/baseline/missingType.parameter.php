@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 75 errors
+// total 72 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -104,21 +104,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\CategoryTreeRenderer::treeItem() has parameter $subHtml with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/Linkmap/CategoryTreeRenderer.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Template::__construct() has parameter $templateId with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/Template.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Template::hasModule() has parameter $ctype with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/Template.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Template::hasModule() has parameter $moduleId with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/Template.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Cronjob\\CronjobManager::setExecutionStart() has parameter $reset with no type specified.',

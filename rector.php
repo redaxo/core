@@ -367,13 +367,11 @@ return RectorConfig::configure()
         'rex_linkmap_category_tree' => Content\Linkmap\CategoryTree::class,
         'rex_linkmap_tree_renderer' => Content\Linkmap\CategoryTreeRenderer::class,
         'rex_module' => Content\Module::class,
-        'rex_module_cache' => Content\ModuleCache::class,
         'rex_module_perm' => Content\ModulePermission::class,
         'rex_structure_context' => Content\StructureContext::class,
         'rex_structure_element' => Content\StructureElement::class,
         'rex_structure_perm' => Content\StructurePermission::class,
         'rex_template' => Content\Template::class,
-        'rex_template_cache' => Content\TemplateCache::class,
         'rex_backend_login' => Security\BackendLogin::class,
         'rex_backend_password_policy' => Security\BackendPasswordPolicy::class,
         'rex_complex_perm' => Security\ComplexPermission::class,
@@ -430,6 +428,11 @@ return RectorConfig::configure()
 
         new MethodCallRename(Content\ArticleContentBase::class, 'getClang', 'getClangId'),
         new MethodCallRename(Content\StructureElement::class, 'getClang', 'getClangId'),
+        new MethodCallRename(Content\StructureElement::class, 'getTemplateId', 'getTemplateKey'),
+        new MethodCallRename(Content\Template::class, 'forKey', 'get'),
+        new MethodCallRename(Content\Template::class, 'getCtypes', 'getContentSections'),
+        new MethodCallRename(Content\Template::class, 'getDefaultId', 'getDefaultKey'),
+        new MethodCallRename(Content\Module::class, 'forKey', 'get'),
 
         new MethodCallRename(MediaManager\ManagedMedia::class, 'getImageWidth', 'getWidth'),
         new MethodCallRename(MediaManager\ManagedMedia::class, 'getImageHeight', 'getHeight'),
@@ -531,7 +534,7 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getRevision', 'revision'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getPriority', 'priority'),
 
-        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getEvent', 'event'),
+        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getEvent', 'mode'),
         new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getSave', 'save'),
         new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getMessages', 'messages'),
 

@@ -5,6 +5,7 @@ use Redaxo\Core\Content\ApiFunction\ArticleStatusChange;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleHandler;
 use Redaxo\Core\Content\StructureContext;
+use Redaxo\Core\Content\Template;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -80,27 +81,20 @@ $content[] = '<dl class="dl-horizontal text-left">' . implode('', $panels) . '</
 
 $article = Sql::factory();
 $article->setQuery('
-            SELECT
-                article.*, template.attributes as template_attributes
-            FROM
-                ' . Core::getTablePrefix() . 'article as article
-            LEFT JOIN ' . Core::getTablePrefix() . "template as template
-                ON template.id=article.template_id
+            SELECT article.*
+            FROM ' . Core::getTablePrefix() . "article as article
             WHERE
                 article.id='$articleId'
                 AND clang_id=$clang",
 );
 
 if (1 == $article->getRows()) {
-    // ----- ctype holen
-    $templateAttributes = $article->getArrayValue('template_attributes');
-
-    $ctypes = $templateAttributes['ctype'] ?? []; // ctypes - aus dem template
+    $template = Template::get((string) $article->getValue('template'));
 
     $ctype = Request::request('ctype', 'int', 1);
-    if (!array_key_exists($ctype, $ctypes)) {
+    if ($ctype < 1 || !$template?->hasContentSection($ctype)) {
         $ctype = 1;
-    } // default = 1
+    }
 
     $context = new Context([
         'page' => Controller::getCurrentPage(),

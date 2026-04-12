@@ -51,15 +51,6 @@ const allPages = {
     'mediapool_structure.png': START_URL + '?page=mediapool/structure',
     'mediapool_sync.png': START_URL + '?page=mediapool/sync',
 
-    'templates.png': START_URL + '?page=templates',
-    'templates_add.png': START_URL + '?page=templates&function=add',
-    'templates_edit.png': START_URL + '?page=templates&function=edit&template_id=1',
-
-    'modules_modules.png': START_URL + '?page=modules/modules',
-    'modules_modules_add.png': START_URL + '?page=modules/modules&function=add',
-    'modules_actions.png': START_URL + '?page=modules/actions',
-    'modules_actions_add.png': START_URL + '?page=modules/actions&function=add',
-
     'users_users.png': START_URL + '?page=users/users',
     'users_roles.png': START_URL + '?page=users/roles',
     'users_role_add.png': START_URL + '?page=users/roles&func=add&default_value=1',
