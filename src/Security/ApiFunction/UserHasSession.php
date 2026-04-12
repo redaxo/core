@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Security\ApiFunction;
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
@@ -11,6 +12,7 @@ use Redaxo\Core\Http\Response;
 /**
  * @internal
  */
+#[AsApiFunction('user_has_session')]
 class UserHasSession extends ApiFunction
 {
     /** @return never */

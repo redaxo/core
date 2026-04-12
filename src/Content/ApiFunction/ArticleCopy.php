@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Content\ApiFunction;
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Backend\Controller;
@@ -16,6 +17,7 @@ use Redaxo\Core\Translation\I18n;
 /**
  * @internal
  */
+#[AsApiFunction('article_copy')]
 class ArticleCopy extends ApiFunction
 {
     public function execute()

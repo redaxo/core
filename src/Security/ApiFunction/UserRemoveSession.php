@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Security\ApiFunction;
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Core;
@@ -14,6 +15,7 @@ use Redaxo\Core\Translation\I18n;
 /**
  * @internal
  */
+#[AsApiFunction('user_remove_session')]
 class UserRemoveSession extends ApiFunction
 {
     public function execute()

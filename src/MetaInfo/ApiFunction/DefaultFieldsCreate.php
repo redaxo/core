@@ -3,6 +3,7 @@
 namespace Redaxo\Core\MetaInfo\ApiFunction;
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Core;
@@ -18,6 +19,7 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsApiFunction('metainfo_default_fields_create')]
 class DefaultFieldsCreate extends ApiFunction
 {
     public function execute()
