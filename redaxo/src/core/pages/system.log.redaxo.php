@@ -50,8 +50,8 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
     /** @var rex_log_entry $entry */
     $data = $entry->getData();
 
-    $type = rex_type::string($data[0]);
-    $message = rex_type::string($data[1]);
+    $type = rex_type::string($data[0] ?? '');
+    $message = rex_type::string($data[1] ?? '');
     $file = $data[2] ?? null;
     $line = $data[3] ?? null;
 
