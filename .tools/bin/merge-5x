@@ -17,12 +17,12 @@ git diff --name-only --diff-filter=U | grep -E '\.tools/(visual-tests/screenshot
 done
 
 for dir in core addons/backup addons/be_style addons/cronjob addons/media_manager addons/mediapool addons/metainfo addons/phpmailer addons/structure addons/users; do
-    git rm --ignore-unmatch -r "redaxo/src/$dir/vendor/"
-    git rm --ignore-unmatch "redaxo/src/$dir/CHANGELOG.md"
-    git rm --ignore-unmatch "redaxo/src/$dir/composer.lock"
+    git rm -f --ignore-unmatch -r "redaxo/src/$dir/vendor/"
+    git rm -f --ignore-unmatch "redaxo/src/$dir/CHANGELOG.md"
+    git rm -f --ignore-unmatch "redaxo/src/$dir/composer.lock"
 done
 
-git rm --ignore-unmatch -r "redaxo/src/addons/install/"
+git rm -f --ignore-unmatch -r "redaxo/src/addons/install/"
 
 echo ""
 echo "Please resolve all remaining conflicts manually."

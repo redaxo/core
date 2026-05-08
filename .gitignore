@@ -29,6 +29,10 @@
 # VSCode setting
 .vscode
 
+# Claude Code (only the project memory pointer is tracked)
+/.claude/*
+!/.claude/CLAUDE.md
+
 # Docker
 /.docker
 /docker-compose.*.yml
