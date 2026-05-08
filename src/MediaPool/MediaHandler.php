@@ -337,7 +337,7 @@ final class MediaHandler
                     if (!is_string($value) || '' == $value) {
                         break;
                     }
-                    foreach (str_getcsv(trim($value), ' ') as $i => $part) {
+                    foreach (str_getcsv(trim($value), ' ', '"', '') as $i => $part) {
                         if (!$part) {
                             continue;
                         }
