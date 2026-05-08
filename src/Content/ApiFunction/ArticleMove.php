@@ -18,12 +18,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('article_move')]
 class ArticleMove extends ApiFunction
 {
-    /**
-     * @throws ApiFunctionException
-     *
-     * @return Result
-     */
-    public function execute()
+    public function execute(): Result
     {
         // The article to move
         $articleId = Request::request('article_id', 'int');

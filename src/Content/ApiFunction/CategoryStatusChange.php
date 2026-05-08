@@ -17,7 +17,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('category_status_change')]
 class CategoryStatusChange extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $categoryId = Request::request('category-id', 'int');
         $clang = Request::request('clang', 'int');

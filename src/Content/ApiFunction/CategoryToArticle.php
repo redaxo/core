@@ -18,7 +18,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('category_to_article')]
 class CategoryToArticle extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $articleId = Request::request('article_id', 'int');
         $categoryId = Article::get($articleId)->getCategoryId();

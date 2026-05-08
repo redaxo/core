@@ -12,7 +12,9 @@ use Redaxo\Core\Http\Response;
 #[AsApiFunction('debug')]
 class rex_api_debug extends ApiFunction
 {
-    public function execute()
+    protected bool $requiresCsrfProtection = false;
+
+    public function execute(): Result
     {
         if (!Core::isDebugMode() || !Core::getUser()?->isAdmin()) {
             return new Result(false);
@@ -24,12 +26,7 @@ class rex_api_debug extends ApiFunction
         exit;
     }
 
-    protected function requiresCsrfProtection(): bool
-    {
-        return false;
-    }
-
-    public static function getUrlParams()
+    public static function getUrlParams(): array
     {
         return [
             self::REQ_CALL_PARAM => 'debug',

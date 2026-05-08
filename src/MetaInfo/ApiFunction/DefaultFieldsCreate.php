@@ -22,7 +22,7 @@ use function sprintf;
 #[AsApiFunction('metainfo_default_fields_create')]
 class DefaultFieldsCreate extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::getUser()?->isAdmin()) {
             throw new ApiFunctionException('user has no permission for this operation!');

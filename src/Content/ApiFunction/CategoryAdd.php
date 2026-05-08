@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('category_add')]
 class CategoryAdd extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('addCategory[]')) {
             throw new ApiFunctionException('User has no permission to add categories!');
