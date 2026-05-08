@@ -59,11 +59,11 @@ class ArticleHandler extends AbstractHandler
             // Alle Metafelder des Pfades sind erlaubt
             foreach ($OOArt->getPathAsArray() as $pathElement) {
                 if ('' != $pathElement) {
-                    $s .= ' OR `p`.`restrictions` LIKE "%|' . $pathElement . '|%"';
+                    $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
                 }
             }
 
-            $t = ' OR `p`.`templates` LIKE "%|' . $OOArt->getValue('template_id') . '|%"';
+            $t = ' OR FIND_IN_SET(' . $OOArt->getValue('template_id') . ', `p`.`templates`)';
 
             $restrictionsCondition = 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ') AND (`p`.`templates` = "" OR `p`.`templates` IS NULL ' . $t . ')';
         }

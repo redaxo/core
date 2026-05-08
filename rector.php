@@ -346,7 +346,7 @@ return RectorConfig::configure()
         'rex_var_medialist' => RexVar\MediaListVar::class,
         'rex_version' => Util\Version::class,
         'rex_article' => Content\Article::class,
-        'rex_article_action' => Content\ArticleAction::class,
+        'rex_article_action' => Content\ArticleSliceAction::class,
         'rex_article_cache' => Content\ArticleCache::class,
         'rex_article_content' => Content\ArticleContent::class,
         'rex_article_content_base' => Content\ArticleContentBase::class,
@@ -519,9 +519,9 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getRevision', 'revision'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getPriority', 'priority'),
 
-        new MethodCallToPropertyFetch(Content\ArticleAction::class, 'getEvent', 'event'),
-        new MethodCallToPropertyFetch(Content\ArticleAction::class, 'getSave', 'save'), // todo setter
-        new MethodCallToPropertyFetch(Content\ArticleAction::class, 'getMessages', 'messages'),
+        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getEvent', 'event'),
+        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getSave', 'save'), // todo setter
+        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getMessages', 'messages'),
 
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),

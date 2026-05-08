@@ -8,6 +8,8 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\MetaInfo\Form\MetaInfoForm;
 use Redaxo\Core\Translation\I18n;
 
+use function is_array;
+
 /**
  * @internal
  */
@@ -26,7 +28,17 @@ class RestrictionField extends SelectField
     {
         parent::__construct('', $form, $attributes);
 
+        $this->setSeparator(',');
         $this->setNotice(I18n::msg('ctrl'));
+    }
+
+    /** @return void */
+    public function setValue($value)
+    {
+        if (is_array($value)) {
+            $value = implode(',', $value);
+        }
+        $this->value = $value;
     }
 
     public function setAllCheckboxLabel(string $label): void

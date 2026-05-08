@@ -90,11 +90,11 @@ class ArticleContentEditor extends ArticleContent
                     // **************** Aktueller Slice
 
                     // ----- PRE VIEW ACTION [EDIT]
-                    $action = new ArticleAction($moduleId, 'edit', $artDataSql);
+                    $action = new ArticleSliceAction($moduleId, 'edit', $artDataSql);
                     if ('post' == Request::requestMethod() && 'edit' == Request::request('function', 'string')) {
                         $action->setRequestValues();
                     }
-                    $action->exec(ArticleAction::PREVIEW);
+                    $action->exec(ArticleSliceAction::PREVIEW);
                     // ----- / PRE VIEW ACTION
 
                     return $sliceContent . $this->editSlice($sliceId, $moduleInput, $sliceCtype, $moduleId, $artDataSql);
@@ -438,9 +438,9 @@ class ArticleContentEditor extends ArticleContent
             ->setValue('ctype_id', $this->ctype);
 
         // ----- PRE VIEW ACTION [ADD]
-        $action = new ArticleAction($moduleId, 'add', $initDataSql);
+        $action = new ArticleSliceAction($moduleId, 'add', $initDataSql);
         $action->setRequestValues();
-        $action->exec(ArticleAction::PREVIEW);
+        $action->exec(ArticleSliceAction::PREVIEW);
         // ----- / PRE VIEW ACTION
 
         $this->currentSlice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleId, $this->sliceAddPosition, $this->slice_revision);

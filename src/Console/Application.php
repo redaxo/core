@@ -6,6 +6,7 @@ use ErrorException;
 use Exception;
 use Override;
 use ParseError;
+use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Console\Command\AbstractCommand;
 use Redaxo\Core\Console\Command\OnlySetupAddonsInterface;
@@ -31,8 +32,9 @@ use const E_RECOVERABLE_ERROR;
 
 class Application extends SymfonyApplication
 {
-    public function __construct()
-    {
+    public function __construct(
+        private readonly AbstractProject $project,
+    ) {
         parent::__construct('REDAXO', Core::getVersion());
     }
 
@@ -117,6 +119,8 @@ class Application extends SymfonyApplication
         }
 
         Extension::registerPoint(new ExtensionPoint('PACKAGES_INCLUDED'));
+
+        $this->project->boot();
     }
 
     private function checkConsoleUser(InputInterface $input, OutputInterface $output): void
