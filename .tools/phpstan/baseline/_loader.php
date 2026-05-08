@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-// total 445 errors
+// total 443 errors
 
 return ['includes' => [
     __DIR__ . '/argument.templateType.php',
     __DIR__ . '/argument.type.php',
     __DIR__ . '/assign.propertyType.php',
     __DIR__ . '/booleanAnd.rightAlwaysFalse.php',
-    __DIR__ . '/catch.neverThrown.php',
-    __DIR__ . '/deadCode.unreachable.php',
     __DIR__ . '/function.alreadyNarrowedType.php',
     __DIR__ . '/if.alwaysTrue.php',
     __DIR__ . '/impure.propertyAssign.php',
