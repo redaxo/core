@@ -50,14 +50,14 @@ final class Addon implements AddonInterface
     private static array $addons = [];
 
     /** @var non-empty-string */
-    public string $path {
+    public private(set) string $path {
         get {
             if (isset($this->path)) {
                 return $this->path;
             }
 
             try {
-                return $this->path = realpath(InstalledVersions::getInstallPath($this->name));
+                return $this->path = realpath(InstalledVersions::getInstallPath($this->package));
             } catch (OutOfBoundsException) {
                 return $this->path = realpath(InstalledVersions::getRootPackage()['install_path']) . '/vendor/' . $this->package;
             }
