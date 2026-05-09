@@ -74,6 +74,7 @@ use Redaxo\Core\Util;
 use Redaxo\Core\Validator;
 use Redaxo\Core\View;
 use Redaxo\Rector\Rule as RedaxoRule;
+use Redaxo\Rector\ValueObject\MethodCallToPropertyAssign;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyFetch;
 
 return RectorConfig::configure()
@@ -520,11 +521,14 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getPriority', 'priority'),
 
         new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getEvent', 'event'),
-        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getSave', 'save'), // todo setter
+        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getSave', 'save'),
         new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getMessages', 'messages'),
 
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
+    ])
+    ->withConfiguredRule(RedaxoRule\MethodCallToPropertyAssignRector::class, [
+        new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
     ])
     ->withConfiguredRule(ArgumentRemoverRector::class, [
         new ArgumentRemover(Util\Str::class, 'buildQuery', 1, null),
