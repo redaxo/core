@@ -31,9 +31,4 @@ class CategoryDelete extends ApiFunction
 
         return new Result(true, CategoryHandler::deleteCategory($catId));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

@@ -279,14 +279,12 @@ abstract class ApiFunction
     }
 
     /**
-     * Csrf validation is disabled by default for backwards compatiblity reasons. This default will change in a future version.
-     * Prepare all your api functions to work with csrf token by using your-api-class::getUrlParams()/getHiddenFields(), otherwise they will stop work.
-     *
-     * @return bool
+     * Csrf validation is enabled by default. Override this method and return `false` to disable it
+     * (e.g. for read-only endpoints or actions that must be callable by 3rd-party apps which can't know the csrf token).
      */
-    protected function requiresCsrfProtection()
+    protected function requiresCsrfProtection(): bool
     {
-        return false;
+        return true;
     }
 
     /** @return array<string, class-string<ApiFunction>> */

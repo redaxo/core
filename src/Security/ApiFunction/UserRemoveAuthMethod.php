@@ -34,11 +34,6 @@ class UserRemoveAuthMethod extends ApiFunction
         return $this->removePasskey($userId);
     }
 
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
-
     private function removePassword(int $userId): Result
     {
         $sql = Sql::factory()

@@ -44,9 +44,4 @@ class ArticleMove extends ApiFunction
 
         throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

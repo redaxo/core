@@ -34,9 +34,4 @@ class ArticleToCategory extends ApiFunction
         }
         throw new ApiFunctionException('User has no permission for this article!');
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

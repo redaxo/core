@@ -42,9 +42,4 @@ class ArticleSliceStatusChange extends ApiFunction
 
         return new Result(true);
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

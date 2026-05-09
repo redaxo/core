@@ -36,9 +36,4 @@ class ArticleAdd extends ApiFunction
         $data['category_id'] = $categoryId;
         return new Result(true, ArticleHandler::addArticle($data));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

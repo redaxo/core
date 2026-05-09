@@ -31,9 +31,4 @@ class ArticleDelete extends ApiFunction
         }
         return new Result(true, ArticleHandler::deleteArticle($articleId));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

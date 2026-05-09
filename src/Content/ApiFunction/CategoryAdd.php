@@ -35,9 +35,4 @@ class CategoryAdd extends ApiFunction
         $data['catname'] = Request::post('category-name', 'string');
         return new Result(true, CategoryHandler::addCategory($parentId, $data));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

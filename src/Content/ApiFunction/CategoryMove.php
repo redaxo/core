@@ -43,9 +43,4 @@ class CategoryMove extends ApiFunction
 
         throw new ApiFunctionException('user has no permission for this category!');
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

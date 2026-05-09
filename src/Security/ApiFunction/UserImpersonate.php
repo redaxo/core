@@ -39,9 +39,4 @@ class UserImpersonate extends ApiFunction
 
         Response::sendRedirect(Url::backendController());
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

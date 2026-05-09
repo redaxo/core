@@ -38,9 +38,4 @@ class CategoryEdit extends ApiFunction
         $data['catname'] = Request::post('category-name', 'string');
         return new Result(true, CategoryHandler::editCategory($catId, $clangId, $data));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }
