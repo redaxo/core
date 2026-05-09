@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('article_edit')]
 class ArticleEdit extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('editArticle[]')) {
             throw new ApiFunctionException('User has no permission to edit articles!');

@@ -76,6 +76,7 @@ use Redaxo\Core\View;
 use Redaxo\Rector\Rule as RedaxoRule;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyAssign;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyFetch;
+use Redaxo\Rector\ValueObject\SetterCallToConstructorArgument;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -422,6 +423,9 @@ return RectorConfig::configure()
         new MethodCallRename(Console\Command\AbstractCommand::class, 'getPackage', 'getAddon'),
         new MethodCallRename(Console\Command\AbstractCommand::class, 'setPackage', 'setAddon'),
 
+        new MethodCallRename(ApiFunction\Result::class, 'toJSON', 'toJson'),
+        new MethodCallRename(ApiFunction\Result::class, 'fromJSON', 'fromJson'),
+
         new MethodCallRename(Security\PasswordPolicy::class, 'getRule', 'getDescription'),
 
         new MethodCallRename(Content\ArticleContentBase::class, 'getClang', 'getClangId'),
@@ -512,6 +516,13 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Addon\Addon::class, 'getName', 'name'),
         new MethodCallToPropertyFetch(Addon\Addon::class, 'getPackageId', 'name'),
 
+        new MethodCallToPropertyFetch(ApiFunction\ApiFunction::class, 'getResult', 'result'),
+        new MethodCallToPropertyFetch(ApiFunction\ApiFunction::class, 'requiresCsrfProtection', 'requiresCsrfProtection'),
+
+        new MethodCallToPropertyFetch(ApiFunction\Result::class, 'isSuccessfull', 'succeeded'),
+        new MethodCallToPropertyFetch(ApiFunction\Result::class, 'getMessage', 'message'),
+        new MethodCallToPropertyFetch(ApiFunction\Result::class, 'requiresReboot', 'requiresReboot'),
+
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getClang', 'clangId'),
@@ -529,6 +540,9 @@ return RectorConfig::configure()
     ])
     ->withConfiguredRule(RedaxoRule\MethodCallToPropertyAssignRector::class, [
         new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
+    ])
+    ->withConfiguredRule(RedaxoRule\SetterCallToConstructorArgumentRector::class, [
+        new SetterCallToConstructorArgument(ApiFunction\Result::class, 'setRequiresReboot', 'requiresReboot'),
     ])
     ->withConfiguredRule(ArgumentRemoverRector::class, [
         new ArgumentRemover(Util\Str::class, 'buildQuery', 1, null),

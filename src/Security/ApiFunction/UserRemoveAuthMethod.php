@@ -18,7 +18,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('user_remove_auth_method')]
 class UserRemoveAuthMethod extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $userId = Request::get('user_id', 'int');
         $user = Core::requireUser();

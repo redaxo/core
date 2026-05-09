@@ -7,7 +7,7 @@ use Redaxo\Core\ApiFunction\ApiFunction;
  */
 abstract class rex_api_function_debug extends ApiFunction
 {
-    public static function handleCall()
+    public static function handleCall(): void
     {
         $apiFunc = self::factory();
 

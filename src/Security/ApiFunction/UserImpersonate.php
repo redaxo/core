@@ -19,8 +19,7 @@ use function sprintf;
 #[AsApiFunction('user_impersonate')]
 class UserImpersonate extends ApiFunction
 {
-    /** @return never */
-    public function execute()
+    public function execute(): never
     {
         $impersonate = Request::get('_impersonate');
 

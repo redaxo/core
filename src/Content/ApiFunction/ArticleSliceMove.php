@@ -19,7 +19,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('article_slice_move')]
 class ArticleSliceMove extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $articleId = Request::request('article_id', 'int');
         $clang = Request::request('clang', 'int');

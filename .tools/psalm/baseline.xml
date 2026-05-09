@@ -1738,14 +1738,6 @@
       <code><![CDATA[$default]]></code>
     </MixedReturnStatement>
   </file>
-  <file src="src/ApiFunction/ApiFunction.php">
-    <MixedOperand>
-      <code><![CDATA[Request::get(self::REQ_CALL_PARAM)]]></code>
-    </MixedOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$message]]></code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/ApiFunction/Result.php">
     <MixedAssignment>
       <code><![CDATA[$json]]></code>

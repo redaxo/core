@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('category_edit')]
 class CategoryEdit extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('editCategory[]')) {
             throw new ApiFunctionException('User has no permission to edit categories!');

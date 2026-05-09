@@ -14,8 +14,10 @@ use Redaxo\Core\Security\BackendLogin;
 #[AsApiFunction('user_session_status')]
 class UserSessionStatus extends ApiFunction
 {
-    /** @return never */
-    public function execute()
+    // this action supports to be callable by 3rd party apps, which can't know our valid csrf token
+    protected bool $requiresCsrfProtection = false;
+
+    public function execute(): never
     {
         $user = Core::getUser();
         if (!$user) {
@@ -31,11 +33,5 @@ class UserSessionStatus extends ApiFunction
         ]);
 
         exit;
-    }
-
-    protected function requiresCsrfProtection(): bool
-    {
-        // this action supports to be callable by 3rd party apps, which can't know our valid csrf token
-        return false;
     }
 }
