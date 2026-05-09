@@ -55,10 +55,4 @@ final class AddonOperation extends ApiFunction
         }
         return $result;
     }
-
-    #[Override]
-    protected function requiresCsrfProtection(): true
-    {
-        return true;
-    }
 }

@@ -32,9 +32,4 @@ class CategoryStatusChange extends ApiFunction
 
         throw new ApiFunctionException('User has no permission for this category!');
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

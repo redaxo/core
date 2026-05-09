@@ -34,9 +34,4 @@ class ArticleStatusChange extends ApiFunction
 
         throw new ApiFunctionException('user has no permission for this article!');
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

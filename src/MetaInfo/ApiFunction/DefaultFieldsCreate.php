@@ -64,9 +64,4 @@ class DefaultFieldsCreate extends ApiFunction
 
         return new Result(true, I18n::msg('minfo_default_fields_created'));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

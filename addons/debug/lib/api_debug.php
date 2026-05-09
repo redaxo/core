@@ -24,7 +24,7 @@ class rex_api_debug extends ApiFunction
         exit;
     }
 
-    protected function requiresCsrfProtection()
+    protected function requiresCsrfProtection(): bool
     {
         return false;
     }

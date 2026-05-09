@@ -33,7 +33,7 @@ class UserSessionStatus extends ApiFunction
         exit;
     }
 
-    protected function requiresCsrfProtection()
+    protected function requiresCsrfProtection(): bool
     {
         // this action supports to be callable by 3rd party apps, which can't know our valid csrf token
         return false;

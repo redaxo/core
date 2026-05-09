@@ -38,9 +38,4 @@ class ArticleEdit extends ApiFunction
         $data['template_id'] = Request::post('template_id', 'int');
         return new Result(true, ArticleHandler::editArticle($articleId, $clang, $data));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

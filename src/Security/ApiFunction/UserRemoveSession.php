@@ -35,9 +35,4 @@ class UserRemoveSession extends ApiFunction
 
         return new Result(false, I18n::msg('session_remove_error'));
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }

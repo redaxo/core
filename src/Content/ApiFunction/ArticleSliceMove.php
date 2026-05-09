@@ -59,9 +59,4 @@ class ArticleSliceMove extends ApiFunction
         }
         return new Result(true, $message);
     }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
-    }
 }
