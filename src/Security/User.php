@@ -35,14 +35,14 @@ class User
     /**
      * User role instance.
      *
-     * @var UserRoleInterface|null
+     * @var UserRole|null
      */
     protected $role;
 
     /**
      * Class name for user roles.
      *
-     * @var class-string<UserRoleInterface>
+     * @var class-string<UserRole>
      */
     protected static $roleClass;
 
@@ -194,9 +194,8 @@ class User
      */
     public function hasRole()
     {
-        if (self::$roleClass && !is_object($this->role) && ($role = $this->sql->getValue('role'))) {
-            $class = self::$roleClass;
-            $this->role = $class::get($role);
+        if (!is_object($this->role) && ($role = $this->sql->getValue('role'))) {
+            $this->role = UserRole::get($role);
         }
         return is_object($this->role);
     }
@@ -249,17 +248,6 @@ class User
             return $this->role->getComplexPerm($this, $key);
         }
         return ComplexPermission::get($this, $key);
-    }
-
-    /**
-     * Sets the role class.
-     *
-     * @param class-string<UserRoleInterface> $class Class name
-     * @return void
-     */
-    public static function setRoleClass($class)
-    {
-        self::$roleClass = $class;
     }
 
     /** Removes the instance of the given key. */
