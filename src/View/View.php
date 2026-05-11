@@ -227,7 +227,7 @@ class View
         $fragment->setVar('header', I18n::msg('clang_select'));
         $fragment->setVar('items', $items, false);
 
-        if ($user->isAdmin()) {
+        if ($user->admin) {
             $fragment->setVar('footer', '<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag"></i> ' . I18n::msg('languages_edit') . '</a>', false);
         }
 

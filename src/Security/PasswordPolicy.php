@@ -12,21 +12,17 @@ class PasswordPolicy
 {
     /** @param array<string, array{min?: int, max?: int}> $options */
     public function __construct(
-        private array $options,
+        private readonly array $options,
     ) {}
 
-    /**
-     * @param string $password
-     * @param int|null $id
-     * @return true|string `true` on success, otherwise an error message
-     */
-    public function check(#[SensitiveParameter] $password, $id = null)
+    /** @return true|string `true` on success, otherwise an error message */
+    public function check(#[SensitiveParameter] string $password, ?int $id = null): true|string
     {
         if ($this->isValid($password)) {
             return true;
         }
 
-        return I18n::msg('password_invalid', $this->getDescription());
+        return I18n::msg('password_invalid', $this->getDescription() ?? '');
     }
 
     public function getDescription(): ?string
@@ -91,11 +87,7 @@ class PasswordPolicy
         return $attr;
     }
 
-    /**
-     * @param string $password
-     * @return bool
-     */
-    protected function isValid(#[SensitiveParameter] $password)
+    protected function isValid(#[SensitiveParameter] string $password): bool
     {
         foreach ($this->options as $key => $options) {
             $count = match ($key) {
@@ -116,13 +108,8 @@ class PasswordPolicy
         return true;
     }
 
-    /**
-     * @param int $count
-     * @param array{min?: int, max?: int} $options
-     *
-     * @return bool
-     */
-    protected function matchesCount($count, array $options)
+    /** @param array{min?: int, max?: int} $options */
+    protected function matchesCount(int $count, array $options): bool
     {
         if (isset($options['min']) && $count < $options['min']) {
             return false;

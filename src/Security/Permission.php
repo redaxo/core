@@ -4,11 +4,11 @@ namespace Redaxo\Core\Security;
 
 use Redaxo\Core\Translation\I18n;
 
-abstract class Permission
+final class Permission
 {
-    public const GENERAL = 'general';
-    public const OPTIONS = 'options';
-    public const EXTRAS = 'extras';
+    public const string GENERAL = 'general';
+    public const string OPTIONS = 'options';
+    public const string EXTRAS = 'extras';
 
     /**
      * Array of permissions.
@@ -17,15 +17,16 @@ abstract class Permission
      */
     private static array $perms = [];
 
+    private function __construct() {}
+
     /**
      * Registers a new permission.
      *
      * @param string $perm Perm key
      * @param string|null $name Perm name
      * @param self::* $group Perm group, possible values are Permission::GENERAL, Permission::OPTIONS and Permission::EXTRAS
-     * @return void
      */
-    public static function register($perm, $name = null, $group = self::GENERAL)
+    public static function register(string $perm, ?string $name = null, string $group = self::GENERAL): void
     {
         if ($name) {
             $name = $perm . ' :: ' . $name;
@@ -36,21 +37,10 @@ abstract class Permission
         self::$perms[$group][$perm] = $name;
     }
 
-    /**
-     * Returns whether the permission is registered.
-     *
-     * @param string $perm
-     *
-     * @return bool
-     */
-    public static function has($perm)
+    /** Returns whether the permission is registered. */
+    public static function has(string $perm): bool
     {
-        foreach (self::$perms as $perms) {
-            if (isset($perms[$perm])) {
-                return true;
-            }
-        }
-        return false;
+        return array_any(self::$perms, static fn ($perms) => isset($perms[$perm]));
     }
 
     /**
@@ -60,7 +50,7 @@ abstract class Permission
      *
      * @return array<string, string> Permissions
      */
-    public static function getAll($group = self::GENERAL)
+    public static function getAll(string $group = self::GENERAL): array
     {
         if (isset(self::$perms[$group])) {
             $perms = self::$perms[$group];

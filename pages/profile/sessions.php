@@ -10,7 +10,7 @@ use Redaxo\Core\View\Fragment;
 use function Redaxo\Core\View\escape;
 
 if (!isset($userId) || 1 > $userId) {
-    $userId = Core::requireUser()->getId();
+    $userId = Core::requireUser()->id;
 }
 
 $list = DataList::factory('Select session_id, cookie_key, ip, useragent, starttime, last_activity from ' . Core::getTablePrefix() . 'user_session where user_id = ' . (int) $userId . ' ORDER BY last_activity DESC');

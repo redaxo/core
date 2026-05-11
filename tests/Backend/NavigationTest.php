@@ -28,7 +28,7 @@ final class NavigationTest extends TestCase
         $user = Core::getUser();
 
         try {
-            Core::setProperty('user', new User(Sql::factory()));
+            Core::setProperty('user', User::fromSql(Sql::factory()));
             $navi = $navi->getNavigation();
         } finally {
             Core::setProperty('user', $user);

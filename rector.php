@@ -537,9 +537,33 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
+
+        new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getForceRenewAfter', 'forceRenewAfter'),
+        new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getBlockAccountAfter', 'blockAccountAfter'),
+
+        new MethodCallToPropertyFetch(Security\CsrfToken::class, 'getId', 'id'),
+
+        new MethodCallToPropertyFetch(Security\User::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getLogin', 'login'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getEmail', 'email'),
+        new MethodCallToPropertyFetch(Security\User::class, 'isAdmin', 'admin'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getLanguage', 'language'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getStartPage', 'startPage'),
     ])
     ->withConfiguredRule(RedaxoRule\MethodCallToPropertyAssignRector::class, [
         new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
+
+        new MethodCallToPropertyAssign(Security\Login::class, 'setCache', 'cache'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setSqlDb', 'DB'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setSystemId', 'systemId'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setSessionDuration', 'sessionDuration'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setUserQuery', 'userQuery'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setLoginQuery', 'loginQuery'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setImpersonateQuery', 'impersonateQuery'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setIdColumn', 'idColumn'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setPasswordColumn', 'passwordColumn'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setMessage', 'message'),
     ])
     ->withConfiguredRule(RedaxoRule\SetterCallToConstructorArgumentRector::class, [
         new SetterCallToConstructorArgument(ApiFunction\Result::class, 'setRequiresReboot', 'requiresReboot'),

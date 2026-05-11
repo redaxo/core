@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 186 errors
+// total 178 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -116,11 +116,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Content/Linkmap/ArticleListRenderer.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ModulePermission::getFieldParams() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ModulePermission.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureContext::__construct() has parameter $params with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/StructureContext.php',
@@ -169,16 +164,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::toLink() has parameter $sorroundAttributes with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructurePermission::getFieldParams() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructurePermission.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructurePermission::getMountpoints() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructurePermission.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\Template::hasModule() has parameter $templateAttributes with no value type specified in iterable type array.',
@@ -346,16 +331,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Form/Form.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Language\\LanguagePermission::getClangs() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Language/LanguagePermission.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Language\\LanguagePermission::getFieldParams() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Language/LanguagePermission.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Property Redaxo\\Core\\Mailer\\Mailer::$xHeader type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Mailer/Mailer.php',
@@ -511,11 +486,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/MediaPool/MediaPool.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaPoolPermission::getFieldParams() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/MediaPoolPermission.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Property Redaxo\\Core\\MetaInfo\\Form\\Input\\MediaInput::$args type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MetaInfo/Form/Input/MediaInput.php',
@@ -639,16 +609,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\RexVar\\MediaVar::getWidget() has parameter $args with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/RexVar/MediaVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Security\\ComplexPermission::getFieldParams() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Security/ComplexPermission.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property Redaxo\\Core\\Security\\ComplexPermission::$perms type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Security/ComplexPermission.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Security\\Login::setSessionVar() has parameter $value with no value type specified in iterable type array.',

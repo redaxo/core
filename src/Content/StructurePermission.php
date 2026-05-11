@@ -9,42 +9,33 @@ use Redaxo\Core\Translation\I18n;
 use function count;
 use function in_array;
 
-class StructurePermission extends ComplexPermission
+/** @extends ComplexPermission<int> */
+final class StructurePermission extends ComplexPermission
 {
-    /**
-     * @param int $categoryId
-     *
-     * @return bool
-     */
-    public function hasCategoryPerm($categoryId)
+    public function hasCategoryPerm(int $categoryId): bool
     {
-        if ($this->hasAll() || in_array($categoryId, $this->perms)) {
+        if ($this->hasAll() || in_array($categoryId, $this->perms, true)) {
             return true;
         }
         if ($c = Category::get($categoryId)) {
-            foreach ($c->getPathAsArray() as $k) {
-                if (in_array($k, $this->perms)) {
-                    return true;
-                }
-            }
+            $perms = $this->perms;
+            return array_any($c->getPathAsArray(), static fn (int $k) => in_array($k, $perms, true));
         }
         return false;
     }
 
-    /** @return bool */
-    public function hasStructurePerm()
+    public function hasStructurePerm(): bool
     {
         return $this->hasAll() || count($this->perms) > 0;
     }
 
-    /** @return array */
-    public function getMountpoints()
+    /** @return list<int> */
+    public function getMountpoints(): array
     {
         return $this->hasAll() ? [] : $this->perms;
     }
 
-    /** @return bool */
-    public function hasMountpoints()
+    public function hasMountpoints(): bool
     {
         return !$this->hasAll() && count($this->perms) > 0;
     }
@@ -81,8 +72,7 @@ class StructurePermission extends ComplexPermission
         return $categories;
     }
 
-    /** @return array */
-    public static function getFieldParams()
+    public static function getFieldParams(): array
     {
         return [
             'label' => I18n::msg('categories'),

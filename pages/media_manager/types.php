@@ -70,7 +70,7 @@ if ('copy' == $func && $typeId > 0) {
     try {
         $sql->setQuery('INSERT INTO ' . Core::getTablePrefix() . 'media_manager_type (status, name, description) SELECT 0, CONCAT(name, \' ' . I18n::msg('media_manager_type_name_copy') . '\'), description FROM ' . Core::getTablePrefix() . 'media_manager_type WHERE id = ?', [$typeId]);
         $newTypeId = $sql->getLastId();
-        $login = Core::requireUser()->getLogin();
+        $login = Core::requireUser()->login;
         $sql->setQuery('INSERT INTO ' . Core::getTablePrefix() . 'media_manager_type_effect (type_id, effect, parameters, priority, updatedate, updateuser, createdate, createuser) SELECT ?, effect, parameters, priority, ?, ?, ?, ? FROM ' . Core::getTablePrefix() . 'media_manager_type_effect WHERE type_id = ?', [$newTypeId, date(Sql::FORMAT_DATETIME), $login, date(Sql::FORMAT_DATETIME), $login, $typeId]);
 
         $success = I18n::msg('media_manager_type_copied');

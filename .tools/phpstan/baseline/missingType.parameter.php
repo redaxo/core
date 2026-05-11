@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 83 errors
+// total 75 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -24,46 +24,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\CategoryHandler::prevStatus() has parameter $currentStatus with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/CategoryHandler.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::checkTempSession() has parameter $historyLogin with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::checkTempSession() has parameter $historySession with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::checkTempSession() has parameter $historyValidtime with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::createSessionKey() has parameter $login with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::createSessionKey() has parameter $session with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::createSessionKey() has parameter $validtime with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::verifySessionKey() has parameter $key1 with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\HistoryLogin::verifySessionKey() has parameter $key2 with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/HistoryLogin.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\ArticleList::listItem() has parameter $categoryId with no type specified.',

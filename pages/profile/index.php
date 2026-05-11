@@ -27,7 +27,7 @@ use function Redaxo\Core\View\escape;
 $error = '';
 $success = '';
 $user = Core::requireUser();
-$userId = $user->getId();
+$userId = $user->id;
 
 $login = Core::getProperty('login');
 $passwordChangeRequired = $login->requiresPasswordChange();
@@ -38,11 +38,11 @@ $passkey = Request::request('passkey', 'string');
 $userpswNew1 = Request::request('userpsw_new_1', 'string');
 $userpswNew2 = Request::request('userpsw_new_2', 'string');
 
-$username = Request::request('username', 'string', $user->getName());
+$username = Request::request('username', 'string', $user->name);
 $userdesc = Request::request('userdesc', 'string', $user->getValue('description'));
-$useremail = Request::request('useremail', 'string', $user->getValue('email'));
-$usertheme = Request::request('usertheme', 'string', $user->getValue('theme')) ?: null;
-$userlogin = $user->getLogin();
+$useremail = Request::request('useremail', 'string', $user->email);
+$usertheme = Request::request('usertheme', 'string', $user->theme) ?: null;
+$userlogin = $user->login;
 $csrfToken = CsrfToken::factory('profile');
 $passwordPolicy = BackendPasswordPolicy::factory();
 $webauthn = new WebAuthn();
@@ -53,7 +53,7 @@ echo View::title(I18n::msg('profile_title'), '');
 // --------------------------------- BE LANG
 
 // backend sprache
-$userpermBeSprache = Request::request('userperm_be_sprache', 'string', $user->getLanguage());
+$userpermBeSprache = Request::request('userperm_be_sprache', 'string', $user->language);
 $selBeSprache = new Select();
 $selBeSprache->setSize(1);
 $selBeSprache->setStyle('class="form-control"');
@@ -126,7 +126,7 @@ if ($update && !$error) {
 
 $verifyLogin = static function () use ($user, $login, $userpsw, $webauthn): bool|string {
     if (!$login->getPasskey()) {
-        if (!$userpsw || !BackendLogin::passwordVerify($userpsw, $user->getValue('password'))) {
+        if (!$userpsw || !BackendLogin::passwordVerify($userpsw, $user->password ?? '')) {
             return I18n::msg('user_psw_verify_error');
         }
 
@@ -137,7 +137,7 @@ $verifyLogin = static function () use ($user, $login, $userpsw, $webauthn): bool
     if ($result) {
         [$id, $passkeyUser] = $result;
 
-        if ($id === $login->getPasskey() && $passkeyUser->getId() === $user->getId()) {
+        if ($id === $login->getPasskey() && $passkeyUser->id === $user->id) {
             return true;
         }
     }
@@ -356,7 +356,7 @@ $buttons = $fragment->parse('core/form/submit.php');
 
 $fragment = new Fragment();
 $fragment->setVar('class', 'edit', false);
-$fragment->setVar('title', I18n::msg($user->getValue('password') ? 'profile_changepsw' : 'add_password'), false);
+$fragment->setVar('title', I18n::msg($user->password ? 'profile_changepsw' : 'add_password'), false);
 $fragment->setVar('body', $content, false);
 $fragment->setVar('buttons', $buttons, false);
 $changePassword = $fragment->parse('core/page/section.php');

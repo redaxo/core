@@ -24,7 +24,7 @@ class DefaultFieldsCreate extends ApiFunction
 {
     public function execute(): Result
     {
-        if (!Core::getUser()?->isAdmin()) {
+        if (!Core::getUser()?->admin) {
             throw new ApiFunctionException('user has no permission for this operation!');
         }
 

@@ -29,9 +29,9 @@ use function Redaxo\Core\View\escape;
     if (Core::getProperty('theme')) {
         // global theme from config.yml
         $colorScheme = escape((string) Core::getProperty('theme'));
-    } elseif ($user && $user->getValue('theme')) {
+    } elseif ($user && $user->theme) {
         // user selected theme
-        $colorScheme = escape($user->getValue('theme'));
+        $colorScheme = escape($user->theme);
     }
     echo "\n" . '    <meta name="color-scheme" content="' . $colorScheme . '">';
     echo "\n" . '    <style nonce="' . Response::getNonce() . '">:root { color-scheme: ' . $colorScheme . ' }</style>';

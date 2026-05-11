@@ -30,8 +30,8 @@ class UserImpersonate extends ApiFunction
         }
 
         $user = Core::requireUser();
-        if (!$user->isAdmin()) {
-            throw new ApiFunctionException(escape(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->getLogin())));
+        if (!$user->admin) {
+            throw new ApiFunctionException(escape(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->login)));
         }
 
         Core::getProperty('login')->impersonate((int) $impersonate);

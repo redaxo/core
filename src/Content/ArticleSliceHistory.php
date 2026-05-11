@@ -51,7 +51,7 @@ final class ArticleSliceHistory
             }
             $sql->setValue('history_type', $historyType);
             $sql->setValue('history_date', $historyDate);
-            $sql->setValue('history_user', Core::requireUser()->getValue('login'));
+            $sql->setValue('history_user', Core::requireUser()->login);
             $sql->insert();
         }
     }

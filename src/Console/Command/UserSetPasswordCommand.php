@@ -56,7 +56,7 @@ class UserSetPasswordCommand extends AbstractCommand
         }
 
         $user = User::fromSql($user);
-        $id = $user->getId();
+        $id = $user->id;
 
         $passwordPolicy = BackendPasswordPolicy::factory();
 

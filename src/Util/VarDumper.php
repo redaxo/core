@@ -25,7 +25,7 @@ final class VarDumper
     public static function register(): void
     {
         BaseVarDumper::setHandler(static function ($var, ?string $label = null) {
-            if (Core::isDebugMode() || ($user = BackendLogin::createUser()) && $user->isAdmin()) {
+            if (Core::isDebugMode() || ($user = BackendLogin::createUser()) && $user->admin) {
                 BaseVarDumper::setHandler(self::dump(...));
                 self::dump($var, $label);
 

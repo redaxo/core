@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Security;
 
-use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
 
@@ -10,34 +9,21 @@ use function sprintf;
 
 /**
  * Class for generating and validating csrf tokens.
- *
- * @psalm-consistent-constructor
  */
-class CsrfToken
+final readonly class CsrfToken
 {
-    use FactoryTrait;
-
-    public const PARAM = '_csrf_token';
+    public const string PARAM = '_csrf_token';
 
     private function __construct(
-        private string $id,
+        public string $id,
     ) {}
 
-    public static function factory(string $tokenId): static
+    public static function factory(string $tokenId): self
     {
-        $class = static::getFactoryClass();
-
-        return new $class($tokenId);
+        return new self($tokenId);
     }
 
-    /** @return string */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /** @return string */
-    public function getValue()
+    public function getValue(): string
     {
         $tokens = self::getTokens();
 
@@ -52,8 +38,7 @@ class CsrfToken
         return $token;
     }
 
-    /** @return string */
-    public function getHiddenField()
+    public function getHiddenField(): string
     {
         return sprintf('<input type="hidden" name="%s" value="%s"/>', self::PARAM, $this->getValue());
     }
@@ -63,13 +48,12 @@ class CsrfToken
      *
      * @return array<self::PARAM, string>
      */
-    public function getUrlParams()
+    public function getUrlParams(): array
     {
         return [self::PARAM => $this->getValue()];
     }
 
-    /** @return bool */
-    public function isValid()
+    public function isValid(): bool
     {
         $tokens = self::getTokens();
 
@@ -82,8 +66,7 @@ class CsrfToken
         return hash_equals($tokens[$this->id], $token);
     }
 
-    /** @return void */
-    public function remove()
+    public function remove(): void
     {
         $tokens = self::getTokens();
 
@@ -96,8 +79,7 @@ class CsrfToken
         Request::setSession(self::getSessionKey(), $tokens);
     }
 
-    /** @return void */
-    public static function removeAll()
+    public static function removeAll(): void
     {
         Login::startSession();
 
@@ -106,15 +88,15 @@ class CsrfToken
     }
 
     /** @return array<string, string> */
-    private static function getTokens()
+    private static function getTokens(): array
     {
         Login::startSession();
 
-        return Request::session(self::getSessionKey(), 'array');
+        /** @var array<string, string> */
+        return Request::session(self::getSessionKey(), 'array[string]');
     }
 
-    /** @return string */
-    private static function getSessionKey()
+    private static function getSessionKey(): string
     {
         // use separate tokens for http/https
         // https://symfony.com/blog/cve-2017-16653-csrf-protection-does-not-use-different-tokens-for-http-and-https
@@ -123,14 +105,12 @@ class CsrfToken
         return self::getBaseSessionKey() . $suffix;
     }
 
-    /** @return string */
-    private static function getBaseSessionKey()
+    private static function getBaseSessionKey(): string
     {
         return 'csrf_tokens_' . Core::getEnvironment();
     }
 
-    /** @return string */
-    private static function generateToken()
+    private static function generateToken(): string
     {
         $bytes = random_bytes(32);
 

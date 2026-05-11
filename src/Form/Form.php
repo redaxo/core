@@ -277,7 +277,7 @@ class Form extends AbstractForm
         $fieldnames = $this->sql->getFieldnames();
 
         if (in_array('updateuser', $fieldnames)) {
-            $saveSql->setValue('updateuser', Core::requireUser()->getValue('login'));
+            $saveSql->setValue('updateuser', Core::requireUser()->login);
         }
 
         if (in_array('updatedate', $fieldnames)) {
@@ -286,7 +286,7 @@ class Form extends AbstractForm
 
         if (!$this->isEditMode()) {
             if (in_array('createuser', $fieldnames)) {
-                $saveSql->setValue('createuser', Core::requireUser()->getValue('login'));
+                $saveSql->setValue('createuser', Core::requireUser()->login);
             }
 
             if (in_array('createdate', $fieldnames)) {

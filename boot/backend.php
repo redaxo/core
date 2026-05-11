@@ -184,8 +184,8 @@ if (Core::isSetup()) {
         }
     } else {
         // Userspezifische Sprache einstellen
-        $user = $login->getUser();
-        $lang = $user->getLanguage();
+        $user = Type::notNull($login->getUser());
+        $lang = $user->language;
         if ($lang && 'default' != $lang && $lang != Core::getProperty('lang')) {
             I18n::setLocale($lang);
         }
@@ -193,7 +193,7 @@ if (Core::isSetup()) {
         Core::setProperty('user', $user);
 
         // Safe Mode
-        if (!Core::isLiveMode() && $user->isAdmin() && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
+        if (!Core::isLiveMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
             if ($safeMode) {
                 Request::setSession('safemode', true);
             } else {
@@ -359,10 +359,10 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
             $articleLink = Url::article(Article::getCurrentId(), Language::getCurrentId());
             if (str_starts_with($articleLink, 'http')) {
                 $user = Core::requireUser();
-                $userLogin = $user->getLogin();
+                $userLogin = $user->login;
                 $historyValidTime = new DateTime();
                 $historyValidTime = $historyValidTime->modify('+10 Minutes')->format('YmdHis'); // 10 minutes valid key
-                $userHistorySession = HistoryLogin::createSessionKey($userLogin, $user->getValue('session_id'), $historyValidTime);
+                $userHistorySession = HistoryLogin::createSessionKey($userLogin, (string) $user->getValue('session_id'), $historyValidTime);
                 $articleLink = Url::article(Article::getCurrentId(), Language::getCurrentId(), [
                     'rex_history_login' => $userLogin,
                     'rex_history_session' => $userHistorySession,
@@ -544,7 +544,7 @@ if (Core::getConfig('article_work_version', false)) {
 $user = Core::getUser();
 $theme = (string) Core::getProperty('theme');
 if ('' === $theme && $user) {
-    $theme = (string) $user->getValue('theme');
+    $theme = $user->theme;
 }
 Asset::setJsProperty('theme', $theme ?: 'auto');
 

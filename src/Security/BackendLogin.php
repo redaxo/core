@@ -21,32 +21,33 @@ use const PHP_SESSION_ACTIVE;
 /**
  * @method User|null getUser()
  * @method User|null getImpersonator()
+ *
+ * @final
  */
 class BackendLogin extends Login
 {
-    public const SYSTEM_ID = 'backend_login';
-    public const SESSION_STAY_LOGGED_IN = 'stay_logged_in';
+    public const string SYSTEM_ID = 'backend_login';
+    public const string SESSION_STAY_LOGGED_IN = 'stay_logged_in';
 
-    private const SESSION_PASSWORD_CHANGE_REQUIRED = 'password_change_required';
+    private const string SESSION_PASSWORD_CHANGE_REQUIRED = 'password_change_required';
 
     private static ?string $legacySha1Hash = null;
 
-    private string $tableName;
+    private readonly string $tableName;
     private ?string $passkey = null;
     private bool $stayLoggedIn = false;
-    private BackendPasswordPolicy $passwordPolicy;
+    private readonly BackendPasswordPolicy $passwordPolicy;
 
     public function __construct()
     {
         parent::__construct();
 
         $tableName = Core::getTablePrefix() . 'user';
-        $this->setSqlDb(1);
-        $this->setSystemId(self::SYSTEM_ID);
-        $this->setSessionDuration(Core::getProperty('session_duration'));
+        $this->systemId = self::SYSTEM_ID;
+        $this->sessionDuration = Core::getProperty('session_duration');
         $qry = 'SELECT * FROM ' . $tableName;
-        $this->setUserQuery($qry . ' WHERE id = :id AND status = 1');
-        $this->setImpersonateQuery($qry . ' WHERE id = :id');
+        $this->userQuery = $qry . ' WHERE id = :id AND status = 1';
+        $this->impersonateQuery = $qry . ' WHERE id = :id';
         $this->passwordPolicy = BackendPasswordPolicy::factory();
 
         $loginPolicy = $this->getLoginPolicy();
@@ -62,12 +63,12 @@ class BackendLogin extends Login
                 login_tries >= ' . $loginPolicy->getMaxTriesUntilDelay() . ' AND lasttrydate < "' . Sql::datetime(time() - $loginPolicy->getReloginDelay()) . '"
             )';
 
-        if ($blockAccountAfter = $this->passwordPolicy->getBlockAccountAfter()) {
+        if ($blockAccountAfter = $this->passwordPolicy->blockAccountAfter) {
             $datetime = new DateTimeImmutable()->sub($blockAccountAfter);
             $qry .= ' AND password_changed > "' . $datetime->format(Sql::FORMAT_DATETIME) . '"';
         }
 
-        $this->setLoginQuery($qry);
+        $this->loginQuery = $qry;
 
         $this->tableName = $tableName;
     }
@@ -77,11 +78,8 @@ class BackendLogin extends Login
         $this->passkey = $data;
     }
 
-    /**
-     * @param bool $stayLoggedIn
-     * @return void
-     */
-    public function setStayLoggedIn($stayLoggedIn = false)
+    /** @param bool $stayLoggedIn */
+    public function setStayLoggedIn($stayLoggedIn = false): void
     {
         if (!$this->getLoginPolicy()->isStayLoggedInEnabled()) {
             $stayLoggedIn = false;
@@ -90,7 +88,7 @@ class BackendLogin extends Login
         $this->stayLoggedIn = (bool) $stayLoggedIn;
     }
 
-    public function checkLogin()
+    public function checkLogin(): bool
     {
         $sql = Sql::factory();
         $userId = $this->getSessionVar(Login::SESSION_USER_ID);
@@ -125,7 +123,7 @@ class BackendLogin extends Login
 
             if ($result) {
                 [$this->passkey, $user] = $result;
-                $this->setSessionVar(self::SESSION_USER_ID, $user->getId());
+                $this->setSessionVar(self::SESSION_USER_ID, $user->id);
                 $this->setSessionVar(self::SESSION_PASSWORD, null);
                 $this->setSessionVar(self::SESSION_START_TIME, time());
                 $this->setSessionVar(self::SESSION_LAST_ACTIVITY, time());
@@ -179,7 +177,7 @@ class BackendLogin extends Login
             if ($loggedInViaCookie || $this->userLogin) {
                 if ($this->user->getValue('password_change_required')) {
                     $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
-                } elseif ($forceRenewAfter = $this->passwordPolicy->getForceRenewAfter()) {
+                } elseif ($forceRenewAfter = $this->passwordPolicy->forceRenewAfter) {
                     $datetime = new DateTimeImmutable()->sub($forceRenewAfter);
                     if (strtotime($this->user->getValue('password_changed')) < $datetime->getTimestamp()) {
                         $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
@@ -250,7 +248,7 @@ class BackendLogin extends Login
         parent::changedPassword($passwordHash);
 
         if (null !== $user = $this->getUser()) {
-            UserSession::getInstance()->removeSessionsExceptCurrent($user->getId());
+            UserSession::getInstance()->removeSessionsExceptCurrent($user->id);
         }
     }
 
@@ -259,8 +257,7 @@ class BackendLogin extends Login
         return $this->passkey;
     }
 
-    /** @return void */
-    public static function deleteSession()
+    public static function deleteSession(): void
     {
         self::startSession();
 
@@ -286,8 +283,7 @@ class BackendLogin extends Login
         Response::sendCookie(self::getStayLoggedInCookieName(), '');
     }
 
-    /** @return string */
-    public static function getStayLoggedInCookieName()
+    public static function getStayLoggedInCookieName(): string
     {
         $instname = Core::getProperty('instname');
         if (!$instname) {
@@ -297,8 +293,7 @@ class BackendLogin extends Login
         return 'rex_user_' . sha1($instname);
     }
 
-    /** @return bool */
-    public static function hasSession()
+    public static function hasSession(): bool
     {
         // try to fast-fail, so we dont need to start a session in all cases (which would require a session lock...)
         if (!isset($_COOKIE[session_name()])) {
@@ -320,10 +315,8 @@ class BackendLogin extends Login
      *
      * Helpful if you want to check permissions of the backend user in frontend.
      * If you only want to know if there is any backend session, use {@link BackendLogin::hasSession()}.
-     *
-     * @return User|null
      */
-    public static function createUser()
+    public static function createUser(): ?User
     {
         if (!self::hasSession()) {
             return null;
@@ -368,12 +361,8 @@ class BackendLogin extends Login
         return parent::passwordNeedsRehash($hash);
     }
 
-    /**
-     * returns the backends session namespace.
-     *
-     * @return string
-     */
-    protected static function getSessionNamespace()
+    /** returns the backends session namespace. */
+    protected static function getSessionNamespace(): string
     {
         return Core::getProperty('instname') . '_backend';
     }
