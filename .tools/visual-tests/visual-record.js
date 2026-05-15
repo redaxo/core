@@ -147,7 +147,7 @@ async function processScreenshot(page, screenshotName) {
             '#rex-page-system-report-html .row td',
             'td[data-title="Version"]',
             'td[data-title="Erstellt am"]',
-            'tr[class^="rex-state-"] td[data-title="Zeit"]', // system log items
+            'td[data-title="Zeit"] small:first-child', // system log items
             'td[data-title="Sitzungs-ID"]',
             'td[data-title="User-Agent"]',
             'td[data-title="Startzeit"]',
