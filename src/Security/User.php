@@ -58,7 +58,7 @@ final class User
         get => $this->sql->getValue('theme');
     }
 
-    private ?UserRole $role;
+    private ?UserRole $role = null;
 
     private function __construct(
         private readonly Sql $sql,
