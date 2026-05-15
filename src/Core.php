@@ -521,7 +521,7 @@ final class Core
         }
 
         // user selected theme
-        $userTheme = (string) $user->getValue('theme');
+        $userTheme = $user->theme;
         if (in_array($userTheme, $themes, true)) {
             return $userTheme;
         }

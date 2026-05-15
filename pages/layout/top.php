@@ -64,9 +64,9 @@ $bodyAttr['class'][] = 'rex-has-theme';
 if (Core::getProperty('theme')) {
     // global theme from config.yml
     $bodyAttr['class'][] = 'rex-theme-' . escape((string) Core::getProperty('theme'));
-} elseif ($user && $user->getValue('theme')) {
+} elseif ($user && $user->theme) {
     // user selected theme
-    $bodyAttr['class'][] = 'rex-theme-' . escape($user->getValue('theme'));
+    $bodyAttr['class'][] = 'rex-theme-' . escape($user->theme);
 }
 
 // ----- EXTENSION POINT
@@ -85,7 +85,7 @@ $hasNavigation = $curPage->hasNavigation();
 
 $metaItems = [];
 if ($user && $hasNavigation) {
-    if (Core::isSafeMode() && $user->isAdmin()) {
+    if (Core::isSafeMode() && $user->admin) {
         $item = [];
         $item['title'] = I18n::msg('safemode_deactivate');
         $item['href'] = Url::backendController(['safemode' => 0]);
@@ -94,10 +94,10 @@ if ($user && $hasNavigation) {
         unset($item);
     }
 
-    $userName = $user->getName() ?: $user->getLogin();
+    $userName = $user->name ?: $user->login;
     $impersonator = Core::getImpersonator();
     if ($impersonator) {
-        $impersonator = $impersonator->getName() ?: $impersonator->getLogin();
+        $impersonator = $impersonator->name ?: $impersonator->login;
     }
 
     $item = [];

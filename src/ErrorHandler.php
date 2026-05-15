@@ -101,7 +101,7 @@ final class ErrorHandler
             }
             Response::setStatus($status);
 
-            if (Core::isSetup() || Core::isDebugMode() || !Core::isLiveMode() && BackendLogin::createUser()?->isAdmin()) {
+            if (Core::isSetup() || Core::isDebugMode() || !Core::isLiveMode() && BackendLogin::createUser()?->admin) {
                 [$errPage, $contentType] = self::renderWhoops($exception);
                 Response::sendContent($errPage, $contentType);
                 exit(1);
@@ -335,7 +335,7 @@ final class ErrorHandler
             throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
         }
 
-        if (ini_get('display_errors') && (Core::isSetup() || Core::isDebugMode() || !Core::isLiveMode() && BackendLogin::createUser()?->isAdmin())) {
+        if (ini_get('display_errors') && (Core::isSetup() || Core::isDebugMode() || !Core::isLiveMode() && BackendLogin::createUser()?->admin)) {
             $file = Path::relative($errfile);
             if ('cli' === PHP_SAPI) {
                 echo self::getErrorType($errno) . ": $errstr in $file on line $errline";

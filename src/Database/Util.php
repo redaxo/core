@@ -139,7 +139,7 @@ final readonly class Util
     {
         // Core::getUser() gibts im Setup nicht
         /** @psalm-taint-escape sql */ // we trust the user db table
-        $user = Core::getUser()?->getLogin() ?? '';
+        $user = Core::getUser()->login ?? '';
 
         $query = str_replace('%USER%', $user, $query);
         $query = str_replace('%TIME%', (string) time(), $query);

@@ -23,7 +23,7 @@ if (!rex_debug_clockwork::isRexDebugEnabled() || 'debug' === Request::get(ApiFun
     return;
 }
 
-if (Core::isBackend() && 'debug' === Request::get('page') && Core::getUser()?->isAdmin()) {
+if (Core::isBackend() && 'debug' === Request::get('page') && Core::getUser()?->admin) {
     $index = file_get_contents(Addon::require('debug')->getAssetsPath('clockwork/index.html'));
 
     $editor = Editor::factory();

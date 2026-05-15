@@ -15,7 +15,7 @@ use Redaxo\Core\View\Fragment;
                 <li><a href="#rex-start-of-page"><i class="fa fa-arrow-up"></i></a></li>
                 <li><a href="https://www.yakamara.de" target="_blank" rel="noreferrer noopener">yakamara.de</a></li>
                 <li><a href="https://www.redaxo.org" target="_blank" rel="noreferrer noopener">redaxo.org</a></li>
-                <?php if (Core::getUser()?->isAdmin()): ?>
+                <?php if (Core::getUser()?->admin): ?>
                     <li><a href="https://www.redaxo.org/doku/5.x" target="_blank" rel="noreferrer noopener"><?= I18n::msg('footer_doku') ?></a></li>
                 <?php endif ?>
                 <li><a href="<?= Core::getUser() ? Url::backendPage('credits') : 'https://www.redaxo.org/" target="_blank" rel="noreferrer noopener' ?>"><?= I18n::msg('footer_credits') ?></a></li>

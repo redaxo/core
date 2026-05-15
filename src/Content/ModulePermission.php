@@ -8,18 +8,15 @@ use Redaxo\Core\Translation\I18n;
 
 use function in_array;
 
-class ModulePermission extends ComplexPermission
+/** @extends ComplexPermission<int> */
+final class ModulePermission extends ComplexPermission
 {
-    /**
-     * @param int $moduleId
-     * @return bool
-     */
-    public function hasPerm($moduleId)
+    public function hasPerm(int $moduleId): bool
     {
         return $this->hasAll() || in_array($moduleId, $this->perms);
     }
 
-    public static function getFieldParams()
+    public static function getFieldParams(): array
     {
         return [
             'label' => I18n::msg('modules'),

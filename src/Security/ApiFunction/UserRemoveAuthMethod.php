@@ -23,7 +23,7 @@ class UserRemoveAuthMethod extends ApiFunction
         $userId = Request::get('user_id', 'int');
         $user = Core::requireUser();
 
-        if ($userId !== $user->getId() && !$user->isAdmin() && (!$user->hasPerm('users[]') || User::require($userId)->isAdmin())) {
+        if ($userId !== $user->id && !$user->admin && (!$user->hasPerm('users[]') || User::require($userId)->admin)) {
             throw new ApiFunctionException('Permission denied');
         }
 

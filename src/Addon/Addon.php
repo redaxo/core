@@ -325,7 +325,7 @@ final class Addon implements AddonInterface
         }
 
         $isCached = isset($cache[$id]);
-        $isBackendAdmin = Core::isBackend() && Core::getUser()?->isAdmin();
+        $isBackendAdmin = Core::isBackend() && Core::getUser()?->admin;
         if (!$isCached || (Core::getConsole() || $isBackendAdmin) && $cache[$id]['timestamp'] < filemtime($file)) {
             try {
                 $properties = File::getConfig($file);

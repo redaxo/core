@@ -6,7 +6,10 @@ use Redaxo\Core\Exception\InvalidArgumentException;
 
 use function array_key_exists;
 
-final class LoginPolicy
+/**
+ * @internal
+ */
+final readonly class LoginPolicy
 {
     /** @param array<string, int|bool> $options */
     public function __construct(

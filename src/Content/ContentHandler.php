@@ -388,6 +388,6 @@ class ContentHandler
     /** @return string */
     private static function getUser()
     {
-        return Core::getUser()?->getLogin() ?? Core::getEnvironment();
+        return Core::getUser()->login ?? Core::getEnvironment();
     }
 }

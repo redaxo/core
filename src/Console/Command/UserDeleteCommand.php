@@ -62,12 +62,12 @@ final class UserDeleteCommand extends AbstractCommand
     {
         $sql = Sql::factory();
         $sql->setTable(Core::getTable('user'));
-        $sql->setWhere(['id' => $user->getId()])->delete();
+        $sql->setWhere(['id' => $user->id])->delete();
 
-        User::clearInstance($user->getId());
+        User::clearInstance($user->id);
 
         Extension::registerPoint(new ExtensionPoint('USER_DELETED', '', [
-            'id' => $user->getId(),
+            'id' => $user->id,
             'user' => $user,
         ], true));
     }

@@ -16,49 +16,62 @@ use function in_array;
 use function is_object;
 use function sprintf;
 
-class User
+final class User
 {
     use InstancePoolTrait {
         clearInstance as baseClearInstance;
     }
 
-    /**
-     * SQL instance.
-     *
-     * @var Sql
-     */
-    protected $sql;
-
-    /** @var bool|null */
-    private $admin;
-
-    /**
-     * User role instance.
-     *
-     * @var UserRole|null
-     */
-    protected $role;
-
-    /**
-     * Class name for user roles.
-     *
-     * @var class-string<UserRole>
-     */
-    protected static $roleClass;
-
-    public function __construct(Sql $sql)
-    {
-        $this->sql = $sql;
+    public int $id {
+        get => $this->sql->getValue('id');
     }
+
+    public string $login {
+        get => $this->sql->getValue('login');
+    }
+
+    public ?string $name {
+        get => $this->sql->getValue('name');
+    }
+
+    public ?string $email {
+        get => $this->sql->getValue('email');
+    }
+
+    public bool $admin {
+        get => (bool) $this->sql->getValue('admin');
+    }
+
+    public ?string $password {
+        get => $this->sql->getValue('password');
+    }
+
+    public ?string $language {
+        get => $this->sql->getValue('language');
+    }
+
+    public ?string $startPage {
+        get => $this->sql->getValue('startpage');
+    }
+
+    public ?string $theme {
+        get => $this->sql->getValue('theme');
+    }
+
+    private ?UserRole $role = null;
+
+    private function __construct(
+        private readonly Sql $sql,
+    ) {}
 
     public static function get(int $id): ?self
     {
-        return static::getInstance($id, static function () use ($id) {
+        return self::getInstance($id, static function () use ($id): ?self {
             $sql = Sql::factory()->setQuery('SELECT * FROM ' . Core::getTable('user') . ' WHERE id = ?', [$id]);
 
             if ($sql->getRows()) {
                 $user = new static($sql);
-                static::addInstance('login_' . $user->getLogin(), $user);
+                self::addInstance('login_' . $user->login, $user);
                 return $user;
             }
 
@@ -68,12 +81,12 @@ class User
 
     public static function forLogin(#[SensitiveParameter] string $login): ?self
     {
-        return static::getInstance('login_' . $login, static function () use ($login) {
+        return self::getInstance('login_' . $login, static function () use ($login): ?self {
             $sql = Sql::factory()->setQuery('SELECT * FROM ' . Core::getTable('user') . ' WHERE login = ?', [$login]);
 
             if ($sql->getRows()) {
                 $user = new static($sql);
-                static::addInstance($user->getId(), $user);
+                self::addInstance($user->id, $user);
                 return $user;
             }
 
@@ -92,107 +105,25 @@ class User
         return $user;
     }
 
+    /** @internal */
     public static function fromSql(Sql $sql): self
     {
         $user = new self($sql);
-        self::addInstance($user->getId(), $user);
-        self::addInstance('login_' . $user->getLogin(), $user);
+        self::addInstance($user->id, $user);
+        self::addInstance('login_' . $user->login, $user);
 
         return $user;
     }
 
-    /**
-     * Returns the value for the given key.
-     *
-     * @param string $key Key
-     *
-     * @return string value
-     */
-    public function getValue($key)
+    /** Returns the value for the given key. */
+    public function getValue(string $key): string|int|null
     {
+        /** @var string|int|null */
         return $this->sql->getValue($key);
     }
 
-    /**
-     * Returns the ID.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return (int) $this->sql->getValue('id');
-    }
-
-    /**
-     * Returns the user login.
-     *
-     * @return string Login
-     */
-    public function getLogin()
-    {
-        return $this->sql->getValue('login');
-    }
-
-    /**
-     * Returns the name.
-     *
-     * @return string Name
-     */
-    public function getName()
-    {
-        return $this->sql->getValue('name');
-    }
-
-    /**
-     * Returns the email.
-     *
-     * @return string email
-     */
-    public function getEmail()
-    {
-        return $this->sql->getValue('email');
-    }
-
-    /**
-     * Returns if the user is an admin.
-     *
-     * @return bool
-     */
-    public function isAdmin()
-    {
-        if (null === $this->admin) {
-            $this->admin = (bool) $this->sql->getValue('admin');
-        }
-
-        return $this->admin;
-    }
-
-    /**
-     * Returns the language.
-     *
-     * @return string|null Language
-     */
-    public function getLanguage()
-    {
-        return $this->sql->getValue('language');
-    }
-
-    /**
-     * Returns the start page.
-     *
-     * @return string|null Start page
-     */
-    public function getStartPage()
-    {
-        return $this->sql->getValue('startpage');
-    }
-
-    /**
-     * Returns if the user has a role.
-     *
-     * @return bool
-     */
-    public function hasRole()
+    /** Returns if the user has a role. */
+    public function hasRole(): bool
     {
         if (!is_object($this->role) && ($role = $this->sql->getValue('role'))) {
             $this->role = UserRole::get($role);
@@ -200,16 +131,10 @@ class User
         return is_object($this->role);
     }
 
-    /**
-     * Returns if the user has the given permission.
-     *
-     * @param string $perm Perm key
-     *
-     * @return bool
-     */
-    public function hasPerm($perm)
+    /** Returns if the user has the given permission. */
+    public function hasPerm(string $perm): bool
     {
-        if ($this->isAdmin()) {
+        if ($this->admin) {
             return true;
         }
         $result = false;
@@ -222,7 +147,7 @@ class User
             $result = $this->role->hasPerm($perm);
         }
         if (!$result && in_array($perm, ['isAdmin', 'admin', 'admin[]'])) {
-            return $this->isAdmin();
+            return $this->admin;
         }
         return $result;
     }
@@ -231,8 +156,6 @@ class User
      * Returns the complex perm for the user.
      *
      * @param string $key Complex perm key
-     *
-     * @return ComplexPermission|null Complex perm
      * @phpstan-return (
      *      $key is 'media' ? MediaPoolPermission :
      *      ($key is 'structure' ? StructurePermission :
@@ -242,7 +165,7 @@ class User
      *      ))))
      *  )
      */
-    public function getComplexPerm($key)
+    public function getComplexPerm(string $key): ?ComplexPermission
     {
         if ($this->hasRole()) {
             return $this->role->getComplexPerm($this, $key);
@@ -253,13 +176,13 @@ class User
     /** Removes the instance of the given key. */
     public static function clearInstance(int|string $key): void
     {
-        $user = static::getInstance($key);
+        $user = self::getInstance($key);
 
         if (!$user) {
             return;
         }
 
-        static::baseClearInstance($user->getId());
-        static::baseClearInstance('login_' . $user->getLogin());
+        self::baseClearInstance($user->id);
+        self::baseClearInstance('login_' . $user->login);
     }
 }

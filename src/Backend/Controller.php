@@ -530,7 +530,7 @@ final class Controller
         // --- page pruefen und benoetigte rechte checken
         if (!$page) {
             // --- fallback zur user startpage -> rechte checken
-            $page = $user->getStartPage();
+            $page = $user->startPage;
             $page = $page ? self::getPageObject($page) : null;
             if (!$page) {
                 // --- fallback zur system startpage -> rechte checken

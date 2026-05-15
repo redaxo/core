@@ -15,8 +15,8 @@ final class UserSession
 {
     use SingletonTrait;
 
-    public const STAY_LOGGED_IN_DURATION = 3; // months
-    private const SESSION_VAR_LAST_DB_UPDATE = 'last_db_update';
+    public const int STAY_LOGGED_IN_DURATION = 3; // months
+    private const string SESSION_VAR_LAST_DB_UPDATE = 'last_db_update';
 
     public function storeCurrentSession(BackendLogin $login, ?string $cookieKey = null, ?string $passkey = null): void
     {

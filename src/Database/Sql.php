@@ -1389,7 +1389,7 @@ class Sql implements Iterator
     public function addGlobalUpdateFields(?string $user = null): static
     {
         if (!$user) {
-            $user = Core::getUser()?->getLogin() ?? Core::getEnvironment();
+            $user = Core::getUser()->login ?? Core::getEnvironment();
         }
 
         $this->setDateTimeValue('updatedate', time());
@@ -1402,7 +1402,7 @@ class Sql implements Iterator
     public function addGlobalCreateFields(?string $user = null): static
     {
         if (!$user) {
-            $user = Core::getUser()?->getLogin() ?? Core::getEnvironment();
+            $user = Core::getUser()->login ?? Core::getEnvironment();
         }
 
         $this->setDateTimeValue('createdate', time());
