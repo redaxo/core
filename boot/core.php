@@ -23,7 +23,6 @@ use Redaxo\Core\MediaManager\MediaManager;
 use Redaxo\Core\MediaPool\MediaPoolPermission;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\ComplexPermission;
-use Redaxo\Core\Security\User;
 use Redaxo\Core\Security\UserRole;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Timer;
@@ -99,8 +98,6 @@ if ('cli' !== PHP_SAPI) {
 VarDumper::register();
 
 // ----------------- REX PERMS
-
-User::setRoleClass(UserRole::class);
 
 ComplexPermission::register('clang', LanguagePermission::class);
 ComplexPermission::register('structure', StructurePermission::class);

@@ -4334,9 +4334,6 @@
       <code><![CDATA[$this->complexPermParams]]></code>
       <code><![CDATA[$this->complexPermParams]]></code>
     </MixedPropertyTypeCoercion>
-    <ParamNameMismatch>
-      <code><![CDATA[$ids]]></code>
-    </ParamNameMismatch>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$role[$key]]]></code>
     </PossiblyUndefinedArrayOffset>

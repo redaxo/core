@@ -384,7 +384,7 @@ return RectorConfig::configure()
         'rex_perm' => Security\Permission::class,
         'rex_user' => Security\User::class,
         'rex_user_role' => Security\UserRole::class,
-        'rex_user_role_interface' => Security\UserRoleInterface::class,
+        'rex_user_role_interface' => Security\UserRole::class,
         'rex_user_session' => Security\UserSession::class,
         'rex_webauthn' => Security\WebAuthn::class,
         'rex_setup' => Setup\Setup::class,

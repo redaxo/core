@@ -9,7 +9,7 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use function count;
 use function in_array;
 
-class UserRole implements UserRoleInterface
+class UserRole
 {
     /**
      * Permissions.
@@ -64,12 +64,25 @@ class UserRole implements UserRoleInterface
         }
     }
 
-    public function hasPerm($perm)
+    /**
+     * Returns if the role has the given permission.
+     *
+     * @param string $perm Perm key
+     */
+    public function hasPerm($perm): bool
     {
         return in_array($perm, $this->perms);
     }
 
-    public function getComplexPerm(User $user, $key)
+    /**
+     * Returns the complex perm.
+     *
+     * @param User $user User instance
+     * @param string $key Complex perm key
+     *
+     * @return ComplexPermission|null Complex perm
+     */
+    public function getComplexPerm(User $user, $key): ?ComplexPermission
     {
         if (isset($this->complexPerms[$key])) {
             return $this->complexPerms[$key];
@@ -85,7 +98,14 @@ class UserRole implements UserRoleInterface
         return $this->complexPerms[$key];
     }
 
-    public static function get($ids)
+    /**
+     * Returns the role for the given ID.
+     *
+     * @param string $ids IDs comma seperated
+     *
+     * @return static|null Role instance
+     */
+    public static function get($ids): ?self
     {
         $sql = Sql::factory();
         $userRoles = $sql->getArray('SELECT perms FROM ' . Core::getTablePrefix() . 'user_role WHERE FIND_IN_SET(id, ?)', [$ids]);
