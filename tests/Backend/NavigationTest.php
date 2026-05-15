@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Backend\MainPage;
 use Redaxo\Core\Backend\Navigation;
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Security\User;
+use ReflectionClass;
 
 /** @internal */
 final class NavigationTest extends TestCase
@@ -28,7 +28,7 @@ final class NavigationTest extends TestCase
         $user = Core::getUser();
 
         try {
-            Core::setProperty('user', User::fromSql(Sql::factory()));
+            Core::setProperty('user', new ReflectionClass(User::class)->newInstanceWithoutConstructor());
             $navi = $navi->getNavigation();
         } finally {
             Core::setProperty('user', $user);
