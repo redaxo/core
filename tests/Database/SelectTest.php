@@ -10,8 +10,6 @@ use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use ReflectionProperty;
 
-use const PHP_VERSION_ID;
-
 /** @internal */
 final class SelectTest extends TestCase
 {

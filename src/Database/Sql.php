@@ -21,7 +21,6 @@ use Throwable;
 
 use function array_key_exists;
 use function assert;
-use function constant;
 use function defined;
 use function gettype;
 use function in_array;
