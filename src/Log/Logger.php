@@ -70,7 +70,7 @@ class Logger extends AbstractLogger
         if ($exception instanceof HttpException) {
             // Client errors should not be logged to system error log (if not debug mode or backend admin).
             // This prevents that external website visitors can fill up the log (and possibly trigger error emails etc.).
-            if (!Core::isDebugMode() && $exception->isClientError() && (!($user = BackendLogin::createUser()) || !$user->isAdmin())) {
+            if (!Core::isDebugMode() && $exception->isClientError() && (!($user = BackendLogin::createUser()) || !$user->admin)) {
                 return;
             }
 

@@ -49,16 +49,7 @@ final class AddonOperation extends ApiFunction
         $manager = AddonManager::factory($package);
         $success = Type::bool($manager->$function());
         $message = $manager->getMessage();
-        $result = new Result($success, $message);
-        if ($success && !$reinstall) {
-            $result->setRequiresReboot(true);
-        }
-        return $result;
-    }
 
-    #[Override]
-    protected function requiresCsrfProtection(): true
-    {
-        return true;
+        return new Result($success, $message, requiresReboot: $success && !$reinstall);
     }
 }

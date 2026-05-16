@@ -18,7 +18,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('article_to_category')]
 class ArticleToCategory extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $articleId = Request::request('article_id', 'int');
         $categoryId = Article::get($articleId)->getCategoryId();
@@ -33,10 +33,5 @@ class ArticleToCategory extends ApiFunction
             return new Result(false, I18n::msg('content_tocategory_failed'));
         }
         throw new ApiFunctionException('User has no permission for this article!');
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

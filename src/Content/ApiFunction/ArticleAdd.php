@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('article_add')]
 class ArticleAdd extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('addArticle[]')) {
             throw new ApiFunctionException('User has no permission to add articles!');
@@ -35,10 +35,5 @@ class ArticleAdd extends ApiFunction
         $data['template_id'] = Request::post('template_id', 'int');
         $data['category_id'] = $categoryId;
         return new Result(true, ArticleHandler::addArticle($data));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

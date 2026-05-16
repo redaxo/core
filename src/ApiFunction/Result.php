@@ -13,77 +13,35 @@ use function is_array;
  *
  * @see ApiFunction
  */
-class Result
+final readonly class Result
 {
-    /**
-     * Flag indicating whether the result of this api call needs to be rendered in a new sub-request.
-     * This is required in rare situations, when some low-level data was changed by the api-function.
-     *
-     * @var bool
-     */
-    private $requiresReboot;
-
     /**
      * @param bool $succeeded flag indicating if the api function was executed successfully
      * @param string|null $message optional message which will be visible to the end-user
+     * @param bool $requiresReboot flag indicating whether the result of this api call needs to be rendered in a new sub-request.
+     *     This is required in rare situations, when some low-level data was changed by the api-function.
      *
      * @psalm-taint-sink html $message
      */
     public function __construct(
-        private $succeeded,
-        private $message = null,
+        public bool $succeeded,
+        public ?string $message = null,
+        public bool $requiresReboot = false,
     ) {}
 
-    /**
-     * @param bool $requiresReboot
-     * @return void
-     */
-    public function setRequiresReboot($requiresReboot)
-    {
-        $this->requiresReboot = $requiresReboot;
-    }
-
-    /** @return bool */
-    public function requiresReboot()
-    {
-        return $this->requiresReboot;
-    }
-
-    /** @return string|null */
-    public function getFormattedMessage()
+    public function getFormattedMessage(): ?string
     {
         if (null === $this->message) {
             return null;
         }
 
-        if ($this->isSuccessfull()) {
+        if ($this->succeeded) {
             return Message::success($this->message);
         }
         return Message::error($this->message);
     }
 
-    /**
-     * Returns end-user friendly statusmessage.
-     *
-     * @return string|null a statusmessage
-     */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /**
-     * Returns whether the api function was executed successfully.
-     *
-     * @return bool true on success, false on error
-     */
-    public function isSuccessfull()
-    {
-        return $this->succeeded;
-    }
-
-    /** @return string */
-    public function toJSON()
+    public function toJson(): string
     {
         return Type::string(json_encode([
             'succeeded' => $this->succeeded,
@@ -91,11 +49,7 @@ class Result
         ]));
     }
 
-    /**
-     * @param string $json
-     * @return self
-     */
-    public static function fromJSON($json)
+    public static function fromJson(string $json): self
     {
         $json = json_decode($json, true);
 

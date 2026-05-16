@@ -22,64 +22,45 @@ use const PHP_SESSION_ACTIVE;
 class Login
 {
     /** Session ID is saved in session under this key for session fixation prevention. */
-    public const SESSION_ID = 'REX_SESSID';
+    final public const string SESSION_ID = 'REX_SESSID';
     /** the timestamp when the session was initially started. */
-    public const SESSION_START_TIME = 'starttime';
-    /*
-     * a timestamp of the last activiy of the http session.
-     */
-    public const SESSION_LAST_ACTIVITY = 'STAMP';
+    final public const string SESSION_START_TIME = 'starttime';
+    /** a timestamp of the last activity of the http session. */
+    final public const string SESSION_LAST_ACTIVITY = 'STAMP';
     /** the id of the user. */
-    public const SESSION_USER_ID = 'UID';
+    final public const string SESSION_USER_ID = 'UID';
     /** the encrypted user password. */
-    public const SESSION_PASSWORD = 'password';
+    final public const string SESSION_PASSWORD = 'password';
     /** the userid of the impersonator user. */
-    public const SESSION_IMPERSONATOR = 'impersonator';
+    final public const string SESSION_IMPERSONATOR = 'impersonator';
 
     /** @var positive-int */
-    protected $DB = 1;
-    /**
-     * A Session will be closed when not activly used for this timespan (seconds).
-     *
-     * @var int
-     */
-    protected $sessionDuration;
-    /**
-     * A session cannot stay longer then this value, no matter its actively used once in a while (seconds).
-     *
-     * @var int
-     */
-    protected $sessionMaxOverallDuration;
-    /** @var string */
-    protected $loginQuery;
-    /** @var string */
-    protected $userQuery;
-    /** @var string */
-    protected $impersonateQuery;
-    /** @var string */
-    protected $systemId = 'default';
-    /** @var string|null */
-    protected $userLogin;
-    /** @var string|null */
-    protected $userPassword;
-    /** @var bool */
-    protected $logout = false;
-    /** @var string */
-    protected $idColumn = 'id';
-    /** @var string */
-    protected $passwordColumn = 'password';
-    /** @var bool */
-    protected $cache = false;
-    /** @var int */
-    protected $loginStatus = 0; // 0 = noch checken, 1 = ok, -1 = not ok
-    /** @var string */
-    protected $message = '';
+    protected int $DB = 1;
 
-    /** @var Sql|User */
-    protected $user;
+    /** A Session will be closed when not activly used for this timespan (seconds). */
+    protected int $sessionDuration = 0;
+    /** A session cannot stay longer then this value, no matter its actively used once in a while (seconds). */
+    protected int $sessionMaxOverallDuration;
 
-    /** @var Sql|User|null */
-    protected $impersonator;
+    protected string $loginQuery;
+    protected string $userQuery;
+    protected ?string $impersonateQuery = null;
+
+    protected string $systemId = 'default';
+
+    protected ?string $userLogin = null;
+    protected ?string $userPassword = null;
+    protected bool $logout = false;
+
+    protected string $idColumn = 'id';
+    protected string $passwordColumn = 'password';
+
+    protected bool $cache = false;
+    protected int $loginStatus = 0; // 0 = noch checken, 1 = ok, -1 = not ok
+    protected string $message = '';
+
+    protected Sql|User|null $user = null;
+    protected Sql|User|null $impersonator = null;
 
     public function __construct()
     {
@@ -88,166 +69,27 @@ class Login
         self::startSession();
     }
 
-    /**
-     * Setzt, ob die Ergebnisse der Login-Abfrage
-     * pro Seitenaufruf gecached werden sollen.
-     *
-     * @param bool $status
-     * @return void
-     */
-    public function setCache($status = true)
-    {
-        $this->cache = $status;
-    }
-
-    /**
-     * Setzt die Id der zu verwendenden SQL Connection.
-     *
-     * @param positive-int $DB
-     * @return void
-     */
-    public function setSqlDb($DB)
-    {
-        $this->DB = $DB;
-    }
-
-    /**
-     * Setzt eine eindeutige System Id, damit mehrere
-     * Sessions auf der gleichen Domain unterschieden werden können.
-     *
-     * @param string $systemId
-     * @return void
-     */
-    public function setSystemId($systemId)
-    {
-        $this->systemId = $systemId;
-    }
-
-    /**
-     * Setzt das Session Timeout.
-     *
-     * @param int $sessionDuration
-     * @return void
-     */
-    public function setSessionDuration($sessionDuration)
-    {
-        $this->sessionDuration = $sessionDuration;
-    }
-
-    /**
-     * Setzt den Login und das Password.
-     *
-     * @param string $login
-     * @param string $password
-     * @return void
-     */
-    public function setLogin(#[SensitiveParameter] $login, #[SensitiveParameter] $password)
+    /** Setzt den Login und das Password. */
+    public function setLogin(#[SensitiveParameter] string $login, #[SensitiveParameter] string $password): void
     {
         $this->userLogin = $login;
         $this->userPassword = $password;
     }
 
-    /**
-     * Markiert die aktuelle Session als ausgeloggt.
-     *
-     * @param bool $logout
-     * @return void
-     */
-    public function setLogout($logout)
+    /** Markiert die aktuelle Session als ausgeloggt. */
+    public function setLogout(bool $logout): void
     {
         $this->logout = $logout;
     }
 
-    /**
-     * Prüft, ob die aktuelle Session ausgeloggt ist.
-     *
-     * @return bool
-     */
-    public function isLoggedOut()
+    /** Prüft, ob die aktuelle Session ausgeloggt ist. */
+    public function isLoggedOut(): bool
     {
         return $this->logout;
     }
 
-    /**
-     * Setzt den UserQuery.
-     *
-     * Dieser wird benutzt, um einen bereits eingeloggten User
-     * im Verlauf seines Aufenthaltes auf der Webseite zu verifizieren
-     *
-     * @param string $userQuery
-     * @return void
-     */
-    public function setUserQuery($userQuery)
-    {
-        $this->userQuery = $userQuery;
-    }
-
-    /**
-     * Setzt den ImpersonateQuery.
-     *
-     * Dieser wird benutzt, um den User abzurufen, dessen Identität ein Admin einnehmen möchte.
-     *
-     * @param string $impersonateQuery
-     * @return void
-     */
-    public function setImpersonateQuery($impersonateQuery)
-    {
-        $this->impersonateQuery = $impersonateQuery;
-    }
-
-    /**
-     * Setzt den LoginQuery.
-     *
-     * Dieser wird benutzt, um den eigentlichne Loginvorgang durchzuführen.
-     * Hier wird das eingegebene Password und der Login eingesetzt.
-     *
-     * @param string $loginQuery
-     * @return void
-     */
-    public function setLoginQuery($loginQuery)
-    {
-        $this->loginQuery = $loginQuery;
-    }
-
-    /**
-     * Setzt den Namen der Spalte, der die User-Id enthält.
-     *
-     * @param string $idColumn
-     * @return void
-     */
-    public function setIdColumn($idColumn)
-    {
-        $this->idColumn = $idColumn;
-    }
-
-    /**
-     * Sets the password column.
-     *
-     * @param string $passwordColumn
-     * @return void
-     */
-    public function setPasswordColumn($passwordColumn)
-    {
-        $this->passwordColumn = $passwordColumn;
-    }
-
-    /**
-     * Setzt einen Meldungstext.
-     *
-     * @param string $message
-     * @return void
-     */
-    protected function setMessage($message)
-    {
-        $this->message = $message;
-    }
-
-    /**
-     * Returns the message.
-     *
-     * @return string
-     */
-    public function getMessage()
+    /** Returns the message. */
+    public function getMessage(): string
     {
         return $this->message;
     }
@@ -257,10 +99,8 @@ class Login
      * anhand des LoginQueries/UserQueries und gibt den Status zurück.
      *
      * Gibt true zurück bei erfolg, sonst false
-     *
-     * @return bool
      */
-    public function checkLogin()
+    public function checkLogin(): bool
     {
         // wenn logout dann header schreiben und auf error seite verweisen
         // message schreiben
@@ -383,11 +223,7 @@ class Login
         return $ok;
     }
 
-    /**
-     * @param int $id
-     * @return void
-     */
-    public function impersonate($id)
+    public function impersonate(int $id): void
     {
         if (!$this->user) {
             throw new RuntimeException('Can not impersonate a user without valid user session.');
@@ -410,8 +246,7 @@ class Login
         $this->setSessionVar(self::SESSION_IMPERSONATOR, $this->impersonator->getValue($this->idColumn));
     }
 
-    /** @return void */
-    public function depersonate()
+    public function depersonate(): void
     {
         if (!$this->impersonator) {
             return;
@@ -429,26 +264,18 @@ class Login
         $this->setSessionVar(self::SESSION_PASSWORD, $passwordHash);
     }
 
-    /** @return Sql|User|null */
-    public function getUser()
+    public function getUser(): User|Sql|null
     {
         return $this->user;
     }
 
-    /** @return Sql|User|null */
-    public function getImpersonator()
+    public function getImpersonator(): User|Sql|null
     {
         return $this->impersonator;
     }
 
-    /**
-     * Gibt einen Benutzer-Spezifischen Wert zurück.
-     *
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function getValue($key, $default = null)
+    /** Gibt einen Benutzer-Spezifischen Wert zurück. */
+    public function getValue(string $key, mixed $default = null): mixed
     {
         if ($this->user) {
             return $this->user->getValue($key);
@@ -460,11 +287,9 @@ class Login
     /**
      * Setzte eine Session-Variable.
      *
-     * @param string $varname
      * @param scalar|array|null $value
-     * @return void
      */
-    public function setSessionVar($varname, $value)
+    public function setSessionVar(string $varname, mixed $value): void
     {
         $_SESSION[static::getSessionNamespace()][$this->systemId][$varname] = $value;
     }
@@ -472,8 +297,6 @@ class Login
     /**
      * Gibt den Wert einer Session-Variable zurück.
      *
-     * @param string $varname
-     * @param mixed $default
      * @return (
      *     $varname is 'starttime' ? int|null :
      *     ($varname is 'STAMP' ? int|null :
@@ -485,7 +308,7 @@ class Login
      *     )))))
      * )
      */
-    public function getSessionVar($varname, $default = '')
+    public function getSessionVar(string $varname, mixed $default = ''): mixed
     {
         /** @var bool $sessChecked */
         static $sessChecked = false;
@@ -503,12 +326,8 @@ class Login
         return $_SESSION[static::getSessionNamespace()][$this->systemId][$varname] ?? $default;
     }
 
-    /**
-     * refresh session on permission elevation for security reasons.
-     *
-     * @return void
-     */
-    public static function regenerateSessionId()
+    /** refresh session on permission elevation for security reasons. */
+    public static function regenerateSessionId(): void
     {
         /** @var bool $regenerated */
         static $regenerated = false;
@@ -541,12 +360,8 @@ class Login
         $_SESSION[self::SESSION_ID] = session_id();
     }
 
-    /**
-     * starts a http-session if not already started.
-     *
-     * @return void
-     */
-    public static function startSession()
+    /** starts a http-session if not already started. */
+    public static function startSession(): void
     {
         if (PHP_SESSION_ACTIVE !== session_status()) {
             $env = Core::isBackend() ? 'backend' : 'frontend';
@@ -576,7 +391,7 @@ class Login
      *
      * @return array{lifetime: ?int, path: ?string, domain: ?string, secure: ?bool, httponly: ?bool, samesite: ?string}
      */
-    public static function getCookieParams()
+    public static function getCookieParams(): array
     {
         $cookieParams = session_get_cookie_params();
 
@@ -609,12 +424,8 @@ class Login
         return password_needs_rehash($hash, PASSWORD_DEFAULT);
     }
 
-    /**
-     * returns the current session namespace.
-     *
-     * @return string
-     */
-    protected static function getSessionNamespace()
+    /** returns the current session namespace. */
+    protected static function getSessionNamespace(): string
     {
         return Request::getSessionNamespace();
     }

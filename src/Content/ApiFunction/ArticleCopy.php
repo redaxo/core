@@ -20,7 +20,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('article_copy')]
 class ArticleCopy extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $articleId = Request::request('article_id', 'int');
         $clang = Request::request('clang', 'int', 1);
@@ -38,7 +38,7 @@ class ArticleCopy extends ApiFunction
                 $result = new Result(true, I18n::msg('content_articlecopied'));
                 Response::sendRedirect($context->getUrl([
                     'article_id' => $newId,
-                    'info' => $result->getMessage(),
+                    'info' => $result->message,
                 ]));
             } else {
                 $result = new Result(false, I18n::msg('content_errorcopyarticle'));
@@ -48,10 +48,5 @@ class ArticleCopy extends ApiFunction
         }
 
         throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

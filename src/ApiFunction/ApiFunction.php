@@ -23,7 +23,7 @@ use function sprintf;
 
 /**
  * This is a base class for all functions which a component may provide for public use.
- * Those function will be called automatically by the core.
+ * Those functions will be called automatically by the core.
  * Inside an api function you might check the preconditions which have to be met (permissions, etc.)
  * and forward the call to an underlying service which does the actual job.
  *
@@ -31,12 +31,12 @@ use function sprintf;
  *
  * The ApiFunction classes must be registered explicitly via `ApiFunction::register()`.
  *
- * A api function may also be called by an ajax-request.
+ * An api function may also be called by an ajax-request.
  * In fact there might be ajax-requests which do nothing more than triggering an api function.
  *
- * The api functions return meaningfull error messages which the caller may display to the end-user.
+ * The api functions return meaningful error messages which the caller may display to the end-user.
  *
- * Calling a api function with the backend-frontcontroller (index.php) requires a valid page parameter and the current user needs permissions to access the given page.
+ * Calling an api function with the backend-frontcontroller (index.php) requires a valid page parameter and the current user needs permissions to access the given page.
  *
  * @psalm-consistent-constructor
  */
@@ -44,22 +44,20 @@ abstract class ApiFunction
 {
     use FactoryTrait;
 
-    public const REQ_CALL_PARAM = 'rex-api-call';
-    public const REQ_RESULT_PARAM = 'rex-api-result';
+    final public const string REQ_CALL_PARAM = 'rex-api-call';
+    final public const string REQ_RESULT_PARAM = 'rex-api-result';
+
+    /** Flag, indicating if this api function may be called from the frontend. False by default. */
+    protected bool $published = false;
 
     /**
-     * Flag, indicating if this api function may be called from the frontend. False by default.
-     *
-     * @var bool
+     * Whether this api function requires CSRF protection. Enabled by default; override with `false`
+     * (e.g. for read-only endpoints or actions that must be callable by 3rd-party apps which can't know the csrf token).
      */
-    protected $published = false;
+    protected bool $requiresCsrfProtection = true;
 
-    /**
-     * The result of the function call.
-     *
-     * @var Result|null
-     */
-    protected $result;
+    /** The result of the function call. */
+    public private(set) ?Result $result = null;
 
     /**
      * Discovered and registered api functions.
@@ -68,29 +66,26 @@ abstract class ApiFunction
      */
     private static ?array $functions = null;
 
-    /**
-     * The api function which is bound to the current request.
-     *
-     * @var ApiFunction|null
-     */
-    private static $instance;
+    /** The api function which is bound to the current request. */
+    private static ?ApiFunction $instance = null;
 
     protected function __construct() {}
 
     /**
-     * This method have to be overriden by a subclass and does all logic which the api function represents.
+     * This method has to be overridden by a subclass and does all logic which the api function represents.
      *
      * In the first place this method may retrieve and validate parameters from the request.
      * Afterwards the actual logic should be executed.
      *
      * This function may also throw exceptions e.g. in case when permissions are missing or the provided parameters are invalid.
      *
+     * @throws ApiFunctionException
      * @return Result The result of the api-function
      */
-    abstract public function execute();
+    abstract public function execute(): Result;
 
     /** Returns the api function instance which is bound to the current request, or null if no api function was bound. */
-    public static function factory(): ?self
+    final public static function factory(): ?self
     {
         if (self::$instance) {
             return self::$instance;
@@ -119,8 +114,8 @@ abstract class ApiFunction
         return null;
     }
 
-    /** @param class-string<ApiFunction> $class */
-    public static function register(string $name, string $class): void
+    /** @param class-string<self> $class */
+    final public static function register(string $name, string $class): void
     {
         self::loadFunctions();
         self::$functions[$name] = $class;
@@ -133,7 +128,7 @@ abstract class ApiFunction
      *
      * @return array<string, string>
      */
-    public static function getUrlParams()
+    public static function getUrlParams(): array
     {
         $class = static::class;
 
@@ -148,10 +143,8 @@ abstract class ApiFunction
      * Returns the hidden fields for `rex-api-call` and `_csrf_token`.
      *
      * The method must be called on sub classes.
-     *
-     * @return string
      */
-    public static function getHiddenFields()
+    public static function getHiddenFields(): string
     {
         $class = static::class;
 
@@ -163,12 +156,8 @@ abstract class ApiFunction
             . CsrfToken::factory($class)->getHiddenField();
     }
 
-    /**
-     * checks whether an api function is bound to the current requests. If so, so the api function will be executed.
-     *
-     * @return void
-     */
-    public static function handleCall()
+    /** checks whether an api function is bound to the current requests. If so, so the api function will be executed. */
+    public static function handleCall(): void
     {
         if ($factoryClass = static::getExplicitFactoryClass()) {
             $factoryClass::handleCall();
@@ -197,9 +186,9 @@ abstract class ApiFunction
                     throw new NotFoundHttpException(new ApiFunctionException('The result of the api function is not available in the session.'));
                 }
 
-                $apiFunc->result = Result::fromJSON($result);
+                $apiFunc->result = Result::fromJson($result);
             } else {
-                if ($apiFunc->requiresCsrfProtection() && !CsrfToken::factory($apiFunc::class)->isValid()) {
+                if ($apiFunc->requiresCsrfProtection && !CsrfToken::factory($apiFunc::class)->isValid()) {
                     $result = new Result(false, I18n::msg('csrf_token_invalid'));
                     $apiFunc->result = $result;
 
@@ -209,16 +198,12 @@ abstract class ApiFunction
                 try {
                     $result = $apiFunc->execute();
 
-                    if (!$result instanceof Result) {
-                        throw new LogicException('Illegal result returned from api-function ' . Request::get(self::REQ_CALL_PARAM) . '. Expected a instance of ApiFunctionResult but got "' . get_debug_type($result) . '".');
-                    }
-
                     $apiFunc->result = $result;
-                    if ($result->requiresReboot()) {
+                    if ($result->requiresReboot) {
                         // add api call result to session
                         Login::startSession();
                         $results = Request::session(self::REQ_RESULT_PARAM, 'array', []);
-                        $result = $result->toJSON();
+                        $result = $result->toJson();
                         $key = sha1($result);
                         $results[$key] = $result;
                         Request::setSession(self::REQ_RESULT_PARAM, $results);
@@ -237,56 +222,24 @@ abstract class ApiFunction
         }
     }
 
-    /** @return bool */
-    public static function hasMessage()
+    final public static function hasMessage(): bool
     {
-        $apiFunc = self::factory();
-
-        if (!$apiFunc) {
-            return false;
-        }
-
-        $result = $apiFunc->getResult();
-        return $result && null !== $result->getMessage();
+        return null !== self::factory()?->result?->message;
     }
 
-    /**
-     * @param bool $formatted
-     * @return string
-     */
-    public static function getMessage($formatted = true)
+    final public static function getMessage(bool $formatted = true): string
     {
-        $apiFunc = self::factory();
+        $apiResult = self::factory()?->result;
         $message = '';
-        if ($apiFunc) {
-            $apiResult = $apiFunc->getResult();
-            if ($apiResult) {
-                if ($formatted) {
-                    $message = $apiResult->getFormattedMessage();
-                } else {
-                    $message = $apiResult->getMessage();
-                }
+        if ($apiResult) {
+            if ($formatted) {
+                $message = $apiResult->getFormattedMessage();
+            } else {
+                $message = $apiResult->message;
             }
         }
         // return a placeholder which can later be used by ajax requests to display messages
-        return '<div id="rex-message-container">' . $message . '</div>';
-    }
-
-    /** @return Result|null */
-    public function getResult()
-    {
-        return $this->result;
-    }
-
-    /**
-     * Csrf validation is disabled by default for backwards compatiblity reasons. This default will change in a future version.
-     * Prepare all your api functions to work with csrf token by using your-api-class::getUrlParams()/getHiddenFields(), otherwise they will stop work.
-     *
-     * @return bool
-     */
-    protected function requiresCsrfProtection()
-    {
-        return false;
+        return '<div id="rex-message-container">' . ($message ?? '') . '</div>';
     }
 
     /** @return array<string, class-string<ApiFunction>> */

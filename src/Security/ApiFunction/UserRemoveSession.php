@@ -18,12 +18,12 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('user_remove_session')]
 class UserRemoveSession extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $userId = Request::get('user_id', 'int');
         $user = Core::requireUser();
 
-        if ($userId !== $user->getId() && !$user->isAdmin() && (!$user->hasPerm('users[]') || User::require($userId)->isAdmin())) {
+        if ($userId !== $user->id && !$user->admin && (!$user->hasPerm('users[]') || User::require($userId)->admin)) {
             throw new ApiFunctionException('Permission denied');
         }
 
@@ -34,10 +34,5 @@ class UserRemoveSession extends ApiFunction
         }
 
         return new Result(false, I18n::msg('session_remove_error'));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

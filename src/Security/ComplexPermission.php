@@ -5,67 +5,58 @@ namespace Redaxo\Core\Security;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+use Redaxo\Core\Form\Select\Select;
 
+use function is_array;
 use function sprintf;
 
 /**
  * Abstract class for complex permissions.
  *
  * All permission check methods ("hasPerm()" etc.) in child classes should return "true" for admins
+ *
+ * @template-covariant TPermission of string|int = string|int
  */
 abstract class ComplexPermission
 {
-    public const ALL = 'all';
+    final public const string ALL = 'all';
 
-    /**
-     * User instance.
-     *
-     * @var User
-     */
-    protected $user;
+    /** @var array<string, class-string<ComplexPermission>> */
+    private static array $classes = [];
 
-    /**
-     * Array of permissions.
-     *
-     * @var array
-     */
-    protected $perms = [];
+    /** @var list<TPermission>|self::ALL */
+    final protected readonly string|array $perms;
 
-    /**
-     * Array of class names.
-     *
-     * @var array<string, class-string<ComplexPermission>>
-     */
-    private static $classes = [];
-
-    /**
-     * @param User $user User instance
-     * @param mixed $perms Permissions
-     */
-    protected function __construct(User $user, $perms)
-    {
-        $this->user = $user;
+    /** @param list<string>|self::ALL $perms */
+    protected function __construct(
+        /** @final */ protected readonly User $user,
+        array|string $perms,
+    ) {
+        if (is_array($perms)) {
+            /** @var list<TPermission> $perms */
+            $perms = array_map(static fn (string $perm) => (string) (int) $perm === $perm ? (int) $perm : $perm, $perms);
+        }
         $this->perms = $perms;
     }
 
     /**
      * Returns if the user has the permission for all items.
      *
-     * @return bool
+     * @phpstan-assert-if-false !string $this->perms
      */
-    public function hasAll()
+    final public function hasAll(): bool
     {
-        return $this->user->isAdmin() || self::ALL == $this->perms;
+        return $this->user->admin || self::ALL === $this->perms;
     }
 
     /**
      * Returns the field params for the role form.
      *
-     * @return array
+     * @return array{label: string, all_label: string, select?: Select, options?: array<string|int, string>, sql_options?: string}|null
      */
-    public static function getFieldParams()
+    public static function getFieldParams(): ?array
     {
-        return [];
+        return null;
     }
 
     /**
@@ -73,9 +64,8 @@ abstract class ComplexPermission
      *
      * @param string $key Key for the complex perm
      * @param class-string<self> $class Class name
-     * @return void
      */
-    public static function register($key, $class)
+    final public static function register(string $key, string $class): void
     {
         if (!is_subclass_of($class, self::class)) {
             throw new InvalidArgumentException(sprintf('Class "%s" must be a subclass of "%s".', $class, self::class));
@@ -88,21 +78,13 @@ abstract class ComplexPermission
      *
      * @return array<string, class-string<ComplexPermission>> Class names
      */
-    public static function getAll()
+    final public static function getAll(): array
     {
         return self::$classes;
     }
 
-    /**
-     * Returns the complex perm.
-     *
-     * @param User $user User instance
-     * @param string $key Complex perm key
-     * @param mixed $perms Permissions
-     *
-     * @return ComplexPermission|null
-     */
-    public static function get(User $user, $key, $perms = [])
+    /** @param list<string>|self::ALL $perms Permissions */
+    final public static function get(User $user, string $key, array|string $perms = []): ?self
     {
         if (!isset(self::$classes[$key])) {
             return null;
@@ -111,27 +93,14 @@ abstract class ComplexPermission
         return new $class($user, $perms);
     }
 
-    /**
-     * Should be called if an item is removed.
-     *
-     * @param string $key Key
-     * @param string|int $item Item
-     * @return void
-     */
-    public static function removeItem($key, $item)
+    /** Should be called if an item is removed. */
+    final public static function removeItem(string $key, int|string $item): void
     {
         Extension::registerPoint(new ExtensionPoint('COMPLEX_PERM_REMOVE_ITEM', '', ['key' => $key, 'item' => $item], true));
     }
 
-    /**
-     * Should be called if an item is replaced.
-     *
-     * @param string $key Key
-     * @param string|int $item Old item
-     * @param string|int $new New item
-     * @return void
-     */
-    public static function replaceItem($key, $item, $new)
+    /** Should be called if an item is replaced. */
+    final public static function replaceItem(string $key, int|string $item, int|string $new): void
     {
         Extension::registerPoint(new ExtensionPoint('COMPLEX_PERM_REPLACE_ITEM', '', ['key' => $key, 'item' => $item, 'new' => $new], true));
     }

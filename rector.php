@@ -74,7 +74,9 @@ use Redaxo\Core\Util;
 use Redaxo\Core\Validator;
 use Redaxo\Core\View;
 use Redaxo\Rector\Rule as RedaxoRule;
+use Redaxo\Rector\ValueObject\MethodCallToPropertyAssign;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyFetch;
+use Redaxo\Rector\ValueObject\SetterCallToConstructorArgument;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -382,7 +384,7 @@ return RectorConfig::configure()
         'rex_perm' => Security\Permission::class,
         'rex_user' => Security\User::class,
         'rex_user_role' => Security\UserRole::class,
-        'rex_user_role_interface' => Security\UserRoleInterface::class,
+        'rex_user_role_interface' => Security\UserRole::class,
         'rex_user_session' => Security\UserSession::class,
         'rex_webauthn' => Security\WebAuthn::class,
         'rex_setup' => Setup\Setup::class,
@@ -420,6 +422,9 @@ return RectorConfig::configure()
         new MethodCallRename(Addon\Addon::class, 'getSetupPackages', 'getSetupAddons'),
         new MethodCallRename(Console\Command\AbstractCommand::class, 'getPackage', 'getAddon'),
         new MethodCallRename(Console\Command\AbstractCommand::class, 'setPackage', 'setAddon'),
+
+        new MethodCallRename(ApiFunction\Result::class, 'toJSON', 'toJson'),
+        new MethodCallRename(ApiFunction\Result::class, 'fromJSON', 'fromJson'),
 
         new MethodCallRename(Security\PasswordPolicy::class, 'getRule', 'getDescription'),
 
@@ -511,6 +516,13 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Addon\Addon::class, 'getName', 'name'),
         new MethodCallToPropertyFetch(Addon\Addon::class, 'getPackageId', 'name'),
 
+        new MethodCallToPropertyFetch(ApiFunction\ApiFunction::class, 'getResult', 'result'),
+        new MethodCallToPropertyFetch(ApiFunction\ApiFunction::class, 'requiresCsrfProtection', 'requiresCsrfProtection'),
+
+        new MethodCallToPropertyFetch(ApiFunction\Result::class, 'isSuccessfull', 'succeeded'),
+        new MethodCallToPropertyFetch(ApiFunction\Result::class, 'getMessage', 'message'),
+        new MethodCallToPropertyFetch(ApiFunction\Result::class, 'requiresReboot', 'requiresReboot'),
+
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getClang', 'clangId'),
@@ -520,11 +532,41 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getPriority', 'priority'),
 
         new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getEvent', 'event'),
-        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getSave', 'save'), // todo setter
+        new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getSave', 'save'),
         new MethodCallToPropertyFetch(Content\ArticleSliceAction::class, 'getMessages', 'messages'),
 
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
+
+        new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getForceRenewAfter', 'forceRenewAfter'),
+        new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getBlockAccountAfter', 'blockAccountAfter'),
+
+        new MethodCallToPropertyFetch(Security\CsrfToken::class, 'getId', 'id'),
+
+        new MethodCallToPropertyFetch(Security\User::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getLogin', 'login'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getEmail', 'email'),
+        new MethodCallToPropertyFetch(Security\User::class, 'isAdmin', 'admin'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getLanguage', 'language'),
+        new MethodCallToPropertyFetch(Security\User::class, 'getStartPage', 'startPage'),
+    ])
+    ->withConfiguredRule(RedaxoRule\MethodCallToPropertyAssignRector::class, [
+        new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
+
+        new MethodCallToPropertyAssign(Security\Login::class, 'setCache', 'cache'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setSqlDb', 'DB'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setSystemId', 'systemId'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setSessionDuration', 'sessionDuration'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setUserQuery', 'userQuery'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setLoginQuery', 'loginQuery'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setImpersonateQuery', 'impersonateQuery'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setIdColumn', 'idColumn'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setPasswordColumn', 'passwordColumn'),
+        new MethodCallToPropertyAssign(Security\Login::class, 'setMessage', 'message'),
+    ])
+    ->withConfiguredRule(RedaxoRule\SetterCallToConstructorArgumentRector::class, [
+        new SetterCallToConstructorArgument(ApiFunction\Result::class, 'setRequiresReboot', 'requiresReboot'),
     ])
     ->withConfiguredRule(ArgumentRemoverRector::class, [
         new ArgumentRemover(Util\Str::class, 'buildQuery', 1, null),

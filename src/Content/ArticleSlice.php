@@ -62,7 +62,7 @@ final readonly class ArticleSlice
             1,
             $time = time(),
             $time,
-            $user = Core::requireUser()->getLogin(),
+            $user = Core::requireUser()->login,
             $user,
             $revision,
             array_fill(0, 20, null),

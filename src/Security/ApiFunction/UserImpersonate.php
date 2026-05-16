@@ -19,8 +19,7 @@ use function sprintf;
 #[AsApiFunction('user_impersonate')]
 class UserImpersonate extends ApiFunction
 {
-    /** @return never */
-    public function execute()
+    public function execute(): never
     {
         $impersonate = Request::get('_impersonate');
 
@@ -31,17 +30,12 @@ class UserImpersonate extends ApiFunction
         }
 
         $user = Core::requireUser();
-        if (!$user->isAdmin()) {
-            throw new ApiFunctionException(escape(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->getLogin())));
+        if (!$user->admin) {
+            throw new ApiFunctionException(escape(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->login)));
         }
 
         Core::getProperty('login')->impersonate((int) $impersonate);
 
         Response::sendRedirect(Url::backendController());
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

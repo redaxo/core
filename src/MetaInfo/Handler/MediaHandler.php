@@ -114,7 +114,7 @@ class MediaHandler extends AbstractHandler
             $items = $sql->getArray('SELECT id, name FROM ' . Core::getTablePrefix() . 'clang WHERE ' . implode(' OR ', $where['clangs']));
             foreach ($items as $clangArr) {
                 $name = (string) $clangArr['name'];
-                if (Core::getUser()?->isAdmin()) {
+                if (Core::getUser()?->admin) {
                     $clangs .= '<li><a href="javascript:openPage(\'' . Url::backendPage('system/lang', ['clang_id' => $clangArr['id'], 'func' => 'editclang']) . '\')">' . $name . '</a></li>';
                 } else {
                     $clangs .= '<li>' . $name . '</li>';

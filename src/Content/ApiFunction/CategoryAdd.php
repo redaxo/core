@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('category_add')]
 class CategoryAdd extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('addCategory[]')) {
             throw new ApiFunctionException('User has no permission to add categories!');
@@ -34,10 +34,5 @@ class CategoryAdd extends ApiFunction
         $data['catpriority'] = Request::post('category-position', 'int');
         $data['catname'] = Request::post('category-name', 'string');
         return new Result(true, CategoryHandler::addCategory($parentId, $data));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

@@ -9,30 +9,21 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use function count;
 use function in_array;
 
-class UserRole implements UserRoleInterface
+/**
+ * @internal
+ */
+final class UserRole
 {
-    /**
-     * Permissions.
-     *
-     * @var list<string>
-     */
+    /** @var list<string> */
     private array $perms = [];
 
-    /**
-     * Complex perm params.
-     *
-     * @var array<string, ComplexPermission::ALL|array<string>>
-     */
+    /** @var array<string, ComplexPermission::ALL|list<string>> */
     private array $complexPermParams = [];
 
-    /**
-     * Cache for complex perm instances.
-     *
-     * @var array<string, (ComplexPermission|null)>
-     */
+    /** @var array<string, ComplexPermission|null> */
     private array $complexPerms = [];
 
-    /** @param list<array> $roles */
+    /** @param list<array<string, string>> $roles */
     private function __construct(array $roles)
     {
         foreach ($roles as $role) {
@@ -64,12 +55,13 @@ class UserRole implements UserRoleInterface
         }
     }
 
-    public function hasPerm($perm)
+    /** Returns if the role has the given permission. */
+    public function hasPerm(string $perm): bool
     {
         return in_array($perm, $this->perms);
     }
 
-    public function getComplexPerm(User $user, $key)
+    public function getComplexPerm(User $user, string $key): ?ComplexPermission
     {
         if (isset($this->complexPerms[$key])) {
             return $this->complexPerms[$key];
@@ -78,14 +70,19 @@ class UserRole implements UserRoleInterface
         if (!isset($this->complexPermParams[$key])) {
             $this->complexPermParams[$key] = [];
         } elseif (ComplexPermission::ALL !== $this->complexPermParams[$key]) {
-            $this->complexPermParams[$key] = array_unique($this->complexPermParams[$key]);
+            $this->complexPermParams[$key] = array_values(array_unique($this->complexPermParams[$key]));
         }
 
         $this->complexPerms[$key] = ComplexPermission::get($user, $key, $this->complexPermParams[$key]);
         return $this->complexPerms[$key];
     }
 
-    public static function get($ids)
+    /**
+     * Returns the role for the given ID.
+     *
+     * @param string $ids Comma separated role IDs
+     */
+    public static function get(string $ids): ?self
     {
         $sql = Sql::factory();
         $userRoles = $sql->getArray('SELECT perms FROM ' . Core::getTablePrefix() . 'user_role WHERE FIND_IN_SET(id, ?)', [$ids]);
@@ -98,11 +95,10 @@ class UserRole implements UserRoleInterface
             $roles[] = json_decode((string) $userRole['perms'], true);
         }
 
-        return new static($roles);
+        return new self($roles);
     }
 
-    /** @return void */
-    public static function removeOrReplaceItem(ExtensionPoint $ep)
+    public static function removeOrReplaceItem(ExtensionPoint $ep): void
     {
         $params = $ep->getParams();
         $key = $params['key'];

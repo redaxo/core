@@ -18,12 +18,12 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('user_remove_auth_method')]
 class UserRemoveAuthMethod extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $userId = Request::get('user_id', 'int');
         $user = Core::requireUser();
 
-        if ($userId !== $user->getId() && !$user->isAdmin() && (!$user->hasPerm('users[]') || User::require($userId)->isAdmin())) {
+        if ($userId !== $user->id && !$user->admin && (!$user->hasPerm('users[]') || User::require($userId)->admin)) {
             throw new ApiFunctionException('Permission denied');
         }
 
@@ -32,11 +32,6 @@ class UserRemoveAuthMethod extends ApiFunction
         }
 
         return $this->removePasskey($userId);
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 
     private function removePassword(int $userId): Result

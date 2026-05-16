@@ -17,12 +17,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('content_copy')]
 class ContentCopy extends ApiFunction
 {
-    /**
-     * @throws ApiFunctionException
-     *
-     * @return Result
-     */
-    public function execute()
+    public function execute(): Result
     {
         $articleId = Request::request('article_id', 'int');
         $clangA = Request::request('clang_a', 'int');
@@ -45,10 +40,5 @@ class ContentCopy extends ApiFunction
         }
 
         throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

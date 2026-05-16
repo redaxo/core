@@ -18,7 +18,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('category_move')]
 class CategoryMove extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         // The category to move
         $articleId = Request::request('article_id', 'int');
@@ -42,10 +42,5 @@ class CategoryMove extends ApiFunction
         }
 
         throw new ApiFunctionException('user has no permission for this category!');
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

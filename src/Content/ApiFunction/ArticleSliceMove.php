@@ -19,7 +19,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('article_slice_move')]
 class ArticleSliceMove extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $articleId = Request::request('article_id', 'int');
         $clang = Request::request('clang', 'int');
@@ -58,10 +58,5 @@ class ArticleSliceMove extends ApiFunction
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
         return new Result(true, $message);
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

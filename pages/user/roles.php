@@ -135,7 +135,7 @@ if ('' == $func) {
     $fieldIds = [];
     foreach (ComplexPermission::getAll() as $key => $class) {
         $params = $class::getFieldParams();
-        if (!empty($params)) {
+        if ($params) {
             /** @var PermissionSelectField $field */
             $field = $fieldContainer->addGroupedField($group, 'perm_select', $key);
             $field->setLabel($params['label']);

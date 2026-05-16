@@ -166,7 +166,6 @@
       <code><![CDATA[$styles]]></code>
     </PossiblyNullArgument>
     <PossiblyNullReference>
-      <code><![CDATA[getLanguage]]></code>
       <code><![CDATA[setIsActive]]></code>
     </PossiblyNullReference>
     <PossiblyUndefinedArrayOffset>
@@ -1389,16 +1388,6 @@
       <code><![CDATA[$article->getValue('parent_id')]]></code>
       <code><![CDATA[$article->getValue('parent_id')]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgument>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-    </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[escape($hiddenFields)]]></code>
     </MixedOperand>
@@ -1639,12 +1628,6 @@
   </file>
   <file src="pages/user/roles.php">
     <MixedArgument>
-      <code><![CDATA[$params['all_label']]]></code>
-      <code><![CDATA[$params['label']]]></code>
-      <code><![CDATA[$params['options']]]></code>
-      <code><![CDATA[$params['select']]]></code>
-      <code><![CDATA[$params['sql_options']]]></code>
-      <code><![CDATA[$perm]]></code>
       <code><![CDATA[$perm]]></code>
       <code><![CDATA[$perm]]></code>
     </MixedArgument>
@@ -1692,9 +1675,7 @@
       <code><![CDATA[$roles]]></code>
     </PossiblyNullArrayOffset>
     <PossiblyNullReference>
-      <code><![CDATA[getLogin]]></code>
       <code><![CDATA[getValue]]></code>
-      <code><![CDATA[isAdmin]]></code>
     </PossiblyNullReference>
   </file>
   <file src="src/Addon/Addon.php">
@@ -1737,14 +1718,6 @@
     <MixedReturnStatement>
       <code><![CDATA[$default]]></code>
     </MixedReturnStatement>
-  </file>
-  <file src="src/ApiFunction/ApiFunction.php">
-    <MixedOperand>
-      <code><![CDATA[Request::get(self::REQ_CALL_PARAM)]]></code>
-    </MixedOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$message]]></code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/ApiFunction/Result.php">
     <MixedAssignment>
@@ -2318,21 +2291,6 @@
       <code><![CDATA[getId]]></code>
     </PossiblyNullReference>
   </file>
-  <file src="src/Content/HistoryLogin.php">
-    <MixedArgument>
-      <code><![CDATA[$key1]]></code>
-      <code><![CDATA[$key2]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[[':login' => $historyLogin]]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$historyLogin]]></code>
-      <code><![CDATA[$historyValidtime]]></code>
-      <code><![CDATA[$login]]></code>
-      <code><![CDATA[$validtime]]></code>
-    </MixedOperand>
-  </file>
   <file src="src/Content/Linkmap/ArticleListRenderer.php">
     <MixedArgument>
       <code><![CDATA[$article]]></code>
@@ -2340,7 +2298,6 @@
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$article]]></code>
-      <code><![CDATA[$categoryId]]></code>
     </MixedAssignment>
     <PossiblyNullReference>
       <code><![CDATA[getArticles]]></code>
@@ -2399,14 +2356,6 @@
     <MixedReturnStatement>
       <code><![CDATA[$this->$val]]></code>
     </MixedReturnStatement>
-  </file>
-  <file src="src/Content/StructurePermission.php">
-    <MixedArgument>
-      <code><![CDATA[$id]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$id]]></code>
-    </MixedAssignment>
   </file>
   <file src="src/Content/Template.php">
     <MixedArrayOffset>
@@ -4190,9 +4139,9 @@
       <code><![CDATA[$time - ($hours * 3600)]]></code>
       <code><![CDATA[($time - ($hours * 3600)) / 60]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[Core::getProperty('session_duration')]]></code>
-    </MixedArgument>
+    <InvalidScalarArgument>
+      <code><![CDATA[$this->user->getValue('password_changed')]]></code>
+    </InvalidScalarArgument>
     <MixedArrayAccess>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][self::SYSTEM_ID]]]></code>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][self::SYSTEM_ID]]]></code>
@@ -4201,13 +4150,14 @@
     </MixedArrayAccess>
     <MixedAssignment>
       <code><![CDATA[$sessionConfig]]></code>
+      <code><![CDATA[$this->sessionDuration]]></code>
     </MixedAssignment>
     <PossiblyInvalidArrayOffset>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()]]]></code>
     </PossiblyInvalidArrayOffset>
-    <PossiblyNullArgument>
-      <code><![CDATA[Core::getProperty('session_duration')]]></code>
-    </PossiblyNullArgument>
+    <PossiblyNullReference>
+      <code><![CDATA[getValue]]></code>
+    </PossiblyNullReference>
   </file>
   <file src="src/Security/BackendPasswordPolicy.php">
     <ArgumentTypeCoercion>
@@ -4222,17 +4172,6 @@
     <MixedAssignment>
       <code><![CDATA[$previousPasswords]]></code>
     </MixedAssignment>
-  </file>
-  <file src="src/Security/ComplexPermission.php">
-    <MixedAssignment>
-      <code><![CDATA[$this->perms]]></code>
-    </MixedAssignment>
-  </file>
-  <file src="src/Security/CsrfToken.php">
-    <MixedReturnTypeCoercion>
-      <code><![CDATA[Request::session(self::getSessionKey(), 'array')]]></code>
-      <code><![CDATA[array<string, string>]]></code>
-    </MixedReturnTypeCoercion>
   </file>
   <file src="src/Security/Login.php">
     <MixedArrayAccess>
@@ -4274,40 +4213,15 @@
     <PossiblyFalseArgument>
       <code><![CDATA[$count]]></code>
     </PossiblyFalseArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$this->getDescription()]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Security/User.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$role]]></code>
     </ArgumentTypeCoercion>
-    <LessSpecificReturnStatement>
-      <code><![CDATA[$this->sql->getValue($key)]]></code>
-      <code><![CDATA[$this->sql->getValue('email')]]></code>
-      <code><![CDATA[$this->sql->getValue('language')]]></code>
-      <code><![CDATA[$this->sql->getValue('login')]]></code>
-      <code><![CDATA[$this->sql->getValue('name')]]></code>
-      <code><![CDATA[$this->sql->getValue('startpage')]]></code>
-    </LessSpecificReturnStatement>
     <MixedReturnStatement>
       <code><![CDATA[$complexPerm ? $complexPerm->$method() : false]]></code>
       <code><![CDATA[$complexPerm ? $complexPerm->$method() : false]]></code>
     </MixedReturnStatement>
-    <MoreSpecificReturnType>
-      <code><![CDATA[string]]></code>
-      <code><![CDATA[string]]></code>
-      <code><![CDATA[string]]></code>
-      <code><![CDATA[string]]></code>
-      <code><![CDATA[string|null]]></code>
-      <code><![CDATA[string|null]]></code>
-    </MoreSpecificReturnType>
-    <NullableReturnStatement>
-      <code><![CDATA[$this->sql->getValue($key)]]></code>
-      <code><![CDATA[$this->sql->getValue('email')]]></code>
-      <code><![CDATA[$this->sql->getValue('login')]]></code>
-      <code><![CDATA[$this->sql->getValue('name')]]></code>
-    </NullableReturnStatement>
     <PossiblyNullReference>
       <code><![CDATA[getComplexPerm]]></code>
       <code><![CDATA[hasPerm]]></code>
@@ -4319,8 +4233,6 @@
   <file src="src/Security/UserRole.php">
     <MixedArgument>
       <code><![CDATA[$perms[$key]]]></code>
-      <code><![CDATA[$role[$key]]]></code>
-      <code><![CDATA[$role[$key]]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$roles]]></code>
@@ -4332,23 +4244,11 @@
     <MixedAssignment>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$roles[]]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$params['item']]]></code>
       <code><![CDATA[$params['new']]]></code>
     </MixedOperand>
-    <MixedPropertyTypeCoercion>
-      <code><![CDATA[$this->complexPermParams]]></code>
-      <code><![CDATA[$this->complexPermParams]]></code>
-      <code><![CDATA[$this->complexPermParams]]></code>
-    </MixedPropertyTypeCoercion>
-    <ParamNameMismatch>
-      <code><![CDATA[$ids]]></code>
-    </ParamNameMismatch>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$role[$key]]]></code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Security/UserSession.php">
     <InvalidArgument>

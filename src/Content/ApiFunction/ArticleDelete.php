@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('article_delete')]
 class ArticleDelete extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('deleteArticle[]')) {
             throw new ApiFunctionException('User has no permission to delete articles!');
@@ -30,10 +30,5 @@ class ArticleDelete extends ApiFunction
             throw new ApiFunctionException('user has no permission for this category!');
         }
         return new Result(true, ArticleHandler::deleteArticle($articleId));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

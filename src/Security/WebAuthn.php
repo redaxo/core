@@ -14,17 +14,17 @@ use stdClass;
 /**
  * @internal
  */
-class WebAuthn
+final class WebAuthn
 {
-    private const SESSION_CHALLENGE_CREATE = 'webauthn_challenge_create';
-    private const SESSION_CHALLENGE_GET = 'webauthn_challenge_get';
+    private const string SESSION_CHALLENGE_CREATE = 'webauthn_challenge_create';
+    private const string SESSION_CHALLENGE_GET = 'webauthn_challenge_get';
 
     public function getCreateArgs(): string
     {
         $user = Core::requireUser();
 
         $webauthn = $this->createWebauthnBase();
-        $args = $webauthn->getCreateArgs((string) $user->getId(), $user->getLogin(), $user->getName(), requireResidentKey: true, requireUserVerification: true);
+        $args = $webauthn->getCreateArgs((string) $user->id, $user->login, $user->name ?? $user->login, requireResidentKey: true, requireUserVerification: true);
 
         Request::setSession(self::SESSION_CHALLENGE_CREATE, $webauthn->getChallenge());
 

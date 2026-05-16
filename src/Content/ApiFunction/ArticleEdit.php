@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('article_edit')]
 class ArticleEdit extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('editArticle[]')) {
             throw new ApiFunctionException('User has no permission to edit articles!');
@@ -37,10 +37,5 @@ class ArticleEdit extends ApiFunction
         $data['name'] = Request::post('article-name', 'string');
         $data['template_id'] = Request::post('template_id', 'int');
         return new Result(true, ArticleHandler::editArticle($articleId, $clang, $data));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

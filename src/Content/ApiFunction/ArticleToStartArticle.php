@@ -18,7 +18,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('article_to_startarticle')]
 class ArticleToStartArticle extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $articleId = Request::request('article_id', 'int');
         $categoryId = Article::get($articleId)->getCategoryId();
@@ -34,10 +34,5 @@ class ArticleToStartArticle extends ApiFunction
         }
 
         throw new ApiFunctionException('user has no permission for this article!');
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

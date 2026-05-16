@@ -15,8 +15,10 @@ use Redaxo\Core\Http\Response;
 #[AsApiFunction('user_has_session')]
 class UserHasSession extends ApiFunction
 {
-    /** @return never */
-    public function execute()
+    // this action supports to be callable by 3rd party apps, which can't know our valid csrf token
+    protected bool $requiresCsrfProtection = false;
+
+    public function execute(): never
     {
         if (!Request::isHttps()) {
             throw new ApiFunctionException('https is required');
@@ -36,11 +38,5 @@ class UserHasSession extends ApiFunction
 
         Response::sendJson(true);
         exit;
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        // this action supports to be callable by 3rd party apps, which can't know our valid csrf token
-        return false;
     }
 }

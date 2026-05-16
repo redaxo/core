@@ -14,12 +14,11 @@ assert(isset($function) && is_string($function));
 assert(isset($info) && is_string($info));
 assert(isset($warning) && is_string($warning));
 
-$apiFunc = ApiFunction::factory();
-if ($apiFunc && $result = $apiFunc->getResult()) {
-    if ($result->isSuccessfull()) {
-        $info = $result->getMessage();
+if ($result = ApiFunction::factory()?->result) {
+    if ($result->succeeded) {
+        $info = $result->message;
     } else {
-        $warning = $result->getMessage();
+        $warning = $result->message;
     }
 }
 

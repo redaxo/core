@@ -16,7 +16,7 @@ use Redaxo\Core\Http\Request;
 #[AsApiFunction('category_edit')]
 class CategoryEdit extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         if (!Core::requireUser()->hasPerm('editCategory[]')) {
             throw new ApiFunctionException('User has no permission to edit categories!');
@@ -37,10 +37,5 @@ class CategoryEdit extends ApiFunction
         $data['catpriority'] = Request::post('category-position', 'int');
         $data['catname'] = Request::post('category-name', 'string');
         return new Result(true, CategoryHandler::editCategory($catId, $clangId, $data));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

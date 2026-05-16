@@ -19,55 +19,49 @@ class BackendPasswordPolicy extends PasswordPolicy
     /**
      * Forbid to reuse the last X previous passwords.
      *
-     * @var int|null
+     * @internal
      */
-    private $noReuseOfLast;
+    public readonly ?int $noReuseOfLast;
 
     /**
      * Forbid to reuse the previous passwords used in the given interval.
      *
-     * @var DateInterval|null
+     * @internal
      */
-    private $noReuseWithin;
+    public readonly ?DateInterval $noReuseWithin;
 
     /**
      * Force to renew the password after the given interval.
      *
-     * @var DateInterval|null
+     * @internal
      */
-    private $forceRenewAfter;
+    public readonly ?DateInterval $forceRenewAfter;
 
     /**
      * Block account if the password wasn't changed in the given interval.
      *
-     * @var DateInterval|null
+     * @internal
      */
-    private $blockAccountAfter;
+    public readonly ?DateInterval $blockAccountAfter;
 
     final private function __construct()
     {
         /** @var array{no_reuse_of_last?: int, no_reuse_within?: string, force_renew_after?: string, block_account_after?: string} $options */
         $options = Core::getProperty('password_policy', []);
 
-        if (isset($options['no_reuse_of_last'])) {
-            $this->noReuseOfLast = $options['no_reuse_of_last'];
-            unset($options['no_reuse_of_last']);
-        }
-        if (isset($options['no_reuse_within'])) {
-            $this->noReuseWithin = new DateInterval($options['no_reuse_within']);
-            unset($options['no_reuse_within']);
-        }
-        if (isset($options['force_renew_after'])) {
-            $this->forceRenewAfter = new DateInterval($options['force_renew_after']);
-            unset($options['force_renew_after']);
-        }
-        if (isset($options['block_account_after'])) {
-            $this->blockAccountAfter = new DateInterval($options['block_account_after']);
-            unset($options['block_account_after']);
-        }
+        $this->noReuseOfLast = $options['no_reuse_of_last'] ?? null;
+        unset($options['no_reuse_of_last']);
 
-        /** @psalm-suppress InvalidArgument */
-        parent::__construct($options); // @phpstan-ignore-line
+        $this->noReuseWithin = isset($options['no_reuse_within']) ? new DateInterval($options['no_reuse_within']) : null;
+        unset($options['no_reuse_within']);
+
+        $this->forceRenewAfter = isset($options['force_renew_after']) ? new DateInterval($options['force_renew_after']) : null;
+        unset($options['force_renew_after']);
+
+        $this->blockAccountAfter = isset($options['block_account_after']) ? new DateInterval($options['block_account_after']) : null;
+        unset($options['block_account_after']);
+
+        parent::__construct($options);
     }
 
     public static function factory(): static
@@ -77,7 +71,7 @@ class BackendPasswordPolicy extends PasswordPolicy
         return new $class();
     }
 
-    public function check(#[SensitiveParameter] $password, $id = null)
+    public function check(#[SensitiveParameter] string $password, ?int $id = null): true|string
     {
         if (true !== $msg = parent::check($password, $id)) {
             return $msg;
@@ -94,7 +88,7 @@ class BackendPasswordPolicy extends PasswordPolicy
             return true;
         }
 
-        $previousPasswords = Type::array(json_decode($previousPasswords, true));
+        $previousPasswords = Type::array(json_decode((string) $previousPasswords, true));
         $previousPasswords = $this->cleanUpPreviousPasswords($previousPasswords);
 
         foreach ($previousPasswords as $previousPassword) {
@@ -104,16 +98,6 @@ class BackendPasswordPolicy extends PasswordPolicy
         }
 
         return true;
-    }
-
-    public function getForceRenewAfter(): ?DateInterval
-    {
-        return $this->forceRenewAfter;
-    }
-
-    public function getBlockAccountAfter(): ?DateInterval
-    {
-        return $this->blockAccountAfter;
     }
 
     /**
@@ -129,7 +113,7 @@ class BackendPasswordPolicy extends PasswordPolicy
 
         if ($user) {
             $previousPasswords = $user->getValue('previous_passwords');
-            $previousPasswords = $previousPasswords ? json_decode($previousPasswords, true) : [];
+            $previousPasswords = $previousPasswords ? json_decode((string) $previousPasswords, true) : [];
         } else {
             $previousPasswords = [];
         }

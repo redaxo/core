@@ -17,7 +17,7 @@ use Redaxo\Core\Translation\I18n;
 #[AsApiFunction('article_status_change')]
 class ArticleStatusChange extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
         $categoryId = Request::request('category_id', 'int');
         $articleId = Request::request('article_id', 'int');
@@ -33,10 +33,5 @@ class ArticleStatusChange extends ApiFunction
         }
 
         throw new ApiFunctionException('user has no permission for this article!');
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }

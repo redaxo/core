@@ -11,17 +11,18 @@ use const PASSWORD_DEFAULT;
 
 /**
  * @internal
+ * @psalm-suppress InvalidExtendClass
+ * @phpstan-ignore class.extendsFinalByPhpDoc
  */
-class HistoryLogin extends BackendLogin
+final class HistoryLogin extends BackendLogin
 {
-    /** @return bool */
-    public function checkTempSession($historyLogin, $historySession, $historyValidtime)
+    public function checkTempSession(string $historyLogin, #[SensitiveParameter] string $historySession, string $historyValidtime): bool
     {
         $userSql = Sql::factory($this->DB);
         $userSql->setQuery($this->loginQuery, [':login' => $historyLogin]);
 
         if (1 == $userSql->getRows()) {
-            if (self::verifySessionKey($historyLogin . $userSql->getValue('session_id') . $historyValidtime, $historySession)) {
+            if (self::verifySessionKey($historyLogin . ((string) $userSql->getValue('session_id')) . $historyValidtime, $historySession)) {
                 $this->user = $userSql;
                 $this->setSessionVar(Login::SESSION_LAST_ACTIVITY, time());
                 $this->setSessionVar(Login::SESSION_USER_ID, $this->user->getValue($this->idColumn));
@@ -33,14 +34,12 @@ class HistoryLogin extends BackendLogin
         return false;
     }
 
-    /** @return string|null */
-    public static function createSessionKey(#[SensitiveParameter] $login, $session, $validtime)
+    public static function createSessionKey(#[SensitiveParameter] string $login, #[SensitiveParameter] string $session, string $validtime): string
     {
         return password_hash($login . $session . $validtime, PASSWORD_DEFAULT);
     }
 
-    /** @return bool */
-    public static function verifySessionKey($key1, $key2)
+    private static function verifySessionKey(#[SensitiveParameter] string $key1, #[SensitiveParameter] string $key2): bool
     {
         return password_verify($key1, $key2);
     }

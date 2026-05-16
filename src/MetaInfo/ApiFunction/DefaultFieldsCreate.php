@@ -22,9 +22,9 @@ use function sprintf;
 #[AsApiFunction('metainfo_default_fields_create')]
 class DefaultFieldsCreate extends ApiFunction
 {
-    public function execute()
+    public function execute(): Result
     {
-        if (!Core::getUser()?->isAdmin()) {
+        if (!Core::getUser()?->admin) {
             throw new ApiFunctionException('user has no permission for this operation!');
         }
 
@@ -63,10 +63,5 @@ class DefaultFieldsCreate extends ApiFunction
         }
 
         return new Result(true, I18n::msg('minfo_default_fields_created'));
-    }
-
-    protected function requiresCsrfProtection()
-    {
-        return true;
     }
 }
