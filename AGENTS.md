@@ -4,7 +4,7 @@ This file provides guidance to AI coding assistants working with code in this re
 
 ## Project Overview
 
-REDAXO is a PHP Content Management System. This repository (`redaxo/core`) contains the core. PHP 8.4+ is required.
+REDAXO is a PHP Content Management System. This repository (`redaxo/core`) contains the core. PHP 8.5+ is required.
 
 The default development branch is `6.x` — PRs target this branch unless stated otherwise. `5.x` is the maintenance branch.
 
