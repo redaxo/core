@@ -96,7 +96,7 @@ if ($hasCategoryPerm && 'delete_selectedmedia' == $mediaMethod) {
             foreach ($selectedmedia as $filename) {
                 $media = Media::get($filename);
                 if ($media) {
-                    if ($perm->hasCategoryPerm($media->getCategoryId())) {
+                    if ($perm->hasCategoryPerm($media->categoryId)) {
                         try {
                             MediaHandler::deleteMedia($filename);
                             ++$countDeleted;
@@ -287,19 +287,19 @@ if ($hasCategoryPerm) {
 $panel .= '<tbody>';
 
 foreach ($items as $media) {
-    $alt = escape($media->getTitle());
+    $alt = escape($media->title);
     $desc = '<p>' . escape(strip_tags((string) $media->getValue('med_description'))) . '</p>';
 
-    if (!is_file(Path::media($media->getFileName()))) {
-        $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '"></i><span class="sr-only">' . $media->getFileName() . '</span>';
+    if (!is_file(Path::media($media->fileName))) {
+        $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '"></i><span class="sr-only">' . $media->fileName . '</span>';
     } else {
-        $fileExt = File::extension($media->getFileName());
-        $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '"></i><span class="sr-only">' . $media->getFileName() . '</span>';
+        $fileExt = File::extension($media->fileName);
+        $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '"></i><span class="sr-only">' . $media->fileName . '</span>';
 
-        if (Media::isImageType(File::extension($media->getFileName()))) {
-            $thumbnail = '<img class="thumbnail" src="' . Url::media($media->getFileName()) . '?buster=' . $media->getValue('updatedate') . '" width="80" height="80" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
-            if ('svg' != File::extension($media->getFileName())) {
-                $thumbnail = '<img class="thumbnail" src="' . MediaManager::getUrl('rex_media_small', urlencode($media->getFileName()), $media->getValue('updatedate')) . '" width="100" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
+        if (Media::isImageType(File::extension($media->fileName))) {
+            $thumbnail = '<img class="thumbnail" src="' . Url::media($media->fileName) . '?buster=' . $media->getValue('updatedate') . '" width="80" height="80" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
+            if ('svg' != File::extension($media->fileName)) {
+                $thumbnail = '<img class="thumbnail" src="' . MediaManager::getUrl('rex_media_small', urlencode($media->fileName), $media->getValue('updatedate')) . '" width="100" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
             }
         }
     }
@@ -307,52 +307,52 @@ foreach ($items as $media) {
     // Register new EP MEDIA_LIST_THUMBNAIL - fuer Vorschau-Manipulation z.B. fuer Plyr/Lottie
     // ----- EXTENSION POINT
     $thumbnail = Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_THUMBNAIL', $thumbnail, [
-        'id' => $media->getId(),
-        'filename' => $media->getFileName(),
+        'id' => $media->id,
+        'filename' => $media->fileName,
         'media' => $media,
     ]));
 
-    if ('' == $media->getTitle()) {
+    if ('' == $media->title) {
         $fileTitle = '[' . I18n::msg('pool_file_notitle') . ']';
     }
 
     $openerLink = '';
     if ('' != $openerInputField) {
-        $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $media->getFileName() . '\', \'' . escape($media->getTitle(), 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
+        $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $media->fileName . '\', \'' . escape($media->title, 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
         if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-            $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $media->getFileName() . '\', this);return false;">' . I18n::msg('pool_file_get') . '</a>';
+            $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $media->fileName . '\', this);return false;">' . I18n::msg('pool_file_get') . '</a>';
         }
     }
 
-    $ilink = Url::currentBackendPage(array_merge(['file_id' => $media->getId(), 'rex_file_category' => $rexFileCategory], $argUrl));
+    $ilink = Url::currentBackendPage(array_merge(['file_id' => $media->id, 'rex_file_category' => $rexFileCategory], $argUrl));
 
     $addTd = '<td></td>';
     if ($hasCategoryPerm) {
-        $addTd = '<td><input type="checkbox" name="selectedmedia[]" value="' . $media->getFileName() . '" /></td>';
+        $addTd = '<td><input type="checkbox" name="selectedmedia[]" value="' . $media->fileName . '" /></td>';
     }
 
     $panel .= '<tr>
                     ' . $addTd . '
                     <td class="rex-word-break" data-title="' . I18n::msg('pool_file_thumbnail') . '"><a href="' . $ilink . '">' . $thumbnail . '</a></td>
                     <td class="rex-word-break" data-title="' . I18n::msg('pool_file_info') . '">
-                        <h3><a class="rex-link-expanded" href="' . $ilink . '">' . escape($media->getTitle()) . '</a></h3>
+                        <h3><a class="rex-link-expanded" href="' . $ilink . '">' . escape($media->title) . '</a></h3>
                         ' . $desc . '
-                        <p>' . escape($media->getFileName()) . ' <span class="rex-filesize">' . Formatter::bytes($media->getSize()) . '</span></p>
+                        <p>' . escape($media->fileName) . ' <span class="rex-filesize">' . Formatter::bytes($media->size) . '</span></p>
                     </td>
-                    <td data-title="' . I18n::msg('pool_last_update') . '"><p class="rex-date">' . Formatter::intlDateTime($media->getUpdateDate()) . '</p><p class="rex-author">' . escape($media->getUpdateUser()) . '</p></td>
+                    <td data-title="' . I18n::msg('pool_last_update') . '"><p class="rex-date">' . Formatter::intlDateTime($media->updateDate) . '</p><p class="rex-author">' . escape($media->updateUser) . '</p></td>
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . $ilink . '">' . I18n::msg('edit') . '</a></td>
                     <td class="rex-table-action">';
 
     $panel .= Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_FUNCTIONS', $openerLink, [
         'media' => $media, // new
-        'file_id' => $media->getId(), // @deprecated
-        'file_name' => $media->getFileName(), // @deprecated
-        'file_oname' => $media->getOriginalFileName(), // @deprecated
-        'file_title' => $media->getTitle(), // @deprecated
-        'file_type' => $media->getType(), // @deprecated
-        'file_size' => $media->getSize(), // @deprecated
-        'file_stamp' => $media->getUpdateDate(), // @deprecated
-        'file_updateuser' => $media->getUpdateUser(), // @deprecated
+        'file_id' => $media->id, // @deprecated
+        'file_name' => $media->fileName, // @deprecated
+        'file_oname' => $media->originalFileName, // @deprecated
+        'file_title' => $media->title, // @deprecated
+        'file_type' => $media->type, // @deprecated
+        'file_size' => $media->size, // @deprecated
+        'file_stamp' => $media->updateDate, // @deprecated
+        'file_updateuser' => $media->updateUser, // @deprecated
     ]));
 
     $panel .= '</td>

@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\MediaPool;
 
-use AllowDynamicProperties;
 use Redaxo\Core\Base\InstanceListPoolTrait;
 use Redaxo\Core\Base\InstancePoolTrait;
 use Redaxo\Core\Core;
@@ -17,53 +16,38 @@ use Redaxo\Core\Util\Formatter;
 use function in_array;
 
 /**
- * Object Oriented Framework: Bildet ein Medium des Medienpools ab.
+ * Bildet ein Medium des Medienpools ab.
  */
-#[AllowDynamicProperties]
-class Media
+final class Media
 {
     use InstanceListPoolTrait;
     use InstancePoolTrait;
 
-    /** @var int */
-    protected $id;
-    /** @var int */
-    protected $category_id;
+    private function __construct(
+        public readonly int $id,
+        public readonly int $categoryId,
+        public readonly string $fileName,
+        public readonly string $originalFileName,
+        public readonly string $type,
+        public readonly int $size,
+        public readonly ?int $width,
+        public readonly ?int $height,
+        public readonly string $title,
+        public readonly int $createDate,
+        public readonly int $updateDate,
+        public readonly string $createUser,
+        public readonly string $updateUser,
+        /** @var array<string, string|int|null> */
+        private readonly array $additionalData,
+    ) {}
 
-    /** @var string */
-    protected $name = '';
-    /** @var string */
-    protected $originalname = '';
-    /** @var string */
-    protected $type = '';
-    /** @var int */
-    protected $size;
-
-    /** @var int|null */
-    protected $width;
-    /** @var int|null */
-    protected $height;
-
-    /** @var string */
-    protected $title = '';
-
-    /** @var int */
-    protected $updatedate;
-    /** @var int */
-    protected $createdate;
-
-    /** @var string */
-    protected $updateuser = '';
-    /** @var string */
-    protected $createuser = '';
-
-    public static function get(string $name): ?static
+    public static function get(string $name): ?self
     {
         if (!$name) {
             return null;
         }
 
-        return static::getInstance($name, static function () use ($name) {
+        return self::getInstance($name, static function () use ($name): ?self {
             $mediaPath = Path::coreCache('mediapool/' . $name . '.media');
 
             $cache = File::getCache($mediaPath, []);
@@ -72,36 +56,37 @@ class Media
                 $cache = File::getCache($mediaPath, []);
             }
 
-            if ($cache) {
-                $aliasMap = [
-                    'filename' => 'name',
-                    'filetype' => 'type',
-                    'filesize' => 'size',
-                ];
-
-                $media = new static();
-                foreach ($cache as $key => $value) {
-                    if (isset($aliasMap[$key])) {
-                        $varName = $aliasMap[$key];
-                    } else {
-                        $varName = $key;
-                    }
-
-                    $media->$varName = match ($varName) {
-                        'id', 'category_id', 'size', 'createdate', 'updatedate' => (int) $value,
-                        'width', 'height' => null === $value ? $value : (int) $value,
-                        default => $value,
-                    };
-                }
-
-                return $media;
+            /** @var array<string, string|int|null>|null $cache */
+            if (!$cache) {
+                return null;
             }
 
-            return null;
+            $getAndUnset = static function (string $key) use (&$cache): mixed {
+                $value = $cache[$key];
+                unset($cache[$key]);
+                return $value;
+            };
+
+            /** @psalm-suppress InvalidScalarArgument */
+            return new self(
+                $getAndUnset('id'),
+                $getAndUnset('category_id'),
+                $getAndUnset('filename'),
+                $getAndUnset('originalname'),
+                $getAndUnset('filetype'),
+                $getAndUnset('filesize'),
+                $getAndUnset('width'),
+                $getAndUnset('height'),
+                $getAndUnset('title'),
+                $getAndUnset('createdate'),
+                $getAndUnset('updatedate'),
+                $getAndUnset('createuser'),
+                $getAndUnset('updateuser'),
+                $cache,
+            );
         });
     }
 
-    /** @return static|null */
     public static function forId(int $mediaId): ?self
     {
         $media = Sql::factory();
@@ -110,15 +95,15 @@ class Media
         if (1 != $media->getRows()) {
             return null;
         }
-        return static::get((string) $media->getValue('filename'));
+        return self::get((string) $media->getValue('filename'));
     }
 
-    /** @return list<static> */
+    /** @return list<self> */
     public static function getRootMedia(): array
     {
-        return static::getInstanceList(
+        return self::getInstanceList(
             'root_media',
-            static fn (string $name): ?static => static::get($name),
+            static fn (string $name): ?self => self::get($name),
             static function (): array {
                 $listPath = Path::coreCache('mediapool/0.mlist');
 
@@ -134,163 +119,78 @@ class Media
         );
     }
 
-    /** @return int */
-    public function getId()
+    public function getCategory(): ?MediaCategory
     {
-        return $this->id;
+        return MediaCategory::get($this->categoryId);
     }
 
-    /** @return MediaCategory|null */
-    public function getCategory()
-    {
-        return MediaCategory::get($this->getCategoryId());
-    }
-
-    /** @return int */
-    public function getCategoryId()
-    {
-        return $this->category_id;
-    }
-
-    /** @return string */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /** @return string */
-    public function getFileName()
-    {
-        return $this->name;
-    }
-
-    /** @return string */
-    public function getOriginalFileName()
-    {
-        return $this->originalname;
-    }
-
-    /** @return string */
-    public function getUrl()
+    public function getUrl(): string
     {
         $url = Extension::registerPoint(new ExtensionPoint('MEDIA_URL_REWRITE', '', ['media' => $this]));
-        return $url ?: Url::media($this->getFileName());
+        return $url ?: Url::media($this->fileName);
     }
 
-    /** @return int|null */
-    public function getWidth()
+    public function getFormattedSize(): string
     {
-        return $this->width;
+        return Formatter::bytes($this->size);
     }
 
-    /** @return int|null */
-    public function getHeight()
-    {
-        return $this->height;
-    }
-
-    /** @return string */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /** @return int */
-    public function getSize()
-    {
-        return $this->size;
-    }
-
-    /** @return string */
-    public function getFormattedSize()
-    {
-        return Formatter::bytes($this->getSize());
-    }
-
-    /** @return string */
-    public function getUpdateUser()
-    {
-        return $this->updateuser;
-    }
-
-    /** @return int */
-    public function getUpdateDate()
-    {
-        return $this->updatedate;
-    }
-
-    /** @return string */
-    public function getCreateUser()
-    {
-        return $this->createuser;
-    }
-
-    /** @return int */
-    public function getCreateDate()
-    {
-        return $this->createdate;
-    }
-
-    /** @return bool */
-    public function isImage()
+    public function isImage(): bool
     {
         return self::isImageType($this->getExtension());
     }
 
-    // new functions by vscope
-
-    /** @return string */
-    public function getExtension()
+    public function getExtension(): string
     {
-        return File::extension($this->name);
+        return File::extension($this->fileName);
     }
 
-    /** @return bool */
-    public function fileExists()
+    public function fileExists(): bool
     {
-        return is_file(Path::media($this->getFileName()));
+        return is_file(Path::media($this->fileName));
     }
 
     // allowed image upload types
     /** @return list<string> */
-    public static function getImageTypes()
+    public static function getImageTypes(): array
     {
         return Core::getProperty('image_extensions', []);
     }
 
-    /** @return bool */
-    public static function isImageType($extension)
+    public static function isImageType(string $extension): bool
     {
         return in_array($extension, self::getImageTypes());
     }
 
-    /** @return bool */
-    public function hasValue($value)
+    public function hasValue(string $value): bool
     {
-        return isset($this->$value) || isset($this->{'med_' . $value});
+        return null !== $this->getValue($value);
     }
 
-    /** @return string|int|null */
-    public function getValue($value)
+    public function getValue(string $value): string|int|null
     {
-        // damit alte rex_media felder wie copyright, description
-        // noch funktionieren
-        if (isset($this->$value)) {
-            return $this->$value;
-        }
-        if (isset($this->{'med_' . $value})) {
-            return $this->getValue('med_' . $value);
-        }
+        $value = strtolower($value);
 
-        return null;
+        return match ($value) {
+            'id' => $this->id,
+            'category_id' => $this->categoryId,
+            'name' => $this->fileName,
+            'originalname' => $this->originalFileName,
+            'type' => $this->type,
+            'size' => $this->size,
+            'width' => $this->width,
+            'height' => $this->height,
+            'title' => $this->title,
+            'createdate' => $this->createDate,
+            'updatedate' => $this->updateDate,
+            'createuser' => $this->createUser,
+            'updateuser' => $this->updateUser,
+            default => $this->additionalData[$value] ?? $this->additionalData['med_' . $value] ?? null,
+        };
     }
 
-    /**
-     * Returns whether the element is permitted.
-     *
-     * @return bool
-     */
-    public function isPermitted()
+    /** Returns whether the element is permitted. */
+    public function isPermitted(): bool
     {
         return (bool) Extension::registerPoint(new ExtensionPoint('MEDIA_IS_PERMITTED', true, ['element' => $this]));
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 171 errors
+// total 168 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -411,11 +411,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/MediaManager/Effect/WorkspaceEffect.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaCategoryHandler::editCategory() has parameter $data with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/MediaCategoryHandler.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaHandler::addMedia() has parameter $allowedExtensions with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaPool/MediaHandler.php',
@@ -432,16 +427,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaPool::getAllowedExtensions() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/MediaPool.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaPool::getAllowedExtensions() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/MediaPool.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaPool::getBlockedExtensions() return type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaPool/MediaPool.php',
 ];

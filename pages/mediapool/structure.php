@@ -71,31 +71,23 @@ if ($PERMALL) {
     $breadcrumb[] = $n;
 
     $catId = Request::request('cat_id', 'int');
-    if (0 == $catId || !($OOCat = MediaCategory::get($catId))) {
+    $category = $catId ? MediaCategory::get($catId) : null;
+    if (!$category) {
         $OOCats = MediaCategory::getRootCategories();
         $catId = 0;
-        $catpath = '|';
     } else {
-        $OOCats = $OOCat->getChildren();
-        $paths = explode('|', $OOCat->getPath());
+        $OOCats = $category->getChildren();
 
-        for ($i = 1; $i < count($paths); ++$i) {
-            $iid = current($paths);
-            if ('' != $iid) {
-                $icat = MediaCategory::get((int) $iid);
-
-                $n = [];
-                $n['title'] = escape($icat->getName());
-                $n['href'] = $link . $iid;
-                $breadcrumb[] = $n;
-            }
-            next($paths);
+        foreach ($category->getParentTree() as $parent) {
+            $n = [];
+            $n['title'] = escape($parent->name);
+            $n['href'] = $link . $parent->id;
+            $breadcrumb[] = $n;
         }
         $n = [];
-        $n['title'] = escape($OOCat->getName());
+        $n['title'] = escape($category->name);
         $n['href'] = $link . $catId;
         $breadcrumb[] = $n;
-        $catpath = $OOCat->getPath() . "$catId|";
     }
 
     $fragment = new Fragment();
@@ -137,9 +129,9 @@ if ($PERMALL) {
         ';
     }
 
-    foreach ($OOCats as $OOCat) {
-        $iid = $OOCat->getId();
-        $iname = $OOCat->getName();
+    foreach ($OOCats as $category) {
+        $iid = $category->id;
+        $iname = $category->name;
 
         if ('update_file_cat' == $mediaMethod && $editId == $iid) {
             $table .= '
@@ -156,9 +148,9 @@ if ($PERMALL) {
         } else {
             $table .= '
                 <tr>
-                    <td class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $iid . '" title="' . escape($OOCat->getName()) . '"><i class="rex-icon rex-icon-media-category"></i></a></td>
+                    <td class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $iid . '" title="' . escape($category->name) . '"><i class="rex-icon rex-icon-media-category"></i></a></td>
                     <td class="rex-table-id" data-title="' . I18n::msg('id') . '">' . $iid . '</td>
-                    <td data-title="' . I18n::msg('pool_kat_name') . '"><a class="rex-link-expanded" href="' . $link . $iid . '">' . escape($OOCat->getName()) . '</a></td>
+                    <td data-title="' . I18n::msg('pool_kat_name') . '"><a class="rex-link-expanded" href="' . $link . $iid . '">' . escape($category->name) . '</a></td>
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $iid . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('pool_kat_edit') . '</a></td>
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $iid . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('pool_kat_delete') . '</a></td>
                 </tr>';
@@ -183,7 +175,6 @@ if ($PERMALL) {
                 <fieldset>
                     <input type="hidden" name="media_method" value="' . $method . '" />
                     <input type="hidden" name="cat_id" value="' . $catId . '" />
-                    <input type="hidden" name="catpath" value="' . $catpath . '" />
                     ' . $argFields . '
                     ' . $content . '
                 </fieldset>

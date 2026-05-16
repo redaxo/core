@@ -11,39 +11,28 @@ use function is_array;
 
 use const GLOB_NOSORT;
 
-class MediaPoolCache
+final class MediaPoolCache
 {
-    /**
-     * Löscht die gecachte Medium-Datei.
-     *
-     * @param string $filename Dateiname
-     * @return void
-     */
-    public static function delete($filename)
+    private function __construct() {}
+
+    /** Löscht die gecachte Medium-Datei. */
+    public static function delete(string $filename): void
     {
         File::delete(Path::coreCache('mediapool/' . $filename . '.media'));
         Media::clearInstance($filename);
         self::deleteLists();
     }
 
-    /**
-     * Löscht die gecachten Dateien der Media-Kategorie.
-     *
-     * @param int $categoryId Id der Media-Kategorie
-     * @return void
-     */
-    public static function deleteCategory($categoryId)
+    /** Löscht die gecachten Dateien der Media-Kategorie. */
+    public static function deleteCategory(int $categoryId): void
     {
         File::delete(Path::coreCache('mediapool/' . $categoryId . '.mcat'));
         MediaCategory::clearInstance($categoryId);
         self::deleteCategoryLists();
     }
 
-    /**
-     * Löscht die gecachten Media-Listen.
-     * @return void
-     */
-    public static function deleteLists()
+    /** Löscht die gecachten Media-Listen. */
+    public static function deleteLists(): void
     {
         $cachePath = Path::coreCache('mediapool/');
 
@@ -56,23 +45,15 @@ class MediaPoolCache
         MediaCategory::clearInstanceListPool();
     }
 
-    /**
-     * Löscht die gecachte Liste mit den Media der Kategorie.
-     *
-     * @param int $categoryId Id der Media-Kategorie
-     * @return void
-     */
-    public static function deleteList($categoryId)
+    /** Löscht die gecachte Liste mit den Media der Kategorie. */
+    public static function deleteList(int $categoryId): void
     {
         File::delete(Path::coreCache('mediapool/' . $categoryId . '.mlist'));
         MediaCategory::clearInstanceList([$categoryId, 'media']);
     }
 
-    /**
-     * Löscht die gecachten Media-Kategorien-Listen.
-     * @return void
-     */
-    public static function deleteCategoryLists()
+    /** Löscht die gecachten Media-Kategorien-Listen. */
+    public static function deleteCategoryLists(): void
     {
         $cachePath = Path::coreCache('mediapool/');
 
@@ -85,13 +66,8 @@ class MediaPoolCache
         MediaCategory::clearInstanceListPool();
     }
 
-    /**
-     * Löscht die gecachte Media-Kategorien-Liste.
-     *
-     * @param int $categoryId Id der Media-Kategorie
-     * @return void
-     */
-    public static function deleteCategoryList($categoryId)
+    /** Löscht die gecachte Media-Kategorien-Liste. */
+    public static function deleteCategoryList(int $categoryId): void
     {
         File::delete(Path::coreCache('mediapool/' . $categoryId . '.mclist'));
         MediaCategory::clearInstanceList([$categoryId, 'children']);
@@ -104,7 +80,7 @@ class MediaPoolCache
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function generate($filename)
+    public static function generate(string $filename): bool
     {
         $query = 'SELECT * FROM ' . Core::getTable('media') . ' WHERE filename = ?';
         $sql = Sql::factory();
@@ -134,7 +110,7 @@ class MediaPoolCache
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function generateCategory($categoryId)
+    public static function generateCategory(int $categoryId): bool
     {
         // sanity check
         if ($categoryId < 0) {
@@ -169,7 +145,7 @@ class MediaPoolCache
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function generateList($categoryId)
+    public static function generateList(int $categoryId): bool
     {
         // sanity check
         if ($categoryId < 0) {
@@ -197,7 +173,7 @@ class MediaPoolCache
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function generateCategoryList($categoryId)
+    public static function generateCategoryList(int $categoryId): bool
     {
         // sanity check
         if ($categoryId < 0) {

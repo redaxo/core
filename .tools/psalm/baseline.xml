@@ -1137,45 +1137,12 @@
   </file>
   <file src="pages/mediapool/structure.php">
     <MixedArgument>
-      <code><![CDATA[$OOCat->getPath()]]></code>
       <code><![CDATA[$error]]></code>
       <code><![CDATA[$success]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[array_merge($argUrl, ['cat_id' => ''])]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$OOCat]]></code>
-      <code><![CDATA[$OOCats]]></code>
-      <code><![CDATA[$iid]]></code>
-      <code><![CDATA[$iname]]></code>
-      <code><![CDATA[$n['title']]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getChildren]]></code>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getName]]></code>
-      <code><![CDATA[getName]]></code>
-      <code><![CDATA[getName]]></code>
-      <code><![CDATA[getName]]></code>
-      <code><![CDATA[getPath]]></code>
-      <code><![CDATA[getPath]]></code>
-    </MixedMethodCall>
-    <MixedOperand>
-      <code><![CDATA[$OOCat->getPath()]]></code>
-      <code><![CDATA[$iid]]></code>
-      <code><![CDATA[$iid]]></code>
-      <code><![CDATA[$iid]]></code>
-      <code><![CDATA[$iid]]></code>
-      <code><![CDATA[$iid]]></code>
-      <code><![CDATA[$iid]]></code>
-      <code><![CDATA[escape($OOCat->getName())]]></code>
-      <code><![CDATA[escape($OOCat->getName())]]></code>
-      <code><![CDATA[escape($iname)]]></code>
-    </MixedOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getName]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="pages/mediapool/sync.php">
     <InvalidArgument>
@@ -3181,9 +3148,12 @@
     <MixedArgument>
       <code><![CDATA[$this->params['cache']]]></code>
     </MixedArgument>
-    <PossiblyNullReference>
-      <code><![CDATA[getOriginalFileName]]></code>
-    </PossiblyNullReference>
+    <PossiblyNullArgument>
+      <code><![CDATA[Media::get($this->media->getMediaFilename())->originalFileName]]></code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch>
+      <code><![CDATA[Media::get($this->media->getMediaFilename())->originalFileName]]></code>
+    </PossiblyNullPropertyFetch>
   </file>
   <file src="src/MediaManager/Effect/ImageFormatEffect.php">
     <MixedArgument>
@@ -3411,16 +3381,7 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/MediaPool/Media.php">
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedOperand>
     <MixedReturnStatement>
-      <code><![CDATA[$this->$value]]></code>
       <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
       <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
     </MixedReturnStatement>
@@ -3428,29 +3389,10 @@
       <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
     </NullableReturnStatement>
   </file>
-  <file src="src/MediaPool/MediaCategoryHandler.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$catName]]></code>
-    </ArgumentTypeCoercion>
-    <MixedArgument>
-      <code><![CDATA[$catName]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$catName]]></code>
-    </MixedAssignment>
-    <NoValue>
-      <code><![CDATA[$warning]]></code>
-    </NoValue>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$uses]]></code>
-    </PossiblyInvalidOperand>
-  </file>
   <file src="src/MediaPool/MediaHandler.php">
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$countQueryParams]]></code>
       <code><![CDATA[$queryParams]]></code>
-      <code><![CDATA[escape($allowedExtensions)]]></code>
-      <code><![CDATA[escape(MediaPool::getBlockedExtensions())]]></code>
     </MixedArgumentTypeCoercion>
     <NullOperand>
       <code><![CDATA[escape(File::mimeType($data['file']['path']))]]></code>
@@ -3460,21 +3402,11 @@
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$uses]]></code>
-    </PossiblyInvalidOperand>
   </file>
   <file src="src/MediaPool/MediaPool.php">
     <MixedArgument>
       <code><![CDATA[$args['types']]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$blockedExtension]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$blockedExtension]]></code>
-      <code><![CDATA[$blockedExtension]]></code>
-    </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
       <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
@@ -3772,9 +3704,6 @@
     <PossiblyNullOperand>
       <code><![CDATA[$sql->getValue('type_id')]]></code>
     </PossiblyNullOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getPathAsArray]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/MetaInfo/MetaInfo.php">
     <InvalidArgument>

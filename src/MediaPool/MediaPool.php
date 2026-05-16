@@ -19,13 +19,8 @@ use function strlen;
 
 final class MediaPool
 {
-    /**
-     * Erstellt einen Filename der eindeutig ist für den Medienpool.
-     *
-     * @param string $mediaName Dateiname
-     * @param bool $doSubindexing
-     */
-    public static function filename(string $mediaName, $doSubindexing = true): string
+    /** Erstellt einen Filename der eindeutig ist für den Medienpool. */
+    public static function filename(string $mediaName, bool $doSubindexing = true): string
     {
         // ----- neuer filename und extension holen
         $newMediaName = Str::normalize($mediaName, '_', '.-@');
@@ -64,8 +59,8 @@ final class MediaPool
         return $newMediaName;
     }
 
-    /** @return bool|string */
-    public static function mediaIsInUse(string $filename)
+    /** @return false|string false or warning message */
+    public static function mediaIsInUse(string $filename): string|false
     {
         $sql = Sql::factory();
 
@@ -173,8 +168,7 @@ final class MediaPool
      * Get allowed mediatype extensions given via media widget "types" param.
      *
      * @param array $args widget params
-     *
-     * @return array allowedExtensions
+     * @return list<string> allowed extensions
      */
     public static function getAllowedExtensions(array $args = []): array
     {
@@ -196,7 +190,7 @@ final class MediaPool
     /**
      * Get global blocked mediatype extensions.
      *
-     * @return array blocked mediatype extensions
+     * @return list<string> blocked mediatype extensions
      */
     public static function getBlockedExtensions(): array
     {

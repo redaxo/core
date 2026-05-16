@@ -40,7 +40,7 @@ class HeaderEffect extends AbstractEffect
         $disposition .= '; filename="' . Path::basename($this->media->getMediaFilename()) . '"';
 
         if ('originalname' == $this->params['filename']) {
-            $disposition .= "; filename*=utf-8''" . rawurldecode(Media::get($this->media->getMediaFilename())->getOriginalFileName());
+            $disposition .= "; filename*=utf-8''" . rawurldecode(Media::get($this->media->getMediaFilename())->originalFileName);
         }
 
         if ('noindex' === ($this->params['index'] ?? null)) {

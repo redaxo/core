@@ -63,14 +63,14 @@ class MediaCategorySelect extends Select
     /** @return void */
     protected function addCatOption(MediaCategory $mediacat, int $parentId = 0)
     {
-        if (!$this->checkPerms || Core::requireUser()->getComplexPerm('media')->hasCategoryPerm($mediacat->getId())
+        if (!$this->checkPerms || Core::requireUser()->getComplexPerm('media')->hasCategoryPerm($mediacat->id)
         ) {
-            $mid = $mediacat->getId();
-            $mname = $mediacat->getName();
+            $mid = $mediacat->id;
+            $mname = $mediacat->name;
 
             $this->addOption($mname, $mid, $mid, $parentId);
 
-            $parentId = $mediacat->getId();
+            $parentId = $mediacat->id;
         }
 
         foreach ($mediacat->getChildren() as $child) {

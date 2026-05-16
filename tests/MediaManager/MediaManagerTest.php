@@ -11,6 +11,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\MediaManager\ManagedMedia;
 use Redaxo\Core\MediaManager\MediaManager;
 use Redaxo\Core\MediaPool\Media;
+use ReflectionClass;
 use ReflectionProperty;
 
 /** @internal */
@@ -80,22 +81,10 @@ final class MediaManagerTest extends TestCase
     {
         yield [false, 'non_existing', 'test.jpg', time()];
 
-        $media = new class extends Media {
-            public int $fakeUpdateDate = 0;
-
-            public function __construct() {}
-
-            public function getFileName(): string
-            {
-                return 'test.jpg';
-            }
-
-            public function getUpdateDate(): int
-            {
-                return $this->fakeUpdateDate;
-            }
-        };
-        $media->fakeUpdateDate = time();
+        $reflectionClass = new ReflectionClass(Media::class);
+        $media = $reflectionClass->newInstanceWithoutConstructor();
+        $reflectionClass->getProperty('fileName')->setValue($media, 'test.jpg');
+        $reflectionClass->getProperty('updateDate')->setValue($media, time());
 
         yield [false, 'non_existing', $media];
 
@@ -112,8 +101,9 @@ final class MediaManagerTest extends TestCase
 
             yield [$expectedBuster, $type, 'test.jpg', $fileTimestamp];
 
-            $media = clone $media;
-            $media->fakeUpdateDate = $fileTimestamp;
+            $media = $reflectionClass->newInstanceWithoutConstructor();
+            $reflectionClass->getProperty('fileName')->setValue($media, 'test.jpg');
+            $reflectionClass->getProperty('updateDate')->setValue($media, $fileTimestamp);
 
             yield [$expectedBuster, $type, $media];
         }

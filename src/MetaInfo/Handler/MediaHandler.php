@@ -14,6 +14,7 @@ use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MetaInfo\Form\DefaultType;
 use Redaxo\Core\MetaInfo\MetaInfo;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Type;
 
 use function in_array;
 
@@ -141,10 +142,10 @@ class MediaHandler extends AbstractHandler
         if ('' !== $catId) {
             $s = '';
             if (0 != $catId) {
-                $OOCat = MediaCategory::get($catId);
+                $OOCat = Type::notNull(MediaCategory::get($catId));
 
                 // Alle Metafelder des Pfades sind erlaubt
-                foreach ($OOCat->getPathAsArray() as $pathElement) {
+                foreach ($OOCat->path as $pathElement) {
                     if ('' != $pathElement) {
                         $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
                     }

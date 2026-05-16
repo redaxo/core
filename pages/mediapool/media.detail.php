@@ -56,8 +56,8 @@ if (Request::post('btn_delete', 'string')) {
         }
 
         if ($media) {
-            $filename = $media->getFileName();
-            if ($perm->hasCategoryPerm($media->getCategoryId())) {
+            $filename = $media->fileName;
+            if ($perm->hasCategoryPerm($media->categoryId)) {
                 try {
                     MediaHandler::deleteMedia($filename);
                     $success = I18n::msg('pool_file_deleted');
@@ -321,7 +321,7 @@ if ($TPERM) {
     $catname = I18n::msg('pool_kats_no');
     $Cat = MediaCategory::get($rexFileCategory);
     if ($Cat) {
-        $catname = $Cat->getName();
+        $catname = $Cat->name;
     }
 
     $ftitle .= ' [' . $fileId . ']';
