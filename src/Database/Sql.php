@@ -1870,7 +1870,6 @@ class Sql implements Iterator
         if ($options) {
             // available only with mysqlnd
             if (defined(Mysql::class . '::ATTR_SSL_VERIFY_SERVER_CERT')) {
-                /** @psalm-suppress MixedArrayOffset */
                 $options[Mysql::ATTR_SSL_VERIFY_SERVER_CERT] = $dbConfig->sslVerifyServerCert;
             }
         }
