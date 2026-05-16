@@ -17,8 +17,8 @@ if (version_compare(Core::getVersion(), '5.16', '<')) {
     throw new UserMessageException(sprintf('The REDAXO version "%s" is too old for this update, please update to 5.16 before.', escape(Core::getVersion())));
 }
 
-if (PHP_VERSION_ID < 80400) {
-    throw new UserMessageException(I18n::msg('setup_201', PHP_VERSION, '8.4'));
+if (PHP_VERSION_ID < 80500) {
+    throw new UserMessageException(I18n::msg('setup_201', PHP_VERSION, '8.5'));
 }
 
 $minExtensions = ['ctype', 'fileinfo', 'filter', 'iconv', 'intl', 'mbstring', 'pcre', 'pdo', 'pdo_mysql', 'session', 'tokenizer'];

@@ -4,7 +4,7 @@ includes:
 
 parameters:
     level: 6
-    phpVersion: 80400 # PHP 8.4
+    phpVersion: 80500 # PHP 8.5
     treatPhpDocTypesAsCertain: false
     editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
     featureToggles:

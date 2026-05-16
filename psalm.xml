@@ -27,6 +27,7 @@
     </projectFiles>
     <stubs>
         <file name=".phpstorm.meta.php" />
+        <file name=".tools/psalm/stubs/imagick.stub.php" /> <!-- https://github.com/vimeo/psalm/issues/11794 -->
     </stubs>
     <universalObjectCrates>
         <class name="Redaxo\Core\View\Fragment" />

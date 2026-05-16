@@ -23,7 +23,7 @@ jobs:
         strategy:
             matrix:
                 include:
-                    -   php-version: '8.4'
+                    -   php-version: '8.5'
                         db-image: 'mysql:8.0'
                         composer-flags: '--prefer-lowest'
                     -   php-version: '8.5'
@@ -31,7 +31,7 @@ jobs:
                     -   php-version: '8.6'
                         db-image: 'mysql:latest'
                         composer-flags: '--ignore-platform-req=php'
-                    -   php-version: '8.4'
+                    -   php-version: '8.5'
                         db-image: 'mariadb:10.4'
                     -   php-version: '8.5'
                         db-image: 'mariadb:latest'

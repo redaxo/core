@@ -10,8 +10,6 @@ use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use ReflectionProperty;
 
-use const PHP_VERSION_ID;
-
 /** @internal */
 final class SelectTest extends TestCase
 {
@@ -273,15 +271,13 @@ final class SelectTest extends TestCase
         /** @var PDO $pdo */
         $pdo = $property->getValue()[1];
 
-        $bufferedQueryAttr = PHP_VERSION_ID >= 8_04_00 ? Mysql::ATTR_USE_BUFFERED_QUERY : PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
-
-        self::assertEquals(1, $pdo->getAttribute($bufferedQueryAttr));
+        self::assertEquals(1, $pdo->getAttribute(Mysql::ATTR_USE_BUFFERED_QUERY));
 
         $sql->setQuery('SELECT * FROM ' . self::TABLE, [], [
             Sql::OPT_BUFFERED => false,
         ]);
 
-        self::assertEquals(1, $pdo->getAttribute($bufferedQueryAttr));
+        self::assertEquals(1, $pdo->getAttribute(Mysql::ATTR_USE_BUFFERED_QUERY));
 
         try {
             $sql->setQuery('SELECT ' . self::TABLE, [], [
@@ -290,7 +286,7 @@ final class SelectTest extends TestCase
         } catch (SqlException) {
         }
 
-        self::assertEquals(1, $pdo->getAttribute($bufferedQueryAttr));
+        self::assertEquals(1, $pdo->getAttribute(Mysql::ATTR_USE_BUFFERED_QUERY));
     }
 
     private function insertRow(): void

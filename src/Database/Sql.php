@@ -21,7 +21,6 @@ use Throwable;
 
 use function array_key_exists;
 use function assert;
-use function constant;
 use function defined;
 use function gettype;
 use function in_array;
@@ -366,9 +365,8 @@ class Sql implements Iterator
         $buffered = null;
         $pdo = $this->getConnection();
         if (isset($options[self::OPT_BUFFERED])) {
-            $bufferedAttr = PHP_VERSION_ID >= 8_04_00 ? Mysql::ATTR_USE_BUFFERED_QUERY : PDO::MYSQL_ATTR_USE_BUFFERED_QUERY;
-            $buffered = $pdo->getAttribute($bufferedAttr);
-            $pdo->setAttribute($bufferedAttr, $options[self::OPT_BUFFERED]);
+            $buffered = $pdo->getAttribute(Mysql::ATTR_USE_BUFFERED_QUERY);
+            $pdo->setAttribute(Mysql::ATTR_USE_BUFFERED_QUERY, $options[self::OPT_BUFFERED]);
         }
 
         try {
@@ -394,7 +392,7 @@ class Sql implements Iterator
             throw new SqlException('Error while executing statement "' . $this->query . '" using params ' . json_encode($params) . ': ' . $e->getMessage(), $e, $this);
         } finally {
             if (null !== $buffered) {
-                $pdo->setAttribute(PHP_VERSION_ID >= 8_04_00 ? Mysql::ATTR_USE_BUFFERED_QUERY : PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $buffered);
+                $pdo->setAttribute(Mysql::ATTR_USE_BUFFERED_QUERY, $buffered);
             }
 
             if ($this->debug) {
@@ -1854,28 +1852,25 @@ class Sql implements Iterator
     public static function createSslOptions(Configuration $dbConfig): array
     {
         $options = [];
-        $mysqlClass = PHP_VERSION_ID >= 8_04_00;
 
         if ($dbConfig->sslKey && $dbConfig->sslCert) {
             $options = [
-                $mysqlClass ? Mysql::ATTR_SSL_KEY : PDO::MYSQL_ATTR_SSL_KEY => $dbConfig->sslKey,
-                $mysqlClass ? Mysql::ATTR_SSL_CERT : PDO::MYSQL_ATTR_SSL_CERT => $dbConfig->sslCert,
+                Mysql::ATTR_SSL_KEY => $dbConfig->sslKey,
+                Mysql::ATTR_SSL_CERT => $dbConfig->sslCert,
             ];
         }
         if (true === $dbConfig->sslCa) {
             // ssl_ca = true enables SSL CA verification without specific file
-            $options[$mysqlClass ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA] = true;
+            $options[Mysql::ATTR_SSL_CA] = true;
         } elseif ($dbConfig->sslCa) {
             // ssl_ca = string path to CA file
-            $options[$mysqlClass ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA] = $dbConfig->sslCa;
+            $options[Mysql::ATTR_SSL_CA] = $dbConfig->sslCa;
         }
 
         if ($options) {
             // available only with mysqlnd
-            $constant = $mysqlClass ? Mysql::class . '::ATTR_SSL_VERIFY_SERVER_CERT' : 'PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT';
-            if (defined($constant)) {
-                /** @psalm-suppress MixedArrayOffset */
-                $options[constant($constant)] = $dbConfig->sslVerifyServerCert;
+            if (defined(Mysql::class . '::ATTR_SSL_VERIFY_SERVER_CERT')) {
+                $options[Mysql::ATTR_SSL_VERIFY_SERVER_CERT] = $dbConfig->sslVerifyServerCert;
             }
         }
 
