@@ -3335,6 +3335,7 @@
     <MixedArgument>
       <code><![CDATA[$color]]></code>
       <code><![CDATA[$color]]></code>
+      <code><![CDATA[$imagick->getImageBlob()]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$color]]></code>
