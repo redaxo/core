@@ -8,6 +8,7 @@ use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleCache;
 use Redaxo\Core\Content\ArticleSlice;
 use Redaxo\Core\Content\ArticleSliceAction;
+use Redaxo\Core\Content\Category;
 use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Content\Module;
@@ -143,7 +144,8 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
             // ------------- MODUL IST VORHANDEN
 
             // ----- RECHTE AM MODUL ?
-            if ('delete' != $function && !Template::checkModuleAllowed($templateKey, $ctype, $moduleKey)) {
+            $category = $categoryId > 0 ? Category::get($categoryId) : null;
+            if ('delete' != $function && (!Template::checkModuleAllowed($templateKey, $ctype, $moduleKey) || !$module->isAllowedInCategory($category))) {
                 $globalWarning = I18n::msg('no_rights_to_this_function');
                 $sliceId = 0;
                 $function = '';

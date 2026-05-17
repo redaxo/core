@@ -55,6 +55,18 @@ abstract class Module
         return self::$instances = $instances;
     }
 
+    /**
+     * Whether this module is allowed in the given category.
+     * `null` means root level (articles without a category).
+     * The default implementation allows the module everywhere.
+     *
+     * Override this to restrict to specific categories.
+     */
+    public function isAllowedInCategory(?Category $category): bool
+    {
+        return true;
+    }
+
     /** Render the backend edit form. */
     abstract public function input(ArticleSlice $slice): string;
 
