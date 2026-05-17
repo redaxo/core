@@ -2150,11 +2150,9 @@
     <MixedAssignment>
       <code><![CDATA[$prefix]]></code>
       <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$prefix]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[$this->$val]]></code>
@@ -3413,17 +3411,10 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/MediaPool/Media.php">
-    <MixedArgument>
-      <code><![CDATA[$filename]]></code>
-    </MixedArgument>
     <MixedAssignment>
-      <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
@@ -3439,9 +3430,6 @@
       <code><![CDATA[Core::getProperty('allowed_doctypes', [])]]></code>
       <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
     </NullableReturnStatement>
-    <PossiblyNullArgument>
-      <code><![CDATA[$this->getValue('med_description')]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/MediaPool/MediaCategoryHandler.php">
     <ArgumentTypeCoercion>

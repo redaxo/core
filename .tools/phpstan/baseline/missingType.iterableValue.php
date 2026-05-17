@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 176 errors
+// total 171 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -136,27 +136,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::_toAttributeString() has parameter $attributes with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::getUrl() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::toLink() has parameter $attributes with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::toLink() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::toLink() has parameter $sorroundAttributes with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
 ];
@@ -429,11 +409,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\Effect\\WorkspaceEffect::getParams() return type has no value type specified in iterable type array.',
     'count' => 2,
     'path' => __DIR__ . '/../../../src/MediaManager/Effect/WorkspaceEffect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\Media::toImage() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/Media.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaCategoryHandler::editCategory() has parameter $data with no value type specified in iterable type array.',

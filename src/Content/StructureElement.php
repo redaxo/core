@@ -14,8 +14,6 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Language\Language;
 
 use function in_array;
-use function is_string;
-use function Redaxo\Core\View\escape;
 
 /**
  * Object Oriented Framework: Basisklasse für die Strukturkomponenten.
@@ -411,40 +409,6 @@ abstract class StructureElement
      * @return bool
      */
     abstract public function isPermitted();
-
-    /**
-     * Returns a link to this article.
-     *
-     * @param array $params Parameter für den Link
-     * @param array $attributes Attribute die dem Link hinzugefügt werden sollen. Default: array
-     * @param string $sorroundTag HTML-Tag-Name mit dem der Link umgeben werden soll, z.b. 'li', 'div'. Default: null
-     * @param array $sorroundAttributes Attribute die Umgebenden-Element hinzugefügt werden sollen. Default: array
-     *
-     * @return string
-     */
-    public function toLink(array $params = [], array $attributes = [], $sorroundTag = null, array $sorroundAttributes = [])
-    {
-        $name = $this->getName();
-        $link = '<a href="' . $this->getUrl($params) . '"' . $this->_toAttributeString($attributes) . ' title="' . escape($name) . '">' . escape($name) . '</a>';
-
-        if (null !== $sorroundTag && is_string($sorroundTag)) {
-            $link = '<' . $sorroundTag . $this->_toAttributeString($sorroundAttributes) . '>' . $link . '</' . $sorroundTag . '>';
-        }
-
-        return $link;
-    }
-
-    /** @return string */
-    protected function _toAttributeString(array $attributes)
-    {
-        $attr = '';
-
-        foreach ($attributes as $name => $value) {
-            $attr .= ' ' . $name . '="' . $value . '"';
-        }
-
-        return $attr;
-    }
 
     /**
      * Get an array of all parentCategories.
