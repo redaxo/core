@@ -170,8 +170,11 @@ class ArticleContentEditor extends ArticleContent
         $menuMoveupAction = [];
         $menuMovedownAction = [];
         if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
-            $templateHasModule = !$this->template || Template::checkModuleAllowed($this->template, $this->ctype, $moduleKey);
-            if ($templateHasModule) {
+            $module = Module::get($moduleKey);
+            $category = $this->category_id > 0 ? Category::get($this->category_id) : null;
+            $moduleAllowed = (!$this->template || Template::checkModuleAllowed($this->template, $this->ctype, $moduleKey))
+                && (null === $module || $module->isAllowedInCategory($category));
+            if ($moduleAllowed) {
                 // edit
                 $item = [];
                 $item['label'] = I18n::msg('edit');
@@ -190,7 +193,7 @@ class ArticleContentEditor extends ArticleContent
             $item['attributes']['data-confirm'] = I18n::msg('confirm_delete_block');
             $menuDeleteAction = $item;
 
-            if ($templateHasModule && Core::requireUser()->hasPerm('publishSlice[]')) {
+            if ($moduleAllowed && Core::requireUser()->hasPerm('publishSlice[]')) {
                 // status
                 $item = [];
                 $statusName = $sliceStatus ? 'online' : 'offline';
@@ -201,7 +204,7 @@ class ArticleContentEditor extends ArticleContent
                 $menuStatusAction = $item;
             }
 
-            if ($templateHasModule && Core::requireUser()->hasPerm('moveSlice[]')) {
+            if ($moduleAllowed && Core::requireUser()->hasPerm('moveSlice[]')) {
                 // moveup
                 $item = [];
                 $item['hidden_label'] = I18n::msg('module') . ' article_content_editor.php' . $moduleName . ' ' . I18n::msg('move_slice_up');
@@ -350,11 +353,13 @@ class ArticleContentEditor extends ArticleContent
             $template = $this->template ? Template::get($this->template) : null;
             $contentSections = $template?->getContentSections() ?? [new ContentSection(1, 'Content')];
 
+            $category = $this->category_id > 0 ? Category::get($this->category_id) : null;
+
             $this->MODULESELECT = [];
             foreach ($contentSections as $section) {
                 foreach (Module::getAll() as $module) {
                     if (Core::requireUser()->getComplexPerm('modules')->hasPerm($module->key)) {
-                        if (!$template || $template->isModuleAllowed($section, $module)) {
+                        if ((!$template || $template->isModuleAllowed($section, $module)) && $module->isAllowedInCategory($category)) {
                             $this->MODULESELECT[$section->id][] = ['name' => I18n::translate($module->name), 'key' => $module->key];
                         }
                     }
