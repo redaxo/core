@@ -254,7 +254,7 @@ if ('' == $func) {
     foreach ($cronjobs as $cronjob) {
         $group = Str::normalize($cronjob::class);
 
-        $disabled = array_diff(['frontend', 'backend', 'script'], (array) $cronjob->getEnvironments());
+        $disabled = array_diff(['frontend', 'backend', 'script'], $cronjob->getEnvironments());
         if (count($disabled) > 0) {
             $envJs .= '
                 if ($("#' . $typeFieldId . ' option:selected").val() == "' . escape($group, 'js') . '")

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 72 errors
+// total 70 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -104,16 +104,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\CategoryTreeRenderer::treeItem() has parameter $subHtml with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/Linkmap/CategoryTreeRenderer.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Cronjob\\CronjobManager::setExecutionStart() has parameter $reset with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Cronjob/CronjobManager.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Cronjob\\CronjobManager::setStatus() has parameter $status with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Cronjob/CronjobManager.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Cronjob\\Form\\CronjobForm::addIntervalField() has parameter $attributes with no type specified.',

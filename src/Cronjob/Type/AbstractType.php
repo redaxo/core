@@ -10,16 +10,15 @@ use function in_array;
 abstract class AbstractType
 {
     /** @var array<string, mixed> */
-    private $params = [];
-    /** @var string */
-    private $message = '';
+    private array $params = [];
+    public protected(set) ?string $message = null;
 
     /**
      * @param class-string<AbstractType> $class
      *
      * @return class-string<AbstractType>|AbstractType
      */
-    final public static function factory($class)
+    final public static function factory(string $class): self|string
     {
         if (!class_exists($class)) {
             /** @var class-string<AbstractType> */
@@ -33,108 +32,64 @@ abstract class AbstractType
         return Type::instanceOf(new $class(), self::class);
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function setParam($key, $value)
+    public function setParam(string $key, mixed $value): void
     {
         $this->params[$key] = $value;
     }
 
-    /**
-     * @param array<string, mixed> $params
-     * @return void
-     */
-    public function setParams(array $params)
+    /** @param array<string, mixed> $params */
+    public function setParams(array $params): void
     {
         $this->params = $params;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    public function getParam($key, $default = null)
+    public function getParam(string $key, mixed $default = null): mixed
     {
         return $this->params[$key] ?? $default;
     }
 
     /** @return array<string, mixed> */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function __set($key, $value)
+    public function __set(string $key, mixed $value): void
     {
         $this->setParam($key, $value);
     }
 
-    /**
-     * @param string $key
-     * @return mixed
-     */
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         return $this->getParam($key);
     }
 
-    /**
-     * @param string $message
-     * @return void
-     */
-    public function setMessage($message)
-    {
-        $this->message = $message;
-    }
-
-    /** @return string */
-    public function getMessage()
-    {
-        return $this->message;
-    }
-
-    /** @return bool */
-    public function hasMessage()
-    {
-        return !empty($this->message);
-    }
-
     /** @return bool true on successfull execution, false on error */
-    abstract public function execute();
+    abstract public function execute(): bool;
 
-    /** @return string */
-    public function getTypeName()
+    public function getTypeName(): string
     {
         // returns the name of the cronjob type
-        return $this->getType();
+        return $this::class;
     }
 
-    /** @return string */
-    final public function getType()
+    /**
+     * Returns an array of environments in which the cronjob is available.
+     *
+     * @return list<'frontend'|'backend'|'script'>
+     */
+    public function getEnvironments(): array
     {
-        return static::class;
-    }
-
-    /** @return list<'frontend'|'backend'|'script'> */
-    public function getEnvironments()
-    {
-        // returns an array of environments in which the cronjob is available
         return ['frontend', 'backend', 'script'];
     }
 
-    /** @return list<array<string, mixed>> */
-    public function getParamFields()
+    /**
+     * Returns an array of parameters which are required for the cronjob.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function getParamFields(): array
     {
-        // returns an array of parameters which are required for the cronjob
         return [];
     }
 }

@@ -2233,7 +2233,6 @@
       <code><![CDATA[$this->sql->getValue('name')]]></code>
     </LessSpecificReturnStatement>
     <MixedArgument>
-      <code><![CDATA[$status]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[json_decode($interval, true)]]></code>
     </MixedArgument>

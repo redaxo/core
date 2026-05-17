@@ -17,89 +17,66 @@ use Redaxo\Core\Util\Str;
 use Throwable;
 
 use function defined;
-use function is_object;
 use function Redaxo\Core\View\escape;
 
-class CronjobExecutor
+/** @internal */
+final class CronjobExecutor
 {
     /** @var list<class-string<AbstractType>>|null */
     private static ?array $types = null;
 
-    /** @var string */
-    private $message = '';
-    /** @var AbstractType|class-string<AbstractType>|null */
-    private $cronjob;
-    /** @var string|null */
-    private $name;
-    /** @var int|null */
-    private $id;
+    private ?string $message = null;
 
-    /** @return self */
-    public static function factory()
+    /** @var AbstractType|class-string<AbstractType>|null */
+    private AbstractType|string|null $cronjob = null;
+
+    private ?string $name = null;
+    private ?int $id = null;
+
+    public static function factory(): self
     {
         return new self();
     }
 
-    /**
-     * @param string $message
-     * @return void
-     */
-    public function setMessage($message)
+    public function setMessage(string $message): void
     {
         $this->message = $message;
     }
 
-    /** @return string */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    /** @return bool */
-    public function hasMessage()
+    public function hasMessage(): bool
     {
         return !empty($this->message);
     }
 
-    /**
-     * @api
-     * @param AbstractType|class-string<AbstractType> $cronjob
-     * @return void
-     */
-    public function setCronjob($cronjob)
+    /** @param AbstractType|class-string<AbstractType> $cronjob */
+    public function setCronjob(AbstractType|string $cronjob): void
     {
         $this->cronjob = $cronjob;
     }
 
-    /**
-     * @param AbstractType|class-string<AbstractType> $cronjob
-     * @param string $name
-     * @param array $params
-     * @param bool $log
-     * @param int|null $id
-     * @return bool
-     */
-    public function tryExecute($cronjob, $name = '', $params = [], $log = true, $id = null)
+    /** @param AbstractType|class-string<AbstractType> $cronjob */
+    public function tryExecute(AbstractType|string $cronjob, string $name = '', array $params = [], bool $log = true, ?int $id = null): bool
     {
         if (!$cronjob instanceof AbstractType) {
             $success = false;
-            if (is_object($cronjob)) {
-                $message = 'Invalid cronjob class "' . $cronjob::class . '"';
-            } else {
-                $message = 'Class "' . $cronjob . '" not found';
-            }
+            $message = 'Class "' . $cronjob . '" not found';
         } else {
             $this->name = $name;
             $this->id = $id;
             $this->cronjob = $cronjob;
-            $type = Str::normalize($cronjob->getType());
+            $type = Str::normalize($cronjob::class);
             foreach ($params as $key => $value) {
                 $cronjob->setParam(str_replace($type . '_', '', $key), $value);
             }
 
             try {
                 $success = $cronjob->execute();
-                $message = $cronjob->getMessage();
+                $message = $cronjob->message;
             } catch (Throwable $t) {
                 $success = false;
                 $message = $t->getMessage();
@@ -121,17 +98,12 @@ class CronjobExecutor
         return $success;
     }
 
-    /**
-     * @param bool $success
-     * @param string $message
-     * @return void
-     */
-    public function log($success, $message)
+    public function log(bool $success, string $message): void
     {
         $name = $this->name;
         if (!$name) {
             if ($this->cronjob instanceof AbstractType) {
-                $name = Core::isBackend() ? $this->cronjob->getTypeName() : $this->cronjob->getType();
+                $name = Core::isBackend() ? $this->cronjob->getTypeName() : $this->cronjob::class;
             } else {
                 $name = '[no name]';
             }
@@ -155,7 +127,7 @@ class CronjobExecutor
     }
 
     /** @return list<class-string<AbstractType>> */
-    public static function getTypes()
+    public static function getTypes(): array
     {
         if (null === self::$types) {
             self::$types = [];
@@ -171,19 +143,15 @@ class CronjobExecutor
         return self::$types;
     }
 
-    /**
-     * @param class-string<AbstractType> $class
-     * @return void
-     */
-    public static function registerType($class)
+    /** @param class-string<AbstractType> $class */
+    public static function registerType(string $class): void
     {
         $types = self::getTypes();
         $types[] = $class;
         self::$types = $types;
     }
 
-    /** @return string */
-    public static function getCurrentEnvironment()
+    public static function getCurrentEnvironment(): string
     {
         if (defined('REX_CRONJOB_SCRIPT') && REX_CRONJOB_SCRIPT) {
             return 'script';

@@ -16,9 +16,10 @@ use function is_array;
 use function is_object;
 use function sprintf;
 
-class CronjobManager
+/** @internal */
+final class CronjobManager
 {
-    private Sql $sql;
+    private readonly Sql $sql;
 
     private function __construct(
         private ?CronjobExecutor $executor = null,
@@ -26,14 +27,12 @@ class CronjobManager
         $this->sql = Sql::factory();
     }
 
-    /** @return self */
-    public static function factory(?CronjobExecutor $executor = null)
+    public static function factory(?CronjobExecutor $executor = null): self
     {
         return new self($executor);
     }
 
-    /** @return CronjobExecutor */
-    public function getExecutor()
+    public function getExecutor(): CronjobExecutor
     {
         if (!is_object($this->executor)) {
             $this->executor = CronjobExecutor::factory();
@@ -41,42 +40,27 @@ class CronjobManager
         return $this->executor;
     }
 
-    /**
-     * @api
-     * @return bool
-     */
-    public function hasExecutor()
+    public function hasExecutor(): bool
     {
         return is_object($this->executor);
     }
 
-    /**
-     * @api
-     * @param string $message
-     * @return void
-     */
-    public function setMessage($message)
+    public function setMessage(string $message): void
     {
         $this->getExecutor()->setMessage($message);
     }
 
-    /** @return string */
-    public function getMessage()
+    public function getMessage(): string
     {
         return $this->getExecutor()->getMessage();
     }
 
-    /** @return bool */
-    public function hasMessage()
+    public function hasMessage(): bool
     {
         return $this->getExecutor()->hasMessage();
     }
 
-    /**
-     * @param int $id
-     * @return string
-     */
-    public function getName($id)
+    public function getName(int $id): string
     {
         $this->sql->setQuery('
             SELECT  name
@@ -90,11 +74,7 @@ class CronjobManager
         throw new RuntimeException(sprintf('No cronjob found with id %s.', $id));
     }
 
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function setStatus($id, $status)
+    public function setStatus(int $id, int $status): bool
     {
         $this->sql->setTable(Core::getTable('cronjob'));
         $this->sql->setWhere(['id' => $id]);
@@ -110,11 +90,7 @@ class CronjobManager
         return $success;
     }
 
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function setExecutionStart($id, $reset = false)
+    public function setExecutionStart(int $id, bool $reset = false): bool
     {
         $this->sql->setTable(Core::getTable('cronjob'));
         $this->sql->setWhere(['id' => $id]);
@@ -127,11 +103,7 @@ class CronjobManager
         }
     }
 
-    /**
-     * @param int $id
-     * @return bool
-     */
-    public function delete($id)
+    public function delete(int $id): bool
     {
         $this->sql->setTable(Core::getTable('cronjob'));
         $this->sql->setWhere(['id' => $id]);
@@ -145,11 +117,8 @@ class CronjobManager
         return $success;
     }
 
-    /**
-     * @param callable(string,bool,string):void|null $callback Callback is called after every job execution (params: job name, success status, message)
-     * @return void
-     */
-    public function check(?callable $callback = null)
+    /** @param callable(string,bool,string):void|null $callback Callback is called after every job execution (params: job name, success status, message) */
+    public function check(?callable $callback = null): void
     {
         $env = CronjobExecutor::getCurrentEnvironment();
         $script = 'script' === $env;
@@ -236,12 +205,7 @@ class CronjobManager
         });
     }
 
-    /**
-     * @param int $id
-     * @param bool $log
-     * @return bool
-     */
-    public function tryExecute($id, $log = true)
+    public function tryExecute(int $id, bool $log = true): bool
     {
         $sql = Sql::factory();
         $jobs = $sql->getArray('
@@ -260,13 +224,8 @@ class CronjobManager
         return $this->tryExecuteJob($jobs[0], $log);
     }
 
-    /**
-     * @param array{id: int, interval: string, name: string, parameters: ?string, type: class-string<AbstractType>} $job
-     * @param bool $log
-     * @param bool $resetExecutionStart
-     * @return bool
-     */
-    private function tryExecuteJob(array $job, $log = true, $resetExecutionStart = false)
+    /** @param array{id: int, interval: string, name: string, parameters: ?string, type: class-string<AbstractType>} $job */
+    private function tryExecuteJob(array $job, bool $log = true, bool $resetExecutionStart = false): bool
     {
         $params = $job['parameters'] ? json_decode($job['parameters'], true) : [];
         if (!is_array($params)) {
@@ -283,14 +242,7 @@ class CronjobManager
         return $this->getExecutor()->tryExecute($cronjob, $job['name'], $params, $log, $job['id']);
     }
 
-    /**
-     * @param int $id
-     * @param string $interval
-     * @param bool $resetExecutionStart
-     *
-     * @return bool
-     */
-    public function setNextTime($id, $interval, $resetExecutionStart = false)
+    public function setNextTime(int $id, string $interval, bool $resetExecutionStart = false): bool
     {
         $nexttime = self::calculateNextTime(json_decode($interval, true));
         $nexttime = $nexttime ? Sql::datetime($nexttime) : null;
@@ -309,8 +261,7 @@ class CronjobManager
         return $success;
     }
 
-    /** @return int|null */
-    public function getMinNextTime()
+    public function getMinNextTime(): ?int
     {
         $this->sql->setQuery('
             SELECT  MIN(nexttime) AS nexttime
@@ -324,11 +275,8 @@ class CronjobManager
         return null;
     }
 
-    /**
-     * @param int|null $nexttime
-     * @return true
-     */
-    public function saveNextTime($nexttime = null)
+    /** @return true */
+    public function saveNextTime(?int $nexttime = null): bool
     {
         if (null === $nexttime) {
             $nexttime = $this->getMinNextTime();
@@ -343,8 +291,7 @@ class CronjobManager
         return true;
     }
 
-    /** @return int|null */
-    public static function calculateNextTime(array $interval)
+    public static function calculateNextTime(array $interval): ?int
     {
         if (empty($interval['minutes']) || empty($interval['hours']) || empty($interval['days']) || empty($interval['weekdays']) || empty($interval['months'])) {
             return null;
@@ -353,7 +300,7 @@ class CronjobManager
         $date = new DateTime('+5 min');
         $date->setTime((int) $date->format('G'), (int) floor((int) $date->format('i') / 5) * 5, 0);
 
-        $isValid = static function ($value, $current) {
+        $isValid = static function ($value, $current): bool {
             return 'all' === $value || in_array($current, $value);
         };
 

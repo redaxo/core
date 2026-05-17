@@ -2,15 +2,18 @@
 
 namespace Redaxo\Core\Cronjob\Type;
 
+use Override;
 use Redaxo\Core\HttpClient\Exception\HttpClientException;
 use Redaxo\Core\HttpClient\Request;
 use Redaxo\Core\Translation\I18n;
 
 use function in_array;
 
-class UrlRequestType extends AbstractType
+/** @internal */
+final class UrlRequestType extends AbstractType
 {
-    public function execute()
+    #[Override]
+    public function execute(): bool
     {
         try {
             $socket = Request::factoryUrl($this->getParam('url'));
@@ -34,26 +37,28 @@ class UrlRequestType extends AbstractType
                 $this->setParam('url', $location);
                 // rekursiv erneut ausfuehren
                 $success = $this->execute();
-                if ($this->hasMessage()) {
-                    $message .= ' -> ' . $this->getMessage();
+                if ($this->message) {
+                    $message .= ' -> ' . $this->message;
                 } else {
                     $message .= ' -> Unknown error';
                 }
             }
-            $this->setMessage($message);
+            $this->message = $message;
             return $success;
         } catch (HttpClientException $e) {
-            $this->setMessage($e->getMessage());
+            $this->message = $e->getMessage();
             return false;
         }
     }
 
-    public function getTypeName()
+    #[Override]
+    public function getTypeName(): string
     {
         return I18n::msg('cronjob_type_urlrequest');
     }
 
-    public function getParamFields()
+    #[Override]
+    public function getParamFields(): array
     {
         return [
             [

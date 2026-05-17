@@ -2,14 +2,17 @@
 
 namespace Redaxo\Core\Cronjob\Type;
 
+use Override;
 use Redaxo\Core\Content\ArticleHandler;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Translation\I18n;
 
-class ArticleStatusType extends AbstractType
+/** @internal */
+final class ArticleStatusType extends AbstractType
 {
-    public function execute()
+    #[Override]
+    public function execute(): bool
     {
         $from = [
             'field' => 'art_online_from',
@@ -38,7 +41,7 @@ class ArticleStatusType extends AbstractType
                 $field = $sql->getValue('name') == $from['field'] ? $to['field'] : $from['field'];
                 $msg = 'Metainfo field `' . $field . '` not found. Please add it to the metainfo fields.';
             }
-            $this->setMessage($msg);
+            $this->message = $msg;
             return false;
         }
 
@@ -72,7 +75,7 @@ class ArticleStatusType extends AbstractType
             ArticleHandler::articleStatus((int) $sql->getValue('id'), (int) $sql->getValue('clang_id'), $status);
             $sql->next();
         }
-        $this->setMessage('Updated articles: ' . $rows);
+        $this->message = 'Updated articles: ' . $rows;
 
         if ($this->getParam('reset_date')) {
             $sql->setQuery(
@@ -95,12 +98,14 @@ class ArticleStatusType extends AbstractType
         return true;
     }
 
-    public function getTypeName()
+    #[Override]
+    public function getTypeName(): string
     {
         return I18n::msg('cronjob_article_status');
     }
 
-    public function getParamFields()
+    #[Override]
+    public function getParamFields(): array
     {
         return [
             [

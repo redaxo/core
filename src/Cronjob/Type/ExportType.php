@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Cronjob\Type;
 
 use DateTimeImmutable;
+use Override;
 use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Backup\FileCompressor;
 use Redaxo\Core\Core;
@@ -15,11 +16,13 @@ use Redaxo\Core\Util\Str;
 use const GLOB_NOSORT;
 use const SORT_NUMERIC;
 
-class ExportType extends AbstractType
+/** @internal */
+final class ExportType extends AbstractType
 {
-    public const DEFAULT_FILENAME = '%REX_SERVER_%Y%m%d_%H%M_rex%REX_VERSION';
+    public const string DEFAULT_FILENAME = '%REX_SERVER_%Y%m%d_%H%M_rex%REX_VERSION';
 
-    public function execute()
+    #[Override]
+    public function execute(): bool
     {
         $filename = $this->getParam('filename', self::DEFAULT_FILENAME);
         $filename = str_replace('%REX_SERVER', Str::normalize(Core::getServerName(), '-'), $filename);
@@ -134,30 +137,32 @@ class ExportType extends AbstractType
                 $mail->Body = I18n::rawMsg('backup_mail_body', Core::getServerName());
                 $mail->addAttachment($exportFilePath, $filename);
                 if ($mail->send()) {
-                    $this->setMessage($message . ', mail sent');
+                    $this->message = $message . ', mail sent';
 
                     return true;
                 }
-                $this->setMessage($message . ', mail not sent');
+                $this->message = $message . ', mail not sent';
 
                 return false;
             }
 
-            $this->setMessage($message);
+            $this->message = $message;
 
             return true;
         }
-        $this->setMessage($file . $ext . ' not created');
+        $this->message = $file . $ext . ' not created';
 
         return false;
     }
 
-    public function getTypeName()
+    #[Override]
+    public function getTypeName(): string
     {
         return I18n::msg('backup_database_export');
     }
 
-    public function getParamFields()
+    #[Override]
+    public function getParamFields(): array
     {
         $tables = Backup::getTables();
 

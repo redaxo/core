@@ -2,11 +2,13 @@
 
 namespace Redaxo\Core\Cronjob\Type;
 
+use Override;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Mailer\Mailer;
 use Redaxo\Core\Translation\I18n;
 
-class PurgeMailerArchiveType extends AbstractType
+/** @internal */
+final class PurgeMailerArchiveType extends AbstractType
 {
     private function purgeMailarchive(int $days = 7, string $dir = ''): int
     {
@@ -29,29 +31,32 @@ class PurgeMailerArchiveType extends AbstractType
         return $log;
     }
 
-    public function execute()
+    #[Override]
+    public function execute(): bool
     {
         $logfolder = Mailer::logFolder();
         if ('' != $logfolder && is_dir($logfolder)) {
             $days = (int) $this->getParam('days');
             $purgeLog = self::purgeMailarchive($days, $logfolder);
             if (0 != $purgeLog) {
-                $this->setMessage('Mails deleted: ' . $purgeLog);
+                $this->message = 'Mails deleted: ' . $purgeLog;
                 return true;
             }
-            $this->setMessage('No Mails found to delete');
+            $this->message = 'No Mails found to delete';
             return true;
         }
-        $this->setMessage('Unable to find the phpmailer archive folder');
+        $this->message = 'Unable to find the phpmailer archive folder';
         return false;
     }
 
-    public function getTypeName()
+    #[Override]
+    public function getTypeName(): string
     {
         return I18n::msg('phpmailer_archivecron');
     }
 
-    public function getParamFields()
+    #[Override]
+    public function getParamFields(): array
     {
         return [
             [
