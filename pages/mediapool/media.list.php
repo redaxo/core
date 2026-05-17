@@ -294,11 +294,7 @@ foreach ($items as $media) {
         $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '"></i><span class="sr-only">' . $media->getFileName() . '</span>';
     } else {
         $fileExt = File::extension($media->getFileName());
-        $iconClass = ' rex-mime-default';
-        if (Media::isDocType($fileExt)) {
-            $iconClass = ' rex-mime-' . $fileExt;
-        }
-        $thumbnail = '<i class="rex-mime' . $iconClass . '" title="' . $alt . '" data-extension="' . $fileExt . '"></i><span class="sr-only">' . $media->getFileName() . '</span>';
+        $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '"></i><span class="sr-only">' . $media->getFileName() . '</span>';
 
         if (Media::isImageType(File::extension($media->getFileName()))) {
             $thumbnail = '<img class="thumbnail" src="' . Url::media($media->getFileName()) . '?buster=' . $media->getValue('updatedate') . '" width="80" height="80" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
