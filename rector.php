@@ -329,7 +329,6 @@ return RectorConfig::configure()
         'rex_sql_schema_dumper' => Database\SchemaDumper::class,
         'rex_sql_table' => Database\Table::class,
         'rex_sql_util' => Database\Util::class,
-        'rex_stream' => Util\Stream::class,
         'rex_string' => Util\Str::class,
         'rex_timer' => Util\Timer::class,
         'rex_type' => Util\Type::class,

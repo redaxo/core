@@ -4186,11 +4186,6 @@
       <code><![CDATA[$text]]></code>
     </PossiblyNullOperand>
   </file>
-  <file src="src/Util/Stream.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[ini_get('suhosin.executor.include.whitelist')]]></code>
-    </PossiblyFalseArgument>
-  </file>
   <file src="src/Util/Timer.php">
     <InvalidOperand>
       <code><![CDATA[$duration * $precision]]></code>
