@@ -341,7 +341,7 @@ final class ClassDiscovery
             return $this->cacheData = [];
         }
 
-        // In debug mode, check if PHP files were added/removed since cache was built
+        // In debug mode, check if PHP files were added, removed or modified since the cache was built
         if (Core::isDebugMode()) {
             if (!isset($cache['files_hash']) || $cache['files_hash'] !== $this->getPhpFilesHash()) {
                 return $this->cacheData = [];
@@ -374,13 +374,13 @@ final class ClassDiscovery
     }
 
     /**
-     * Builds a hash of all PHP file paths in the relevant directories.
-     * This is cheap (just directory listing, no file reading) and detects
-     * added/removed files so the cache is invalidated automatically in debug mode.
+     * Builds a hash of all PHP files in the relevant directories, combining each file's path with its mtime.
+     * Cheap — only directory listing and stat calls, no file reading — and detects added, removed or modified
+     * files so the cache is invalidated automatically in debug mode.
      */
     private function getPhpFilesHash(): string
     {
-        $files = [];
+        $entries = [];
 
         foreach ($this->getRelevantPaths() as $path) {
             if (!is_dir($path)) {
@@ -390,14 +390,14 @@ final class ClassDiscovery
             /** @var RecursiveDirectoryIterator $file */
             foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $file) {
                 if ($file->isFile() && 'php' === $file->getExtension()) {
-                    $files[] = $file->getPathname();
+                    $entries[] = $file->getPathname() . ':' . (int) $file->getMTime();
                 }
             }
         }
 
-        sort($files, SORT_STRING);
+        sort($entries, SORT_STRING);
 
-        return hash('xxh128', implode("\n", $files));
+        return hash('xxh128', implode("\n", $entries));
     }
 
     private static function getCacheFile(): string
