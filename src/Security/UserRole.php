@@ -4,6 +4,7 @@ namespace Redaxo\Core\Security;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 
 use function count;
@@ -98,6 +99,8 @@ final class UserRole
         return new self($roles);
     }
 
+    #[AsExtension('COMPLEX_PERM_REMOVE_ITEM')]
+    #[AsExtension('COMPLEX_PERM_REPLACE_ITEM')]
     public static function removeOrReplaceItem(ExtensionPoint $ep): void
     {
         $params = $ep->getParams();

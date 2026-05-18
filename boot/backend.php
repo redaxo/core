@@ -20,7 +20,6 @@ use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
-use Redaxo\Core\MetaInfo\MetaInfo;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
@@ -589,8 +588,6 @@ Core::setProperty('metainfo_metaTables', [
     'clang_' => Core::getTablePrefix() . 'clang',
 ]);
 
-Extension::register('PAGE_CHECKED', MetaInfo::extensionHandler(...));
-Extension::register('BACKUP_BEFORE_DB_IMPORT', MetaInfo::cleanup(...));
 Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
     $subject = $ep->getSubject();
     $metaSidebar = include Path::core('pages/structure/content.metainfo.php');
