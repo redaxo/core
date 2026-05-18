@@ -8,6 +8,7 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
 use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\InvalidArgumentException;
+use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\MetaInfo\Database\Table as MetaInfoTable;
@@ -243,6 +244,7 @@ class MetaInfo
      *
      * @return void
      */
+    #[AsExtension('PAGE_CHECKED')]
     public static function extensionHandler(ExtensionPoint $ep)
     {
         $page = $ep->getSubject();
@@ -270,6 +272,7 @@ class MetaInfo
      * @param ExtensionPoint|array $epOrParams
      * @return void
      */
+    #[AsExtension('BACKUP_BEFORE_DB_IMPORT')]
     public static function cleanup($epOrParams)
     {
         $params = $epOrParams instanceof ExtensionPoint ? $epOrParams->getParams() : $epOrParams;

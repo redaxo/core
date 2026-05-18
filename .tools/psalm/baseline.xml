@@ -196,7 +196,6 @@
     <PossiblyInvalidArgument>
       <code><![CDATA[$REX['PATH_PROVIDER']]]></code>
       <code><![CDATA[$REX['URL_PROVIDER']]]></code>
-      <code><![CDATA[[MediaManager::class, 'init']]]></code>
     </PossiblyInvalidArgument>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$REX['PATH_PROVIDER']]]></code>

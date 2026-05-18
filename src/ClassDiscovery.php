@@ -5,6 +5,7 @@ namespace Redaxo\Core;
 use Composer\Autoload\ClassLoader;
 use Composer\InstalledVersions;
 use FilesystemIterator;
+use Generator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Redaxo\Core\Addon\Addon;
@@ -40,7 +41,7 @@ final class ClassDiscovery
     /** @var list<string>|null */
     private ?array $relevantPaths = null;
 
-    /** @var array<string, array<class-string, array<string, mixed>|object>>|null */
+    /** @var array<string, mixed>|null */
     private ?array $cacheData = null;
 
     private function __construct(
@@ -69,7 +70,9 @@ final class ClassDiscovery
         if (isset($cacheData[$cacheKey])) {
             // Reconstruct attribute instances from cached arrays (JSON roundtrip converts objects to arrays)
             $result = [];
-            foreach ($cacheData[$cacheKey] as $class => $entry) {
+            /** @var array<class-string, array<string, mixed>|object> $cached */
+            $cached = $cacheData[$cacheKey];
+            foreach ($cached as $class => $entry) {
                 /**
                  * @var TAttribute $attribute
                  * @psalm-suppress MixedMethodCall
@@ -83,13 +86,7 @@ final class ClassDiscovery
 
         $result = [];
 
-        foreach ($this->getRelevantClasses() as $class) {
-            if (!class_exists($class)) {
-                continue;
-            }
-
-            $reflection = new ReflectionClass($class);
-
+        foreach ($this->getReflections() as $reflection) {
             if ($reflection->isAbstract()) {
                 continue;
             }
@@ -105,7 +102,75 @@ final class ClassDiscovery
             }
 
             /** @var class-string<TParent> $class */
+            $class = $reflection->getName();
             $result[$class] = $attributes[0]->newInstance();
+        }
+
+        $this->saveCacheData($cacheKey, $result);
+
+        return $result;
+    }
+
+    /**
+     * Discovers all non-abstract methods (static and instance) that carry the given attribute.
+     *
+     * Each entry contains the declaring class, method name, whether the method is static,
+     * and the attribute instance. Methods inherited from parent classes are not duplicated —
+     * only the declaring class is reported.
+     *
+     * @template TAttribute of object
+     * @param class-string<TAttribute> $attributeClass
+     * @return list<array{class: class-string, method: string, isStatic: bool, attribute: TAttribute}>
+     */
+    public function discoverByMethodAttribute(string $attributeClass): array
+    {
+        $cacheKey = 'method:' . $attributeClass;
+        $cacheData = $this->loadCacheData();
+
+        if (isset($cacheData[$cacheKey])) {
+            /** @var list<array{class: class-string, method: string, isStatic: bool, attribute: array<string, mixed>|TAttribute}> $cached */
+            $cached = $cacheData[$cacheKey];
+            $result = [];
+            foreach ($cached as $entry) {
+                /**
+                 * @var TAttribute $attribute
+                 * @psalm-suppress MixedMethodCall
+                 */
+                $attribute = is_array($entry['attribute']) ? new $attributeClass(...$entry['attribute']) : $entry['attribute'];
+                $result[] = [
+                    'class' => $entry['class'],
+                    'method' => $entry['method'],
+                    'isStatic' => $entry['isStatic'],
+                    'attribute' => $attribute,
+                ];
+            }
+            return $result;
+        }
+
+        $result = [];
+
+        foreach ($this->getReflections() as $reflection) {
+            $class = $reflection->getName();
+
+            foreach ($reflection->getMethods() as $method) {
+                if ($method->isAbstract()) {
+                    continue;
+                }
+
+                // Skip methods inherited from a parent — they'll be reported on their declaring class.
+                if ($method->getDeclaringClass()->getName() !== $class) {
+                    continue;
+                }
+
+                foreach ($method->getAttributes($attributeClass) as $attribute) {
+                    $result[] = [
+                        'class' => $class,
+                        'method' => $method->getName(),
+                        'isStatic' => $method->isStatic(),
+                        'attribute' => $attribute->newInstance(),
+                    ];
+                }
+            }
         }
 
         $this->saveCacheData($cacheKey, $result);
@@ -116,6 +181,18 @@ final class ClassDiscovery
     public static function clearCache(): void
     {
         File::delete(self::getCacheFile());
+    }
+
+    /** @return Generator<int, ReflectionClass<object>> */
+    private function getReflections(): Generator
+    {
+        foreach ($this->getRelevantClasses() as $class) {
+            if (!class_exists($class)) {
+                continue;
+            }
+
+            yield new ReflectionClass($class);
+        }
     }
 
     /** @return list<string> */
@@ -250,14 +327,14 @@ final class ClassDiscovery
         return false;
     }
 
-    /** @return array<string, array<class-string, array<string, mixed>|object>> */
+    /** @return array<string, mixed> */
     private function loadCacheData(): array
     {
         if (null !== $this->cacheData) {
             return $this->cacheData;
         }
 
-        /** @var array{addons_hash?: string, files_hash?: string, data?: array<string, array<class-string, array<string, mixed>>>} $cache */
+        /** @var array{addons_hash?: string, files_hash?: string, data?: array<string, mixed>} $cache */
         $cache = File::getCache(self::getCacheFile());
 
         if (!isset($cache['addons_hash']) || $cache['addons_hash'] !== $this->getAddonHash()) {
@@ -274,8 +351,7 @@ final class ClassDiscovery
         return $this->cacheData = $cache['data'] ?? [];
     }
 
-    /** @param array<class-string, array<string, mixed>|object> $data */
-    private function saveCacheData(string $cacheKey, array $data): void
+    private function saveCacheData(string $cacheKey, mixed $data): void
     {
         $this->cacheData = $this->loadCacheData();
         $this->cacheData[$cacheKey] = $data;

@@ -4,6 +4,7 @@ namespace Redaxo\Core\MediaManager;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
@@ -464,6 +465,7 @@ class MediaManager
      * Checks if media is used by this addon.
      * @return list<string> Warning message as array
      */
+    #[AsExtension('MEDIA_IS_IN_USE')]
     public static function mediaIsInUse(ExtensionPoint $ep)
     {
         /** @var list<string> $warning */
@@ -491,12 +493,15 @@ class MediaManager
     }
 
     /** @return void */
+    #[AsExtension('MEDIA_UPDATED')]
+    #[AsExtension('MEDIA_DELETED')]
     public static function mediaUpdated(ExtensionPoint $ep)
     {
         self::deleteCache((string) $ep->getParam('filename'));
     }
 
     /** @return void */
+    #[AsExtension('PACKAGES_INCLUDED', level: Extension::EARLY)]
     public static function init()
     {
         // --- handle image request

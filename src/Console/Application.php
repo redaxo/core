@@ -118,6 +118,8 @@ class Application extends SymfonyApplication
             }
         }
 
+        Extension::registerByAttribute($this->project);
+
         Extension::registerPoint(new ExtensionPoint('PACKAGES_INCLUDED'));
 
         $this->project->boot();

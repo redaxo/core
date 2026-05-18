@@ -19,11 +19,8 @@ use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Language\LanguagePermission;
-use Redaxo\Core\MediaManager\MediaManager;
 use Redaxo\Core\MediaPool\MediaPoolPermission;
-use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\ComplexPermission;
-use Redaxo\Core\Security\UserRole;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\VarDumper;
@@ -104,9 +101,6 @@ ComplexPermission::register('structure', StructurePermission::class);
 ComplexPermission::register('modules', ModulePermission::class);
 ComplexPermission::register('media', MediaPoolPermission::class);
 
-Extension::register('COMPLEX_PERM_REMOVE_ITEM', [UserRole::class, 'removeOrReplaceItem']);
-Extension::register('COMPLEX_PERM_REPLACE_ITEM', [UserRole::class, 'removeOrReplaceItem']);
-
 // ----- SET CLANG
 if (!Core::isSetup()) {
     $clangId = Request::request('clang', 'int', Language::getStartId());
@@ -126,8 +120,6 @@ if ('cli' !== PHP_SAPI && !Core::isSetup()) {
     }
 }
 
-Extension::register('SESSION_REGENERATED', BackendLogin::sessionRegenerated(...));
-
 $nexttime = Core::isSetup() || Core::getConsole() ? 0 : (int) Core::getConfig('cronjob_nexttime', 0);
 if (0 !== $nexttime && time() >= $nexttime) {
     $env = CronjobExecutor::getCurrentEnvironment();
@@ -138,11 +130,6 @@ if (0 !== $nexttime && time() >= $nexttime) {
         }
     });
 }
-
-Extension::register('PACKAGES_INCLUDED', [MediaManager::class, 'init'], Extension::EARLY);
-Extension::register('MEDIA_UPDATED', [MediaManager::class, 'mediaUpdated']);
-Extension::register('MEDIA_DELETED', [MediaManager::class, 'mediaUpdated']);
-Extension::register('MEDIA_IS_IN_USE', [MediaManager::class, 'mediaIsInUse']);
 
 if (!Core::isSetup()) {
     Core::setProperty('start_article_id', Core::getConfig('start_article_id', 1));
