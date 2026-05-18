@@ -3,34 +3,40 @@
 namespace Redaxo\Core\Cronjob\Type;
 
 use DateTimeImmutable;
+use Override;
 use Redaxo\Core\Content\ArticleSliceHistory;
 use Redaxo\Core\Translation\I18n;
 
-class ClearArticleHistoryType extends AbstractType
+/** @internal */
+final class ClearArticleHistoryType extends AbstractType
 {
-    public function execute()
+    #[Override]
+    public function execute(): bool
     {
         $period = $this->getParam('period');
 
         if ('' == $period) {
-            $this->setMessage('Article-History Cleanup failed: `' . $period . '` is not a period');
+            $this->message = 'Article-History Cleanup failed: `' . $period . '` is not a period';
             return false;
         }
 
         $deleteDate = new DateTimeImmutable('- ' . $period);
 
         ArticleSliceHistory::clearHistoryByDate($deleteDate);
-        $this->setMessage('Article-History Cleanup done with `' . $period . '` as period');
+        $this->message = 'Article-History Cleanup done with `' . $period . '` as period';
 
         return true;
     }
 
-    public function getTypeName()
+    #[Override]
+    public function getTypeName(): string
     {
         return I18n::msg('structure_history_cleanup');
     }
 
-    public function getParamFields()
+    /** @return list<array{label: string, name: 'period', type: 'select', options: array{'7 days': string, '14 days': string, '1 month': string, '6 months': string, '1 year': string}}> */
+    #[Override]
+    public function getParamFields(): array
     {
         $fields = [];
 

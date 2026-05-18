@@ -2207,9 +2207,6 @@
     <MixedAssignment>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$cronjob::class]]></code>
-    </MixedOperand>
     <PossiblyInvalidArgument>
       <code><![CDATA[str_replace($type . '_', '', $key)]]></code>
     </PossiblyInvalidArgument>
@@ -2233,7 +2230,6 @@
       <code><![CDATA[$this->sql->getValue('name')]]></code>
     </LessSpecificReturnStatement>
     <MixedArgument>
-      <code><![CDATA[$status]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[json_decode($interval, true)]]></code>
     </MixedArgument>

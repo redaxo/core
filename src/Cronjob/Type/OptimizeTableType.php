@@ -2,14 +2,17 @@
 
 namespace Redaxo\Core\Cronjob\Type;
 
+use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Translation\I18n;
 
-class OptimizeTableType extends AbstractType
+/** @internal */
+final class OptimizeTableType extends AbstractType
 {
-    public function execute()
+    #[Override]
+    public function execute(): bool
     {
         $tables = Sql::factory()->getTables(Core::getTablePrefix());
         if (!empty($tables)) {
@@ -19,14 +22,15 @@ class OptimizeTableType extends AbstractType
                 $sql->setQuery('OPTIMIZE TABLE ' . implode(', ', array_map($sql->escapeIdentifier(...), $tables)));
                 return true;
             } catch (SqlException $e) {
-                $this->setMessage($e->getMessage());
+                $this->message = $e->getMessage();
                 return false;
             }
         }
         return false;
     }
 
-    public function getTypeName()
+    #[Override]
+    public function getTypeName(): string
     {
         return I18n::msg('cronjob_optimize_tables');
     }
