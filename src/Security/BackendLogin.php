@@ -7,6 +7,7 @@ use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
+use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
@@ -378,6 +379,7 @@ class BackendLogin extends Login
      * @internal
      * @param ExtensionPoint<null> $ep
      */
+    #[AsExtension('SESSION_REGENERATED')]
     public static function sessionRegenerated(ExtensionPoint $ep): void
     {
         if (self::class === $ep->getParam('class')) {
