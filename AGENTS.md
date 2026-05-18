@@ -23,9 +23,14 @@ composer baseline        # Regenerate all analysis baselines
 ```bash
 composer phpstan        # PHPStan
 composer psalm          # Psalm
+composer psalm:no-cache # Psalm with a cleared cache (see note below)
 composer taint          # Psalm taint analysis
 composer rector         # Rector
 ```
+
+> **Stale Psalm cache:** If `composer psalm` reports errors that look unrelated to your changes (or that disappear/reappear
+> depending on which files you touched), rerun with `composer psalm:no-cache` before assuming the errors are real or going
+> through git-stash gymnastics to compare against the baseline.
 
 ### Running a Single Test
 ```bash
