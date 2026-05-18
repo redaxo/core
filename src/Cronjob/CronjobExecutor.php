@@ -25,7 +25,7 @@ final class CronjobExecutor
     /** @var list<class-string<AbstractType>>|null */
     private static ?array $types = null;
 
-    private ?string $message = null;
+    public string $message = '';
 
     /** @var AbstractType|class-string<AbstractType>|null */
     private AbstractType|string|null $cronjob = null;
@@ -36,21 +36,6 @@ final class CronjobExecutor
     public static function factory(): self
     {
         return new self();
-    }
-
-    public function setMessage(string $message): void
-    {
-        $this->message = $message;
-    }
-
-    public function getMessage(): string
-    {
-        return $this->message;
-    }
-
-    public function hasMessage(): bool
-    {
-        return !empty($this->message);
     }
 
     /** @param AbstractType|class-string<AbstractType> $cronjob */
@@ -91,7 +76,7 @@ final class CronjobExecutor
             $this->log($success, $message);
         }
 
-        $this->setMessage(escape($message));
+        $this->message = escape($message);
         $this->cronjob = null;
         $this->id = null;
 

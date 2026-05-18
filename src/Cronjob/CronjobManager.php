@@ -45,19 +45,9 @@ final class CronjobManager
         return is_object($this->executor);
     }
 
-    public function setMessage(string $message): void
-    {
-        $this->getExecutor()->setMessage($message);
-    }
-
     public function getMessage(): string
     {
-        return $this->getExecutor()->getMessage();
-    }
-
-    public function hasMessage(): bool
-    {
-        return $this->getExecutor()->hasMessage();
+        return $this->getExecutor()->message;
     }
 
     public function getName(int $id): string
@@ -185,7 +175,7 @@ final class CronjobManager
                 $success = $this->tryExecuteJob($job, true, true);
 
                 if ($callback) {
-                    $callback($job['name'], $success, $this->getMessage());
+                    $callback($job['name'], $success, $this->getExecutor()->message);
                 }
 
                 $job['finished'] = true;
@@ -198,7 +188,7 @@ final class CronjobManager
             $success = $this->tryExecuteJob($jobs[0], true, true);
 
             if ($callback) {
-                $callback($jobs[0]['name'], $success, $this->getMessage());
+                $callback($jobs[0]['name'], $success, $this->getExecutor()->message);
             }
 
             $jobs[0]['finished'] = true;
@@ -216,7 +206,7 @@ final class CronjobManager
         ', [$id, '%|' . CronjobExecutor::getCurrentEnvironment() . '|%']);
 
         if (!$jobs) {
-            $this->getExecutor()->setMessage('Cronjob not found in database');
+            $this->getExecutor()->message = 'Cronjob not found in database';
             $this->saveNextTime();
             return false;
         }

@@ -2207,9 +2207,6 @@
     <MixedAssignment>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$cronjob::class]]></code>
-    </MixedOperand>
     <PossiblyInvalidArgument>
       <code><![CDATA[str_replace($type . '_', '', $key)]]></code>
     </PossiblyInvalidArgument>

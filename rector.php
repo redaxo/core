@@ -528,6 +528,8 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Cronjob\Type\AbstractType::class, 'getMessage', 'message'),
         new MethodCallToPropertyFetch(Cronjob\Type\AbstractType::class, 'hasMessage', 'message'),
+        new MethodCallToPropertyFetch(Cronjob\CronjobExecutor::class, 'getMessage', 'message'),
+        new MethodCallToPropertyFetch(Cronjob\CronjobExecutor::class, 'hasMessage', 'message'),
 
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
@@ -559,6 +561,7 @@ return RectorConfig::configure()
     ])
     ->withConfiguredRule(RedaxoRule\MethodCallToPropertyAssignRector::class, [
         new MethodCallToPropertyAssign(Cronjob\Type\AbstractType::class, 'setMessage', 'message'),
+        new MethodCallToPropertyAssign(Cronjob\CronjobExecutor::class, 'setMessage', 'message'),
 
         new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
 

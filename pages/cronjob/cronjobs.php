@@ -55,7 +55,7 @@ if (in_array($func, ['setstatus', 'delete', 'execute']) && !$csrfToken->isValid(
     $name = $manager->getName($oid);
     $success = $manager->tryExecute($oid);
     $msg = '';
-    if ($manager->hasMessage()) {
+    if ($manager->getMessage()) {
         $msg = '<br /><br />' . I18n::msg('cronjob_log_message') . ': <br />' . nl2br(escape($manager->getMessage()));
     }
     if ($success) {

@@ -101,7 +101,7 @@ class CronjobRunCommand extends AbstractCommand
         $success = $manager->tryExecute($id);
 
         $msg = '';
-        if ($manager->hasMessage()) {
+        if ($manager->getMessage()) {
             $msg = ': ' . $manager->getMessage();
         }
 
