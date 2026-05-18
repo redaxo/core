@@ -2,8 +2,11 @@
 
 namespace Redaxo\Core\ExtensionPoint;
 
+use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Base\FactoryTrait;
+use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Exception\InvalidArgumentException;
+use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Util\Timer;
 
 use function call_user_func;
@@ -11,6 +14,7 @@ use function in_array;
 use function is_array;
 use function is_int;
 use function is_string;
+use function sprintf;
 
 use const E_USER_WARNING;
 
@@ -105,6 +109,39 @@ abstract class Extension
 
         foreach ((array) $extensionPoint as $ep) {
             self::$extensions[$ep][$level][] = [$extension, $params];
+        }
+    }
+
+    /**
+     * Registers all extensions for methods carrying the `#[AsExtension]` attribute,
+     * discovered via {@see ClassDiscovery}.
+     *
+     * Static methods are bound to their class; non-static methods are only allowed
+     * on the project class (where the instance is available).
+     *
+     * @internal
+     */
+    public static function registerByAttribute(AbstractProject $project): void
+    {
+        foreach (ClassDiscovery::getInstance()->discoverByMethodAttribute(AsExtension::class) as $entry) {
+            if ($entry['isStatic']) {
+                $callable = [$entry['class'], $entry['method']];
+            } elseif ($project instanceof $entry['class']) {
+                $callable = [$project, $entry['method']];
+            } else {
+                throw new LogicException(sprintf(
+                    'Non-static #[AsExtension] is only allowed on the project class. Method "%s::%s()" is neither static nor defined on a parent of %s.',
+                    $entry['class'],
+                    $entry['method'],
+                    $project::class,
+                ));
+            }
+
+            self::register(
+                $entry['attribute']->extensionPoint,
+                $callable,
+                $entry['attribute']->level,
+            );
         }
     }
 
