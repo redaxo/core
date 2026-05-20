@@ -408,10 +408,6 @@
             "type": ["null", "object"]
 
         },
-        "allowed_doctypes": {
-            "description": "Allowed doctypes",
-            "type": "array"
-        },
         "image_extensions": {
             "description": "Image extensions",
             "type": "array"

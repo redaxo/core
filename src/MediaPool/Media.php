@@ -251,19 +251,6 @@ class Media
         return is_file(Path::media($this->getFileName()));
     }
 
-    // allowed filetypes
-    /** @return list<string> */
-    public static function getDocTypes()
-    {
-        return Core::getProperty('allowed_doctypes', []);
-    }
-
-    /** @return bool */
-    public static function isDocType($type)
-    {
-        return in_array($type, self::getDocTypes());
-    }
-
     // allowed image upload types
     /** @return list<string> */
     public static function getImageTypes()

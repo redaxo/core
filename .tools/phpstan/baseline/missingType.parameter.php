@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 70 errors
+// total 69 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -212,11 +212,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\Media::hasValue() has parameter $value with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/Media.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\Media::isDocType() has parameter $type with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaPool/Media.php',
 ];

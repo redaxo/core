@@ -3421,13 +3421,10 @@
     </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[$this->$value]]></code>
-      <code><![CDATA[Core::getProperty('allowed_doctypes', [])]]></code>
-      <code><![CDATA[Core::getProperty('allowed_doctypes', [])]]></code>
       <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
       <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
     </MixedReturnStatement>
     <NullableReturnStatement>
-      <code><![CDATA[Core::getProperty('allowed_doctypes', [])]]></code>
       <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
     </NullableReturnStatement>
   </file>
