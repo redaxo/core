@@ -15,8 +15,6 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Util\Formatter;
 
 use function in_array;
-use function Redaxo\Core\View\escape;
-use function sprintf;
 
 /**
  * Object Oriented Framework: Bildet ein Medium des Medienpools ab.
@@ -231,48 +229,6 @@ class Media
     public function getCreateDate()
     {
         return $this->createdate;
-    }
-
-    /** @return string */
-    public function toImage(array $params = [])
-    {
-        if (!$this->isImage()) {
-            return '';
-        }
-
-        $filename = Url::media($this->getFileName());
-        $title = $this->getTitle();
-
-        if (!isset($params['alt'])) {
-            if ('' != $title) {
-                $params['alt'] = escape($title);
-            }
-        }
-
-        if (!isset($params['title'])) {
-            if ('' != $title) {
-                $params['title'] = escape($title);
-            }
-        }
-
-        Extension::registerPoint(new ExtensionPoint('MEDIA_TOIMAGE', '', ['filename' => &$filename, 'params' => &$params]));
-
-        $additional = '';
-        foreach ($params as $name => $value) {
-            $additional .= ' ' . $name . '="' . $value . '"';
-        }
-
-        return sprintf('<img src="%s"%s />', $filename, $additional);
-    }
-
-    /**
-     * @param string $attributes
-     *
-     * @return string
-     */
-    public function toLink($attributes = '')
-    {
-        return sprintf('<a href="%s" title="%s"%s>%s</a>', $this->getUrl(), $this->getValue('med_description'), $attributes, $this->getFileName());
     }
 
     /** @return bool */
