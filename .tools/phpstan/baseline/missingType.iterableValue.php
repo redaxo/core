@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 257 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_cronjob_form_interval_element::getIntervalElements() return type has no value type specified in iterable type array.',

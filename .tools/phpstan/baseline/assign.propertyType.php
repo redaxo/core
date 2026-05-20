@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 6 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Static property rex_media::$instances (array<class-string, array<string, static(rex_media)|null>>) does not accept array<class-string, array<string, rex_media|null>>.',

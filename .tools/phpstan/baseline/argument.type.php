@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 31 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Parameter #2 $createCallback of static method rex_media::getInstance() expects (callable(mixed ...): (static|null))|null, Closure(mixed): (static|null) given.',

@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 121 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_command_cronjob_run::executeSingleJob() has parameter $id with no type specified.',

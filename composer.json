@@ -128,7 +128,7 @@
         "phpstan": "phpstan analyse --ansi -v",
         "phpstan:baseline": [
             "phpstan --generate-baseline=.tools/phpstan/baseline/_loader.php -v",
-            "split-phpstan-baseline .tools/phpstan/baseline/_loader.php",
+            "split-phpstan-baseline .tools/phpstan/baseline/_loader.php --no-error-count",
             "@cs-fixer .tools/phpstan/baseline"
         ],
         "phpstan:no-cache": [
