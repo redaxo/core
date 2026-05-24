@@ -275,10 +275,6 @@
             "description": "Max age for HSTS header (seconds)",
             "type": "integer"
         },
-        "use_gzip": {
-            "description": "Use gzip encoding",
-            "$ref": "#/definitions/bool-or-environment"
-        },
         "use_etag": {
             "description": "Use Etag header",
             "$ref": "#/definitions/bool-or-environment"

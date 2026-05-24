@@ -2856,12 +2856,6 @@
     </MixedAssignment>
   </file>
   <file src="src/Http/Response.php">
-    <FalsableReturnStatement>
-      <code><![CDATA[$content]]></code>
-    </FalsableReturnStatement>
-    <InvalidFalsableReturnType>
-      <code><![CDATA[string]]></code>
-    </InvalidFalsableReturnType>
     <InvalidOperand>
       <code><![CDATA[filesize($file)]]></code>
     </InvalidOperand>
@@ -2880,7 +2874,6 @@
     </PossiblyFalseOperand>
     <PossiblyNullArgument>
       <code><![CDATA[$value]]></code>
-      <code><![CDATA[preg_replace('/\s+/', '', $_SERVER['HTTP_ACCEPT_ENCODING'])]]></code>
       <code><![CDATA[preg_replace('@<!--DYN-->.*<!--/DYN-->@U', '', $content)]]></code>
     </PossiblyNullArgument>
     <PossiblyNullOperand>
