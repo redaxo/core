@@ -238,10 +238,8 @@ final class Response
      * Sends a page to client.
      *
      * The page content can be modified by the Extension Point OUTPUT_FILTER
-     *
-     * @param int|null $lastModified HTTP Last-Modified Timestamp
      */
-    public static function sendPage(string $content, ?int $lastModified = null): void
+    public static function sendPage(string $content): void
     {
         // ----- EXTENSION POINT
         $content = Extension::registerPoint(new ExtensionPoint('OUTPUT_FILTER', $content));
@@ -251,7 +249,7 @@ final class Response
             self::$closeConnection = true;
         }
 
-        self::sendContent($content, null, $lastModified);
+        self::sendContent($content);
 
         // ----- EXTENSION POINT - (read only)
         if ($hasShutdownExtension) {
@@ -281,9 +279,7 @@ final class Response
 
         if (self::HTTP_OK == self::$httpStatus) {
             // ----- Last-Modified
-            if (!self::$sentLastModified
-                && (true === Core::getProperty('use_last_modified') || Core::getProperty('use_last_modified') === $environment)
-            ) {
+            if (!self::$sentLastModified && null !== $lastModified) {
                 self::sendLastModified($lastModified);
             }
 
