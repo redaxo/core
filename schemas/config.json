@@ -283,10 +283,6 @@
             "description": "Use Etag header",
             "$ref": "#/definitions/bool-or-environment"
         },
-        "use_last_modified": {
-            "description": "Use Last-Modified header (not recommended)",
-            "$ref": "#/definitions/bool-or-environment"
-        },
         "start_page": {
             "description": "Default start page for backend",
             "type": "string"
