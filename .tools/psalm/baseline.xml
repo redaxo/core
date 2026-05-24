@@ -2011,31 +2011,6 @@
       <code><![CDATA[getId]]></code>
     </MixedMethodCall>
   </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_article2category.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_article2startarticle.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_article_move.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_category2article.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_category_move.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
   <file src="redaxo/src/addons/structure/lib/article.php">
     <MixedReturnStatement>
       <code><![CDATA[rex_addon::get('structure')->getProperty('article_id', 1)]]></code>
