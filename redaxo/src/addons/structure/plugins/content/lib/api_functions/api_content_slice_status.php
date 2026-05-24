@@ -9,6 +9,11 @@ class rex_api_content_slice_status extends rex_api_function
 {
     public function execute()
     {
+        $user = rex::requireUser();
+        if (!$user->hasPerm('publishSlice[]')) {
+            throw new rex_api_exception('User has no permission to publish slices!');
+        }
+
         $articleId = rex_request('article_id', 'int');
         $clang = rex_request('clang', 'int');
 
@@ -17,10 +22,10 @@ class rex_api_content_slice_status extends rex_api_function
             throw new rex_api_exception('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
         }
 
-        $user = rex::requireUser();
-        $categoryId = $article->getCategoryId();
-
-        if (!$user->hasPerm('publishSlice[]') || !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
+        if (
+            !$user->getComplexPerm('clang')->hasPerm($clang)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+        ) {
             throw new rex_api_exception(rex_i18n::msg('no_rights_to_this_function'));
         }
 
