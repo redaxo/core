@@ -19,7 +19,6 @@ use function ini_get;
 use function is_resource;
 use function sprintf;
 
-use const FORCE_GZIP;
 use const PHP_SAPI;
 
 final class Response
@@ -291,11 +290,6 @@ final class Response
             }
         }
 
-        // ----- GZIP
-        if (true === Core::getProperty('use_gzip') || Core::getProperty('use_gzip') === $environment) {
-            $content = self::sendGzip($content);
-        }
-
         self::cleanOutputBuffers();
 
         header('HTTP/1.1 ' . self::$httpStatus);
@@ -409,38 +403,6 @@ final class Response
             exit;
         }
         self::$sentEtag = true;
-    }
-
-    /**
-     * Encodes the content with GZIP/X-GZIP if the browser supports one of them.
-     *
-     * HTTP_ACCEPT_ENCODING feature
-     */
-    private static function sendGzip(string $content): string
-    {
-        $enc = '';
-        $encodings = [];
-        $supportsGzip = false;
-
-        // Check if it supports gzip
-        if (isset($_SERVER['HTTP_ACCEPT_ENCODING'])) {
-            $encodings = explode(',', strtolower(preg_replace('/\s+/', '', $_SERVER['HTTP_ACCEPT_ENCODING'])));
-        }
-
-        if ((in_array('gzip', $encodings) || in_array('x-gzip', $encodings) || isset($_SERVER['---------------']))
-            && function_exists('ob_gzhandler')
-            && !ini_get('zlib.output_compression')
-        ) {
-            $enc = in_array('x-gzip', $encodings) ? 'x-gzip' : 'gzip';
-            $supportsGzip = true;
-        }
-
-        if ($supportsGzip) {
-            header('Content-Encoding: ' . $enc);
-            $content = gzencode($content, 9, FORCE_GZIP);
-        }
-
-        return $content;
     }
 
     // method inspired by https://github.com/symfony/symfony/blob/master/src/Symfony/Component/HttpFoundation/Cookie.php
