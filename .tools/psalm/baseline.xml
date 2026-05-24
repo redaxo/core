@@ -204,9 +204,6 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="boot/frontend.php">
-    <InvalidScalarArgument>
-      <code><![CDATA[$article->getValue('updatedate')]]></code>
-    </InvalidScalarArgument>
     <MixedAssignment>
       <code><![CDATA[$article]]></code>
       <code><![CDATA[$article]]></code>
