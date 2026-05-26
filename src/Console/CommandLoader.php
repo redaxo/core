@@ -9,7 +9,6 @@ use Redaxo\Core\Console\Command\AddonActivateCommand;
 use Redaxo\Core\Console\Command\AddonDeactivateCommand;
 use Redaxo\Core\Console\Command\AddonInstallCommand;
 use Redaxo\Core\Console\Command\AddonListCommand;
-use Redaxo\Core\Console\Command\AddonRunUpdateScriptCommand;
 use Redaxo\Core\Console\Command\AddonUninstallCommand;
 use Redaxo\Core\Console\Command\AssetsCompileStylesCommand;
 use Redaxo\Core\Console\Command\AssetsSyncCommand;
@@ -67,7 +66,6 @@ final class CommandLoader implements CommandLoaderInterface
                 'addon:deactivate' => AddonDeactivateCommand::class,
                 'addon:list' => AddonListCommand::class,
                 'addon:install' => AddonInstallCommand::class,
-                'addon:run-update-script' => AddonRunUpdateScriptCommand::class,
                 'addon:uninstall' => AddonUninstallCommand::class,
                 'migrate' => MigrateCommand::class,
                 'system:report' => SystemReportCommand::class,
