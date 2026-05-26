@@ -58,8 +58,8 @@ if ('editstatus' === $func && Language::exists($clangId)) {
         if (!$csrfToken->isValid()) {
             throw new UserMessageException(I18n::msg('csrf_token_invalid'));
         }
-        $clang = Language::get($clangId);
-        LanguageHandler::editCLang($clangId, $clang->getCode(), $clang->getName(), $clang->getPriority(), $clangStatus);
+        $clang = Language::require($clangId);
+        LanguageHandler::editCLang($clangId, $clang->code, $clang->name, $clang->priority, $clangStatus);
         $success = I18n::msg('clang_edited');
         $func = '';
         $clangId = 0;

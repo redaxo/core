@@ -14,18 +14,12 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Translation\I18n;
 
-class LanguageHandler
+final class LanguageHandler
 {
-    /**
-     * Erstellt eine Clang.
-     *
-     * @param string $code Clang Code
-     * @param string $name Name
-     * @param int $priority Priority
-     * @param bool $status Status
-     * @return void
-     */
-    public static function addCLang($code, $name, $priority, $status = false)
+    private function __construct() {}
+
+    /** Erstellt eine Clang. */
+    public static function addCLang(string $code, string $name, int $priority, bool $status = false): void
     {
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'clang');
@@ -78,31 +72,22 @@ class LanguageHandler
         Cache::delete();
 
         // ----- EXTENSION POINT
-        $clang = Language::get($id);
+        $clang = Language::require($id);
         Extension::registerPoint(new ExtensionPoint('CLANG_ADDED', '', [
-            'id' => $clang->getId(),
-            'name' => $clang->getName(),
+            'id' => $clang->id,
+            'name' => $clang->name,
             'clang' => $clang,
         ]));
     }
 
-    /**
-     * Ändert eine Clang.
-     *
-     * @param int $id Id der Clang
-     * @param string $code Clang Code
-     * @param string $name Name der Clang
-     * @param int $priority Priority
-     * @param bool|null $status Status
-     * @return bool
-     */
-    public static function editCLang($id, $code, $name, $priority, $status = null)
+    /** Ändert eine Clang. */
+    public static function editCLang(int $id, string $code, string $name, int $priority, ?bool $status = null): bool
     {
         if (!Language::exists($id)) {
             throw new RuntimeException('Language with id "' . $id . '" does not exist');
         }
 
-        $oldPriority = Language::get($id)->getPriority();
+        $oldPriority = Language::require($id)->priority;
 
         $editLang = Sql::factory();
         $editLang->setTable(Core::getTablePrefix() . 'clang');
@@ -121,10 +106,10 @@ class LanguageHandler
         Cache::delete();
 
         // ----- EXTENSION POINT
-        $clang = Language::get($id);
+        $clang = Language::require($id);
         Extension::registerPoint(new ExtensionPoint('CLANG_UPDATED', '', [
-            'id' => $clang->getId(),
-            'name' => $clang->getName(),
+            'id' => $clang->id,
+            'name' => $clang->name,
             'clang' => $clang,
         ]));
 
@@ -134,11 +119,9 @@ class LanguageHandler
     /**
      * Löscht eine Clang.
      *
-     * @param int $id Zu löschende ClangId
      * @throws UserMessageException
-     * @return void
      */
-    public static function deleteCLang($id)
+    public static function deleteCLang(int $id): void
     {
         $startClang = Language::getStartId();
         if ($id == $startClang) {
@@ -149,7 +132,7 @@ class LanguageHandler
             throw new UserMessageException(I18n::msg('clang_error_idcanotbedeleted', $id));
         }
 
-        $clang = Language::get($id);
+        $clang = Language::require($id);
 
         $del = Sql::factory();
         $del->setQuery('delete from ' . Core::getTablePrefix() . 'clang where id=?', [$id]);
@@ -163,18 +146,14 @@ class LanguageHandler
 
         // ----- EXTENSION POINT
         Extension::registerPoint(new ExtensionPoint('CLANG_DELETED', '', [
-            'id' => $clang->getId(),
-            'name' => $clang->getName(),
+            'id' => $clang->id,
+            'name' => $clang->name,
             'clang' => $clang,
         ]));
     }
 
-    /**
-     * Schreibt Spracheigenschaften in die Datei include/clang.php.
-     *
-     * @return void
-     */
-    public static function generateCache()
+    /** Schreibt Spracheigenschaften in die Datei include/clang.php. */
+    public static function generateCache(): void
     {
         $lg = Sql::factory();
         $lg->setQuery('select * from ' . Core::getTablePrefix() . 'clang order by priority');

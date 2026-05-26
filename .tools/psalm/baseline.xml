@@ -1245,10 +1245,6 @@
       <code><![CDATA[Request::request('clang_a', 'int', null)]]></code>
       <code><![CDATA[Request::request('clang_b', 'int', null)]]></code>
     </PossiblyNullArgument>
-    <PossiblyNullReference>
-      <code><![CDATA[getName]]></code>
-      <code><![CDATA[getName]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="pages/structure/content.metainfo.php">
     <InvalidOperand>
@@ -1333,9 +1329,6 @@
       <code><![CDATA[escape($sql->getValue('priority'))]]></code>
       <code><![CDATA[escape($sql->getValue('priority'))]]></code>
     </NullOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getCode]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="pages/system/log.external.php">
     <MixedArgument>
@@ -2872,28 +2865,6 @@
     <PossiblyFalseOperand>
       <code><![CDATA[fgets($this->stream)]]></code>
     </PossiblyFalseOperand>
-  </file>
-  <file src="src/Language/Language.php">
-    <MixedArrayAccess>
-      <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$data['status']]]></code>
-    </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$data]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedPropertyTypeCoercion>
-      <code><![CDATA[self::$clangs]]></code>
-    </MixedPropertyTypeCoercion>
-  </file>
-  <file src="src/Language/LanguageHandler.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getId]]></code>
-      <code><![CDATA[getPriority]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/Log/LogEntry.php">
     <PossiblyFalseArgument>
