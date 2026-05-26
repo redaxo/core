@@ -8,7 +8,6 @@ use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Exception\SqlException;
-use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Dir;
@@ -50,10 +49,9 @@ class AddonManager
     /**
      * Installs a addon.
      *
-     * @param bool $installDump When TRUE, the sql dump will be importet
      * @return bool TRUE on success, FALSE on error
      */
-    public function install(bool $installDump = true): bool
+    public function install(): bool
     {
         try {
             // check package.yml
@@ -92,12 +90,6 @@ class AddonManager
                 if (!$this->addon->isInstalled()) {
                     throw new UserMessageException($this->i18n('no_reason'));
                 }
-            }
-
-            // import install.sql
-            $installSql = $this->addon->getPath(Addon::FILE_INSTALL_SQL);
-            if ($installDump && is_readable($installSql)) {
-                Util::importDump($installSql);
             }
 
             if (!$reinstall) {
@@ -143,10 +135,9 @@ class AddonManager
     /**
      * Uninstalls a addon.
      *
-     * @param bool $installDump When TRUE, the sql dump will be importet
      * @return bool TRUE on success, FALSE on error
      */
-    public function uninstall(bool $installDump = true): bool
+    public function uninstall(): bool
     {
         $isActivated = $this->addon->isAvailable();
         if ($isActivated && !$this->deactivate()) {
@@ -172,12 +163,6 @@ class AddonManager
                 if ($this->addon->isInstalled()) {
                     throw new UserMessageException($this->i18n('no_reason'));
                 }
-            }
-
-            // import uninstall.sql
-            $uninstallSql = $this->addon->getPath(Addon::FILE_UNINSTALL_SQL);
-            if ($installDump && is_readable($uninstallSql)) {
-                Util::importDump($uninstallSql);
             }
 
             // delete assets
