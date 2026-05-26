@@ -35,9 +35,7 @@ final class Addon implements AddonInterface
     public const string FILE_PACKAGE = 'package.yml';
     public const string FILE_BOOT = 'boot.php';
     public const string FILE_INSTALL = 'install.php';
-    public const string FILE_INSTALL_SQL = 'install.sql';
     public const string FILE_UNINSTALL = 'uninstall.php';
-    public const string FILE_UNINSTALL_SQL = 'uninstall.sql';
     public const string FILE_UPDATE = 'update.php';
 
     private const string PROPERTIES_CACHE_FILE = 'packages.cache';
