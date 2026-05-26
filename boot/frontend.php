@@ -194,4 +194,4 @@ if ($artId == Article::getNotfoundArticleId() && $artId != Article::getSiteStart
 }
 
 // ----- inhalt ausgeben
-Response::sendPage($content, $article->getValue('updatedate'));
+Response::sendPage($content);
