@@ -15,19 +15,7 @@ if [ "true" = $(.tools/bin/console config:get setup) ]; then
     exit
 fi
 
-.tools/bin/reinstall-core
-
-packages="
-debug
-test
-"
-
-for package in $packages; do
-    if .tools/bin/console addon:list --addon $package --installed-only --error-when-empty --quiet; then
-        .tools/bin/console addon:install --ansi --re-install $package
-    fi
-done
-
+.tools/bin/console migrate --ansi
 .tools/bin/console cache:clear --ansi
 
 composer update --ansi # update dev-tools

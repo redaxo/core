@@ -17,7 +17,6 @@ $finder = Finder::create()
     ->append([
         __FILE__,
         __DIR__ . '/.tools/bin/console',
-        __DIR__ . '/.tools/bin/reinstall-core',
         __DIR__ . '/.tools/bin/update-root-composer',
         __DIR__ . '/assets_src/vendor_files.php',
         __DIR__ . '/rector.php',
