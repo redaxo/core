@@ -20,6 +20,7 @@ use Redaxo\Core\Console\Command\CronjobRunCommand;
 use Redaxo\Core\Console\Command\DatabaseConnectionOptionsCommand;
 use Redaxo\Core\Console\Command\DatabaseDumpSchemaCommand;
 use Redaxo\Core\Console\Command\DatabaseSetConnectionCommand;
+use Redaxo\Core\Console\Command\MigrateCommand;
 use Redaxo\Core\Console\Command\SetupCheckCommand;
 use Redaxo\Core\Console\Command\SetupRunCommand;
 use Redaxo\Core\Console\Command\SystemReportCommand;
@@ -68,6 +69,7 @@ final class CommandLoader implements CommandLoaderInterface
                 'addon:install' => AddonInstallCommand::class,
                 'addon:run-update-script' => AddonRunUpdateScriptCommand::class,
                 'addon:uninstall' => AddonUninstallCommand::class,
+                'migrate' => MigrateCommand::class,
                 'system:report' => SystemReportCommand::class,
                 'user:create' => UserCreateCommand::class,
                 'user:delete' => UserDeleteCommand::class,

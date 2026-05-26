@@ -38,6 +38,7 @@ vendor/bin/phpunit tests/Database/SqlTest.php
 ```bash
 php .tools/bin/console                      # List all CLI commands (Symfony Console)
 php .tools/bin/console setup:run            # Run setup
+php .tools/bin/console migrate              # Sync DB schema with core + addons after a code update
 docker-compose up -d                        # Start (port 80)
 REDAXO_PORT=8080 docker-compose up -d       # Start on custom port
 ```
@@ -49,7 +50,7 @@ This repository contains the **REDAXO core** under `src/` (`Redaxo\Core\`), back
 
 ### Key concepts
 - **`Core` static class** (`src/Core.php`) — central application registry for paths, config, request, current user.
-- **Addon system** — `Addon` / `AddonManager` (`src/Addon/`). Each addon has a `package.yml` (metadata + page config) plus optional `boot.php` (runtime init) and `install.php` / `update.php` (lifecycle).
+- **Addon system** — `Addon` / `AddonManager` (`src/Addon/`). Each addon has a `package.yml` (metadata + page config) plus optional `boot.php` (runtime init) and `install.php` (schema/data setup — must be idempotent, runs on every `console migrate`).
 - **Extension points** — REDAXO's hook/event system: register listeners with `Extension::register('NAME', ...)`, fire points with `Extension::registerPoint(new ExtensionPoint(...))`. Classes live under `Redaxo\Core\ExtensionPoint`. This is the primary integration mechanism for addons.
 - **Fragments** (`fragments/`) — template snippets rendered via `Fragment` (`src/View/Fragment.php`).
 - **Boot flow** — `AbstractProject` (Symfony `RuntimeInterface`) drives boot via `boot/core.php` → `boot/addons.php` → environment entry (`boot/backend.php`, `boot/frontend.php`, `boot/console.php`).
