@@ -1,8 +1,0 @@
-#!/usr/bin/env php
-<?php
-
-use Redaxo\Core\Filesystem\Path;
-
-require dirname(__DIR__) . '/bootstrap.php';
-
-require Path::core('setup/install.php');
