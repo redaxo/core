@@ -546,10 +546,10 @@ class MediaManager
     {
         if ($file instanceof Media) {
             if (null === $timestamp) {
-                $timestamp = $file->getUpdateDate();
+                $timestamp = $file->updateDate;
             }
 
-            $file = $file->getFileName();
+            $file = $file->fileName;
         }
 
         $params = [

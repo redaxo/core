@@ -9,15 +9,17 @@ use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Translation\I18n;
 
-class MediaCategoryHandler
+final class MediaCategoryHandler
 {
+    private function __construct() {}
+
     /**
      * @param string $name The name of the new category
      * @param MediaCategory|null $parent The category in which the new category should be created, or null for a top/root level category
      *
      * @return string A success message
      */
-    public static function addCategory($name, $parent)
+    public static function addCategory(string $name, ?MediaCategory $parent): string
     {
         $db = Sql::factory();
 
@@ -25,8 +27,8 @@ class MediaCategoryHandler
         $parentId = 0;
         $path = '|';
         if ($parent) {
-            $parentId = $parent->getId();
-            $path = $parent->getPath() . $parent->getId() . '|';
+            $parentId = $parent->id;
+            $path .= implode('|', $parent->path) . '|' . $parent->id . '|';
         }
 
         $db->setTable(Core::getTablePrefix() . 'media_category');
@@ -50,13 +52,10 @@ class MediaCategoryHandler
     }
 
     /**
-     * @param int $categoryId
-     *
      * @throws UserMessageException
-     *
      * @return string A success message
      */
-    public static function deleteCategory($categoryId)
+    public static function deleteCategory(int $categoryId): string
     {
         $gf = Sql::factory();
         $gf->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'media WHERE category_id=?', [$categoryId]);
@@ -81,19 +80,16 @@ class MediaCategoryHandler
         return I18n::msg('pool_kat_deleted');
     }
 
-    /**
-     * @param int $categoryId
-     *
-     * @return bool|string false|warning-Message
-     */
-    public static function categoryIsInUse($categoryId)
+    /** @return false|string false or warning message */
+    public static function categoryIsInUse(int $categoryId): string|false
     {
-        // ----- EXTENSION POINT
-        $warning = Extension::registerPoint(new ExtensionPoint('MEDIA_CATEGORY_IS_IN_USE', [], [
+        /** @var list<string> $warning */
+        $warning = [];
+        $warning = Extension::registerPoint(new ExtensionPoint('MEDIA_CATEGORY_IS_IN_USE', $warning, [
             'id' => $categoryId,
         ]));
 
-        if (!empty($warning)) {
+        if ($warning) {
             return implode('<br />', $warning);
         }
 
@@ -102,11 +98,11 @@ class MediaCategoryHandler
 
     /**
      * @param int $categoryId The id of the category to edit
-     * @param array $data The category data
+     * @param array{name: string} $data The category data
      *
      * @return string A success message
      */
-    public static function editCategory($categoryId, array $data)
+    public static function editCategory(int $categoryId, array $data): string
     {
         $catName = $data['name'];
 

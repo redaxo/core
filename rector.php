@@ -545,6 +545,30 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
 
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getCategoryId', 'categoryId'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getFileName', 'fileName'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getOriginalFileName', 'originalFileName'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getType', 'type'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getSize', 'size'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getWidth', 'width'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getHeight', 'height'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getTitle', 'title'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getCreateDate', 'createDate'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getUpdateDate', 'updateDate'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getCreateUser', 'createUser'),
+        new MethodCallToPropertyFetch(MediaPool\Media::class, 'getUpdateUser', 'updateUser'),
+
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getParentId', 'parentId'),
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getPath', 'path'), // changed from string to array
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getPathAsArray', 'path'),
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getCreateDate', 'createDate'),
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getUpdateDate', 'updateDate'),
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getCreateUser', 'createUser'),
+        new MethodCallToPropertyFetch(MediaPool\MediaCategory::class, 'getUpdateUser', 'updateUser'),
+
         new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getForceRenewAfter', 'forceRenewAfter'),
         new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getBlockAccountAfter', 'blockAccountAfter'),
 

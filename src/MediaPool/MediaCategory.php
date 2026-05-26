@@ -12,40 +12,32 @@ use function in_array;
 use function sprintf;
 
 /**
- * Object Oriented Framework: Bildet eine Kategorie im Medienpool ab.
+ * Bildet eine Kategorie im Medienpool ab.
  */
-class MediaCategory
+final class MediaCategory
 {
     use InstanceListPoolTrait;
     use InstancePoolTrait;
 
-    /** @var int */
-    private $id;
-    /** @var int */
-    private $parentId;
+    private function __construct(
+        public readonly int $id,
+        public readonly string $name,
+        public readonly ?int $parentId,
+        /** @var list<int> */
+        public readonly array $path,
+        public readonly int $createDate,
+        public readonly int $updateDate,
+        public readonly string $createUser,
+        public readonly string $updateUser,
+    ) {}
 
-    /** @var string */
-    private $name = '';
-    /** @var string */
-    private $path = '';
-
-    /** @var int */
-    private $createdate;
-    /** @var int */
-    private $updatedate;
-
-    /** @var string */
-    private $createuser = '';
-    /** @var string */
-    private $updateuser = '';
-
-    public static function get(int $id): ?static
+    public static function get(int $id): ?self
     {
         if (0 >= $id) {
             return null;
         }
 
-        return static::getInstance($id, static function () use ($id) {
+        return self::getInstance($id, static function () use ($id): ?self {
             $catPath = Path::coreCache('mediapool/' . $id . '.mcat');
             $cache = File::getCache($catPath);
 
@@ -54,36 +46,32 @@ class MediaCategory
                 $cache = File::getCache($catPath);
             }
 
-            if ($cache) {
-                $cat = new static();
-
-                $cat->id = (int) $cache['id'];
-                $cat->parentId = (int) $cache['parent_id'];
-
-                $cat->name = (string) $cache['name'];
-                $cat->path = (string) $cache['path'];
-
-                $cat->createdate = (int) $cache['createdate'];
-                $cat->updatedate = (int) $cache['updatedate'];
-
-                $cat->createuser = (string) $cache['createuser'];
-                $cat->updateuser = (string) $cache['updateuser'];
-
-                return $cat;
+            if (!$cache) {
+                return null;
             }
 
-            return null;
+            /** @psalm-suppress MixedArgument */
+            return new self(
+                $cache['id'],
+                $cache['name'],
+                $cache['parent_id'],
+                array_map('intval', explode('|', trim($cache['path'], '|'))),
+                $cache['createdate'],
+                $cache['updatedate'],
+                $cache['createuser'],
+                $cache['updateuser'],
+            );
         });
     }
 
     /** @return list<self> */
-    public static function getRootCategories()
+    public static function getRootCategories(): array
     {
         return self::getChildCategories(0);
     }
 
     /** @return list<self> */
-    protected static function getChildCategories(int $parentId): array
+    private static function getChildCategories(int $parentId): array
     {
         // for $parentId=0 root categories will be returned, so abort here for $parentId<0 only
         if (0 > $parentId) {
@@ -104,123 +92,48 @@ class MediaCategory
         });
     }
 
-    /** @return int */
-    public function getId()
+    public function getParent(): ?self
     {
-        return $this->id;
-    }
-
-    /** @return string */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /** @return string */
-    public function getPath()
-    {
-        return $this->path;
+        return $this->parentId ? self::get($this->parentId) : null;
     }
 
     /**
-     * Returns the path ids of the category as an array.
-     *
-     * @return list<int>
-     */
-    public function getPathAsArray()
-    {
-        $p = array_filter(explode('|', $this->path));
-
-        return array_values(array_map('intval', $p));
-    }
-
-    /** @return string */
-    public function getUpdateUser()
-    {
-        return $this->updateuser;
-    }
-
-    /** @return int */
-    public function getUpdateDate()
-    {
-        return $this->updatedate;
-    }
-
-    /** @return string */
-    public function getCreateUser()
-    {
-        return $this->createuser;
-    }
-
-    /** @return int */
-    public function getCreateDate()
-    {
-        return $this->createdate;
-    }
-
-    /** @return int */
-    public function getParentId()
-    {
-        return $this->parentId;
-    }
-
-    /** @return self|null */
-    public function getParent()
-    {
-        return self::get($this->getParentId());
-    }
-
-    /**
-     * Get an array of all parentCategories.
-     * Returns an array of MediaCategory objects sorted by $priority.
+     * Get an array of all parent categories (root as the first element).
      *
      * @return list<self>
      */
-    public function getParentTree()
+    public function getParentTree(): array
     {
         $tree = [];
-        if ($this->path) {
-            $explode = explode('|', $this->path);
-            foreach ($explode as $var) {
-                if ('' == $var) {
-                    continue;
-                }
+        foreach ($this->path as $id) {
+            $category = self::get($id);
 
-                $category = self::get((int) $var);
-
-                if (!$category) {
-                    throw new LogicException(sprintf('Missing media category with id=%d.', $var));
-                }
-
-                $tree[] = $category;
+            if (!$category) {
+                throw new LogicException(sprintf('Missing media category with id=%d.', $id));
             }
+
+            $tree[] = $category;
         }
+
         return $tree;
     }
 
-    /**
-     * Checks if $anObj is in the parent tree of the object.
-     *
-     * @param self $anObj
-     *
-     * @return bool
-     */
-    public function inParentTree($anObj)
+    /** Checks if $category is in the parent tree of this category. */
+    public function inParentTree(self $category): bool
     {
-        $tree = $this->getParentTree();
-        return in_array($anObj, $tree);
+        return in_array($category->id, $this->path, true);
     }
 
     /** @return list<self> */
-    public function getChildren()
+    public function getChildren(): array
     {
-        return self::getChildCategories($this->getId());
+        return self::getChildCategories($this->id);
     }
 
     /** @return list<Media> */
     public function getMedia(): array
     {
-        $id = $this->getId();
+        $id = $this->id;
 
         return self::getInstanceList([$id, 'media'], Media::get(...), static function () use ($id) {
             $listPath = Path::coreCache('mediapool/' . $id . '.mlist');
@@ -236,9 +149,9 @@ class MediaCategory
         });
     }
 
-    /** @return bool */
-    public function isParent(self $mediaCat)
+    /** Checks if $category is the parent of this category. */
+    public function isParent(self $category): bool
     {
-        return $this->getParentId() == $mediaCat->getId();
+        return $this->parentId === $category->id;
     }
 }

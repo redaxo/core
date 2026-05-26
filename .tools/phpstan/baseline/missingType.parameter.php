@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-// total 69 errors
+// total 66 errors
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
@@ -204,21 +204,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\Effect\\MirrorEffect::imagereflection() has parameter $transparent with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaManager/Effect/MirrorEffect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\Media::getValue() has parameter $value with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/Media.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\Media::hasValue() has parameter $value with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/Media.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\Media::isImageType() has parameter $extension with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/Media.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MetaInfo\\Form\\Input\\AbstractInput::getAttribute() has parameter $default with no type specified.',

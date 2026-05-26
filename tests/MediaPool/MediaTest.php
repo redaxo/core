@@ -13,9 +13,6 @@ final class MediaTest extends TestCase
     {
         $media = $this->createMediaWithoutConstructor();
 
-        /** @psalm-suppress UndefinedPropertyAssignment */
-        $media->med_foo = 'teststring'; // @phpstan-ignore-line
-
         self::assertTrue($media->hasValue('med_foo'));
         self::assertTrue($media->hasValue('foo'));
 
@@ -27,9 +24,6 @@ final class MediaTest extends TestCase
     {
         $media = $this->createMediaWithoutConstructor();
 
-        /** @psalm-suppress UndefinedPropertyAssignment */
-        $media->med_foo = 'teststring'; // @phpstan-ignore-line
-
         self::assertEquals('teststring', $media->getValue('med_foo'));
         self::assertEquals('teststring', $media->getValue('foo'));
 
@@ -39,6 +33,11 @@ final class MediaTest extends TestCase
 
     private function createMediaWithoutConstructor(): Media
     {
-        return new ReflectionClass(Media::class)->newInstanceWithoutConstructor();
+        $reflectionClass = new ReflectionClass(Media::class);
+        $media = $reflectionClass->newInstanceWithoutConstructor();
+
+        $reflectionClass->getProperty('additionalData')->setValue($media, ['med_foo' => 'teststring']);
+
+        return $media;
     }
 }

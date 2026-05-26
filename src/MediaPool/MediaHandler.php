@@ -37,6 +37,8 @@ final class MediaHandler
         'title',
     ];
 
+    private function __construct() {}
+
     /**
      * Holt ein upgeloadetes File und legt es in den Medienpool
      * Dabei wird kontrolliert ob das File schon vorhanden ist und es
@@ -265,7 +267,7 @@ final class MediaHandler
         $return['ok'] = 1;
         $return['msg'] = I18n::msg('pool_file_infos_updated');
 
-        $return['id'] = $media->getId();
+        $return['id'] = $media->id;
         $return['filename'] = $filename;
         $return['type'] = $filetype;
         $return['filetype'] = $filetype;
