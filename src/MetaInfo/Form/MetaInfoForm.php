@@ -193,7 +193,9 @@ class MetaInfoForm extends Form
         if (true === ($result = parent::delete())) {
             // Prios neu setzen, damit keine lücken entstehen
             $this->organizePriorities(1, 2);
-            return $this->tableManager->deleteColumn($columnName);
+            $this->tableManager->deleteColumn($columnName);
+
+            return true;
         }
 
         return $result;
@@ -304,14 +306,14 @@ class MetaInfoForm extends Form
 
             if ($this->isEditMode()) {
                 // Spalte in der Tabelle veraendern
-                $tmRes = $this->tableManager->editColumn($fieldOldName, $fieldName, $fieldDbType, $fieldDbLength, $fieldDefault);
+                $this->tableManager->editColumn($fieldOldName, $fieldName, $fieldDbType, $fieldDbLength, $fieldDefault);
             } else {
                 // Spalte in der Tabelle anlegen
-                $tmRes = $this->tableManager->addColumn($fieldName, $fieldDbType, $fieldDbLength, $fieldDefault);
+                $this->tableManager->addColumn($fieldName, $fieldDbType, $fieldDbLength, $fieldDefault);
             }
             Cache::delete();
 
-            return $tmRes;
+            return true;
         }
 
         return false;

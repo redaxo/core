@@ -35,20 +35,14 @@ if (in_array($func, ['setstatus', 'delete', 'execute']) && !$csrfToken->isValid(
     $name = $manager->getName($oid);
     $status = (Request::request('oldstatus', 'int') + 1) % 2;
     $msg = 1 == $status ? 'status_activate' : 'status_deactivate';
-    if ($manager->setStatus($oid, $status)) {
-        echo Message::success(I18n::msg('cronjob_' . $msg . '_success', $name));
-    } else {
-        echo Message::error(I18n::msg('cronjob_' . $msg . '_error', $name));
-    }
+    $manager->setStatus($oid, $status);
+    echo Message::success(I18n::msg('cronjob_' . $msg . '_success', $name));
     $func = '';
 } elseif ('delete' == $func) {
     $manager = CronjobManager::factory();
     $name = $manager->getName($oid);
-    if ($manager->delete($oid)) {
-        echo Message::success(I18n::msg('cronjob_delete_success', $name));
-    } else {
-        echo Message::error(I18n::msg('cronjob_delete_error', $name));
-    }
+    $manager->delete($oid);
+    echo Message::success(I18n::msg('cronjob_delete_success', $name));
     $func = '';
 } elseif ('execute' == $func) {
     $manager = CronjobManager::factory();

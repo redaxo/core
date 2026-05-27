@@ -247,7 +247,6 @@ setup_500 = Setup: Schritt 5 von 6 / Administrator
 setup_501 = Bitte geben Sie das Administratorlogin ein!
 setup_502 = Bitte geben Sie das Administratorpasswort ein!
 setup_503 = Dieses Login existiert schon.
-setup_504 = Der Administrator konnte nicht angelegt werden.
 setup_505 = Es existiert noch kein User. Bitte legen Sie einen an.
 setup_506 = Administrator anlegen
 setup_507 = Login
@@ -618,7 +617,6 @@ cronjob_no_cronjobs = Keine Cronjobs vorhanden
 cronjob_delete = löschen
 cronjob_really_delete = Cronjob wirklich löschen?
 cronjob_delete_success = Cronjob "{0}" wurde erfolgreich gelöscht!
-cronjob_delete_error = Cronjob "{0}" konnte nicht gelöscht werden!
 
 cronjob_execute = ausführen
 cronjob_execute_success = Cronjob "{0}" wurde erfolgreich ausgeführt!
@@ -671,9 +669,7 @@ cronjob_status_activated = aktiviert
 cronjob_status_deactivated = deaktiviert
 cronjob_status_invalid = fehlerhaft
 cronjob_status_activate_success = Cronjob "{0}" wurde aktiviert!
-cronjob_status_activate_error = Cronjob "{0}" konnte nicht aktiviert werden!
 cronjob_status_deactivate_success = Cronjob "{0}" wurde deaktiviert!
-cronjob_status_deactivate_error = Cronjob "{0}" konnte nicht deaktiviert werden!
 
 cronjob_error_no_name = Der Name darf nicht leer sein!
 cronjob_error_no_environment = Mindestens eine Umgebung muss ausgewählt werden!
