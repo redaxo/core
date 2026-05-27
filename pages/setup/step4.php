@@ -38,12 +38,11 @@ foreach (Setup::checkDbSecurity() as $message) {
     $headline .= Message::warning($message);
 }
 
-$dbchecked = array_fill(0, 6, '');
+$dbchecked = array_fill(0, 4, '');
 switch ($createdb) {
     case Setup::DB_MODE_SETUP_AND_OVERRIDE:
     case Setup::DB_MODE_SETUP_SKIP:
     case Setup::DB_MODE_SETUP_IMPORT_BACKUP:
-    case Setup::DB_MODE_SETUP_UPDATE_FROM_PREVIOUS:
         $dbchecked[$createdb] = ' checked="checked"';
         break;
     default:
@@ -107,12 +106,6 @@ if ($tablesComplete) {
     $n['note'] = I18n::msg('setup_406_note');
     $formElements[] = $n;
 }
-
-$n = [];
-$n['label'] = '<label for="rex-form-createdb-4">' . I18n::msg('setup_414') . '</label>';
-$n['field'] = '<input type="radio" id="rex-form-createdb-4" name="createdb" value="' . Setup::DB_MODE_SETUP_UPDATE_FROM_PREVIOUS . '"' . $dbchecked[4] . ' />';
-$n['note'] = I18n::msg('setup_414_note');
-$formElements[] = $n;
 
 $fragment = new Fragment();
 $fragment->setVar('elements', $formElements, false);

@@ -403,7 +403,6 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
             'normal' => 'Setup database',
             'override' => 'Setup database and overwrite it if it exitsts already (Caution - All existing data will be deleted!)',
             'existing' => 'Database already exists (Continue without database import)',
-            'update' => 'Update database (Update from previous version)',
             'import' => 'Import existing database export',
         ];
 
@@ -430,10 +429,7 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
         );
         $io->success('Using "' . $createdb . '" database setup');
 
-        if ('update' == $createdb) {
-            $error = Importer::updateFromPrevious();
-            $io->success('Database successfully updated');
-        } elseif ('import' == $createdb) {
+        if ('import' == $createdb) {
             $importName = $input->getOption('db-import') ?? $io->askQuestion(new ChoiceQuestion('Please choose a database export', $backups));
             $importName = Type::string($importName);
             if (!in_array($importName, $backups, true)) {

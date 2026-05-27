@@ -19,30 +19,6 @@ use function Redaxo\Core\View\escape;
  */
 class Importer
 {
-    /** @return string */
-    public static function updateFromPrevious()
-    {
-        // ----- vorhandenen seite updaten
-        $errMsg = '';
-
-        $version = Core::getVersion();
-        Core::setProperty('version', Core::getConfig('version'));
-
-        try {
-            include Path::core('setup/update.php');
-        } catch (UserMessageException $e) {
-            $errMsg .= $e->getMessage();
-        }
-
-        Core::setProperty('version', $version);
-
-        if ('' == $errMsg) {
-            $errMsg .= self::reinstallPackages();
-        }
-
-        return $errMsg;
-    }
-
     /**
      * @param string $importName
      *

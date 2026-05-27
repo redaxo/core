@@ -6,8 +6,13 @@ use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
+use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Setup\Setup;
+use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Version;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,6 +35,23 @@ class MigrateCommand extends AbstractCommand implements StandaloneInterface
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = $this->getStyle($input, $output);
+
+        // verify the database server meets the minimum version requirements
+        $sql = Sql::factory();
+        $dbType = $sql->getDbType();
+        $dbVersion = $sql->getDbVersion();
+        $minVersion = Sql::MARIADB === $dbType ? Setup::MIN_MARIADB_VERSION : Setup::MIN_MYSQL_VERSION;
+        if (Version::compare($dbVersion, $minVersion, '<')) {
+            $io->error(I18n::msg('sql_database_required_version', $dbType, $dbVersion, Setup::MIN_MYSQL_VERSION, Setup::MIN_MARIADB_VERSION));
+            return Command::FAILURE;
+        }
+
+        // merge new defaults from the shipped default.config.yml into the user's config.yml
+        $configPath = Path::coreData('config.yml');
+        File::putConfig($configPath, array_merge(
+            File::getConfig(Path::core('setup/default.config.yml')),
+            File::getConfig($configPath),
+        ));
 
         // align registered addons with composer state: drop config of orphaned addons, register new ones
         AddonManager::synchronizeWithFileSystem();
