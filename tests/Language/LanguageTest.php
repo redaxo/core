@@ -16,12 +16,12 @@ final class LanguageTest extends TestCase
 
     public function testGetId(): void
     {
-        self::assertIsInt(Language::getCurrent()->getId());
+        self::assertIsInt(Language::getCurrent()->id);
     }
 
     public function testGetPriority(): void
     {
-        self::assertSame(1, Language::getCurrent()->getPriority());
+        self::assertSame(1, Language::getCurrent()->priority);
     }
 
     public function testIsOnline(): void
@@ -32,9 +32,6 @@ final class LanguageTest extends TestCase
     public function testHasValue(): void
     {
         $clang = $this->createClangWithoutConstructor();
-
-        /** @psalm-suppress UndefinedPropertyAssignment */
-        $clang->clang_foo = 'teststring'; // @phpstan-ignore-line
 
         self::assertTrue($clang->hasValue('foo'));
         self::assertTrue($clang->hasValue('clang_foo'));
@@ -49,9 +46,6 @@ final class LanguageTest extends TestCase
 
         $clang = $this->createClangWithoutConstructor();
 
-        /** @psalm-suppress UndefinedPropertyAssignment */
-        $clang->clang_foo = 'teststring'; // @phpstan-ignore-line
-
         self::assertEquals('teststring', $clang->getValue('foo'));
         self::assertEquals('teststring', $clang->getValue('clang_foo'));
 
@@ -61,6 +55,11 @@ final class LanguageTest extends TestCase
 
     private function createClangWithoutConstructor(): Language
     {
-        return new ReflectionClass(Language::class)->newInstanceWithoutConstructor();
+        $reflectionClass = new ReflectionClass(Language::class);
+        $language = $reflectionClass->newInstanceWithoutConstructor();
+
+        $reflectionClass->getProperty('additionalData')->setValue($language, ['clang_foo' => 'teststring']);
+
+        return $language;
     }
 }

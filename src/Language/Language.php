@@ -2,58 +2,40 @@
 
 namespace Redaxo\Core\Language;
 
-use AllowDynamicProperties;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 
 use function count;
-use function in_array;
+use function sprintf;
 
-#[AllowDynamicProperties]
-class Language
+final class Language
 {
     private static bool $cacheLoaded = false;
     /** @var array<int, self> */
     private static array $clangs = [];
-    /** @var int|null */
-    private static $currentId;
+    private static ?int $currentId = null;
 
-    /** @var int */
-    private $id;
-    /** @var string */
-    private $code;
-    /** @var string */
-    private $name;
-    /** @var int */
-    private $priority;
-    /** @var bool */
-    private $status;
+    private function __construct(
+        public readonly int $id,
+        public readonly string $code,
+        public readonly string $name,
+        public readonly int $priority,
+        private readonly bool $status,
+        /** @var array<string, string|int|null> */
+        private readonly array $additionalData,
+    ) {}
 
-    private function __construct() {}
-
-    /**
-     * Checks if the given clang exists.
-     *
-     * @param int $id Clang id
-     *
-     * @return bool
-     */
-    public static function exists($id)
+    /** Checks if the given clang exists. */
+    public static function exists(int $id): bool
     {
         self::checkCache();
         return isset(self::$clangs[$id]);
     }
 
-    /**
-     * Returns the clang object for the given id.
-     *
-     * @param int $id Clang id
-     *
-     * @return self|null
-     */
-    public static function get($id)
+    /** Returns the clang object for the given id. */
+    public static function get(int $id): ?self
     {
         if (self::exists($id)) {
             return self::$clangs[$id];
@@ -61,12 +43,16 @@ class Language
         return null;
     }
 
-    /**
-     * Returns the clang start id.
-     *
-     * @return int
-     */
-    public static function getStartId()
+    /** Returns the clang object for the given id. */
+    public static function require(int $id): self
+    {
+        if (self::exists($id)) {
+            return self::$clangs[$id];
+        }
+        throw new RuntimeException(sprintf('Required language with ID "%s" does not exist.', $id));
+    }
+
+    public static function getStartId(): int
     {
         foreach (self::getAll() as $id => $clang) {
             return $id;
@@ -74,12 +60,7 @@ class Language
         throw new LogicException('No language found.');
     }
 
-    /**
-     * Returns the current clang object.
-     *
-     * @return self
-     */
-    public static function getCurrent()
+    public static function getCurrent(): self
     {
         $clang = self::get(self::getCurrentId());
 
@@ -90,112 +71,47 @@ class Language
         return $clang;
     }
 
-    /**
-     * Returns the current clang id.
-     *
-     * @return int Current clang id
-     */
-    public static function getCurrentId()
+    public static function getCurrentId(): int
     {
         return self::$currentId ?? self::$currentId = self::getStartId();
     }
 
-    /**
-     * Sets the current clang id.
-     *
-     * @param int $id Clang id
-     * @return void
-     */
-    public static function setCurrentId($id)
+    public static function setCurrentId(int $id): void
     {
         if (!self::exists($id)) {
             throw new RuntimeException('Language id "' . $id . '" doesn\'t exist');
         }
-        self::$currentId = (int) $id;
+        self::$currentId = $id;
     }
 
-    /**
-     * Returns the id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the lang code.
-     *
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * Returns the name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the priority.
-     *
-     * @return int
-     */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
-    /**
-     * Returns the status.
-     *
-     * @return bool
-     */
-    public function isOnline()
+    public function isOnline(): bool
     {
         return $this->status;
     }
 
-    /**
-     * Checks whether the language has the given value.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function hasValue($key)
+    /** Checks whether the language has the given value. */
+    public function hasValue(string $key): bool
     {
-        return isset($this->$key) || isset($this->{'clang_' . $key});
+        return null !== $this->getValue($key);
     }
 
-    /**
-     * Returns the given value.
-     *
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getValue($key)
+    /** Returns the given value. */
+    public function getValue(string $key): string|int|bool|null
     {
-        return $this->$key ?? $this->{'clang_' . $key} ?? null;
+        $key = strtolower($key);
+
+        return match ($key) {
+            'id' => $this->id,
+            'code' => $this->code,
+            'name' => $this->name,
+            'priority' => $this->priority,
+            'status' => $this->status,
+            default => $this->additionalData[$key] ?? $this->additionalData['clang_' . $key] ?? null,
+        };
     }
 
-    /**
-     * Counts the clangs.
-     *
-     * @param bool $ignoreOfflines
-     *
-     * @return int
-     */
-    public static function count($ignoreOfflines = false)
+    /** Counts the clangs. */
+    public static function count(bool $ignoreOfflines = false): int
     {
         self::checkCache();
         return count(self::getAll($ignoreOfflines));
@@ -204,11 +120,9 @@ class Language
     /**
      * Returns an array of all clang ids.
      *
-     * @param bool $ignoreOfflines
-     *
      * @return list<int>
      */
-    public static function getAllIds($ignoreOfflines = false)
+    public static function getAllIds(bool $ignoreOfflines = false): array
     {
         self::checkCache();
         return array_keys(self::getAll($ignoreOfflines));
@@ -217,11 +131,9 @@ class Language
     /**
      * Returns an array of all clangs.
      *
-     * @param bool $ignoreOfflines
-     *
      * @return array<int, self>
      */
-    public static function getAll($ignoreOfflines = false)
+    public static function getAll(bool $ignoreOfflines = false): array
     {
         self::checkCache();
 
@@ -234,11 +146,8 @@ class Language
         });
     }
 
-    /**
-     * Loads the cache if not already loaded.
-     * @return void
-     */
-    private static function checkCache()
+    /** Loads the cache if not already loaded. */
+    private static function checkCache(): void
     {
         if (self::$cacheLoaded) {
             return;
@@ -248,30 +157,35 @@ class Language
         if (!is_file($file)) {
             LanguageHandler::generateCache();
         }
-        foreach (File::getCache($file) as $id => $data) {
-            $clang = new self();
-            $clang->id = (int) $id;
-            $clang->priority = (int) $data['priority'];
-            $clang->status = (bool) $data['status'];
 
-            foreach ($data as $key => $value) {
-                if (in_array($key, ['id', 'priority', 'status'], true)) {
-                    continue;
-                }
+        /**
+         * @var int $id
+         * @var array<string, string|int|null> $cache
+         */
+        foreach (File::getCache($file) as $id => $cache) {
+            $getAndUnset = static function (string $key) use (&$cache): mixed {
+                $value = $cache[$key];
+                unset($cache[$key]);
+                return $value;
+            };
 
-                $clang->$key = $value;
-            }
+            /** @psalm-suppress InvalidScalarArgument */
+            $clang = new self(
+                $getAndUnset('id'),
+                $getAndUnset('code'),
+                $getAndUnset('name'),
+                $getAndUnset('priority'),
+                $getAndUnset('status'),
+                $cache,
+            );
 
             self::$clangs[$id] = $clang;
         }
         self::$cacheLoaded = true;
     }
 
-    /**
-     * Resets the intern cache of this class.
-     * @return void
-     */
-    public static function reset()
+    /** Resets the intern cache of this class. */
+    public static function reset(): void
     {
         self::$cacheLoaded = false;
         self::$clangs = [];

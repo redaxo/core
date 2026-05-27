@@ -192,7 +192,7 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
     $langA->setSize('1');
     $langA->setAttribute('class', 'form-control selectpicker');
     foreach ($clangPerm as $key) {
-        $val = I18n::translate(Language::get($key)->getName());
+        $val = I18n::translate(Language::require($key)->name);
         $langA->addOption($val, $key);
     }
 
@@ -202,7 +202,7 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
     $langB->setSize('1');
     $langB->setAttribute('class', 'form-control selectpicker');
     foreach ($clangPerm as $key) {
-        $val = I18n::translate(Language::get($key)->getName());
+        $val = I18n::translate(Language::require($key)->name);
         $langB->addOption($val, $key);
     }
 

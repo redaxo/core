@@ -544,6 +544,11 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
 
+        new MethodCallToPropertyFetch(Language\Language::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(Language\Language::class, 'getCode', 'code'),
+        new MethodCallToPropertyFetch(Language\Language::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Language\Language::class, 'getPriority', 'priority'),
+
         new MethodCallToPropertyFetch(MediaPool\Media::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(MediaPool\Media::class, 'getCategoryId', 'categoryId'),
         new MethodCallToPropertyFetch(MediaPool\Media::class, 'getFileName', 'fileName'),

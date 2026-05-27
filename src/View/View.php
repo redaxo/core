@@ -141,7 +141,7 @@ class View
                 $icon = $id === $context->getParam('clang') ? '<i class="rex-icon rex-icon-language-active"></i> ' : '<i class="rex-icon rex-icon-language"></i> ';
                 $item = [];
                 $item['href'] = $context->getUrl(['clang' => $id]);
-                $item['title'] = $icon . I18n::translate($clang->getName());
+                $item['title'] = $icon . I18n::translate($clang->name);
                 if ($id === $context->getParam('clang')) {
                     $item['active'] = true;
                 }
@@ -176,10 +176,10 @@ class View
             if (Core::requireUser()->getComplexPerm('clang')->hasPerm($id)) {
                 $icon = $clang->isOnline() ? '<i class="rex-icon rex-icon-online"></i> ' : '<i class="rex-icon rex-icon-offline"></i> ';
                 $item = [];
-                $item['label'] = $icon . I18n::translate($clang->getName());
+                $item['label'] = $icon . I18n::translate($clang->name);
                 $item['url'] = $context->getUrl(['clang' => $id]);
                 $item['attributes']['class'][] = 'btn-clang';
-                $item['attributes']['title'] = I18n::translate($clang->getName());
+                $item['attributes']['title'] = I18n::translate($clang->name);
                 if ($id === $context->getParam('clang')) {
                     $item['attributes']['class'][] = 'active';
                 }
@@ -210,11 +210,11 @@ class View
         foreach (Language::getAll() as $id => $clang) {
             if ($user->getComplexPerm('clang')->hasPerm($id)) {
                 $item = [];
-                $item['title'] = I18n::translate($clang->getName());
+                $item['title'] = I18n::translate($clang->name);
                 $item['href'] = $context->getUrl(['clang' => $id]);
                 if ($id === $context->getParam('clang')) {
                     $item['active'] = true;
-                    $buttonLabel = I18n::translate($clang->getName());
+                    $buttonLabel = I18n::translate($clang->name);
                 }
                 $items[] = $item;
             }

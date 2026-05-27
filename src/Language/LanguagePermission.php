@@ -30,7 +30,7 @@ final class LanguagePermission extends ComplexPermission
     public static function getFieldParams(): array
     {
         $options = array_map(static function (Language $clang) {
-            return $clang->getName();
+            return $clang->name;
         }, Language::getAll());
 
         return [

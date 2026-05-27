@@ -105,7 +105,7 @@ $shutdownFn = static function () {
     $req = $clockwork->getRequest();
 
     if (Core::isFrontend()) {
-        $req->controller = 'article: ' . Article::getCurrentId() . '; clang: ' . Language::getCurrent()->getCode();
+        $req->controller = 'article: ' . Article::getCurrentId() . '; clang: ' . Language::getCurrent()->code;
     } elseif (!Core::getConsole()) {
         $req->controller = 'page: ' . Controller::getCurrentPage();
     }
