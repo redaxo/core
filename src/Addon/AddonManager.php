@@ -7,7 +7,6 @@ use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Dir;
@@ -122,8 +121,6 @@ class AddonManager
             return true;
         } catch (UserMessageException $e) {
             $this->message = $e->getMessage();
-        } catch (SqlException $e) {
-            $this->message = 'SQL error: ' . $e->getMessage();
         }
 
         $this->addon->setProperty('install', false);
@@ -182,8 +179,6 @@ class AddonManager
             return true;
         } catch (UserMessageException $e) {
             $this->message = $e->getMessage();
-        } catch (SqlException $e) {
-            $this->message = 'SQL error: ' . $e->getMessage();
         }
 
         $this->addon->setProperty('install', true);

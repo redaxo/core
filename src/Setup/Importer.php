@@ -7,7 +7,6 @@ use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Path;
@@ -33,8 +32,6 @@ class Importer
             include Path::core('setup/update.php');
         } catch (UserMessageException $e) {
             $errMsg .= $e->getMessage();
-        } catch (SqlException $e) {
-            $errMsg .= 'SQL error: ' . $e->getMessage();
         }
 
         Core::setProperty('version', $version);
@@ -101,8 +98,6 @@ class Importer
             include Path::core('setup/install.php');
         } catch (UserMessageException $e) {
             $errMsg .= $e->getMessage();
-        } catch (SqlException $e) {
-            $errMsg .= 'SQL error: ' . $e->getMessage();
         }
 
         if ('' == $errMsg) {
@@ -122,8 +117,6 @@ class Importer
             include Path::core('setup/install.php');
         } catch (UserMessageException $e) {
             $errMsg .= $e->getMessage();
-        } catch (SqlException $e) {
-            $errMsg .= 'SQL error: ' . $e->getMessage();
         }
 
         self::prepareAddons();

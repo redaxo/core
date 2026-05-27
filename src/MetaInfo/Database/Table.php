@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\MetaInfo\Database;
 
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\InvalidArgumentException;
 
@@ -42,9 +41,8 @@ class Table
      * @param int|null $length
      * @param string|null $default
      * @param bool $nullable
-     * @return bool
      */
-    public function addColumn($name, $type, $length, $default = null, $nullable = true)
+    public function addColumn($name, $type, $length, $default = null, $nullable = true): void
     {
         $sql = Sql::factory($this->DBID);
 
@@ -71,12 +69,7 @@ class Table
             $qry .= ' NOT NULL';
         }
 
-        try {
-            $sql->setQuery($qry);
-            return true;
-        } catch (SqlException) {
-            return false;
-        }
+        $sql->setQuery($qry);
     }
 
     /**
@@ -86,9 +79,8 @@ class Table
      * @param int|null $length
      * @param string|null $default
      * @param bool $nullable
-     * @return bool
      */
-    public function editColumn($oldname, $name, $type, $length, $default = null, $nullable = true)
+    public function editColumn($oldname, $name, $type, $length, $default = null, $nullable = true): void
     {
         $sql = Sql::factory($this->DBID);
 
@@ -115,31 +107,18 @@ class Table
             $qry .= ' NOT NULL';
         }
 
-        try {
-            $sql->setQuery($qry);
-            return true;
-        } catch (SqlException) {
-            return false;
-        }
+        $sql->setQuery($qry);
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function deleteColumn($name)
+    /** @param string $name */
+    public function deleteColumn($name): void
     {
         $sql = Sql::factory($this->DBID);
 
         $qry = 'ALTER TABLE ' . $sql->escapeIdentifier($this->getTableName()) . ' DROP ';
         $qry .= $sql->escapeIdentifier($name);
 
-        try {
-            $sql->setQuery($qry);
-            return true;
-        } catch (SqlException) {
-            return false;
-        }
+        $sql->setQuery($qry);
     }
 
     /**

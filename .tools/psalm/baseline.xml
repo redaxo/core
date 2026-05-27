@@ -1002,9 +1002,6 @@
     <PossiblyInvalidOperand>
       <code><![CDATA[$field->getAttribute('id')]]></code>
     </PossiblyInvalidOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$warning]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$field->getAttribute('id')]]></code>
     </PossiblyNullOperand>

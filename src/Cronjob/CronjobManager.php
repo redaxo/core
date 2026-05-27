@@ -5,7 +5,6 @@ namespace Redaxo\Core\Cronjob;
 use DateTime;
 use Redaxo\Core\Core;
 use Redaxo\Core\Cronjob\Type\AbstractType;
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -64,47 +63,30 @@ final class CronjobManager
         throw new RuntimeException(sprintf('No cronjob found with id %s.', $id));
     }
 
-    public function setStatus(int $id, int $status): bool
+    public function setStatus(int $id, int $status): void
     {
         $this->sql->setTable(Core::getTable('cronjob'));
         $this->sql->setWhere(['id' => $id]);
         $this->sql->setValue('status', $status);
         $this->sql->addGlobalUpdateFields();
-        try {
-            $this->sql->update();
-            $success = true;
-        } catch (SqlException) {
-            $success = false;
-        }
+        $this->sql->update();
         $this->saveNextTime();
-        return $success;
     }
 
-    public function setExecutionStart(int $id, bool $reset = false): bool
+    public function setExecutionStart(int $id, bool $reset = false): void
     {
         $this->sql->setTable(Core::getTable('cronjob'));
         $this->sql->setWhere(['id' => $id]);
         $this->sql->setDateTimeValue('execution_start', $reset ? null : time());
-        try {
-            $this->sql->update();
-            return true;
-        } catch (SqlException) {
-            return false;
-        }
+        $this->sql->update();
     }
 
-    public function delete(int $id): bool
+    public function delete(int $id): void
     {
         $this->sql->setTable(Core::getTable('cronjob'));
         $this->sql->setWhere(['id' => $id]);
-        try {
-            $this->sql->delete();
-            $success = true;
-        } catch (SqlException) {
-            $success = false;
-        }
+        $this->sql->delete();
         $this->saveNextTime();
-        return $success;
     }
 
     /** @param callable(string,bool,string):void|null $callback Callback is called after every job execution (params: job name, success status, message) */
@@ -232,23 +214,17 @@ final class CronjobManager
         return $this->getExecutor()->tryExecute($cronjob, $job['name'], $params, $log, $job['id']);
     }
 
-    public function setNextTime(int $id, string $interval, bool $resetExecutionStart = false): bool
+    public function setNextTime(int $id, string $interval, bool $resetExecutionStart = false): void
     {
         $nexttime = self::calculateNextTime(json_decode($interval, true));
         $nexttime = $nexttime ? Sql::datetime($nexttime) : null;
         $add = $resetExecutionStart ? ', execution_start = NULL' : '';
-        try {
-            $this->sql->setQuery('
-                UPDATE  ' . Core::getTable('cronjob') . '
-                SET     nexttime = ?' . $add . '
-                WHERE   id = ?
-            ', [$nexttime, $id]);
-            $success = true;
-        } catch (SqlException) {
-            $success = false;
-        }
+        $this->sql->setQuery('
+            UPDATE  ' . Core::getTable('cronjob') . '
+            SET     nexttime = ?' . $add . '
+            WHERE   id = ?
+        ', [$nexttime, $id]);
         $this->saveNextTime();
-        return $success;
     }
 
     public function getMinNextTime(): ?int

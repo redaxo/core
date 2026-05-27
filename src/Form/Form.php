@@ -369,17 +369,16 @@ class Form extends AbstractForm
                     $sql->insert();
                 }
             }
-            $saved = true;
-        } catch (SqlException) {
-            $saved = false;
+        } catch (SqlException $e) {
+            $errno = $e->getErrorCode();
+            if (null === $errno || !isset($this->errorMessages[$errno])) {
+                throw $e;
+            }
+            return $errno;
         }
 
         // ----- EXTENSION POINT
-        if ($saved) {
-            return Extension::registerPoint(new ExtensionPoint('REX_FORM_SAVED', $saved, ['form' => $this, 'sql' => $sql]));
-        }
-
-        return $sql->getMysqlErrno();
+        return Extension::registerPoint(new ExtensionPoint('REX_FORM_SAVED', true, ['form' => $this, 'sql' => $sql]));
     }
 
     /** @return bool|int */
@@ -392,16 +391,15 @@ class Form extends AbstractForm
 
         try {
             $deleteSql->delete();
-            $deleted = true;
-        } catch (SqlException) {
-            $deleted = false;
+        } catch (SqlException $e) {
+            $errno = $e->getErrorCode();
+            if (null === $errno || !isset($this->errorMessages[$errno])) {
+                throw $e;
+            }
+            return $errno;
         }
 
         // ----- EXTENSION POINT
-        if ($deleted) {
-            return Extension::registerPoint(new ExtensionPoint('REX_FORM_DELETED', $deleted, ['form' => $this, 'sql' => $deleteSql]));
-        }
-
-        return $deleteSql->getMysqlErrno();
+        return Extension::registerPoint(new ExtensionPoint('REX_FORM_DELETED', true, ['form' => $this, 'sql' => $deleteSql]));
     }
 }

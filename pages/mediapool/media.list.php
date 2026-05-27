@@ -3,7 +3,6 @@
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -64,18 +63,14 @@ if ($hasCategoryPerm && 'updatecat_selectedmedia' == $mediaMethod) {
                 $db->setWhere(['filename' => $fileName]);
                 $db->setValue('category_id', $rexFileCategory);
                 $db->addGlobalUpdateFields();
-                try {
-                    $db->update();
-                    $success = I18n::msg('pool_selectedmedia_moved');
-                    MediaPoolCache::delete($fileName);
+                $db->update();
+                $success = I18n::msg('pool_selectedmedia_moved');
+                MediaPoolCache::delete($fileName);
 
-                    Extension::registerPoint(new ExtensionPoint('MEDIA_MOVED', null, [
-                        'filename' => $fileName,
-                        'category_id' => $rexFileCategory,
-                    ]));
-                } catch (SqlException) {
-                    $error = I18n::msg('pool_selectedmedia_error');
-                }
+                Extension::registerPoint(new ExtensionPoint('MEDIA_MOVED', null, [
+                    'filename' => $fileName,
+                    'category_id' => $rexFileCategory,
+                ]));
             }
         } else {
             $error = I18n::msg('pool_selectedmedia_error');

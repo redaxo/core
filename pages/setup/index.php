@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Filesystem\File;
@@ -361,11 +360,7 @@ if (6 === $step) {
                 $user->setDateTimeValue('password_changed', time());
                 $user->setArrayValue('previous_passwords', $passwordPolicy->updatePreviousPasswords(null, $redaxoUserPass));
                 $user->setValue('status', '1');
-                try {
-                    $user->insert();
-                } catch (SqlException) {
-                    $errors[] = Message::error(I18n::msg('setup_504'));
-                }
+                $user->insert();
             }
         }
     } else {

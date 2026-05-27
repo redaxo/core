@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\LogicException;
@@ -39,7 +38,6 @@ if (MediaManager::STATUS_SYSTEM_TYPE === (int) $sql->getValue('status')) {
 $typeName = (string) $sql->getValue('name');
 
 $info = '';
-$warning = '';
 
 // -------------- delete effect
 if ('delete' == $func && $effectId > 0) {
@@ -47,38 +45,30 @@ if ('delete' == $func && $effectId > 0) {
     //  $sql->setDebug();
     $sql->setTable(Core::getTablePrefix() . 'media_manager_type_effect');
     $sql->setWhere(['id' => $effectId]);
+    $sql->delete();
 
-    try {
-        $sql->delete();
+    Util::organizePriorities(
+        Core::getTablePrefix() . 'media_manager_type_effect',
+        'priority',
+        'type_id = ' . $typeId,
+        'priority, updatedate desc',
+    );
 
-        Util::organizePriorities(
-            Core::getTablePrefix() . 'media_manager_type_effect',
-            'priority',
-            'type_id = ' . $typeId,
-            'priority, updatedate desc',
-        );
+    $info = I18n::msg('media_manager_effect_deleted');
 
-        $info = I18n::msg('media_manager_effect_deleted');
+    MediaManager::deleteCacheByType($typeId);
 
-        MediaManager::deleteCacheByType($typeId);
+    Sql::factory()
+        ->setTable(Core::getTable('media_manager_type'))
+        ->setWhere(['id' => $typeId])
+        ->addGlobalUpdateFields()
+        ->update();
 
-        Sql::factory()
-            ->setTable(Core::getTable('media_manager_type'))
-            ->setWhere(['id' => $typeId])
-            ->addGlobalUpdateFields()
-            ->update();
-    } catch (SqlException) {
-        $warning = $sql->getError();
-    }
     $func = '';
 }
 
 if ('' != $info) {
     echo Message::info($info);
-}
-
-if ('' != $warning) {
-    echo Message::warning($warning);
 }
 
 $effects = [];
