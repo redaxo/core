@@ -18,10 +18,14 @@
     "require": {
         "php": "^8.5",
         "ext-ctype": "*",
+        "ext-fileinfo": "*",
         "ext-gd": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
+        "ext-pdo_mysql": "*",
+        "ext-session": "*",
+        "ext-tokenizer": "*",
         "composer-runtime-api": "^2",
 
         "composer/ca-bundle": "^1.5.11",

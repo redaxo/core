@@ -39,10 +39,9 @@ use const PHP_VERSION;
  */
 class Setup
 {
-    // These values must be synchronized with the values in setup/update.php
     /** @var string */
     public const MIN_PHP_VERSION = REX_MIN_PHP_VERSION;
-    public const MIN_PHP_EXTENSIONS = ['ctype', 'fileinfo', 'filter', 'gd', 'iconv', 'intl', 'mbstring', 'pcre', 'pdo', 'pdo_mysql', 'session', 'tokenizer'];
+    public const MIN_PHP_EXTENSIONS = ['ctype', 'fileinfo', 'gd', 'iconv', 'intl', 'mbstring', 'pdo_mysql', 'session', 'tokenizer'];
     public const MIN_MYSQL_VERSION = '8.0';
     public const MIN_MARIADB_VERSION = '10.4';
 
@@ -53,7 +52,6 @@ class Setup
     public const DB_MODE_SETUP_AND_OVERRIDE = 1;
     public const DB_MODE_SETUP_SKIP = 2;
     public const DB_MODE_SETUP_IMPORT_BACKUP = 3;
-    public const DB_MODE_SETUP_UPDATE_FROM_PREVIOUS = 4;
 
     /**
      * very basic setup steps, so everything is in place for our browser-based setup wizard.

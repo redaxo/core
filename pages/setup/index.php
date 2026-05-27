@@ -256,12 +256,7 @@ $createdb = Request::post('createdb', 'int', -1);
 if ($step > 4 && $createdb > -1) {
     $tablesComplete = '' == Importer::verifyDbSchema();
 
-    if (4 == $createdb) {
-        $error = Importer::updateFromPrevious();
-        if ('' != $error) {
-            $errors[] = Message::error($error);
-        }
-    } elseif (3 == $createdb) {
+    if (3 == $createdb) {
         $importName = Request::post('import_name', 'string');
 
         $error = Importer::loadExistingImport($importName);

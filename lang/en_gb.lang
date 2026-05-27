@@ -238,8 +238,6 @@ setup_408 = Please choose a database export!
 setup_409 = No exported files found!
 setup_411 = Continue with step 5
 setup_412 = Repeat step 4
-setup_414 = Update database
-setup_414_note = Update from previous version
 setup_499 = 4 / Database
 
 setup_500 = Setup: step 5 of 6 / Administrator
