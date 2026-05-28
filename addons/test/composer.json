@@ -19,5 +19,17 @@
     "require": {
         "php": "^8.5",
         "redaxo/core": "@dev"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Redaxo\\Test\\": "src/"
+        }
+    },
+
+    "extra": {
+        "redaxo": {
+            "addon-class": "Redaxo\\Test\\TestAddon"
+        }
     }
 }

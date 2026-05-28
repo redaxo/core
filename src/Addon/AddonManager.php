@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Addon;
 
+use Composer\Autoload\ClassLoader;
 use Composer\InstalledVersions;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Base\FactoryTrait;
@@ -19,7 +20,11 @@ use Redaxo\Core\Util\Str;
 use Redaxo\Core\Util\Type;
 
 use function in_array;
+use function is_array;
+use function is_string;
 use function sprintf;
+
+use const JSON_THROW_ON_ERROR;
 
 class AddonManager
 {
@@ -75,20 +80,17 @@ class AddonManager
 
             I18n::addDirectory($this->addon->getPath('lang'));
 
-            // include install.php
-            $successMessage = '';
-            if (is_readable($this->addon->getPath(Addon::FILE_INSTALL))) {
-                $this->addon->includeFile(Addon::FILE_INSTALL);
-                $successMessage = $this->addon->getProperty('successmsg', '');
+            // run install hook
+            $this->addon->install();
+            $successMessage = (string) $this->addon->getProperty('successmsg', '');
 
-                /** @psalm-taint-escape html */
-                $instmsg = (string) $this->addon->getProperty('installmsg', '');
-                if ('' != $instmsg) {
-                    throw new UserMessageException($instmsg);
-                }
-                if (!$this->addon->isInstalled()) {
-                    throw new UserMessageException($this->i18n('no_reason'));
-                }
+            /** @psalm-taint-escape html */
+            $instmsg = (string) $this->addon->getProperty('installmsg', '');
+            if ('' != $instmsg) {
+                throw new UserMessageException($instmsg);
+            }
+            if (!$this->addon->isInstalled()) {
+                throw new UserMessageException($this->i18n('no_reason'));
             }
 
             if (!$reinstall) {
@@ -144,22 +146,20 @@ class AddonManager
         try {
             $this->addon->setProperty('install', false);
 
-            // include uninstall.php
-            if (is_readable($this->addon->getPath(Addon::FILE_UNINSTALL))) {
-                if (!$isActivated) {
-                    I18n::addDirectory($this->addon->getPath('lang'));
-                }
+            if (!$isActivated) {
+                I18n::addDirectory($this->addon->getPath('lang'));
+            }
 
-                $this->addon->includeFile(Addon::FILE_UNINSTALL);
+            // run uninstall hook
+            $this->addon->uninstall();
 
-                /** @psalm-taint-escape html */
-                $instmsg = (string) $this->addon->getProperty('installmsg', '');
-                if ('' != $instmsg) {
-                    throw new UserMessageException($instmsg);
-                }
-                if ($this->addon->isInstalled()) {
-                    throw new UserMessageException($this->i18n('no_reason'));
-                }
+            /** @psalm-taint-escape html */
+            $instmsg = (string) $this->addon->getProperty('installmsg', '');
+            if ('' != $instmsg) {
+                throw new UserMessageException($instmsg);
+            }
+            if ($this->addon->isInstalled()) {
+                throw new UserMessageException($this->i18n('no_reason'));
             }
 
             // delete assets
@@ -378,7 +378,7 @@ class AddonManager
     {
         $config = [];
         foreach (Addon::getRegisteredAddons() as $addonName => $addon) {
-            $config[$addonName]['package'] = $addon->package;
+            $config[$addonName]['class'] = $addon::class;
             $config[$addonName]['install'] = $addon->isInstalled();
             $config[$addonName]['status'] = $addon->isAvailable();
         }
@@ -391,6 +391,7 @@ class AddonManager
         $config = Core::getPackageConfig();
         $registeredAddons = Addon::getRegisteredAddons();
         $packages = self::getComposerPackages();
+        $addonClasses = self::getAddonClasses();
 
         foreach (array_diff_key($registeredAddons, $packages) as $addonName => $addon) {
             $manager = self::factory($addon);
@@ -398,6 +399,10 @@ class AddonManager
             unset($config[$addonName]);
         }
         foreach ($packages as $addonName => $package) {
+            if (!isset($addonClasses[$addonName])) {
+                throw new RuntimeException(sprintf('Addon "%s" must declare its addon class via composer.json `extra.redaxo.addon-class`.', $addonName));
+            }
+            $config[$addonName]['class'] = $addonClasses[$addonName];
             if (!Addon::exists($addonName)) {
                 $config[$addonName]['install'] = false;
                 $config[$addonName]['status'] = false;
@@ -411,6 +416,64 @@ class AddonManager
 
         Core::setConfig('package-config', $config);
         Addon::initialize();
+    }
+
+    /**
+     * Returns the addon-class mapping for all registered `redaxo-addon` packages, read from `vendor/composer/installed.json`.
+     *
+     * Used by setup and sync to write the resolved classes into the package-config. Normal request boots
+     * read the class directly from the package-config and never call this.
+     *
+     * @internal
+     *
+     * @return array<non-empty-string, class-string<Addon>>
+     */
+    public static function getAddonClasses(): array
+    {
+        $classes = [];
+
+        foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $_loader) {
+            $jsonPath = $vendorDir . '/composer/installed.json';
+            if (!is_file($jsonPath)) {
+                continue;
+            }
+
+            $json = File::get($jsonPath);
+            if (!$json) {
+                continue;
+            }
+
+            /** @var array{packages?: list<array<string, mixed>>} $data */
+            $data = Type::array(json_decode($json, true, flags: JSON_THROW_ON_ERROR));
+
+            foreach ($data['packages'] ?? [] as $package) {
+                if (($package['type'] ?? null) !== 'redaxo-addon') {
+                    continue;
+                }
+
+                $name = Path::basename(Type::string($package['name'] ?? ''));
+                /** @var array<string, mixed> $extra */
+                $extra = is_array($package['extra'] ?? null) ? $package['extra'] : [];
+                /** @var array<string, mixed> $redaxoExtra */
+                $redaxoExtra = is_array($extra['redaxo'] ?? null) ? $extra['redaxo'] : [];
+                $class = $redaxoExtra['addon-class'] ?? null;
+
+                if (!is_string($class) || '' === $class || '' === $name) {
+                    continue;
+                }
+                if (!class_exists($class)) {
+                    throw new RuntimeException(sprintf('Addon class "%s" of addon "%s" does not exist.', $class, $name));
+                }
+                if (!is_subclass_of($class, Addon::class)) {
+                    throw new RuntimeException(sprintf('Addon class "%s" of addon "%s" must extend %s.', $class, $name, Addon::class));
+                }
+
+                /** @var class-string<Addon> $class */
+                $classes[$name] = $class;
+            }
+        }
+
+        return $classes;
     }
 
     /** @return array<non-empty-string, non-empty-string> */
