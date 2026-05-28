@@ -4384,9 +4384,6 @@
     <PossiblyNullOperand>
       <code><![CDATA[$sortType]]></code>
     </PossiblyNullOperand>
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->columnLayouts]]></code>
-    </PropertyTypeCoercion>
   </file>
   <file src="redaxo/src/core/lib/login/api_has_user_session.php">
     <MixedArgument>

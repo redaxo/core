@@ -4,6 +4,26 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
+    'rawMessage' => 'Parameter #1 $job of method rex_cronjob_manager_sql::tryExecuteJob() expects array{id: int, interval: string, name: string, parameters: string|null, type: class-string<rex_cronjob>}, array<string, bool|float|int|string|null> given.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../redaxo/src/addons/cronjob/lib/manager_sql.php',
+];
+$ignoreErrors[] = [
+    'rawMessage' => 'Parameter #1 $job of method rex_cronjob_manager_sql::tryExecuteJob() expects array{id: int, interval: string, name: string, parameters: string|null, type: class-string<rex_cronjob>}, non-empty-array<string, bool|float|int|string|null> given.',
+    'count' => 2,
+    'path' => __DIR__ . '/../../../redaxo/src/addons/cronjob/lib/manager_sql.php',
+];
+$ignoreErrors[] = [
+    'rawMessage' => 'Parameter #1 $data of static method rex_media_service::addMedia() expects array{category_id: int, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}}, non-empty-array given.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../redaxo/src/addons/mediapool/functions/function_rex_mediapool.php',
+];
+$ignoreErrors[] = [
+    'rawMessage' => 'Parameter #2 $data of static method rex_media_service::updateMedia() expects array{category_id: int, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}}, array{category_id: mixed, title: mixed, file?: non-empty-array} given.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../redaxo/src/addons/mediapool/functions/function_rex_mediapool.php',
+];
+$ignoreErrors[] = [
     'rawMessage' => 'Parameter #2 $createCallback of static method rex_media::getInstance() expects (callable(mixed ...): (static|null))|null, Closure(mixed): (static|null) given.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/mediapool/lib/media.php',
@@ -39,6 +59,11 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../redaxo/src/addons/mediapool/lib/service_media.php',
 ];
 $ignoreErrors[] = [
+    'rawMessage' => 'Parameter #1 $data of static method rex_media_service::addMedia() expects array{category_id: int, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}}, array{title: mixed, category_id: int, filename: mixed, file: array{name: mixed, path: non-empty-string}} given.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../redaxo/src/addons/mediapool/pages/sync.php',
+];
+$ignoreErrors[] = [
     'rawMessage' => 'Parameter #2 $createCallback of static method rex_structure_element::getInstance() expects (callable(mixed ...): (static|null))|null, Closure(mixed, mixed): (static|null) given.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/structure/lib/structure_element.php',
@@ -67,6 +92,11 @@ $ignoreErrors[] = [
     'rawMessage' => 'Parameter #1 $callback of function spl_autoload_register expects (callable(string): void)|null, Closure(string): bool given.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/lib/autoload.php',
+];
+$ignoreErrors[] = [
+    'rawMessage' => 'Parameter #1 $options of method rex_form_options_element::addOptions() expects array<array{0: string, 1?: int|string}|string>, list<array<int, bool|float|int|string|null>> given.',
+    'count' => 2,
+    'path' => __DIR__ . '/../../../redaxo/src/core/lib/form/elements/options.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Parameter #1 $options of method rex_password_policy::__construct() expects array<string, array{min?: int, max?: int}>, array{no_reuse_of_last?: int, no_reuse_within?: string, force_renew_after?: string, block_account_after?: string} given.',

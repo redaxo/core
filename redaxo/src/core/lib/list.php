@@ -401,7 +401,7 @@ class rex_list implements rex_url_provider_interface
      * @param string $columnHead Titel der Spalte
      * @param string $columnBody Text/Format der Spalte
      * @param int $columnIndex Stelle, an der die neue Spalte erscheinen soll
-     * @param array $columnLayout Layout der Spalte
+     * @param array{string, string} $columnLayout Layout der Spalte
      * @return void
      */
     public function addColumn($columnHead, $columnBody, $columnIndex = -1, $columnLayout = null)
@@ -431,7 +431,7 @@ class rex_list implements rex_url_provider_interface
      * Methode, um das Layout einer Spalte zu setzen.
      *
      * @param string $columnHead Titel der Spalte
-     * @param array $columnLayout Layout der Spalte
+     * @param array{string, string} $columnLayout Layout der Spalte
      * @return void
      */
     public function setColumnLayout($columnHead, $columnLayout)
