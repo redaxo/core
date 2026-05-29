@@ -1486,11 +1486,6 @@
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
   </file>
-  <file src="src/Addon/NullAddon.php">
-    <MixedReturnStatement>
-      <code><![CDATA[$default]]></code>
-    </MixedReturnStatement>
-  </file>
   <file src="src/ApiFunction/Result.php">
     <MixedAssignment>
       <code><![CDATA[$json]]></code>

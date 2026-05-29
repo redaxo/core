@@ -271,7 +271,7 @@ class AddonManager
         $state = [];
 
         foreach (self::getRequiredAddons($this->addon) as $addonName) {
-            if (Addon::get($addonName)->isAvailable()) {
+            if (Addon::get($addonName)?->isAvailable()) {
                 continue;
             }
 
@@ -361,7 +361,7 @@ class AddonManager
                 $late[] = $id;
             } else {
                 foreach (self::getRequiredAddons($addon) as $addonId) {
-                    if (!in_array($addonId, $normal) && !in_array(Addon::get($addonId)->getProperty('load'), ['early', 'late'])) {
+                    if (!in_array($addonId, $normal) && !in_array(Addon::get($addonId)?->getProperty('load'), ['early', 'late'])) {
                         $requires[$id][$addonId] = true;
                     }
                 }
@@ -407,7 +407,7 @@ class AddonManager
                 $config[$addonName]['install'] = false;
                 $config[$addonName]['status'] = false;
             } else {
-                $addon = Addon::get($addonName);
+                $addon = Addon::require($addonName);
                 $config[$addonName]['install'] = $addon->isInstalled();
                 $config[$addonName]['status'] = $addon->isAvailable();
             }

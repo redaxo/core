@@ -47,7 +47,7 @@ class AddonActivateCommand extends AbstractCommand
         AddonManager::synchronizeWithFileSystem();
 
         $package = Addon::get($packageId);
-        if (!$package instanceof Addon) {
+        if (!$package) {
             $io->error('Addon "' . $packageId . '" doesn\'t exists!');
             return Command::FAILURE;
         }
