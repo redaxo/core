@@ -10,8 +10,6 @@ use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
@@ -33,11 +31,9 @@ class AssetsSyncCommand extends AbstractCommand
         ;
     }
 
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $io): int
     {
         $created = $updated = $errored = 0;
-        $io = $this->getStyle($input, $output);
 
         foreach (Addon::getInstalledAddons() as $package) {
             $assetsPublicPath = $package->getAssetsPath();

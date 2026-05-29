@@ -1673,7 +1673,7 @@
   </file>
   <file src="src/Console/Command/DatabaseDumpSchemaCommand.php">
     <ArgumentTypeCoercion>
-      <code><![CDATA[$input->getArgument('table')]]></code>
+      <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
   </file>
   <file src="src/Console/Command/DatabaseSetConnectionCommand.php">

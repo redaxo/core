@@ -2,15 +2,13 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use PDOException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function count;
 
@@ -22,11 +20,9 @@ use const PHP_VERSION;
 #[AsCommand(name: 'setup:check', description: 'Check the commandline interface (CLI) environment for REDAXO requirements')]
 class SetupCheckCommand extends AbstractCommand implements AvailableInSetupInterface
 {
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(SymfonyStyle $io): int
     {
         $exitCode = 0;
-        $io = $this->getStyle($input, $output);
 
         $errors = Setup::checkEnvironment();
         if (0 == count($errors)) {

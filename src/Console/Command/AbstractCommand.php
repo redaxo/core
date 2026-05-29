@@ -6,9 +6,6 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Exception\LogicException;
 use ReflectionObject;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 use function str_starts_with;
@@ -25,11 +22,6 @@ abstract class AbstractCommand extends Command
      */
     public private(set) Addon $addon {
         get => $this->addon ??= $this->resolveAddon();
-    }
-
-    protected function getStyle(InputInterface $input, OutputInterface $output): SymfonyStyle
-    {
-        return new SymfonyStyle($input, $output);
     }
 
     /**

@@ -2,11 +2,9 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Core;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -30,8 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 )]
 class DatabaseConnectionOptionsCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    public function __invoke(OutputInterface $output): int
     {
         $db = Core::getDbConfig(1);
 

@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Console\Command;
 
 use DateTimeZone;
-use Override;
 use PDOException;
 use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Core;
@@ -18,11 +17,10 @@ use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -47,37 +45,31 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
     private InputInterface $input;
     private bool $forceAsking = false;
 
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->addOption('lang', null, InputOption::VALUE_REQUIRED, 'System language e.g. "de_de" or "en_gb"', null, static fn () => I18n::getLocales())
-            ->addOption('agree-license', null, InputOption::VALUE_NONE, 'Accept license terms and conditions') // BC, not used anymore
-            ->addOption('server', null, InputOption::VALUE_REQUIRED, 'Website URL e.g. "https://example.org/"')
-            ->addOption('servername', null, InputOption::VALUE_REQUIRED, 'Website name')
-            ->addOption('error-email', null, InputOption::VALUE_REQUIRED, 'Error mail address e.g. "info@example.org"')
-            ->addOption('timezone', null, InputOption::VALUE_REQUIRED, 'Timezone e.g. "Europe/Berlin"', null, static fn () => DateTimeZone::listIdentifiers())
-            ->addOption('db-host', null, InputOption::VALUE_REQUIRED, 'Database hostname e.g. "localhost" or "127.0.0.1"')
-            ->addOption('db-login', null, InputOption::VALUE_REQUIRED, 'Database username e.g. "root"')
-            ->addOption('db-password', null, InputOption::VALUE_REQUIRED, 'Database user password')
-            ->addOption('db-name', null, InputOption::VALUE_REQUIRED, 'Database name e.g. "redaxo"')
-            ->addOption('db-createdb', null, InputOption::VALUE_REQUIRED, 'Creates the database "yes" or "no"', null, ['yes', 'no'])
-            ->addOption('db-setup', null, InputOption::VALUE_REQUIRED, 'Database setup mode e.g. "normal", "override" or "import"', null, ['normal', 'override', 'import'])
-            ->addOption('db-import', null, InputOption::VALUE_REQUIRED, 'Database import filename if "import" is used as --db-setup')
-            ->addOption('db-ssl-ca', null, InputOption::VALUE_OPTIONAL, 'Path to SSL Certificate Authority file or use without value to enable CA mode', false)
-            ->addOption('db-ssl-key', null, InputOption::VALUE_REQUIRED, 'Path to SSL key file')
-            ->addOption('db-ssl-cert', null, InputOption::VALUE_REQUIRED, 'Path to SSL certificate file')
-            ->addOption('db-ssl-verify-server-cert', null, InputOption::VALUE_REQUIRED, 'Verify SSL server certificate (yes/no)', null, ['yes', 'no'])
-            ->addOption('admin-username', null, InputOption::VALUE_REQUIRED, 'Creates a redaxo admin user with the given username')
-            ->addOption('admin-password', null, InputOption::VALUE_REQUIRED, 'Sets the password for the admin user account')
-        ;
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
+    public function __invoke(
+        InputInterface $input,
+        SymfonyStyle $io,
+        #[Option('System language e.g. "de_de" or "en_gb"', suggestedValues: I18n::getLocales(...))] ?string $lang = null,
+        #[Option('Accept license terms and conditions')] bool $agreeLicense = false, // BC, not used anymore
+        #[Option('Website URL e.g. "https://example.org/"')] ?string $server = null,
+        #[Option('Website name')] ?string $servername = null,
+        #[Option('Error mail address e.g. "info@example.org"')] ?string $errorEmail = null,
+        #[Option('Timezone e.g. "Europe/Berlin"', suggestedValues: static function () {
+            return DateTimeZone::listIdentifiers();
+        })] ?string $timezone = null,
+        #[Option('Database hostname e.g. "localhost" or "127.0.0.1"')] ?string $dbHost = null,
+        #[Option('Database username e.g. "root"')] ?string $dbLogin = null,
+        #[Option('Database user password')] ?string $dbPassword = null,
+        #[Option('Database name e.g. "redaxo"')] ?string $dbName = null,
+        #[Option('Creates the database "yes" or "no"', suggestedValues: ['yes', 'no'])] ?string $dbCreatedb = null,
+        #[Option('Database setup mode e.g. "normal", "override" or "import"', suggestedValues: ['normal', 'override', 'import'])] ?string $dbSetup = null,
+        #[Option('Database import filename if "import" is used as --db-setup')] ?string $dbImport = null,
+        #[Option('Path to SSL Certificate Authority file or use without value to enable CA mode')] bool|string $dbSslCa = false,
+        #[Option('Path to SSL key file')] ?string $dbSslKey = null,
+        #[Option('Path to SSL certificate file')] ?string $dbSslCert = null,
+        #[Option('Verify SSL server certificate (yes/no)', suggestedValues: ['yes', 'no'])] ?string $dbSslVerifyServerCert = null,
+        #[Option('Creates a redaxo admin user with the given username')] ?string $adminUsername = null,
+        #[Option('Sets the password for the admin user account')] ?string $adminPassword = null,
+    ): int {
         $this->io = $io;
         $this->input = $input;
 
@@ -256,8 +248,7 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
             $sslRequired = $input->isInteractive() && $this->io->confirm('Configure SSL database connection?', false);
             $sslConfigured = false; // Track if any SSL option was configured
 
-            $sslCa = $input->getOption('db-ssl-ca');
-            if ($sslRequired && ($this->forceAsking || false === $sslCa)) {
+            if ($sslRequired && ($this->forceAsking || false === $dbSslCa)) {
                 /** @var string $sslCaChoice */
                 $sslCaChoice = $this->io->choice('SSL Certificate Authority', [
                     'none' => 'No CA verification',
@@ -282,18 +273,18 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
                     }));
                     $sslConfigured = true;
                 }
-            } elseif (false === $sslCa) {
+            } elseif (false === $dbSslCa) {
                 $config['db'][1]['ssl_ca'] = null;
-            } elseif (null === $sslCa || true === $sslCa) {
+            } elseif (true === $dbSslCa) {
                 $config['db'][1]['ssl_ca'] = true;
                 $io->success('Using SSL system CA verification');
                 $sslConfigured = true;
             } else {
-                if (!is_file($sslCa) || !is_readable($sslCa)) {
-                    throw new InvalidArgumentException('SSL CA file not found or not readable: ' . $sslCa);
+                if (!is_file($dbSslCa) || !is_readable($dbSslCa)) {
+                    throw new InvalidArgumentException('SSL CA file not found or not readable: ' . $dbSslCa);
                 }
-                $config['db'][1]['ssl_ca'] = $sslCa;
-                $io->success(sprintf('Using SSL CA file "%s"', $sslCa));
+                $config['db'][1]['ssl_ca'] = $dbSslCa;
+                $io->success(sprintf('Using SSL CA file "%s"', $dbSslCa));
                 $sslConfigured = true;
             }
 
@@ -322,7 +313,7 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
                 $config['db'][1][$key] = $value;
             }
 
-            $sslVerifyServerCert = $input->getOption('db-ssl-verify-server-cert');
+            $sslVerifyServerCert = $dbSslVerifyServerCert;
             if (
                 $sslRequired && $sslConfigured
                 && (null === $sslVerifyServerCert || $this->forceAsking)

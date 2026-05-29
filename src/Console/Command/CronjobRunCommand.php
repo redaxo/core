@@ -2,16 +2,14 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Cronjob\CronjobManager;
 use Redaxo\Core\Database\Sql;
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -24,22 +22,17 @@ use function sprintf;
 #[AsCommand(name: 'cronjob:run', description: 'Executes cronjobs of the "script" environment')]
 class CronjobRunCommand extends AbstractCommand
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->addOption('job', null, InputOption::VALUE_OPTIONAL, 'Execute single job (selected interactively or given by id)', false)
-        ;
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
+    public function __invoke(
+        InputInterface $input,
+        SymfonyStyle $io,
+        #[Option('Execute single job (selected interactively or given by id)')] bool|string $job = false,
+    ): int {
         // indicator constant, kept for BC
         define('REX_CRONJOB_SCRIPT', true);
 
+        // read the raw option value to preserve the original behavior: VALUE_OPTIONAL without
+        // a value yields null here (not the attribute-resolved bool true)
+        /** @var bool|string|null $job */
         $job = $input->getOption('job');
 
         if (false !== $job) {

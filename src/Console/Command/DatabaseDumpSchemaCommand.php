@@ -2,17 +2,16 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\SchemaDumper;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
@@ -22,20 +21,14 @@ use function sprintf;
 #[AsCommand(name: 'db:dump-schema', description: 'Dumps the schema of db tables as php code')]
 class DatabaseDumpSchemaCommand extends AbstractCommand
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('table', InputArgument::REQUIRED, 'Database table', null, static function () {
-                return Sql::factory()->getTables(Core::getTablePrefix());
-            })
-        ;
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $table = Table::get($input->getArgument('table'));
+    public function __invoke(
+        OutputInterface $output,
+        SymfonyStyle $io,
+        #[Argument('Database table', suggestedValues: static function (): array {
+            return Sql::factory()->getTables(Core::getTablePrefix());
+        })] string $table,
+    ): int {
+        $table = Table::get($table);
 
         if (!$table->exists()) {
             throw new InvalidArgumentException(sprintf('Table "%s" does not exist.', $table->getName()));
@@ -45,7 +38,7 @@ class DatabaseDumpSchemaCommand extends AbstractCommand
 
         $output->write($generator->dumpTable($table));
 
-        $io = $this->getStyle($input, $output)->getErrorStyle();
+        $io = $io->getErrorStyle();
         $io->success('Generated schema for table "' . $table->getName() . '".');
 
         return Command::SUCCESS;

@@ -2,15 +2,14 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
@@ -20,22 +19,14 @@ use function sprintf;
 #[AsCommand(name: 'user:list', description: 'List all users or a specific user by login name')]
 final class UserListCommand extends AbstractCommand
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->addArgument('user', InputArgument::OPTIONAL, 'Username', null, static function () {
-                /** @var list<string> */
-                return array_column(Sql::factory()->getArray('SELECT login FROM' . Core::getTable('user')), 'login');
-            });
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
-        $username = $input->getArgument('user');
+    public function __invoke(
+        OutputInterface $output,
+        SymfonyStyle $io,
+        #[Argument('Username', suggestedValues: static function (): array {
+            /** @var list<string> */
+            return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
+        })] ?string $user = null,
+    ): int {
         $sql = Sql::factory();
         $query = '
             SELECT
@@ -47,13 +38,13 @@ final class UserListCommand extends AbstractCommand
                 `lastlogin`
             FROM ' . Core::getTable('user') . '
         ';
-        if ($username) {
+        if ($user) {
             $sql->setQuery($query . ' WHERE login = :login', [
-                'login' => $username,
+                'login' => $user,
             ]);
 
             if (0 === $sql->getRows()) {
-                $io->error(sprintf('The user "%s" does not exist.', $username));
+                $io->error(sprintf('The user "%s" does not exist.', $user));
                 return Command::FAILURE;
             }
         } else {
