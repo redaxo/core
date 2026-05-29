@@ -1483,12 +1483,8 @@
       <code><![CDATA[$load]]></code>
       <code><![CDATA[$normal[]]]></code>
       <code><![CDATA[$reinstall]]></code>
-      <code><![CDATA[$successMessage]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$successMessage]]></code>
-    </MixedOperand>
   </file>
   <file src="src/Addon/NullAddon.php">
     <MixedReturnStatement>

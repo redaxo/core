@@ -9,6 +9,7 @@ use Redaxo\Core\Addon\ExtensionPoint\AddonCacheDeleted;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
 use Redaxo\Core\Exception\RuntimeException;
+use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
@@ -30,12 +31,9 @@ use const DIRECTORY_SEPARATOR;
 use const EXTR_SKIP;
 use const JSON_THROW_ON_ERROR;
 
-final class Addon implements AddonInterface
+abstract class Addon implements AddonInterface
 {
-    public const string FILE_PACKAGE = 'package.yml';
-    public const string FILE_BOOT = 'boot.php';
-    public const string FILE_INSTALL = 'install.php';
-    public const string FILE_UNINSTALL = 'uninstall.php';
+    final public const string FILE_PACKAGE = 'package.yml';
 
     private const string PROPERTIES_CACHE_FILE = 'packages.cache';
 
@@ -74,11 +72,11 @@ final class Addon implements AddonInterface
     /** @var array<string, mixed>|null */
     private ?array $composerJson = null;
 
-    private function __construct(
+    final private function __construct(
         /** @var non-empty-string Composer package name */
-        public readonly string $package,
+        final public readonly string $package,
         /** @var non-empty-string Name of the addon */
-        public readonly string $name,
+        final public readonly string $name,
     ) {}
 
     /**
@@ -87,7 +85,7 @@ final class Addon implements AddonInterface
      * @param string $addon Addon name
      * @return AddonInterface If the addon exists, a `Addon` is returned, otherwise a `NullAddon`
      */
-    public static function get(string $addon): AddonInterface
+    final public static function get(string $addon): AddonInterface
     {
         if (!isset(self::$addons[$addon])) {
             return NullAddon::getInstance();
@@ -101,7 +99,7 @@ final class Addon implements AddonInterface
      *
      * @psalm-assert =non-empty-string $addon
      */
-    public static function require(string $addon): self
+    final public static function require(string $addon): self
     {
         if (!isset(self::$addons[$addon])) {
             throw new RuntimeException(sprintf('Required addon "%s" does not exist.', $addon));
@@ -117,73 +115,73 @@ final class Addon implements AddonInterface
      *
      * @psalm-assert-if-true =non-empty-string $addon
      */
-    public static function exists(string $addon): bool
+    final public static function exists(string $addon): bool
     {
         return isset(self::$addons[$addon]);
     }
 
     #[Override]
-    public function getPath(string $file = ''): string
+    final public function getPath(string $file = ''): string
     {
         return Path::addon($this->name, $file);
     }
 
     #[Override]
-    public function getAssetsPath(string $file = ''): string
+    final public function getAssetsPath(string $file = ''): string
     {
         return Path::addonAssets($this->name, $file);
     }
 
     #[Override]
-    public function getAssetsUrl(string $file = ''): string
+    final public function getAssetsUrl(string $file = ''): string
     {
         return Url::addonAssets($this->name, $file);
     }
 
     #[Override]
-    public function getDataPath(string $file = ''): string
+    final public function getDataPath(string $file = ''): string
     {
         return Path::addonData($this->name, $file);
     }
 
     #[Override]
-    public function getCachePath(string $file = ''): string
+    final public function getCachePath(string $file = ''): string
     {
         return Path::addonCache($this->name, $file);
     }
 
     #[Override]
-    public function setConfig(string|array $key, mixed $value = null): bool
+    final public function setConfig(string|array $key, mixed $value = null): bool
     {
         return Config::set($this->name, $key, $value);
     }
 
     #[Override]
-    public function getConfig(?string $key = null, mixed $default = null): mixed
+    final public function getConfig(?string $key = null, mixed $default = null): mixed
     {
         return Config::get($this->name, $key, $default);
     }
 
     #[Override]
-    public function hasConfig(?string $key = null): bool
+    final public function hasConfig(?string $key = null): bool
     {
         return Config::has($this->name, $key);
     }
 
     #[Override]
-    public function removeConfig(string $key): bool
+    final public function removeConfig(string $key): bool
     {
         return Config::remove($this->name, $key);
     }
 
     #[Override]
-    public function setProperty(string $key, mixed $value): void
+    final public function setProperty(string $key, mixed $value): void
     {
         $this->properties[$key] = $value;
     }
 
     #[Override]
-    public function getProperty(string $key, mixed $default = null): mixed
+    final public function getProperty(string $key, mixed $default = null): mixed
     {
         if ($this->hasProperty($key)) {
             return $this->properties[$key];
@@ -192,7 +190,7 @@ final class Addon implements AddonInterface
     }
 
     #[Override]
-    public function hasProperty(string $key): bool
+    final public function hasProperty(string $key): bool
     {
         if (!isset($this->properties[$key]) && !$this->propertiesLoaded) {
             $this->loadProperties();
@@ -201,25 +199,25 @@ final class Addon implements AddonInterface
     }
 
     #[Override]
-    public function removeProperty(string $key): void
+    final public function removeProperty(string $key): void
     {
         unset($this->properties[$key]);
     }
 
     #[Override]
-    public function isAvailable(): bool
+    final public function isAvailable(): bool
     {
         return $this->isInstalled() && (bool) $this->getProperty('status', false);
     }
 
     #[Override]
-    public function isInstalled(): bool
+    final public function isInstalled(): bool
     {
         return (bool) $this->getProperty('install', false);
     }
 
     #[Override]
-    public function getAuthor(?string $default = null): ?string
+    final public function getAuthor(?string $default = null): ?string
     {
         $composerJson = $this->getComposerJson();
 
@@ -235,7 +233,7 @@ final class Addon implements AddonInterface
     }
 
     #[Override]
-    public function getVersion(?string $format = null): string
+    final public function getVersion(?string $format = null): string
     {
         $version = $this->getProperty('version');
 
@@ -253,7 +251,7 @@ final class Addon implements AddonInterface
     }
 
     #[Override]
-    public function getSupportPage(?string $default = null): ?string
+    final public function getSupportPage(?string $default = null): ?string
     {
         $composerJson = $this->getComposerJson();
 
@@ -270,7 +268,7 @@ final class Addon implements AddonInterface
     }
 
     #[Override]
-    public function includeFile(string $file, array $context = []): mixed
+    final public function includeFile(string $file, array $context = []): mixed
     {
         $__file = $file;
         $__context = $context;
@@ -291,7 +289,7 @@ final class Addon implements AddonInterface
     }
 
     #[Override]
-    public function i18n(string $key, string|int ...$replacements): string
+    final public function i18n(string $key, string|int ...$replacements): string
     {
         $fullKey = $this->name . '_' . $key;
         if (I18n::hasMsgOrFallback($fullKey)) {
@@ -301,7 +299,7 @@ final class Addon implements AddonInterface
     }
 
     /** Loads the properties of package.yml. */
-    public function loadProperties(bool $force = false): void
+    final public function loadProperties(bool $force = false): void
     {
         $file = $this->getPath(self::FILE_PACKAGE);
         if (!is_file($file)) {
@@ -372,7 +370,7 @@ final class Addon implements AddonInterface
         $this->propertiesLoaded = true;
     }
 
-    public function getLicense(): ?string
+    final public function getLicense(): ?string
     {
         /** @var string|list<string>|null $license */
         $license = $this->getComposerJson()['license'] ?? null;
@@ -398,7 +396,7 @@ final class Addon implements AddonInterface
     }
 
     /** Clears the cache of the addon. */
-    public function clearCache(): void
+    final public function clearCache(): void
     {
         $cacheDir = $this->getCachePath();
         if (!Dir::delete($cacheDir)) {
@@ -414,7 +412,7 @@ final class Addon implements AddonInterface
         Extension::registerPoint(new AddonCacheDeleted($this));
     }
 
-    public function enlist(): void
+    final public function enlist(): void
     {
         $folder = $this->getPath();
 
@@ -428,19 +426,29 @@ final class Addon implements AddonInterface
         }
     }
 
-    public function boot(): void
-    {
-        if (is_readable($this->getPath(self::FILE_BOOT))) {
-            $this->includeFile(self::FILE_BOOT);
-        }
-    }
+    /** Boot hook — runs on every request after all addons are enlisted. Override to register listeners etc. */
+    public function boot(): void {}
+
+    /**
+     * Install hook — runs on install/reinstall. Override for schema/data setup. Must be idempotent.
+     *
+     * @throws UserMessageException
+     */
+    public function install(): void {}
+
+    /**
+     * Uninstall hook — runs on uninstall. Override for cleanup.
+     *
+     * @throws UserMessageException
+     */
+    public function uninstall(): void {}
 
     /**
      * Returns the registered addons.
      *
      * @return array<non-empty-string, self>
      */
-    public static function getRegisteredAddons(): array
+    final public static function getRegisteredAddons(): array
     {
         return self::$addons;
     }
@@ -450,7 +458,7 @@ final class Addon implements AddonInterface
      *
      * @return array<non-empty-string, self>
      */
-    public static function getInstalledAddons(): array
+    final public static function getInstalledAddons(): array
     {
         return self::filterPackages(self::$addons, 'isInstalled');
     }
@@ -460,7 +468,7 @@ final class Addon implements AddonInterface
      *
      * @return array<non-empty-string, self>
      */
-    public static function getAvailableAddons(): array
+    final public static function getAvailableAddons(): array
     {
         return self::filterPackages(self::$addons, 'isAvailable');
     }
@@ -470,7 +478,7 @@ final class Addon implements AddonInterface
      *
      * @return array<non-empty-string, self>
      */
-    public static function getSetupAddons(): array
+    final public static function getSetupAddons(): array
     {
         $addons = [];
         foreach ((array) Core::getProperty('setup_addons', []) as $addon) {
@@ -482,7 +490,7 @@ final class Addon implements AddonInterface
     }
 
     /** Initializes all addons. */
-    public static function initialize(bool $dbExists = true): void
+    final public static function initialize(bool $dbExists = true): void
     {
         if ($dbExists) {
             $config = Core::getPackageConfig();
@@ -494,6 +502,7 @@ final class Addon implements AddonInterface
         }
 
         $composerPackages = AddonManager::getComposerPackages();
+        $addonClasses = null;
 
         $addons = self::$addons;
         self::$addons = [];
@@ -502,7 +511,21 @@ final class Addon implements AddonInterface
                 continue;
             }
 
-            $addon = $addons[$addonName] ?? new self($composerPackages[$addonName], $addonName);
+            if (isset($addons[$addonName])) {
+                $addon = $addons[$addonName];
+            } else {
+                $class = $addonConfig['class'] ?? null;
+                if (!is_string($class) || !is_subclass_of($class, self::class)) {
+                    // bootstrap fallback: config has no (valid) class — e.g. fresh setup, brand-new addon,
+                    // class rename after composer update without sync. Sync will refresh the config.
+                    $addonClasses ??= AddonManager::getAddonClasses();
+                    if (!isset($addonClasses[$addonName])) {
+                        throw new RuntimeException(sprintf('Addon "%s" must declare its addon class via composer.json `extra.redaxo.addon-class`.', $addonName));
+                    }
+                    $class = $addonClasses[$addonName];
+                }
+                $addon = new $class($composerPackages[$addonName], $addonName);
+            }
             $addon->setProperty('install', $addonConfig['install'] ?? false);
             $addon->setProperty('status', $addonConfig['status'] ?? false);
             self::$addons[$addonName] = $addon;
@@ -514,7 +537,7 @@ final class Addon implements AddonInterface
      *
      * @return array<string, mixed>
      */
-    public function getComposerJson(): array
+    final public function getComposerJson(): array
     {
         if (null !== $this->composerJson) {
             return $this->composerJson;

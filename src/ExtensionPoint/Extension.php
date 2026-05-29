@@ -3,6 +3,7 @@
 namespace Redaxo\Core\ExtensionPoint;
 
 use Redaxo\Core\AbstractProject;
+use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Exception\InvalidArgumentException;
@@ -116,21 +117,39 @@ abstract class Extension
      * Registers all extensions for methods carrying the `#[AsExtension]` attribute,
      * discovered via {@see ClassDiscovery}.
      *
-     * Static methods are bound to their class; non-static methods are only allowed
-     * on the project class (where the instance is available).
+     * Static methods are bound to their class; non-static methods are allowed on
+     * the project class and on addon classes (where the instance is available).
      *
      * @internal
      */
     public static function registerByAttribute(AbstractProject $project): void
     {
+        /** @var array<class-string<Addon>, Addon>|null $addonByClass */
+        $addonByClass = null;
+
         foreach (ClassDiscovery::getInstance()->discoverByMethodAttribute(AsExtension::class) as $entry) {
             if ($entry['isStatic']) {
                 $callable = [$entry['class'], $entry['method']];
             } elseif ($project instanceof $entry['class']) {
                 $callable = [$project, $entry['method']];
+            } elseif (is_subclass_of($entry['class'], Addon::class)) {
+                if (null === $addonByClass) {
+                    $addonByClass = [];
+                    foreach (Addon::getAvailableAddons() as $addon) {
+                        $addonByClass[$addon::class] = $addon;
+                    }
+                }
+                if (!isset($addonByClass[$entry['class']])) {
+                    throw new LogicException(sprintf(
+                        'Non-static #[AsExtension] on addon class "%s::%s()" cannot be registered: addon is not available.',
+                        $entry['class'],
+                        $entry['method'],
+                    ));
+                }
+                $callable = [$addonByClass[$entry['class']], $entry['method']];
             } else {
                 throw new LogicException(sprintf(
-                    'Non-static #[AsExtension] is only allowed on the project class. Method "%s::%s()" is neither static nor defined on a parent of %s.',
+                    'Non-static #[AsExtension] is only allowed on the project class or on addon classes. Method "%s::%s()" is neither static nor defined on a parent of %s or on a registered addon class.',
                     $entry['class'],
                     $entry['method'],
                     $project::class,
