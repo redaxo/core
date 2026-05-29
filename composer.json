@@ -39,11 +39,11 @@
         "ramsey/http-range": "^2.0.0",
         "scssphp/scssphp": "^1.13.0",
         "splitbrain/php-archive": "^1.4.2",
-        "symfony/console": "^7.4.13",
-        "symfony/http-foundation": "^7.4.13",
-        "symfony/runtime": "^7.4.13",
-        "symfony/var-dumper": "^7.4.8",
-        "symfony/yaml": "^7.4.13",
+        "symfony/console": "^8.1.0",
+        "symfony/http-foundation": "^8.1.0",
+        "symfony/runtime": "^8.1.0",
+        "symfony/var-dumper": "^8.1.0",
+        "symfony/yaml": "^8.1.0",
         "voku/anti-xss": "^4.1.43"
     },
     "require-dev": {
