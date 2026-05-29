@@ -22,7 +22,7 @@ use const STR_PAD_LEFT;
  * @internal
  */
 #[AsCommand(name: 'system:report', description: 'Shows the system report')]
-class SystemReportCommand extends AbstractCommand
+final class SystemReportCommand extends AbstractCommand
 {
     private const array FORMATS = ['cli', 'markdown'];
 

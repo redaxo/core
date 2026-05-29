@@ -35,7 +35,7 @@ use function is_array;
           <info>%command.full_name% error_email mail@example.org</info>
         EOF,
 )]
-class ConfigSetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
+final class ConfigSetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
     public function __invoke(
         SymfonyStyle $io,

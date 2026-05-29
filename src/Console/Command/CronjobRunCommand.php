@@ -19,7 +19,7 @@ use function sprintf;
  * @internal
  */
 #[AsCommand(name: 'cronjob:run', description: 'Executes cronjobs of the "script" environment')]
-class CronjobRunCommand extends AbstractCommand
+final class CronjobRunCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,

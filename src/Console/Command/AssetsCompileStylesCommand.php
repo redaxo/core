@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(name: 'assets:compile-styles', description: 'Converts Backend SCSS files to CSS')]
-class AssetsCompileStylesCommand extends AbstractCommand
+final class AssetsCompileStylesCommand extends AbstractCommand
 {
     public function __invoke(SymfonyStyle $io): int
     {

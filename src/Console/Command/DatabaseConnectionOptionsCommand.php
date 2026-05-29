@@ -26,7 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
           <info>%command.full_name% | xargs sh -c 'mysql "$0" "$@" < dump.sql'</info>
         EOF,
 )]
-class DatabaseConnectionOptionsCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
+final class DatabaseConnectionOptionsCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
     public function __invoke(OutputInterface $output): int
     {

@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * @internal
  */
-class ListCommand extends SymfonyListCommand
+final class ListCommand extends SymfonyListCommand
 {
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(name: 'cache:clear', description: 'Clears the redaxo core cache')]
-class CacheClearCommand extends AbstractCommand implements AvailableInSetupInterface
+final class CacheClearCommand extends AbstractCommand implements AvailableInSetupInterface
 {
     public function __invoke(SymfonyStyle $io): int
     {

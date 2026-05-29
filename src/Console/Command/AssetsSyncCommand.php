@@ -18,7 +18,7 @@ use function sprintf;
  * @internal
  */
 #[AsCommand(name: 'assets:sync', description: 'Sync assets within the assets-dir with the sources-dir')]
-class AssetsSyncCommand extends AbstractCommand
+final class AssetsSyncCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void

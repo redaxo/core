@@ -19,7 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     description: 'Sets database connection credentials.',
     help: 'Checks by default if a database connection can be established with the new settings.',
 )]
-class DatabaseSetConnectionCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
+final class DatabaseSetConnectionCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
     public function __invoke(
         SymfonyStyle $io,

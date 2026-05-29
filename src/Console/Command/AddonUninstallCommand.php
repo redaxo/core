@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(name: 'addon:uninstall', description: 'Uninstalls the selected addon')]
-class AddonUninstallCommand extends AbstractCommand
+final class AddonUninstallCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,

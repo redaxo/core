@@ -39,7 +39,7 @@ use const PHP_VERSION;
  * @internal
  */
 #[AsCommand(name: 'setup:run', description: 'Perform redaxo setup')]
-class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterface, AvailableInSetupInterface
+final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterface, AvailableInSetupInterface
 {
     private SymfonyStyle $io;
     private InputInterface $input;

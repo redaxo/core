@@ -18,7 +18,7 @@ use function is_array;
  * @internal
  */
 #[AsCommand(name: 'config:get', description: 'Get config variables')]
-class ConfigGetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
+final class ConfigGetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
     public function __invoke(
         SymfonyStyle $io,

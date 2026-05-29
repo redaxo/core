@@ -22,7 +22,7 @@ use function sprintf;
  * @internal
  */
 #[AsCommand(name: 'user:set-password', description: 'Sets a new password for a user')]
-class UserSetPasswordCommand extends AbstractCommand
+final class UserSetPasswordCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,

@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(name: 'addon:install', description: 'Installs the selected addon')]
-class AddonInstallCommand extends AbstractCommand
+final class AddonInstallCommand extends AbstractCommand
 {
     public function __invoke(
         InputInterface $input,

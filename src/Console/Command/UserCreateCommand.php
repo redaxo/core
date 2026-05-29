@@ -19,7 +19,7 @@ use function sprintf;
  * @internal
  */
 #[AsCommand(name: 'user:create', description: 'Create a new user')]
-class UserCreateCommand extends AbstractCommand
+final class UserCreateCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,

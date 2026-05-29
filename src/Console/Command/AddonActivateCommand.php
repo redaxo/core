@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(name: 'addon:activate', description: 'Activates the selected addon')]
-class AddonActivateCommand extends AbstractCommand
+final class AddonActivateCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,

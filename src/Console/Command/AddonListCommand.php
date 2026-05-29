@@ -15,7 +15,7 @@ use function count;
  * @internal
  */
 #[AsCommand(name: 'addon:list', description: 'List available addons')]
-class AddonListCommand extends AbstractCommand
+final class AddonListCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,

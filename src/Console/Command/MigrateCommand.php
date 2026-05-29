@@ -23,7 +23,7 @@ use function sprintf;
  * @internal
  */
 #[AsCommand(name: 'migrate', description: 'Runs install scripts of core and addons to ensure schema is up to date')]
-class MigrateCommand extends AbstractCommand implements StandaloneInterface
+final class MigrateCommand extends AbstractCommand implements StandaloneInterface
 {
     public function __invoke(SymfonyStyle $io): int
     {

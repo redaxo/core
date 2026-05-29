@@ -19,7 +19,7 @@ use function sprintf;
  * @internal
  */
 #[AsCommand(name: 'db:dump-schema', description: 'Dumps the schema of db tables as php code')]
-class DatabaseDumpSchemaCommand extends AbstractCommand
+final class DatabaseDumpSchemaCommand extends AbstractCommand
 {
     public function __invoke(
         OutputInterface $output,

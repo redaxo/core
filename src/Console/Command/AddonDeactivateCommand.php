@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * @internal
  */
 #[AsCommand(name: 'addon:deactivate', description: 'Deactivates the selected addon')]
-class AddonDeactivateCommand extends AbstractCommand
+final class AddonDeactivateCommand extends AbstractCommand
 {
     public function __invoke(
         SymfonyStyle $io,
