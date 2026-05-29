@@ -45,6 +45,7 @@ $articleStatus = $articleStatusTypes[$status][0];
 $articleIcon = $articleStatusTypes[$status][2];
 $structureContext = new StructureContext([
     'article_id' => Request::request('article_id', 'int'),
+    'category_id' => $article->getCategoryId(),
     'clang_id' => Request::request('clang', 'int'),
 ]);
 

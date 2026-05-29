@@ -115,7 +115,7 @@ final class Dir
             return true;
         }
 
-        if (!self::deleteIterator(Finder::factory($dir)->recursive()->childFirst()->ignoreSystemStuff(false))) {
+        if (!self::deleteIterator(Finder::factory($dir)->recursive()->childFirst()->ignoreSystemStuff(false)->ignoreUnreadableDirs())) {
             return false;
         }
 
@@ -133,7 +133,7 @@ final class Dir
      */
     public static function deleteFiles(string $dir, bool $recursive = true): bool
     {
-        $iterator = Finder::factory($dir)->recursive($recursive)->filesOnly()->ignoreSystemStuff(false);
+        $iterator = Finder::factory($dir)->recursive($recursive)->filesOnly()->ignoreSystemStuff(false)->ignoreUnreadableDirs();
         return self::deleteIterator($iterator);
     }
 

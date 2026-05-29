@@ -112,7 +112,7 @@ async function processScreenshot(page, screenshotName) {
         // disable animations / transitions
         // disable box-shadow on navbar to prevent visual noise by https://github.com/redaxo/core/blob/120950020f35e9158030513744835c936e527bc6/assets/js/redaxo.js#L211-L222
 
-        document.body.insertAdjacentHTML('beforeend', `<style type="text/css">input { caret-color: transparent !important; } * { animation: initial !important; transition: none !important; mix-blend-mode: unset !important;} .navbar {box-shadow: none !important; } body {font-family: sans-serif;} #rex-js-main-sidebar{opacity: 1 !important;} #rex-js-nav-top{position: absolute; transform: none !important;}</style>`);
+        document.body.insertAdjacentHTML('beforeend', `<style type="text/css">input { caret-color: transparent !important; } * { animation: initial !important; transition: none !important; mix-blend-mode: unset !important;} .navbar {box-shadow: none !important; } body {font-family: sans-serif;} #rex-js-main-sidebar{opacity: 1 !important;} #rex-js-nav-top{position: absolute; transform: none !important;} #rex-js-ajax-loader{display: none !important;}</style>`);
     });
 
     // mask dynamic content, to make it not appear like change (visual noise)
@@ -127,7 +127,7 @@ async function processScreenshot(page, screenshotName) {
             '#rex-page-system-report-html .row td',
             'td[data-title="Version"]',
             'td[data-title="Erstellt am"]',
-            'tr[class^="rex-state-"] td[data-title="Zeit"]', // system log items
+            'td[data-title="Zeit"] small:first-child', // system log items
             'td[data-title="Sitzungs-ID"]',
             'td[data-title="User-Agent"]',
             'td[data-title="Startzeit"]',

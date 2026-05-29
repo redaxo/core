@@ -41,6 +41,7 @@ class Finder implements IteratorAggregate, Countable
     /** @var list<string> */
     private array $ignoreDirsRecursive = [];
     private bool $ignoreSystemStuff = true;
+    private bool $ignoreUnreadableDirs = false;
     /** @var SortableIterator::*|Closure(mixed, mixed):int|null */
     private int|Closure|null $sort = null;
 
@@ -148,6 +149,25 @@ class Finder implements IteratorAggregate, Countable
     }
 
     /**
+     * Silently skips sub-directories that can not be opened on recursive descent
+     * (e.g. because they vanished between scandir() and descent in a concurrent run,
+     * or because permissions deny access).
+     *
+     * Default is `false`: an unreadable sub-directory throws `UnexpectedValueException`
+     * mid-iteration. Enable only when partial loss is acceptable — typically for
+     * cleanup loops over a tree that other workers may modify in parallel.
+     * Don't enable for backup/copy paths where read errors must surface.
+     *
+     * @return $this
+     */
+    public function ignoreUnreadableDirs(bool $ignore = true)
+    {
+        $this->ignoreUnreadableDirs = $ignore;
+
+        return $this;
+    }
+
+    /**
      * Sorts the elements.
      *
      * @param SortableIterator::*|Closure(mixed, mixed): int $sort Sort mode, see {@link SortableIterator::__construct()}
@@ -211,8 +231,9 @@ class Finder implements IteratorAggregate, Countable
         });
 
         if ($this->recursive) {
+            $flags = $this->ignoreUnreadableDirs ? RecursiveIteratorIterator::CATCH_GET_CHILD : 0;
             /** @var Traversable<string, SplFileInfo> */
-            $iterator = new RecursiveIteratorIterator($iterator, $this->recursiveMode);
+            $iterator = new RecursiveIteratorIterator($iterator, $this->recursiveMode, $flags);
         }
 
         if ($this->sort) {

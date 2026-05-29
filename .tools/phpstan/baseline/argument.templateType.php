@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 2 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Unable to resolve the template type T in call to function Redaxo\\Core\\View\\escape',

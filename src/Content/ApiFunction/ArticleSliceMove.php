@@ -22,29 +22,21 @@ class ArticleSliceMove extends ApiFunction
 {
     public function execute(): Result
     {
+        $user = Core::requireUser();
+        if (!$user->hasPerm('moveSlice[]')) {
+            throw new ApiFunctionException('User has no permission to move slices!');
+        }
+
         $articleId = Request::request('article_id', 'int');
         $clang = Request::request('clang', 'int');
         $sliceId = Request::request('slice_id', 'int');
         $direction = Request::request('direction', 'string');
 
-        $ooArt = Article::get($articleId, $clang);
-        if (!$ooArt instanceof Article) {
+        $article = Article::get($articleId, $clang);
+        if (!$article instanceof Article) {
             throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
         }
-        $categoryId = $ooArt->getCategoryId();
 
-        $user = Core::requireUser();
-
-        // check permissions
-        if (!$user->hasPerm('moveSlice[]')) {
-            throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
-        }
-
-        if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
-            throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
-        }
-
-        // modul und rechte vorhanden ?
         $CM = Sql::factory();
         $CM->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where id=? and clang_id=?', [$sliceId, $clang]);
         if (1 != $CM->getRows()) {
@@ -56,12 +48,16 @@ class ArticleSliceMove extends ApiFunction
             throw new ApiFunctionException(I18n::msg('module_not_found'));
         }
 
-        // ----- RECHTE AM MODUL ?
-        if ($user->getComplexPerm('modules')->hasPerm($moduleKey)) {
-            $message = ContentHandler::moveSlice($sliceId, $clang, $direction);
-        } else {
+        if (
+            !$user->getComplexPerm('clang')->hasPerm($clang)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+            || !$user->getComplexPerm('modules')->hasPerm($moduleKey)
+        ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
+
+        $message = ContentHandler::moveSlice($sliceId, $clang, $direction);
+
         return new Result(true, $message);
     }
 }

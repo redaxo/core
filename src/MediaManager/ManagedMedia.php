@@ -46,7 +46,7 @@ class ManagedMedia
     /** @var bool */
     private $asImage = false;
 
-    /** @var array{width: ?int, height: ?int, src?: GdImage}&array<string, mixed> */
+    /** @var array{width: ?int, height: ?int, src?: GdImage, ...<string, mixed>} */
     private $image = [
         'width' => null,
         'height' => null,

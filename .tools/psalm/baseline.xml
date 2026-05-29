@@ -1775,31 +1775,6 @@
       <code><![CDATA[is_array($commands)]]></code>
     </TypeDoesNotContainType>
   </file>
-  <file src="src/Content/ApiFunction/ArticleMove.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/Content/ApiFunction/ArticleToCategory.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/Content/ApiFunction/ArticleToStartArticle.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/Content/ApiFunction/CategoryMove.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="src/Content/ApiFunction/CategoryToArticle.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
   <file src="src/Content/Article.php">
     <MixedReturnStatement>
       <code><![CDATA[Core::getProperty('article_id', 1)]]></code>
@@ -4149,9 +4124,6 @@
     <PossiblyNullOperand>
       <code><![CDATA[$sortType]]></code>
     </PossiblyNullOperand>
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->columnLayouts]]></code>
-    </PropertyTypeCoercion>
   </file>
   <file src="src/View/Fragment.php">
     <MixedArgument>

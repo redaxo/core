@@ -6,6 +6,7 @@ use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
+use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleHandler;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
@@ -19,19 +20,29 @@ class ArticleStatusChange extends ApiFunction
 {
     public function execute(): Result
     {
-        $categoryId = Request::request('category_id', 'int');
+        $user = Core::requireUser();
+        if (!$user->hasPerm('publishArticle[]')) {
+            throw new ApiFunctionException('User has no permission to publish articles!');
+        }
+
         $articleId = Request::request('article_id', 'int');
         $clang = Request::request('clang', 'int');
         $status = Request::request('art_status', 'int', null);
-        $user = Core::requireUser();
 
-        // check permissions
-        if ($user->getComplexPerm('structure')->hasCategoryPerm($categoryId) && $user->hasPerm('publishArticle[]')) {
-            ArticleHandler::articleStatus($articleId, $clang, $status);
-
-            return new Result(true, I18n::msg('article_status_updated'));
+        $article = Article::get($articleId, $clang);
+        if (!$article instanceof Article) {
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
         }
 
-        throw new ApiFunctionException('user has no permission for this article!');
+        if (
+            !$user->getComplexPerm('clang')->hasPerm($clang)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+        ) {
+            throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
+        }
+
+        ArticleHandler::articleStatus($articleId, $clang, $status);
+
+        return new Result(true, I18n::msg('article_status_updated'));
     }
 }

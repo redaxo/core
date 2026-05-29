@@ -27,7 +27,8 @@ final class Cache
         $finder = Finder::factory(Path::cache())
             ->recursive()
             ->childFirst()
-            ->ignoreSystemStuff(false);
+            ->ignoreSystemStuff(false)
+            ->ignoreUnreadableDirs();
         Dir::deleteIterator($finder);
 
         Language::reset();

@@ -6,9 +6,11 @@ use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
+use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleHandler;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Translation\I18n;
 
 /**
  * @internal
@@ -18,20 +20,26 @@ class ArticleEdit extends ApiFunction
 {
     public function execute(): Result
     {
-        if (!Core::requireUser()->hasPerm('editArticle[]')) {
+        $user = Core::requireUser();
+        if (!$user->hasPerm('editArticle[]')) {
             throw new ApiFunctionException('User has no permission to edit articles!');
         }
 
-        $categoryId = Request::request('category_id', 'int');
         $articleId = Request::request('article_id', 'int');
         $clang = Request::request('clang', 'int');
 
-        // check permissions
-        if (!Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
-            throw new ApiFunctionException('user has no permission for this category!');
+        $article = Article::get($articleId, $clang);
+        if (!$article instanceof Article) {
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
         }
 
-        // --------------------- ARTIKEL EDIT
+        if (
+            !$user->getComplexPerm('clang')->hasPerm($clang)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+        ) {
+            throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
+        }
+
         $data = [];
         $data['priority'] = Request::post('article-position', 'int');
         $data['name'] = Request::post('article-name', 'string');

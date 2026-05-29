@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 14 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Form\\Field\\PriorityField::organizePriorities() has parameter $ep with generic class Redaxo\\Core\\ExtensionPoint\\ExtensionPoint but does not specify its types: T',

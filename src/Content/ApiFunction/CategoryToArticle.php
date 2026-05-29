@@ -20,18 +20,27 @@ class CategoryToArticle extends ApiFunction
 {
     public function execute(): Result
     {
-        $articleId = Request::request('article_id', 'int');
-        $categoryId = Article::get($articleId)->getCategoryId();
         $user = Core::requireUser();
-
-        // Check permissions: ArticleToCategory and CategoryToArticle share the same permission: ArticleToCategory
-        if ($user->hasPerm('article2category[]') && $user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
-            if (ArticleHandler::category2article($articleId)) {
-                return new Result(true, I18n::msg('content_toarticle_ok'));
-            }
-
-            return new Result(false, I18n::msg('content_toarticle_failed'));
+        // article2category and category2article share the same permission: article2category
+        if (!$user->hasPerm('article2category[]')) {
+            throw new ApiFunctionException('User has no permission to convert categories to articles!');
         }
-        throw new ApiFunctionException('User has no permission for this article!');
+
+        $articleId = Request::request('article_id', 'int');
+
+        $article = Article::get($articleId);
+        if (!$article instanceof Article) {
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '"!');
+        }
+
+        if (!$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())) {
+            throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
+        }
+
+        if (ArticleHandler::category2article($articleId)) {
+            return new Result(true, I18n::msg('content_toarticle_ok'));
+        }
+
+        return new Result(false, I18n::msg('content_toarticle_failed'));
     }
 }

@@ -4,16 +4,41 @@
 
 set -e
 
+find_renames=15%
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --find-renames=*)
+            find_renames="${1#*=}"
+            ;;
+        --find-renames)
+            find_renames="$2"
+            shift
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            exit 1
+            ;;
+    esac
+    shift
+done
+
 git fetch origin
 git checkout 6.x
 git pull
 
-git merge origin/5.x --no-commit -X find-renames=15% || [[ $? -le 1 ]]
+git merge origin/5.x --no-commit -X "find-renames=$find_renames" || [[ $? -le 1 ]]
 
 # Auto-resolve conflicts in visual test screenshots and phpstan/psalm baselines (keep 6.x version)
 git diff --name-only --diff-filter=U | grep -E '\.tools/(visual-tests/screenshots/|phpstan/baseline/|psalm/baseline)' | while read -r file; do
-    git checkout --ours "$file"
-    git add "$file"
+    if git ls-files -u -- "$file" | grep -q '^[0-7]* [0-9a-f]* 2'; then
+        # 6.x has its own version -> keep it
+        git checkout --ours "$file"
+        git add "$file"
+    else
+        # 6.x deleted the file (e.g. baseline entry removed) -> keep it deleted
+        git rm -f --ignore-unmatch "$file"
+    fi
 done
 
 for dir in core addons/backup addons/be_style addons/cronjob addons/media_manager addons/mediapool addons/metainfo addons/phpmailer addons/structure addons/users; do

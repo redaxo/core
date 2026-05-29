@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 269 errors
-
 return ['includes' => [
     __DIR__ . '/argument.templateType.php',
     __DIR__ . '/argument.type.php',
@@ -15,4 +13,5 @@ return ['includes' => [
     __DIR__ . '/missingType.generics.php',
     __DIR__ . '/missingType.iterableValue.php',
     __DIR__ . '/missingType.parameter.php',
+    __DIR__ . '/return.type.php',
 ]];

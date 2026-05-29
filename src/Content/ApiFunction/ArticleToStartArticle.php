@@ -20,19 +20,26 @@ class ArticleToStartArticle extends ApiFunction
 {
     public function execute(): Result
     {
-        $articleId = Request::request('article_id', 'int');
-        $categoryId = Article::get($articleId)->getCategoryId();
         $user = Core::requireUser();
-
-        // Check permissions
-        if ($user->hasPerm('article2startarticle[]') && $user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
-            if (ArticleHandler::article2startarticle($articleId)) {
-                return new Result(true, I18n::msg('content_tostartarticle_ok'));
-            }
-
-            return new Result(false, I18n::msg('content_tostartarticle_failed'));
+        if (!$user->hasPerm('article2startarticle[]')) {
+            throw new ApiFunctionException('User has no permission to convert articles to start articles!');
         }
 
-        throw new ApiFunctionException('user has no permission for this article!');
+        $articleId = Request::request('article_id', 'int');
+
+        $article = Article::get($articleId);
+        if (!$article instanceof Article) {
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '"!');
+        }
+
+        if (!$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())) {
+            throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
+        }
+
+        if (ArticleHandler::article2startarticle($articleId)) {
+            return new Result(true, I18n::msg('content_tostartarticle_ok'));
+        }
+
+        return new Result(false, I18n::msg('content_tostartarticle_failed'));
     }
 }

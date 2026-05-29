@@ -20,6 +20,11 @@ class ArticleSliceStatusChange extends ApiFunction
 {
     public function execute(): Result
     {
+        $user = Core::requireUser();
+        if (!$user->hasPerm('publishSlice[]')) {
+            throw new ApiFunctionException('User has no permission to publish slices!');
+        }
+
         $articleId = Request::request('article_id', 'int');
         $clang = Request::request('clang', 'int');
 
@@ -28,10 +33,10 @@ class ArticleSliceStatusChange extends ApiFunction
             throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
         }
 
-        $user = Core::requireUser();
-        $categoryId = $article->getCategoryId();
-
-        if (!$user->hasPerm('publishSlice[]') || !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
+        if (
+            !$user->getComplexPerm('clang')->hasPerm($clang)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+        ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 

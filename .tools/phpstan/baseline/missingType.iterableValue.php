@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 168 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_debug::getTrace() return type has no value type specified in iterable type array.',
@@ -626,11 +624,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/View/Asset.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::addColumn() has parameter $columnLayout with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/View/DataList.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::addTableColumnGroup() has parameter $columns with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/DataList.php',
@@ -662,11 +655,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::setColumnFormat() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/View/DataList.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::setColumnLayout() has parameter $columnLayout with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/DataList.php',
 ];

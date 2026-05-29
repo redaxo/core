@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 66 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleHandler::nextStatus() has parameter $currentStatus with no type specified.',
