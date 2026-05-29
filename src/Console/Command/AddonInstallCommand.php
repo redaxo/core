@@ -5,6 +5,7 @@ namespace Redaxo\Core\Console\Command;
 use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,13 +17,13 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * @internal
  */
+#[AsCommand(name: 'addon:install', description: 'Installs the selected addon')]
 class AddonInstallCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Installs the selected addon')
             ->addArgument('addon-id', InputArgument::REQUIRED, 'The id of the addon, e.g. "yform"', null, static function () {
                 $packageNames = [];
 

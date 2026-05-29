@@ -4,6 +4,7 @@ namespace Redaxo\Core\Console\Command;
 
 use Override;
 use Redaxo\Core\Cache;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,15 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
-class CacheClearCommand extends AbstractCommand
+#[AsCommand(name: 'cache:clear', description: 'Clears the redaxo core cache')]
+class CacheClearCommand extends AbstractCommand implements AvailableInSetupInterface
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Clears the redaxo core cache');
-    }
-
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

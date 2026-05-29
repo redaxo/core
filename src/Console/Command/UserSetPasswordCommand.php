@@ -10,6 +10,7 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Security\User;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,13 +23,13 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsCommand(name: 'user:set-password', description: 'Sets a new password for a user')]
 class UserSetPasswordCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Sets a new password for a user')
             ->addArgument('user', InputArgument::REQUIRED, 'Username', null, static function () {
                 /** @var list<string> */
                 return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');

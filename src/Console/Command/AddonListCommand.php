@@ -5,6 +5,7 @@ namespace Redaxo\Core\Console\Command;
 use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,13 +16,13 @@ use function count;
 /**
  * @internal
  */
+#[AsCommand(name: 'addon:list', description: 'List available addons')]
 class AddonListCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('List available addons')
             ->addOption('search', 's', InputOption::VALUE_REQUIRED, 'filter list')
             ->addOption('addon', 'p', InputOption::VALUE_REQUIRED, 'search for exactly this addon-id')
             ->addOption('installed-only', 'i', InputOption::VALUE_NONE, 'only list installed addons')

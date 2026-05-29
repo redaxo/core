@@ -13,6 +13,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -23,14 +24,9 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsCommand(name: 'migrate', description: 'Runs install scripts of core and addons to ensure schema is up to date')]
 class MigrateCommand extends AbstractCommand implements StandaloneInterface
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this->setDescription('Runs install scripts of core and addons to ensure schema is up to date');
-    }
-
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

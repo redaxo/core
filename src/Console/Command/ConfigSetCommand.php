@@ -6,6 +6,7 @@ use Override;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Util\Type;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -20,30 +21,32 @@ use function is_array;
 /**
  * @internal
  */
-class ConfigSetCommand extends AbstractCommand implements StandaloneInterface
+#[AsCommand(
+    name: 'config:set',
+    description: 'Set config variables',
+    help: <<<'EOF'
+        Set config variables in config.yml.
+
+        Example: enable setup
+          <info>%command.full_name% --type boolean setup true</info>
+
+        Example: set password min length to 8
+          <info>%command.full_name% --type integer password_policy.length.min 8</info>
+
+        Example: set error email
+          <info>%command.full_name% error_email mail@example.org</info>
+        EOF,
+)]
+class ConfigSetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
     #[Override]
     protected function configure(): void
     {
-        $this->setDescription('Set config variables')
+        $this
             ->addArgument('config-key', InputArgument::REQUIRED, 'config path separated by periods, e.g. "setup" or "db.1.host"')
             ->addArgument('value', InputArgument::OPTIONAL, 'new value for config key, e.g. "somestring" or "1"')
             ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'php type of new value, e.g. "bool", "octal" or "int"', 'string')
             ->addOption('unset', null, InputOption::VALUE_NONE, 'sets the config key to null')
-            ->setHelp(<<<'EOF'
-                Set config variables in config.yml.
-
-                Example: enable setup
-                  <info>%command.full_name% --type boolean setup true</info>
-
-                Example: set password min length to 8
-                  <info>%command.full_name% --type integer password_policy.length.min 8</info>
-
-                Example: set error email
-                  <info>%command.full_name% error_email mail@example.org</info>
-
-                EOF
-            )
         ;
     }
 

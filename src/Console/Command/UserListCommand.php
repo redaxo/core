@@ -5,6 +5,7 @@ namespace Redaxo\Core\Console\Command;
 use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,13 +17,13 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsCommand(name: 'user:list', description: 'List all users or a specific user by login name')]
 final class UserListCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('List all users or a specific user by login name')
             ->addArgument('user', InputArgument::OPTIONAL, 'Username', null, static function () {
                 /** @var list<string> */
                 return array_column(Sql::factory()->getArray('SELECT login FROM' . Core::getTable('user')), 'login');

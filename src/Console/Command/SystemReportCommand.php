@@ -4,6 +4,7 @@ namespace Redaxo\Core\Console\Command;
 
 use Override;
 use Redaxo\Core\SystemReport;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Helper\Table;
@@ -21,13 +22,13 @@ use const STR_PAD_LEFT;
 /**
  * @internal
  */
+#[AsCommand(name: 'system:report', description: 'Shows the system report')]
 class SystemReportCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Shows the system report')
             ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Output format ("cli", "markdown")', 'cli', ['cli', 'markdown'])
         ;
     }

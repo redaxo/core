@@ -8,6 +8,7 @@ use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,13 +19,13 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsCommand(name: 'assets:sync', description: 'Sync assets within the assets-dir with the sources-dir')]
 class AssetsSyncCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Sync assets within the assets-dir with the sources-dir')
             ->setHelp(sprintf(
                 'Sync folders and files of /%s with source assets folders',
                 rtrim(Path::relative(Path::assets()), '/'),

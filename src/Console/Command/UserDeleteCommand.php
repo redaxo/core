@@ -8,6 +8,7 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Security\User;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,13 +19,13 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsCommand(name: 'user:delete', description: 'Deletes an user by the specified login name.')]
 final class UserDeleteCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Deletes an user by the specified login name.')
             ->addArgument('user', InputArgument::REQUIRED, 'Username', null, static function () {
                 /** @var list<string> */
                 return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');

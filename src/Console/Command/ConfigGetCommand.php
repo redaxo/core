@@ -5,6 +5,7 @@ namespace Redaxo\Core\Console\Command;
 use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -17,12 +18,13 @@ use function is_array;
 /**
  * @internal
  */
-class ConfigGetCommand extends AbstractCommand implements StandaloneInterface
+#[AsCommand(name: 'config:get', description: 'Get config variables')]
+class ConfigGetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
     #[Override]
     protected function configure(): void
     {
-        $this->setDescription('Get config variables')
+        $this
             ->addArgument('config-key', InputArgument::REQUIRED, 'config path separated by periods, e.g. "setup" or "db.1.host"')
             ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'php type of the returned value, e.g. "octal"', 'string')
             ->addOption('addon', 'p', InputOption::VALUE_REQUIRED, 'addon to inspect, defaults to redaxo-core', 'core')

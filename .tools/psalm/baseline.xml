@@ -1604,9 +1604,6 @@
       <code><![CDATA[$currentuser['name']]]></code>
       <code><![CDATA[$webuser['name']]]></code>
     </PossiblyInvalidArrayAccess>
-    <PossiblyNullReference>
-      <code><![CDATA[boot]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/Console/Command/AbstractCommand.php">
     <PossiblyNullArgument>
@@ -1769,11 +1766,6 @@
     <MixedAssignment>
       <code><![CDATA[$password]]></code>
     </MixedAssignment>
-  </file>
-  <file src="src/Console/CommandLoader.php">
-    <TypeDoesNotContainType>
-      <code><![CDATA[is_array($commands)]]></code>
-    </TypeDoesNotContainType>
   </file>
   <file src="src/Content/Article.php">
     <MixedReturnStatement>

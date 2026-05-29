@@ -6,6 +6,7 @@ use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Cronjob\CronjobManager;
 use Redaxo\Core\Database\Sql;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,13 +21,13 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsCommand(name: 'cronjob:run', description: 'Executes cronjobs of the "script" environment')]
 class CronjobRunCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Executes cronjobs of the "script" environment')
             ->addOption('job', null, InputOption::VALUE_OPTIONAL, 'Execute single job (selected interactively or given by id)', false)
         ;
     }

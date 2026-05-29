@@ -8,6 +8,7 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -18,16 +19,9 @@ use const PHP_VERSION;
 /**
  * @internal
  */
-class SetupCheckCommand extends AbstractCommand
+#[AsCommand(name: 'setup:check', description: 'Check the commandline interface (CLI) environment for REDAXO requirements')]
+class SetupCheckCommand extends AbstractCommand implements AvailableInSetupInterface
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Check the commandline interface (CLI) environment for REDAXO requirements')
-        ;
-    }
-
     #[Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

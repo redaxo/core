@@ -6,6 +6,7 @@ use Override;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,14 +16,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @internal
  */
-class DatabaseSetConnectionCommand extends AbstractCommand implements StandaloneInterface
+#[AsCommand(
+    name: 'db:set-connection',
+    description: 'Sets database connection credentials.',
+    help: 'Checks by default if a database connection can be established with the new settings.',
+)]
+class DatabaseSetConnectionCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Sets database connection credentials.')
-            ->setHelp('Checks by default if a database connection can be established with the new settings.')
             ->addOption('host', null, InputOption::VALUE_REQUIRED, 'database host')
             ->addOption('login', null, InputOption::VALUE_REQUIRED, 'database user')
             ->addOption('password', null, InputOption::VALUE_REQUIRED, 'database password')

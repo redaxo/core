@@ -17,6 +17,7 @@ use Redaxo\Core\Setup\Importer;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,7 +40,8 @@ use const PHP_VERSION;
 /**
  * @internal
  */
-class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterface
+#[AsCommand(name: 'setup:run', description: 'Perform redaxo setup')]
+class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterface, AvailableInSetupInterface
 {
     private SymfonyStyle $io;
     private InputInterface $input;
@@ -49,7 +51,6 @@ class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterfac
     protected function configure(): void
     {
         $this
-            ->setDescription('Perform redaxo setup')
             ->addOption('lang', null, InputOption::VALUE_REQUIRED, 'System language e.g. "de_de" or "en_gb"', null, static fn () => I18n::getLocales())
             ->addOption('agree-license', null, InputOption::VALUE_NONE, 'Accept license terms and conditions') // BC, not used anymore
             ->addOption('server', null, InputOption::VALUE_REQUIRED, 'Website URL e.g. "https://example.org/"')

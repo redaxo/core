@@ -7,6 +7,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\BackendPasswordPolicy;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,13 +20,13 @@ use function sprintf;
 /**
  * @internal
  */
+#[AsCommand(name: 'user:create', description: 'Create a new user')]
 class UserCreateCommand extends AbstractCommand
 {
     #[Override]
     protected function configure(): void
     {
         $this
-            ->setDescription('Create a new user')
             ->addArgument('login', InputArgument::REQUIRED, 'Login')
             ->addArgument('password', InputArgument::OPTIONAL, 'Password')
             ->addOption('name', null, InputOption::VALUE_REQUIRED, 'Name')
