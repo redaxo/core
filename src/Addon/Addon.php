@@ -4,7 +4,6 @@ namespace Redaxo\Core\Addon;
 
 use Composer\InstalledVersions;
 use OutOfBoundsException;
-use Override;
 use Redaxo\Core\Addon\ExtensionPoint\AddonCacheDeleted;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
@@ -31,7 +30,7 @@ use const DIRECTORY_SEPARATOR;
 use const EXTR_SKIP;
 use const JSON_THROW_ON_ERROR;
 
-abstract class Addon implements AddonInterface
+abstract class Addon
 {
     final public const string FILE_PACKAGE = 'package.yml';
 
@@ -80,18 +79,13 @@ abstract class Addon implements AddonInterface
     ) {}
 
     /**
-     * Returns the addon by the given name.
+     * Returns the addon by the given name, or `null` if it does not exist.
      *
      * @param string $addon Addon name
-     * @return AddonInterface If the addon exists, a `Addon` is returned, otherwise a `NullAddon`
      */
-    final public static function get(string $addon): AddonInterface
+    final public static function get(string $addon): ?self
     {
-        if (!isset(self::$addons[$addon])) {
-            return NullAddon::getInstance();
-        }
-
-        return self::$addons[$addon];
+        return self::$addons[$addon] ?? null;
     }
 
     /**
@@ -120,67 +114,79 @@ abstract class Addon implements AddonInterface
         return isset(self::$addons[$addon]);
     }
 
-    #[Override]
+    /** @return non-empty-string */
     final public function getPath(string $file = ''): string
     {
         return Path::addon($this->name, $file);
     }
 
-    #[Override]
+    /** @return non-empty-string */
     final public function getAssetsPath(string $file = ''): string
     {
         return Path::addonAssets($this->name, $file);
     }
 
-    #[Override]
+    /** @return non-empty-string */
     final public function getAssetsUrl(string $file = ''): string
     {
         return Url::addonAssets($this->name, $file);
     }
 
-    #[Override]
+    /** @return non-empty-string */
     final public function getDataPath(string $file = ''): string
     {
         return Path::addonData($this->name, $file);
     }
 
-    #[Override]
+    /** @return non-empty-string */
     final public function getCachePath(string $file = ''): string
     {
         return Path::addonCache($this->name, $file);
     }
 
-    #[Override]
+    /**
+     * @see Config::set()
+     * @param string|array<string, mixed> $key The associated key or an associative array of key/value pairs
+     * @return bool TRUE when an existing value was overridden, otherwise FALSE
+     */
     final public function setConfig(string|array $key, mixed $value = null): bool
     {
         return Config::set($this->name, $key, $value);
     }
 
-    #[Override]
+    /**
+     * @see Config::get()
+     *
+     * @template T as ?string
+     * @param T $key The associated key
+     * @param mixed $default Default return value if no associated-value can be found
+     * @return (T is string ? mixed|null : array<string, mixed>) the value for $key or $default if $key cannot be found in the given $namespace
+     */
     final public function getConfig(?string $key = null, mixed $default = null): mixed
     {
+        /** @psalm-suppress MixedReturnStatement */
         return Config::get($this->name, $key, $default);
     }
 
-    #[Override]
+    /** @see Config::has() */
     final public function hasConfig(?string $key = null): bool
     {
         return Config::has($this->name, $key);
     }
 
-    #[Override]
+    /** @see Config::remove() */
     final public function removeConfig(string $key): bool
     {
         return Config::remove($this->name, $key);
     }
 
-    #[Override]
+    /** @param non-empty-string $key */
     final public function setProperty(string $key, mixed $value): void
     {
         $this->properties[$key] = $value;
     }
 
-    #[Override]
+    /** @param non-empty-string $key */
     final public function getProperty(string $key, mixed $default = null): mixed
     {
         if ($this->hasProperty($key)) {
@@ -189,7 +195,7 @@ abstract class Addon implements AddonInterface
         return $default;
     }
 
-    #[Override]
+    /** @param non-empty-string $key */
     final public function hasProperty(string $key): bool
     {
         if (!isset($this->properties[$key]) && !$this->propertiesLoaded) {
@@ -198,25 +204,24 @@ abstract class Addon implements AddonInterface
         return isset($this->properties[$key]);
     }
 
-    #[Override]
+    /** @param non-empty-string $key */
     final public function removeProperty(string $key): void
     {
         unset($this->properties[$key]);
     }
 
-    #[Override]
+    /** Returns if the addon is available (activated and installed). */
     final public function isAvailable(): bool
     {
         return $this->isInstalled() && (bool) $this->getProperty('status', false);
     }
 
-    #[Override]
+    /** Returns if the addon is installed. */
     final public function isInstalled(): bool
     {
         return (bool) $this->getProperty('install', false);
     }
 
-    #[Override]
     final public function getAuthor(?string $default = null): ?string
     {
         $composerJson = $this->getComposerJson();
@@ -232,7 +237,7 @@ abstract class Addon implements AddonInterface
         return $names ? implode(', ', $names) : $default;
     }
 
-    #[Override]
+    /** @param string|null $format See {@link Formatter::version()} */
     final public function getVersion(?string $format = null): string
     {
         $version = $this->getProperty('version');
@@ -250,7 +255,6 @@ abstract class Addon implements AddonInterface
         return $version;
     }
 
-    #[Override]
     final public function getSupportPage(?string $default = null): ?string
     {
         $composerJson = $this->getComposerJson();
@@ -267,7 +271,12 @@ abstract class Addon implements AddonInterface
         return $homepage;
     }
 
-    #[Override]
+    /**
+     * Includes a file in the addon context.
+     *
+     * @param non-empty-string $file Filename
+     * @param array<string, mixed> $context Context values, available as variables in given file
+     */
     final public function includeFile(string $file, array $context = []): mixed
     {
         $__file = $file;
@@ -288,7 +297,11 @@ abstract class Addon implements AddonInterface
         throw new RuntimeException(sprintf('Addon "%s": the page path "%s" neither exists as standalone path nor as addon subpath "%s"', $this->name, $__file, $__path));
     }
 
-    #[Override]
+    /**
+     * Adds the addon prefix to the given key and returns the translation for it.
+     *
+     * @return non-empty-string Translation for the key
+     */
     final public function i18n(string $key, string|int ...$replacements): string
     {
         $fullKey = $this->name . '_' . $key;

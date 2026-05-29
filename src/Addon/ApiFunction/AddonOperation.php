@@ -3,7 +3,7 @@
 namespace Redaxo\Core\Addon\ApiFunction;
 
 use Override;
-use Redaxo\Core\Addon\Addon as BaseAddon;
+use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\ApiFunction\AsApiFunction;
@@ -34,7 +34,11 @@ final class AddonOperation extends ApiFunction
             throw new ApiFunctionException('Unknown package function "' . escape($function) . '"!');
         }
         $packageId = Request::request('package', 'string');
-        $package = BaseAddon::get($packageId);
+        $package = Addon::get($packageId);
+        if (!$package) {
+            throw new ApiFunctionException('Package "' . escape($packageId) . '" doesn\'t exists!');
+        }
+
         if ('uninstall' == $function && !$package->isInstalled()
             || 'activate' == $function && $package->isAvailable()
             || 'deactivate' == $function && !$package->isAvailable()
@@ -42,9 +46,6 @@ final class AddonOperation extends ApiFunction
             return new Result(true);
         }
 
-        if (!$package instanceof BaseAddon) {
-            throw new ApiFunctionException('Package "' . escape($packageId) . '" doesn\'t exists!');
-        }
         $reinstall = 'install' === $function && $package->isInstalled();
         $manager = AddonManager::factory($package);
         $success = Type::bool($manager->$function());

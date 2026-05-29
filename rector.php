@@ -138,14 +138,14 @@ return RectorConfig::configure()
     // Upgrade REDAXO 5 to 6
     ->withConfiguredRule(RenameClassRector::class, [
         'rex' => Core::class,
-        'rex_package_interface' => Addon\AddonInterface::class,
-        'rex_null_package' => Addon\NullAddon::class,
+        'rex_package_interface' => Addon\Addon::class,
+        'rex_null_package' => Addon\Addon::class,
         'rex_package' => Addon\Addon::class,
         'rex_package_manager' => Addon\AddonManager::class,
         'rex_addon' => Addon\Addon::class,
-        'rex_addon_interface' => Addon\AddonInterface::class,
+        'rex_addon_interface' => Addon\Addon::class,
         'rex_addon_manager' => Addon\AddonManager::class,
-        'rex_null_addon' => Addon\NullAddon::class,
+        'rex_null_addon' => Addon\Addon::class,
         'rex_api_exception' => ApiFunction\Exception\ApiFunctionException::class,
         'rex_api_function' => ApiFunction\ApiFunction::class,
         'rex_api_result' => ApiFunction\Result::class,
