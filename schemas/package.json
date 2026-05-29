@@ -30,11 +30,6 @@
             "additionalProperties": {
                 "type": "string"
             }
-        },
-        "load": {
-            "description": "Loading position",
-            "enum": ["early", "normal", "late"],
-            "default": "normal"
         }
     },
     "additionalProperties": true,

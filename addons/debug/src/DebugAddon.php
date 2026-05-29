@@ -4,9 +4,12 @@ namespace Redaxo\Debug;
 
 use Override;
 use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\Addon\LoadOrder;
 
 final class DebugAddon extends Addon
 {
+    public protected(set) LoadOrder $load = LoadOrder::Early;
+
     #[Override]
     public function boot(): void
     {
