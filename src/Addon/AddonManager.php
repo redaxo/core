@@ -354,14 +354,13 @@ class AddonManager
         };
         foreach (Addon::getAvailableAddons() as $addon) {
             $id = $addon->name;
-            $load = $addon->getProperty('load');
-            if ('early' === $load) {
+            if (LoadOrder::Early === $addon->load) {
                 $early[] = $id;
-            } elseif ('late' === $load) {
+            } elseif (LoadOrder::Late === $addon->load) {
                 $late[] = $id;
             } else {
                 foreach (self::getRequiredAddons($addon) as $addonId) {
-                    if (!in_array($addonId, $normal) && !in_array(Addon::get($addonId)?->getProperty('load'), ['early', 'late'])) {
+                    if (!in_array($addonId, $normal) && !in_array(Addon::get($addonId)?->load, [LoadOrder::Early, LoadOrder::Late], true)) {
                         $requires[$id][$addonId] = true;
                     }
                 }

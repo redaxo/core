@@ -58,6 +58,9 @@ abstract class Addon
         }
     }
 
+    /** Loading position relative to other addons during boot. Override to load this addon early or late. */
+    public protected(set) LoadOrder $load = LoadOrder::Normal;
+
     /**
      * Properties.
      *

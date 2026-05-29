@@ -1,5 +1,3 @@
-load: early
-
 page:
     title: translate:debug
     perm: admin
