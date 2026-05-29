@@ -9,7 +9,6 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -23,20 +22,15 @@ use function sprintf;
 class CronjobRunCommand extends AbstractCommand
 {
     public function __invoke(
-        InputInterface $input,
         SymfonyStyle $io,
         #[Option('Execute single job (selected interactively or given by id)')] bool|string $job = false,
     ): int {
         // indicator constant, kept for BC
         define('REX_CRONJOB_SCRIPT', true);
 
-        // read the raw option value to preserve the original behavior: VALUE_OPTIONAL without
-        // a value yields null here (not the attribute-resolved bool true)
-        /** @var bool|string|null $job */
-        $job = $input->getOption('job');
-
         if (false !== $job) {
-            return $this->executeSingleJob($io, (int) $job);
+            // `true` means the option was given without a value (--job) -> select the job interactively
+            return $this->executeSingleJob($io, true === $job ? null : (int) $job);
         }
 
         $manager = CronjobManager::factory();
