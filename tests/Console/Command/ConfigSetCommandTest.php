@@ -35,7 +35,7 @@ final class ConfigSetCommandTest extends TestCase
         $commandTester = new CommandTester(new ConfigSetCommand());
         $commandTester->execute([
             '--type' => 'bool',
-            'config-key' => 'test',
+            'key' => 'test',
             'value' => $value,
         ]);
         $config = File::getConfig(Path::coreData('config.yml'));

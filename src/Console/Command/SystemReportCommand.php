@@ -2,15 +2,15 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\SystemReport;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function in_array;
 use function is_bool;
@@ -21,26 +21,18 @@ use const STR_PAD_LEFT;
 /**
  * @internal
  */
-class SystemReportCommand extends AbstractCommand
+#[AsCommand(name: 'system:report', description: 'Shows the system report')]
+final class SystemReportCommand extends AbstractCommand
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Shows the system report')
-            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, 'Output format ("cli", "markdown")', 'cli', ['cli', 'markdown'])
-        ;
-    }
+    private const array FORMATS = ['cli', 'markdown'];
 
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $formats = ['cli', 'markdown'];
-
-        $format = $input->getOption('format');
-
-        if (!in_array($format, $formats, true)) {
-            throw new InvalidOptionException(sprintf('Invalid value "%s" for --format option, allowed values: %s', $format, implode(', ', $formats)));
+    public function __invoke(
+        OutputInterface $output,
+        SymfonyStyle $io,
+        #[Option('Output format ("cli", "markdown")', shortcut: 'f', suggestedValues: self::FORMATS)] string $format = 'cli',
+    ): int {
+        if (!in_array($format, self::FORMATS, true)) {
+            throw new InvalidOptionException(sprintf('Invalid value "%s" for --format option, allowed values: %s', $format, implode(', ', self::FORMATS)));
         }
 
         $report = SystemReport::factory();
@@ -50,8 +42,6 @@ class SystemReportCommand extends AbstractCommand
 
             return Command::SUCCESS;
         }
-
-        $io = $this->getStyle($input, $output);
 
         $io->title('System report');
 

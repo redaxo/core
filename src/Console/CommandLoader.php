@@ -3,121 +3,85 @@
 namespace Redaxo\Core\Console;
 
 use Override;
-use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Console\Command\AbstractCommand;
-use Redaxo\Core\Console\Command\AddonActivateCommand;
-use Redaxo\Core\Console\Command\AddonDeactivateCommand;
-use Redaxo\Core\Console\Command\AddonInstallCommand;
-use Redaxo\Core\Console\Command\AddonListCommand;
-use Redaxo\Core\Console\Command\AddonUninstallCommand;
-use Redaxo\Core\Console\Command\AssetsCompileStylesCommand;
-use Redaxo\Core\Console\Command\AssetsSyncCommand;
-use Redaxo\Core\Console\Command\CacheClearCommand;
-use Redaxo\Core\Console\Command\ConfigGetCommand;
-use Redaxo\Core\Console\Command\ConfigSetCommand;
-use Redaxo\Core\Console\Command\CronjobRunCommand;
-use Redaxo\Core\Console\Command\DatabaseConnectionOptionsCommand;
-use Redaxo\Core\Console\Command\DatabaseDumpSchemaCommand;
-use Redaxo\Core\Console\Command\DatabaseSetConnectionCommand;
-use Redaxo\Core\Console\Command\MigrateCommand;
-use Redaxo\Core\Console\Command\SetupCheckCommand;
-use Redaxo\Core\Console\Command\SetupRunCommand;
-use Redaxo\Core\Console\Command\SystemReportCommand;
-use Redaxo\Core\Console\Command\UserCreateCommand;
-use Redaxo\Core\Console\Command\UserDeleteCommand;
-use Redaxo\Core\Console\Command\UserListCommand;
-use Redaxo\Core\Console\Command\UserSetPasswordCommand;
+use Redaxo\Core\Console\Command\AvailableInSetupInterface;
 use Redaxo\Core\Core;
-use Redaxo\Core\Exception\RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 
-use function gettype;
-use function is_array;
+use function array_shift;
+use function array_slice;
+use function explode;
+use function is_a;
 use function sprintf;
 
 /**
+ * Discovers all commands that are marked with the {@see AsCommand} attribute and extend {@see AbstractCommand},
+ * both in the core and in the active addons. Addons therefore register their commands simply by adding the
+ * attribute to a command class — no `package.yml` configuration is required.
+ *
+ * Commands are returned as {@see LazyCommand}, so that listing the commands (e.g. `console list`) does not
+ * instantiate every command class — only the command that is actually executed is instantiated.
+ *
  * @internal
  */
 final class CommandLoader implements CommandLoaderInterface
 {
-    /** @var array<string, array{class: class-string<AbstractCommand>, addon?: Addon}> */
+    /** @var array<string, array{class: class-string<AbstractCommand>, name: string, aliases: list<string>, hidden: bool, description: string}> */
     private array $commands = [];
 
     public function __construct()
     {
-        $commands = [
-            'cache:clear' => CacheClearCommand::class,
-            'config:get' => ConfigGetCommand::class,
-            'config:set' => ConfigSetCommand::class,
-            'db:connection-options' => DatabaseConnectionOptionsCommand::class,
-            'db:set-connection' => DatabaseSetConnectionCommand::class,
-            'setup:check' => SetupCheckCommand::class,
-            'setup:run' => SetupRunCommand::class,
-        ];
+        $isSetup = Core::isSetup();
 
-        if (!Core::isSetup()) {
-            $commands = array_merge($commands, [
-                'assets:sync' => AssetsSyncCommand::class,
-                'assets:compile-styles' => AssetsCompileStylesCommand::class,
-                'cronjob:run' => CronjobRunCommand::class,
-                'db:dump-schema' => DatabaseDumpSchemaCommand::class,
-                'addon:activate' => AddonActivateCommand::class,
-                'addon:deactivate' => AddonDeactivateCommand::class,
-                'addon:list' => AddonListCommand::class,
-                'addon:install' => AddonInstallCommand::class,
-                'addon:uninstall' => AddonUninstallCommand::class,
-                'migrate' => MigrateCommand::class,
-                'system:report' => SystemReportCommand::class,
-                'user:create' => UserCreateCommand::class,
-                'user:delete' => UserDeleteCommand::class,
-                'user:list' => UserListCommand::class,
-                'user:set-password' => UserSetPasswordCommand::class,
-            ]);
-        }
-
-        foreach ($commands as $command => $class) {
-            $this->commands[$command] = ['class' => $class];
-        }
-
-        foreach (Addon::getAvailableAddons() as $addon) {
-            /** @var array<string, class-string<AbstractCommand>> $commands */
-            $commands = $addon->getProperty('console_commands');
-
-            if (!$commands) {
+        foreach (ClassDiscovery::getInstance()->discoverByAttribute(AsCommand::class, AbstractCommand::class) as $class => $attribute) {
+            // Before the setup is completed only the explicitly marked commands are available.
+            if ($isSetup && !is_a($class, AvailableInSetupInterface::class, true)) {
                 continue;
             }
 
-            if (!is_array($commands)) {
-                throw new RuntimeException('Expecting "console_commands" property to be an array, got "' . gettype($commands) . '" from package.yml of "' . $addon->name . '"');
+            // The name may contain aliases, separated by "|" (and an empty first segment for hidden commands).
+            $names = explode('|', $attribute->name);
+            $hidden = '' === $names[0];
+            if ($hidden) {
+                array_shift($names);
             }
 
-            foreach ($commands as $command => $class) {
-                $this->commands[$command] = [
-                    'addon' => $addon,
-                    'class' => $class,
-                ];
+            $command = [
+                'class' => $class,
+                'name' => $names[0],
+                'aliases' => array_slice($names, 1),
+                'hidden' => $hidden,
+                'description' => $attribute->description ?? '',
+            ];
+
+            foreach ($names as $name) {
+                $this->commands[$name] = $command;
             }
         }
     }
 
     #[Override]
-    public function get(string $name): AbstractCommand
+    public function get(string $name): Command
     {
         if (!isset($this->commands[$name])) {
             throw new CommandNotFoundException(sprintf('Command "%s" does not exist.', $name));
         }
 
-        $class = $this->commands[$name]['class'];
+        $command = $this->commands[$name];
+        $class = $command['class'];
 
-        $command = new $class();
-        $command->setName($name);
-
-        if (isset($this->commands[$name]['addon'])) {
-            $command->setAddon($this->commands[$name]['addon']);
-        }
-
-        return $command;
+        return new LazyCommand(
+            $command['name'],
+            $command['aliases'],
+            $command['description'],
+            $command['hidden'],
+            static fn (): AbstractCommand => new $class(),
+        );
     }
 
     #[Override]

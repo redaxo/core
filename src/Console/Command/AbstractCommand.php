@@ -3,32 +3,25 @@
 namespace Redaxo\Core\Console\Command;
 
 use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\Exception\LogicException;
+use ReflectionObject;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function sprintf;
+use function str_starts_with;
+
+use const DIRECTORY_SEPARATOR;
 use const ENT_QUOTES;
 
 abstract class AbstractCommand extends Command
 {
-    protected ?Addon $addon = null;
-
-    /** @internal */
-    public function setAddon(?Addon $addon = null): void
-    {
-        $this->addon = $addon;
-    }
-
-    /** @return Addon|null In core commands it returns `null`, otherwise the corresponding addon object */
-    public function getAddon(): ?Addon
-    {
-        return $this->addon;
-    }
-
-    protected function getStyle(InputInterface $input, OutputInterface $output): SymfonyStyle
-    {
-        return new SymfonyStyle($input, $output);
+    /**
+     * The addon the command belongs to, resolved lazily from the location of the command class.
+     *
+     * Only available for addon commands; reading it on a core command throws a {@see LogicException}.
+     */
+    public private(set) Addon $addon {
+        get => $this->addon ??= $this->resolveAddon();
     }
 
     /**
@@ -44,5 +37,22 @@ abstract class AbstractCommand extends Command
         $message = strip_tags($message);
 
         return htmlspecialchars_decode($message, ENT_QUOTES);
+    }
+
+    private function resolveAddon(): Addon
+    {
+        $file = new ReflectionObject($this)->getFileName();
+
+        if (false !== $file) {
+            $file = realpath($file) ?: $file;
+
+            foreach (Addon::getAvailableAddons() as $addon) {
+                if (str_starts_with($file, $addon->path . DIRECTORY_SEPARATOR)) {
+                    return $addon;
+                }
+            }
+        }
+
+        throw new LogicException(sprintf('Command "%s" does not belong to an addon.', $this::class));
     }
 }

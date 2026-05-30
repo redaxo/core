@@ -2,53 +2,32 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @internal
  */
-class AddonUninstallCommand extends AbstractCommand
+#[AsCommand(name: 'addon:uninstall', description: 'Uninstalls the selected addon')]
+final class AddonUninstallCommand extends AbstractCommand
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Uninstalls the selected addon')
-            ->addArgument('addon-id', InputArgument::REQUIRED, 'The id of the addon, e.g. "yform"', null, static function () {
-                $packageNames = [];
-
-                foreach (Addon::getRegisteredAddons() as $package) {
-                    if (!$package->isInstalled()) {
-                        continue;
-                    }
-
-                    $packageNames[] = $package->name;
-                }
-
-                return $packageNames;
-            });
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
-        $packageId = $input->getArgument('addon-id');
-
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('The name of the addon, e.g. "yform"', suggestedValues: static function (): array {
+            return array_keys(Addon::getInstalledAddons());
+        })] string $addon,
+    ): int {
         // the package manager don't know new packages in the addon folder
         // so we need to make them available
         AddonManager::synchronizeWithFileSystem();
 
-        $package = Addon::get($packageId);
+        $package = Addon::get($addon);
         if (!$package) {
-            $io->error('Addon "' . $packageId . '" doesn\'t exists!');
+            $io->error('Addon "' . $addon . '" doesn\'t exists!');
             return Command::FAILURE;
         }
 

@@ -2,58 +2,52 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @internal
  */
-class DatabaseSetConnectionCommand extends AbstractCommand implements StandaloneInterface
+#[AsCommand(
+    name: 'db:set-connection',
+    description: 'Sets database connection credentials.',
+    help: 'Checks by default if a database connection can be established with the new settings.',
+)]
+final class DatabaseSetConnectionCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Sets database connection credentials.')
-            ->setHelp('Checks by default if a database connection can be established with the new settings.')
-            ->addOption('host', null, InputOption::VALUE_REQUIRED, 'database host')
-            ->addOption('login', null, InputOption::VALUE_REQUIRED, 'database user')
-            ->addOption('password', null, InputOption::VALUE_REQUIRED, 'database password')
-            ->addOption('database', null, InputOption::VALUE_REQUIRED, 'database name')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Save credentials even if validation fails.');
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Option('database host')] ?string $host = null,
+        #[Option('database user')] ?string $login = null,
+        #[Option('database password')] ?string $password = null,
+        #[Option('database name')] ?string $database = null,
+        #[Option('Save credentials even if validation fails.', shortcut: 'f')] bool $force = false,
+    ): int {
         $configFile = Path::coreData('config.yml');
         $config = File::getConfig($configFile);
 
         $db = ($config['db'][1] ?? []) + ['host' => '', 'login' => '', 'password' => '', 'name' => ''];
 
         $changed = false;
-        if (null !== $host = $input->getOption('host')) {
+        if (null !== $host) {
             $db['host'] = $host;
             $changed = true;
         }
-        if (null !== $login = $input->getOption('login')) {
+        if (null !== $login) {
             $db['login'] = $login;
             $changed = true;
         }
-        if (null !== $password = $input->getOption('password')) {
+        if (null !== $password) {
             $db['password'] = $password;
             $changed = true;
         }
-        if (null !== $database = $input->getOption('database')) {
+        if (null !== $database) {
             $db['name'] = $database;
             $changed = true;
         }
@@ -73,7 +67,7 @@ class DatabaseSetConnectionCommand extends AbstractCommand implements Standalone
         if (true !== $settingsValid) {
             $io->error("Can't connect to database:\n" . $settingsValid);
 
-            if (!$input->getOption('force')) {
+            if (!$force) {
                 return Command::FAILURE;
             }
         } else {

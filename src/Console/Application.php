@@ -18,6 +18,7 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Path;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LazyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -68,6 +69,11 @@ class Application extends SymfonyApplication
     #[Override]
     protected function doRunCommand(Command $command, InputInterface $input, OutputInterface $output): int
     {
+        // Unwrap the LazyCommand returned by the CommandLoader to get the actual command instance.
+        if ($command instanceof LazyCommand) {
+            $command = $command->getCommand();
+        }
+
         if ($command instanceof AbstractCommand) {
             $this->loadPackages($command);
         }
@@ -105,7 +111,7 @@ class Application extends SymfonyApplication
 
         if ('ydeploy:migrate' === $command->getName()) {
             // boot only the ydeploy package, which provides the migrate command
-            $command->getAddon()->boot();
+            $command->addon->boot();
 
             return;
         }

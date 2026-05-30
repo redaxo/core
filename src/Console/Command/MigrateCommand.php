@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Core;
@@ -13,9 +12,9 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
 use function sprintf;
@@ -23,19 +22,11 @@ use function sprintf;
 /**
  * @internal
  */
-class MigrateCommand extends AbstractCommand implements StandaloneInterface
+#[AsCommand(name: 'migrate', description: 'Runs install scripts of core and addons to ensure schema is up to date')]
+final class MigrateCommand extends AbstractCommand implements StandaloneInterface
 {
-    #[Override]
-    protected function configure(): void
+    public function __invoke(SymfonyStyle $io): int
     {
-        $this->setDescription('Runs install scripts of core and addons to ensure schema is up to date');
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
         // verify the database server meets the minimum version requirements
         $sql = Sql::factory();
         $dbType = $sql->getDbType();

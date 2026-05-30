@@ -23,13 +23,6 @@
         "default_config": {
             "description": "Default values for Redaxo\\Core\\Config",
             "type": "object"
-        },
-        "console_commands": {
-            "description": "Console command names and their corresponding class",
-            "type": "object",
-            "additionalProperties": {
-                "type": "string"
-            }
         }
     },
     "additionalProperties": true,

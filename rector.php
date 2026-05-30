@@ -416,8 +416,6 @@ return RectorConfig::configure()
         new MethodCallRename(Addon\Addon::class, 'getInstalledPackages', 'getInstalledAddons'),
         new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getAvailableAddons'),
         new MethodCallRename(Addon\Addon::class, 'getSetupPackages', 'getSetupAddons'),
-        new MethodCallRename(Console\Command\AbstractCommand::class, 'getPackage', 'getAddon'),
-        new MethodCallRename(Console\Command\AbstractCommand::class, 'setPackage', 'setAddon'),
 
         new MethodCallRename(ApiFunction\Result::class, 'toJSON', 'toJson'),
         new MethodCallRename(ApiFunction\Result::class, 'fromJSON', 'fromJson'),
@@ -523,6 +521,8 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(ApiFunction\Result::class, 'isSuccessfull', 'succeeded'),
         new MethodCallToPropertyFetch(ApiFunction\Result::class, 'getMessage', 'message'),
         new MethodCallToPropertyFetch(ApiFunction\Result::class, 'requiresReboot', 'requiresReboot'),
+
+        new MethodCallToPropertyFetch(Console\Command\AbstractCommand::class, 'getPackage', 'addon'),
 
         new MethodCallToPropertyFetch(Cronjob\Type\AbstractType::class, 'getMessage', 'message'),
         new MethodCallToPropertyFetch(Cronjob\Type\AbstractType::class, 'hasMessage', 'message'),

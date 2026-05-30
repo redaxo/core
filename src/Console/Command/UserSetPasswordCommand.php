@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -10,40 +9,31 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Security\User;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function sprintf;
 
 /**
  * @internal
  */
-class UserSetPasswordCommand extends AbstractCommand
+#[AsCommand(name: 'user:set-password', description: 'Sets a new password for a user')]
+final class UserSetPasswordCommand extends AbstractCommand
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Sets a new password for a user')
-            ->addArgument('user', InputArgument::REQUIRED, 'Username', null, static function () {
-                /** @var list<string> */
-                return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
-            })
-            ->addArgument('password', InputArgument::OPTIONAL, 'Password')
-            ->addOption('password-change-required', null, InputOption::VALUE_NONE, 'Require password change after login')
-        ;
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
-        $username = $input->getArgument('user');
+    public function __invoke(
+        SymfonyStyle $io,
+        #[Argument('Username', suggestedValues: static function (): array {
+            /** @var list<string> */
+            return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
+        })] string $user,
+        #[Argument('Password')] ?string $password = null,
+        #[Option('Require password change after login')] bool $passwordChangeRequired = false,
+    ): int {
+        $username = $user;
 
         $user = Sql::factory();
         $user
@@ -59,8 +49,6 @@ class UserSetPasswordCommand extends AbstractCommand
         $id = $user->id;
 
         $passwordPolicy = BackendPasswordPolicy::factory();
-
-        $password = $input->getArgument('password');
 
         if ($password && true !== $msg = $passwordPolicy->check($password, $id)) {
             throw new InvalidArgumentException($msg);
@@ -93,7 +81,7 @@ class UserSetPasswordCommand extends AbstractCommand
             ->addGlobalUpdateFields('console')
             ->setDateTimeValue('password_changed', time())
             ->setArrayValue('previous_passwords', $passwordPolicy->updatePreviousPasswords($user, $passwordHash))
-            ->setValue('password_change_required', (int) $input->getOption('password-change-required'))
+            ->setValue('password_change_required', (int) $passwordChangeRequired)
             ->update();
 
         Extension::registerPoint(new ExtensionPoint('PASSWORD_UPDATED', '', [

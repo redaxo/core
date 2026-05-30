@@ -2,58 +2,45 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * @internal
  */
-class AddonInstallCommand extends AbstractCommand
+#[AsCommand(name: 'addon:install', description: 'Installs the selected addon')]
+final class AddonInstallCommand extends AbstractCommand
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this
-            ->setDescription('Installs the selected addon')
-            ->addArgument('addon-id', InputArgument::REQUIRED, 'The id of the addon, e.g. "yform"', null, static function () {
-                $packageNames = [];
-
-                foreach (Addon::getRegisteredAddons() as $package) {
-                    // allow all packages, because we support --re-intall for already installed ones
-                    $packageNames[] = $package->name;
-                }
-
-                return $packageNames;
-            })
-            ->addOption('re-install', '-r', InputOption::VALUE_NONE, 'Allows to reinstall the addon without asking the User');
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-
-        $packageId = $input->getArgument('addon-id');
-
+    public function __invoke(
+        InputInterface $input,
+        OutputInterface $output,
+        SymfonyStyle $io,
+        #[Argument('The name of the addon, e.g. "yform"', suggestedValues: static function (): array {
+            // allow all packages, because we support --re-intall for already installed ones
+            return array_keys(Addon::getRegisteredAddons());
+        })] string $addon,
+        #[Option('Allows to reinstall the addon without asking the User', shortcut: 'r')] bool $reInstall = false,
+    ): int {
         // the package manager don't know new packages in the addon folder
         // so we need to make them available
         AddonManager::synchronizeWithFileSystem();
 
-        $package = Addon::get($packageId);
+        $package = Addon::get($addon);
         if (!$package) {
-            $io->error('Addon "' . $packageId . '" doesn\'t exists!');
+            $io->error('Addon "' . $addon . '" doesn\'t exists!');
             return Command::FAILURE;
         }
 
-        if ($package->isInstalled() && !$input->getOption('re-install')) {
+        if ($package->isInstalled() && !$reInstall) {
             /** @var QuestionHelper $helper */
             $helper = $this->getHelper('question');
             $question = new ConfirmationQuestion('Addon "' . $package->name . '" is already installed. Should it be reinstalled? (y/n) ', false);

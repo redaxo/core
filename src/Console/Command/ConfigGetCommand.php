@@ -2,40 +2,31 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
+use Symfony\Component\Console\Attribute\Argument;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 use function is_array;
 
 /**
  * @internal
  */
-class ConfigGetCommand extends AbstractCommand implements StandaloneInterface
+#[AsCommand(name: 'config:get', description: 'Get config variables')]
+final class ConfigGetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
 {
-    #[Override]
-    protected function configure(): void
-    {
-        $this->setDescription('Get config variables')
-            ->addArgument('config-key', InputArgument::REQUIRED, 'config path separated by periods, e.g. "setup" or "db.1.host"')
-            ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'php type of the returned value, e.g. "octal"', 'string')
-            ->addOption('addon', 'p', InputOption::VALUE_REQUIRED, 'addon to inspect, defaults to redaxo-core', 'core')
-        ;
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $io = $this->getStyle($input, $output);
-        $key = $input->getArgument('config-key');
-        $type = $input->getOption('type');
-
+    public function __invoke(
+        SymfonyStyle $io,
+        OutputInterface $output,
+        #[Argument('config path separated by periods, e.g. "setup" or "db.1.host"')] string $key,
+        #[Option('php type of the returned value, e.g. "octal"', shortcut: 't')] string $type = 'string',
+        #[Option('addon to inspect, defaults to redaxo-core', name: 'addon', shortcut: 'p')] string $package = 'core',
+    ): int {
         if (!$key) {
             throw new InvalidArgumentException('config-key is required');
         }
@@ -43,7 +34,6 @@ class ConfigGetCommand extends AbstractCommand implements StandaloneInterface
         $path = explode('.', $key);
         $propertyKey = array_shift($path);
 
-        $package = $input->getOption('addon');
         if ('core' === $package) {
             $config = Core::getProperty($propertyKey);
         } else {
