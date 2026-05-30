@@ -15,7 +15,7 @@ final class ConfigGetCommandTest extends TestCase
     {
         $commandTester = new CommandTester(new ConfigGetCommand());
         $commandTester->execute([
-            'config-key' => $key,
+            'key' => $key,
         ]);
         self::assertEquals($expectedValue, $commandTester->getDisplay(true));
         self::assertEquals(0, $commandTester->getStatusCode());
@@ -34,7 +34,7 @@ final class ConfigGetCommandTest extends TestCase
     {
         $commandTester = new CommandTester(new ConfigGetCommand());
         $commandTester->execute([
-            'config-key' => 'foo.bar',
+            'key' => 'foo.bar',
         ]);
         self::assertEquals(1, $commandTester->getStatusCode());
     }
@@ -43,7 +43,7 @@ final class ConfigGetCommandTest extends TestCase
     {
         $commandTester = new CommandTester(new ConfigGetCommand());
         $commandTester->execute([
-            'config-key' => 'author',
+            'key' => 'author',
             '--addon' => 'test', ],
         );
         self::assertEquals("\"Yakamara Media GmbH & Co. KG, REDAXO team & community\"\n", $commandTester->getDisplay(true));
