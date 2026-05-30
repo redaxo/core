@@ -7,7 +7,6 @@ use Composer\InstalledVersions;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Config;
-use Redaxo\Core\Core;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Dir;
@@ -24,13 +23,22 @@ use function is_array;
 use function is_string;
 use function sprintf;
 
+use const JSON_PRETTY_PRINT;
 use const JSON_THROW_ON_ERROR;
+use const JSON_UNESCAPED_SLASHES;
+use const JSON_UNESCAPED_UNICODE;
 
+/**
+ * @phpstan-type TAddonConfig array<non-empty-string, array{class: class-string<Addon>, install: bool, status: bool}>
+ * @phpstan-type TAddonOrder list<non-empty-string>
+ */
 class AddonManager
 {
     use FactoryTrait;
 
-    protected bool $generatePackageOrder = true;
+    /** @var array{config: TAddonConfig, order: TAddonOrder}|null */
+    private static ?array $addonsData = null;
+
     protected string $message = '';
 
     final protected function __construct(
@@ -97,9 +105,7 @@ class AddonManager
                 $this->addon->setProperty('status', true);
             }
             static::saveConfig();
-            if ($this->generatePackageOrder) {
-                self::generatePackageOrder();
-            }
+            self::generateAddonOrder();
 
             foreach ($this->addon->getProperty('default_config', []) as $key => $value) {
                 if (!$this->addon->hasConfig($key)) {
@@ -209,8 +215,8 @@ class AddonManager
                 $this->addon->setProperty('status', true);
                 static::saveConfig();
             }
-            if (true === $state && $this->generatePackageOrder) {
-                self::generatePackageOrder();
+            if (true === $state) {
+                self::generateAddonOrder();
             }
         } else {
             $state = $this->i18n('not_installed', $this->addon->name);
@@ -243,9 +249,7 @@ class AddonManager
             // clear cache of addon
             $this->addon->clearCache();
 
-            if ($this->generatePackageOrder) {
-                self::generatePackageOrder();
-            }
+            self::generateAddonOrder();
 
             $this->message = $this->i18n('deactivated', $this->addon->name);
             return true;
@@ -330,16 +334,28 @@ class AddonManager
         return I18n::msg($fullKey, ...$replacements);
     }
 
-    /** Generates the addon order. */
-    public static function generatePackageOrder(): void
+    /** @return TAddonConfig */
+    public static function getAddonConfig(): array
     {
-        /** @var list<string> $early */
+        return self::loadAddonsData()['config'];
+    }
+
+    /** @return TAddonOrder */
+    public static function getAddonOrder(): array
+    {
+        return self::loadAddonsData()['order'];
+    }
+
+    /** Generates the addon order. */
+    public static function generateAddonOrder(): void
+    {
+        /** @var list<non-empty-string> $early */
         $early = [];
-        /** @var list<string> $normal */
+        /** @var list<non-empty-string> $normal */
         $normal = [];
-        /** @var list<string> $late */
+        /** @var list<non-empty-string> $late */
         $late = [];
-        /** @var array<string, array<string, true>> $requires */
+        /** @var array<non-empty-string, array<non-empty-string, true>> $requires */
         $requires = [];
 
         $add = static function ($id) use (&$add, &$normal, &$requires) {
@@ -369,7 +385,10 @@ class AddonManager
                 }
             }
         }
-        Core::setConfig('package-order', array_merge($early, $normal, array_keys($requires), $late));
+
+        /** @var TAddonOrder $order */
+        $order = array_merge($early, $normal, array_keys($requires), $late);
+        self::saveAddonsData(order: $order);
     }
 
     /** Saves the addon config. */
@@ -381,13 +400,14 @@ class AddonManager
             $config[$addonName]['install'] = $addon->isInstalled();
             $config[$addonName]['status'] = $addon->isAvailable();
         }
-        Core::setConfig('package-config', $config);
+
+        self::saveAddonsData(config: $config);
     }
 
     /** Synchronizes the addons with the file system. */
     public static function synchronizeWithFileSystem(): void
     {
-        $config = Core::getPackageConfig();
+        $config = self::getAddonConfig();
         $registeredAddons = Addon::getRegisteredAddons();
         $packages = self::getComposerPackages();
         $addonClasses = self::getAddonClasses();
@@ -413,8 +433,45 @@ class AddonManager
         }
         ksort($config);
 
-        Core::setConfig('package-config', $config);
+        self::saveAddonsData(config: $config);
         Addon::initialize();
+    }
+
+    /** @return array{config: TAddonConfig, order: TAddonOrder} */
+    private static function loadAddonsData(): array
+    {
+        if (null !== self::$addonsData) {
+            return self::$addonsData;
+        }
+
+        $file = Path::coreData('addons.json');
+        if (!is_file($file)) {
+            return self::$addonsData = ['config' => [], 'order' => []];
+        }
+
+        /** @var array{config: TAddonConfig, order: TAddonOrder} $data */
+        $data = File::getCache($file) ?? ['config' => [], 'order' => []];
+
+        return self::$addonsData = $data;
+    }
+
+    /**
+     * @param TAddonConfig|null $config
+     * @param TAddonOrder|null $order
+     */
+    private static function saveAddonsData(?array $config = null, ?array $order = null): void
+    {
+        $data = self::loadAddonsData();
+
+        if (null !== $config) {
+            $data['config'] = $config;
+        }
+        if (null !== $order) {
+            $data['order'] = $order;
+        }
+
+        self::$addonsData = $data;
+        File::put(Path::coreData('addons.json'), (string) json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     /**
