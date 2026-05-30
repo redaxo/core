@@ -2075,9 +2075,6 @@
     </MixedReturnStatement>
   </file>
   <file src="src/Core.php">
-    <LessSpecificReturnStatement>
-      <code><![CDATA[Type::array(self::getConfig('package-order', []))]]></code>
-    </LessSpecificReturnStatement>
     <MixedArgument>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
@@ -2101,9 +2098,6 @@
       <code><![CDATA[$result | $item]]></code>
       <code><![CDATA[Config::get(self::CONFIG_NAMESPACE, $key, $default)]]></code>
     </MixedReturnStatement>
-    <MoreSpecificReturnType>
-      <code><![CDATA[list<non-empty-string>]]></code>
-    </MoreSpecificReturnType>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$server]]></code>
     </PossiblyUndefinedArrayOffset>

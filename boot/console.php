@@ -2,6 +2,7 @@
 
 use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Console\Application;
 use Redaxo\Core\Console\Command\ListCommand;
 use Redaxo\Core\Console\CommandLoader;
@@ -25,7 +26,7 @@ Core::setProperty('console', $application);
 Addon::initialize(!Core::isSetup());
 
 if (!Core::isSetup()) {
-    foreach (Core::getPackageOrder() as $packageId) {
+    foreach (AddonManager::getAddonOrder() as $packageId) {
         Addon::require($packageId)->enlist();
     }
 
