@@ -143,11 +143,6 @@ final class Core
                     throw new InvalidArgumentException(sprintf('"%s" property: expecting $value to be an instance of %s, "%s" found.', $key, Application::class, get_debug_type($value)));
                 }
                 break;
-            case 'version':
-                if (!is_string($value) || !preg_match('/^\d+(?:\.\d+)*(?:\.x)*(?:-\w+)?$/', $value)) {
-                    throw new InvalidArgumentException(sprintf('"%s" property: expecting $value to be a valid version string, got %s.', $key, is_string($value) ? '"' . $value . '"' : get_debug_type($value)));
-                }
-                break;
         }
         $exists = isset(self::$properties[$key]);
         self::$properties[$key] = $value;
@@ -174,7 +169,6 @@ final class Core
      *      ($key is 'timezone' ? string :
      *      ($key is 'table_prefix' ? non-empty-string :
      *      ($key is 'temp_prefix' ? non-empty-string :
-     *      ($key is 'version' ? string :
      *      ($key is 'server' ? string :
      *      ($key is 'servername' ? string :
      *      ($key is 'error_email' ? string :
@@ -189,7 +183,7 @@ final class Core
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      )))))))))))))))))))))))))))
+     *      ))))))))))))))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -433,19 +427,12 @@ final class Core
      */
     public static function getVersion(?string $format = null): string
     {
-        /** @psalm-taint-escape file */
-        $version = self::getProperty('version');
+        $version = Type::string(InstalledVersions::getPrettyVersion('redaxo/core'));
 
-        if (!$version) {
-            $version = Type::string(InstalledVersions::getPrettyVersion('redaxo/core'));
-
-            // On feature branches Composer returns "dev-<branch>", which is not
-            // a meaningful version. Fall back to a generic dev version.
-            if (str_starts_with($version, 'dev-')) {
-                $version = '6.x-dev';
-            }
-
-            self::setProperty('version', $version);
+        // On feature branches Composer returns "dev-<branch>", which is not
+        // a meaningful version. Fall back to a generic dev version.
+        if (str_starts_with($version, 'dev-')) {
+            $version = '6.x-dev';
         }
 
         if ($format) {
