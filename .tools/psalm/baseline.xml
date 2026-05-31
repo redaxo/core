@@ -1863,9 +1863,6 @@
     <InvalidArgument>
       <code><![CDATA[['id' => $ArtSql->getValue('id'), 'startarticle' => '0', 'clang_id' => $clang]]]></code>
     </InvalidArgument>
-    <InvalidArrayOffset>
-      <code><![CDATA[$templates[$templateKey]]]></code>
-    </InvalidArrayOffset>
     <InvalidOperand>
       <code><![CDATA[$fcat->getValue('path')]]></code>
       <code><![CDATA[$tcat->getValue('path')]]></code>
