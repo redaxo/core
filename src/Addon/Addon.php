@@ -62,6 +62,13 @@ abstract class Addon
     /** Loading position relative to other addons during boot. Override to load this addon early or late. */
     public protected(set) LoadOrder $load = LoadOrder::Normal;
 
+    /**
+     * Default config values applied on install (only for keys that are not already set). Override to provide defaults.
+     *
+     * @var array<string, mixed>
+     */
+    public protected(set) array $defaultConfig = [];
+
     /** Lifecycle state of the addon. */
     public private(set) AddonState $state = AddonState::Uninstalled;
 

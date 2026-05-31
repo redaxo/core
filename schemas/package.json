@@ -3,11 +3,6 @@
     "$id": "https://redaxo.org/schemas/package.json",
     "title": "JSON schema for REDAXO package.yml",
     "type": "object",
-    "properties": {
-        "default_config": {
-            "description": "Default values for Redaxo\\Core\\Config",
-            "type": "object"
-        }
-    },
+    "properties": {},
     "additionalProperties": true
 }

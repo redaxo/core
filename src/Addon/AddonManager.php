@@ -91,7 +91,7 @@ class AddonManager
             $this->addon->install();
             $successMessage = (string) $this->addon->getProperty('successmsg', '');
 
-            foreach ($this->addon->getProperty('default_config', []) as $key => $value) {
+            foreach ($this->addon->defaultConfig as $key => $value) {
                 if (!$this->addon->hasConfig($key)) {
                     $this->addon->setConfig($key, $value);
                 }
