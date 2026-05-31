@@ -5,6 +5,7 @@ namespace Redaxo\Core\Addon;
 use Composer\InstalledVersions;
 use OutOfBoundsException;
 use Redaxo\Core\Addon\ExtensionPoint\AddonCacheDeleted;
+use Redaxo\Core\Backend\Page;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
 use Redaxo\Core\Exception\RuntimeException;
@@ -444,6 +445,22 @@ abstract class Addon
 
     /** Boot hook — runs on every request after all addons are enlisted. Override to register listeners etc. */
     public function boot(): void {}
+
+    /**
+     * Backend page hook — override to register the addon's backend pages.
+     *
+     * Runs only in the backend, after the core pages and all earlier-loading addons have been registered, so
+     * Controller::getPageObject() can be used to attach subpages to existing core or addon pages. Top-level pages
+     * are typically MainPage instances (shown in the navigation); a plain Page can be used for hidden entry points
+     * that are reachable by key/URL but should not appear in the navigation. Any page without an explicit path falls
+     * back to the convention `pages/<key>.php` (or `pages/index.php` for the main page whose key equals the addon name).
+     *
+     * @return iterable<Page>
+     */
+    public function getPages(): iterable
+    {
+        return [];
+    }
 
     /**
      * Install hook — runs on install/reinstall. Override for schema/data setup. Must be idempotent.
