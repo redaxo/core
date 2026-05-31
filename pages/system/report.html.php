@@ -23,7 +23,7 @@ foreach ($report as $title => $group) {
     foreach ($group as $label => $value) {
         if (SystemReport::TITLE_PACKAGES === $title || SystemReport::TITLE_REDAXO === $title) {
             if (null === $value) {
-                throw new RuntimeException('Package ' . $label . ' does not define a proper version in its package.yml.');
+                throw new RuntimeException('Package ' . $label . ' does not define a proper version in its composer.json.');
             }
             if (Version::isUnstable($value)) {
                 $value = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . escape($value);

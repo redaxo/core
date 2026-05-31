@@ -327,7 +327,6 @@ package_activate = aktivieren
 package_yes = ja
 package_no = nein
 package_caption = Liste der verfügbaren Packages
-package_invalid_yml_file = Die package.yml ist invalid:
 package_install_cant_copy_files = Fehler beim Kopieren des /assets Ordners!
 package_install_cant_delete_files = Fehler beim Löschen des /assets Ordners!
 package_jump_to = Zu "{0}" springen
