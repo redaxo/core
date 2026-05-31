@@ -291,7 +291,6 @@ if ($step > 4 && $createdb > -1) {
 
     if (0 == count($errors)) {
         LanguageHandler::generateCache();
-        Core::setConfig('version', Core::getVersion());
     } else {
         $step = 4;
         $context->setParam('step', $step);

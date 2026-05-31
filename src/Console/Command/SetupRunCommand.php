@@ -454,7 +454,6 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         }
 
         LanguageHandler::generateCache();
-        Core::setConfig('version', Core::getVersion());
 
         // ---------------------------------- Step 5 . Create User
         $io->title('Step 5 of 5 / User');

@@ -257,14 +257,7 @@ abstract class Addon
     /** @param string|null $format See {@link Formatter::version()} */
     final public function getVersion(?string $format = null): string
     {
-        $version = $this->getProperty('version');
-
-        if (null === $version) {
-            $version = InstalledVersions::getPrettyVersion($this->package) ?? '';
-            $this->setProperty('version', $version);
-        }
-
-        Type::string($version);
+        $version = InstalledVersions::getPrettyVersion($this->package) ?? '';
 
         if ($format) {
             return Formatter::version($version, $format);
