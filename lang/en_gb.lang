@@ -1265,10 +1265,8 @@ perm_options_linkmap[all_categories] = Show all categories in Linkmap
 
 system_setting_start_article_id = Start article
 system_setting_notfound_article_id = Not-found article
-system_setting_default_template = Default template
 system_setting_start_article_id_invalid = Invalid start article!
 system_setting_notfound_article_id_invalid = Invalid not-found article!
-system_setting_default_template_invalid = Invalid default template!
 
 linkmap = Linkmap
 linkmap_categories = Categories

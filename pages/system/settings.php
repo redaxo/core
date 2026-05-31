@@ -2,7 +2,6 @@
 
 use Redaxo\Core\Cache;
 use Redaxo\Core\Content\Article;
-use Redaxo\Core\Content\Template;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\InvalidArgumentException;
@@ -106,14 +105,6 @@ if ($func && !$csrfToken->isValid()) {
                     $error[] = I18n::msg('system_setting_' . $key . '_invalid');
                 }
                 Core::setConfig($key, $value);
-                break;
-
-            case 'default_template':
-                $value = (string) $value;
-                if ('' !== $value && !Template::exists($value)) {
-                    $error[] = I18n::msg('system_setting_default_template_invalid');
-                }
-                Core::setConfig('default_template', '' !== $value ? $value : null);
                 break;
 
             case 'article_history':
@@ -336,27 +327,6 @@ $field->setAttribute('class', 'rex-form-widget');
 $field->setAttribute('name', 'settings[notfound_article_id]');
 $field->setLabel(I18n::msg('system_setting_notfound_article_id'));
 $field->setValue(Core::getConfig('notfound_article_id', 1));
-$content .= $field->get();
-
-$field = new SelectField();
-$field->setAttribute('class', 'form-control selectpicker');
-$field->setAttribute('name', 'settings[default_template]');
-$field->setLabel(I18n::msg('system_setting_default_template'));
-$select = $field->getSelect();
-$select->setSize(1);
-$defaultTemplate = Template::getDefaultKey();
-if (null !== $defaultTemplate) {
-    $select->setSelected($defaultTemplate);
-}
-
-$templates = Template::getTemplatesForCategory(0);
-if (empty($templates)) {
-    $select->addOption(I18n::msg('option_no_template'), '');
-} else {
-    foreach ($templates as $key => $template) {
-        $select->addOption(I18n::translate($template->name), $key);
-    }
-}
 $content .= $field->get();
 
 $field = new SelectField();

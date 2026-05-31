@@ -66,7 +66,10 @@ class CategoryHandler
             // $sql->setDebug();
             $sql->setQuery('select clang_id,template from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1', [$categoryId]);
             for ($i = 0; $i < $sql->getRows(); $i++, $sql->next()) {
-                $startpageTemplates[(int) $sql->getValue('clang_id')] = $sql->getValue('template');
+                $template = (string) $sql->getValue('template');
+                if ('' !== $template) {
+                    $startpageTemplates[(int) $sql->getValue('clang_id')] = $template;
+                }
             }
         }
 
@@ -78,15 +81,12 @@ class CategoryHandler
         // Kategorie in allen Sprachen anlegen
         $AART = Sql::factory();
         foreach (Language::getAllIds() as $key) {
-            $templateKey = Template::getDefaultKey();
-            if (isset($startpageTemplates[$key]) && '' != $startpageTemplates[$key]) {
-                $templateKey = $startpageTemplates[$key];
-            }
+            // Inherit the template from the start article of the respective language, otherwise use the default
+            $templateKey = $startpageTemplates[$key] ?? Template::getDefaultKey();
 
-            // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
-            // oder leer setzen.
+            // Fall back to the first allowed template if the chosen one is not available in this category
             if (null === $templateKey || !isset($templates[$templateKey])) {
-                $templateKey = count($templates) > 0 ? key($templates) : null;
+                $templateKey = array_key_first($templates);
             }
 
             $AART->setTable(Core::getTablePrefix() . 'article');
