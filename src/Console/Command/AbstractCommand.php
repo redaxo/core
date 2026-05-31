@@ -46,7 +46,7 @@ abstract class AbstractCommand extends Command
         if (false !== $file) {
             $file = realpath($file) ?: $file;
 
-            foreach (Addon::getAvailableAddons() as $addon) {
+            foreach (Addon::getActivatedAddons() as $addon) {
                 if (str_starts_with($file, $addon->path . DIRECTORY_SEPARATOR)) {
                     return $addon;
                 }

@@ -29,7 +29,7 @@ use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
 /**
- * @phpstan-type TAddonConfig array<non-empty-string, array{class: class-string<Addon>, install: bool, status: bool}>
+ * @phpstan-type TAddonConfig array<non-empty-string, array{class: class-string<Addon>, state: value-of<AddonState>}>
  * @phpstan-type TAddonOrder list<non-empty-string>
  */
 class AddonManager
@@ -83,29 +83,13 @@ class AddonManager
                 throw new UserMessageException($message);
             }
 
-            $reinstall = $this->addon->getProperty('install');
-            $this->addon->setProperty('install', true);
+            $reinstall = $this->addon->isInstalled();
 
             I18n::addDirectory($this->addon->getPath('lang'));
 
-            // run install hook
+            // run install hook (can only abort by throwing a UserMessageException)
             $this->addon->install();
             $successMessage = (string) $this->addon->getProperty('successmsg', '');
-
-            /** @psalm-taint-escape html */
-            $instmsg = (string) $this->addon->getProperty('installmsg', '');
-            if ('' != $instmsg) {
-                throw new UserMessageException($instmsg);
-            }
-            if (!$this->addon->isInstalled()) {
-                throw new UserMessageException($this->i18n('no_reason'));
-            }
-
-            if (!$reinstall) {
-                $this->addon->setProperty('status', true);
-            }
-            static::saveConfig();
-            self::generateAddonOrder();
 
             foreach ($this->addon->getProperty('default_config', []) as $key => $value) {
                 if (!$this->addon->hasConfig($key)) {
@@ -121,6 +105,13 @@ class AddonManager
                 }
             }
 
+            // everything succeeded — commit (fresh installs are activated right away)
+            if (!$reinstall) {
+                $this->addon->setState(AddonState::Activated);
+            }
+            static::saveConfig();
+            self::generateAddonOrder();
+
             $this->message = $this->i18n($reinstall ? 'reinstalled' : 'installed', $this->addon->name);
             if ($successMessage) {
                 $this->message .= ' ' . $successMessage;
@@ -131,7 +122,6 @@ class AddonManager
             $this->message = $e->getMessage();
         }
 
-        $this->addon->setProperty('install', false);
         $this->message = $this->i18n('no_install', $this->addon->name) . '<br />' . $this->message;
 
         return false;
@@ -144,29 +134,19 @@ class AddonManager
      */
     public function uninstall(): bool
     {
-        $isActivated = $this->addon->isAvailable();
+        $originalState = $this->addon->state;
+        $isActivated = $this->addon->isActivated();
         if ($isActivated && !$this->deactivate()) {
             return false;
         }
 
         try {
-            $this->addon->setProperty('install', false);
-
             if (!$isActivated) {
                 I18n::addDirectory($this->addon->getPath('lang'));
             }
 
-            // run uninstall hook
+            // run uninstall hook (can only abort by throwing a UserMessageException)
             $this->addon->uninstall();
-
-            /** @psalm-taint-escape html */
-            $instmsg = (string) $this->addon->getProperty('installmsg', '');
-            if ('' != $instmsg) {
-                throw new UserMessageException($instmsg);
-            }
-            if ($this->addon->isInstalled()) {
-                throw new UserMessageException($this->i18n('no_reason'));
-            }
 
             // delete assets
             $assets = $this->addon->getAssetsPath();
@@ -179,6 +159,8 @@ class AddonManager
 
             Config::removeNamespace($this->addon->name);
 
+            // everything succeeded — commit the new state
+            $this->addon->setState(AddonState::Uninstalled);
             static::saveConfig();
             $this->message = $this->i18n('uninstalled', $this->addon->name);
 
@@ -187,11 +169,12 @@ class AddonManager
             $this->message = $e->getMessage();
         }
 
-        $this->addon->setProperty('install', true);
         if ($isActivated) {
-            $this->addon->setProperty('status', true);
+            // the deactivation was already committed — restore the previous state
+            $this->addon->setState($originalState);
+            static::saveConfig();
+            self::generateAddonOrder();
         }
-        static::saveConfig();
         $this->message = $this->i18n('no_uninstall', $this->addon->name) . '<br />' . $this->message;
 
         return false;
@@ -204,30 +187,19 @@ class AddonManager
      */
     public function activate(): bool
     {
-        if ($this->addon->isInstalled()) {
-            $state = '';
-            if (!$this->checkRequirements()) {
-                $state .= $this->message;
-            }
-            $state = $state ?: true;
-
-            if (true === $state) {
-                $this->addon->setProperty('status', true);
-                static::saveConfig();
-            }
-            if (true === $state) {
-                self::generateAddonOrder();
-            }
-        } else {
-            $state = $this->i18n('not_installed', $this->addon->name);
-        }
-
-        if (true !== $state) {
-            // error while config generation, rollback addon status
-            $this->addon->setProperty('status', false);
-            $this->message = $this->i18n('no_activation', $this->addon->name) . '<br />' . $state;
+        if (!$this->addon->isInstalled()) {
+            $this->message = $this->i18n('no_activation', $this->addon->name) . '<br />' . $this->i18n('not_installed', $this->addon->name);
             return false;
         }
+
+        if (!$this->checkRequirements()) {
+            $this->message = $this->i18n('no_activation', $this->addon->name) . '<br />' . $this->message;
+            return false;
+        }
+
+        $this->addon->setState(AddonState::Activated);
+        static::saveConfig();
+        self::generateAddonOrder();
 
         $this->message = $this->i18n('activated', $this->addon->name);
         return true;
@@ -240,10 +212,8 @@ class AddonManager
      */
     public function deactivate(): bool
     {
-        $state = $this->checkDependencies();
-
-        if ($state) {
-            $this->addon->setProperty('status', false);
+        if ($this->checkDependencies()) {
+            $this->addon->setState(AddonState::Installed);
             static::saveConfig();
 
             // clear cache of addon
@@ -275,7 +245,7 @@ class AddonManager
         $state = [];
 
         foreach (self::getRequiredAddons($this->addon) as $addonName) {
-            if (Addon::get($addonName)?->isAvailable()) {
+            if (Addon::get($addonName)?->isActivated()) {
                 continue;
             }
 
@@ -300,7 +270,7 @@ class AddonManager
         $i18nPrefix = 'package_dependencies_error_';
         $state = [];
 
-        foreach (Addon::getAvailableAddons() as $addon) {
+        foreach (Addon::getActivatedAddons() as $addon) {
             if ($addon === $this->addon) {
                 continue;
             }
@@ -368,7 +338,7 @@ class AddonManager
                 }
             }
         };
-        foreach (Addon::getAvailableAddons() as $addon) {
+        foreach (Addon::getActivatedAddons() as $addon) {
             $id = $addon->name;
             if (LoadOrder::Early === $addon->load) {
                 $early[] = $id;
@@ -397,8 +367,7 @@ class AddonManager
         $config = [];
         foreach (Addon::getRegisteredAddons() as $addonName => $addon) {
             $config[$addonName]['class'] = $addon::class;
-            $config[$addonName]['install'] = $addon->isInstalled();
-            $config[$addonName]['status'] = $addon->isAvailable();
+            $config[$addonName]['state'] = $addon->state->value;
         }
 
         self::saveAddonsData(config: $config);
@@ -423,12 +392,9 @@ class AddonManager
             }
             $config[$addonName]['class'] = $addonClasses[$addonName];
             if (!Addon::exists($addonName)) {
-                $config[$addonName]['install'] = false;
-                $config[$addonName]['status'] = false;
+                $config[$addonName]['state'] = AddonState::Uninstalled->value;
             } else {
-                $addon = Addon::require($addonName);
-                $config[$addonName]['install'] = $addon->isInstalled();
-                $config[$addonName]['status'] = $addon->isAvailable();
+                $config[$addonName]['state'] = Addon::require($addonName)->state->value;
             }
         }
         ksort($config);

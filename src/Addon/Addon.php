@@ -62,6 +62,9 @@ abstract class Addon
     /** Loading position relative to other addons during boot. Override to load this addon early or late. */
     public protected(set) LoadOrder $load = LoadOrder::Normal;
 
+    /** Lifecycle state of the addon. */
+    public private(set) AddonState $state = AddonState::Uninstalled;
+
     /**
      * Properties.
      *
@@ -214,16 +217,26 @@ abstract class Addon
         unset($this->properties[$key]);
     }
 
-    /** Returns if the addon is available (activated and installed). */
-    final public function isAvailable(): bool
+    /**
+     * Sets the lifecycle state of the addon.
+     *
+     * @internal
+     */
+    final public function setState(AddonState $state): void
     {
-        return $this->isInstalled() && (bool) $this->getProperty('status', false);
+        $this->state = $state;
     }
 
-    /** Returns if the addon is installed. */
+    /** Returns if the addon is activated (and therefore installed). */
+    final public function isActivated(): bool
+    {
+        return AddonState::Activated === $this->state;
+    }
+
+    /** Returns if the addon is installed (activated or not). */
     final public function isInstalled(): bool
     {
-        return (bool) $this->getProperty('install', false);
+        return AddonState::Uninstalled !== $this->state;
     }
 
     final public function getAuthor(?string $default = null): ?string
@@ -369,13 +382,10 @@ abstract class Addon
             $properties = $cache[$id]['data'];
         }
 
-        $this->properties = array_intersect_key($this->properties, ['install' => null, 'status' => null]);
+        $this->properties = [];
         if ($properties) {
             foreach ($properties as $key => $value) {
                 $key = Type::string($key);
-                if (isset($this->properties[$key])) {
-                    continue;
-                }
                 if ('supportpage' !== $key) {
                     $value = I18n::translateArray($value, false, $this->i18n(...));
                 } elseif (null !== $value && !preg_match('@^https?://@i', $value)) {
@@ -465,14 +475,14 @@ abstract class Addon
     /**
      * Install hook — runs on install/reinstall. Override for schema/data setup. Must be idempotent.
      *
-     * @throws UserMessageException
+     * @throws UserMessageException to abort the installation with a message
      */
     public function install(): void {}
 
     /**
      * Uninstall hook — runs on uninstall. Override for cleanup.
      *
-     * @throws UserMessageException
+     * @throws UserMessageException to abort the uninstallation with a message
      */
     public function uninstall(): void {}
 
@@ -497,13 +507,13 @@ abstract class Addon
     }
 
     /**
-     * Returns the available addons.
+     * Returns the activated addons.
      *
      * @return array<non-empty-string, self>
      */
-    final public static function getAvailableAddons(): array
+    final public static function getActivatedAddons(): array
     {
-        return self::filterPackages(self::$addons, 'isAvailable');
+        return self::filterPackages(self::$addons, 'isActivated');
     }
 
     /**
@@ -530,7 +540,7 @@ abstract class Addon
         } else {
             $config = [];
             foreach (Core::getProperty('setup_addons') as $addon) {
-                $config[(string) $addon]['install'] = false;
+                $config[(string) $addon]['state'] = AddonState::Uninstalled->value;
             }
         }
 
@@ -559,8 +569,7 @@ abstract class Addon
                 }
                 $addon = new $class($composerPackages[$addonName], $addonName);
             }
-            $addon->setProperty('install', $addonConfig['install'] ?? false);
-            $addon->setProperty('status', $addonConfig['status'] ?? false);
+            $addon->state = AddonState::from($addonConfig['state'] ?? AddonState::Uninstalled->value);
             self::$addons[$addonName] = $addon;
         }
     }

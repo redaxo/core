@@ -39,7 +39,7 @@ final class AddonListCommand extends AbstractCommand
                 'author' => $package->getAuthor(),
                 'version' => $package->getVersion(),
                 'installed' => $package->isInstalled(),
-                'activated' => $package->isAvailable(),
+                'activated' => $package->isActivated(),
                 'license' => $package->getLicense(),
             ];
 
@@ -60,7 +60,7 @@ final class AddonListCommand extends AbstractCommand
                 continue;
             }
 
-            if ($activatedOnly && !$package->isAvailable()) {
+            if ($activatedOnly && !$package->isActivated()) {
                 continue;
             }
 

@@ -135,7 +135,7 @@ abstract class Extension
             } elseif (is_subclass_of($entry['class'], Addon::class)) {
                 if (null === $addonByClass) {
                     $addonByClass = [];
-                    foreach (Addon::getAvailableAddons() as $addon) {
+                    foreach (Addon::getActivatedAddons() as $addon) {
                         $addonByClass[$addon::class] = $addon;
                     }
                 }

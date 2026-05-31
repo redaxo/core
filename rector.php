@@ -414,8 +414,10 @@ return RectorConfig::configure()
     ->withConfiguredRule(RenameMethodRector::class, [
         new MethodCallRename(Addon\Addon::class, 'getRegisteredPackages', 'getRegisteredAddons'),
         new MethodCallRename(Addon\Addon::class, 'getInstalledPackages', 'getInstalledAddons'),
-        new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getAvailableAddons'),
+        new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getActivatedAddons'),
+        new MethodCallRename(Addon\Addon::class, 'getAvailableAddons', 'getActivatedAddons'),
         new MethodCallRename(Addon\Addon::class, 'getSetupPackages', 'getSetupAddons'),
+        new MethodCallRename(Addon\Addon::class, 'isAvailable', 'isActivated'),
 
         new MethodCallRename(ApiFunction\Result::class, 'toJSON', 'toJson'),
         new MethodCallRename(ApiFunction\Result::class, 'fromJSON', 'fromJson'),

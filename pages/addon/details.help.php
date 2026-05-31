@@ -19,7 +19,7 @@ $version = $package->getVersion();
 $author = $package->getAuthor();
 $supportPage = $package->getSupportPage();
 if (is_readable($package->getPath('help.php'))) {
-    if (!$package->isAvailable() && is_readable($package->getPath('lang'))) {
+    if (!$package->isActivated() && is_readable($package->getPath('lang'))) {
         I18n::addDirectory($package->getPath('lang'));
     }
     ob_start();
