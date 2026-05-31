@@ -1491,41 +1491,9 @@
     </MixedAssignment>
   </file>
   <file src="src/Backend/Controller.php">
-    <MixedArgument>
-      <code><![CDATA[$addon->getProperty('page')]]></code>
-      <code><![CDATA[$page]]></code>
-      <code><![CDATA[$page]]></code>
-      <code><![CDATA[$pageArray['title']]]></code>
-      <code><![CDATA[$pageArray['title']]]></code>
-      <code><![CDATA[$subProperties['title']]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$pageKey]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$k]]></code>
-      <code><![CDATA[$page]]></code>
-      <code><![CDATA[$page]]></code>
-      <code><![CDATA[$pages]]></code>
-      <code><![CDATA[$subProperties]]></code>
-      <code><![CDATA[$v]]></code>
-      <code><![CDATA[$v]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
     <PossiblyFalseArgument>
       <code><![CDATA[ini_get('error_log')]]></code>
     </PossiblyFalseArgument>
-    <PossiblyInvalidArgument>
-      <code><![CDATA[$subProperties]]></code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/Backend/Page.php">
     <PossiblyNullArgument>
