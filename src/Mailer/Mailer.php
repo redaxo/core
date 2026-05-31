@@ -340,8 +340,8 @@ class Mailer extends PHPMailer
 
         if ($mail->Send()) {
             // Update configuration only if email was sent successfully
-            Core::getConfig('phpmailer_last_errors', $currentErrorsHash);
-            Core::getConfig('phpmailer_last_log_file_send_time', time());
+            Core::setConfig('phpmailer_last_errors', $currentErrorsHash);
+            Core::setConfig('phpmailer_last_log_file_send_time', time());
         }
     }
 
