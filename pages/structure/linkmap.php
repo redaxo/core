@@ -112,8 +112,8 @@ $navigation = [];
 if ($category) {
     foreach ($category->getParentTree() as $parent) {
         $n = [];
-        $n['title'] = str_replace(' ', '&nbsp;', escape($parent->getName()));
-        $n['href'] = $context->getUrl(['category_id' => $parent->getId()]);
+        $n['title'] = str_replace(' ', '&nbsp;', escape($parent->name));
+        $n['href'] = $context->getUrl(['category_id' => $parent->id]);
         $navigation[] = $n;
     }
 }
@@ -137,7 +137,7 @@ $fragment->setVar('title', I18n::msg('linkmap_categories'), false);
 $fragment->setVar('content', $panel, false);
 $content[] = $fragment->parse('core/page/section.php');
 
-$articleList = new ArticleList($context);
+$articleList = new ArticleList();
 $panel = $articleList->getList($categoryId);
 
 $fragment = new Fragment();

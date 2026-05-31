@@ -22,12 +22,12 @@ final readonly class LinkVar
     {
         $artName = '';
         $art = $value ? Article::get($value) : null;
-        $category = Category::getCurrent() ? Category::getCurrent()->getId() : 0; // Aktuelle Kategorie vorauswählen
+        $category = Category::getCurrent()->id ?? 0; // Aktuelle Kategorie vorauswählen
 
         // Falls ein Artikel vorausgewählt ist, dessen Namen anzeigen und beim Öffnen der Linkmap dessen Kategorie anzeigen
         if ($art instanceof Article) {
-            $artName = trim(sprintf('%s [%s]', $art->getName(), $art->getId()));
-            $category = $art->getCategoryId();
+            $artName = trim(sprintf('%s [%s]', $art->name, $art->id));
+            $category = $art->categoryId ?? 0;
         }
 
         // Falls ein Kategorie-Parameter angegeben wurde, die Linkmap in dieser Kategorie öffnen

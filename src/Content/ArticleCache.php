@@ -152,7 +152,7 @@ class ArticleCache
             $clang = $row->getValue('clang_id');
 
             // --------------------------------------------------- Artikelparameter speichern
-            $params = ['last_update_stamp' => time()];
+            $params = [];
             foreach ($fieldnames as $field) {
                 $params[$field] = match ($field) {
                     'createdate', 'updatedate' => $row->getDateTimeValue($field),

@@ -44,7 +44,7 @@ class ArticleCopy extends ApiFunction
         }
 
         if (
-            !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+            !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($categoryCopyIdNew)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));

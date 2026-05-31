@@ -20,7 +20,7 @@ final readonly class LinkListVar
      */
     public static function getWidget($id, $name, $value, array $args = [])
     {
-        $category = Category::getCurrent() ? Category::getCurrent()->getId() : 0; // Aktuelle Kategorie vorauswählen
+        $category = Category::getCurrent()->id ?? 0; // Aktuelle Kategorie vorauswählen
 
         // Falls ein Kategorie-Parameter angegeben wurde, die Linkmap in dieser Kategorie öffnen
         if (isset($args['category'])) {
@@ -36,7 +36,7 @@ final readonly class LinkListVar
                 continue;
             }
             if ($article = Article::get((int) $link)) {
-                $options .= '<option value="' . $link . '">' . escape(trim(sprintf('%s [%s]', $article->getName(), $article->getId()))) . '</option>';
+                $options .= '<option value="' . $link . '">' . escape(trim(sprintf('%s [%s]', $article->name, $article->id))) . '</option>';
             }
         }
 

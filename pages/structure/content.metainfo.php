@@ -45,7 +45,7 @@ $articleStatus = $articleStatusTypes[$status][0];
 $articleIcon = $articleStatusTypes[$status][2];
 $structureContext = new StructureContext([
     'article_id' => Request::request('article_id', 'int'),
-    'category_id' => $article->getCategoryId(),
+    'category_id' => $article->categoryId,
     'clang_id' => Request::request('clang', 'int'),
 ]);
 
@@ -114,7 +114,7 @@ if (1 == $article->getRows()) {
     $formElements = [];
     $formElements[] = [
         'label' => '<label for="rex-id-meta-article-name">' . I18n::msg('header_article_name') . '</label>',
-        'field' => '<input class="form-control" type="text" id="rex-id-meta-article-name" name="meta_article_name" value="' . htmlspecialchars(Article::get($articleId, $clang)->getName()) . '" />',
+        'field' => '<input class="form-control" type="text" id="rex-id-meta-article-name" name="meta_article_name" value="' . escape(Article::require($articleId, $clang)->name) . '" />',
     ];
     $fragment = new Fragment();
     $fragment->setVar('elements', $formElements, false);

@@ -13,7 +13,6 @@ use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
-use ReflectionClass;
 use ReflectionProperty;
 
 /** @internal */
@@ -44,15 +43,6 @@ final class ArticleContentTest extends TestCase
 
             'art_foo' => 'teststring',
         ]);
-
-        // generate classVars and add test column
-        Article::getClassVars();
-        $class = new ReflectionClass(Article::class);
-        /** @psalm-suppress MixedArgument */
-        $class->setStaticPropertyValue('classVars', array_merge(
-            $class->getStaticPropertyValue('classVars'),
-            ['art_foo'],
-        ));
     }
 
     protected function tearDown(): void
@@ -63,10 +53,6 @@ final class ArticleContentTest extends TestCase
             ->childFirst()
             ->ignoreSystemStuff(false);
         Dir::deleteIterator($finder);
-
-        // reset static properties
-        $class = new ReflectionClass(Article::class);
-        $class->setStaticPropertyValue('classVars', null);
 
         Article::clearInstancePool();
     }

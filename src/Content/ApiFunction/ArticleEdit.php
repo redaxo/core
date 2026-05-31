@@ -35,7 +35,7 @@ class ArticleEdit extends ApiFunction
 
         if (
             !$user->getComplexPerm('clang')->hasPerm($clang)
-            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }

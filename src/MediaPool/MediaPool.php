@@ -91,8 +91,8 @@ final class MediaPool
             foreach ($res as $artArr) {
                 $aid = (int) $artArr['article_id'];
                 $clang = (int) $artArr['clang_id'];
-                $ooa = Article::get($aid, $clang);
-                $name = ($ooa) ? $ooa->getName() : '';
+                $article = Article::get($aid, $clang);
+                $name = $article ? $article->name : '';
                 $warning[0] .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'clang' => $clang]) . '\')">' . $name . '</a></li>';
             }
             $warning[0] .= '</ul>';

@@ -68,8 +68,8 @@ if ($ctype < 2 || !$template?->hasContentSection($ctype)) {
 }
 
 // ----- Artikel wurde gefunden - Kategorie holen
-$OOArt = Article::get($articleId, $clang);
-$categoryId = $OOArt->getCategoryId();
+$OOArt = Article::require($articleId, $clang);
+$categoryId = $OOArt->categoryId;
 
 // ----- Request Parameter
 $subpage = Controller::getCurrentPagePart(2);
@@ -86,13 +86,13 @@ $context = new Context([
 ]);
 
 // ----- Titel anzeigen
-echo View::title(I18n::msg('content') . ': ' . escape($OOArt->getName()), '');
+echo View::title(I18n::msg('content') . ': ' . escape($OOArt->name), '');
 
 // ----- Languages
 echo View::clangSwitchAsButtons($context);
 
 // ----- category pfad und rechte
-echo View::structureBreadcrumb($categoryId, $articleId, $clang);
+echo View::structureBreadcrumb($categoryId ?? 0, $articleId, $clang);
 
 // ----- EXTENSION POINT
 echo Extension::registerPoint(new ExtensionPoint('STRUCTURE_CONTENT_HEADER', '', [

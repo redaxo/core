@@ -35,7 +35,6 @@ final class Cache
 
         StructureElement::clearInstancePool();
         StructureElement::clearInstanceListPool();
-        StructureElement::resetClassVars();
 
         if (function_exists('opcache_reset')) {
             opcache_reset();

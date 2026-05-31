@@ -41,8 +41,7 @@ class ArticleHandler
             if (!$parent) {
                 throw new ApiFunctionException('Target category with ID "' . $data['category_id'] . '" does not exist.');
             }
-            $path = $parent->getPath();
-            $path .= $parent->getId() . '|';
+            $path = '|' . implode('|', [...$parent->path, $parent->id]) . '|';
         } else {
             $path = '|';
         }
@@ -68,7 +67,7 @@ class ArticleHandler
 
             $categoryName = '';
             if ($category) {
-                $categoryName = $category->getName();
+                $categoryName = $category->name;
             }
 
             $AART->setTable(Core::getTablePrefix() . 'article');
@@ -136,8 +135,8 @@ class ArticleHandler
             throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
         }
 
-        $ooArt = Article::get($articleId, $clang);
-        $data['category_id'] = $ooArt->getCategoryId();
+        $ooArt = Article::require($articleId, $clang);
+        $data['category_id'] = $ooArt->categoryId;
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
 
@@ -413,7 +412,7 @@ class ArticleHandler
     /**
      * Berechnet die Prios der Artikel in einer Kategorie neu.
      *
-     * @param int $parentId KategorieId der Kategorie, die erneuert werden soll
+     * @param int|null $parentId KategorieId der Kategorie, die erneuert werden soll
      * @param int $clang ClangId der Kategorie, die erneuert werden soll
      * @param int $newPrio Neue PrioNr der Kategorie
      * @param int $oldPrio Alte PrioNr der Kategorie
@@ -586,8 +585,7 @@ class ArticleHandler
 
         // cat felder sammeln. +
         $params = ['path', 'priority', 'catname', 'startarticle', 'catpriority', 'status'];
-        $dbFields = StructureElement::getClassVars();
-        foreach ($dbFields as $field) {
+        foreach ($alt->getFieldnames() as $field) {
             if (str_starts_with($field, 'cat_')) {
                 $params[] = $field;
             }

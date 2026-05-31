@@ -66,7 +66,7 @@ class ContentHandler
 
         $message = I18n::msg('slice_added');
 
-        $article = Article::get($articleId, $clangId);
+        $article = Article::require($articleId, $clangId);
 
         // ----- EXTENSION POINT
         $message = Extension::registerPoint(new ExtensionPoint('SLICE_ADDED', $message, [
@@ -76,7 +76,7 @@ class ContentHandler
             'slice_id' => $sliceId,
             'page' => Controller::getCurrentPage(),
             'ctype' => $ctypeId,
-            'category_id' => $article->getCategoryId(),
+            'category_id' => $article->categoryId,
             'module_key' => $moduleKey,
             'article_revision' => 0,
             'slice_revision' => $data['revision'],
@@ -218,14 +218,14 @@ class ContentHandler
             throw new RuntimeException(sprintf('Slice with id=%d not found.', $sliceId));
         }
 
-        $article = Article::get($sql->getValue('article_id'), $sql->getValue('clang_id'));
+        $article = Article::require($sql->getValue('article_id'), $sql->getValue('clang_id'));
 
         $sql->setTable(Core::getTable('article_slice'));
         $sql->setWhere(['id' => $sliceId]);
         $sql->setValue('status', $status);
         $sql->update();
 
-        ArticleCache::deleteContent($article->getId(), $article->getClangId());
+        ArticleCache::deleteContent($article->id, $article->clangId);
 
         Extension::registerPoint(new ArticleContentUpdated($article, 'slice_status'));
     }
@@ -335,7 +335,7 @@ class ContentHandler
 
         ArticleCache::deleteContent($toId, $toClang);
 
-        $article = Article::get($toId, $toClang);
+        $article = Article::require($toId, $toClang);
         Extension::registerPoint(new ArticleContentUpdated($article, 'content_copied'));
 
         return true;

@@ -34,7 +34,7 @@ class CategoryTree extends CategoryTreeRenderer
         $badgeCat = ($countChildren > 0) ? '<span class="badge">' . $countChildren . '</span>' : '';
         $li = '';
         $li .= '<li' . $liClasses . '>';
-        $li .= '<a' . $linkClasses . ' href="' . $this->context->getUrl(['category_id' => $cat->getId()]) . '">' . $liIcon . escape($label) . '<span class="list-item-suffix">' . $cat->getId() . '</span></a>';
+        $li .= '<a' . $linkClasses . ' href="' . $this->context->getUrl(['category_id' => $cat->id]) . '">' . $liIcon . escape($label) . '<span class="list-item-suffix">' . $cat->id . '</span></a>';
         $li .= $badgeCat;
         $li .= $subHtml;
         $li .= '</li>' . "\n";

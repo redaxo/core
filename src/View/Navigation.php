@@ -167,8 +167,8 @@ class Navigation
                 }
             }
 
-            $cat = Category::get($pathItem);
-            $link = $this->getBreadcrumbLinkTag($cat, escape($cat->getName()), [
+            $cat = Category::require($pathItem);
+            $link = $this->getBreadcrumbLinkTag($cat, escape($cat->name), [
                 'href' => $cat->getUrl(),
             ], $i);
             $lis[] = $this->getBreadcrumbListItemTag($link, [
@@ -180,13 +180,13 @@ class Navigation
         if ($includeCurrent) {
             if ($art = Article::get($this->currentArticleId)) {
                 if (!$art->isStartArticle()) {
-                    $lis[] = $this->getBreadcrumbListItemTag(escape($art->getName()), [
+                    $lis[] = $this->getBreadcrumbListItemTag(escape($art->name), [
                         'class' => 'rex-lvl' . $i,
                     ], $i);
                 }
             } else {
-                $cat = Category::get($this->currentArticleId);
-                $lis[] = $this->getBreadcrumbListItemTag(escape($cat->getName()), [
+                $cat = Category::require($this->currentArticleId);
+                $lis[] = $this->getBreadcrumbListItemTag(escape($cat->name), [
                     'class' => 'rex-lvl' . $i,
                 ], $i);
             }
@@ -265,15 +265,9 @@ class Navigation
     {
         $articleId = Article::getCurrentId();
         if ($OOArt = Article::get($articleId)) {
-            $path = trim($OOArt->getPath(), '|');
-
-            $this->path = [];
-            if ('' != $path) {
-                $this->path = array_map(intval(...), explode('|', $path));
-            }
-
+            $this->path = $OOArt->path;
             $this->currentArticleId = $articleId;
-            $this->currentCategoryId = $OOArt->getCategoryId();
+            $this->currentCategoryId = $OOArt->categoryId ?? 0;
             return true;
         }
 
@@ -394,14 +388,14 @@ class Navigation
             $li['class'] = [];
             $a['class'] = [];
             $a['href'] = [$nav->getUrl()];
-            $aContent = escape($nav->getName());
+            $aContent = escape($nav->name);
             if ($this->checkFilter($nav, $depth) && $this->checkCallbacks($nav, $depth, $li, $a, $aContent)) {
-                $li['class'][] = 'rex-article-' . $nav->getId();
+                $li['class'][] = 'rex-article-' . $nav->id;
                 // classes abhaengig vom pfad
-                if ($nav->getId() == $this->currentCategoryId) {
+                if ($nav->id == $this->currentCategoryId) {
                     $li['class'][] = 'rex-current';
                     $a['class'][] = 'rex-current';
-                } elseif (in_array($nav->getId(), $this->path)) {
+                } elseif (in_array($nav->id, $this->path)) {
                     $li['class'][] = 'rex-active';
                     $a['class'][] = 'rex-active';
                 } else {
@@ -418,10 +412,10 @@ class Navigation
 
                 ++$depth;
                 if (
-                    ($this->open || $nav->getId() == $this->currentCategoryId || in_array($nav->getId(), $this->path))
+                    ($this->open || $nav->id == $this->currentCategoryId || in_array($nav->id, $this->path))
                     && ($this->depth >= $depth || $this->depth < 0)
                 ) {
-                    $link .= "\n" . $this->_getNavigation($nav->getId(), $depth);
+                    $link .= "\n" . $this->_getNavigation($nav->id, $depth);
                 }
                 --$depth;
                 $lis[] = $this->getListItemTag($nav, $link, $li, $depth);

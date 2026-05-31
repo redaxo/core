@@ -12,14 +12,20 @@ use function in_array;
 /** @extends ComplexPermission<int> */
 final class StructurePermission extends ComplexPermission
 {
-    public function hasCategoryPerm(int $categoryId): bool
+    public function hasCategoryPerm(?int $categoryId): bool
     {
-        if ($this->hasAll() || in_array($categoryId, $this->perms, true)) {
+        if ($this->hasAll()) {
+            return true;
+        }
+        if (null === $categoryId) {
+            return false;
+        }
+        if (in_array($categoryId, $this->perms, true)) {
             return true;
         }
         if ($c = Category::get($categoryId)) {
             $perms = $this->perms;
-            return array_any($c->getPathAsArray(), static fn (int $k) => in_array($k, $perms, true));
+            return array_any($c->path, static fn (int $k) => in_array($k, $perms, true));
         }
         return false;
     }
@@ -56,16 +62,16 @@ final class StructurePermission extends ComplexPermission
             }
 
             $categories[] = $category;
-            $parents[$category->getParentId()] = true;
+            $parents[$category->parentId ?? 0] = true;
         }
 
         if (count($parents) <= 1) {
             usort($categories, static function (Category $a, Category $b) {
-                return $a->getPriority() <=> $b->getPriority();
+                return $a->priority <=> $b->priority;
             });
         } else {
             usort($categories, static function (Category $a, Category $b) {
-                return strcasecmp($a->getName(), $b->getName());
+                return strcasecmp($a->name, $b->name);
             });
         }
 

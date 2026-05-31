@@ -114,16 +114,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Content/StructureContext.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::__construct() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::_hasValue() has parameter $prefixes with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::getUrl() has parameter $params with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
@@ -677,31 +667,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\View\\View::title() has parameter $subtitle with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/View.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Category@anonymous/tests/Content/CategoryTest.php:175::__construct() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/Content/CategoryTest.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Tests\\Content\\CategoryTest::createCategories() has parameter $lev1Params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/Content/CategoryTest.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Tests\\Content\\CategoryTest::createCategories() has parameter $lev2Params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/Content/CategoryTest.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Tests\\Content\\CategoryTest::createCategories() has parameter $lev3Params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/Content/CategoryTest.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Tests\\Content\\CategoryTest::createCategory() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/Content/CategoryTest.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Tests\\MediaPool\\MediaPoolTest::testIsAllowedExtension() has parameter $args with no value type specified in iterable type array.',

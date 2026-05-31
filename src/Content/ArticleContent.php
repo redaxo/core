@@ -61,8 +61,8 @@ class ArticleContent extends ArticleContentBase
 
         $rexArticle = Article::get($articleId, $this->clang);
         if ($rexArticle instanceof Article) {
-            $this->category_id = $rexArticle->getCategoryId();
-            $this->template = $rexArticle->getTemplateKey();
+            $this->category_id = $rexArticle->categoryId ?? 0;
+            $this->template = $rexArticle->templateKey;
             return true;
         }
 
@@ -81,14 +81,14 @@ class ArticleContent extends ArticleContentBase
 
         $value = $this->correctValue($value);
 
-        if (!Article::hasValue($value)) {
-            throw new LogicException('Articles do not have the property "' . $value . '"');
-        }
-
         $article = Article::get($this->article_id, $this->clang);
 
         if (!$article) {
             throw new LogicException('Article for id=' . $this->article_id . ' and clang=' . $this->clang . ' does not exist');
+        }
+
+        if (!$article->hasValue($value)) {
+            throw new LogicException('Articles do not have the property "' . $value . '"');
         }
 
         return $article->getValue($value);
@@ -103,7 +103,7 @@ class ArticleContent extends ArticleContentBase
 
         $value = $this->correctValue($value);
 
-        return Article::hasValue($value);
+        return Article::get($this->article_id, $this->clang)?->hasValue($value) ?? false;
     }
 
     public function getArticle($curctype = -1)

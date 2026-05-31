@@ -4,40 +4,24 @@ namespace Redaxo\Core\Tests\Content;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\Category;
+use Redaxo\Core\Content\StructureElement;
 use ReflectionClass;
+use ReflectionProperty;
 
 /** @internal */
 final class CategoryTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        // generate classVars and add test column
-        Category::getClassVars();
-        $class = new ReflectionClass(Category::class);
-        /** @psalm-suppress MixedArgument */
-        $class->setStaticPropertyValue('classVars', array_merge(
-            $class->getStaticPropertyValue('classVars'),
-            ['cat_foo'],
-        ));
-    }
+    private static int $nextId = 10000;
 
-    protected function tearDown(): void
+    public static function tearDownAfterClass(): void
     {
-        // reset static properties
-        $class = new ReflectionClass(Article::class);
-        $class->setStaticPropertyValue('classVars', null);
-
         Category::clearInstancePool();
     }
 
     public function testHasValue(): void
     {
-        $instance = $this->createCategoryWithoutConstructor();
-
-        /** @psalm-suppress UndefinedPropertyAssignment */
-        $instance->cat_foo = 'teststring'; // @phpstan-ignore-line
+        $instance = $this->createCategoryWithAdditionalData(['cat_foo' => 'teststring']);
 
         self::assertTrue($instance->hasValue('foo'));
         self::assertTrue($instance->hasValue('cat_foo'));
@@ -48,10 +32,7 @@ final class CategoryTest extends TestCase
 
     public function testGetValue(): void
     {
-        $instance = $this->createCategoryWithoutConstructor();
-
-        /** @psalm-suppress UndefinedPropertyAssignment */
-        $instance->cat_foo = 'teststring'; // @phpstan-ignore-line
+        $instance = $this->createCategoryWithAdditionalData(['cat_foo' => 'teststring']);
 
         self::assertEquals('teststring', $instance->getValue('foo'));
         self::assertEquals('teststring', $instance->getValue('cat_foo'));
@@ -129,64 +110,78 @@ final class CategoryTest extends TestCase
     /** @return iterable<int, array{?Category, Category, callable}> */
     public static function dataGetClosest(): iterable
     {
-        $callback = static function (Category $category) {
-            return 1 === $category->getValue('status');
-        };
+        $statusCallback = static fn (Category $category): bool => 1 === $category->getValue('status');
 
         [$lev1, $_, $lev3] = self::createCategories(['status' => 0], ['status' => 0], ['status' => 0]);
-        yield [null, $lev1, $callback];
-        yield [null, $lev3, $callback];
+        yield [null, $lev1, $statusCallback];
+        yield [null, $lev3, $statusCallback];
 
         [$lev1, $_, $lev3] = self::createCategories(['status' => 1], ['status' => 1], ['status' => 1]);
-        yield [$lev1, $lev1, $callback];
-        yield [$lev3, $lev3, $callback];
+        yield [$lev1, $lev1, $statusCallback];
+        yield [$lev3, $lev3, $statusCallback];
 
         [$_, $lev2, $lev3] = self::createCategories(['status' => 1], ['status' => 1], ['status' => 0]);
-        yield [$lev2, $lev3, $callback];
+        yield [$lev2, $lev3, $statusCallback];
 
         [$lev1, $_, $lev3] = self::createCategories(['status' => 1], ['status' => 0], ['status' => 0]);
-        yield [$lev1, $lev3, $callback];
+        yield [$lev1, $lev3, $statusCallback];
 
-        $callback = static function (Category $category) {
-            return $category->getValue('cat_foo') > 3;
-        };
+        $fooCallback = static fn (Category $category): bool => $category->getValue('cat_foo') > 3;
 
         [$lev1, $_, $lev3] = self::createCategories(['cat_foo' => 4], [], ['cat_foo' => 2]);
-        yield [$lev1, $lev3, $callback];
+        yield [$lev1, $lev3, $fooCallback];
     }
 
-    private function createCategoryWithoutConstructor(): Category
+    /** @param array<string, string|int|null> $additionalData */
+    private function createCategoryWithAdditionalData(array $additionalData): Category
     {
-        return new ReflectionClass(Category::class)->newInstanceWithoutConstructor();
+        $reflectionClass = new ReflectionClass(Category::class);
+        $category = $reflectionClass->newInstanceWithoutConstructor();
+
+        $reflectionClass->getProperty('additionalData')->setValue($category, $additionalData);
+
+        return $category;
     }
 
-    /** @return array{Category, Category, Category} */
+    /**
+     * @param array<string, string|int|null> $lev1Params
+     * @param array<string, string|int|null> $lev2Params
+     * @param array<string, string|int|null> $lev3Params
+     * @return array{Category, Category, Category}
+     */
     private static function createCategories(array $lev1Params, array $lev2Params, array $lev3Params): array
     {
         $lev1 = self::createCategory(null, $lev1Params);
-        $lev2 = self::createCategory($lev1, $lev2Params);
-        $lev3 = self::createCategory($lev2, $lev3Params);
+        $lev2 = self::createCategory($lev1->id, $lev2Params);
+        $lev3 = self::createCategory($lev2->id, $lev3Params);
 
         return [$lev1, $lev2, $lev3];
     }
 
-    private static function createCategory(?Category $parent, array $params): Category
+    /** @param array<string, string|int|null> $params */
+    private static function createCategory(?int $parentId, array $params): Category
     {
-        return new class($parent, $params) extends Category {
-            public function __construct(
-                private ?Category $parent,
-                array $params,
-            ) {
-                foreach ($params as $key => $value) {
-                    $this->$key = $value;
-                }
-            }
+        $id = self::$nextId++;
+        $status = isset($params['status']) ? (int) $params['status'] : 1;
+        unset($params['status']);
 
-            public function getParent(): ?Category
-            {
-                /** @var static|null */
-                return $this->parent;
-            }
-        };
+        $reflectionClass = new ReflectionClass(Category::class);
+        $category = $reflectionClass->newInstanceWithoutConstructor();
+
+        $reflectionClass->getProperty('id')->setValue($category, $id);
+        $reflectionClass->getProperty('parentId')->setValue($category, $parentId);
+        $reflectionClass->getProperty('clangId')->setValue($category, 1);
+        $reflectionClass->getProperty('status')->setValue($category, $status);
+        $reflectionClass->getProperty('path')->setValue($category, []);
+        $reflectionClass->getProperty('additionalData')->setValue($category, $params);
+
+        // register in instance pool so Category::get($id, 1) returns this instance
+        $instancesProperty = new ReflectionProperty(StructureElement::class, 'instances');
+        /** @var array<class-string, array<string, ?Category>> $instances */
+        $instances = $instancesProperty->getValue();
+        $instances[Category::class][$id . '###1'] = $category;
+        $instancesProperty->setValue(null, $instances);
+
+        return $category;
     }
 }

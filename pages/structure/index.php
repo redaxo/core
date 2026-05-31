@@ -81,7 +81,7 @@ echo ApiFunction::getMessage();
 $catName = I18n::msg('root_level');
 $category = Category::get($structureContext->getCategoryId(), $structureContext->getClangId());
 if ($category) {
-    $catName = $category->getName();
+    $catName = $category->name;
 }
 
 $addCategory = '';

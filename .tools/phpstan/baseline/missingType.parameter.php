@@ -64,21 +64,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Content/Linkmap/CategoryTree.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\CategoryTreeRenderer::formatLi() has parameter $currentCategoryId with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/Linkmap/CategoryTreeRenderer.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\CategoryTreeRenderer::formatLi() has parameter $liAttr with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/Linkmap/CategoryTreeRenderer.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\CategoryTreeRenderer::formatLi() has parameter $linkAttr with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/Linkmap/CategoryTreeRenderer.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\CategoryTreeRenderer::getTree() has parameter $categoryId with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/Linkmap/CategoryTreeRenderer.php',
