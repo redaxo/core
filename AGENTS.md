@@ -55,7 +55,7 @@ This repository contains the **REDAXO core** under `src/` (`Redaxo\Core\`), back
 
 ### Key concepts
 - **`Core` static class** (`src/Core.php`) — central application registry for paths, config, request, current user.
-- **Addon system** — `Addon` / `AddonManager` (`src/Addon/`). Each addon has a `package.yml` (metadata + page config) plus optional `boot.php` (runtime init) and `install.php` (schema/data setup — must be idempotent, runs on every `console migrate`).
+- **Addon system** — `Addon` / `AddonManager` (`src/Addon/`). Each addon is a subclass of `Addon`, registered via composer.json `extra.redaxo.addon-class`. Metadata comes from composer.json; integration happens through overridable hooks — `boot()` (runtime init), `install()`/`uninstall()` (schema/data setup — must be idempotent, runs on every `console migrate`), `getPages()` (backend pages) — plus the `$load` and `$defaultConfig` properties.
 - **Extension points** — REDAXO's hook/event system: register listeners with `Extension::register('NAME', ...)`, fire points with `Extension::registerPoint(new ExtensionPoint(...))`. Classes live under `Redaxo\Core\ExtensionPoint`. This is the primary integration mechanism for addons.
 - **Fragments** (`fragments/`) — template snippets rendered via `Fragment` (`src/View/Fragment.php`).
 - **Boot flow** — `AbstractProject` (Symfony `RuntimeInterface`) drives boot via `boot/core.php` → `boot/addons.php` → environment entry (`boot/backend.php`, `boot/frontend.php`, `boot/console.php`).

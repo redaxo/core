@@ -16,7 +16,6 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Exception\YamlParseException;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
@@ -33,10 +32,6 @@ use const JSON_THROW_ON_ERROR;
 
 abstract class Addon
 {
-    final public const string FILE_PACKAGE = 'package.yml';
-
-    private const string PROPERTIES_CACHE_FILE = 'packages.cache';
-
     /**
      * Array of all addons.
      *
@@ -62,6 +57,13 @@ abstract class Addon
     /** Loading position relative to other addons during boot. Override to load this addon early or late. */
     public protected(set) LoadOrder $load = LoadOrder::Normal;
 
+    /**
+     * Default config values applied on install (only for keys that are not already set). Override to provide defaults.
+     *
+     * @var array<string, mixed>
+     */
+    public protected(set) array $defaultConfig = [];
+
     /** Lifecycle state of the addon. */
     public private(set) AddonState $state = AddonState::Uninstalled;
 
@@ -71,9 +73,6 @@ abstract class Addon
      * @var array<string, mixed>
      */
     private array $properties = [];
-
-    /** Flag whether the properties of package.yml are loaded. */
-    private bool $propertiesLoaded = false;
 
     /** @var array<string, mixed>|null */
     private ?array $composerJson = null;
@@ -205,9 +204,6 @@ abstract class Addon
     /** @param non-empty-string $key */
     final public function hasProperty(string $key): bool
     {
-        if (!isset($this->properties[$key]) && !$this->propertiesLoaded) {
-            $this->loadProperties();
-        }
         return isset($this->properties[$key]);
     }
 
@@ -321,75 +317,6 @@ abstract class Addon
         return I18n::msg($key, ...$replacements);
     }
 
-    /** Loads the properties of package.yml. */
-    final public function loadProperties(bool $force = false): void
-    {
-        $file = $this->getPath(self::FILE_PACKAGE);
-        if (!is_file($file)) {
-            $this->propertiesLoaded = true;
-            return;
-        }
-
-        /** @var array<string, array{timestamp: int, data: array<string, mixed>}>|null $cache */
-        static $cache = null;
-        if (null === $cache) {
-            /** @var array<string, array{timestamp: int, data: array<string, mixed>}> $cache */
-            $cache = File::getCache(Path::coreCache(self::PROPERTIES_CACHE_FILE));
-        }
-        $id = $this->name;
-
-        if ($force) {
-            unset($cache[$id]);
-        }
-
-        $isCached = isset($cache[$id]);
-        $isBackendAdmin = Core::isBackend() && Core::getUser()?->admin;
-        if (!$isCached || (Core::getConsole() || $isBackendAdmin) && $cache[$id]['timestamp'] < filemtime($file)) {
-            try {
-                $properties = File::getConfig($file);
-
-                $cache[$id]['timestamp'] = filemtime($file);
-                $cache[$id]['data'] = $properties;
-
-                /** @var bool $registeredShutdown */
-                static $registeredShutdown = false;
-                if (!$registeredShutdown) {
-                    $registeredShutdown = true;
-                    register_shutdown_function(static function () use (&$cache) {
-                        foreach ($cache as $addon => $_) {
-                            if (!self::exists($addon)) {
-                                unset($cache[$addon]);
-                            }
-                        }
-                        File::putCache(Path::coreCache(self::PROPERTIES_CACHE_FILE), $cache);
-                    });
-                }
-            } catch (YamlParseException $exception) {
-                if ($this->isInstalled()) {
-                    throw $exception;
-                }
-
-                $properties = [];
-            }
-        } else {
-            $properties = $cache[$id]['data'];
-        }
-
-        $this->properties = [];
-        if ($properties) {
-            foreach ($properties as $key => $value) {
-                $key = Type::string($key);
-                if ('supportpage' !== $key) {
-                    $value = I18n::translateArray($value, false, $this->i18n(...));
-                } elseif (null !== $value && !preg_match('@^https?://@i', $value)) {
-                    $value = 'https://' . $value;
-                }
-                $this->properties[$key] = $value;
-            }
-        }
-        $this->propertiesLoaded = true;
-    }
-
     final public function getLicense(): ?string
     {
         /** @var string|list<string>|null $license */
@@ -421,12 +348,6 @@ abstract class Addon
         $cacheDir = $this->getCachePath();
         if (!Dir::delete($cacheDir)) {
             throw new RuntimeException('Addon cache directory "' . $cacheDir . '" is not writable.');
-        }
-
-        $cache = File::getCache($path = Path::coreCache(self::PROPERTIES_CACHE_FILE));
-        if ($cache) {
-            unset($cache[$this->name]);
-            File::putCache($path, $cache);
         }
 
         Extension::registerPoint(new AddonCacheDeleted($this));

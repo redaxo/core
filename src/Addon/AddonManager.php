@@ -14,7 +14,6 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Exception\YamlParseException;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\Util\Type;
 
@@ -66,14 +65,6 @@ class AddonManager
     public function install(): bool
     {
         try {
-            // check package.yml
-            $addonFile = $this->addon->getPath(Addon::FILE_PACKAGE);
-            try {
-                File::getConfig($addonFile);
-            } catch (YamlParseException $e) {
-                throw new UserMessageException($this->i18n('invalid_yml_file') . ' ' . $e->getMessage());
-            }
-
             // check requirements and conflicts
             $message = '';
             if (!$this->checkRequirements()) {
@@ -91,7 +82,7 @@ class AddonManager
             $this->addon->install();
             $successMessage = (string) $this->addon->getProperty('successmsg', '');
 
-            foreach ($this->addon->getProperty('default_config', []) as $key => $value) {
+            foreach ($this->addon->defaultConfig as $key => $value) {
                 if (!$this->addon->hasConfig($key)) {
                     $this->addon->setConfig($key, $value);
                 }

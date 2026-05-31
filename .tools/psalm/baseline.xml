@@ -1451,31 +1451,17 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Addon/Addon.php">
-    <MixedArgument>
-      <code><![CDATA[$value]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$value]]></code>
-    </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[$f]]></code>
       <code><![CDATA[$f]]></code>
     </PossiblyFalseArgument>
   </file>
   <file src="src/Addon/AddonManager.php">
-    <MixedArgument>
-      <code><![CDATA[$key]]></code>
-    </MixedArgument>
     <MixedArrayOffset>
       <code><![CDATA[$ps[$id]]]></code>
       <code><![CDATA[$requires[$id]]]></code>
     </MixedArrayOffset>
     <MixedAssignment>
-      <code><![CDATA[$key]]></code>
       <code><![CDATA[$normal[]]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>

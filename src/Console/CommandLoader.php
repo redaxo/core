@@ -22,7 +22,7 @@ use function sprintf;
 /**
  * Discovers all commands that are marked with the {@see AsCommand} attribute and extend {@see AbstractCommand},
  * both in the core and in the active addons. Addons therefore register their commands simply by adding the
- * attribute to a command class — no `package.yml` configuration is required.
+ * attribute to a command class.
  *
  * Commands are returned as {@see LazyCommand}, so that listing the commands (e.g. `console list`) does not
  * instantiate every command class — only the command that is actually executed is instantiated.
