@@ -18,12 +18,9 @@ use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
-use function call_user_func;
 use function count;
 use function ini_get;
 use function is_array;
-use function is_callable;
-use function is_string;
 use function sprintf;
 
 use const DIRECTORY_SEPARATOR;
@@ -358,71 +355,30 @@ final class Controller
 
     public static function appendPackagePages(): void
     {
-        $insertPages = [];
         $addons = Core::isSafeMode() ? Addon::getSetupAddons() : Addon::getAvailableAddons();
         foreach ($addons as $addon) {
-            $mainPage = self::pageCreate($addon->getProperty('page'), $addon, true);
-
-            if (is_array($pages = $addon->getProperty('pages'))) {
-                foreach ($pages as $key => $page) {
-                    if (str_contains($key, '/')) {
-                        $insertPages[$key] = [$addon, $page];
-                    } else {
-                        self::pageCreate($page, $addon, false, $mainPage, $key, true);
-                    }
-                }
-            }
-        }
-        foreach ($insertPages as $key => $packagePage) {
-            [$package, $page] = $packagePage;
-            $key = explode('/', $key);
-            if (!isset(self::$pages[$key[0]])) {
-                continue;
-            }
-            $parentPage = self::$pages[$key[0]];
-            for ($i = 1, $count = count($key) - 1; $i < $count && $parentPage; ++$i) {
-                $parentPage = $parentPage->getSubpage($key[$i]);
-            }
-            if ($parentPage) {
-                self::pageCreate($page, $package, false, $parentPage, $key[$i], strtr($parentPage->getFullKey(), '/', '.') . '.' . $key[$i] . '.');
+            foreach ($addon->getPages() as $page) {
+                self::registerAddonPage($page, $addon);
             }
         }
     }
 
-    private static function pageCreate(Page|array|null $page, Addon $package, bool $createMainPage, ?Page $parentPage = null, ?string $pageKey = null, bool|string $prefix = false): ?Page
+    /**
+     * Registers a top-level addon page and applies the path convention to it and its subpages.
+     *
+     * A page without an explicit path falls back to `pages/<key>.php`, or `pages/index.php` for the main page
+     * whose key equals the addon name.
+     */
+    private static function registerAddonPage(Page $page, Addon $addon): void
     {
-        if (is_array($page) && isset($page['title']) && (false !== ($page['live_mode'] ?? null) || !Core::isLiveMode())) {
-            $pageArray = $page;
-            $pageKey = $pageKey ?: $package->name;
-            if ($createMainPage || isset($pageArray['main']) && $pageArray['main']) {
-                $page = new MainPage('addons', $pageKey, $pageArray['title']);
-            } else {
-                $page = new Page($pageKey, $pageArray['title']);
-            }
-            self::pageAddProperties($page, $pageArray, $package);
-        }
+        $prefix = $page->getKey() === $addon->name ? '' : $page->getKey() . '.';
 
-        if ($page instanceof Page) {
-            if (!is_string($prefix)) {
-                $prefix = $prefix ? $page->getKey() . '.' : '';
-            }
-            if ($page instanceof MainPage) {
-                if (!$page->hasPath()) {
-                    $page->setPath($package->getPath('pages/' . ($prefix ?: 'index.') . 'php'));
-                }
-                self::$pages[$page->getKey()] = $page;
-            } else {
-                if (!$page->hasSubPath()) {
-                    $page->setSubPath($package->getPath('pages/' . ($prefix ?: 'index.') . 'php'));
-                }
-                if ($parentPage) {
-                    $parentPage->addSubpage($page);
-                }
-            }
-            self::pageSetSubPaths($page, $package, $prefix);
-            return $page;
+        if (!$page->hasPath()) {
+            $page->setPath($addon->getPath('pages/' . ($prefix ?: 'index.') . 'php'));
         }
-        return null;
+        self::$pages[$page->getKey()] = $page;
+
+        self::pageSetSubPaths($page, $addon, $prefix);
     }
 
     private static function pageSetSubPaths(Page $page, Addon $package, string $prefix = ''): void
@@ -432,56 +388,6 @@ final class Controller
                 $subpage->setSubPath($package->getPath('pages/' . $prefix . $subpage->getKey() . '.php'));
             }
             self::pageSetSubPaths($subpage, $package, $prefix . $subpage->getKey() . '.');
-        }
-    }
-
-    private static function pageAddProperties(Page $page, array $properties, Addon $package): void
-    {
-        foreach ($properties as $key => $value) {
-            switch (strtolower($key)) {
-                case 'subpages':
-                    if (is_array($value)) {
-                        foreach ($value as $pageKey => $subProperties) {
-                            if (isset($subProperties['title']) && (false !== ($subProperties['live_mode'] ?? null) || !Core::isLiveMode())) {
-                                $subpage = new Page($pageKey, $subProperties['title']);
-                                $page->addSubpage($subpage);
-                                self::pageAddProperties($subpage, $subProperties, $package);
-                            }
-                        }
-                    }
-                    break;
-
-                case 'itemattr':
-                case 'linkattr':
-                    $setter = [$page, 'set' . ucfirst($key)];
-                    foreach ($value as $k => $v) {
-                        call_user_func($setter, $k, $v);
-                    }
-                    break;
-
-                case 'perm':
-                    $page->setRequiredPermissions($value);
-                    break;
-
-                case 'path':
-                case 'subpath':
-                    if (is_file($path = $package->getPath($value))) {
-                        $value = $path;
-                    }
-                    // no break
-                default:
-                    $adder = [$page, 'add' . ucfirst($key)];
-                    if (is_callable($adder)) {
-                        foreach ((array) $value as $v) {
-                            call_user_func($adder, $v);
-                        }
-                        break;
-                    }
-                    $setter = [$page, 'set' . ucfirst($key)];
-                    if (is_callable($setter)) {
-                        call_user_func($setter, $value);
-                    }
-            }
         }
     }
 

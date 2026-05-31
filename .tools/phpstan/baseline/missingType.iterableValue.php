@@ -34,16 +34,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Backend\\Controller::pageAddProperties() has parameter $properties with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Backend/Controller.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Backend\\Controller::pageCreate() has parameter $page with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Backend/Controller.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleHandler::addArticle() has parameter $data with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/ArticleHandler.php',

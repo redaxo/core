@@ -1,8 +1,0 @@
-page:
-    title: translate:debug
-    perm: admin
-    live_mode: false
-    block: system
-    pjax: false
-    icon: rex-icon rex-icon-heartbeat
-    linkAttr: { target: _blank }
