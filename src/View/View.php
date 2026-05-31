@@ -6,6 +6,7 @@ use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\Navigation;
 use Redaxo\Core\Backend\Page;
 use Redaxo\Core\Content\Article;
+use Redaxo\Core\Content\Category;
 use Redaxo\Core\Core;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -247,11 +248,11 @@ class View
                 $tree[] = $object;
             }
             foreach ($tree as $parent) {
-                $id = $parent->getId();
+                $id = $parent->id;
                 if (Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($id)) {
                     $n = [];
-                    $n['title'] = str_replace(' ', '&nbsp;', escape($parent->getName()));
-                    if ($parent->isStartArticle()) {
+                    $n['title'] = str_replace(' ', '&nbsp;', escape($parent->name));
+                    if ($parent instanceof Category) {
                         $n['href'] = Url::backendPage('structure', ['category_id' => $id, 'clang' => $clang]);
                     }
                     $navigation[] = $n;

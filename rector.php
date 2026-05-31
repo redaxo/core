@@ -533,6 +533,10 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Cronjob\CronjobExecutor::class, 'getMessage', 'message'),
         new MethodCallToPropertyFetch(Cronjob\CronjobExecutor::class, 'hasMessage', 'message'),
 
+        new MethodCallToPropertyFetch(Content\Article::class, 'getCategoryId', 'categoryId'), // changed from int to ?int
+        new MethodCallToPropertyFetch(Content\Article::class, 'getTemplateKey', 'templateKey'),
+        new MethodCallToPropertyFetch(Content\Article::class, 'hasTemplate', 'templateKey'), // changed from bool to ?string, callers using the bool need manual adjustment
+
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getClang', 'clangId'),
@@ -547,6 +551,18 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
+
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getId', 'id'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getParentId', 'parentId'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClangId', 'clangId'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPriority', 'priority'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPath', 'path'), // changed from string to array, callers using the string need manual adjustment
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPathAsArray', 'path'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getCreateDate', 'createDate'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getUpdateDate', 'updateDate'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getCreateUser', 'createUser'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getUpdateUser', 'updateUser'),
 
         new MethodCallToPropertyFetch(Language\Language::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Language\Language::class, 'getCode', 'code'),

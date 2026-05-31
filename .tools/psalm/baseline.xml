@@ -1240,8 +1240,6 @@
       <code><![CDATA[escape($hiddenFields)]]></code>
     </MixedOperand>
     <PossiblyNullArgument>
-      <code><![CDATA[$article->getValue('parent_id')]]></code>
-      <code><![CDATA[$article->getValue('parent_id')]]></code>
       <code><![CDATA[Request::request('clang_a', 'int', null)]]></code>
       <code><![CDATA[Request::request('clang_b', 'int', null)]]></code>
     </PossiblyNullArgument>
@@ -1256,7 +1254,6 @@
       <code><![CDATA[escape($article->getValue('updateuser'))]]></code>
     </PossiblyNullOperand>
     <PossiblyNullReference>
-      <code><![CDATA[getName]]></code>
       <code><![CDATA[getValue]]></code>
     </PossiblyNullReference>
   </file>
@@ -1275,7 +1272,6 @@
     </PossiblyInvalidArrayAccess>
     <PossiblyNullReference>
       <code><![CDATA[addSubpage]]></code>
-      <code><![CDATA[getCategoryId]]></code>
       <code><![CDATA[getSubpages]]></code>
     </PossiblyNullReference>
   </file>
@@ -1832,9 +1828,6 @@
       <code><![CDATA[$toSql->getValue('path')]]></code>
       <code><![CDATA[$toSql->getValue('path')]]></code>
     </PossiblyNullOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$data['template']]]></code>
       <code><![CDATA[$data['template']]]></code>
@@ -1950,7 +1943,6 @@
     </MixedAssignment>
     <PossiblyNullArgument>
       <code><![CDATA[$article]]></code>
-      <code><![CDATA[$article]]></code>
       <code><![CDATA[$articleId]]></code>
       <code><![CDATA[$articleId]]></code>
       <code><![CDATA[$colname]]></code>
@@ -1966,10 +1958,6 @@
       <code><![CDATA[$CM->getValue('priority')]]></code>
       <code><![CDATA[$CM->getValue('priority')]]></code>
     </PossiblyNullOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-      <code><![CDATA[getId]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/Content/Linkmap/ArticleListRenderer.php">
     <MixedArgument>
@@ -1999,10 +1987,6 @@
     <MixedArgument>
       <code><![CDATA[$categoryId]]></code>
     </MixedArgument>
-    <MixedOperand>
-      <code><![CDATA[$liAttr]]></code>
-      <code><![CDATA[$linkAttr]]></code>
-    </MixedOperand>
   </file>
   <file src="src/Content/ModulePermission.php">
     <MixedReturnTypeCoercion>
@@ -2023,18 +2007,6 @@
     <MixedAssignment>
       <code><![CDATA[$params['category_id']]]></code>
     </MixedAssignment>
-  </file>
-  <file src="src/Content/StructureElement.php">
-    <MixedAssignment>
-      <code><![CDATA[$prefix]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$prefix]]></code>
-    </MixedOperand>
-    <MixedReturnStatement>
-      <code><![CDATA[$this->$val]]></code>
-    </MixedReturnStatement>
   </file>
   <file src="src/Content/Template.php">
     <MixedReturnStatement>
@@ -3474,10 +3446,6 @@
     <MixedMethodCall>
       <code><![CDATA[setValue]]></code>
     </MixedMethodCall>
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-      <code><![CDATA[getPathAsArray]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/MetaInfo/Handler/CategoryHandler.php">
     <MixedArgument>
@@ -3508,9 +3476,6 @@
       <code><![CDATA[$ep->getSubject()]]></code>
       <code><![CDATA[$ep->getSubject()]]></code>
     </MixedReturnStatement>
-    <PossiblyNullReference>
-      <code><![CDATA[getPathAsArray]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/MetaInfo/Handler/LanguageHandler.php">
     <ImplementedReturnTypeMismatch>
@@ -3615,9 +3580,6 @@
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$value]]></code>
     </MixedOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getId]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/RexVar/LinkVar.php">
     <MixedArgument>
@@ -3627,9 +3589,6 @@
       <code><![CDATA[$name]]></code>
       <code><![CDATA[$value]]></code>
     </MixedOperand>
-    <PossiblyNullReference>
-      <code><![CDATA[getId]]></code>
-    </PossiblyNullReference>
   </file>
   <file src="src/RexVar/MediaListVar.php">
     <MixedArgument>
@@ -4101,13 +4060,8 @@
     <MixedMethodCall>
       <code><![CDATA[$method]]></code>
     </MixedMethodCall>
-    <PossiblyNullArgument>
-      <code><![CDATA[$cat]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullReference>
       <code><![CDATA[getChildren]]></code>
-      <code><![CDATA[getName]]></code>
-      <code><![CDATA[getName]]></code>
     </PossiblyNullReference>
   </file>
   <file src="src/View/View.php">
@@ -4180,9 +4134,6 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$callback]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
   </file>
   <file src="tests/Database/SelectTest.php">
     <MixedArrayAccess>

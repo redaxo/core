@@ -19,8 +19,8 @@ class ArticleContentUpdated extends ExtensionPoint
     public function __construct(Article $article, string $action, string $subject = '', array $params = [], bool $readonly = false)
     {
         // for BC 'simple' attach params
-        $params['article_id'] = $article->getId();
-        $params['clang'] = $article->getClangId();
+        $params['article_id'] = $article->id;
+        $params['clang'] = $article->clangId;
 
         parent::__construct(self::NAME, $subject, $params, $readonly);
 

@@ -40,7 +40,7 @@ class ArticleMove extends ApiFunction
             throw new ApiFunctionException('Unable to find category with id "' . $categoryIdNew . '"!');
         }
 
-        $categoryId = $article->getCategoryId();
+        $categoryId = $article->categoryId ?? 0;
 
         if (
             !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)

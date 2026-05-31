@@ -42,8 +42,7 @@ class CategoryHandler
             if (!$parent) {
                 throw new ApiFunctionException('Target category with ID "' . $categoryId . '" does not exist.');
             }
-            $path = $parent->getPath();
-            $path .= $parent->getId() . '|';
+            $path = '|' . implode('|', [...$parent->path, $parent->id]) . '|';
         } else {
             $path = '|';
         }

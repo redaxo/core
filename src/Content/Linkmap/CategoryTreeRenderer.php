@@ -6,12 +6,10 @@ use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\Category;
 use Redaxo\Core\Content\StructureElement;
 use Redaxo\Core\Core;
-use Redaxo\Core\Http\Context;
 use Redaxo\Core\Translation\I18n;
 
 use function count;
 use function in_array;
-use function Redaxo\Core\View\escape;
 
 /**
  * @internal
@@ -39,7 +37,7 @@ abstract class CategoryTreeRenderer
         $tree = [];
         if ($category) {
             foreach ($category->getParentTree() as $cat) {
-                $tree[] = $cat->getId();
+                $tree[] = $cat->id;
             }
         }
 
@@ -62,7 +60,7 @@ abstract class CategoryTreeRenderer
         $li = '';
         foreach ($children as $cat) {
             $catChildren = $cat->getChildren();
-            $catId = $cat->getId();
+            $catId = $cat->id;
             $liclasses = 'list-group-item';
             $linkclasses = '';
             $subLi = '';
@@ -79,7 +77,7 @@ abstract class CategoryTreeRenderer
         }
 
         if ('' != $li) {
-            $ul = '<ul class="list-group" data-cat-id="' . $children[0]->getParentId() . '">' . "\n" . $li . '</ul>' . "\n";
+            $ul = '<ul class="list-group" data-cat-id="' . ($children[0]->parentId ?? 0) . '">' . "\n" . $li . '</ul>' . "\n";
         }
 
         return $ul;
@@ -88,35 +86,18 @@ abstract class CategoryTreeRenderer
     /** @return string */
     abstract protected function treeItem(Category $cat, $liClasses, $linkClasses, $subHtml, $liIcon);
 
-    /** @return string */
-    public static function formatLabel(StructureElement $OOobject)
+    public static function formatLabel(StructureElement $OOobject): string
     {
-        $label = $OOobject->getName();
+        $label = $OOobject->name;
 
-        if ('' == trim($label)) {
+        if ('' === trim($label)) {
             $label = '&nbsp;';
         }
 
-        if ($OOobject instanceof Article && !$OOobject->hasTemplate()) {
+        if ($OOobject instanceof Article && null === $OOobject->templateKey) {
             $label .= ' [' . I18n::msg('linkmap_has_no_template') . ']';
         }
 
         return $label;
-    }
-
-    /** @return string */
-    public static function formatLi(StructureElement $OOobject, $currentCategoryId, Context $context, $liAttr = '', $linkAttr = '')
-    {
-        $linkAttr .= ' class="' . ($OOobject->isOnline() ? 'rex-online' : 'rex-offline') . '"';
-
-        if (!str_contains($linkAttr, ' href=')) {
-            $linkAttr .= ' href="' . $context->getUrl(['category_id' => $OOobject->getId()]) . '"';
-        }
-
-        $label = self::formatLabel($OOobject);
-
-        $icon = '<i class="rex-icon rex-icon-' . ($OOobject->isSiteStartArticle() ? 'sitestartarticle' : ($OOobject->isStartArticle() ? 'startarticle' : 'article')) . '"></i>';
-
-        return '<li' . $liAttr . '><a' . $linkAttr . '>' . $icon . ' ' . escape($label) . '<span class="list-item-suffix">' . $OOobject->getId() . '</span></a>';
     }
 }

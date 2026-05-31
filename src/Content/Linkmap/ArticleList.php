@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Content\Linkmap;
 
 use Redaxo\Core\Content\Article;
-use Redaxo\Core\Http\Context;
 
 use function Redaxo\Core\View\escape;
 use function sprintf;
@@ -13,15 +12,26 @@ use function sprintf;
  */
 class ArticleList extends ArticleListRenderer
 {
-    public function __construct(
-        private Context $context,
-    ) {}
-
     /** @return string */
     protected function listItem(Article $article, $categoryId)
     {
-        $liAttr = ' class="list-group-item rex-linkmap-list-item-article"';
-        $url = 'javascript:insertLink(\'redaxo://' . $article->getId() . '\',\'' . escape(trim(sprintf('%s [%s]', $article->getName(), $article->getId())), 'js') . '\');';
-        return CategoryTreeRenderer::formatLi($article, $categoryId, $this->context, $liAttr, ' href="' . $url . '"') . '</li>' . "\n";
+        $url = 'javascript:insertLink(\'redaxo://' . $article->id . '\',\'' . escape(trim(sprintf('%s [%s]', $article->name, $article->id)), 'js') . '\');';
+
+        $linkClass = $article->isOnline() ? 'rex-online' : 'rex-offline';
+        $label = CategoryTreeRenderer::formatLabel($article);
+
+        $iconType = match (true) {
+            $article->isSiteStartArticle() => 'sitestartarticle',
+            $article->isStartArticle() => 'startarticle',
+            default => 'article',
+        };
+
+        return '<li class="list-group-item rex-linkmap-list-item-article">'
+            . '<a href="' . $url . '" class="' . $linkClass . '">'
+            . '<i class="rex-icon rex-icon-' . $iconType . '"></i> '
+            . escape($label)
+            . '<span class="list-item-suffix">' . $article->id . '</span>'
+            . '</a>'
+            . '</li>' . "\n";
     }
 }

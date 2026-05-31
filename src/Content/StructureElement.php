@@ -2,172 +2,45 @@
 
 namespace Redaxo\Core\Content;
 
-use AllowDynamicProperties;
 use Redaxo\Core\Base\InstanceListPoolTrait;
 use Redaxo\Core\Base\InstancePoolTrait;
-use Redaxo\Core\Core;
-use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
+use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Language\Language;
 
+use function array_key_exists;
 use function in_array;
+use function sprintf;
 
 /**
- * Object Oriented Framework: Basisklasse für die Strukturkomponenten.
+ * Basisklasse für die Strukturkomponenten.
  */
-#[AllowDynamicProperties]
 abstract class StructureElement
 {
     use InstanceListPoolTrait;
     use InstancePoolTrait;
 
-    /** @var int */
-    protected $id = 0;
+    /** Prefix used for meta-info fields of this element type (`art_` or `cat_`). */
+    abstract protected string $metaInfoPrefix { get; }
 
-    /** @var int */
-    protected $parent_id = 0;
-
-    /** @var int */
-    protected $clang_id = 0;
-
-    /** @var string */
-    protected $name = '';
-
-    /** @var string */
-    protected $catname = '';
-
-    protected ?string $template = null;
-
-    /** @var string */
-    protected $path = '';
-
-    /** @var int */
-    protected $priority = 0;
-
-    /** @var int */
-    protected $catpriority = 0;
-
-    /** @var bool */
-    protected $startarticle = false;
-
-    /** @var int */
-    protected $status = 0;
-
-    /** @var int */
-    protected $updatedate = 0;
-
-    /** @var int */
-    protected $createdate = 0;
-
-    /** @var string */
-    protected $updateuser = '';
-
-    /** @var string */
-    protected $createuser = '';
-
-    /** @var list<string>|null */
-    protected static $classVars;
-
-    protected function __construct(array $params)
-    {
-        foreach (self::getClassVars() as $var) {
-            if (!isset($params[$var])) {
-                continue;
-            }
-
-            if (in_array($var, ['id', 'parent_id', 'clang_id', 'priority', 'catpriority', 'status', 'createdate', 'updatedate'], true)) {
-                $this->$var = (int) $params[$var];
-            } elseif ('startarticle' === $var) {
-                $this->$var = (bool) $params[$var];
-            } else {
-                $this->$var = $params[$var];
-            }
-        }
-    }
-
-    /**
-     * Returns Object Value.
-     *
-     * @param string $value
-     * @return string|int|null
-     * @psalm-taint-source input
-     */
-    public function getValue($value)
-    {
-        // damit alte rex_article felder wie teaser, online_from etc
-        // noch funktionieren
-        // gleicher BC code nochmals in article::getValue
-        foreach (['', 'art_', 'cat_'] as $prefix) {
-            $val = $prefix . $value;
-            if (isset($this->$val)) {
-                return $this->$val;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    protected static function _hasValue($value, array $prefixes = [])
-    {
-        $values = self::getClassVars();
-
-        if (in_array($value, $values)) {
-            return true;
-        }
-
-        foreach ($prefixes as $prefix) {
-            if (in_array($prefix . $value, $values)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns an Array containing article field names.
-     *
-     * @return list<string>
-     */
-    public static function getClassVars()
-    {
-        if (empty(self::$classVars)) {
-            self::$classVars = [];
-
-            $startId = Article::getSiteStartArticleId();
-            $file = Path::coreCache('structure/' . $startId . '.1.article');
-            if (!Core::isBackend() && is_file($file)) {
-                // da getClassVars() eine statische Methode ist, können wir hier nicht mit $this->getId() arbeiten!
-                $genVars = File::getCache($file, []);
-                unset($genVars['last_update_stamp']);
-                foreach ($genVars as $name => $value) {
-                    self::$classVars[] = (string) $name;
-                }
-            } else {
-                // Im Backend die Spalten aus der DB auslesen / via EP holen
-                $sql = Sql::factory();
-                $sql->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article LIMIT 0');
-                foreach ($sql->getFieldnames() as $field) {
-                    self::$classVars[] = $field;
-                }
-            }
-        }
-
-        return self::$classVars;
-    }
-
-    /** @return void */
-    public static function resetClassVars()
-    {
-        self::$classVars = null;
-    }
+    protected function __construct(
+        public readonly int $id,
+        public readonly int $clangId,
+        public readonly string $name,
+        public readonly int $priority,
+        /** @var list<int> */
+        public readonly array $path,
+        public readonly int $status,
+        public readonly int $createDate,
+        public readonly int $updateDate,
+        public readonly string $createUser,
+        public readonly string $updateUser,
+        /** @var array<string, string|int|null> */
+        final protected readonly array $additionalData,
+    ) {}
 
     /**
      * Return a StructureElement object based on an id.
@@ -188,7 +61,7 @@ abstract class StructureElement
             $clang = Language::getCurrentId();
         }
 
-        return static::getInstance([$id, $clang], static function () use ($id, $clang) {
+        return static::getInstance([$id, $clang], static function () use ($id, $clang): ?static {
             $articlePath = Path::coreCache('structure/' . $id . '.' . $clang . '.article');
 
             // load metadata from cache
@@ -205,17 +78,31 @@ abstract class StructureElement
                 return null;
             }
 
-            // don't allow to retrieve non-categories (startarticle=0) as Category
-            if (!$metadata['startarticle'] && (Category::class === static::class || is_subclass_of(static::class, Category::class))) {
-                return null;
-            }
-
-            return new static($metadata);
+            /** @var array<string, string|int|null> $metadata */
+            return static::fromCache($metadata);
         });
     }
 
+    /**
+     * Returns the element for the given id like {@see get()}, but throws when it does not exist.
+     *
+     * @throws RuntimeException if no element exists for the given id and clang
+     */
+    public static function require(int $id, ?int $clang = null): static
+    {
+        return static::get($id, $clang)
+            ?? throw new RuntimeException(sprintf('Required %s with id "%d" and clang "%s" does not exist.', static::class, $id, $clang ?? Language::getCurrentId()));
+    }
+
+    /**
+     * Builds an instance from the cache row.
+     *
+     * @param array<string, string|int|null> $data
+     */
+    abstract protected static function fromCache(array $data): ?static;
+
     /** @return list<static> */
-    protected static function getChildElements(int $parentId, string $listType, bool $ignoreOfflines = false, ?int $clang = null): array
+    final protected static function getChildElements(int $parentId, string $listType, bool $ignoreOfflines = false, ?int $clang = null): array
     {
         // for $parentId=0 root elements will be returned, so abort here for $parentId<0 only
         if (0 > $parentId) {
@@ -252,208 +139,88 @@ abstract class StructureElement
         );
     }
 
-    /**
-     * Returns the clang of the category.
-     *
-     * @return int
-     */
-    public function getClangId()
+    /** @psalm-taint-source input */
+    public function getValue(string $key): string|int|null
     {
-        return $this->clang_id;
+        $key = strtolower($key);
+
+        return match ($key) {
+            'id' => $this->id,
+            'clang_id' => $this->clangId,
+            'name' => $this->name,
+            'priority' => $this->priority,
+            'path' => $this->path ? '|' . implode('|', $this->path) . '|' : '|',
+            'status' => $this->status,
+            'createdate' => $this->createDate,
+            'updatedate' => $this->updateDate,
+            'createuser' => $this->createUser,
+            'updateuser' => $this->updateUser,
+            default => $this->additionalData[$key] ?? $this->additionalData[$this->metaInfoPrefix . $key] ?? null,
+        };
+    }
+
+    /** Checks whether this element has a value for the given key. */
+    public function hasValue(string $key): bool
+    {
+        $key = strtolower($key);
+
+        return in_array($key, [
+            'id', 'clang_id', 'name', 'priority', 'path', 'status',
+            'createdate', 'updatedate', 'createuser', 'updateuser',
+        ], true)
+            || array_key_exists($key, $this->additionalData)
+            || array_key_exists($this->metaInfoPrefix . $key, $this->additionalData);
+    }
+
+    /** Returns a url for linking to this article. */
+    public function getUrl(array $params = []): string
+    {
+        return Url::article($this->id, $this->clangId, $params);
     }
 
     /**
-     * Returns a url for linking to this article.
-     *
-     * @return string
+     * Returns the next category upwards in the structure tree
+     * (the containing category for articles, the parent category for categories).
      */
-    public function getUrl(array $params = [])
+    abstract protected function getParent(): ?Category;
+
+    /** Returns true if article is online. */
+    public function isOnline(): bool
     {
-        return Url::article($this->getId(), $this->getClangId(), $params);
+        return 1 === $this->status;
     }
 
-    /**
-     * Returns the id of the article.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+    /** Returns whether the element is permitted. */
+    abstract public function isPermitted(): bool;
 
     /**
-     * Returns the parent_id of the article.
-     *
-     * @return int
-     */
-    public function getParentId()
-    {
-        return $this->parent_id;
-    }
-
-    /**
-     * Returns the path of the category/article.
-     *
-     * @return string
-     */
-    abstract public function getPath();
-
-    /**
-     * Returns the path ids of the category/article as an array.
-     *
-     * @return list<int>
-     */
-    public function getPathAsArray()
-    {
-        $path = explode('|', $this->getPath());
-        return array_values(array_map('intval', array_filter($path)));
-    }
-
-    /**
-     * Returns the parent category.
-     *
-     * @return static|null
-     */
-    abstract public function getParent();
-
-    /**
-     * Returns the name of the article.
-     *
-     * @return string
-     * @psalm-taint-source input
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the article priority.
-     *
-     * @return int
-     */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
-    /**
-     * Returns the last update user.
-     *
-     * @return string
-     */
-    public function getUpdateUser()
-    {
-        return $this->updateuser;
-    }
-
-    /**
-     * Returns the last update date.
-     *
-     * @return int
-     */
-    public function getUpdateDate()
-    {
-        return $this->updatedate;
-    }
-
-    /**
-     * Returns the creator.
-     *
-     * @return string
-     */
-    public function getCreateUser()
-    {
-        return $this->createuser;
-    }
-
-    /**
-     * Returns the creation date.
-     *
-     * @return int
-     */
-    public function getCreateDate()
-    {
-        return $this->createdate;
-    }
-
-    /**
-     * Returns true if article is online.
-     *
-     * @return bool
-     */
-    public function isOnline()
-    {
-        return 1 == $this->status;
-    }
-
-    public function getTemplateKey(): ?string
-    {
-        return $this->template;
-    }
-
-    /**
-     * Returns true if article has a template.
-     *
-     * @return bool
-     */
-    public function hasTemplate()
-    {
-        return null !== $this->template;
-    }
-
-    /**
-     * Returns whether the element is permitted.
-     *
-     * @return bool
-     */
-    abstract public function isPermitted();
-
-    /**
-     * Get an array of all parentCategories.
-     * Returns an array of StructureElement objects.
+     * Get an array of all parent categories.
      *
      * @return list<Category>
      */
-    public function getParentTree()
+    public function getParentTree(): array
     {
         $return = [];
 
-        if ($this->path) {
-            if ($this->isStartArticle()) {
-                $explode = explode('|', $this->path . $this->id . '|');
-            } else {
-                $explode = explode('|', $this->path);
+        foreach ($this->path as $id) {
+            $cat = Category::get($id, $this->clangId);
+            if (!$cat) {
+                throw new LogicException('No category found with id=' . $id . ' and clang=' . $this->clangId . '.');
             }
-
-            foreach ($explode as $var) {
-                if ('' != $var) {
-                    $cat = Category::get((int) $var, $this->clang_id);
-                    if (!$cat) {
-                        throw new LogicException('No category found with id=' . $var . ' and clang=' . $this->clang_id . '.');
-                    }
-                    $return[] = $cat;
-                }
-            }
+            $return[] = $cat;
         }
 
         return $return;
     }
 
-    /**
-     * Checks if $anObj is in the parent tree of the object.
-     *
-     * @return bool
-     */
-    public function inParentTree(self $anObj)
+    /** Checks if $anObj is in the parent tree of the object. */
+    public function inParentTree(self $anObj): bool
     {
-        $tree = $this->getParentTree();
-        return in_array($anObj, $tree);
+        return in_array($anObj, $this->getParentTree(), true);
     }
 
     /**
-     * Returns the closest element from parent tree (including itself) where the callback returns true.
+     * Returns the closest element (this element or any parent category) where the callback returns true.
      *
      * @param callable(self):bool $callback
      */
@@ -463,17 +230,11 @@ abstract class StructureElement
             return $this;
         }
 
-        $parent = $this->getParent();
-
-        return $parent ? $parent->getClosest($callback) : null;
+        return $this->getParent()?->getClosest($callback);
     }
 
-    /**
-     * Returns the value from this element or from the closest parent where the value is set.
-     *
-     * @return string|int|null
-     */
-    public function getClosestValue(string $key)
+    /** Returns the value from this element or from the closest parent category where the value is set. */
+    public function getClosestValue(string $key): string|int|null
     {
         $value = $this->getValue($key);
 
@@ -481,12 +242,10 @@ abstract class StructureElement
             return $value;
         }
 
-        $parent = $this->getParent();
-
-        return $parent ? $parent->getClosestValue($key) : null;
+        return $this->getParent()?->getClosestValue($key);
     }
 
-    /** Returns true if this element and all parents are online. */
+    /** Returns true if this element and all parent categories are online. */
     public function isOnlineIncludingParents(): bool
     {
         if (!$this->isOnline()) {
@@ -496,35 +255,5 @@ abstract class StructureElement
         $parent = $this->getParent();
 
         return !$parent || $parent->isOnlineIncludingParents();
-    }
-
-    /**
-     * Returns true if this Article is the Startpage for the category.
-     *
-     * @return bool
-     */
-    public function isStartArticle()
-    {
-        return $this->startarticle;
-    }
-
-    /**
-     * Returns true if this Article is the Startpage for the entire site.
-     *
-     * @return bool
-     */
-    public function isSiteStartArticle()
-    {
-        return $this->id == Article::getSiteStartArticleId();
-    }
-
-    /**
-     * Returns  true if this Article is the not found article.
-     *
-     * @return bool
-     */
-    public function isNotFoundArticle()
-    {
-        return $this->id == Article::getNotfoundArticleId();
     }
 }

@@ -33,7 +33,7 @@ class CategoryToArticle extends ApiFunction
             throw new ApiFunctionException('Unable to find article with id "' . $articleId . '"!');
         }
 
-        if (!$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())) {
+        if (!$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 

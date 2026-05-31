@@ -54,16 +54,14 @@ class ArticleHandler extends AbstractHandler
 
         if (!empty($params['id'])) {
             $s = '';
-            $OOArt = Article::get($params['id'], $params['clang']);
+            $OOArt = Article::require($params['id'], $params['clang']);
 
             // Alle Metafelder des Pfades sind erlaubt
-            foreach ($OOArt->getPathAsArray() as $pathElement) {
-                if ('' != $pathElement) {
-                    $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
-                }
+            foreach ($OOArt->path as $pathElement) {
+                $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
             }
 
-            $t = ' OR FIND_IN_SET(' . Sql::factory()->escape($OOArt->getTemplateKey() ?? '') . ', `p`.`templates`)';
+            $t = ' OR FIND_IN_SET(' . Sql::factory()->escape($OOArt->templateKey ?? '') . ', `p`.`templates`)';
 
             $restrictionsCondition = 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ') AND (`p`.`templates` = "" OR `p`.`templates` IS NULL ' . $t . ')';
         }
@@ -83,7 +81,7 @@ class ArticleHandler extends AbstractHandler
 
         $params['activeItem'] = $params['article'];
         // Hier die category_id setzen, damit beim klick auf den REX_LINK_BUTTON der Medienpool in der aktuellen Kategorie startet
-        $params['activeItem']->setValue('category_id', $OOArt->getCategoryId());
+        $params['activeItem']->setValue('category_id', $OOArt->categoryId ?? 0);
 
         return parent::renderFormAndSave(self::PREFIX, $params);
     }

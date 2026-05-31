@@ -88,21 +88,18 @@ class CategorySelect extends Select
     /** @return void */
     protected function addCatOption(Category $cat, $group = null)
     {
-        if (!$this->checkPerms || Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($cat->getId())
+        if (!$this->checkPerms || Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($cat->id)
         ) {
-            $cid = $cat->getId();
-            $cname = $cat->getName() . ' [' . $cid . ']';
+            $cid = $cat->id;
+            $cname = $cat->name . ' [' . $cid . ']';
 
             if (null === $group) {
-                $group = $cat->getParentId();
+                $group = $cat->parentId ?? 0;
             }
 
             $this->addOption($cname, $cid, $cid, $group);
-            $childs = $cat->getChildren($this->ignoreOfflines);
-            if (is_array($childs)) {
-                foreach ($childs as $child) {
-                    $this->addCatOption($child);
-                }
+            foreach ($cat->getChildren($this->ignoreOfflines) as $child) {
+                $this->addCatOption($child);
             }
         }
     }

@@ -2,77 +2,111 @@
 
 namespace Redaxo\Core\Content;
 
+use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 
+use function in_array;
+
 /**
- * Object Oriented Framework: Bildet einen Artikel der Struktur ab.
+ * Bildet einen Artikel der Struktur ab.
  */
-class Article extends StructureElement
+final class Article extends StructureElement
 {
-    /**
-     * Return the current article id.
-     *
-     * @return int
-     */
-    public static function getCurrentId()
+    protected string $metaInfoPrefix = 'art_';
+
+    public readonly ?int $categoryId;
+    public readonly ?string $templateKey;
+    public readonly bool $startArticle;
+
+    /** @param array<string, string|int|null> $data */
+    private function __construct(array $data)
+    {
+        // strip irrelevant + Category-only fields up front; the rest gets explicitly
+        // pulled into typed properties below, what remains lands in additionalData.
+        unset($data['pid'], $data['catname'], $data['catpriority']);
+        foreach (array_keys($data) as $key) {
+            if (str_starts_with((string) $key, 'cat_')) {
+                unset($data[$key]);
+            }
+        }
+
+        $getAndUnset = static function (string $key) use (&$data): string|int|null {
+            $value = $data[$key] ?? null;
+            unset($data[$key]);
+            return $value;
+        };
+
+        $id = (int) $getAndUnset('id');
+        $parentId = (int) $getAndUnset('parent_id');
+        $startArticle = (bool) $getAndUnset('startarticle');
+        $path = array_map('intval', array_filter(explode('|', (string) $getAndUnset('path'))));
+        // start-articles share the cache row with their category; their DB path
+        // only includes ancestor categories, so add their own id to keep the
+        // semantic "all category ids on the way to this element"
+        if ($startArticle) {
+            $path[] = $id;
+        }
+
+        parent::__construct(
+            id: $id,
+            clangId: (int) $getAndUnset('clang_id'),
+            name: (string) $getAndUnset('name'),
+            priority: (int) $getAndUnset('priority'),
+            path: array_values($path),
+            status: (int) $getAndUnset('status'),
+            createDate: (int) $getAndUnset('createdate'),
+            updateDate: (int) $getAndUnset('updatedate'),
+            createUser: (string) $getAndUnset('createuser'),
+            updateUser: (string) $getAndUnset('updateuser'),
+            additionalData: $data,
+        );
+
+        $this->categoryId = $startArticle ? $id : ($parentId > 0 ? $parentId : null);
+        $this->templateKey = null === ($t = $getAndUnset('template')) ? null : (string) $t;
+        $this->startArticle = $startArticle;
+    }
+
+    /** @param array<string, string|int|null> $data */
+    #[Override]
+    protected static function fromCache(array $data): static
+    {
+        return new self($data);
+    }
+
+    /** Return the current article id. */
+    public static function getCurrentId(): int
     {
         return Core::getProperty('article_id', 1);
     }
 
-    /**
-     * Return the current article.
-     *
-     * @param int $clang
-     *
-     * @return self|null
-     */
-    public static function getCurrent($clang = null)
+    /** Return the current article. */
+    public static function getCurrent(?int $clang = null): ?self
     {
         return self::get(self::getCurrentId(), $clang);
     }
 
-    /**
-     * Return the site wide start article id.
-     *
-     * @return int
-     */
-    public static function getSiteStartArticleId()
+    /** Return the site wide start article id. */
+    public static function getSiteStartArticleId(): int
     {
         return Core::getProperty('start_article_id', 1);
     }
 
-    /**
-     * Return the site wide start article.
-     *
-     * @param int $clang
-     *
-     * @return self|null
-     */
-    public static function getSiteStartArticle($clang = null)
+    /** Return the site wide start article. */
+    public static function getSiteStartArticle(?int $clang = null): ?self
     {
         return self::get(self::getSiteStartArticleId(), $clang);
     }
 
-    /**
-     * Return the site wide notfound article id.
-     *
-     * @return int
-     */
-    public static function getNotfoundArticleId()
+    /** Return the site wide notfound article id. */
+    public static function getNotfoundArticleId(): int
     {
         return Core::getProperty('notfound_article_id', 1);
     }
 
-    /**
-     * Return the site wide notfound article.
-     *
-     * @param int $clang
-     *
-     * @return self|null
-     */
-    public static function getNotfoundArticle($clang = null)
+    /** Return the site wide notfound article. */
+    public static function getNotfoundArticle(?int $clang = null): ?self
     {
         return self::get(self::getNotfoundArticleId(), $clang);
     }
@@ -80,81 +114,68 @@ class Article extends StructureElement
     /**
      * Return a list of top-level articles.
      *
-     * @param bool $ignoreOfflines
-     * @param int $clang
-     *
      * @return list<self>
      */
-    public static function getRootArticles($ignoreOfflines = false, $clang = null)
+    public static function getRootArticles(bool $ignoreOfflines = false, ?int $clang = null): array
     {
         return self::getChildElements(0, 'alist', $ignoreOfflines, $clang);
     }
 
-    /**
-     * Returns the category id.
-     *
-     * @return int
-     */
-    public function getCategoryId()
+    /** Returns the category this article belongs to (for start-articles the category itself). */
+    public function getCategory(): ?Category
     {
-        return $this->isStartArticle() ? $this->getId() : $this->getParentId();
+        return null === $this->categoryId ? null : Category::get($this->categoryId, $this->clangId);
     }
 
-    /**
-     * Returns the parent category.
-     *
-     * @return Category|null
-     */
-    public function getCategory()
+    #[Override]
+    protected function getParent(): ?Category
     {
-        return Category::get($this->getCategoryId(), $this->getClangId());
+        $category = $this->getCategory();
+        return $this->startArticle ? $category?->getParent() : $category;
     }
 
-    /**
-     * Returns the parent object of the article.
-     *
-     * @return static|null
-     */
-    public function getParent()
+    /** Returns true if this article is the start-article for its category. */
+    public function isStartArticle(): bool
     {
-        return self::get($this->parent_id, $this->clang_id);
+        return $this->startArticle;
     }
 
-    /**
-     * Returns the path of the category/article.
-     *
-     * @return string
-     */
-    public function getPath()
+    /** Returns true if this article is the site-wide start article. */
+    public function isSiteStartArticle(): bool
     {
-        if ($this->isStartArticle()) {
-            return $this->path . $this->id . '|';
-        }
-
-        return $this->path;
+        return $this->id === self::getSiteStartArticleId();
     }
 
-    public function getValue($value)
+    /** Returns true if this article is the site-wide not-found article. */
+    public function isNotFoundArticle(): bool
     {
-        if ('category_id' === $value) {
-            // für die CatId hier den Getter verwenden,
-            // da dort je nach ArtikelTyp unterscheidungen getroffen werden müssen
-            return $this->getCategoryId();
-        }
-        return parent::getValue($value);
+        return $this->id === self::getNotfoundArticleId();
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
-    public static function hasValue($value)
+    #[Override]
+    public function getValue(string $key): string|int|null
     {
-        return parent::_hasValue($value, ['art_']);
+        $key = strtolower($key);
+
+        return match ($key) {
+            'category_id' => $this->categoryId,
+            'template' => $this->templateKey,
+            'startarticle' => (int) $this->startArticle,
+            default => parent::getValue($key),
+        };
     }
 
-    public function isPermitted()
+    #[Override]
+    public function hasValue(string $key): bool
+    {
+        $key = strtolower($key);
+
+        return in_array($key, ['template', 'startarticle', 'category_id'], true)
+            || parent::hasValue($key);
+    }
+
+    #[Override]
+    public function isPermitted(): bool
     {
         return (bool) Extension::registerPoint(new ExtensionPoint('ART_IS_PERMITTED', true, ['element' => $this]));
     }

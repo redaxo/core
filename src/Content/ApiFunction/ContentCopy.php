@@ -38,7 +38,7 @@ class ContentCopy extends ApiFunction
         if (
             !$user->getComplexPerm('clang')->hasPerm($clangA)
             || !$user->getComplexPerm('clang')->hasPerm($clangB)
-            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }

@@ -50,7 +50,7 @@ class ArticleSliceMove extends ApiFunction
 
         if (
             !$user->getComplexPerm('clang')->hasPerm($clang)
-            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
             || !$user->getComplexPerm('modules')->hasPerm($moduleKey)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));

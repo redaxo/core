@@ -64,13 +64,11 @@ class CategoryHandler extends AbstractHandler
         $s = '';
 
         if (!empty($params['id'])) {
-            $OOCat = Category::get($params['id'], $params['clang']);
+            $OOCat = Category::require($params['id'], $params['clang']);
 
             // Alle Metafelder des Pfades sind erlaubt
-            foreach ($OOCat->getPathAsArray() as $pathElement) {
-                if ('' != $pathElement) {
-                    $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
-                }
+            foreach ($OOCat->path as $pathElement) {
+                $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
             }
 
             // Auch die Kategorie selbst kann Metafelder haben
