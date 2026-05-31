@@ -40,8 +40,8 @@ final class AddonOperation extends ApiFunction
         }
 
         if ('uninstall' == $function && !$package->isInstalled()
-            || 'activate' == $function && $package->isAvailable()
-            || 'deactivate' == $function && !$package->isAvailable()
+            || 'activate' == $function && $package->isActivated()
+            || 'deactivate' == $function && !$package->isActivated()
         ) {
             return new Result(true);
         }

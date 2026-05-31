@@ -18,7 +18,7 @@ final class AddonActivateCommand extends AbstractCommand
     public function __invoke(
         SymfonyStyle $io,
         #[Argument('The id of the addon, e.g. "yform"', suggestedValues: static function (): array {
-            return array_keys(array_filter(Addon::getRegisteredAddons(), static fn (Addon $addon): bool => !$addon->isAvailable()));
+            return array_keys(array_filter(Addon::getRegisteredAddons(), static fn (Addon $addon): bool => !$addon->isActivated()));
         })] string $addon,
     ): int {
         // the package manager don't know new packages in the addon folder

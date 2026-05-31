@@ -355,7 +355,7 @@ final class Controller
 
     public static function appendPackagePages(): void
     {
-        $addons = Core::isSafeMode() ? Addon::getSetupAddons() : Addon::getAvailableAddons();
+        $addons = Core::isSafeMode() ? Addon::getSetupAddons() : Addon::getActivatedAddons();
         foreach ($addons as $addon) {
             foreach ($addon->getPages() as $page) {
                 self::registerAddonPage($page, $addon);
@@ -515,7 +515,7 @@ final class Controller
     private static function includePath(string $path, array $context = []): mixed
     {
         return Timer::measure('Page: ' . Path::relative($path), function () use ($path, $context) {
-            foreach (Addon::getAvailableAddons() as $addon) {
+            foreach (Addon::getActivatedAddons() as $addon) {
                 if (str_starts_with($path, $addon->path . DIRECTORY_SEPARATOR)) {
                     return $addon->includeFile($path, $context);
                 }

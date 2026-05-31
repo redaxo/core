@@ -18,7 +18,7 @@ final class AddonDeactivateCommand extends AbstractCommand
     public function __invoke(
         SymfonyStyle $io,
         #[Argument('The name of the addon, e.g. "yform"', suggestedValues: static function (): array {
-            return array_keys(Addon::getAvailableAddons());
+            return array_keys(Addon::getActivatedAddons());
         })] string $addon,
     ): int {
         // the package manager don't know new packages in the addon folder

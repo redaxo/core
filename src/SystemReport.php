@@ -107,7 +107,7 @@ final class SystemReport
         }
 
         $packages = [];
-        foreach (Addon::getAvailableAddons() as $package) {
+        foreach (Addon::getActivatedAddons() as $package) {
             $packages[$package->name] = $package->getVersion();
         }
 

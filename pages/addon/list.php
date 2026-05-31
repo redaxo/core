@@ -70,7 +70,7 @@ $getTableRow = static function (Addon $package) use ($getLink) {
 
     $class = '';
     $status = '&nbsp;';
-    if ($package->isAvailable()) {
+    if ($package->isActivated()) {
         $status = $getLink($package, 'deactivate', 'rex-icon-package-is-activated');
         $class .= ' rex-package-is-activated';
     } elseif ($package->isInstalled()) {

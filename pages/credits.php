@@ -91,7 +91,7 @@ $content .= '
 
         <tbody>';
 
-foreach (Addon::getAvailableAddons() as $package) {
+foreach (Addon::getActivatedAddons() as $package) {
     $helpUrl = Url::backendPage('packages', ['subpage' => 'help', 'package' => $package->name]);
 
     $license = '';
