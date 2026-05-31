@@ -3,7 +3,6 @@
 namespace Redaxo\Core;
 
 use Composer\InstalledVersions;
-use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Console\Application;
 use Redaxo\Core\Database\Configuration as DatabaseConfiguration;
 use Redaxo\Core\Exception\InvalidArgumentException;
@@ -453,21 +452,6 @@ final class Core
             return Formatter::version($version, $format);
         }
         return $version;
-    }
-
-    /**
-     * @return array<non-empty-string, array{class: class-string<Addon>, install: bool, status: bool}>
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
-    public static function getPackageConfig(): array
-    {
-        return Type::array(self::getConfig('package-config', []));
-    }
-
-    /** @return list<non-empty-string> */
-    public static function getPackageOrder(): array
-    {
-        return Type::array(self::getConfig('package-order', []));
     }
 
     /**

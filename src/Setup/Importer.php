@@ -172,10 +172,10 @@ class Importer
         AddonManager::synchronizeWithFileSystem();
 
         // enlist activated packages to ensure that all their classess are known in autoloader and can be referenced in other package's install.php
-        foreach (Core::getPackageOrder() as $packageId) {
+        foreach (AddonManager::getAddonOrder() as $packageId) {
             Addon::require($packageId)->enlist();
         }
-        foreach (Core::getPackageOrder() as $packageId) {
+        foreach (AddonManager::getAddonOrder() as $packageId) {
             $package = Addon::require($packageId);
             $manager = AddonManager::factory($package);
 

@@ -526,7 +526,7 @@ abstract class Addon
     final public static function initialize(bool $dbExists = true): void
     {
         if ($dbExists) {
-            $config = Core::getPackageConfig();
+            $config = AddonManager::getAddonConfig();
         } else {
             $config = [];
             foreach (Core::getProperty('setup_addons') as $addon) {

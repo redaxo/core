@@ -2,6 +2,7 @@
 
 use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Core;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -17,7 +18,7 @@ Addon::initialize(!Core::isSetup());
 if (Core::isSetup() || Core::isSafeMode()) {
     $packageOrder = array_keys(Addon::getSetupAddons());
 } else {
-    $packageOrder = Core::getPackageOrder();
+    $packageOrder = AddonManager::getAddonOrder();
 }
 
 // in the first run, we register all folders for class- and fragment-loading,

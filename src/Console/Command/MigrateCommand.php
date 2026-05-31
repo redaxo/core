@@ -4,7 +4,6 @@ namespace Redaxo\Core\Console\Command;
 
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\File;
@@ -47,7 +46,7 @@ final class MigrateCommand extends AbstractCommand implements StandaloneInterfac
         // align registered addons with composer state: drop config of orphaned addons, register new ones
         AddonManager::synchronizeWithFileSystem();
 
-        $packages = array_merge(['core'], Core::getPackageOrder());
+        $packages = array_merge(['core'], AddonManager::getAddonOrder());
 
         $io->section('Migrating');
 

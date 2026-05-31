@@ -443,6 +443,8 @@ return RectorConfig::configure()
         new MethodCallRename(Cronjob\CronjobManager::class, 'hasManager', 'hasExecutor'),
     ])
     ->withConfiguredRule(RenameStaticMethodRector::class, [
+        new RenameStaticMethod(Core::class, 'getPackageConfig', Addon\AddonManager::class, 'getAddonConfig'),
+        new RenameStaticMethod(Core::class, 'getPackageOrder', Addon\AddonManager::class, 'getAddonOrder'),
         new RenameStaticMethod(Core::class, 'getVersionHash', Util\Version::class, 'gitHash'),
         new RenameStaticMethod(Util\Str::class, 'versionSplit', Util\Version::class, 'split'),
         new RenameStaticMethod(Util\Str::class, 'versionCompare', Util\Version::class, 'compare'),
