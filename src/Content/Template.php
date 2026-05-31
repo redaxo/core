@@ -2,14 +2,18 @@
 
 namespace Redaxo\Core\Content;
 
+use InvalidArgumentException;
 use Redaxo\Core\ClassDiscovery;
-use Redaxo\Core\Core;
-use Redaxo\Core\Util\Type;
+
+use function sprintf;
 
 abstract class Template
 {
     /** @var array<string, self>|null */
     private static ?array $instances = null;
+
+    /** @var class-string<self>|null */
+    private static ?string $defaultClass = null;
 
     public function __construct(
         /** Unique key, used as DB reference in rex_article.template. */
@@ -17,9 +21,35 @@ abstract class Template
         public readonly string $name,
     ) {}
 
-    public static function getDefaultKey(): ?string
+    /**
+     * Sets the default template, used e.g. for new articles.
+     *
+     * Call this in your project's `boot()` method.
+     *
+     * @param class-string<self> $class
+     */
+    final public static function setDefault(string $class): void
     {
-        return Type::nullOrString(Core::getConfig('default_template'));
+        if (null === self::get($class)) {
+            throw new InvalidArgumentException(sprintf('"%s" is not a registered template.', $class));
+        }
+
+        self::$defaultClass = $class;
+    }
+
+    /**
+     * Returns the key of the default template.
+     *
+     * If no default has been set, the first available template is used.
+     * Returns `null` only when no templates exist at all.
+     */
+    final public static function getDefaultKey(): ?string
+    {
+        if (null !== self::$defaultClass) {
+            return self::get(self::$defaultClass)?->key;
+        }
+
+        return array_key_first(self::getAll());
     }
 
     /**
