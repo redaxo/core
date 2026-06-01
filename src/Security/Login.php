@@ -4,6 +4,7 @@ namespace Redaxo\Core\Security;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Environment;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -364,7 +365,7 @@ class Login
     public static function startSession(): void
     {
         if (PHP_SESSION_ACTIVE !== session_status()) {
-            $env = Core::isBackend() ? 'backend' : 'frontend';
+            $env = Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
             $sessionConfig = Type::array(Core::getProperty('session', []));
 
             if (isset($sessionConfig[$env]['save_path'])) {
@@ -395,7 +396,7 @@ class Login
     {
         $cookieParams = session_get_cookie_params();
 
-        $key = Core::isBackend() ? 'backend' : 'frontend';
+        $key = Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
         $sessionConfig = Core::getProperty('session', []);
 
         if ($sessionConfig) {

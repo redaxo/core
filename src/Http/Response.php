@@ -6,6 +6,7 @@ use DateTimeInterface;
 use Ramsey\Http\Range\Exception\HttpRangeException;
 use Ramsey\Http\Range\UnitFactory;
 use Redaxo\Core\Core;
+use Redaxo\Core\Environment;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -274,7 +275,7 @@ final class Response
             self::sendCacheControl();
         }
 
-        $environment = Core::isBackend() ? 'backend' : 'frontend';
+        $environment = Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
 
         if (self::HTTP_OK == self::$httpStatus) {
             // ----- Last-Modified
