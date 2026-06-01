@@ -1256,13 +1256,6 @@
     <MixedArgument>
       <code><![CDATA[$args['types']]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$blockedExtension]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$blockedExtension]]></code>
-      <code><![CDATA[$blockedExtension]]></code>
-    </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[rex_addon::get('mediapool')->getProperty('allowed_mime_types', [])]]></code>
       <code><![CDATA[rex_addon::get('mediapool')->getProperty('blocked_extensions')]]></code>
