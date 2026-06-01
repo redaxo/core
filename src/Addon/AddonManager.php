@@ -4,6 +4,7 @@ namespace Redaxo\Core\Addon;
 
 use Composer\Autoload\ClassLoader;
 use Composer\InstalledVersions;
+use Psr\Log\LogLevel;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Config;
@@ -13,6 +14,7 @@ use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
+use Redaxo\Core\Log\Logger;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\Util\Type;
@@ -220,14 +222,20 @@ class AddonManager
         return false;
     }
 
-    /** Cleans up a addon that was removed from the filesystem. */
-    protected function _delete(): void
+    /**
+     * Cleans up the leftovers of an addon whose code was removed from the filesystem.
+     *
+     * Only the parts reachable by name are removed (assets, cache, config). The addon's own uninstall hook
+     * can no longer run because its code is gone, so anything it created itself (e.g. database tables) is
+     * left behind — to fully uninstall an addon, uninstall it before removing it via composer.
+     *
+     * @param non-empty-string $addon
+     */
+    private static function clearLeftovers(string $addon): void
     {
-        if ($this->addon->isInstalled()) {
-            $this->uninstall();
-        }
-
-        $this->addon->clearCache();
+        Dir::delete(Path::addonAssets($addon));
+        Dir::delete(Path::addonCache($addon));
+        Config::removeNamespace($addon);
     }
 
     /** Checks whether the required addons are available. */
@@ -304,7 +312,10 @@ class AddonManager
     /** @return TAddonOrder */
     public static function getAddonOrder(): array
     {
-        return self::loadAddonsData()['order'];
+        // The persisted order may list addons that are currently not available (e.g. a dev-only addon
+        // missing after `composer install --no-dev`). Filter them out so boot does not require a missing
+        // addon, while leaving the stored order untouched so it returns unchanged once available again.
+        return array_values(array_filter(self::loadAddonsData()['order'], Addon::exists(...)));
     }
 
     /** Generates the addon order. */
@@ -355,10 +366,12 @@ class AddonManager
     /** Saves the addon config. */
     protected static function saveConfig(): void
     {
-        $config = [];
+        // Start from the existing config so entries of addons that are configured but currently not loaded
+        // (e.g. a dev-only addon missing after `composer install --no-dev`) are preserved. Removing orphaned
+        // entries is the dedicated job of synchronizeWithFileSystem().
+        $config = self::getAddonConfig();
         foreach (Addon::getRegisteredAddons() as $addonName => $addon) {
-            $config[$addonName]['class'] = $addon::class;
-            $config[$addonName]['state'] = $addon->state->value;
+            $config[$addonName] = ['class' => $addon::class, 'state' => $addon->state->value];
         }
 
         self::saveAddonsData(config: $config);
@@ -367,15 +380,35 @@ class AddonManager
     /** Synchronizes the addons with the file system. */
     public static function synchronizeWithFileSystem(): void
     {
+        // Whether composer was installed with dev dependencies. In a production install (`--no-dev`) a
+        // dev-only addon is intentionally absent, so its config entry must be preserved.
+        $devMode = self::isDevInstall();
+
         $config = self::getAddonConfig();
-        $registeredAddons = Addon::getRegisteredAddons();
         $packages = self::getComposerPackages();
         $addonClasses = self::getAddonClasses();
+        $removed = false;
 
-        foreach (array_diff_key($registeredAddons, $packages) as $addonName => $addon) {
-            $manager = self::factory($addon);
-            $manager->_delete();
+        // Addons that have a config entry but are no longer a composer package.
+        foreach (array_diff_key($config, $packages) as $addonName => $addonConfig) {
+            if (!$devMode) {
+                // Production install: the addon is intentionally absent (dev-only addon). Keep its config
+                // entry untouched so it returns unchanged once dev dependencies are installed again.
+                continue;
+            }
+
+            // Dev install: the addon was genuinely removed (`composer remove`). Its code is gone, so its own
+            // uninstall hook can no longer run — clean up everything reachable by name and forget the addon.
+            if (AddonState::Uninstalled->value !== ($addonConfig['state'] ?? AddonState::Uninstalled->value)) {
+                Logger::factory()->log(LogLevel::WARNING, sprintf(
+                    'Addon "%s" was removed from the filesystem while still installed. Its assets, cache and config have been cleaned up, but its uninstall routine (e.g. database changes) could not run because its code is gone. To fully uninstall an addon, uninstall it before removing it via composer.',
+                    $addonName,
+                ));
+            }
+
+            self::clearLeftovers($addonName);
             unset($config[$addonName]);
+            $removed = true;
         }
         foreach ($packages as $addonName => $package) {
             if (!isset($addonClasses[$addonName])) {
@@ -388,10 +421,32 @@ class AddonManager
                 $config[$addonName]['state'] = Addon::require($addonName)->state->value;
             }
         }
-        ksort($config);
 
         self::saveAddonsData(config: $config);
         Addon::initialize();
+
+        if ($removed) {
+            // Drop the removed addons from the persisted order as well, so the committed addons.json stays clean.
+            self::generateAddonOrder();
+        }
+    }
+
+    /**
+     * Returns whether composer was installed with dev dependencies (i.e. not `--no-dev`).
+     *
+     * {@see InstalledVersions::getRootPackage()} is unreliable here: a dependency that ships a scoped vendor
+     * with its own autoloader (e.g. rector) can become the reported root package. So instead we look through
+     * all install data sets for the one that actually contains redaxo/core and read its root dev flag.
+     */
+    private static function isDevInstall(): bool
+    {
+        foreach (InstalledVersions::getAllRawData() as $data) {
+            if ('redaxo/core' === ($data['root']['name'] ?? null) || isset($data['versions']['redaxo/core'])) {
+                return (bool) ($data['root']['dev'] ?? false);
+            }
+        }
+
+        return false;
     }
 
     /** @return array{config: TAddonConfig, order: TAddonOrder} */
@@ -421,6 +476,9 @@ class AddonManager
         $data = self::loadAddonsData();
 
         if (null !== $config) {
+            // keep the config sorted by addon name so the committed addons.json stays stable (the boot order
+            // is tracked separately in $data['order'])
+            ksort($config);
             $data['config'] = $config;
         }
         if (null !== $order) {
