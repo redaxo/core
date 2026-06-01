@@ -111,7 +111,7 @@ if (!Core::isSetup()) {
 
 // ----------------- HTTPS REDIRECT
 if ('cli' !== PHP_SAPI && !Core::isSetup()) {
-    if ((true === Core::getProperty('use_https') || Core::getEnvironment() === Core::getProperty('use_https')) && !Request::isHttps()) {
+    if ((true === Core::getProperty('use_https') || Core::getEnvironment()->value === Core::getProperty('use_https')) && !Request::isHttps()) {
         Response::enforceHttps();
     }
 

@@ -10,6 +10,7 @@ use Redaxo\Core\Cronjob\Type\ExportType;
 use Redaxo\Core\Cronjob\Type\OptimizeTableType;
 use Redaxo\Core\Cronjob\Type\PurgeMailerArchiveType;
 use Redaxo\Core\Cronjob\Type\UrlRequestType;
+use Redaxo\Core\Environment;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Log\LogFile;
@@ -94,10 +95,10 @@ final class CronjobExecutor
             }
         }
 
-        if ('backend' === Core::getEnvironment() && 'cronjob/cronjobs' == Request::get('page') && 'execute' == Request::get('func')) {
+        if (Environment::Backend === Core::getEnvironment() && 'cronjob/cronjobs' == Request::get('page') && 'execute' == Request::get('func')) {
             $environment = 'backend_manual';
         } else {
-            $environment = Core::getEnvironment();
+            $environment = Core::getEnvironment()->value;
         }
 
         $log = LogFile::factory(Path::log('cronjob.log'), 2_000_000);

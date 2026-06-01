@@ -223,33 +223,26 @@ final class Core
         return Setup::isEnabled();
     }
 
-    /** Returns if the environment is the backend. */
+    /** Returns if the environment is the backend (the console counts as backend, too). */
     public static function isBackend(): bool
     {
-        return (bool) self::getProperty('redaxo', false);
+        return Environment::Frontend !== self::getEnvironment();
     }
 
     /** Returns if the environment is the frontend. */
     public static function isFrontend(): bool
     {
-        if (self::getConsole()) {
-            return false;
-        }
-        return !self::getProperty('redaxo', false);
+        return Environment::Frontend === self::getEnvironment();
     }
 
-    /**
-     * Returns the environment.
-     *
-     * @return 'console'|'backend'|'frontend'
-     */
-    public static function getEnvironment(): string
+    /** Returns the environment. */
+    public static function getEnvironment(): Environment
     {
         if (self::getConsole()) {
-            return 'console';
+            return Environment::Console;
         }
 
-        return self::isBackend() ? 'backend' : 'frontend';
+        return self::getProperty('redaxo', false) ? Environment::Backend : Environment::Frontend;
     }
 
     /** Returns if the debug mode is active. */
