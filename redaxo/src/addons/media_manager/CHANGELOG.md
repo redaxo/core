@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.18.1 – 01.06.2026
+---------------------------
+
+### Bugfixes
+
+* Deprecated `imagedestroy` wird nicht mehr aufgerufen (@gharlan)
+
+
 Version 2.17.2 – 05.09.2025
 ---------------------------
 

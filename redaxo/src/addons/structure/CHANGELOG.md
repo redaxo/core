@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.20.1 – 01.06.2026
+---------------------------
+
+### Security
+
+* In den API-Functions wurden die Kategorie- und Sprach-Berechtigungen des Users nicht überall korrekt berücksichtigt (@gharlan)
+
+
 Version 2.20.0 – 09.04.2026
 ---------------------------
 

@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Version 5.21.1 – 01.06.2026
+---------------------------
+
+### Bugfixes
+
+* Systemlog-Page: Crash vermeiden bei fehlerhaften Logzeilen (@tyrant88)
+* `rex_finder`: Neue Methode `ignoreUnreadableDirs` um z.B. Race Conditions beim Cache löschen zu lösen (@gharlan)
+
+
 Version 5.21.0 – 09.04.2026
 ---------------------------
 
