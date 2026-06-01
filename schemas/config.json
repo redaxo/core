@@ -84,16 +84,6 @@
             "type": ["null", "string"],
             "format": "email"
         },
-        "fileperm": {
-            "description": "File permission (octal)",
-            "type": "string",
-            "pattern": "^0\\d{3}$"
-        },
-        "dirperm": {
-            "description": "Directory permission (octal)",
-            "type": "string",
-            "pattern": "^0\\d{3}$"
-        },
         "session_duration": {
             "description": "A Session will be closed when not activly used for this timespan (seconds)",
             "type": "integer"

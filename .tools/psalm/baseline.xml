@@ -961,9 +961,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$config['timezone']]]></code>
     </ArgumentTypeCoercion>
-    <PossiblyInvalidArgument>
-      <code><![CDATA[$value]]></code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="pages/setup/step1.php">
     <MixedOperand>
@@ -1354,9 +1351,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$propertyKey]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgument>
-      <code><![CDATA[$config]]></code>
-    </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$config]]></code>
       <code><![CDATA[$config]]></code>
@@ -1370,9 +1364,6 @@
       <code><![CDATA[$config[$pathPart]]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <PossiblyNullOperand>
-      <code><![CDATA[$value]]></code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Console/Command/CronjobRunCommand.php">
     <MixedArgument>

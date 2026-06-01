@@ -210,9 +210,6 @@ if ($step > 3) {
         if (in_array($key, $check)) {
             continue;
         }
-        if (in_array($key, ['fileperm', 'dirperm'])) {
-            $value = octdec($value);
-        }
         Core::setProperty($key, $value);
     }
 

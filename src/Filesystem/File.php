@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Filesystem;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Util\Exception\YamlParseException;
 use Redaxo\Core\Util\Formatter;
@@ -107,10 +106,14 @@ final class File
                 return false;
             }
 
+            // preserve the perms of an existing file, otherwise use the umask-derived default
+            $perm = is_file($file) ? fileperms($file) : false;
+
             // mimic a atomic write
             $tmpFile = @tempnam(dirname($file), Path::basename($file));
             if (false !== file_put_contents($tmpFile, $content) && self::move($tmpFile, $file)) {
-                @chmod($file, Core::getFilePerm());
+                // tempnam() creates the file with 0600, restore the preserved or umask-derived perms
+                @chmod($file, $perm ?: 0o666 & ~umask());
                 return true;
             }
             @unlink($tmpFile);
@@ -144,14 +147,9 @@ final class File
             if ($hasContent) {
                 $content = $delimiter . $content;
             }
-
-            // Append the content to the file with FILE_APPEND and LOCK_EX flags
-            if (false !== file_put_contents($file, $content, FILE_APPEND | LOCK_EX)) {
-                @chmod($file, Core::getFilePerm());
-                return true;
-            }
-
-            return false;
+            // Append the content to the file with FILE_APPEND and LOCK_EX flags.
+            // No chmod needed: file_put_contents() applies the umask-derived perms on creation.
+            return false !== file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
         });
     }
 
@@ -210,7 +208,7 @@ final class File
                 }
 
                 if (Dir::isWritable($dstdir) && (!is_file($dstfile) || is_writable($dstfile)) && copy($srcfile, $dstfile)) {
-                    @chmod($dstfile, Core::getFilePerm());
+                    // copy() applies the umask-derived perms on a new file and keeps them on an existing one
                     @touch($dstfile, filemtime($srcfile), fileatime($srcfile));
                     return true;
                 }
