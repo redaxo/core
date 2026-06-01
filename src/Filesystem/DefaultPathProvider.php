@@ -4,6 +4,7 @@ namespace Redaxo\Core\Filesystem;
 
 use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\Environment;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Util\Type;
@@ -36,7 +37,7 @@ class DefaultPathProvider
             $this->backend = $project->backendDirectory;
             $this->core = Type::string(realpath($project->corePath)) . '/';
         } else {
-            $this->base = 'frontend' === $project->environment ? './' : '../';
+            $this->base = Environment::Frontend === $project->environment ? './' : '../';
             $this->frontend = '';
             $this->backend = str_ends_with($this->base, '../') ? '' : $this->base . $project->backendDirectory . '/';
             $this->core = $this->base;

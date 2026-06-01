@@ -107,7 +107,7 @@ final readonly class CsrfToken
 
     private static function getBaseSessionKey(): string
     {
-        return 'csrf_tokens_' . Core::getEnvironment();
+        return 'csrf_tokens_' . Core::getEnvironment()->value;
     }
 
     private static function generateToken(): string

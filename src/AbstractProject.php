@@ -54,15 +54,14 @@ abstract class AbstractProject implements RunnerInterface
     public string $backendDirectory = 'redaxo';
 
     public function __construct(
-        /** @var 'frontend'|'backend'|'console' */
-        public readonly string $environment,
+        public readonly Environment $environment,
     ) {}
 
     public function boot(): void {}
 
     final public function bootCore(): void
     {
-        if ('console' === $this->environment) {
+        if (Environment::Console === $this->environment) {
             set_time_limit(0);
 
             // setup a minimal exception handler to print early errors,
@@ -75,7 +74,7 @@ abstract class AbstractProject implements RunnerInterface
         }
 
         $REX = [];
-        $REX['REDAXO'] = 'frontend' !== $this->environment;
+        $REX['REDAXO'] = Environment::Frontend !== $this->environment;
         $REX['PATH_PROVIDER'] = new DefaultPathProvider($this, true);
         $REX['URL_PROVIDER'] = new DefaultPathProvider($this, false);
 
@@ -104,7 +103,7 @@ abstract class AbstractProject implements RunnerInterface
     {
         $this->bootCore();
 
-        require dirname(__DIR__) . '/boot/' . $this->environment . '.php';
+        require dirname(__DIR__) . '/boot/' . $this->environment->value . '.php';
 
         return 0;
     }

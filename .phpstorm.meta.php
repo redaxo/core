@@ -14,8 +14,6 @@ override(
     ])
 );
 
-expectedReturnValues(\Redaxo\Core\Core::getEnvironment(), 'frontend', 'backend', 'console');
-
 expectedArguments(Redaxo\Core\ExtensionPoint\Extension::register(), 2, \Redaxo\Core\ExtensionPoint\Extension::EARLY, \Redaxo\Core\ExtensionPoint\Extension::NORMAL, \Redaxo\Core\ExtensionPoint\Extension::LATE);
 
 expectedArguments(\Redaxo\Core\Filesystem\Finder::sort(), 0, \Redaxo\Core\Util\SortableIterator::KEYS, \Redaxo\Core\Util\SortableIterator::VALUES);
