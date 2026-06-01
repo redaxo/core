@@ -19,6 +19,7 @@ use function class_exists;
 use function implode;
 use function is_array;
 use function is_dir;
+use function json_decode;
 use function realpath;
 use function sort;
 use function str_replace;
@@ -254,14 +255,18 @@ final class ClassDiscovery
 
         $paths = [];
 
-        // PSR-4 directories of the root composer package (project-level code)
+        // PSR-4 directories of the root composer package (project-level code), excluding vendor and the
+        // root's autoload-dev dirs (tests, dev tooling such as rector rules). Dev-only code never carries
+        // runtime attributes — and reflecting it needlessly autoloads dev-only vendor code (e.g. touching a
+        // custom rector rule pulls in rector's scoped vendor).
         $rootPath = realpath(InstalledVersions::getRootPackage()['install_path']);
         if (false !== $rootPath) {
             $vendorPrefix = $rootPath . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR;
+            $devDirs = $this->getRootAutoloadDevDirs($rootPath);
             foreach ($this->classLoader->getPrefixesPsr4() as $dirs) {
                 foreach ($dirs as $dir) {
                     $realDir = (string) realpath($dir);
-                    if ('' !== $realDir && !str_starts_with($realDir, $vendorPrefix)) {
+                    if ('' !== $realDir && !str_starts_with($realDir, $vendorPrefix) && !isset($devDirs[$realDir])) {
                         $paths[] = $realDir . DIRECTORY_SEPARATOR;
                     }
                 }
@@ -277,6 +282,37 @@ final class ClassDiscovery
         }
 
         return $this->relevantPaths = $paths;
+    }
+
+    /**
+     * Returns the realpaths of the root package's autoload-dev PSR-4 directories, keyed for set lookup.
+     *
+     * These hold dev-only code (tests, dev tooling) that must be excluded from discovery: it is never
+     * registered at runtime, and a `--no-dev` install would not even autoload it.
+     *
+     * @return array<string, true>
+     */
+    private function getRootAutoloadDevDirs(string $rootPath): array
+    {
+        $json = File::get($rootPath . DIRECTORY_SEPARATOR . 'composer.json');
+        if (null === $json) {
+            return [];
+        }
+
+        /** @var array{autoload-dev?: array{psr-4?: array<string, string|list<string>>}} $data */
+        $data = json_decode($json, true);
+
+        $dirs = [];
+        foreach ($data['autoload-dev']['psr-4'] ?? [] as $value) {
+            foreach ((array) $value as $dir) {
+                $realDir = realpath($rootPath . DIRECTORY_SEPARATOR . $dir);
+                if (false !== $realDir) {
+                    $dirs[$realDir] = true;
+                }
+            }
+        }
+
+        return $dirs;
     }
 
     /** @return list<string> */
