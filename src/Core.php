@@ -363,7 +363,7 @@ final class Core
     /** Returns the console application. */
     public static function getConsole(): ?Application
     {
-        return self::getProperty('console', null);
+        return self::getProperty(Environment::Console->value, null);
     }
 
     public static function getRequest(): Request
