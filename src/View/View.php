@@ -109,14 +109,14 @@ class View
             $subtitle = '';
         }
 
-        $title = Extension::registerPoint(new ExtensionPoint('PAGE_TITLE', $head));
+        $title = Extension::dispatch(new ExtensionPoint('PAGE_TITLE', $head));
 
         $fragment = new Fragment();
         $fragment->setVar('heading', $title, false);
         $fragment->setVar('subtitle', $subtitle, false);
         $return = $fragment->parse('core/page/header.php');
 
-        return $return . Extension::registerPoint(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
+        return $return . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
     }
 
     /**
@@ -326,7 +326,7 @@ class View
         $fragment->setVar('elements', $formElements, false);
         $panel .= $fragment->parse('core/form/form.php');
 
-        $panel .= Extension::registerPoint(new ExtensionPoint('MEDIA_FORM_ADD', ''));
+        $panel .= Extension::dispatch(new ExtensionPoint('MEDIA_FORM_ADD', ''));
 
         if ($fileChooser) {
             $e = [];

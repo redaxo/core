@@ -81,7 +81,7 @@ class Mailer extends PHPMailer
         $this->archive = Core::getConfig('phpmailer_archive');
         parent::__construct($exceptions);
 
-        Extension::registerPoint(new ExtensionPoint('PHPMAILER_CONFIG', $this));
+        Extension::dispatch(new ExtensionPoint('PHPMAILER_CONFIG', $this));
     }
 
     protected function addOrEnqueueAnAddress($kind, $address, $name)
@@ -127,7 +127,7 @@ class Mailer extends PHPMailer
             $logging = (int) Core::getConfig('phpmailer_logging');
             $detourModeActive = Core::getConfig('phpmailer_detour_mode') && '' !== Core::getConfig('phpmailer_test_address');
 
-            Extension::registerPoint(new ExtensionPoint('PHPMAILER_PRE_SEND', $this));
+            Extension::dispatch(new ExtensionPoint('PHPMAILER_PRE_SEND', $this));
 
             if ($detourModeActive && isset($this->xHeader['to'])) {
                 $this->prepareDetourMode();
@@ -151,7 +151,7 @@ class Mailer extends PHPMailer
                 $this->log('OK');
             }
 
-            Extension::registerPoint(new ExtensionPoint('PHPMAILER_POST_SEND', $this));
+            Extension::dispatch(new ExtensionPoint('PHPMAILER_POST_SEND', $this));
 
             return true;
         });

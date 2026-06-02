@@ -69,7 +69,7 @@ class ContentHandler
         $article = Article::require($articleId, $clangId);
 
         // ----- EXTENSION POINT
-        $message = Extension::registerPoint(new ExtensionPoint('SLICE_ADDED', $message, [
+        $message = Extension::dispatch(new ExtensionPoint('SLICE_ADDED', $message, [
             'article_id' => $articleId,
             'clang' => $clangId,
             'function' => '',
@@ -82,7 +82,7 @@ class ContentHandler
             'slice_revision' => $data['revision'],
         ]));
 
-        return Extension::registerPoint(new ArticleContentUpdated($article, 'slice_added', $message));
+        return Extension::dispatch(new ArticleContentUpdated($article, 'slice_added', $message));
     }
 
     /**
@@ -121,7 +121,7 @@ class ContentHandler
             $ctype = $CM->getValue('ctype_id');
             $sliceRevision = $CM->getValue('revision');
 
-            Extension::registerPoint(new ExtensionPoint('SLICE_MOVE', '', [
+            Extension::dispatch(new ExtensionPoint('SLICE_MOVE', '', [
                 'direction' => $direction,
                 'slice_id' => $sliceId,
                 'article_id' => $articleId,
@@ -158,7 +158,7 @@ class ContentHandler
 
                 $info = I18n::msg('slice_moved');
                 $article = Article::get($articleId, $clang);
-                $info = Extension::registerPoint(new ArticleContentUpdated($article, 'slice_moved', $info));
+                $info = Extension::dispatch(new ArticleContentUpdated($article, 'slice_moved', $info));
             } else {
                 throw new InvalidArgumentException('Unsupported move direction "' . $direction . '".');
             }
@@ -185,7 +185,7 @@ class ContentHandler
             return false;
         }
 
-        Extension::registerPoint(new ExtensionPoint('SLICE_DELETE', '', [
+        Extension::dispatch(new ExtensionPoint('SLICE_DELETE', '', [
             'slice_id' => $sliceId,
             'article_id' => $curr->getValue('article_id'),
             'clang_id' => $curr->getValue('clang_id'),
@@ -227,7 +227,7 @@ class ContentHandler
 
         ArticleCache::deleteContent($article->id, $article->clangId);
 
-        Extension::registerPoint(new ArticleContentUpdated($article, 'slice_status'));
+        Extension::dispatch(new ArticleContentUpdated($article, 'slice_status'));
     }
 
     /**
@@ -255,7 +255,7 @@ class ContentHandler
             $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and clang_id=? and revision=?', [$fromId, $fromClang, $revision]);
         }
 
-        Extension::registerPoint(new ExtensionPoint('ART_SLICES_COPY', '', [
+        Extension::dispatch(new ExtensionPoint('ART_SLICES_COPY', '', [
             'article_id' => $toId,
             'clang_id' => $toClang,
             'slice_revision' => $revision,
@@ -336,7 +336,7 @@ class ContentHandler
         ArticleCache::deleteContent($toId, $toClang);
 
         $article = Article::require($toId, $toClang);
-        Extension::registerPoint(new ArticleContentUpdated($article, 'content_copied'));
+        Extension::dispatch(new ArticleContentUpdated($article, 'content_copied'));
 
         return true;
     }
@@ -367,7 +367,7 @@ class ContentHandler
             $articleContent = $CONT->getArticle();
 
             // ----- EXTENSION POINT
-            $articleContent = Extension::registerPoint(new ExtensionPoint('GENERATE_FILTER', $articleContent, [
+            $articleContent = Extension::dispatch(new ExtensionPoint('GENERATE_FILTER', $articleContent, [
                 'id' => $articleId,
                 'clang' => $clangId,
                 'article' => $CONT,

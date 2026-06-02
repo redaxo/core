@@ -119,7 +119,7 @@ class Form extends AbstractForm
         $controlFields['abort'] = I18n::msg('form_abort');
 
         // ----- EXTENSION POINT
-        $controlFields = Extension::registerPoint(new ExtensionPoint('REX_FORM_CONTROL_FIELDS', $controlFields, ['form' => $this]));
+        $controlFields = Extension::dispatch(new ExtensionPoint('REX_FORM_CONTROL_FIELDS', $controlFields, ['form' => $this]));
 
         $controlElements = [];
         foreach ($controlFields as $name => $label) {
@@ -378,7 +378,7 @@ class Form extends AbstractForm
         }
 
         // ----- EXTENSION POINT
-        return Extension::registerPoint(new ExtensionPoint('REX_FORM_SAVED', true, ['form' => $this, 'sql' => $sql]));
+        return Extension::dispatch(new ExtensionPoint('REX_FORM_SAVED', true, ['form' => $this, 'sql' => $sql]));
     }
 
     /** @return bool|int */
@@ -400,6 +400,6 @@ class Form extends AbstractForm
         }
 
         // ----- EXTENSION POINT
-        return Extension::registerPoint(new ExtensionPoint('REX_FORM_DELETED', true, ['form' => $this, 'sql' => $deleteSql]));
+        return Extension::dispatch(new ExtensionPoint('REX_FORM_DELETED', true, ['form' => $this, 'sql' => $deleteSql]));
     }
 }

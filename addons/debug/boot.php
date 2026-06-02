@@ -138,10 +138,10 @@ if ('cli' === PHP_SAPI) {
     Extension::register(ConsoleShutdown::NAME, static function (ConsoleShutdown $extensionPoint) use ($shutdownFn) {
         $shutdownFn();
 
-        $command = $extensionPoint->getCommand();
-        $input = $extensionPoint->getInput();
-        // $output = $extensionPoint->getOutput();
-        $exitCode = $extensionPoint->getExitCode();
+        $command = $extensionPoint->command;
+        $input = $extensionPoint->input;
+        // $output = $extensionPoint->output;
+        $exitCode = $extensionPoint->exitCode;
 
         // we need to make sure that the storage path exists after actions like cache:clear
         rex_debug_clockwork::ensureStoragePath();

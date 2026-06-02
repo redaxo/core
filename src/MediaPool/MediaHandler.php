@@ -97,7 +97,7 @@ final class MediaHandler
         // Entscheidung respektieren
         /** @var string|null $errorMessage */
         $errorMessage = null;
-        $errorMessage = Extension::registerPoint(new ExtensionPoint('MEDIA_ADD', $errorMessage, [
+        $errorMessage = Extension::dispatch(new ExtensionPoint('MEDIA_ADD', $errorMessage, [
             'file' => $data['file'],
             'title' => $title,
             'filename' => $data['file']['name_new'],
@@ -168,7 +168,7 @@ final class MediaHandler
         $return['old_filename'] = $data['file']['name'];
         $return['ok'] = 1;
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_ADDED', '', $return));
+        Extension::dispatch(new ExtensionPoint('MEDIA_ADDED', '', $return));
 
         return $return;
     }
@@ -272,7 +272,7 @@ final class MediaHandler
         $return['type'] = $filetype;
         $return['filetype'] = $filetype;
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_UPDATED', '', $return));
+        Extension::dispatch(new ExtensionPoint('MEDIA_UPDATED', '', $return));
 
         return $return;
     }
@@ -294,7 +294,7 @@ final class MediaHandler
         File::delete(Path::media($filename));
         MediaPoolCache::delete($filename);
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_DELETED', '', [
+        Extension::dispatch(new ExtensionPoint('MEDIA_DELETED', '', [
             'filename' => $filename,
         ]));
     }
@@ -382,7 +382,7 @@ final class MediaHandler
             $countQueryParams = $queryParams;
 
             // EP is called twice, once for count query and once for data query
-            $countQuery = Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_QUERY', $countQuery, [
+            $countQuery = Extension::dispatch(new ExtensionPoint('MEDIA_LIST_QUERY', $countQuery, [
                 'queryParams' => &$countQueryParams,
             ]));
             assert(is_array($countQueryParams)); // @phpstan-ignore function.alreadyNarrowedType
@@ -398,7 +398,7 @@ final class MediaHandler
         }
 
         // EP to modify the media list query
-        $query = Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_QUERY', $query, [
+        $query = Extension::dispatch(new ExtensionPoint('MEDIA_LIST_QUERY', $query, [
             'queryParams' => &$queryParams,
         ]));
         assert(is_array($queryParams)); // @phpstan-ignore function.alreadyNarrowedType

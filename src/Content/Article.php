@@ -177,6 +177,6 @@ final class Article extends StructureElement
     #[Override]
     public function isPermitted(): bool
     {
-        return (bool) Extension::registerPoint(new ExtensionPoint('ART_IS_PERMITTED', true, ['element' => $this]));
+        return (bool) Extension::dispatch(new ExtensionPoint('ART_IS_PERMITTED', true, ['element' => $this]));
     }
 }

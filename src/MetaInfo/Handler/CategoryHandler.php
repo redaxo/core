@@ -7,6 +7,7 @@ use Redaxo\Core\Content\Category;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
 
@@ -27,10 +28,10 @@ class CategoryHandler extends AbstractHandler
         if ($fields->getRows() >= 1) {
             $return = '<a class="btn btn-default collapsed" data-toggle="collapse" href="#' . self::CONTAINER . '"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>';
 
-            return $ep->getSubject() . $return;
+            return $ep->subject . $return;
         }
 
-        return $ep->getSubject();
+        return $ep->subject;
     }
 
     /** @return array */
@@ -108,10 +109,10 @@ class CategoryHandler extends AbstractHandler
             </tr>';
 
         // Bei CAT_ADDED und CAT_UPDATED nur speichern und kein Formular zurückgeben
-        if ('CAT_UPDATED' == $ep->getName() || 'CAT_ADDED' == $ep->getName()) {
-            return $ep->getSubject();
+        if ('CAT_UPDATED' == $ep->name || 'CAT_ADDED' == $ep->name) {
+            return $ep->subject;
         }
-        return $ep->getSubject() . $result;
+        return $ep->subject . $result;
     }
 }
 
@@ -120,7 +121,7 @@ $categoryHandler = new CategoryHandler();
 Extension::register('CAT_FORM_ADD', $categoryHandler->extendForm(...));
 Extension::register('CAT_FORM_EDIT', $categoryHandler->extendForm(...));
 
-Extension::register('CAT_ADDED', $categoryHandler->extendForm(...), Extension::EARLY);
-Extension::register('CAT_UPDATED', $categoryHandler->extendForm(...), Extension::EARLY);
+Extension::register('CAT_ADDED', $categoryHandler->extendForm(...), ExtensionLevel::Early);
+Extension::register('CAT_UPDATED', $categoryHandler->extendForm(...), ExtensionLevel::Early);
 
 Extension::register('CAT_FORM_BUTTONS', $categoryHandler->renderToggleButton(...));

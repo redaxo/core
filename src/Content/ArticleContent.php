@@ -137,7 +137,7 @@ class ArticleContent extends ArticleContentBase
             $CONTENT = parent::getArticle($curctype);
         }
 
-        return Extension::registerPoint(new ExtensionPoint('ART_CONTENT', $CONTENT, [
+        return Extension::dispatch(new ExtensionPoint('ART_CONTENT', $CONTENT, [
             'ctype' => $curctype,
             'article' => $this,
         ]));

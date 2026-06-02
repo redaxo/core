@@ -46,9 +46,9 @@ $content = ob_get_clean();
 // trigger api functions. the api function is responsible for checking permissions.
 ApiFunction::handleCall();
 
-if (Extension::isRegistered('FE_OUTPUT')) {
+if (Extension::hasExtensions('FE_OUTPUT')) {
     // ----- EXTENSION POINT
-    Extension::registerPoint(new ExtensionPoint('FE_OUTPUT', $content));
+    Extension::dispatch(new ExtensionPoint('FE_OUTPUT', $content));
 
     return;
 }

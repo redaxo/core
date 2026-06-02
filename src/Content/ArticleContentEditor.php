@@ -104,7 +104,7 @@ class ArticleContentEditor extends ArticleContent
             }
 
             // EP for changing the module preview
-            $panel .= Extension::registerPoint(new ExtensionPoint('SLICE_BE_PREVIEW', $content, [
+            $panel .= Extension::dispatch(new ExtensionPoint('SLICE_BE_PREVIEW', $content, [
                 'article_id' => $this->article_id,
                 'clang' => $this->clang,
                 'ctype' => $this->ctype,
@@ -232,7 +232,7 @@ class ArticleContentEditor extends ArticleContent
         }
 
         // ----- EXTENSION POINT
-        Extension::registerPoint($ep = new SliceMenu(
+        Extension::dispatch($ep = new SliceMenu(
             $menuEditAction,
             $menuDeleteAction,
             $menuStatusAction,
@@ -249,11 +249,11 @@ class ArticleContentEditor extends ArticleContent
         ));
 
         $actionItems = [];
-        if ($ep->getMenuEditAction()) {
-            $actionItems[] = $ep->getMenuEditAction();
+        if ($ep->menuEditAction) {
+            $actionItems[] = $ep->menuEditAction;
         }
-        if ($ep->getMenuDeleteAction()) {
-            $actionItems[] = $ep->getMenuDeleteAction();
+        if ($ep->menuDeleteAction) {
+            $actionItems[] = $ep->menuDeleteAction;
         }
         if (count($actionItems) > 0) {
             $fragment = new Fragment();
@@ -261,24 +261,24 @@ class ArticleContentEditor extends ArticleContent
             $headerRight .= $fragment->parse('core/structure/content/slice_menu_action.php');
         }
 
-        if ($ep->getMenuStatusAction()) {
+        if ($ep->menuStatusAction) {
             $fragment = new Fragment();
-            $fragment->setVar('items', [$ep->getMenuStatusAction()], false);
+            $fragment->setVar('items', [$ep->menuStatusAction], false);
             $headerRight .= $fragment->parse('core/structure/content/slice_menu_action.php');
         }
 
-        if (count($ep->getAdditionalActions()) > 0) {
+        if (count($ep->additionalActions) > 0) {
             $fragment = new Fragment();
-            $fragment->setVar('items', $ep->getAdditionalActions(), false);
+            $fragment->setVar('items', $ep->additionalActions, false);
             $headerRight .= $fragment->parse('core/structure/content/slice_menu_ep.php');
         }
 
         $moveItems = [];
-        if ($ep->getMenuMoveupAction()) {
-            $moveItems[] = $ep->getMenuMoveupAction();
+        if ($ep->menuMoveupAction) {
+            $moveItems[] = $ep->menuMoveupAction;
         }
-        if ($ep->getMenuMovedownAction()) {
-            $moveItems[] = $ep->getMenuMovedownAction();
+        if ($ep->menuMovedownAction) {
+            $moveItems[] = $ep->menuMovedownAction;
         }
         if (count($moveItems) > 0) {
             $fragment = new Fragment();
@@ -329,7 +329,7 @@ class ArticleContentEditor extends ArticleContent
         $fragment->setVar('button_label', I18n::msg('add_block'));
         $fragment->setVar('items', $items, false);
         $select = $fragment->parse('core/structure/content/module_select.php');
-        $select = Extension::registerPoint(new ExtensionPoint(
+        $select = Extension::dispatch(new ExtensionPoint(
             'STRUCTURE_CONTENT_MODULE_SELECT',
             $select,
             [

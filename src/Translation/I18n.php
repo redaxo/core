@@ -210,7 +210,7 @@ class I18n
     {
         $fallback = "[translate:$key]";
 
-        $msg = Extension::registerPoint(new ExtensionPoint('I18N_MISSING_TRANSLATION', $fallback, [
+        $msg = Extension::dispatch(new ExtensionPoint('I18N_MISSING_TRANSLATION', $fallback, [
             'key' => $key,
             'args' => $replacements,
         ]));

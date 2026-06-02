@@ -51,7 +51,7 @@ class MetaInfoForm extends Form
 
         // ----- EXTENSION POINT
         // IDs aller Feldtypen bei denen das Parameter-Feld eingeblendet werden soll
-        $typeFields = Extension::registerPoint(new ExtensionPoint('METAINFO_TYPE_FIELDS', [Table::FIELD_SELECT, Table::FIELD_RADIO, Table::FIELD_CHECKBOX, Table::FIELD_REX_MEDIA_WIDGET, Table::FIELD_REX_LINK_WIDGET, Table::FIELD_DATE, Table::FIELD_DATETIME]));
+        $typeFields = Extension::dispatch(new ExtensionPoint('METAINFO_TYPE_FIELDS', [Table::FIELD_SELECT, Table::FIELD_RADIO, Table::FIELD_CHECKBOX, Table::FIELD_REX_MEDIA_WIDGET, Table::FIELD_REX_LINK_WIDGET, Table::FIELD_DATE, Table::FIELD_DATETIME]));
 
         $field = $this->addReadOnlyField('prefix', $this->metaPrefix);
         $field->setLabel(I18n::msg('minfo_field_label_prefix'));
