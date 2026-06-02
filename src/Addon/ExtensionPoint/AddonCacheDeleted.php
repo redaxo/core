@@ -14,6 +14,6 @@ final class AddonCacheDeleted extends ExtensionPoint
 
     public function __construct(Addon $package)
     {
-        parent::__construct(self::NAME, $package, [], true);
+        parent::__construct(self::NAME, $package, readonly: true);
     }
 }

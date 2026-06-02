@@ -192,7 +192,7 @@ if ($warnings) {
         Core::getProperty('login')->changedPassword($passwordHash);
     }
 
-    Extension::registerPoint(new ExtensionPoint('USER_UPDATED', '', [
+    Extension::dispatch(new ExtensionPoint('USER_UPDATED', '', [
         'id' => $userId,
         'user' => $user,
         'password' => $userpsw,
@@ -219,7 +219,7 @@ if ($warnings) {
 
         User::clearInstance($userId);
 
-        Extension::registerPoint(new ExtensionPoint('USER_DELETED', '', [
+        Extension::dispatch(new ExtensionPoint('USER_DELETED', '', [
             'id' => $userId,
             'user' => $user,
         ], true));
@@ -260,7 +260,7 @@ if ($warnings) {
         $fUNCADD = '';
         $info[] = I18n::msg('user_added');
 
-        Extension::registerPoint(new ExtensionPoint('USER_ADDED', '', [
+        Extension::dispatch(new ExtensionPoint('USER_ADDED', '', [
             'id' => $adduser->getLastId(),
             'user' => User::require($adduser->getLastId()),
             'password' => $userpsw,

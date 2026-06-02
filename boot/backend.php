@@ -415,7 +415,7 @@ if (Core::getConfig('article_work_version', false)) {
         $params = $ep->getParams();
         $articleId = Type::int($params['article_id']);
         $clangId = Type::int($params['clang']);
-        $return = Type::string($ep->getSubject());
+        $return = Type::string($ep->subject);
 
         $workingVersionEmpty = true;
         $gw = Sql::factory();
@@ -449,7 +449,7 @@ if (Core::getConfig('article_work_version', false)) {
                     $article = Type::instanceOf(Article::get($articleId, $clangId), Article::class);
                     ArticleRevision::setSessionArticleRevision($articleId, ArticleRevision::LIVE);
                     $params['slice_revision'] = ArticleRevision::LIVE;
-                    $return = Extension::registerPoint(
+                    $return = Extension::dispatch(
                         new ArticleContentUpdated($article, 'work_to_live', $return),
                     );
                 }
@@ -589,7 +589,7 @@ Core::setProperty('metainfo_metaTables', [
 ]);
 
 Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
-    $subject = $ep->getSubject();
+    $subject = $ep->subject;
     $metaSidebar = include Path::core('pages/structure/content.metainfo.php');
     return $metaSidebar . $subject;
 });
@@ -606,7 +606,7 @@ if (Core::getUser()) {
     Controller::appendPackagePages();
 }
 
-$pages = Extension::registerPoint(new ExtensionPoint('PAGES_PREPARED', Controller::getPages()));
+$pages = Extension::dispatch(new ExtensionPoint('PAGES_PREPARED', Controller::getPages()));
 Controller::setPages($pages);
 
 // Set Startpage
@@ -632,7 +632,7 @@ if ('content' == Controller::getCurrentPagePart(1)) {
 
 // ----- EXTENSION POINT
 // page variable validated
-Extension::registerPoint(new ExtensionPoint('PAGE_CHECKED', $page, ['pages' => $pages], true));
+Extension::dispatch(new ExtensionPoint('PAGE_CHECKED', $page, ['pages' => $pages], true));
 
 if (in_array($page, ['profile', 'login'], true)) {
     Asset::addJsFile(Url::coreAssets('webauthn.js'), [Asset::JS_IMMUTABLE => true]);

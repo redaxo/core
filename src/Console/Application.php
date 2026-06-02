@@ -81,7 +81,7 @@ class Application extends SymfonyApplication
 
         $exitCode = parent::doRunCommand($command, $input, $output);
 
-        Extension::registerPoint(new ConsoleShutdown($command, $input, $output, $exitCode));
+        Extension::dispatch(new ConsoleShutdown($command, $input, $output, $exitCode));
 
         return $exitCode;
     }
@@ -127,7 +127,7 @@ class Application extends SymfonyApplication
 
         Extension::registerByAttribute($this->project);
 
-        Extension::registerPoint(new ExtensionPoint('PACKAGES_INCLUDED'));
+        Extension::dispatch(new ExtensionPoint('PACKAGES_INCLUDED'));
 
         $this->project->boot();
     }

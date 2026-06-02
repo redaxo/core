@@ -99,7 +99,7 @@ final class MediaPool
         }
 
         // ----- EXTENSION POINT
-        $warning = Extension::registerPoint(new ExtensionPoint('MEDIA_IS_IN_USE', $warning, [
+        $warning = Extension::dispatch(new ExtensionPoint('MEDIA_IS_IN_USE', $warning, [
             'filename' => $filename,
         ]));
 

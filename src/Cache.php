@@ -41,6 +41,6 @@ final class Cache
         }
 
         // ----- EXTENSION POINT
-        return Extension::registerPoint(new ExtensionPoint('CACHE_DELETED', I18n::msg('delete_cache_message')));
+        return Extension::dispatch(new ExtensionPoint('CACHE_DELETED', I18n::msg('delete_cache_message')));
     }
 }

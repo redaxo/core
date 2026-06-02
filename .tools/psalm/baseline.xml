@@ -2320,11 +2320,6 @@
       <code><![CDATA[$frame['type']]]></code>
     </PossiblyUndefinedArrayOffset>
   </file>
-  <file src="src/ExtensionPoint/Extension.php">
-    <InvalidCast>
-      <code><![CDATA[$level]]></code>
-    </InvalidCast>
-  </file>
   <file src="src/Filesystem/DefaultPathProvider.php">
     <LessSpecificReturnStatement>
       <code><![CDATA[$this->backend . $file]]></code>
@@ -3451,13 +3446,13 @@
       <code><![CDATA[setValue]]></code>
     </MixedMethodCall>
     <MixedOperand>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
       <code><![CDATA[$params['id']]]></code>
     </MixedOperand>
     <MixedReturnStatement>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedReturnStatement>
   </file>
   <file src="src/MetaInfo/Handler/LanguageHandler.php">
@@ -3475,12 +3470,12 @@
       <code><![CDATA[$params['activeItem']]]></code>
     </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
     <MixedReturnStatement>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedReturnStatement>
   </file>
   <file src="src/MetaInfo/Handler/MediaHandler.php">
@@ -3518,7 +3513,7 @@
     </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$catId]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[$warning]]></code>
@@ -4142,9 +4137,9 @@
       <code><![CDATA[$subjectActual]]></code>
     </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
   </file>
   <file src="tests/HttpClient/RequestTest.php">

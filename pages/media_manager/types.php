@@ -176,7 +176,7 @@ if ('' == $func) {
     }
 
     Extension::register('REX_FORM_CONTROL_FIELDS', static function (ExtensionPoint $ep) {
-        $controlFields = $ep->getSubject();
+        $controlFields = $ep->subject;
         $form = $ep->getParam('form');
         $sql = $form->getSql();
 

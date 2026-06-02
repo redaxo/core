@@ -469,7 +469,7 @@ abstract class AbstractHandler
                 default:
                     // ----- EXTENSION POINT
                     [$field, $tag, $tagAttr, $id, $label, $labelIt] =
-                        Extension::registerPoint(new ExtensionPoint(
+                        Extension::dispatch(new ExtensionPoint(
                             'METAINFO_CUSTOM_FIELD',
                             [
                                 $field,

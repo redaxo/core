@@ -251,7 +251,7 @@ class MetaInfo
     #[AsExtension('PAGE_CHECKED')]
     public static function extensionHandler(ExtensionPoint $ep)
     {
-        $page = $ep->getSubject();
+        $page = $ep->subject;
         $mainpage = Controller::getCurrentPagePart(1);
 
         // additional javascripts

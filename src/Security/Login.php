@@ -7,6 +7,7 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Translation\I18n;
@@ -350,10 +351,10 @@ class Login
 
             // We don't know here if packages have already been loaded
             // Therefore we call the extension point twice, directly and after PACKAGES_INCLUDED
-            Extension::registerPoint($extensionPoint);
+            Extension::dispatch($extensionPoint);
             Extension::register('PACKAGES_INCLUDED', static function () use ($extensionPoint) {
-                Extension::registerPoint($extensionPoint);
-            }, Extension::EARLY);
+                Extension::dispatch($extensionPoint);
+            }, ExtensionLevel::Early);
         }
 
         // session-id is shared between frontend/backend or even redaxo instances per server because it's the same http session

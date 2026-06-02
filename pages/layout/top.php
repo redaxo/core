@@ -70,7 +70,7 @@ if (Core::getProperty('theme')) {
 }
 
 // ----- EXTENSION POINT
-$bodyAttr = Extension::registerPoint(new ExtensionPoint('PAGE_BODY_ATTR', $bodyAttr));
+$bodyAttr = Extension::dispatch(new ExtensionPoint('PAGE_BODY_ATTR', $bodyAttr));
 
 $body = '';
 foreach ($bodyAttr as $k => $v) {
@@ -148,7 +148,7 @@ if ($user && $hasNavigation) {
         }
     }
 
-    $n = Extension::registerPoint(new ExtensionPoint('PAGE_NAVIGATION', $n));
+    $n = Extension::dispatch(new ExtensionPoint('PAGE_NAVIGATION', $n));
 
     $blocks = $n->getNavigation();
 
@@ -214,7 +214,7 @@ if (!Request::isPJAXContainer('#rex-js-page-container')) {
     $fragment->setVar('jsFiles', Asset::getJsFilesWithOptions());
     $fragment->setVar('jsProperties', json_encode(Asset::getJsProperties()), false);
     $fragment->setVar('favicon', Asset::getFavicon());
-    $fragment->setVar('pageHeader', Extension::registerPoint(new ExtensionPoint('PAGE_HEADER', '')), false);
+    $fragment->setVar('pageHeader', Extension::dispatch(new ExtensionPoint('PAGE_HEADER', '')), false);
     $fragment->setVar('bodyAttr', $body, false);
     echo $fragment->parse('core/top.php');
 
@@ -223,7 +223,7 @@ if (!Request::isPJAXContainer('#rex-js-page-container')) {
     $metaNavigation = $fragment->parse('core/navigations/meta.php');
 
     $fragment = new Fragment();
-    // $fragment->setVar('pageHeader', Extension::registerPoint(new ExtensionPoint('PAGE_HEADER', '')), false);
+    // $fragment->setVar('pageHeader', Extension::dispatch(new ExtensionPoint('PAGE_HEADER', '')), false);
     $fragment->setVar('meta_navigation', $metaNavigation, false);
     echo $fragment->parse('core/header.php');
 }

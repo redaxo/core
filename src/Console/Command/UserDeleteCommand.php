@@ -56,7 +56,7 @@ final class UserDeleteCommand extends AbstractCommand
 
         User::clearInstance($user->id);
 
-        Extension::registerPoint(new ExtensionPoint('USER_DELETED', '', [
+        Extension::dispatch(new ExtensionPoint('USER_DELETED', '', [
             'id' => $user->id,
             'user' => $user,
         ], true));
