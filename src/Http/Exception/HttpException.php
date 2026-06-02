@@ -13,18 +13,11 @@ use function is_string;
  */
 class HttpException extends RuntimeException implements Exception
 {
-    private string $httpCode;
-
-    public function __construct(string|Throwable $cause, string $httpCode)
-    {
+    public function __construct(
+        string|Throwable $cause,
+        final public readonly string $httpCode,
+    ) {
         parent::__construct(is_string($cause) ? $cause : $cause->getMessage(), $cause instanceof Throwable ? $cause : null);
-
-        $this->httpCode = $httpCode;
-    }
-
-    public function getHttpCode(): string
-    {
-        return $this->httpCode;
     }
 
     public function isClientError(): bool

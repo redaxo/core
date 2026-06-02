@@ -564,6 +564,9 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getCreateUser', 'createUser'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getUpdateUser', 'updateUser'),
 
+        new MethodCallToPropertyFetch(Database\Exception\SqlException::class, 'getSql', 'sql'),
+        new MethodCallToPropertyFetch(Http\Exception\HttpException::class, 'getHttpCode', 'httpCode'),
+
         new MethodCallToPropertyFetch(Language\Language::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Language\Language::class, 'getCode', 'code'),
         new MethodCallToPropertyFetch(Language\Language::class, 'getName', 'name'),

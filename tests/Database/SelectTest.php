@@ -257,7 +257,7 @@ final class SelectTest extends TestCase
         }
 
         self::assertInstanceOf(SqlException::class, $exception);
-        self::assertSame($sql, $exception->getSql());
+        self::assertSame($sql, $exception->sql);
         self::assertTrue($sql->hasError());
         self::assertSame(Sql::ERRNO_TABLE_OR_VIEW_DOESNT_EXIST, $sql->getErrno());
     }
