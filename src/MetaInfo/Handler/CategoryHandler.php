@@ -14,7 +14,7 @@ use Redaxo\Core\Http\Request;
 /**
  * @internal
  */
-class CategoryHandler extends AbstractHandler
+final class CategoryHandler extends AbstractHandler
 {
     public const PREFIX = 'cat_';
     public const CONTAINER = 'rex-structure-category-metainfo';

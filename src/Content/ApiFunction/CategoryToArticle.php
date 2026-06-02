@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('category_to_article')]
-class CategoryToArticle extends ApiFunction
+final class CategoryToArticle extends ApiFunction
 {
     public function execute(): Result
     {

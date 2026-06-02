@@ -17,8 +17,10 @@ use function Redaxo\Core\View\escape;
 /**
  * @internal
  */
-class Importer
+final class Importer
 {
+    private function __construct() {}
+
     /**
      * @param string $importName
      *

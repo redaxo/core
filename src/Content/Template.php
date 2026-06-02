@@ -15,10 +15,10 @@ abstract class Template
     /** @var class-string<self>|null */
     private static ?string $defaultClass = null;
 
-    public function __construct(
+    final public function __construct(
         /** Unique key, used as DB reference in rex_article.template. */
-        public readonly string $key,
-        public readonly string $name,
+        final public readonly string $key,
+        final public readonly string $name,
     ) {}
 
     /**
@@ -57,7 +57,7 @@ abstract class Template
      *
      * @param string|class-string<self> $keyOrClass
      */
-    public static function get(string $keyOrClass): ?self
+    final public static function get(string $keyOrClass): ?self
     {
         $all = self::getAll();
 
@@ -72,13 +72,13 @@ abstract class Template
      *
      * @param string|class-string<self> $keyOrClass
      */
-    public static function exists(string $keyOrClass): bool
+    final public static function exists(string $keyOrClass): bool
     {
         return null !== self::get($keyOrClass);
     }
 
     /** @return array<string, self> */
-    public static function getAll(): array
+    final public static function getAll(): array
     {
         if (null !== self::$instances) {
             return self::$instances;
@@ -97,7 +97,7 @@ abstract class Template
      *
      * @return array<string, self>
      */
-    public static function getTemplatesForCategory(?int $categoryId): array
+    final public static function getTemplatesForCategory(?int $categoryId): array
     {
         $category = $categoryId > 0 ? Category::get($categoryId) : null;
 
@@ -113,7 +113,7 @@ abstract class Template
      * @param positive-int $contentSectionId
      * @internal
      */
-    public static function checkModuleAllowed(string $templateKey, int $contentSectionId, string $moduleKey): bool
+    final public static function checkModuleAllowed(string $templateKey, int $contentSectionId, string $moduleKey): bool
     {
         $template = self::get($templateKey);
 

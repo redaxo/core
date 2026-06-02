@@ -7,9 +7,9 @@ use Redaxo\Core\Security\ComplexPermission;
 /**
  * @internal
  */
-class PermissionSelectField extends SelectField
+final class PermissionSelectField extends SelectField
 {
-    protected string $checkboxLabel = 'All';
+    private string $checkboxLabel = 'All';
 
     public function getSaveValue()
     {

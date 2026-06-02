@@ -9,9 +9,9 @@ use Redaxo\Core\Form\Select\Select;
  *
  * @extends AbstractInput<string|array<string>>
  */
-class SelectInput extends AbstractInput
+final class SelectInput extends AbstractInput
 {
-    private Select $select;
+    private readonly Select $select;
 
     public function __construct()
     {

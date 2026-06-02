@@ -28,7 +28,7 @@ use const DIRECTORY_SEPARATOR;
 use const GLOB_NOSORT;
 use const PHP_SESSION_ACTIVE;
 
-class MediaManager
+final class MediaManager
 {
     /**
      * status of a system mediatyp.
@@ -108,7 +108,7 @@ class MediaManager
      * @param string $type
      * @return void
      */
-    protected function applyEffects($type)
+    private function applyEffects($type)
     {
         $this->type = $type;
 
@@ -230,15 +230,6 @@ class MediaManager
     public function getCachePath()
     {
         return $this->cachePath;
-    }
-
-    /**
-     * @param bool $useCache
-     * @return void
-     */
-    protected function useCache($useCache = true)
-    {
-        $this->useCache = $useCache;
     }
 
     /** @return bool */

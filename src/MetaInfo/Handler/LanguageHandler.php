@@ -12,7 +12,7 @@ use Redaxo\Core\Http\Request;
 /**
  * @internal
  */
-class LanguageHandler extends AbstractHandler
+final class LanguageHandler extends AbstractHandler
 {
     public const PREFIX = 'clang_';
     public const CONTAINER = 'rex-clang-metainfo';

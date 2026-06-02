@@ -9,12 +9,9 @@ use function function_exists;
 use function in_array;
 use function sprintf;
 
-class Version
+final class Version
 {
-    private function __construct()
-    {
-        // noop
-    }
+    private function __construct() {}
 
     public static function isUnstable(string $version): bool
     {

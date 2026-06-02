@@ -12,7 +12,7 @@ use function Redaxo\Core\View\escape;
  *
  * @extends AbstractInput<string>
  */
-class MediaInput extends AbstractInput
+final class MediaInput extends AbstractInput
 {
     private string $buttonId = '';
     private array $args = [];

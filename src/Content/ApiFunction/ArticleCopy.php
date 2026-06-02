@@ -20,7 +20,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('article_copy')]
-class ArticleCopy extends ApiFunction
+final class ArticleCopy extends ApiFunction
 {
     public function execute(): Result
     {

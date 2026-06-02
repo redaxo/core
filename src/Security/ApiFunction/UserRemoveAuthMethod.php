@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('user_remove_auth_method')]
-class UserRemoveAuthMethod extends ApiFunction
+final class UserRemoveAuthMethod extends ApiFunction
 {
     public function execute(): Result
     {

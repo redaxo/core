@@ -9,10 +9,10 @@ abstract class Module
     /** @var array<string, self>|null */
     private static ?array $instances = null;
 
-    public function __construct(
+    final public function __construct(
         /** Unique key, used as DB reference in rex_article_slice.module. */
-        public readonly string $key,
-        public readonly string $name,
+        final public readonly string $key,
+        final public readonly string $name,
     ) {}
 
     /**
@@ -20,7 +20,7 @@ abstract class Module
      *
      * @param string|class-string<self> $keyOrClass
      */
-    public static function get(string $keyOrClass): ?self
+    final public static function get(string $keyOrClass): ?self
     {
         $all = self::getAll();
 
@@ -35,13 +35,13 @@ abstract class Module
      *
      * @param string|class-string<self> $keyOrClass
      */
-    public static function exists(string $keyOrClass): bool
+    final public static function exists(string $keyOrClass): bool
     {
         return null !== self::get($keyOrClass);
     }
 
     /** @return array<string, self> */
-    public static function getAll(): array
+    final public static function getAll(): array
     {
         if (null !== self::$instances) {
             return self::$instances;

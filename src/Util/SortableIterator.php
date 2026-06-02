@@ -14,10 +14,10 @@ use Traversable;
  * @template TValue
  * @implements IteratorAggregate<TKey, TValue>
  */
-readonly class SortableIterator implements IteratorAggregate
+final readonly class SortableIterator implements IteratorAggregate
 {
-    final public const int VALUES = 1;
-    final public const int KEYS = 2;
+    public const int VALUES = 1;
+    public const int KEYS = 2;
 
     /**
      * @param Traversable<TKey, TValue> $iterator Inner iterator

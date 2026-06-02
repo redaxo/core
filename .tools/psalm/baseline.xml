@@ -2090,12 +2090,6 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Cronjob/Form/IntervalField.php">
-    <FalsableReturnStatement>
-      <code><![CDATA[json_encode($save)]]></code>
-    </FalsableReturnStatement>
-    <InvalidFalsableReturnType>
-      <code><![CDATA[getSaveValue]]></code>
-    </InvalidFalsableReturnType>
     <MixedArgument>
       <code><![CDATA[$value[$key]]]></code>
     </MixedArgument>
@@ -2215,6 +2209,7 @@
     </InvalidFalsableReturnType>
     <LessSpecificReturnStatement>
       <code><![CDATA[$sql->getValue('Create Table')]]></code>
+      <code><![CDATA[$this]]></code>
       <code><![CDATA[$this->getConnection()->quote($value)]]></code>
     </LessSpecificReturnStatement>
     <MixedArgument>
@@ -3266,6 +3261,9 @@
     <MixedReturnTypeCoercion>
       <code><![CDATA[$this->getValue()]]></code>
     </MixedReturnTypeCoercion>
+    <PossiblyInvalidPropertyAssignmentValue>
+      <code><![CDATA[$value]]></code>
+    </PossiblyInvalidPropertyAssignmentValue>
   </file>
   <file src="src/MetaInfo/Form/Input/DateInput.php">
     <InvalidArgument>

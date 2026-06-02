@@ -12,7 +12,7 @@ use Redaxo\Core\Security\BackendLogin;
  * @internal
  */
 #[AsApiFunction('user_session_status')]
-class UserSessionStatus extends ApiFunction
+final class UserSessionStatus extends ApiFunction
 {
     // this action supports to be callable by 3rd party apps, which can't know our valid csrf token
     protected bool $requiresCsrfProtection = false;

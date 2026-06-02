@@ -29,7 +29,7 @@ use const PREG_SET_ORDER;
 /**
  * Class for internationalization.
  */
-class I18n
+final class I18n
 {
     /** @var list<string> */
     private static array $locales = [];
@@ -40,6 +40,8 @@ class I18n
     private static ?string $locale = null;
     /** @var array<string, array<string, non-empty-string>> */
     private static array $msg = [];
+
+    private function __construct() {}
 
     /**
      * Switches the current locale.

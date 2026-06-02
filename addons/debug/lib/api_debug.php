@@ -10,7 +10,7 @@ use Redaxo\Core\Http\Response;
  * @internal
  */
 #[AsApiFunction('debug')]
-class rex_api_debug extends ApiFunction
+final class rex_api_debug extends ApiFunction
 {
     protected bool $requiresCsrfProtection = false;
 

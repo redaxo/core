@@ -14,12 +14,13 @@ use function is_array;
 use function is_string;
 use function Redaxo\Core\View\escape;
 
+use const JSON_THROW_ON_ERROR;
 use const STR_PAD_LEFT;
 
 /**
  * @internal
  */
-class IntervalField extends BaseField
+final class IntervalField extends BaseField
 {
     private const DEFAULT_INTERVAL = [
         'minutes' => [0],
@@ -50,7 +51,7 @@ class IntervalField extends BaseField
         return $this->intervalElements;
     }
 
-    public function getSaveValue()
+    public function getSaveValue(): string
     {
         $value = $this->intervalElements;
 
@@ -65,7 +66,7 @@ class IntervalField extends BaseField
             }
         }
 
-        return json_encode($save);
+        return json_encode($save, JSON_THROW_ON_ERROR);
     }
 
     /** @return string */
@@ -149,7 +150,7 @@ class IntervalField extends BaseField
      * @param iterable<int, string> $options
      * @return string
      */
-    protected function formatField($group, $optionAll, $options)
+    private function formatField($group, $optionAll, $options)
     {
         $value = $this->intervalElements;
         $value = $value[$group] ?? [];

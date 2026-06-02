@@ -17,7 +17,7 @@ use function function_exists;
 use function in_array;
 use function sprintf;
 
-class ManagedMedia
+final class ManagedMedia
 {
     public const PROP_JPG_QUALITY = 'jpg_quality';
     public const PROP_PNG_COMPRESSION = 'png_compression';
@@ -151,7 +151,7 @@ class ManagedMedia
         $format = $this->format;
 
         // if mimetype detected and in imagemap -> change format
-        if ($ftype = File::mimeType($this->getSourcePath())) {
+        if ($ftype = File::mimeType($this->sourcePath)) {
             if (array_key_exists($ftype, self::MIMETYPE_MAP)) {
                 $format = self::MIMETYPE_MAP[$ftype];
             }
@@ -159,27 +159,27 @@ class ManagedMedia
 
         if ('jpg' == $format || 'jpeg' == $format) {
             $format = 'jpeg';
-            $image = @imagecreatefromjpeg($this->getSourcePath());
+            $image = @imagecreatefromjpeg($this->sourcePath);
         } elseif ('gif' == $format) {
-            $image = @imagecreatefromgif($this->getSourcePath());
+            $image = @imagecreatefromgif($this->sourcePath);
         } elseif ('wbmp' == $format) {
-            $image = @imagecreatefromwbmp($this->getSourcePath());
+            $image = @imagecreatefromwbmp($this->sourcePath);
         } elseif ('webp' == $format) {
             $image = false;
             if (function_exists('imagecreatefromwebp')) {
-                $image = @imagecreatefromwebp($this->getSourcePath());
+                $image = @imagecreatefromwebp($this->sourcePath);
                 imagealphablending($image, false);
                 imagesavealpha($image, true);
             }
         } elseif ('avif' == $format) {
             $image = false;
             if (function_exists('imagecreatefromavif')) {
-                $image = @imagecreatefromavif($this->getSourcePath());
+                $image = @imagecreatefromavif($this->sourcePath);
                 imagealphablending($image, false);
                 imagesavealpha($image, true);
             }
         } else {
-            $image = @imagecreatefrompng($this->getSourcePath());
+            $image = @imagecreatefrompng($this->sourcePath);
             if ($image) {
                 imagealphablending($image, false);
                 imagesavealpha($image, true);
@@ -262,8 +262,8 @@ class ManagedMedia
 
             if ($save) {
                 File::putCache($headerCachePath, [
-                    'media_path' => $this->getMediaPath(),
-                    'media_filename' => $this->getMediaFilename(),
+                    'media_path' => $this->mediaPath,
+                    'media_filename' => $this->media,
                     'format' => $this->format,
                     'headers' => $this->header,
                 ]);
@@ -271,24 +271,24 @@ class ManagedMedia
                 File::put($sourceCachePath, $src);
             }
         } else {
-            $this->setHeader('Content-Length', (string) filesize($this->getSourcePath()));
+            $this->setHeader('Content-Length', (string) filesize($this->sourcePath));
 
             Response::cleanOutputBuffers();
             foreach ($this->header as $t => $c) {
                 Response::setHeader($t, $c);
             }
 
-            Response::sendFile($this->getSourcePath(), $this->header['Content-Type']);
+            Response::sendFile($this->sourcePath, $this->header['Content-Type']);
 
             if ($save) {
                 File::putCache($headerCachePath, [
-                    'media_path' => $this->getMediaPath(),
-                    'media_filename' => $this->getMediaFilename(),
+                    'media_path' => $this->mediaPath,
+                    'media_filename' => $this->media,
                     'format' => $this->format,
                     'headers' => $this->header,
                 ]);
 
-                File::copy($this->getSourcePath(), $sourceCachePath);
+                File::copy($this->sourcePath, $sourceCachePath);
             }
         }
     }
@@ -312,7 +312,7 @@ class ManagedMedia
     }
 
     /** @return string */
-    protected function getImageSource()
+    private function getImageSource()
     {
         if (!isset($this->image['src'])) {
             throw new LogicException(__METHOD__ . ' can not be called without calling asImage() before.');
@@ -442,11 +442,11 @@ class ManagedMedia
             return;
         }
         // exif_read_data() only works on jpg/jpeg/tiff
-        if (!in_array($this->getFormat(), ['jpg', 'jpeg', 'tiff'])) {
+        if (!in_array($this->format, ['jpg', 'jpeg', 'tiff'])) {
             return;
         }
         // suppress warning in case of corrupt/ missing exif data
-        $exif = @exif_read_data($this->getSourcePath());
+        $exif = @exif_read_data($this->sourcePath);
 
         if (!isset($exif['Orientation']) || !in_array($exif['Orientation'], [3, 6, 8])) {
             return;
@@ -475,7 +475,7 @@ class ManagedMedia
             $this->setHeader('Content-Length', (string) Str::size($src));
         }
 
-        $header = $this->getHeader();
+        $header = $this->header;
         if (!isset($header['Content-Type']) && $this->sourcePath) {
             $contentType = File::mimeType($this->sourcePath);
 
@@ -484,7 +484,7 @@ class ManagedMedia
             }
         }
         if (!isset($header['Content-Disposition'])) {
-            $this->setHeader('Content-Disposition', 'inline; filename="' . $this->getMediaFilename() . '";');
+            $this->setHeader('Content-Disposition', 'inline; filename="' . $this->media . '";');
         }
         if (!isset($header['Last-Modified'])) {
             $this->setHeader('Last-Modified', gmdate('D, d M Y H:i:s T'));
@@ -500,8 +500,8 @@ class ManagedMedia
     private function saveFiles($src, $sourceCachePath, $headerCachePath)
     {
         File::putCache($headerCachePath, [
-            'media_path' => $this->getMediaPath(),
-            'media_filename' => $this->getMediaFilename(),
+            'media_path' => $this->mediaPath,
+            'media_filename' => $this->media,
             'format' => $this->format,
             'headers' => $this->header,
         ]);

@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('category_status_change')]
-class CategoryStatusChange extends ApiFunction
+final class CategoryStatusChange extends ApiFunction
 {
     public function execute(): Result
     {

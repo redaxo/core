@@ -20,7 +20,7 @@ use function sprintf;
  * @internal
  */
 #[AsApiFunction('metainfo_default_fields_create')]
-class DefaultFieldsCreate extends ApiFunction
+final class DefaultFieldsCreate extends ApiFunction
 {
     public function execute(): Result
     {

@@ -12,7 +12,7 @@ use Redaxo\Core\Translation\I18n;
 
 use function count;
 
-class TemplateSelect extends Select
+final class TemplateSelect extends Select
 {
     /** @var bool */
     private $loaded = false;
