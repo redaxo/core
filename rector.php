@@ -594,6 +594,7 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuMoveupAction', 'menuMoveupAction'),
         new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuMovedownAction', 'menuMovedownAction'),
         new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getAdditionalActions', 'additionalActions'),
+
         new MethodCallToPropertyFetch(Database\Exception\SqlException::class, 'getSql', 'sql'),
         new MethodCallToPropertyFetch(Http\Exception\HttpException::class, 'getHttpCode', 'httpCode'),
 
