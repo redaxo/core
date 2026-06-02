@@ -96,8 +96,8 @@ final class ErrorHandler
             }
 
             $status = Response::HTTP_INTERNAL_ERROR;
-            if ($exception instanceof HttpException && $exception->getHttpCode()) {
-                $status = $exception->getHttpCode();
+            if ($exception instanceof HttpException && $exception->httpCode) {
+                $status = $exception->httpCode;
             }
             Response::setStatus($status);
 

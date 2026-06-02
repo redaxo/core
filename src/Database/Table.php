@@ -74,8 +74,7 @@ final class Table
             $columns = Sql::showColumns($name, $db);
             $this->new = false;
         } catch (SqlException $exception) {
-            $sql = $exception->getSql();
-            if ($sql && Sql::ERRNO_TABLE_OR_VIEW_DOESNT_EXIST !== $sql->getErrno()) {
+            if (Sql::ERRNO_TABLE_OR_VIEW_DOESNT_EXIST !== $exception->sql?->getErrno()) {
                 throw $exception;
             }
 

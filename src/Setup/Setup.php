@@ -333,8 +333,7 @@ class Setup
         } catch (CouldNotConnectException) {
             return $initial = true;
         } catch (SqlException $e) {
-            $sql = $e->getSql();
-            if ($sql && Sql::ERRNO_TABLE_OR_VIEW_DOESNT_EXIST === $sql->getErrno()) {
+            if (Sql::ERRNO_TABLE_OR_VIEW_DOESNT_EXIST === $e->sql?->getErrno()) {
                 return $initial = true;
             }
             throw $e;
