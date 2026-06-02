@@ -12,7 +12,8 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name=".tools/project"/>
+        <directory name=".tools/project/public"/>
+        <directory name=".tools/project/src"/>
         <directory name="addons"/>
         <directory name="boot"/>
         <directory name="fragments"/>
@@ -21,7 +22,6 @@
         <directory name="src"/>
         <directory name="tests"/>
         <ignoreFiles>
-            <directory name=".tools/project/var"/>
             <directory name="vendor"/>
             <file name=".phpstorm.meta.php" />
         </ignoreFiles>
