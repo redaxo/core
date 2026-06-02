@@ -15,7 +15,7 @@ final class Style
     /** Converts Backend SCSS files to CSS. */
     public static function compile(): void
     {
-        $scssFiles = Extension::registerPoint(new ExtensionPoint('BE_STYLE_SCSS_FILES', []));
+        $scssFiles = Extension::dispatch(new ExtensionPoint('BE_STYLE_SCSS_FILES', []));
 
         /** @var list<array{root_dir?: string, scss_files: string|list<string>, css_file: string, copy_dest?: string}> */
         $scssFiles = [
@@ -33,7 +33,7 @@ final class Style
             ],
         ];
 
-        $scssFiles = Extension::registerPoint(new ExtensionPoint('BE_STYLE_SCSS_COMPILE', $scssFiles));
+        $scssFiles = Extension::dispatch(new ExtensionPoint('BE_STYLE_SCSS_COMPILE', $scssFiles));
 
         foreach ($scssFiles as $file) {
             $compiler = new ScssCompiler();

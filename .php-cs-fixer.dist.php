@@ -14,6 +14,9 @@ $finder = Finder::create()
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
+    ->exclude([
+        'project/var',
+    ])
     ->append([
         __FILE__,
         __DIR__ . '/.tools/bin/console',

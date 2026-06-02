@@ -115,7 +115,7 @@ if ($update && !$error) {
     $updateuser->update();
     User::clearInstance($userId);
 
-    Extension::registerPoint(new ExtensionPoint('PROFILE_UPDATED', '', [
+    Extension::dispatch(new ExtensionPoint('PROFILE_UPDATED', '', [
         'user_id' => $userId,
         'user' => User::require($userId),
     ], true));
@@ -178,7 +178,7 @@ if (Request::post('upd_psw_button', 'bool')) {
         }
         $login->changedPassword($userpswNew1);
 
-        Extension::registerPoint(new ExtensionPoint('PASSWORD_UPDATED', '', [
+        Extension::dispatch(new ExtensionPoint('PASSWORD_UPDATED', '', [
             'user_id' => $userId,
             'user' => User::require($userId),
             'password' => $userpswNew2,

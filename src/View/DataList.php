@@ -1206,7 +1206,7 @@ class DataList implements UrlProviderInterface
      */
     public function get()
     {
-        Extension::registerPoint(new ExtensionPoint('REX_LIST_GET', $this, [], true));
+        Extension::dispatch(new ExtensionPoint('REX_LIST_GET', $this, [], true));
 
         $s = "\n";
 

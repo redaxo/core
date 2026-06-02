@@ -95,7 +95,7 @@ echo View::clangSwitchAsButtons($context);
 echo View::structureBreadcrumb($categoryId ?? 0, $articleId, $clang);
 
 // ----- EXTENSION POINT
-echo Extension::registerPoint(new ExtensionPoint('STRUCTURE_CONTENT_HEADER', '', [
+echo Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_HEADER', '', [
     'article_id' => $articleId,
     'clang' => $clang,
     'function' => $function,
@@ -225,7 +225,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                         if ('edit' == $function) {
                             $newsql->addGlobalUpdateFields();
 
-                            Extension::registerPoint(new ExtensionPoint('SLICE_UPDATE', '', [
+                            Extension::dispatch(new ExtensionPoint('SLICE_UPDATE', '', [
                                 'slice_id' => $sliceId,
                                 'article_id' => $articleId,
                                 'clang_id' => $clang,
@@ -248,13 +248,13 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                             ];
 
                             // ----- EXTENSION POINT
-                            $info = Extension::registerPoint(new ExtensionPoint('SLICE_UPDATED', $info, $epParams));
-                            $info = Extension::registerPoint(new ArticleContentUpdated($OOArt, 'slice_updated', $info));
+                            $info = Extension::dispatch(new ExtensionPoint('SLICE_UPDATED', $info, $epParams));
+                            $info = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_updated', $info));
                         } else {
                             $newsql->addGlobalUpdateFields();
                             $newsql->addGlobalCreateFields();
 
-                            Extension::registerPoint(new ExtensionPoint('SLICE_ADD', '', [
+                            Extension::dispatch(new ExtensionPoint('SLICE_ADD', '', [
                                 'article_id' => $articleId,
                                 'clang_id' => $clang,
                                 'slice_revision' => $sliceRevision,
@@ -286,8 +286,8 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                             ];
 
                             // ----- EXTENSION POINT
-                            $info = Extension::registerPoint(new ExtensionPoint('SLICE_ADDED', $info, $epParams));
-                            $info = Extension::registerPoint(new ArticleContentUpdated($OOArt, 'slice_added', $info));
+                            $info = Extension::dispatch(new ExtensionPoint('SLICE_ADDED', $info, $epParams));
+                            $info = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_added', $info));
                         }
                     } else {
                         // make delete
@@ -308,8 +308,8 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                             ];
 
                             // ----- EXTENSION POINT
-                            $globalInfo = Extension::registerPoint(new ExtensionPoint('SLICE_DELETED', $globalInfo, $epParams));
-                            $globalInfo = Extension::registerPoint(new ArticleContentUpdated($OOArt, 'slice_deleted', $globalInfo));
+                            $globalInfo = Extension::dispatch(new ExtensionPoint('SLICE_DELETED', $globalInfo, $epParams));
+                            $globalInfo = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_deleted', $globalInfo));
                         } else {
                             $globalWarning = I18n::msg('block_not_deleted');
                         }
@@ -324,7 +324,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
                     $EA->update();
                     ArticleCache::delete($articleId, $clang);
 
-                    Extension::registerPoint(new ExtensionPoint('STRUCTURE_CONTENT_ARTICLE_UPDATED', '', [
+                    Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_ARTICLE_UPDATED', '', [
                         'id' => $articleId,
                         'clang' => $clang,
                     ]));
@@ -426,7 +426,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
     }
 
     // ----- EXTENSION POINT
-    $contentMain .= Extension::registerPoint(new ExtensionPoint('STRUCTURE_CONTENT_BEFORE_SLICES', '', [
+    $contentMain .= Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_BEFORE_SLICES', '', [
         'article_id' => $articleId,
         'clang' => $clang,
         'function' => $function,
@@ -443,7 +443,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
     // ------------------------------------------ END: AUSGABE
 
     // ----- EXTENSION POINT
-    $contentMain .= Extension::registerPoint(new ExtensionPoint('STRUCTURE_CONTENT_AFTER_SLICES', '', [
+    $contentMain .= Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_AFTER_SLICES', '', [
         'article_id' => $articleId,
         'clang' => $clang,
         'function' => $function,
@@ -458,7 +458,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
     $contentMain = '<section id="rex-js-page-main-content" data-pjax-container="#rex-js-page-main-content">' . $contentMain . '</section>';
 
     // ----- EXTENSION POINT
-    $contentSidebar = Extension::registerPoint(new ExtensionPoint('STRUCTURE_CONTENT_SIDEBAR', '', [
+    $contentSidebar = Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_SIDEBAR', '', [
         'article_id' => $articleId,
         'clang' => $clang,
         'function' => $function,

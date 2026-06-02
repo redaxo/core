@@ -615,7 +615,7 @@ abstract class AbstractForm
     public static function getInputClassName($inputType)
     {
         // ----- EXTENSION POINT
-        $className = Extension::registerPoint(new ExtensionPoint('REX_FORM_INPUT_CLASS', '', ['inputType' => $inputType]));
+        $className = Extension::dispatch(new ExtensionPoint('REX_FORM_INPUT_CLASS', '', ['inputType' => $inputType]));
 
         if ($className) {
             return $className;
@@ -643,7 +643,7 @@ abstract class AbstractForm
     public static function getInputTagName($inputType)
     {
         // ----- EXTENSION POINT
-        $inputTag = Extension::registerPoint(new ExtensionPoint('REX_FORM_INPUT_TAG', '', ['inputType' => $inputType]));
+        $inputTag = Extension::dispatch(new ExtensionPoint('REX_FORM_INPUT_TAG', '', ['inputType' => $inputType]));
 
         if ($inputTag) {
             return $inputTag;
@@ -676,7 +676,7 @@ abstract class AbstractForm
         // ----- EXTENSION POINT
         /** @var array<string, scalar> $inputAttr */
         $inputAttr = [];
-        $inputAttr = Extension::registerPoint(new ExtensionPoint('REX_FORM_INPUT_ATTRIBUTES', $inputAttr, ['inputType' => $inputType]));
+        $inputAttr = Extension::dispatch(new ExtensionPoint('REX_FORM_INPUT_ATTRIBUTES', $inputAttr, ['inputType' => $inputType]));
 
         if ($inputAttr) {
             return $inputAttr;
@@ -1103,7 +1103,7 @@ abstract class AbstractForm
     {
         $this->init();
 
-        Extension::registerPoint(new ExtensionPoint('REX_FORM_GET', $this, [], true));
+        Extension::dispatch(new ExtensionPoint('REX_FORM_GET', $this, [], true));
 
         if (!$this->applyUrl) {
             $this->setApplyUrl($this->getUrl(['func' => '']));

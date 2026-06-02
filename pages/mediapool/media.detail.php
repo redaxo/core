@@ -106,7 +106,7 @@ if (Request::post('btn_update', 'string')) {
                 MediaHandler::updateMedia($filename, $data);
 
                 if ($gf->getValue('category_id') != $rexFileCategory) {
-                    Extension::registerPoint(new ExtensionPoint('MEDIA_MOVED', null, [
+                    Extension::dispatch(new ExtensionPoint('MEDIA_MOVED', null, [
                         'filename' => $filename,
                         'category_id' => $rexFileCategory,
                     ]));
@@ -209,7 +209,7 @@ if ('' != $openerLink) {
 }
 
 // ----- EXTENSION POINT
-$sidebar = Extension::registerPoint(new ExtensionPoint('MEDIA_DETAIL_SIDEBAR', $sidebar, [
+$sidebar = Extension::dispatch(new ExtensionPoint('MEDIA_DETAIL_SIDEBAR', $sidebar, [
     'id' => $fileId,
     'filename' => $fname,
     'media' => $gf,
@@ -248,7 +248,7 @@ if ($TPERM) {
     $fragment->setVar('elements', $formElements, false);
     $panel .= $fragment->parse('core/form/form.php');
 
-    $panel .= Extension::registerPoint(new ExtensionPoint('MEDIA_FORM_EDIT', '', ['id' => $fileId, 'media' => $gf]));
+    $panel .= Extension::dispatch(new ExtensionPoint('MEDIA_FORM_EDIT', '', ['id' => $fileId, 'media' => $gf]));
 
     $panel .= $addExtInfo;
 

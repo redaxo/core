@@ -8,36 +8,16 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /** @extends ExtensionPoint<null> */
-class ConsoleShutdown extends ExtensionPoint
+final class ConsoleShutdown extends ExtensionPoint
 {
-    public const NAME = 'CONSOLE_SHUTDOWN';
+    public const string NAME = 'CONSOLE_SHUTDOWN';
 
     public function __construct(
-        private Command $command,
-        private InputInterface $input,
-        private OutputInterface $output,
-        private int $exitCode,
+        public readonly Command $command,
+        public readonly InputInterface $input,
+        public readonly OutputInterface $output,
+        public readonly int $exitCode,
     ) {
-        parent::__construct(self::NAME, null, [], true);
-    }
-
-    public function getCommand(): Command
-    {
-        return $this->command;
-    }
-
-    public function getInput(): InputInterface
-    {
-        return $this->input;
-    }
-
-    public function getOutput(): OutputInterface
-    {
-        return $this->output;
-    }
-
-    public function getExitCode(): int
-    {
-        return $this->exitCode;
+        parent::__construct(self::NAME, null, readonly: true);
     }
 }

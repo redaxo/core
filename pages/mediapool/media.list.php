@@ -67,7 +67,7 @@ if ($hasCategoryPerm && 'updatecat_selectedmedia' == $mediaMethod) {
                 $success = I18n::msg('pool_selectedmedia_moved');
                 MediaPoolCache::delete($fileName);
 
-                Extension::registerPoint(new ExtensionPoint('MEDIA_MOVED', null, [
+                Extension::dispatch(new ExtensionPoint('MEDIA_MOVED', null, [
                     'filename' => $fileName,
                     'category_id' => $rexFileCategory,
                 ]));
@@ -301,7 +301,7 @@ foreach ($items as $media) {
 
     // Register new EP MEDIA_LIST_THUMBNAIL - fuer Vorschau-Manipulation z.B. fuer Plyr/Lottie
     // ----- EXTENSION POINT
-    $thumbnail = Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_THUMBNAIL', $thumbnail, [
+    $thumbnail = Extension::dispatch(new ExtensionPoint('MEDIA_LIST_THUMBNAIL', $thumbnail, [
         'id' => $media->id,
         'filename' => $media->fileName,
         'media' => $media,
@@ -338,7 +338,7 @@ foreach ($items as $media) {
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . $ilink . '">' . I18n::msg('edit') . '</a></td>
                     <td class="rex-table-action">';
 
-    $panel .= Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_FUNCTIONS', $openerLink, [
+    $panel .= Extension::dispatch(new ExtensionPoint('MEDIA_LIST_FUNCTIONS', $openerLink, [
         'media' => $media, // new
         'file_id' => $media->id, // @deprecated
         'file_name' => $media->fileName, // @deprecated

@@ -41,6 +41,6 @@ Timer::measure('packages_boot', static function () use ($packageOrder) {
 Extension::registerByAttribute($this);
 
 // ----- all addons configs included
-Extension::registerPoint(new ExtensionPoint('PACKAGES_INCLUDED'));
+Extension::dispatch(new ExtensionPoint('PACKAGES_INCLUDED'));
 
 $this->boot();
