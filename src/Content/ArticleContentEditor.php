@@ -32,8 +32,6 @@ final class ArticleContentEditor extends ArticleContent
     /** @var int */
     private $sliceAddPosition = 0;
 
-    private ?ArticleSlice $currentSlice = null;
-
     /**
      * @param int|null $articleId
      * @param int|null $clang
@@ -398,12 +396,10 @@ final class ArticleContentEditor extends ArticleContent
             return Message::error(I18n::msg('module_doesnt_exist'));
         }
 
-        $this->currentSlice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->slice_revision)
+        $slice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->slice_revision)
             ->withRequestValues();
 
-        $moduleInput = $module->input($this->currentSlice);
-
-        $this->currentSlice = null;
+        $moduleInput = $module->input($slice);
 
         $msg = '';
         if ('' != $this->warning) {
@@ -513,10 +509,5 @@ final class ArticleContentEditor extends ArticleContent
         $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
-    }
-
-    public function getCurrentSlice(): ArticleSlice
-    {
-        return $this->currentSlice ?? parent::getCurrentSlice();
     }
 }

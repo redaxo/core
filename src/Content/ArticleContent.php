@@ -21,12 +21,6 @@ class ArticleContent extends ArticleContentBase
     private $viasql = false;
 
     /**
-     * @var ArticleSlice|null
-     * @phpstan-ignore-next-line this property looks unread, but is written from content cache file
-     */
-    private $currentSlice;
-
-    /**
      * @param int|null $articleId
      * @param int|null $clang
      */
@@ -141,18 +135,5 @@ class ArticleContent extends ArticleContentBase
             'ctype' => $curctype,
             'article' => $this,
         ]));
-    }
-
-    public function getCurrentSlice(): ArticleSlice
-    {
-        if ($this->viasql) {
-            return parent::getCurrentSlice();
-        }
-
-        if (!$this->currentSlice) {
-            throw new LogicException('There is no current slice; getCurrentSlice() can be called only while rendering slices');
-        }
-
-        return $this->currentSlice;
     }
 }

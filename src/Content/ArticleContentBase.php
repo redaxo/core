@@ -63,9 +63,6 @@ class ArticleContentBase
     /** @var Sql|null */
     protected $ARTICLE;
 
-    /** @var Sql|null */
-    private $sliceSql;
-
     /**
      * @param int|null $articleId
      * @param int|null $clang
@@ -326,15 +323,6 @@ class ArticleContentBase
         return $output;
     }
 
-    public function getCurrentSlice(): ArticleSlice
-    {
-        if (!$this->sliceSql || !$this->sliceSql->valid()) {
-            throw new LogicException('There is no current slice; getCurrentSlice() can be called only while rendering slices');
-        }
-
-        return ArticleSlice::fromSql($this->sliceSql);
-    }
-
     /**
      * Returns the content of the given slice-id.
      *
@@ -499,77 +487,70 @@ class ArticleContentBase
 
         // ---------- SLICES AUSGEBEN
 
-        $this->sliceSql = $artDataSql;
+        $prevCtype = null;
+        $artDataSql->reset();
+        $rows = $artDataSql->getRows();
+        for ($i = 0; $i < $rows; ++$i) {
+            $sliceId = (int) $artDataSql->getValue($prefix . 'article_slice.id');
+            $sliceCtypeId = (int) $artDataSql->getValue($prefix . 'article_slice.ctype_id');
+            /**
+             * Module key from internal DB table, safe to embed in generated cache code.
+             * @psalm-taint-escape html
+             * @psalm-taint-escape has_quotes
+             */
+            $sliceModuleKey = (string) $artDataSql->getValue($prefix . 'article_slice.module');
 
-        try {
-            $prevCtype = null;
-            $artDataSql->reset();
-            $rows = $artDataSql->getRows();
-            for ($i = 0; $i < $rows; ++$i) {
-                $sliceId = (int) $artDataSql->getValue($prefix . 'article_slice.id');
-                $sliceCtypeId = (int) $artDataSql->getValue($prefix . 'article_slice.ctype_id');
-                /**
-                 * Module key from internal DB table, safe to embed in generated cache code.
-                 * @psalm-taint-escape html
-                 * @psalm-taint-escape has_quotes
-                 */
-                $sliceModuleKey = (string) $artDataSql->getValue($prefix . 'article_slice.module');
-
-                // ----- ctype unterscheidung
-                if ('edit' != $this->mode && !$this->eval) {
-                    if (0 == $i) {
-                        $articleContent = "<?php\n\nif (\$this->ctype == '" . $sliceCtypeId . "' || \$this->ctype == '-1') {\n";
-                    } elseif (null !== $prevCtype && $sliceCtypeId != $prevCtype) {
-                        // ----- zwischenstand: ctype .. wenn ctype neu dann if
-                        $articleContent .= "}\n\nif (\$this->ctype == '" . $sliceCtypeId . "' || \$this->ctype == '-1') {\n";
-                    }
-
-                    $slice = ArticleSlice::fromSql($artDataSql);
-                    $articleContent .= '$this->currentSlice = ' . var_export($slice, true) . ";\n";
-                    $articleContent .= 'echo \\' . Module::class . '::get(' . var_export($sliceModuleKey, true) . ')?->output($this->getCurrentSlice()) ?? \'\';' . "\n";
+            // ----- ctype unterscheidung
+            if ('edit' != $this->mode && !$this->eval) {
+                if (0 == $i) {
+                    $articleContent = "<?php\n\nif (\$this->ctype == '" . $sliceCtypeId . "' || \$this->ctype == '-1') {\n";
+                } elseif (null !== $prevCtype && $sliceCtypeId != $prevCtype) {
+                    // ----- zwischenstand: ctype .. wenn ctype neu dann if
+                    $articleContent .= "}\n\nif (\$this->ctype == '" . $sliceCtypeId . "' || \$this->ctype == '-1') {\n";
                 }
 
-                // ------------- EINZELNER SLICE - AUSGABE
-                if ('edit' == $this->mode || $this->eval) {
-                    $sliceContent = $this->outputSlice(
-                        $artDataSql,
-                        $moduleKey,
-                    );
-                } else {
-                    $sliceContent = '';
-                }
-                // --------------- ENDE EINZELNER SLICE
-
-                // --------------- EP: SLICE_SHOW
-                $sliceContent = Extension::dispatch(
-                    new ExtensionPoint(
-                        'SLICE_SHOW',
-                        $sliceContent,
-                        [
-                            'article_id' => $this->article_id,
-                            'clang' => $this->clang,
-                            'ctype' => $sliceCtypeId,
-                            'module_key' => $sliceModuleKey,
-                            'slice_id' => $sliceId,
-                            'function' => $this->function,
-                            'function_slice_id' => $this->slice_id,
-                            'sql' => $artDataSql,
-                        ],
-                    ),
-                );
-
-                // ---------- slice in ausgabe speichern wenn ctype richtig
-                if (-1 == $this->ctype || $this->ctype == $sliceCtypeId) {
-                    $articleContent .= $sliceContent;
-                }
-
-                $prevCtype = $sliceCtypeId;
-
-                $artDataSql->flushValues();
-                $artDataSql->next();
+                $slice = ArticleSlice::fromSql($artDataSql);
+                $articleContent .= 'echo \\' . Module::class . '::get(' . var_export($sliceModuleKey, true) . ')?->output(' . var_export($slice, true) . ') ?? \'\';' . "\n";
             }
-        } finally {
-            $this->sliceSql = null;
+
+            // ------------- EINZELNER SLICE - AUSGABE
+            if ('edit' == $this->mode || $this->eval) {
+                $sliceContent = $this->outputSlice(
+                    $artDataSql,
+                    $moduleKey,
+                );
+            } else {
+                $sliceContent = '';
+            }
+            // --------------- ENDE EINZELNER SLICE
+
+            // --------------- EP: SLICE_SHOW
+            $sliceContent = Extension::dispatch(
+                new ExtensionPoint(
+                    'SLICE_SHOW',
+                    $sliceContent,
+                    [
+                        'article_id' => $this->article_id,
+                        'clang' => $this->clang,
+                        'ctype' => $sliceCtypeId,
+                        'module_key' => $sliceModuleKey,
+                        'slice_id' => $sliceId,
+                        'function' => $this->function,
+                        'function_slice_id' => $this->slice_id,
+                        'sql' => $artDataSql,
+                    ],
+                ),
+            );
+
+            // ---------- slice in ausgabe speichern wenn ctype richtig
+            if (-1 == $this->ctype || $this->ctype == $sliceCtypeId) {
+                $articleContent .= $sliceContent;
+            }
+
+            $prevCtype = $sliceCtypeId;
+
+            $artDataSql->flushValues();
+            $artDataSql->next();
         }
 
         // ----- end: ctype unterscheidung
