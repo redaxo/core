@@ -4,6 +4,7 @@ namespace Redaxo\Core\Console\Command;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Environment;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Security\BackendLogin;
@@ -78,7 +79,7 @@ final class UserSetPasswordCommand extends AbstractCommand
             ->setWhere(['id' => $id])
             ->setValue('password', $passwordHash)
             ->setValue('login_tries', 0)
-            ->addGlobalUpdateFields('console')
+            ->addGlobalUpdateFields(Environment::Console->value)
             ->setDateTimeValue('password_changed', time())
             ->setArrayValue('previous_passwords', $passwordPolicy->updatePreviousPasswords($user, $passwordHash))
             ->setValue('password_change_required', (int) $passwordChangeRequired)

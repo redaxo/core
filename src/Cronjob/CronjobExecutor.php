@@ -143,6 +143,6 @@ final class CronjobExecutor
             return 'script';
         }
 
-        return Core::isBackend() ? 'backend' : 'frontend';
+        return Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
     }
 }

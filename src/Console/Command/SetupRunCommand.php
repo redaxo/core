@@ -7,6 +7,7 @@ use PDOException;
 use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Environment;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Language\LanguageHandler;
@@ -528,8 +529,8 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
             $user->setValue('login', $login);
             $user->setValue('password', $passwordHash);
             $user->setValue('admin', 1);
-            $user->addGlobalCreateFields('console');
-            $user->addGlobalUpdateFields('console');
+            $user->addGlobalCreateFields(Environment::Console->value);
+            $user->addGlobalUpdateFields(Environment::Console->value);
             $user->setDateTimeValue('password_changed', time());
             $user->setArrayValue('previous_passwords', $passwordPolicy->updatePreviousPasswords(null, $passwordHash));
             $user->setValue('status', '1');
