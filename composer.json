@@ -2,8 +2,9 @@
     "name": "redaxo/core",
     "type": "library",
     "description": "REDAXO CMS core package",
-    "homepage": "https://redaxo.org",
+    "keywords": ["redaxo", "cms", "content-management-system"],
     "license": "MIT",
+    "homepage": "https://redaxo.org",
     "authors": [
         {
             "name": "Yakamara Media GmbH & Co. KG",
@@ -197,7 +198,19 @@
     },
 
     "repositories": [
-        {"type": "path", "url": "addons/debug"},
-        {"type": "path", "url": "addons/test"}
+        {
+            "type": "path",
+            "url": "addons/debug",
+            "options": {
+                "versions": {"redaxo/debug": "2.x-dev"}
+            }
+        },
+        {
+            "type": "path",
+            "url": "addons/test",
+            "options": {
+                "versions": {"redaxo/test": "1.x-dev"}
+            }
+        }
     ]
 }

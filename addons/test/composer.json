@@ -1,9 +1,9 @@
 {
     "name": "redaxo/test",
-    "description": "REDAXO test addon",
     "type": "redaxo-addon",
+    "description": "REDAXO test addon",
+    "keywords": ["redaxo", "redaxo-addon", "testing"],
     "license": "MIT",
-    "version": "1.0.0-dev",
     "homepage": "https://github.com/redaxo/core",
     "authors": [
         {

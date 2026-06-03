@@ -1,9 +1,9 @@
 {
     "name": "redaxo/debug",
-    "description": "REDAXO debug addon",
     "type": "redaxo-addon",
+    "description": "REDAXO debug addon",
+    "keywords": ["redaxo", "redaxo-addon", "debug", "clockwork", "profiler", "dev"],
     "license": "MIT",
-    "version": "2.0.0-dev",
     "homepage": "https://github.com/redaxo/core",
     "authors": [
         {
@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.5",
         "ext-zip": "*",
-        "redaxo/core": "@dev",
+        "redaxo/core": "^6.0",
         "itsgoingd/clockwork": "^5.3.5"
     },
 
