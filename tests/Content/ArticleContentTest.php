@@ -6,14 +6,11 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleContent;
-use Redaxo\Core\Content\ArticleContentBase;
-use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
-use ReflectionProperty;
 
 /** @internal */
 final class ArticleContentTest extends TestCase
@@ -55,61 +52,6 @@ final class ArticleContentTest extends TestCase
         Dir::deleteIterator($finder);
 
         Article::clearInstancePool();
-    }
-
-    public function testBcHasValue(): void
-    {
-        $instance = new ArticleContent(1, 1);
-        $viaSql = new ReflectionProperty(ArticleContent::class, 'viasql');
-
-        $viaSql->setValue($instance, true);
-
-        // fake meta field in database structure
-        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'ARTICLE');
-        $propArticle->setValue($instance, Sql::factory()->setValue('art_foo', 'teststring'));
-
-        self::assertTrue($instance->hasValue('foo'));
-        self::assertTrue($instance->hasValue('art_foo'));
-
-        self::assertFalse($instance->hasValue('bar'));
-        self::assertFalse($instance->hasValue('art_bar'));
-    }
-
-    public function testBcGetValue(): void
-    {
-        $instance = new ArticleContent(1, 1);
-
-        $viaSql = new ReflectionProperty(ArticleContent::class, 'viasql');
-        $viaSql->setValue($instance, true);
-
-        // fake meta field in database structure
-        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'ARTICLE');
-        $propArticle->setValue($instance, Sql::factory()->setValue('art_foo', 'teststring'));
-
-        self::assertEquals('teststring', $instance->getValue('foo'));
-        self::assertEquals('teststring', $instance->getValue('art_foo'));
-    }
-
-    #[DataProvider('dataBcGetValueNonExisting')]
-    public function testBcGetValueNonExisting(string $value): void
-    {
-        $instance = new ArticleContent(1, 1);
-
-        $viaSql = new ReflectionProperty(ArticleContent::class, 'viasql');
-        $viaSql->setValue($instance, true);
-
-        $this->expectException(LogicException::class);
-
-        $instance->getValue($value);
-    }
-
-    /** @return list<array{string}> */
-    public static function dataBcGetValueNonExisting(): array
-    {
-        return [
-            ['bar'],
-            ['art_bar'],
-        ];
     }
 
     public function testHasValue(): void

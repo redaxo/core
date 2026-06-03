@@ -3,7 +3,6 @@
 use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleContent;
-use Redaxo\Core\Content\ArticleContentBase;
 use Redaxo\Core\Content\ArticleRevision;
 use Redaxo\Core\Content\ArticleSliceHistory;
 use Redaxo\Core\Content\Exception\ArticleNotFoundException;
@@ -21,6 +20,7 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Mailer\Mailer;
 use Redaxo\Core\Security\BackendLogin;
+use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
 if (Core::isSetup()) {
@@ -89,11 +89,8 @@ if (Core::getConfig('article_history', false)) {
         }
 
         Extension::register('ART_INIT', static function (ExtensionPoint $ep) {
-            $article = $ep->getParam('article');
-            if ($article instanceof ArticleContent) {
-                $article->getContentAsQuery();
-            }
-            $article->setEval(true);
+            // Render the requested article live from the database instead of the published content cache.
+            Type::instanceOf($ep->subject, ArticleContent::class)->setEval(true);
         });
 
         Extension::register('ART_SLICES_QUERY', static function (ExtensionPoint $ep) {
@@ -146,12 +143,9 @@ if (Core::getConfig('article_work_version', false)) {
             exit;
         }
 
-        /** @var ArticleContentBase $article */
-        $article = $ep->getParam('article');
+        // Render the working version live from the database instead of the published content cache.
+        $article = Type::instanceOf($ep->subject, ArticleContent::class);
         $article->setSliceRevision($version);
-        if ($article instanceof ArticleContent) {
-            $article->getContentAsQuery();
-        }
         $article->setEval(true);
     });
 }
@@ -162,6 +156,14 @@ if ($clangId && !Language::exists($clangId)) {
 }
 
 $article = new ArticleContent();
+
+// ----- EXTENSION POINT: lets extensions configure the requested article content object,
+// e.g. to render the history or working version live from the database instead of the cache.
+Extension::dispatch(new ExtensionPoint('ART_INIT', $article, [
+    'article_id' => Article::getCurrentId(),
+    'clang' => Language::getCurrentId(),
+], readonly: true));
+
 $article->setClang(Language::getCurrentId());
 
 if (!$article->setArticleId(Article::getCurrentId())) {
@@ -180,6 +182,8 @@ if (!$article->setArticleId(Article::getCurrentId())) {
 try {
     $content .= $article->getArticleTemplate();
 } catch (ArticleNotFoundException) {
+    // The error article is a fallback and is always rendered normally from the published content cache,
+    // regardless of any history/work-version mode the failed request might have been in.
     $article = new ArticleContent();
     $article->setClang(Language::getCurrentId());
     $article->setArticleId(Article::getNotfoundArticleId());

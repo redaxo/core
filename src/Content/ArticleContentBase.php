@@ -75,13 +75,6 @@ class ArticleContentBase
             $this->setClang(Language::getCurrentId());
         }
 
-        // ----- EXTENSION POINT
-        Extension::dispatch(new ExtensionPoint('ART_INIT', '', [
-            'article' => $this,
-            'article_id' => $articleId,
-            'clang' => $this->clang,
-        ]));
-
         if (null !== $articleId) {
             $this->setArticleId($articleId);
         }

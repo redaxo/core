@@ -16,10 +16,6 @@ use function is_string;
  */
 final class ArticleContent extends ArticleContentBase
 {
-    // bc schalter
-    /** @var bool */
-    private $viasql = false;
-
     /**
      * @param int|null $articleId
      * @param int|null $clang
@@ -29,27 +25,8 @@ final class ArticleContent extends ArticleContentBase
         parent::__construct($articleId, $clang);
     }
 
-    // bc
-
-    /**
-     * @param bool $viasql
-     * @return void
-     */
-    public function getContentAsQuery($viasql = true)
-    {
-        if (!$viasql) {
-            $viasql = false;
-        }
-        $this->viasql = $viasql;
-    }
-
     public function setArticleId($articleId)
     {
-        // bc
-        if ($this->viasql) {
-            return parent::setArticleId($articleId);
-        }
-
         $articleId = (int) $articleId;
         $this->article_id = $articleId;
 
@@ -68,11 +45,6 @@ final class ArticleContent extends ArticleContentBase
 
     public function getValue($value)
     {
-        // bc
-        if ($this->viasql) {
-            return parent::getValue($value);
-        }
-
         $value = $this->correctValue($value);
 
         $article = Article::get($this->article_id, $this->clang);
@@ -90,11 +62,6 @@ final class ArticleContent extends ArticleContentBase
 
     public function hasValue($value)
     {
-        // bc
-        if ($this->viasql) {
-            return parent::hasValue($value);
-        }
-
         $value = $this->correctValue($value);
 
         return Article::get($this->article_id, $this->clang)?->hasValue($value) ?? false;
@@ -102,14 +69,11 @@ final class ArticleContent extends ArticleContentBase
 
     public function getArticle($curctype = -1)
     {
-        // bc
-        if ($this->viasql) {
-            return parent::getArticle($curctype);
-        }
-
         $this->ctype = $curctype;
 
-        if (!$this->getSlice && 0 != $this->article_id) {
+        // In eval mode (history/work version, single slice) the content is rendered live from the
+        // database; otherwise it comes from the published content cache file.
+        if (!$this->eval && !$this->getSlice && 0 != $this->article_id) {
             // article caching
             ob_start();
             try {
