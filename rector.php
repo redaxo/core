@@ -257,7 +257,6 @@ return RectorConfig::configure()
         'rex_form_widget_linkmap_element' => Form\Field\ArticleField::class,
         'rex_form_widget_media_element' => Form\Field\MediaField::class,
         'rex_select' => Form\Select\Select::class,
-        'rex_event_select' => Form\Select\ActionEventSelect::class,
         'rex_category_select' => Form\Select\CategorySelect::class,
         'rex_media_category_select' => Form\Select\MediaCategorySelect::class,
         'rex_template_select' => Form\Select\TemplateSelect::class,

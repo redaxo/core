@@ -124,11 +124,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Form/Field/SelectField.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\ActionEventSelect::__construct() has parameter $options with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Form/Select/ActionEventSelect.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\CategorySelect::__construct() has parameter $addHomepage with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Form/Select/CategorySelect.php',
