@@ -22,7 +22,7 @@ A detailed description and information on optional browser extensions are availa
 The addon is intended for development only. Add it as a dev dependency and install it via the REDAXO console:
 
 ```bash
-composer require --dev redaxo/debug
+composer require --dev redaxo/debug:^2.0@dev
 bin/console addon:install debug
 ```
 
