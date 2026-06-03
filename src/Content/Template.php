@@ -175,5 +175,5 @@ abstract class Template
         return null !== $this->getContentSection($id);
     }
 
-    abstract public function render(ArticleContent $article): string;
+    abstract public function render(ArticleContent $content): string;
 }
