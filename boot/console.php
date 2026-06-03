@@ -7,7 +7,6 @@ use Redaxo\Core\Console\Application;
 use Redaxo\Core\Console\Command\ListCommand;
 use Redaxo\Core\Console\CommandLoader;
 use Redaxo\Core\Core;
-use Redaxo\Core\Environment;
 use Redaxo\Core\Translation\I18n;
 
 /**
@@ -22,7 +21,7 @@ Core::setProperty('lang', 'en_gb');
 I18n::setLocale('en_gb');
 
 $application = new Application($this);
-Core::setProperty(Environment::Console->value, $application);
+Core::setProperty('console', $application);
 
 Addon::initialize(!Core::isSetup());
 
