@@ -248,6 +248,8 @@ class ArticleContentBase
      *
      * @param Sql $artDataSql A Sql instance containing all slice and module data
      * @param string $moduleKeyToAdd The key of the module, which was selected using the ModuleSelect
+     *
+     * @throws ArticleNotFoundException
      */
     protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
@@ -280,6 +282,7 @@ class ArticleContentBase
      *
      * @param int $sliceId A article-slice id
      *
+     * @throws ArticleNotFoundException
      * @return string
      */
     public function getSlice($sliceId)
@@ -300,6 +303,7 @@ class ArticleContentBase
      *
      * @param int $curctype The ctype to fetch, or -1 for all ctypes
      *
+     * @throws ArticleNotFoundException
      * @return string
      */
     public function getArticle($curctype = -1)
@@ -354,7 +358,7 @@ class ArticleContentBase
     // ----- Template inklusive Artikel zurückgeben
 
     /**
-     * @throws ArticleNotFoundException if a template or module aborts rendering to redirect to the error article
+     * @throws ArticleNotFoundException if a template or module aborts rendering to switch to the not found article
      * @return string
      */
     public function getArticleTemplate()
@@ -406,6 +410,7 @@ class ArticleContentBase
         return $result;
     }
 
+    /** @throws ArticleNotFoundException */
     private function renderSlices(string $articleLimit, string $sliceLimit): void
     {
         $moduleKey = Request::request('module', 'string', '');

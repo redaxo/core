@@ -18,7 +18,6 @@ use function sprintf;
  */
 final class ArticleContent extends ArticleContentBase
 {
-    /** @throws ArticleNotFoundException */
     protected function loadArticle(): void
     {
         $article = Article::get($this->articleId, $this->clangId);
