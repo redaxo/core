@@ -4,6 +4,7 @@ namespace Redaxo\Core\Console\Command;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Environment;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\BackendPasswordPolicy;
 use Symfony\Component\Console\Attribute\Argument;
@@ -75,8 +76,8 @@ final class UserCreateCommand extends AbstractCommand
         $user->setValue('password', $passwordHash);
         $user->setValue('admin', $admin ? 1 : 0);
         $user->setValue('login_tries', 0);
-        $user->addGlobalCreateFields('console');
-        $user->addGlobalUpdateFields('console');
+        $user->addGlobalCreateFields(Environment::Console->value);
+        $user->addGlobalUpdateFields(Environment::Console->value);
         $user->setDateTimeValue('password_changed', time());
         $user->setArrayValue('previous_passwords', $passwordPolicy->updatePreviousPasswords(null, $passwordHash));
         $user->setValue('password_change_required', (int) $passwordChangeRequired);
