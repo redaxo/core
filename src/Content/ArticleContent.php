@@ -26,8 +26,8 @@ final class ArticleContent extends ArticleContentBase
             throw new ArticleNotFoundException(sprintf('Article with id "%d" and clang "%d" does not exist.', $this->articleId, $this->clangId));
         }
 
-        $this->category_id = $article->categoryId ?? 0;
-        $this->template = $article->templateKey;
+        $this->categoryId = $article->categoryId ?? 0;
+        $this->templateKey = $article->templateKey;
     }
 
     public function getValue($value)
@@ -60,7 +60,7 @@ final class ArticleContent extends ArticleContentBase
 
         // In eval mode (history/work version, single slice) the content is rendered live from the
         // database; otherwise it comes from the published content cache file.
-        if (!$this->eval && !$this->getSlice && 0 != $this->articleId) {
+        if (!$this->eval && !$this->singleSliceId && 0 != $this->articleId) {
             // article caching
             ob_start();
             try {

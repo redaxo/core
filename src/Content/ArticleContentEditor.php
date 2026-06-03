@@ -26,11 +26,10 @@ use function sprintf;
  */
 final class ArticleContentEditor extends ArticleContentBase
 {
-    /** @var array<int, list<array{name: string, key: string}>> */
-    private $MODULESELECT;
+    /** @var array<int, list<array{name: string, key: string}>>|null */
+    private ?array $moduleSelect = null;
 
-    /** @var int */
-    private $sliceAddPosition = 0;
+    private int $sliceAddPosition = 0;
 
     protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
@@ -52,14 +51,14 @@ final class ArticleContentEditor extends ArticleContentBase
             // ----- add select box einbauen
             $sliceContent = $this->getModuleSelect($sliceId);
 
-            if ('add' == $this->function && $this->slice_id == $sliceId) {
+            if ('add' == $this->function && $this->sliceId == $sliceId) {
                 $sliceContent .= $this->addSlice($sliceId, $moduleKeyToAdd);
             }
 
             $panel = '';
             // ----- Display message at current slice
             // if(rex::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
-            if ('add' != $this->function && $this->slice_id == $sliceId) {
+            if ('add' != $this->function && $this->sliceId == $sliceId) {
                 $msg = '';
                 if ('' != $this->warning) {
                     $msg .= Message::error($this->warning);
@@ -73,7 +72,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
             // ----- EDIT/DELETE BLOCK - Wenn Rechte vorhanden
             if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
-                if ('edit' == $this->function && $this->slice_id == $sliceId) {
+                if ('edit' == $this->function && $this->sliceId == $sliceId) {
                     // **************** Aktueller Slice
 
                     $slice = ArticleSlice::fromSql($artDataSql);
@@ -160,8 +159,8 @@ final class ArticleContentEditor extends ArticleContentBase
         $menuMovedownAction = [];
         if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
             $module = Module::get($moduleKey);
-            $category = $this->category_id > 0 ? Category::get($this->category_id) : null;
-            $moduleAllowed = (!$this->template || Template::checkModuleAllowed($this->template, $this->ctype, $moduleKey))
+            $category = $this->categoryId > 0 ? Category::get($this->categoryId) : null;
+            $moduleAllowed = (!$this->templateKey || Template::checkModuleAllowed($this->templateKey, $this->ctype, $moduleKey))
                 && (null === $module || $module->isAllowedInCategory($category));
             if ($moduleAllowed) {
                 // edit
@@ -297,8 +296,8 @@ final class ArticleContentEditor extends ArticleContentBase
         $position = ++$this->sliceAddPosition;
 
         $items = [];
-        if (isset($this->MODULESELECT[$this->ctype])) {
-            foreach ($this->MODULESELECT[$this->ctype] as $module) {
+        if (isset($this->moduleSelect[$this->ctype])) {
+            foreach ($this->moduleSelect[$this->ctype] as $module) {
                 $item = [];
                 $item['key'] = $module['key'];
                 $item['title'] = escape($module['name']);
@@ -339,17 +338,17 @@ final class ArticleContentEditor extends ArticleContentBase
     {
         // ---------- moduleselect: nur module nehmen auf die der user rechte hat
         if ('edit' == $this->mode) {
-            $template = $this->template ? Template::get($this->template) : null;
+            $template = $this->templateKey ? Template::get($this->templateKey) : null;
             $contentSections = $template?->getContentSections() ?? [new ContentSection(1, 'Content')];
 
-            $category = $this->category_id > 0 ? Category::get($this->category_id) : null;
+            $category = $this->categoryId > 0 ? Category::get($this->categoryId) : null;
 
-            $this->MODULESELECT = [];
+            $this->moduleSelect = [];
             foreach ($contentSections as $section) {
                 foreach (Module::getAll() as $module) {
                     if (Core::requireUser()->getComplexPerm('modules')->hasPerm($module->key)) {
                         if ((!$template || $template->isModuleAllowed($section, $module)) && $module->isAllowedInCategory($category)) {
-                            $this->MODULESELECT[$section->id][] = ['name' => I18n::translate($module->name), 'key' => $module->key];
+                            $this->moduleSelect[$section->id][] = ['name' => I18n::translate($module->name), 'key' => $module->key];
                         }
                     }
                 }
@@ -366,7 +365,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
         // ----- add module im edit mode
         if ('edit' == $this->mode) {
-            if ('add' == $this->function && $this->slice_id == $behindlastSliceId) {
+            if ('add' == $this->function && $this->sliceId == $behindlastSliceId) {
                 ++$this->sliceAddPosition;
                 $sliceContent = $this->addSlice($behindlastSliceId, $moduleKey);
             } else {
@@ -387,7 +386,7 @@ final class ArticleContentEditor extends ArticleContentBase
             return Message::error(I18n::msg('module_doesnt_exist'));
         }
 
-        $slice = ArticleSlice::forNewSlice($this->articleId, $this->clangId, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->slice_revision)
+        $slice = ArticleSlice::forNewSlice($this->articleId, $this->clangId, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->sliceRevision)
             ->withRequestValues();
 
         $moduleInput = $module->input($slice);
@@ -445,7 +444,7 @@ final class ArticleContentEditor extends ArticleContentBase
     private function editSlice(int $sliceId, ArticleSlice $slice, int $ctypeId, string $moduleKey, Sql $artDataSql): string
     {
         $msg = '';
-        if ($this->slice_id == $sliceId) {
+        if ($this->sliceId == $sliceId) {
             if ('' != $this->warning) {
                 $msg .= Message::warning($this->warning);
             }

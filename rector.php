@@ -545,6 +545,7 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getArticleId', 'articleId'),
         new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClangId', 'clangId'),
+        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getTemplateKey', 'templateKey'),
 
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
@@ -645,6 +646,13 @@ return RectorConfig::configure()
     ->withConfiguredRule(RedaxoRule\MethodCallToPropertyAssignRector::class, [
         new MethodCallToPropertyAssign(Cronjob\Type\AbstractType::class, 'setMessage', 'message'),
         new MethodCallToPropertyAssign(Cronjob\CronjobExecutor::class, 'setMessage', 'message'),
+
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setSliceId', 'sliceId'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setSliceRevision', 'sliceRevision'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setMode', 'mode'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setFunction', 'function'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setEval', 'eval'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setTemplateKey', 'templateKey'),
 
         new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
 

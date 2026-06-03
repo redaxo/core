@@ -266,7 +266,7 @@ final readonly class ArticleSlice
     public function getSlice(): string
     {
         $art = new ArticleContent($this->articleId, $this->clangId);
-        $art->setSliceRevision($this->revision);
+        $art->sliceRevision = $this->revision;
         return $art->getSlice($this->id);
     }
 

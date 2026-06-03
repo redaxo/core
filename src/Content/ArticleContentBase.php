@@ -28,40 +28,30 @@ use function sprintf;
  */
 class ArticleContentBase
 {
-    /** @var string */
-    public $warning;
-    /** @var string */
-    public $info;
-    /** @var bool */
-    public $debug = false;
+    public string $warning = '';
+    public string $info = '';
+    public bool $debug = false;
 
-    public ?string $template = null;
+    public protected(set) ?string $templateKey = null;
 
-    /** @var int */
-    protected $category_id;
+    protected int $categoryId = 0;
 
-    /** @var int */
-    protected $slice_id = 0;
-    /** @var int */
-    protected $getSlice = 0;
+    public int $sliceId = 0;
+    protected int $singleSliceId = 0;
     /** @var 'view'|'edit' */
-    protected $mode = 'view';
-    /** @var 'add'|'edit' */
-    protected $function;
+    public string $mode = 'view';
+    /** @var 'add'|'edit'|'' */
+    public string $function = '';
 
-    /** @var int */
-    protected $ctype = -1;
+    protected int $ctype = -1;
 
     public readonly int $clangId;
 
-    /** @var bool */
-    protected $eval = false;
+    public bool $eval = false;
 
-    /** @var int */
-    protected $slice_revision = 0;
+    public int $sliceRevision = 0;
 
-    /** @var Sql|null */
-    protected $ARTICLE;
+    private ?Sql $articleSql = null;
 
     /** @throws ArticleNotFoundException */
     public function __construct(
@@ -76,33 +66,13 @@ class ArticleContentBase
     /** @return Sql */
     protected function getSqlInstance()
     {
-        if (!is_object($this->ARTICLE)) {
-            $this->ARTICLE = Sql::factory();
+        if (!is_object($this->articleSql)) {
+            $this->articleSql = Sql::factory();
             if ($this->debug) {
-                $this->ARTICLE->setDebug();
+                $this->articleSql->setDebug();
             }
         }
-        return $this->ARTICLE;
-    }
-
-    /**
-     * @param int $sr
-     * @return void
-     */
-    public function setSliceRevision($sr)
-    {
-        $this->slice_revision = (int) $sr;
-    }
-
-    // ----- Slice Id setzen für Editiermodus
-
-    /**
-     * @param int $value
-     * @return void
-     */
-    public function setSliceId($value)
-    {
-        $this->slice_id = $value;
+        return $this->articleSql;
     }
 
     /** @throws ArticleNotFoundException */
@@ -117,49 +87,8 @@ class ArticleContentBase
         }
 
         $template = $this->getValue('template');
-        $this->template = $template ? (string) $template : null;
-        $this->category_id = (int) $this->getValue('category_id');
-    }
-
-    public function setTemplateKey(?string $templateKey): void
-    {
-        $this->template = $templateKey;
-    }
-
-    public function getTemplateKey(): ?string
-    {
-        return $this->template;
-    }
-
-    /**
-     * @param 'view'|'edit' $mode
-     * @return void
-     */
-    public function setMode($mode)
-    {
-        $this->mode = $mode;
-    }
-
-    /**
-     * @param 'add'|'edit' $function
-     * @return void
-     */
-    public function setFunction($function)
-    {
-        $this->function = $function;
-    }
-
-    /**
-     * @param bool $value
-     * @return void
-     */
-    public function setEval($value)
-    {
-        if ($value) {
-            $this->eval = true;
-        } else {
-            $this->eval = false;
-        }
+        $this->templateKey = $template ? (string) $template : null;
+        $this->categoryId = (int) $this->getValue('category_id');
     }
 
     /**
@@ -288,13 +217,13 @@ class ArticleContentBase
     public function getSlice($sliceId)
     {
         $oldEval = $this->eval;
-        $this->setEval(true);
+        $this->eval = true;
 
-        $this->getSlice = $sliceId;
+        $this->singleSliceId = $sliceId;
         $sliceContent = $this->getArticle();
-        $this->getSlice = 0;
+        $this->singleSliceId = 0;
 
-        $this->setEval($oldEval);
+        $this->eval = $oldEval;
         return $this->replaceLinks($sliceContent);
     }
 
@@ -310,7 +239,7 @@ class ArticleContentBase
     {
         $this->ctype = $curctype;
 
-        if (0 == $this->articleId && 0 == $this->getSlice) {
+        if (0 == $this->articleId && 0 == $this->singleSliceId) {
             return I18n::msg('no_article_available');
         }
 
@@ -320,8 +249,8 @@ class ArticleContentBase
         }
 
         $sliceLimit = '';
-        if (0 != $this->getSlice) {
-            $sliceLimit = ' AND ' . Core::getTablePrefix() . "article_slice.id = '" . ((int) $this->getSlice) . "' ";
+        if (0 != $this->singleSliceId) {
+            $sliceLimit = ' AND ' . Core::getTablePrefix() . "article_slice.id = '" . $this->singleSliceId . "' ";
         }
         if ('edit' !== $this->mode) {
             $sliceLimit .= ' AND ' . Core::getTablePrefix() . 'article_slice.status = 1';
@@ -363,8 +292,8 @@ class ArticleContentBase
      */
     public function getArticleTemplate()
     {
-        if (null !== $this->template && 0 != $this->articleId) {
-            $template = Template::get($this->template);
+        if (null !== $this->templateKey && 0 != $this->articleId) {
+            $template = Template::get($this->templateKey);
 
             if (null === $template) {
                 return 'no template';
@@ -426,7 +355,7 @@ class ArticleContentBase
             WHERE
                 {$prefix}article_slice.clang_id = {$this->clangId} AND
                 {$prefix}article.clang_id = {$this->clangId} AND
-                {$prefix}article_slice.revision = {$this->slice_revision}
+                {$prefix}article_slice.revision = {$this->sliceRevision}
                 {$articleLimit}
                 {$sliceLimit}
             ORDER BY {$prefix}article_slice.priority
@@ -493,7 +422,7 @@ class ArticleContentBase
                         'module_key' => $sliceModuleKey,
                         'slice_id' => $sliceId,
                         'function' => $this->function,
-                        'function_slice_id' => $this->slice_id,
+                        'function_slice_id' => $this->sliceId,
                         'sql' => $artDataSql,
                     ],
                 ),

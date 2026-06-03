@@ -90,7 +90,7 @@ if (Core::getConfig('article_history', false)) {
 
         Extension::register('ART_INIT', static function (ExtensionPoint $ep) {
             // Render the requested article live from the database instead of the published content cache.
-            Type::instanceOf($ep->subject, ArticleContent::class)->setEval(true);
+            Type::instanceOf($ep->subject, ArticleContent::class)->eval = true;
         });
 
         Extension::register('ART_SLICES_QUERY', static function (ExtensionPoint $ep) {
@@ -145,8 +145,8 @@ if (Core::getConfig('article_work_version', false)) {
 
         // Render the working version live from the database instead of the published content cache.
         $article = Type::instanceOf($ep->subject, ArticleContent::class);
-        $article->setSliceRevision($version);
-        $article->setEval(true);
+        $article->sliceRevision = $version;
+        $article->eval = true;
     });
 }
 

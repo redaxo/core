@@ -24,12 +24,12 @@ if ($result = ApiFunction::factory()?->result) {
 $CONT = new ArticleContentEditor($articleId, $clang);
 $CONT->info = $info;
 $CONT->warning = $warning;
-$CONT->setSliceId($sliceId);
-$CONT->setMode('edit');
-$CONT->setEval(true);
-$CONT->setSliceRevision($sliceRevision);
+$CONT->sliceId = $sliceId;
+$CONT->mode = 'edit';
+$CONT->eval = true;
+$CONT->sliceRevision = $sliceRevision;
 /** @var 'add'|'edit' $function */
-$CONT->setFunction($function);
+$CONT->function = $function;
 $content = $CONT->getArticle($ctype);
 
 $fragment = new Fragment();

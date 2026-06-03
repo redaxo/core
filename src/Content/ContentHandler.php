@@ -361,7 +361,7 @@ final class ContentHandler
             try {
                 $CONT = new ArticleContentBase($articleId, $clangId);
 
-                $CONT->setEval(false); // Content nicht ausführen, damit in Cachedatei gespeichert werden kann
+                $CONT->eval = false; // Content nicht ausführen, damit in Cachedatei gespeichert werden kann
                 $articleContent = $CONT->getArticle();
             } catch (ArticleNotFoundException $e) {
                 // getArticle() cannot throw here (modules are not executed while eval is off),

@@ -18,7 +18,7 @@ final class ArticleContentBaseTest extends TestCase
         $instance = $this->createArticleContentBaseWithoutConstructor();
 
         // fake meta field in database structure
-        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'ARTICLE');
+        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'articleSql');
         $propArticle->setValue($instance, Sql::factory()->setValue('art_foo', 'teststring'));
 
         self::assertTrue($instance->hasValue('foo'));
@@ -33,7 +33,7 @@ final class ArticleContentBaseTest extends TestCase
         $instance = $this->createArticleContentBaseWithoutConstructor();
 
         // fake meta field in database structure
-        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'ARTICLE');
+        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'articleSql');
         $propArticle->setValue($instance, Sql::factory()->setValue('art_foo', 'teststring'));
 
         self::assertEquals('teststring', $instance->getValue('foo'));
