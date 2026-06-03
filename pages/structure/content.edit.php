@@ -22,7 +22,6 @@ if ($result = ApiFunction::factory()?->result) {
 }
 
 $CONT = new ArticleContentEditor();
-$CONT->getContentAsQuery();
 $CONT->info = $info;
 $CONT->warning = $warning;
 $CONT->setArticleId($articleId);

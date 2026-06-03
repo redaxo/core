@@ -14,7 +14,7 @@ use function is_string;
  * Klasse regelt den Zugriff auf Artikelinhalte.
  * DB Anfragen werden vermieden, caching läuft über generated Dateien.
  */
-class ArticleContent extends ArticleContentBase
+final class ArticleContent extends ArticleContentBase
 {
     // bc schalter
     /** @var bool */

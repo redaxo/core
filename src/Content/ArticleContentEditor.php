@@ -24,7 +24,7 @@ use function sprintf;
 /**
  * Erweiterung eines Artikels um slicemanagement.
  */
-final class ArticleContentEditor extends ArticleContent
+final class ArticleContentEditor extends ArticleContentBase
 {
     /** @var array<int, list<array{name: string, key: string}>> */
     private $MODULESELECT;
