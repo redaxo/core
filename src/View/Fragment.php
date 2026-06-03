@@ -24,26 +24,11 @@ use const E_USER_WARNING;
  */
 class Fragment
 {
-    /**
-     * filename of the actual fragmentfile.
-     *
-     * @var string
-     */
-    private $filename;
+    /** filename of the actual fragmentfile. */
+    private string $filename;
 
-    /**
-     * key-value pair which represents all variables defined inside the fragment.
-     *
-     * @var array<string, mixed>
-     */
-    private array $vars;
-
-    /**
-     * another fragment which can optionaly be used to decorate the current fragment.
-     *
-     * @var self|null
-     */
-    private $decorator;
+    /** another fragment which can optionaly be used to decorate the current fragment. */
+    private ?self $decorator = null;
 
     /**
      * array which contains all folders in which fragments will be searched for at runtime.
@@ -57,10 +42,9 @@ class Fragment
      *
      * @param array<string, mixed> $vars A array of key-value pairs to pass as local parameters
      */
-    public function __construct(array $vars = [])
-    {
-        $this->vars = $vars;
-    }
+    public function __construct(
+        private array $vars = [],
+    ) {}
 
     /**
      * Returns the value of the given variable $name.

@@ -14,23 +14,16 @@ use function count;
 
 final class TemplateSelect extends Select
 {
-    /** @var bool */
-    private $loaded = false;
-    /** @var int|null */
-    private $categoryId;
+    private bool $loaded = false;
     /** @var array<string, Template>|null */
-    private $templates;
-    /** @var int */
-    private $clangId;
+    private ?array $templates = null;
+    private readonly int $clangId;
 
-    /**
-     * @param int|null $categoryId
-     * @param int|null $clangId
-     */
-    public function __construct($categoryId = null, $clangId = null)
-    {
-        $this->categoryId = $categoryId;
-        $this->clangId = null === $clangId ? Language::getCurrentId() : (int) $clangId;
+    public function __construct(
+        private readonly ?int $categoryId = null,
+        ?int $clangId = null,
+    ) {
+        $this->clangId = $clangId ?? Language::getCurrentId();
 
         parent::__construct();
     }

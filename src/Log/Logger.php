@@ -34,8 +34,7 @@ class Logger extends AbstractLogger
 {
     use FactoryTrait;
 
-    /** @var LogFile|null */
-    private static $file;
+    private static ?LogFile $file = null;
 
     public static function factory(): static
     {
@@ -149,9 +148,7 @@ class Logger extends AbstractLogger
     public static function open()
     {
         // check if already opened
-        if (!self::$file) {
-            self::$file = LogFile::factory(self::getPath(), 2_000_000);
-        }
+        self::$file ??= LogFile::factory(self::getPath(), 2_000_000);
     }
 
     /**

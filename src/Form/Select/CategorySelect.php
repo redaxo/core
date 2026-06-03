@@ -10,28 +10,17 @@ use function is_array;
 
 class CategorySelect extends Select
 {
-    /** @var bool */
-    private $ignoreOfflines;
-    /** @var int|null */
-    private $clang;
-    /** @var bool */
-    private $checkPerms;
-    /** @var bool */
-    private $addHomepage;
-
     /** @var int|list<int>|null */
-    private $rootId;
+    private int|array|null $rootId = null;
 
-    /** @var bool */
-    private $loaded = false;
+    private bool $loaded = false;
 
-    public function __construct($ignoreOfflines = false, $clang = false, $checkPerms = true, $addHomepage = true)
-    {
-        $this->ignoreOfflines = $ignoreOfflines;
-        $this->clang = false === $clang ? null : $clang;
-        $this->checkPerms = $checkPerms;
-        $this->addHomepage = $addHomepage;
-
+    public function __construct(
+        private readonly bool $ignoreOfflines = false,
+        private readonly ?int $clang = null,
+        private readonly bool $checkPerms = true,
+        private readonly bool $addHomepage = true,
+    ) {
         parent::__construct();
     }
 
@@ -39,9 +28,8 @@ class CategorySelect extends Select
      * Kategorie-Id oder ein Array von Kategorie-Ids als Wurzelelemente der Select-Box.
      *
      * @param int|list<int>|null $rootId Kategorie-Id oder Array von Kategorie-Ids zur Identifikation der Wurzelelemente
-     * @return void
      */
-    public function setRootId($rootId)
+    public function setRootId(int|array|null $rootId): void
     {
         $this->rootId = $rootId;
     }

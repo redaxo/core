@@ -79,13 +79,8 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="addons/debug/lib/debug_clockwork.php">
-    <MixedAssignment>
-      <code><![CDATA[$clockwork]]></code>
-      <code><![CDATA[self::$instance]]></code>
-    </MixedAssignment>
     <MixedMethodCall>
       <code><![CDATA[addDataSource]]></code>
-      <code><![CDATA[getClockwork]]></code>
     </MixedMethodCall>
     <MixedReturnStatement>
       <code><![CDATA[self::getHelper()->getClockwork()]]></code>
@@ -2545,20 +2540,9 @@
     <MixedArgument>
       <code><![CDATA[$group]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$this->addHomepage]]></code>
-      <code><![CDATA[$this->checkPerms]]></code>
-      <code><![CDATA[$this->clang]]></code>
-      <code><![CDATA[$this->ignoreOfflines]]></code>
-    </MixedAssignment>
     <RedundantCondition>
       <code><![CDATA[$this->checkPerms]]></code>
     </RedundantCondition>
-  </file>
-  <file src="src/Form/Select/MediaCategorySelect.php">
-    <MixedAssignment>
-      <code><![CDATA[$this->checkPerms]]></code>
-    </MixedAssignment>
   </file>
   <file src="src/Form/Select/Select.php">
     <MixedArgument>

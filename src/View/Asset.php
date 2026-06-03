@@ -19,8 +19,8 @@ final class Asset
     private static array $jsFiles = [];
     /** @var array<string, mixed> */
     private static array $jsProperties = [];
-    /** @var string */
-    private static $favicon;
+
+    private static ?string $favicon = null;
 
     private function __construct() {}
 
@@ -115,23 +115,14 @@ final class Asset
         return self::$jsProperties;
     }
 
-    /**
-     * Sets the favicon path.
-     *
-     * @param string $file
-     * @return void
-     */
-    public static function setFavicon($file)
+    /** Sets the favicon path. */
+    public static function setFavicon(?string $file): void
     {
         self::$favicon = $file;
     }
 
-    /**
-     * Returns the favicon.
-     *
-     * @return string
-     */
-    public static function getFavicon()
+    /** Returns the favicon. */
+    public static function getFavicon(): ?string
     {
         return self::$favicon;
     }

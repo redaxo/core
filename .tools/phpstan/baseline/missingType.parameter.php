@@ -59,34 +59,9 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Form/Field/SelectField.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\CategorySelect::__construct() has parameter $addHomepage with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Form/Select/CategorySelect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\CategorySelect::__construct() has parameter $checkPerms with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Form/Select/CategorySelect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\CategorySelect::__construct() has parameter $clang with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Form/Select/CategorySelect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\CategorySelect::__construct() has parameter $ignoreOfflines with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Form/Select/CategorySelect.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\CategorySelect::addCatOption() has parameter $group with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Form/Select/CategorySelect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\MediaCategorySelect::__construct() has parameter $checkPerms with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Form/Select/MediaCategorySelect.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Form\\Select\\Select::addOptions() has parameter $options with no type specified.',

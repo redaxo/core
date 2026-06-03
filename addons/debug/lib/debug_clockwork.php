@@ -15,12 +15,11 @@ use Redaxo\Core\Filesystem\Url;
  */
 final class rex_debug_clockwork
 {
-    /** @var VanillaClockwork|null */
-    private static $instance;
+    private static ?VanillaClockwork $instance = null;
 
-    /** @psalm-assert VanillaClockwork self::$instance */
-    private static function init(): void
+    private static function init(): VanillaClockwork
     {
+        /** @var VanillaClockwork $clockwork */
         $clockwork = VanillaClockwork::init([
             'storage_files_path' => self::getStoragePath(),
             'storage_files_compress' => true,
@@ -32,7 +31,7 @@ final class rex_debug_clockwork
             $clockwork->getClockwork()->addDataSource(new XdebugDataSource());
         }
 
-        self::$instance = $clockwork;
+        return $clockwork;
     }
 
     public static function getInstance(): Clockwork
@@ -42,10 +41,7 @@ final class rex_debug_clockwork
 
     public static function getHelper(): VanillaClockwork
     {
-        if (!self::$instance) {
-            self::init();
-        }
-        return self::$instance;
+        return self::$instance ??= self::init();
     }
 
     public static function getFullClockworkApiUrl(): string

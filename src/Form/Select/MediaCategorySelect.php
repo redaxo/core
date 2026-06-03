@@ -9,19 +9,14 @@ use function is_array;
 
 class MediaCategorySelect extends Select
 {
-    /** @var bool */
-    private $checkPerms;
-
     /** @var int|list<int>|null */
-    private $rootId;
+    private int|array|null $rootId = null;
 
-    /** @var bool */
-    private $loaded = false;
+    private bool $loaded = false;
 
-    public function __construct($checkPerms = true)
-    {
-        $this->checkPerms = $checkPerms;
-
+    public function __construct(
+        private readonly bool $checkPerms = true,
+    ) {
         parent::__construct();
     }
 
@@ -29,9 +24,8 @@ class MediaCategorySelect extends Select
      * Kategorie-Id oder ein Array von Kategorie-Ids als Wurzelelemente der Select-Box.
      *
      * @param int|list<int>|null $rootId Kategorie-Id oder Array von Kategorie-Ids zur Identifikation der Wurzelelemente
-     * @return void
      */
-    public function setRootId($rootId)
+    public function setRootId(int|array|null $rootId): void
     {
         $this->rootId = $rootId;
     }

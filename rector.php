@@ -731,6 +731,8 @@ return RectorConfig::configure()
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_DELETED', 'SLICE_DELETED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_MENU', '\\' . Content\ExtensionPoint\SliceMenu::class . '::NAME'),
 
+        new ReplaceArgumentDefaultValue(Form\Select\CategorySelect::class, '__construct', 1, false, null),
+
         new ReplaceArgumentDefaultValue(Util\Markdown::class, 'parse', 1, false, $options = [
             new ArrayItem(new Expr\ConstFetch(new Name('false')), new Expr\ClassConstFetch(new Name(Util\Markdown::class), 'SOFT_LINE_BREAKS')),
         ]),

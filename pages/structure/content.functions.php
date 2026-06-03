@@ -266,7 +266,7 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
 // --------------------------------------------------- ARTIKEL VERSCHIEBEN START
 if (!$isStartpage && $user->hasPerm('moveArticle[]')) {
     // Wenn Artikel kein Startartikel dann Selectliste darstellen, sonst...
-    $moveA = new CategorySelect(false, false, true, !$user->getComplexPerm('structure')->hasMountPoints());
+    $moveA = new CategorySelect(false, null, true, !$user->getComplexPerm('structure')->hasMountPoints());
     $moveA->setId('category_id_new');
     $moveA->setName('category_id_new');
     $moveA->setSize('1');
@@ -307,7 +307,7 @@ if (!$isStartpage && $user->hasPerm('moveArticle[]')) {
 
 // -------------------------------------------------- ARTIKEL KOPIEREN START
 if ($user->hasPerm('copyArticle[]')) {
-    $moveA = new CategorySelect(false, false, true, !$user->getComplexPerm('structure')->hasMountPoints());
+    $moveA = new CategorySelect(false, null, true, !$user->getComplexPerm('structure')->hasMountPoints());
     $moveA->setName('category_copy_id_new');
     $moveA->setId('category_copy_id_new');
     $moveA->setSize('1');
@@ -348,7 +348,7 @@ if ($user->hasPerm('copyArticle[]')) {
 
 // --------------------------------------------------- KATEGORIE/STARTARTIKEL VERSCHIEBEN START
 if ($isStartpage && $user->hasPerm('moveCategory[]') && $user->getComplexPerm('structure')->hasCategoryPerm($article->getValue('parent_id'))) {
-    $moveA = new CategorySelect(false, false, true, !$user->getComplexPerm('structure')->hasMountPoints());
+    $moveA = new CategorySelect(false, null, true, !$user->getComplexPerm('structure')->hasMountPoints());
     $moveA->setId('category_id_new');
     $moveA->setName('category_id_new');
     $moveA->setSize('1');

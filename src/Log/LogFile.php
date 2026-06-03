@@ -22,8 +22,7 @@ class LogFile implements Iterator
 {
     use FactoryTrait;
 
-    /** @var string */
-    private $path;
+    private readonly string $path;
 
     /** @var resource */
     private $file;
@@ -31,23 +30,12 @@ class LogFile implements Iterator
     /** @var resource|null */
     private $file2;
 
-    /** @var bool */
-    private $second = false;
-
-    /** @var int|null */
-    private $pos;
-
-    /** @var int|null */
-    private $key;
-
-    /** @var string|null */
-    private $currentLine;
-
-    /** @var string */
-    private $buffer;
-
-    /** @var int */
-    private $bufferPos;
+    private bool $second = false;
+    private ?int $pos = null;
+    private ?int $key = null;
+    private ?string $currentLine = null;
+    private string $buffer;
+    private int $bufferPos;
 
     private function __construct(string $path, ?int $maxFileSize = null)
     {

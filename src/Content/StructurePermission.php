@@ -83,7 +83,7 @@ final class StructurePermission extends ComplexPermission
         return [
             'label' => I18n::msg('categories'),
             'all_label' => I18n::msg('all_categories'),
-            'select' => new CategorySelect(false, false, false, false),
+            'select' => new CategorySelect(false, null, false, false),
         ];
     }
 }

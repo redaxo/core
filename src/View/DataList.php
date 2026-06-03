@@ -81,63 +81,55 @@ class DataList implements UrlProviderInterface
 
     public const DISABLE_PAGINATION = null;
 
-    /** @var positive-int */
-    private $db;
-
     protected Sql $sql;
-    /** @var bool */
-    private $debug;
-    /** @var string */
-    private $noRowsMessage;
+    private string $noRowsMessage;
 
     // --------- List Attributes
-    /** @var string */
-    private $name;
+    private readonly string $name;
     /** @var array<string, string|int> */
-    private array $params;
-    private int $rows;
+    private array $params = [];
+    private int $rows = 0;
 
     // --------- Form Attributes
     /** @var array<string, string|int> */
-    private array $formAttributes;
+    private array $formAttributes = [];
 
     //  --------- Row Attributes
     /** @var array<string, string|int>|callable(self):string */
-    private $rowAttributes;
+    private $rowAttributes = [];
 
     // --------- Column Attributes
     /** @var array<string, string> */
-    private array $customColumns;
+    private array $customColumns = [];
     /** @var list<string> */
-    private $columnNames;
+    private array $columnNames = [];
     /** @var array<string, string> */
-    private array $columnLabels;
+    private array $columnLabels = [];
     /** @var array<string, array{string, mixed, array<mixed>}> */
-    private $columnFormates;
+    private array $columnFormates = [];
     /** @var array<string, array<string|int, mixed>> */
-    private array $columnOptions;
+    private array $columnOptions = [];
     /** @var array<string, array{string, string}> */
-    private array $columnLayouts;
+    private array $columnLayouts = [];
     /** @var array<string, array> */
-    private $columnParams;
+    private array $columnParams = [];
     /** @var list<string> */
-    private array $columnDisabled;
+    private array $columnDisabled = [];
 
     // --------- Layout, Default
     /** @var array{string, string} */
-    private array $defaultColumnLayout;
+    private array $defaultColumnLayout = ['<th>###VALUE###</th>', '<td data-title="###LABEL###">###VALUE###</td>'];
 
     // --------- Table Attributes
-    /** @var string */
-    private $caption;
+    private string $caption = '';
     /** @var array<string, string|int> */
-    private array $tableAttributes;
+    private array $tableAttributes = [];
     /** @var array<int, array> */
-    private $tableColumnGroups;
+    private array $tableColumnGroups = [];
 
     // --------- Link Attributes
     /** @var array<string, array<string, string|int>> */
-    private array $linkAttributes;
+    private array $linkAttributes = [];
 
     // --------- Pagination Attributes
     private ?Pager $pager = null;
@@ -149,8 +141,14 @@ class DataList implements UrlProviderInterface
      * @param positive-int $db
      * @param array<string, 'asc'|'desc'> $defaultSort
      */
-    protected function __construct(string $query, ?int $rowsPerPage = 30, ?string $listName = null, bool $debug = false, int $db = 1, array $defaultSort = [])
-    {
+    protected function __construct(
+        string $query,
+        ?int $rowsPerPage = 30,
+        ?string $listName = null,
+        private readonly bool $debug = false,
+        private readonly int $db = 1,
+        array $defaultSort = [],
+    ) {
         // --------- Validation
         if (!$listName) {
             // use a hopefully unique (per page) hash
@@ -158,41 +156,10 @@ class DataList implements UrlProviderInterface
         }
 
         // --------- List Attributes
-        $this->db = $db;
         $this->sql = Sql::factory($db);
-        $this->debug = $debug;
         $this->sql->setDebug($this->debug);
         $this->name = $listName;
-        $this->caption = '';
-        $this->rows = 0;
-        $this->params = [];
-        $this->tableAttributes = [];
         $this->noRowsMessage = I18n::msg('list_no_rows');
-
-        // --------- Form Attributes
-        $this->formAttributes = [];
-
-        // --------- Column Attributes
-        $this->customColumns = [];
-        $this->columnLabels = [];
-        $this->columnFormates = [];
-        $this->columnParams = [];
-        $this->columnOptions = [];
-        $this->columnLayouts = [];
-        $this->columnDisabled = [];
-
-        // --------- Default
-        $this->defaultColumnLayout = ['<th>###VALUE###</th>', '<td data-title="###LABEL###">###VALUE###</td>'];
-
-        // --------- Table Attributes
-        $this->tableAttributes = [];
-        $this->tableColumnGroups = [];
-
-        // --------- Link Attributes
-        $this->linkAttributes = [];
-
-        // --------- Row Attributes
-        $this->rowAttributes = [];
 
         // --------- Pagination Attributes
         if (self::DISABLE_PAGINATION !== $rowsPerPage) {

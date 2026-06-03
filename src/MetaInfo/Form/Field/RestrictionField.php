@@ -15,8 +15,7 @@ use function is_array;
  */
 final class RestrictionField extends SelectField
 {
-    /** @var string */
-    private $allCheckboxLabel;
+    private string $allCheckboxLabel = '';
 
     // 1. Parameter nicht genutzt, muss aber hier stehen,
     // wg einheitlicher Konstrukturparameter
