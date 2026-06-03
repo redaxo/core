@@ -164,6 +164,6 @@ final class Category extends StructureElement
     #[Override]
     public function isPermitted(): bool
     {
-        return (bool) Extension::registerPoint(new ExtensionPoint('CAT_IS_PERMITTED', true, ['element' => $this]));
+        return (bool) Extension::dispatch(new ExtensionPoint('CAT_IS_PERMITTED', true, ['element' => $this]));
     }
 }

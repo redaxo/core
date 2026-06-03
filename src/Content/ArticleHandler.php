@@ -15,8 +15,10 @@ use Redaxo\Core\Translation\I18n;
 use function count;
 use function is_array;
 
-class ArticleHandler
+final class ArticleHandler
 {
+    private function __construct() {}
+
     /**
      * Erstellt einen neuen Artikel.
      *
@@ -96,7 +98,7 @@ class ArticleHandler
             ArticleCache::delete($id, $key);
 
             // ----- EXTENSION POINT
-            $message = Extension::registerPoint(new ExtensionPoint('ART_ADDED', $message, [
+            $message = Extension::dispatch(new ExtensionPoint('ART_ADDED', $message, [
                 'id' => $id,
                 'clang' => $key,
                 'status' => 0,
@@ -189,7 +191,7 @@ class ArticleHandler
         ArticleCache::delete($articleId);
 
         // ----- EXTENSION POINT
-        $message = Extension::registerPoint(new ExtensionPoint('ART_UPDATED', $message, [
+        $message = Extension::dispatch(new ExtensionPoint('ART_UPDATED', $message, [
             'id' => $articleId,
             'article' => clone $EA,
             'article_old' => clone $thisArt,
@@ -229,7 +231,7 @@ class ArticleHandler
                 self::newArtPrio($parentId, $clang, 0, 1);
 
                 // ----- EXTENSION POINT
-                $message = Extension::registerPoint(new ExtensionPoint('ART_DELETED', $message, [
+                $message = Extension::dispatch(new ExtensionPoint('ART_DELETED', $message, [
                     'id' => $articleId,
                     'clang' => $clang,
                     'parent_id' => $parentId,
@@ -286,7 +288,7 @@ class ArticleHandler
         $message = '';
         if ($ART->getRows() > 0) {
             $parentId = (int) $ART->getValue('parent_id');
-            $message = Extension::registerPoint(new ExtensionPoint('ART_PRE_DELETED', $message, [
+            $message = Extension::dispatch(new ExtensionPoint('ART_PRE_DELETED', $message, [
                 'id' => $id,
                 'parent_id' => $parentId,
                 'name' => $ART->getValue('name'),
@@ -355,7 +357,7 @@ class ArticleHandler
             ArticleCache::delete($articleId, $clang);
 
             // ----- EXTENSION POINT
-            Extension::registerPoint(new ExtensionPoint('ART_STATUS', null, [
+            Extension::dispatch(new ExtensionPoint('ART_STATUS', null, [
                 'id' => $articleId,
                 'clang' => $clang,
                 'status' => $newstatus,
@@ -385,7 +387,7 @@ class ArticleHandler
             ];
 
             // ----- EXTENSION POINT
-            $artStatusTypes = Extension::registerPoint(new ExtensionPoint('ART_STATUS_TYPES', $artStatusTypes));
+            $artStatusTypes = Extension::dispatch(new ExtensionPoint('ART_STATUS_TYPES', $artStatusTypes));
         }
 
         return $artStatusTypes;
@@ -483,7 +485,7 @@ class ArticleHandler
         ArticleCache::delete($artId);
 
         foreach (Language::getAllIds() as $clang) {
-            Extension::registerPoint(new ExtensionPoint('ART_TO_CAT', '', [
+            Extension::dispatch(new ExtensionPoint('ART_TO_CAT', '', [
                 'id' => $artId,
                 'clang' => $clang,
             ]));
@@ -541,7 +543,7 @@ class ArticleHandler
         ArticleCache::delete($artId);
 
         foreach (Language::getAllIds() as $clang) {
-            Extension::registerPoint(new ExtensionPoint('CAT_TO_ART', '', [
+            Extension::dispatch(new ExtensionPoint('CAT_TO_ART', '', [
                 'id' => $artId,
                 'clang' => $clang,
             ]));
@@ -652,7 +654,7 @@ class ArticleHandler
         ComplexPermission::replaceItem('structure', $altId, $neuId);
 
         foreach (Language::getAllIds() as $clang) {
-            Extension::registerPoint(new ExtensionPoint('ART_TO_STARTARTICLE', '', [
+            Extension::dispatch(new ExtensionPoint('ART_TO_STARTARTICLE', '', [
                 'id' => $neuId,
                 'id_old' => $altId,
                 'clang' => $clang,
@@ -784,7 +786,7 @@ class ArticleHandler
                     // Prios neu berechnen
                     self::newArtPrio($toCatId, $clang, 1, 0);
 
-                    Extension::registerPoint(new ExtensionPoint('ART_COPIED', null, [
+                    Extension::dispatch(new ExtensionPoint('ART_COPIED', null, [
                         'id_source' => $id,
                         'id' => $newId,
                         'clang' => $clang,
@@ -869,7 +871,7 @@ class ArticleHandler
                     self::newArtPrio($toCatId, $clang, 1, 0);
                     self::newArtPrio($fromCatId, $clang, 1, 0);
 
-                    Extension::registerPoint(new ExtensionPoint('ART_MOVED', null, [
+                    Extension::dispatch(new ExtensionPoint('ART_MOVED', null, [
                         'id' => $id,
                         'clang' => $clang,
                         'category_id' => $parentId,
@@ -901,7 +903,7 @@ class ArticleHandler
      * @throws ApiFunctionException
      * @return void
      */
-    protected static function reqKey($array, $keyName)
+    private static function reqKey($array, $keyName)
     {
         if (!isset($array[$keyName])) {
             throw new ApiFunctionException('Missing required parameter "' . $keyName . '"!');

@@ -17,7 +17,7 @@ use function sprintf;
  * @internal
  */
 #[AsApiFunction('user_impersonate')]
-class UserImpersonate extends ApiFunction
+final class UserImpersonate extends ApiFunction
 {
     public function execute(): never
     {

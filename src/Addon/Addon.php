@@ -350,7 +350,7 @@ abstract class Addon
             throw new RuntimeException('Addon cache directory "' . $cacheDir . '" is not writable.');
         }
 
-        Extension::registerPoint(new AddonCacheDeleted($this));
+        Extension::dispatch(new AddonCacheDeleted($this));
     }
 
     final public function enlist(): void

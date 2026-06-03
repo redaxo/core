@@ -12,10 +12,10 @@ use function is_array;
  *
  * @extends AbstractInput<array{year: numeric-string, month: numeric-string, day: numeric-string, hour: numeric-string, minute: numeric-string}>
  */
-class DateTimeInput extends AbstractInput
+final class DateTimeInput extends AbstractInput
 {
-    private DateInput $dateInput;
-    private TimeInput $timeInput;
+    private readonly DateInput $dateInput;
+    private readonly TimeInput $timeInput;
 
     public function __construct()
     {

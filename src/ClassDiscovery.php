@@ -12,10 +12,14 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionType;
+use ReflectionUnionType;
 use RuntimeException;
 
 use function array_key_exists;
 use function class_exists;
+use function function_exists;
 use function implode;
 use function is_array;
 use function is_dir;
@@ -67,115 +71,149 @@ final class ClassDiscovery
         $cacheKey = $attributeClass . ($parentClass ? '|' . $parentClass : '');
         $cacheData = $this->loadCacheData();
 
-        if (isset($cacheData[$cacheKey])) {
-            // Reconstruct attribute instances from cached arrays (JSON roundtrip converts objects to arrays)
-            $result = [];
-            /** @var array<class-string, array<string, mixed>|object> $cached */
-            $cached = $cacheData[$cacheKey];
-            foreach ($cached as $class => $entry) {
-                /**
-                 * @var TAttribute $attribute
-                 * @psalm-suppress MixedMethodCall
-                 */
-                $attribute = is_array($entry) ? new $attributeClass(...$entry) : $entry;
-                $result[$class] = $attribute;
+        if (!isset($cacheData[$cacheKey])) {
+            // Only the attribute arguments are cached (always constant expressions, hence var_export-safe);
+            // the instance is reconstructed below from the known attribute class.
+            $raw = [];
+
+            foreach ($this->getReflections() as $reflection) {
+                if ($reflection->isAbstract()) {
+                    continue;
+                }
+
+                $attributes = $reflection->getAttributes($attributeClass);
+
+                if ([] === $attributes) {
+                    continue;
+                }
+
+                if (null !== $parentClass && !$reflection->isSubclassOf($parentClass)) {
+                    continue;
+                }
+
+                $raw[$reflection->getName()] = $attributes[0]->getArguments();
             }
-            /** @var array<class-string<TParent>, TAttribute> */
-            return $result;
+
+            $this->saveCacheData($cacheKey, $raw);
+            $cacheData[$cacheKey] = $raw;
         }
+
+        /** @var array<class-string<TParent>, array<int|string, mixed>> $cached */
+        $cached = $cacheData[$cacheKey];
 
         $result = [];
-
-        foreach ($this->getReflections() as $reflection) {
-            if ($reflection->isAbstract()) {
-                continue;
-            }
-
-            $attributes = $reflection->getAttributes($attributeClass);
-
-            if ([] === $attributes) {
-                continue;
-            }
-
-            if (null !== $parentClass && !$reflection->isSubclassOf($parentClass)) {
-                continue;
-            }
-
-            /** @var class-string<TParent> $class */
-            $class = $reflection->getName();
-            $result[$class] = $attributes[0]->newInstance();
+        foreach ($cached as $class => $arguments) {
+            /**
+             * @var TAttribute $attribute
+             * @psalm-suppress MixedMethodCall
+             */
+            $attribute = new $attributeClass(...$arguments);
+            $result[$class] = $attribute;
         }
 
-        $this->saveCacheData($cacheKey, $result);
-
+        /** @var array<class-string<TParent>, TAttribute> */
         return $result;
     }
 
     /**
      * Discovers all non-abstract methods (static and instance) that carry the given attribute.
      *
-     * Each entry contains the declaring class, method name, whether the method is static,
-     * and the attribute instance. Methods inherited from parent classes are not duplicated —
-     * only the declaring class is reported.
+     * Each entry contains the declaring class, method name, whether the method is static, the class/interface types of
+     * the method's first parameter (a list, so union types are fully captured), and the attribute instance. Methods
+     * inherited from parent classes are not duplicated — only the declaring class is reported.
      *
      * @template TAttribute of object
      * @param class-string<TAttribute> $attributeClass
-     * @return list<array{class: class-string, method: string, isStatic: bool, attribute: TAttribute}>
+     * @return list<array{class: class-string, method: string, isStatic: bool, firstParameterTypes: list<class-string>, attribute: TAttribute}>
      */
     public function discoverByMethodAttribute(string $attributeClass): array
     {
         $cacheKey = 'method:' . $attributeClass;
         $cacheData = $this->loadCacheData();
 
-        if (isset($cacheData[$cacheKey])) {
-            /** @var list<array{class: class-string, method: string, isStatic: bool, attribute: array<string, mixed>|TAttribute}> $cached */
-            $cached = $cacheData[$cacheKey];
-            $result = [];
-            foreach ($cached as $entry) {
-                /**
-                 * @var TAttribute $attribute
-                 * @psalm-suppress MixedMethodCall
-                 */
-                $attribute = is_array($entry['attribute']) ? new $attributeClass(...$entry['attribute']) : $entry['attribute'];
-                $result[] = [
-                    'class' => $entry['class'],
-                    'method' => $entry['method'],
-                    'isStatic' => $entry['isStatic'],
-                    'attribute' => $attribute,
-                ];
+        if (!isset($cacheData[$cacheKey])) {
+            // Only the attribute arguments are cached (always constant expressions, hence var_export-safe);
+            // the instance is reconstructed below from the known attribute class.
+            $raw = [];
+
+            foreach ($this->getReflections() as $reflection) {
+                $class = $reflection->getName();
+
+                foreach ($reflection->getMethods() as $method) {
+                    if ($method->isAbstract()) {
+                        continue;
+                    }
+
+                    // Skip methods inherited from a parent — they'll be reported on their declaring class.
+                    if ($method->getDeclaringClass()->getName() !== $class) {
+                        continue;
+                    }
+
+                    $attributes = $method->getAttributes($attributeClass);
+                    if ([] === $attributes) {
+                        continue;
+                    }
+
+                    $firstParameterTypes = self::classTypes(($method->getParameters()[0] ?? null)?->getType());
+
+                    foreach ($attributes as $attribute) {
+                        $raw[] = [
+                            'class' => $class,
+                            'method' => $method->getName(),
+                            'isStatic' => $method->isStatic(),
+                            'firstParameterTypes' => $firstParameterTypes,
+                            'arguments' => $attribute->getArguments(),
+                        ];
+                    }
+                }
             }
-            return $result;
+
+            $this->saveCacheData($cacheKey, $raw);
+            $cacheData[$cacheKey] = $raw;
         }
+
+        /** @var list<array{class: class-string, method: string, isStatic: bool, firstParameterTypes: list<class-string>, arguments: array<int|string, mixed>}> $cached */
+        $cached = $cacheData[$cacheKey];
 
         $result = [];
+        foreach ($cached as $entry) {
+            /**
+             * @var TAttribute $attribute
+             * @psalm-suppress MixedMethodCall
+             */
+            $attribute = new $attributeClass(...$entry['arguments']);
+            $result[] = [
+                'class' => $entry['class'],
+                'method' => $entry['method'],
+                'isStatic' => $entry['isStatic'],
+                'firstParameterTypes' => $entry['firstParameterTypes'],
+                'attribute' => $attribute,
+            ];
+        }
 
-        foreach ($this->getReflections() as $reflection) {
-            $class = $reflection->getName();
+        return $result;
+    }
 
-            foreach ($reflection->getMethods() as $method) {
-                if ($method->isAbstract()) {
-                    continue;
-                }
+    /**
+     * Returns the class/interface type names of a parameter type, flattening union types.
+     * Built-in types (including `null` from a nullable type) are omitted.
+     *
+     * @return list<class-string>
+     */
+    private static function classTypes(?ReflectionType $type): array
+    {
+        $parts = $type instanceof ReflectionUnionType ? $type->getTypes() : [$type];
 
-                // Skip methods inherited from a parent — they'll be reported on their declaring class.
-                if ($method->getDeclaringClass()->getName() !== $class) {
-                    continue;
-                }
-
-                foreach ($method->getAttributes($attributeClass) as $attribute) {
-                    $result[] = [
-                        'class' => $class,
-                        'method' => $method->getName(),
-                        'isStatic' => $method->isStatic(),
-                        'attribute' => $attribute->newInstance(),
-                    ];
-                }
+        $classTypes = [];
+        foreach ($parts as $part) {
+            if ($part instanceof ReflectionNamedType && !$part->isBuiltin()) {
+                /** @var class-string $name */
+                $name = $part->getName();
+                $classTypes[] = $name;
             }
         }
 
-        $this->saveCacheData($cacheKey, $result);
-
-        return $result;
+        return $classTypes;
     }
 
     public static function clearCache(): void
@@ -334,10 +372,18 @@ final class ClassDiscovery
             return $this->cacheData;
         }
 
-        /** @var array{addons_hash?: string, files_hash?: string, data?: array<string, mixed>} $cache */
-        $cache = File::getCache(self::getCacheFile());
+        // The cache is a plain PHP file (var_export + include) so it benefits from OpCache. It only ever holds
+        // scalars, arrays and enums (attribute arguments are constant expressions), never arbitrary objects, so
+        // including it cannot instantiate unexpected classes.
+        $file = self::getCacheFile();
+        if (!is_file($file)) {
+            return $this->cacheData = [];
+        }
 
-        if (!isset($cache['addons_hash']) || $cache['addons_hash'] !== $this->getAddonHash()) {
+        /** @var mixed $cache */
+        $cache = include $file;
+
+        if (!is_array($cache) || !isset($cache['addons_hash']) || $cache['addons_hash'] !== $this->getAddonHash()) {
             return $this->cacheData = [];
         }
 
@@ -348,7 +394,10 @@ final class ClassDiscovery
             }
         }
 
-        return $this->cacheData = $cache['data'] ?? [];
+        /** @var array<string, mixed> $data */
+        $data = $cache['data'] ?? [];
+
+        return $this->cacheData = $data;
     }
 
     private function saveCacheData(string $cacheKey, mixed $data): void
@@ -356,11 +405,16 @@ final class ClassDiscovery
         $this->cacheData = $this->loadCacheData();
         $this->cacheData[$cacheKey] = $data;
 
-        File::putCache(self::getCacheFile(), [
+        $file = self::getCacheFile();
+        File::put($file, '<?php' . "\n\n" . 'return ' . var_export([
             'addons_hash' => $this->getAddonHash(),
             'files_hash' => $this->getPhpFilesHash(),
             'data' => $this->cacheData,
-        ]);
+        ], true) . ';' . "\n");
+
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($file, true);
+        }
     }
 
     private function getAddonHash(): string
@@ -402,7 +456,7 @@ final class ClassDiscovery
 
     private static function getCacheFile(): string
     {
-        return Path::coreCache('class_discovery.cache');
+        return Path::coreCache('class_discovery.php');
     }
 
     private static function findClassLoader(): ClassLoader

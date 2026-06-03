@@ -109,7 +109,7 @@ return RectorConfig::configure()
         CodeQuality\NullsafeMethodCall\CleanupUnneededNullsafeOperatorRector::class,
         CodeQuality\Ternary\UnnecessaryTernaryExpressionRector::class,
         CodingStyle\ClassConst\RemoveFinalFromConstRector::class,
-        // CodingStyle\String_\SymplifyQuoteEscapeRector::class,
+        // CodingStyle\String_\SimplifyQuoteEscapeRector::class,
         Php55\ClassConstFetch\StaticToSelfOnFinalClassRector::class,
         Php70\StmtsAwareInterface\IfIssetToCoalescingRector::class,
         Php70\Ternary\TernaryToNullCoalescingRector::class,
@@ -119,8 +119,8 @@ return RectorConfig::configure()
         Php80\NotIdentical\StrContainsRector::class,
         Php80\Switch_\ChangeSwitchToMatchRector::class,
         Php81\Array_\ArrayToFirstClassCallableRector::class,
-        // Php81\Property\ReadOnlyPropertyRector::class,
-        // Php82\Class_\ReadOnlyClassRector::class,
+        Php81\Property\ReadOnlyPropertyRector::class,
+        Php82\Class_\ReadOnlyClassRector::class,
         Privatization\Class_\FinalizeTestCaseClassRector::class,
 
         // Own rules
@@ -133,6 +133,8 @@ return RectorConfig::configure()
         Php81\FuncCall\NullToStrictStringFuncCallArgRector::class,
         TypeDeclaration\ArrowFunction\AddArrowFunctionReturnTypeRector::class,
         TypeDeclaration\Closure\AddClosureVoidReturnTypeWhereNoReturnRector::class,
+
+        '.tools/project/var',
     ])
 
     // Upgrade REDAXO 5 to 6
@@ -255,7 +257,6 @@ return RectorConfig::configure()
         'rex_form_widget_linkmap_element' => Form\Field\ArticleField::class,
         'rex_form_widget_media_element' => Form\Field\MediaField::class,
         'rex_select' => Form\Select\Select::class,
-        'rex_event_select' => Form\Select\ActionEventSelect::class,
         'rex_category_select' => Form\Select\CategorySelect::class,
         'rex_media_category_select' => Form\Select\MediaCategorySelect::class,
         'rex_template_select' => Form\Select\TemplateSelect::class,
@@ -448,8 +449,13 @@ return RectorConfig::configure()
         new RenameStaticMethod(Core::class, 'getPackageConfig', Addon\AddonManager::class, 'getAddonConfig'),
         new RenameStaticMethod(Core::class, 'getPackageOrder', Addon\AddonManager::class, 'getAddonOrder'),
         new RenameStaticMethod(Core::class, 'getVersionHash', Util\Version::class, 'gitHash'),
+
+        new RenameStaticMethod(ExtensionPoint\Extension::class, 'registerPoint', ExtensionPoint\Extension::class, 'dispatch'),
+        new RenameStaticMethod(ExtensionPoint\Extension::class, 'isRegistered', ExtensionPoint\Extension::class, 'hasExtensions'),
+
         new RenameStaticMethod(Util\Str::class, 'versionSplit', Util\Version::class, 'split'),
         new RenameStaticMethod(Util\Str::class, 'versionCompare', Util\Version::class, 'compare'),
+
         new RenameStaticMethod(View\View::class, 'addCssFile', View\Asset::class, 'addCssFile'),
         new RenameStaticMethod(View\View::class, 'getCssFiles', View\Asset::class, 'getCssFiles'),
         new RenameStaticMethod(View\View::class, 'addJsFile', View\Asset::class, 'addJsFile'),
@@ -564,6 +570,33 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getCreateUser', 'createUser'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getUpdateUser', 'updateUser'),
 
+        new MethodCallToPropertyFetch(ExtensionPoint\ExtensionPoint::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(ExtensionPoint\ExtensionPoint::class, 'getSubject', 'subject'),
+        new MethodCallToPropertyFetch(ExtensionPoint\ExtensionPoint::class, 'isReadonly', 'readonly'),
+        new MethodCallToPropertyFetch(Console\ExtensionPoint\ConsoleShutdown::class, 'getCommand', 'command'),
+        new MethodCallToPropertyFetch(Console\ExtensionPoint\ConsoleShutdown::class, 'getInput', 'input'),
+        new MethodCallToPropertyFetch(Console\ExtensionPoint\ConsoleShutdown::class, 'getOutput', 'output'),
+        new MethodCallToPropertyFetch(Console\ExtensionPoint\ConsoleShutdown::class, 'getExitCode', 'exitCode'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\ArticleContentUpdated::class, 'getArticle', 'article'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\ArticleContentUpdated::class, 'getAction', 'action'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getContext', 'context'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getFragment', 'fragment'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getArticleId', 'articleId'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getClangId', 'languageId'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getCtypeId', 'contentSectionId'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getModuleId', 'moduleKey'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getSliceId', 'sliceId'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'hasPerm', 'hasPerm'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuEditAction', 'menuEditAction'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuDeleteAction', 'menuDeleteAction'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuStatusAction', 'menuStatusAction'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuMoveupAction', 'menuMoveupAction'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuMovedownAction', 'menuMovedownAction'),
+        new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getAdditionalActions', 'additionalActions'),
+
+        new MethodCallToPropertyFetch(Database\Exception\SqlException::class, 'getSql', 'sql'),
+        new MethodCallToPropertyFetch(Http\Exception\HttpException::class, 'getHttpCode', 'httpCode'),
+
         new MethodCallToPropertyFetch(Language\Language::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Language\Language::class, 'getCode', 'code'),
         new MethodCallToPropertyFetch(Language\Language::class, 'getName', 'name'),
@@ -612,6 +645,15 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
 
+        new MethodCallToPropertyAssign(Content\ExtensionPoint\SliceMenu::class, 'setMenuEditAction', 'menuEditAction'),
+        new MethodCallToPropertyAssign(Content\ExtensionPoint\SliceMenu::class, 'setMenuDeleteAction', 'menuDeleteAction'),
+        new MethodCallToPropertyAssign(Content\ExtensionPoint\SliceMenu::class, 'setMenuStatusAction', 'menuStatusAction'),
+        new MethodCallToPropertyAssign(Content\ExtensionPoint\SliceMenu::class, 'setMenuMoveupAction', 'menuMoveupAction'),
+        new MethodCallToPropertyAssign(Content\ExtensionPoint\SliceMenu::class, 'setMenuMovedownAction', 'menuMovedownAction'),
+        new MethodCallToPropertyAssign(Content\ExtensionPoint\SliceMenu::class, 'setAdditionalActions', 'additionalActions'),
+
+        new MethodCallToPropertyAssign(ExtensionPoint\ExtensionPoint::class, 'setSubject', 'subject'),
+
         new MethodCallToPropertyAssign(Security\Login::class, 'setCache', 'cache'),
         new MethodCallToPropertyAssign(Security\Login::class, 'setSqlDb', 'DB'),
         new MethodCallToPropertyAssign(Security\Login::class, 'setSystemId', 'systemId'),
@@ -648,6 +690,7 @@ return RectorConfig::configure()
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_ADDED', 'SLICE_ADDED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_UPDATED', 'SLICE_UPDATED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_DELETED', 'SLICE_DELETED'),
+        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_MENU', '\\' . Content\ExtensionPoint\SliceMenu::class . '::NAME'),
 
         new ReplaceArgumentDefaultValue(Util\Markdown::class, 'parse', 1, false, $options = [
             new Expr\ArrayItem(new Expr\ConstFetch(new Name('false')), new Expr\ClassConstFetch(new Name(Util\Markdown::class), 'SOFT_LINE_BREAKS')),
@@ -677,6 +720,11 @@ return RectorConfig::configure()
         new RenameClassConstFetch(MetaInfo\Database\Table::class, 'FIELD_REX_LINKLIST_WIDGET', 'FIELD_REX_LINK_WIDGET'),
         new RenameClassConstFetch(MetaInfo\Form\DefaultType::class, 'REX_MEDIALIST_WIDGET', 'REX_MEDIA_WIDGET'),
         new RenameClassConstFetch(MetaInfo\Form\DefaultType::class, 'REX_LINKLIST_WIDGET', 'REX_LINK_WIDGET'),
+
+        new RenameClassAndConstFetch(ExtensionPoint\Extension::class, 'EARLY', ExtensionPoint\ExtensionLevel::class, 'Early'),
+        new RenameClassAndConstFetch(ExtensionPoint\Extension::class, 'NORMAL', ExtensionPoint\ExtensionLevel::class, 'Normal'),
+        new RenameClassAndConstFetch(ExtensionPoint\Extension::class, 'LATE', ExtensionPoint\ExtensionLevel::class, 'Late'),
+
         new RenameClassAndConstFetch(View\View::class, 'JS_ASYNC', View\Asset::class, 'JS_ASYNC'),
         new RenameClassAndConstFetch(View\View::class, 'JS_DEFERED', View\Asset::class, 'JS_DEFERED'),
         new RenameClassAndConstFetch(View\View::class, 'JS_IMMUTABLE', View\Asset::class, 'JS_IMMUTABLE'),

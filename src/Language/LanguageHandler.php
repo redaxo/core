@@ -73,7 +73,7 @@ final class LanguageHandler
 
         // ----- EXTENSION POINT
         $clang = Language::require($id);
-        Extension::registerPoint(new ExtensionPoint('CLANG_ADDED', '', [
+        Extension::dispatch(new ExtensionPoint('CLANG_ADDED', '', [
             'id' => $clang->id,
             'name' => $clang->name,
             'clang' => $clang,
@@ -107,7 +107,7 @@ final class LanguageHandler
 
         // ----- EXTENSION POINT
         $clang = Language::require($id);
-        Extension::registerPoint(new ExtensionPoint('CLANG_UPDATED', '', [
+        Extension::dispatch(new ExtensionPoint('CLANG_UPDATED', '', [
             'id' => $clang->id,
             'name' => $clang->name,
             'clang' => $clang,
@@ -145,7 +145,7 @@ final class LanguageHandler
         Cache::delete();
 
         // ----- EXTENSION POINT
-        Extension::registerPoint(new ExtensionPoint('CLANG_DELETED', '', [
+        Extension::dispatch(new ExtensionPoint('CLANG_DELETED', '', [
             'id' => $clang->id,
             'name' => $clang->name,
             'clang' => $clang,

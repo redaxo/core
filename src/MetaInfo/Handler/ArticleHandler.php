@@ -13,7 +13,7 @@ use Redaxo\Core\Http\Request;
 /**
  * @internal
  */
-class ArticleHandler extends AbstractHandler
+final class ArticleHandler extends AbstractHandler
 {
     public const PREFIX = 'art_';
 
@@ -42,7 +42,7 @@ class ArticleHandler extends AbstractHandler
 
         ArticleCache::deleteMeta($params['id'], $params['clang']);
 
-        Extension::registerPoint(new ExtensionPoint('ART_META_UPDATED', '', $params));
+        Extension::dispatch(new ExtensionPoint('ART_META_UPDATED', '', $params));
 
         return $params;
     }

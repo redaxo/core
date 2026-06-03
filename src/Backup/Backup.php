@@ -26,12 +26,14 @@ use function Redaxo\Core\View\escape;
 use function sprintf;
 use function strlen;
 
-class Backup
+final class Backup
 {
-    public const IMPORT_ARCHIVE = 1;
-    public const IMPORT_DB = 2;
-    public const IMPORT_EVENT_PRE = 3;
-    public const IMPORT_EVENT_POST = 4;
+    public const int IMPORT_ARCHIVE = 1;
+    public const int IMPORT_DB = 2;
+    public const int IMPORT_EVENT_PRE = 3;
+    public const int IMPORT_EVENT_POST = 4;
+
+    private function __construct() {}
 
     /** @return string */
     public static function getDir()
@@ -155,7 +157,7 @@ class Backup
         // ----- EXTENSION POINT
         $filesize = filesize($filename);
         $msg = '';
-        $msg = Extension::registerPoint(new ExtensionPoint('BACKUP_BEFORE_DB_IMPORT', $msg, [
+        $msg = Extension::dispatch(new ExtensionPoint('BACKUP_BEFORE_DB_IMPORT', $msg, [
             'content' => $conts,
             'filename' => $filename,
             'filesize' => $filesize,
@@ -192,7 +194,7 @@ class Backup
         Config::refresh();
 
         // ----- EXTENSION POINT
-        $msg = Extension::registerPoint(new ExtensionPoint('BACKUP_AFTER_DB_IMPORT', $msg, [
+        $msg = Extension::dispatch(new ExtensionPoint('BACKUP_AFTER_DB_IMPORT', $msg, [
             'content' => $conts,
             'filename' => $filename,
             'filesize' => $filesize,
@@ -233,7 +235,7 @@ class Backup
          * @var Tar $tar
          * @psalm-ignore-var
          */
-        $tar = Extension::registerPoint(new ExtensionPoint('BACKUP_BEFORE_FILE_IMPORT', $tar));
+        $tar = Extension::dispatch(new ExtensionPoint('BACKUP_BEFORE_FILE_IMPORT', $tar));
 
         // require import skript to do some userside-magic
         self::importScript(str_replace('.tar.gz', '.php', $filename), self::IMPORT_ARCHIVE, self::IMPORT_EVENT_PRE);
@@ -243,7 +245,7 @@ class Backup
         $msg = I18n::msg('backup_file_imported') . '<br />';
 
         // ----- EXTENSION POINT
-        Extension::registerPoint(new ExtensionPoint('BACKUP_AFTER_FILE_IMPORT', $tar));
+        Extension::dispatch(new ExtensionPoint('BACKUP_AFTER_FILE_IMPORT', $tar));
 
         // require import skript to do some userside-magic
         self::importScript(str_replace('.tar.gz', '.php', $filename), self::IMPORT_ARCHIVE, self::IMPORT_EVENT_POST);
@@ -282,7 +284,7 @@ class Backup
         $insertSize = 4000;
 
         // ----- EXTENSION POINT
-        Extension::registerPoint(new ExtensionPoint('BACKUP_BEFORE_DB_EXPORT'));
+        Extension::dispatch(new ExtensionPoint('BACKUP_BEFORE_DB_EXPORT'));
 
         // Versionsstempel hinzufügen
         fwrite($fp, '## Redaxo Database Dump Version ' . Core::getVersion('%s') . $nl);
@@ -338,11 +340,11 @@ class Backup
         $hasContent = true;
 
         // Den Dateiinhalt geben wir nur dann weiter, wenn es unbedingt notwendig ist.
-        if (Extension::isRegistered('BACKUP_AFTER_DB_EXPORT')) {
+        if (Extension::hasExtensions('BACKUP_AFTER_DB_EXPORT')) {
             $content = File::require($filename);
             $hashBefore = md5($content);
             // ----- EXTENSION POINT
-            $content = Extension::registerPoint(new ExtensionPoint('BACKUP_AFTER_DB_EXPORT', $content));
+            $content = Extension::dispatch(new ExtensionPoint('BACKUP_AFTER_DB_EXPORT', $content));
             $hashAfter = md5($content);
 
             if ($hashAfter != $hashBefore) {
@@ -410,14 +412,14 @@ class Backup
         $tar->create($archivePath);
 
         // ----- EXTENSION POINT
-        $tar = Extension::registerPoint(new ExtensionPoint('BACKUP_BEFORE_FILE_EXPORT', $tar));
+        $tar = Extension::dispatch(new ExtensionPoint('BACKUP_BEFORE_FILE_EXPORT', $tar));
 
         foreach ($folders as $item) {
             self::addFolderToTar($tar, Url::frontend(), $item);
         }
 
         // ----- EXTENSION POINT
-        $tar = Extension::registerPoint(new ExtensionPoint('BACKUP_AFTER_FILE_EXPORT', $tar));
+        $tar = Extension::dispatch(new ExtensionPoint('BACKUP_AFTER_FILE_EXPORT', $tar));
 
         $tar->close();
     }

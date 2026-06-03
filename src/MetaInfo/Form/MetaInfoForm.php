@@ -31,10 +31,10 @@ use function strlen;
 /**
  * @internal
  */
-class MetaInfoForm extends Form
+final class MetaInfoForm extends Form
 {
-    private string $metaPrefix;
-    private Table $tableManager;
+    private readonly string $metaPrefix;
+    private readonly Table $tableManager;
 
     /** @param 'post'|'get' $method */
     public function __construct(string $metaPrefix, string $metaTable, string $tableName, string $whereCondition, string $method = 'post', bool $debug = false)
@@ -51,7 +51,7 @@ class MetaInfoForm extends Form
 
         // ----- EXTENSION POINT
         // IDs aller Feldtypen bei denen das Parameter-Feld eingeblendet werden soll
-        $typeFields = Extension::registerPoint(new ExtensionPoint('METAINFO_TYPE_FIELDS', [Table::FIELD_SELECT, Table::FIELD_RADIO, Table::FIELD_CHECKBOX, Table::FIELD_REX_MEDIA_WIDGET, Table::FIELD_REX_LINK_WIDGET, Table::FIELD_DATE, Table::FIELD_DATETIME]));
+        $typeFields = Extension::dispatch(new ExtensionPoint('METAINFO_TYPE_FIELDS', [Table::FIELD_SELECT, Table::FIELD_RADIO, Table::FIELD_CHECKBOX, Table::FIELD_REX_MEDIA_WIDGET, Table::FIELD_REX_LINK_WIDGET, Table::FIELD_DATE, Table::FIELD_DATETIME]));
 
         $field = $this->addReadOnlyField('prefix', $this->metaPrefix);
         $field->setLabel(I18n::msg('minfo_field_label_prefix'));
@@ -268,7 +268,7 @@ class MetaInfoForm extends Form
         return parent::validate();
     }
 
-    protected function save()
+    protected function save(): bool
     {
         $fieldName = $this->elementPostValue($this->getFieldsetName(), 'name');
         assert(null !== $fieldName);
@@ -324,7 +324,7 @@ class MetaInfoForm extends Form
         return $this->metaPrefix;
     }
 
-    protected function organizePriorities(int $newPrio, int $oldPrio): void
+    private function organizePriorities(int $newPrio, int $oldPrio): void
     {
         if ($newPrio == $oldPrio) {
             return;

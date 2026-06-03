@@ -2,6 +2,7 @@
 
 use Redaxo\Core\Core;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Timer;
@@ -9,20 +10,20 @@ use Redaxo\Core\Util\Timer;
 /**
  * @internal
  */
-class rex_extension_debug extends Extension
+final class rex_extension_debug extends Extension
 {
     private static array $extensionPoints = [];
     private static array $extensions = [];
     private static array $listeners = [];
 
-    public static function registerPoint(ExtensionPoint $extensionPoint)
+    public static function dispatch(ExtensionPoint $extensionPoint): mixed
     {
         $coreTimer = Core::getProperty('timer');
         $absDur = $coreTimer->getDelta();
 
         $timer = new Timer();
         $epStart = microtime(true);
-        $res = parent::registerPoint($extensionPoint);
+        $res = parent::dispatch($extensionPoint);
         $epEnd = microtime(true);
         $epDur = $timer->getDelta();
 
@@ -30,10 +31,10 @@ class rex_extension_debug extends Extension
 
         self::$extensionPoints[] = [
             '#' => count(self::$extensionPoints),
-            'ep' => $extensionPoint->getName(),
-            'subject' => $extensionPoint->getSubject(),
+            'ep' => $extensionPoint->name,
+            'subject' => $extensionPoint->subject,
             'params' => $extensionPoint->getParams() ?: '',
-            'read_only' => $extensionPoint->isReadonly(),
+            'read_only' => $extensionPoint->readonly,
             'started at (ms)' => $absDur,
             'duration (ms)' => $epDur,
             'memory' => $memory,
@@ -41,11 +42,11 @@ class rex_extension_debug extends Extension
         ];
 
         $data = rex_debug::getTrace([Extension::class]);
-        $data['listeners'] = self::$listeners[$extensionPoint->getName()] ?? [];
+        $data['listeners'] = self::$listeners[$extensionPoint->name] ?? [];
 
         rex_debug_clockwork::getInstance()
-            ->event('EP: ' . $extensionPoint->getName(), [
-                'subject' => $extensionPoint->getSubject(),
+            ->event('EP: ' . $extensionPoint->name, [
+                'subject' => $extensionPoint->subject,
                 'params' => $extensionPoint->getParams(),
                 'result' => $res,
                 'start' => $epStart,
@@ -56,9 +57,9 @@ class rex_extension_debug extends Extension
         return $res;
     }
 
-    public static function register($extensionPoint, callable $extension, $level = self::NORMAL, array $params = [])
+    public static function register(string|array $extensionPoint, callable $extension, ExtensionLevel $level = ExtensionLevel::Normal): void
     {
-        parent::register($extensionPoint, $extension, $level, $params);
+        parent::register($extensionPoint, $extension, $level);
 
         $trace = rex_debug::getTrace([Extension::class]);
         if (!is_array($extensionPoint)) {

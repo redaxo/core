@@ -11,7 +11,7 @@ use function count;
 /**
  * @internal
  */
-class StructureContext
+final readonly class StructureContext
 {
     private array $params;
 
@@ -119,7 +119,7 @@ class StructureContext
      *
      * @return mixed
      */
-    protected function getValue($key, $default)
+    private function getValue($key, $default)
     {
         return $this->params[$key] ?? $default;
     }

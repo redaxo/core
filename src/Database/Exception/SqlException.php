@@ -10,18 +10,12 @@ use Throwable;
 
 class SqlException extends RuntimeException implements Exception
 {
-    private ?Sql $sql;
-
-    public function __construct(string $message, ?Throwable $previous = null, ?Sql $sql = null)
-    {
+    public function __construct(
+        string $message,
+        ?Throwable $previous = null,
+        final public readonly ?Sql $sql = null,
+    ) {
         parent::__construct($message, $previous);
-
-        $this->sql = $sql;
-    }
-
-    public function getSql(): ?Sql
-    {
-        return $this->sql;
     }
 
     /** Returns the mysql native error code. */

@@ -39,7 +39,7 @@ if (Core::requireUser()->getComplexPerm('media')->hasAll()) {
 }
 
 // ----- EXTENSION POINT
-echo Extension::registerPoint(new ExtensionPoint('PAGE_MEDIAPOOL_HEADER', '', [
+echo Extension::dispatch(new ExtensionPoint('PAGE_MEDIAPOOL_HEADER', '', [
     'subpage' => $subpage,
     'category_id' => $rexFileCategory,
 ]));
@@ -77,7 +77,7 @@ $context = new Context([
 ]);
 
 // ----- EXTENSION POINT
-$toolbar = Extension::registerPoint(new ExtensionPoint('MEDIA_LIST_TOOLBAR', $toolbar, [
+$toolbar = Extension::dispatch(new ExtensionPoint('MEDIA_LIST_TOOLBAR', $toolbar, [
     'subpage' => $subpage,
     'category_id' => $rexFileCategory,
 ]));

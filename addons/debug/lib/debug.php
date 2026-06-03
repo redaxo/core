@@ -7,7 +7,7 @@ use Redaxo\Core\Log\Logger;
 /**
  * @internal
  */
-class rex_debug
+final class rex_debug
 {
     /** @var list<class-string> */
     private static array $ignoreClasses = [

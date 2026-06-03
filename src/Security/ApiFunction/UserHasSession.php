@@ -13,7 +13,7 @@ use Redaxo\Core\Http\Response;
  * @internal
  */
 #[AsApiFunction('user_has_session')]
-class UserHasSession extends ApiFunction
+final class UserHasSession extends ApiFunction
 {
     // this action supports to be callable by 3rd party apps, which can't know our valid csrf token
     protected bool $requiresCsrfProtection = false;

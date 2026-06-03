@@ -2,7 +2,7 @@
 
 namespace Redaxo\Core\Backend;
 
-class MainPage extends Page
+final class MainPage extends Page
 {
     private string $block;
     private int $prio = 0;

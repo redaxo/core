@@ -2090,12 +2090,6 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Cronjob/Form/IntervalField.php">
-    <FalsableReturnStatement>
-      <code><![CDATA[json_encode($save)]]></code>
-    </FalsableReturnStatement>
-    <InvalidFalsableReturnType>
-      <code><![CDATA[getSaveValue]]></code>
-    </InvalidFalsableReturnType>
     <MixedArgument>
       <code><![CDATA[$value[$key]]]></code>
     </MixedArgument>
@@ -2215,6 +2209,7 @@
     </InvalidFalsableReturnType>
     <LessSpecificReturnStatement>
       <code><![CDATA[$sql->getValue('Create Table')]]></code>
+      <code><![CDATA[$this]]></code>
       <code><![CDATA[$this->getConnection()->quote($value)]]></code>
     </LessSpecificReturnStatement>
     <MixedArgument>
@@ -2319,11 +2314,6 @@
       <code><![CDATA[$frame['function']]]></code>
       <code><![CDATA[$frame['type']]]></code>
     </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="src/ExtensionPoint/Extension.php">
-    <InvalidCast>
-      <code><![CDATA[$level]]></code>
-    </InvalidCast>
   </file>
   <file src="src/Filesystem/DefaultPathProvider.php">
     <LessSpecificReturnStatement>
@@ -2599,17 +2589,6 @@
       <code><![CDATA[$this->languageSupport['id']]]></code>
       <code><![CDATA[$this->languageSupport['id']]]></code>
     </MixedArgument>
-  </file>
-  <file src="src/Form/Select/ActionEventSelect.php">
-    <MixedArgument>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$options]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
   </file>
   <file src="src/Form/Select/CategorySelect.php">
     <MixedArgument>
@@ -3282,6 +3261,9 @@
     <MixedReturnTypeCoercion>
       <code><![CDATA[$this->getValue()]]></code>
     </MixedReturnTypeCoercion>
+    <PossiblyInvalidPropertyAssignmentValue>
+      <code><![CDATA[$value]]></code>
+    </PossiblyInvalidPropertyAssignmentValue>
   </file>
   <file src="src/MetaInfo/Form/Input/DateInput.php">
     <InvalidArgument>
@@ -3451,13 +3433,13 @@
       <code><![CDATA[setValue]]></code>
     </MixedMethodCall>
     <MixedOperand>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
       <code><![CDATA[$params['id']]]></code>
     </MixedOperand>
     <MixedReturnStatement>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedReturnStatement>
   </file>
   <file src="src/MetaInfo/Handler/LanguageHandler.php">
@@ -3475,12 +3457,12 @@
       <code><![CDATA[$params['activeItem']]]></code>
     </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
     <MixedReturnStatement>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedReturnStatement>
   </file>
   <file src="src/MetaInfo/Handler/MediaHandler.php">
@@ -3518,7 +3500,7 @@
     </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$catId]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[$warning]]></code>
@@ -4142,9 +4124,9 @@
       <code><![CDATA[$subjectActual]]></code>
     </MixedAssignment>
     <MixedOperand>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
-      <code><![CDATA[$ep->getSubject()]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
+      <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
   </file>
   <file src="tests/HttpClient/RequestTest.php">

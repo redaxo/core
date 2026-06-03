@@ -85,7 +85,7 @@ final class UserSetPasswordCommand extends AbstractCommand
             ->setValue('password_change_required', (int) $passwordChangeRequired)
             ->update();
 
-        Extension::registerPoint(new ExtensionPoint('PASSWORD_UPDATED', '', [
+        Extension::dispatch(new ExtensionPoint('PASSWORD_UPDATED', '', [
             'user_id' => $id,
             'user' => $user,
             'password' => $password,

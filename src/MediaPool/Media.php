@@ -126,7 +126,7 @@ final class Media
 
     public function getUrl(): string
     {
-        $url = Extension::registerPoint(new ExtensionPoint('MEDIA_URL_REWRITE', '', ['media' => $this]));
+        $url = Extension::dispatch(new ExtensionPoint('MEDIA_URL_REWRITE', '', ['media' => $this]));
         return $url ?: Url::media($this->fileName);
     }
 
@@ -192,6 +192,6 @@ final class Media
     /** Returns whether the element is permitted. */
     public function isPermitted(): bool
     {
-        return (bool) Extension::registerPoint(new ExtensionPoint('MEDIA_IS_PERMITTED', true, ['element' => $this]));
+        return (bool) Extension::dispatch(new ExtensionPoint('MEDIA_IS_PERMITTED', true, ['element' => $this]));
     }
 }

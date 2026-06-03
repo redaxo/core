@@ -79,7 +79,7 @@ class ArticleContentBase
         }
 
         // ----- EXTENSION POINT
-        Extension::registerPoint(new ExtensionPoint('ART_INIT', '', [
+        Extension::dispatch(new ExtensionPoint('ART_INIT', '', [
             'article' => $this,
             'article_id' => $articleId,
             'clang' => $this->clang,
@@ -313,7 +313,7 @@ class ArticleContentBase
 
         $output = $module->output($slice);
 
-        $output = Extension::registerPoint(new ExtensionPoint(
+        $output = Extension::dispatch(new ExtensionPoint(
             'SLICE_OUTPUT',
             $output,
             [
@@ -487,7 +487,7 @@ class ArticleContentBase
             ORDER BY {$prefix}article_slice.priority
             SQL;
 
-        $query = Extension::registerPoint(new ExtensionPoint('ART_SLICES_QUERY', $query, ['article' => $this]));
+        $query = Extension::dispatch(new ExtensionPoint('ART_SLICES_QUERY', $query, ['article' => $this]));
 
         $artDataSql = Sql::factory();
         $artDataSql->setDebug($this->debug);
@@ -541,7 +541,7 @@ class ArticleContentBase
                 // --------------- ENDE EINZELNER SLICE
 
                 // --------------- EP: SLICE_SHOW
-                $sliceContent = Extension::registerPoint(
+                $sliceContent = Extension::dispatch(
                     new ExtensionPoint(
                         'SLICE_SHOW',
                         $sliceContent,

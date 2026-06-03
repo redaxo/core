@@ -38,7 +38,7 @@ if (count($items) > 0) {
         $listItems[] = '<li>' . $listItem . '</li>';
     }
 
-    $listItems = Extension::registerPoint(new ExtensionPoint('META_NAVI', $listItems));
+    $listItems = Extension::dispatch(new ExtensionPoint('META_NAVI', $listItems));
 
     if (count($listItems) > 0) {
         echo '  <div class="rex-nav-meta">

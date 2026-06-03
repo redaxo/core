@@ -8,7 +8,7 @@ use Redaxo\Core\Filesystem\File;
 /**
  * @internal
  */
-class FileCompressor
+final class FileCompressor
 {
     /**
      * GZIPs a file on disk (appending .gz to the name).

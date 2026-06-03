@@ -21,8 +21,10 @@ use function in_array;
 use function is_int;
 use function is_string;
 
-class MetaInfo
+final class MetaInfo
 {
+    private function __construct() {}
+
     /**
      * Fügt einen neuen Feldtyp ein.
      *
@@ -251,7 +253,7 @@ class MetaInfo
     #[AsExtension('PAGE_CHECKED')]
     public static function extensionHandler(ExtensionPoint $ep)
     {
-        $page = $ep->getSubject();
+        $page = $ep->subject;
         $mainpage = Controller::getCurrentPagePart(1);
 
         // additional javascripts

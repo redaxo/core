@@ -6,7 +6,7 @@ use Redaxo\Core\Log\Logger;
 /**
  * @internal
  */
-class rex_logger_debug extends Logger
+final class rex_logger_debug extends Logger
 {
     public function log($level, string|Stringable $message, array $context = [], ?string $file = null, ?int $line = null, ?string $url = null): void
     {

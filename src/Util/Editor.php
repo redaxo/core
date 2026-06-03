@@ -79,7 +79,7 @@ class Editor
             $editorUrl = str_replace('%f', $filePath, $editorUrl);
         }
 
-        return Extension::registerPoint(new ExtensionPoint('EDITOR_URL', $editorUrl, [
+        return Extension::dispatch(new ExtensionPoint('EDITOR_URL', $editorUrl, [
             'file' => $filePath,
             'line' => (int) $line,
         ]));

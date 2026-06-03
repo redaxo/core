@@ -148,10 +148,10 @@ if (!Core::isSetup()) {
         Extension::register(
             ['ART_SLICES_COPY', 'SLICE_ADD', 'SLICE_UPDATE', 'SLICE_MOVE', 'SLICE_DELETE'],
             static function (ExtensionPoint $ep) {
-                $type = match ($ep->getName()) {
+                $type = match ($ep->name) {
                     'ART_SLICES_COPY' => 'slices_copy',
                     'SLICE_MOVE' => 'slice_' . $ep->getParam('direction'),
-                    default => strtolower($ep->getName()),
+                    default => strtolower($ep->name),
                 };
 
                 $articleId = $ep->getParam('article_id');

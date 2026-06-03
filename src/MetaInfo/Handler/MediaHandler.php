@@ -7,6 +7,7 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
@@ -21,7 +22,7 @@ use function in_array;
 /**
  * @internal
  */
-class MediaHandler extends AbstractHandler
+final class MediaHandler extends AbstractHandler
 {
     public const PREFIX = 'med_';
 
@@ -33,7 +34,7 @@ class MediaHandler extends AbstractHandler
     public static function isMediaInUse(ExtensionPoint $ep)
     {
         $params = $ep->getParams();
-        $warning = $ep->getSubject();
+        $warning = $ep->subject;
 
         $sql = Sql::factory();
         $sql->setQuery('SELECT `name`, `type_id` FROM `' . Core::getTablePrefix() . 'metainfo_field` WHERE `type_id` IN(6,7)');
@@ -191,13 +192,13 @@ class MediaHandler extends AbstractHandler
     public function extendForm(ExtensionPoint $ep)
     {
         $params = $ep->getParams();
-        $params['save'] = in_array($ep->getName(), ['MEDIA_ADDED', 'MEDIA_UPDATED'], true);
+        $params['save'] = in_array($ep->name, ['MEDIA_ADDED', 'MEDIA_UPDATED'], true);
 
         // Nur beim EDIT gibts auch ein Medium zum bearbeiten
-        if ('MEDIA_FORM_EDIT' == $ep->getName()) {
+        if ('MEDIA_FORM_EDIT' == $ep->name) {
             $params['activeItem'] = $params['media'];
             unset($params['media']);
-        } elseif ('MEDIA_ADDED' == $ep->getName()) {
+        } elseif ('MEDIA_ADDED' == $ep->name) {
             $sql = Sql::factory();
 
             $qry = 'SELECT id FROM ' . Core::getTablePrefix() . 'media WHERE filename=:filename';
@@ -209,7 +210,7 @@ class MediaHandler extends AbstractHandler
             }
         }
 
-        return $ep->getSubject() . parent::renderFormAndSave(self::PREFIX, $params);
+        return $ep->subject . parent::renderFormAndSave(self::PREFIX, $params);
     }
 }
 
@@ -218,7 +219,7 @@ $mediaHandler = new MediaHandler();
 Extension::register('MEDIA_FORM_EDIT', $mediaHandler->extendForm(...));
 Extension::register('MEDIA_FORM_ADD', $mediaHandler->extendForm(...));
 
-Extension::register('MEDIA_ADDED', $mediaHandler->extendForm(...), Extension::EARLY);
-Extension::register('MEDIA_UPDATED', $mediaHandler->extendForm(...), Extension::EARLY);
+Extension::register('MEDIA_ADDED', $mediaHandler->extendForm(...), ExtensionLevel::Early);
+Extension::register('MEDIA_UPDATED', $mediaHandler->extendForm(...), ExtensionLevel::Early);
 
 Extension::register('MEDIA_IS_IN_USE', MediaHandler::isMediaInUse(...));

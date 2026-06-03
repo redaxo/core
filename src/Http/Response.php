@@ -49,6 +49,8 @@ final class Response
     private static array $preloadFiles = [];
     private static string $nonce = '';
 
+    private function __construct() {}
+
     /** Sets the HTTP Status code. */
     public static function setStatus(string $httpStatus): void
     {
@@ -242,9 +244,9 @@ final class Response
     public static function sendPage(string $content): void
     {
         // ----- EXTENSION POINT
-        $content = Extension::registerPoint(new ExtensionPoint('OUTPUT_FILTER', $content));
+        $content = Extension::dispatch(new ExtensionPoint('OUTPUT_FILTER', $content));
 
-        $hasShutdownExtension = Extension::isRegistered('RESPONSE_SHUTDOWN');
+        $hasShutdownExtension = Extension::hasExtensions('RESPONSE_SHUTDOWN');
         if ($hasShutdownExtension) {
             self::$closeConnection = true;
         }
@@ -256,7 +258,7 @@ final class Response
             // unlock session
             session_write_close();
 
-            Extension::registerPoint(new ExtensionPoint('RESPONSE_SHUTDOWN', $content, [], true));
+            Extension::dispatch(new ExtensionPoint('RESPONSE_SHUTDOWN', $content, [], true));
         }
     }
 

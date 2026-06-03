@@ -13,7 +13,7 @@ use Redaxo\Core\Filesystem\Url;
 /**
  * @internal
  */
-class rex_debug_clockwork
+final class rex_debug_clockwork
 {
     /** @var VanillaClockwork|null */
     private static $instance;

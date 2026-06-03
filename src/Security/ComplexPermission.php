@@ -28,7 +28,7 @@ abstract class ComplexPermission
     final protected readonly string|array $perms;
 
     /** @param list<string>|self::ALL $perms */
-    protected function __construct(
+    final protected function __construct(
         /** @final */ protected readonly User $user,
         array|string $perms,
     ) {
@@ -96,12 +96,12 @@ abstract class ComplexPermission
     /** Should be called if an item is removed. */
     final public static function removeItem(string $key, int|string $item): void
     {
-        Extension::registerPoint(new ExtensionPoint('COMPLEX_PERM_REMOVE_ITEM', '', ['key' => $key, 'item' => $item], true));
+        Extension::dispatch(new ExtensionPoint('COMPLEX_PERM_REMOVE_ITEM', '', ['key' => $key, 'item' => $item], true));
     }
 
     /** Should be called if an item is replaced. */
     final public static function replaceItem(string $key, int|string $item, int|string $new): void
     {
-        Extension::registerPoint(new ExtensionPoint('COMPLEX_PERM_REPLACE_ITEM', '', ['key' => $key, 'item' => $item, 'new' => $new], true));
+        Extension::dispatch(new ExtensionPoint('COMPLEX_PERM_REPLACE_ITEM', '', ['key' => $key, 'item' => $item, 'new' => $new], true));
     }
 }

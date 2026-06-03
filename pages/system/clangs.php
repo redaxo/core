@@ -120,7 +120,7 @@ $content .= '
 // Add form
 if ('addclang' == $func) {
     // ----- EXTENSION POINT
-    $metaButtons = Extension::registerPoint(new ExtensionPoint('CLANG_FORM_BUTTONS', ''));
+    $metaButtons = Extension::dispatch(new ExtensionPoint('CLANG_FORM_BUTTONS', ''));
 
     // ggf wiederanzeige des add forms, falls ungueltige id uebermittelt
     $content .= '
@@ -136,7 +136,7 @@ if ('addclang' == $func) {
             ';
 
     // ----- EXTENSION POINT
-    $content .= Extension::registerPoint(new ExtensionPoint('CLANG_FORM_ADD', ''));
+    $content .= Extension::dispatch(new ExtensionPoint('CLANG_FORM_ADD', ''));
 }
 
 $sql = Sql::factory()->setQuery('SELECT * FROM ' . Core::getTable('clang') . ' ORDER BY priority');
@@ -154,7 +154,7 @@ foreach ($sql as $row) {
     // Edit form
     if ('editclang' == $func && $clangId == $langId) {
         // ----- EXTENSION POINT
-        $metaButtons = Extension::registerPoint(new ExtensionPoint('CLANG_FORM_BUTTONS', '', ['id' => $clangId, 'sql' => $sql]));
+        $metaButtons = Extension::dispatch(new ExtensionPoint('CLANG_FORM_BUTTONS', '', ['id' => $clangId, 'sql' => $sql]));
 
         $content .= '
                     <tr class="mark">
@@ -168,7 +168,7 @@ foreach ($sql as $row) {
                     </tr>';
 
         // ----- EXTENSION POINT
-        $content .= Extension::registerPoint(new ExtensionPoint('CLANG_FORM_EDIT', '', ['id' => $clangId, 'sql' => $sql]));
+        $content .= Extension::dispatch(new ExtensionPoint('CLANG_FORM_EDIT', '', ['id' => $clangId, 'sql' => $sql]));
     } else {
         $editLink = Url::currentBackendPage(['func' => 'editclang', 'clang_id' => $langId]) . '#clang';
 

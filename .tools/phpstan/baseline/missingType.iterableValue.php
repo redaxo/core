@@ -74,26 +74,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Content/ContentHandler.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ExtensionPoint\\SliceMenu::addAdditionalActions() has parameter $additionalActions with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ExtensionPoint/SliceMenu.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ExtensionPoint\\SliceMenu::getAdditionalActions() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ExtensionPoint/SliceMenu.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\ExtensionPoint\\SliceMenu::setAdditionalActions() has parameter $additionalActions with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ExtensionPoint/SliceMenu.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property Redaxo\\Core\\Content\\ExtensionPoint\\SliceMenu::$additionalActions type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/ExtensionPoint/SliceMenu.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\Linkmap\\ArticleListRenderer::renderList() has parameter $articles with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/Linkmap/ArticleListRenderer.php',

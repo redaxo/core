@@ -10,7 +10,7 @@ use function sprintf;
 /**
  * @internal
  */
-class ArticleList extends ArticleListRenderer
+final class ArticleList extends ArticleListRenderer
 {
     /** @return string */
     protected function listItem(Article $article, $categoryId)

@@ -5,13 +5,14 @@ namespace Redaxo\Core\MetaInfo\Handler;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
 
 /**
  * @internal
  */
-class LanguageHandler extends AbstractHandler
+final class LanguageHandler extends AbstractHandler
 {
     public const PREFIX = 'clang_';
     public const CONTAINER = 'rex-clang-metainfo';
@@ -23,10 +24,10 @@ class LanguageHandler extends AbstractHandler
         if ($fields->getRows() >= 1) {
             $return = '<a class="btn btn-default collapsed" data-toggle="collapse" href="#' . self::CONTAINER . '"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>';
 
-            return $ep->getSubject() . $return;
+            return $ep->subject . $return;
         }
 
-        return $ep->getSubject();
+        return $ep->subject;
     }
 
     /** @return array */
@@ -83,10 +84,10 @@ class LanguageHandler extends AbstractHandler
             </tr>';
 
         // Bei CLANG_ADDED und CLANG_UPDATED nur speichern und kein Formular zurückgeben
-        if ('CLANG_UPDATED' == $ep->getName() || 'CLANG_ADDED' == $ep->getName()) {
-            return $ep->getSubject();
+        if ('CLANG_UPDATED' == $ep->name || 'CLANG_ADDED' == $ep->name) {
+            return $ep->subject;
         }
-        return $ep->getSubject() . $result;
+        return $ep->subject . $result;
     }
 }
 
@@ -95,7 +96,7 @@ $languageHandler = new LanguageHandler();
 Extension::register('CLANG_FORM_ADD', $languageHandler->extendForm(...));
 Extension::register('CLANG_FORM_EDIT', $languageHandler->extendForm(...));
 
-Extension::register('CLANG_ADDED', $languageHandler->extendForm(...), Extension::EARLY);
-Extension::register('CLANG_UPDATED', $languageHandler->extendForm(...), Extension::EARLY);
+Extension::register('CLANG_ADDED', $languageHandler->extendForm(...), ExtensionLevel::Early);
+Extension::register('CLANG_UPDATED', $languageHandler->extendForm(...), ExtensionLevel::Early);
 
 Extension::register('CLANG_FORM_BUTTONS', $languageHandler->renderToggleButton(...));

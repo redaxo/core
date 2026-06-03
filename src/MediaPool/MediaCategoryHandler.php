@@ -42,7 +42,7 @@ final class MediaCategoryHandler
 
         MediaPoolCache::deleteCategoryList($parentId);
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_CATEGORY_ADDED', [
+        Extension::dispatch(new ExtensionPoint('MEDIA_CATEGORY_ADDED', [
             'id' => $db->getLastId(),
             'parent_id' => $parentId,
             'name' => $name,
@@ -75,7 +75,7 @@ final class MediaCategoryHandler
             throw new UserMessageException(I18n::msg('pool_kat_not_deleted'));
         }
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_CATEGORY_DELETED', ['id' => $categoryId]));
+        Extension::dispatch(new ExtensionPoint('MEDIA_CATEGORY_DELETED', ['id' => $categoryId]));
 
         return I18n::msg('pool_kat_deleted');
     }
@@ -85,7 +85,7 @@ final class MediaCategoryHandler
     {
         /** @var list<string> $warning */
         $warning = [];
-        $warning = Extension::registerPoint(new ExtensionPoint('MEDIA_CATEGORY_IS_IN_USE', $warning, [
+        $warning = Extension::dispatch(new ExtensionPoint('MEDIA_CATEGORY_IS_IN_USE', $warning, [
             'id' => $categoryId,
         ]));
 
@@ -116,7 +116,7 @@ final class MediaCategoryHandler
 
         MediaPoolCache::deleteCategory($categoryId);
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_CATEGORY_UPDATED', [
+        Extension::dispatch(new ExtensionPoint('MEDIA_CATEGORY_UPDATED', [
             'id' => $categoryId,
             'name' => $catName,
         ]));

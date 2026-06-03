@@ -31,7 +31,7 @@ abstract class AbstractCommand extends Command
      *
      * @return string A cli optimized message
      */
-    protected function decodeMessage(string $message): string
+    final protected function decodeMessage(string $message): string
     {
         $message = preg_replace('/<br ?\/?>\r?\n?/', "\n", $message);
         $message = strip_tags($message);

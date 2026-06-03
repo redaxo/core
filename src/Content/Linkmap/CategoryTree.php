@@ -11,10 +11,10 @@ use function Redaxo\Core\View\escape;
 /**
  * @internal
  */
-class CategoryTree extends CategoryTreeRenderer
+final class CategoryTree extends CategoryTreeRenderer
 {
     public function __construct(
-        private Context $context,
+        private readonly Context $context,
     ) {}
 
     /** @return string */

@@ -13,10 +13,10 @@ use function sprintf;
  *
  * @extends AbstractInput<array{hour: numeric-string, minute: numeric-string, year?: numeric-string, month?: numeric-string, day?: numeric-string}>
  */
-class TimeInput extends AbstractInput
+final class TimeInput extends AbstractInput
 {
-    private Select $hourSelect;
-    private Select $minuteSelect;
+    private readonly Select $hourSelect;
+    private readonly Select $minuteSelect;
 
     public function __construct()
     {

@@ -9,7 +9,7 @@ use Redaxo\Core\Form\Form;
 /**
  * @internal
  */
-class CronjobForm extends Form
+final class CronjobForm extends Form
 {
     /** @var string */
     private $mainFieldset;

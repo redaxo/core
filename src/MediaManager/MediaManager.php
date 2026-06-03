@@ -6,6 +6,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
@@ -27,7 +28,7 @@ use const DIRECTORY_SEPARATOR;
 use const GLOB_NOSORT;
 use const PHP_SESSION_ACTIVE;
 
-class MediaManager
+final class MediaManager
 {
     /**
      * status of a system mediatyp.
@@ -107,18 +108,18 @@ class MediaManager
      * @param string $type
      * @return void
      */
-    protected function applyEffects($type)
+    private function applyEffects($type)
     {
         $this->type = $type;
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_MANAGER_INIT', $this, [
+        Extension::dispatch(new ExtensionPoint('MEDIA_MANAGER_INIT', $this, [
             'type' => $type,
             'file' => $this->originalFilename,
         ], true));
 
         if (!$this->isCached()) {
             $set = $this->effectsFromType($type);
-            $set = Extension::registerPoint(new ExtensionPoint('MEDIA_MANAGER_FILTERSET', $set, ['rex_media_type' => $type]));
+            $set = Extension::dispatch(new ExtensionPoint('MEDIA_MANAGER_FILTERSET', $set, ['rex_media_type' => $type]));
 
             if (0 == count($set)) {
                 $this->useCache = false;
@@ -229,15 +230,6 @@ class MediaManager
     public function getCachePath()
     {
         return $this->cachePath;
-    }
-
-    /**
-     * @param bool $useCache
-     * @return void
-     */
-    protected function useCache($useCache = true)
-    {
-        $this->useCache = $useCache;
     }
 
     /** @return bool */
@@ -354,7 +346,7 @@ class MediaManager
     /** @return never */
     public function sendMedia()
     {
-        Extension::registerPoint(new ExtensionPoint('MEDIA_MANAGER_BEFORE_SEND', $this, []));
+        Extension::dispatch(new ExtensionPoint('MEDIA_MANAGER_BEFORE_SEND', $this, []));
 
         Response::cleanOutputBuffers();
 
@@ -397,7 +389,7 @@ class MediaManager
             $this->media->sendMedia($CacheFilename, $headerCacheFilename, $this->useCache);
         }
 
-        Extension::registerPoint(new ExtensionPoint('MEDIA_MANAGER_AFTER_SEND', $this, []));
+        Extension::dispatch(new ExtensionPoint('MEDIA_MANAGER_AFTER_SEND', $this, []));
 
         exit;
     }
@@ -469,7 +461,7 @@ class MediaManager
     public static function mediaIsInUse(ExtensionPoint $ep)
     {
         /** @var list<string> $warning */
-        $warning = $ep->getSubject();
+        $warning = $ep->subject;
         $filename = $ep->getParam('filename');
         assert(is_string($filename));
 
@@ -501,7 +493,7 @@ class MediaManager
     }
 
     /** @return void */
-    #[AsExtension('PACKAGES_INCLUDED', level: Extension::EARLY)]
+    #[AsExtension('PACKAGES_INCLUDED', ExtensionLevel::Early)]
     public static function init()
     {
         // --- handle image request
@@ -567,7 +559,7 @@ class MediaManager
 
         $url = Url::frontendController($params);
 
-        return Extension::registerPoint(new ExtensionPoint('MEDIA_MANAGER_URL', $url, [
+        return Extension::dispatch(new ExtensionPoint('MEDIA_MANAGER_URL', $url, [
             'type' => $type,
             'file' => $file,
             'buster' => $params['buster'] ?? null,
