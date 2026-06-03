@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('category_delete')]
-class CategoryDelete extends ApiFunction
+final class CategoryDelete extends ApiFunction
 {
     public function execute(): Result
     {

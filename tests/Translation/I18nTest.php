@@ -9,7 +9,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Translation\I18n;
 
 /** @internal */
-class I18nTransCb
+final class I18nTransCb
 {
     public static function mytranslate(): string
     {

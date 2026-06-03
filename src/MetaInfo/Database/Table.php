@@ -8,20 +8,20 @@ use Redaxo\Core\Exception\InvalidArgumentException;
 /**
  * @internal
  */
-class Table
+final readonly class Table
 {
-    public const FIELD_TEXT = 1;
-    public const FIELD_TEXTAREA = 2;
-    public const FIELD_SELECT = 3;
-    public const FIELD_RADIO = 4;
-    public const FIELD_CHECKBOX = 5;
-    public const FIELD_REX_MEDIA_WIDGET = 6;
-    public const FIELD_REX_LINK_WIDGET = 8;
-    public const FIELD_DATE = 10;
-    public const FIELD_DATETIME = 11;
-    public const FIELD_LEGEND = 12;
-    public const FIELD_TIME = 13;
-    public const FIELD_COUNT = 13;
+    public const int FIELD_TEXT = 1;
+    public const int FIELD_TEXTAREA = 2;
+    public const int FIELD_SELECT = 3;
+    public const int FIELD_RADIO = 4;
+    public const int FIELD_CHECKBOX = 5;
+    public const int FIELD_REX_MEDIA_WIDGET = 6;
+    public const int FIELD_REX_LINK_WIDGET = 8;
+    public const int FIELD_DATE = 10;
+    public const int FIELD_DATETIME = 11;
+    public const int FIELD_LEGEND = 12;
+    public const int FIELD_TIME = 13;
+    public const int FIELD_COUNT = 13;
 
     /** @param positive-int $DBID */
     public function __construct(
@@ -46,7 +46,7 @@ class Table
     {
         $sql = Sql::factory($this->DBID);
 
-        $qry = 'ALTER TABLE ' . $sql->escapeIdentifier($this->getTableName()) . ' ADD ';
+        $qry = 'ALTER TABLE ' . $sql->escapeIdentifier($this->tableName) . ' ADD ';
         $qry .= $sql->escapeIdentifier($name);
 
         if (!ctype_alpha($type)) {
@@ -84,7 +84,7 @@ class Table
     {
         $sql = Sql::factory($this->DBID);
 
-        $qry = 'ALTER TABLE ' . $sql->escapeIdentifier($this->getTableName()) . ' CHANGE ';
+        $qry = 'ALTER TABLE ' . $sql->escapeIdentifier($this->tableName) . ' CHANGE ';
         $qry .= $sql->escapeIdentifier($oldname) . ' ' . $sql->escapeIdentifier($name);
 
         if (!ctype_alpha($type)) {
@@ -115,7 +115,7 @@ class Table
     {
         $sql = Sql::factory($this->DBID);
 
-        $qry = 'ALTER TABLE ' . $sql->escapeIdentifier($this->getTableName()) . ' DROP ';
+        $qry = 'ALTER TABLE ' . $sql->escapeIdentifier($this->tableName) . ' DROP ';
         $qry .= $sql->escapeIdentifier($name);
 
         $sql->setQuery($qry);
@@ -127,7 +127,7 @@ class Table
      */
     public function hasColumn($name)
     {
-        $columns = Sql::showColumns($this->getTableName(), $this->DBID);
+        $columns = Sql::showColumns($this->tableName, $this->DBID);
 
         foreach ($columns as $column) {
             if ($column['name'] == $name) {

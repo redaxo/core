@@ -13,7 +13,7 @@ use function is_array;
 /**
  * @internal
  */
-class RestrictionField extends SelectField
+final class RestrictionField extends SelectField
 {
     /** @var string */
     private $allCheckboxLabel;

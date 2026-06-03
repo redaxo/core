@@ -15,8 +15,10 @@ use Redaxo\Core\Translation\I18n;
 use function count;
 use function is_array;
 
-class ArticleHandler
+final class ArticleHandler
 {
+    private function __construct() {}
+
     /**
      * Erstellt einen neuen Artikel.
      *
@@ -901,7 +903,7 @@ class ArticleHandler
      * @throws ApiFunctionException
      * @return void
      */
-    protected static function reqKey($array, $keyName)
+    private static function reqKey($array, $keyName)
     {
         if (!isset($array[$keyName])) {
             throw new ApiFunctionException('Missing required parameter "' . $keyName . '"!');

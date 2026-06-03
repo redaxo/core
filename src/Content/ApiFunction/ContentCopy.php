@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('content_copy')]
-class ContentCopy extends ApiFunction
+final class ContentCopy extends ApiFunction
 {
     public function execute(): Result
     {

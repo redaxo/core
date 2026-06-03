@@ -28,7 +28,7 @@ abstract class ComplexPermission
     final protected readonly string|array $perms;
 
     /** @param list<string>|self::ALL $perms */
-    protected function __construct(
+    final protected function __construct(
         /** @final */ protected readonly User $user,
         array|string $perms,
     ) {

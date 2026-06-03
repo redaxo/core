@@ -21,8 +21,10 @@ use function in_array;
 use function is_int;
 use function is_string;
 
-class MetaInfo
+final class MetaInfo
 {
+    private function __construct() {}
+
     /**
      * Fügt einen neuen Feldtyp ein.
      *

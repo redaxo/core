@@ -11,7 +11,7 @@ abstract class AbstractType
 {
     /** @var array<string, mixed> */
     private array $params = [];
-    public protected(set) string $message = '';
+    final public protected(set) string $message = '';
 
     /**
      * @param class-string<AbstractType> $class

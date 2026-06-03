@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('article_edit')]
-class ArticleEdit extends ApiFunction
+final class ArticleEdit extends ApiFunction
 {
     public function execute(): Result
     {

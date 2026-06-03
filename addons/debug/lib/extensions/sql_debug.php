@@ -7,7 +7,7 @@ use Redaxo\Core\Util\Timer;
 /**
  * @internal
  */
-class rex_sql_debug extends Sql
+final class rex_sql_debug extends Sql
 {
     #[Override]
     public function setQuery(string $query, array $params = [], array $options = []): static

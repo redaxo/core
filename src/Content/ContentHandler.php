@@ -20,8 +20,10 @@ use Redaxo\Core\Translation\I18n;
 use function function_exists;
 use function sprintf;
 
-class ContentHandler
+final class ContentHandler
 {
+    private function __construct() {}
+
     /** @throws ApiFunctionException */
     public static function addSlice(int $articleId, int $clangId, int $ctypeId, string $moduleKey, array $data = []): string
     {

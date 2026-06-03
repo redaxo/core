@@ -13,7 +13,7 @@ use Redaxo\Core\Http\Request;
 /**
  * @internal
  */
-class ArticleHandler extends AbstractHandler
+final class ArticleHandler extends AbstractHandler
 {
     public const PREFIX = 'art_';
 

@@ -18,8 +18,10 @@ use function in_array;
 /**
  * Funktionensammlung für die Strukturverwaltung.
  */
-class CategoryHandler
+final class CategoryHandler
 {
+    private function __construct() {}
+
     /**
      * Erstellt eine neue Kategorie.
      *
@@ -559,7 +561,7 @@ class CategoryHandler
      * @throws ApiFunctionException
      * @return void
      */
-    protected static function reqKey(array $array, $keyName)
+    private static function reqKey(array $array, $keyName)
     {
         if (!isset($array[$keyName])) {
             throw new ApiFunctionException('Missing required parameter "' . $keyName . '"!');

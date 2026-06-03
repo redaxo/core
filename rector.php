@@ -109,7 +109,7 @@ return RectorConfig::configure()
         CodeQuality\NullsafeMethodCall\CleanupUnneededNullsafeOperatorRector::class,
         CodeQuality\Ternary\UnnecessaryTernaryExpressionRector::class,
         CodingStyle\ClassConst\RemoveFinalFromConstRector::class,
-        // CodingStyle\String_\SymplifyQuoteEscapeRector::class,
+        // CodingStyle\String_\SimplifyQuoteEscapeRector::class,
         Php55\ClassConstFetch\StaticToSelfOnFinalClassRector::class,
         Php70\StmtsAwareInterface\IfIssetToCoalescingRector::class,
         Php70\Ternary\TernaryToNullCoalescingRector::class,
@@ -119,8 +119,8 @@ return RectorConfig::configure()
         Php80\NotIdentical\StrContainsRector::class,
         Php80\Switch_\ChangeSwitchToMatchRector::class,
         Php81\Array_\ArrayToFirstClassCallableRector::class,
-        // Php81\Property\ReadOnlyPropertyRector::class,
-        // Php82\Class_\ReadOnlyClassRector::class,
+        Php81\Property\ReadOnlyPropertyRector::class,
+        Php82\Class_\ReadOnlyClassRector::class,
         Privatization\Class_\FinalizeTestCaseClassRector::class,
 
         // Own rules

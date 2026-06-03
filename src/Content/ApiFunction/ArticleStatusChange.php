@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('article_status_change')]
-class ArticleStatusChange extends ApiFunction
+final class ArticleStatusChange extends ApiFunction
 {
     public function execute(): Result
     {

@@ -48,6 +48,8 @@ final class Response
     private static array $preloadFiles = [];
     private static string $nonce = '';
 
+    private function __construct() {}
+
     /** Sets the HTTP Status code. */
     public static function setStatus(string $httpStatus): void
     {

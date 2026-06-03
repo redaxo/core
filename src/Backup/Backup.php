@@ -26,12 +26,14 @@ use function Redaxo\Core\View\escape;
 use function sprintf;
 use function strlen;
 
-class Backup
+final class Backup
 {
-    public const IMPORT_ARCHIVE = 1;
-    public const IMPORT_DB = 2;
-    public const IMPORT_EVENT_PRE = 3;
-    public const IMPORT_EVENT_POST = 4;
+    public const int IMPORT_ARCHIVE = 1;
+    public const int IMPORT_DB = 2;
+    public const int IMPORT_EVENT_PRE = 3;
+    public const int IMPORT_EVENT_POST = 4;
+
+    private function __construct() {}
 
     /** @return string */
     public static function getDir()

@@ -15,7 +15,7 @@ use const E_DEPRECATED;
  *
  * @internal
  */
-class Tar
+final readonly class Tar
 {
     private BaseTar $tar;
 
@@ -73,16 +73,9 @@ class Tar
         return true;
     }
 
-    /**
-     * Saves tar archive to a different file than the current file.
-     *
-     * @return bool|string
-     */
-    public function close()
+    public function close(): void
     {
         $this->tar->close();
-
-        return true;
     }
 
     /**

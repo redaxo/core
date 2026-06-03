@@ -13,14 +13,14 @@ use function sprintf;
  *
  * @extends AbstractInput<array{year: numeric-string, month: numeric-string, day: numeric-string, hour?: numeric-string, minute?: numeric-string}>
  */
-class DateInput extends AbstractInput
+final class DateInput extends AbstractInput
 {
     private ?int $startYear = null;
     private ?int $endYear = null;
 
-    private Select $yearSelect;
-    private Select $monthSelect;
-    private Select $daySelect;
+    private readonly Select $yearSelect;
+    private readonly Select $monthSelect;
+    private readonly Select $daySelect;
 
     public function __construct()
     {

@@ -9,8 +9,10 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
 
-class ArticleCache
+final class ArticleCache
 {
+    private function __construct() {}
+
     /**
      * Löscht die gecachten Dateien eines Artikels. Wenn keine clang angegeben, wird
      * der Artikel-Cache in allen Sprachen gelöscht.

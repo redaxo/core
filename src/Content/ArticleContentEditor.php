@@ -24,7 +24,7 @@ use function sprintf;
 /**
  * Erweiterung eines Artikels um slicemanagement.
  */
-class ArticleContentEditor extends ArticleContent
+final class ArticleContentEditor extends ArticleContent
 {
     /** @var array<int, list<array{name: string, key: string}>> */
     private $MODULESELECT;
@@ -390,7 +390,7 @@ class ArticleContentEditor extends ArticleContent
         return $articleContent;
     }
 
-    protected function addSlice(int $sliceId, string $moduleKey): string
+    private function addSlice(int $sliceId, string $moduleKey): string
     {
         $module = Module::get($moduleKey);
 
@@ -455,7 +455,7 @@ class ArticleContentEditor extends ArticleContent
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }
 
-    protected function editSlice(int $sliceId, ArticleSlice $slice, int $ctypeId, string $moduleKey, Sql $artDataSql): string
+    private function editSlice(int $sliceId, ArticleSlice $slice, int $ctypeId, string $moduleKey, Sql $artDataSql): string
     {
         $msg = '';
         if ($this->slice_id == $sliceId) {

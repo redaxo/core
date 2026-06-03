@@ -7,7 +7,7 @@ use Redaxo\Core\Exception\RuntimeException;
 use function in_array;
 use function sprintf;
 
-class Asset
+final class Asset
 {
     public const JS_DEFERED = 'defer';
     public const JS_ASYNC = 'async';
@@ -21,6 +21,8 @@ class Asset
     private static array $jsProperties = [];
     /** @var string */
     private static $favicon;
+
+    private function __construct() {}
 
     /**
      * Adds a CSS file.

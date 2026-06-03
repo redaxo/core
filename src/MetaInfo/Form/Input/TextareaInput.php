@@ -9,7 +9,7 @@ use function Redaxo\Core\View\escape;
  *
  * @extends AbstractInput<string>
  */
-class TextareaInput extends AbstractInput
+final class TextareaInput extends AbstractInput
 {
     public function __construct()
     {

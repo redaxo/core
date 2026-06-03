@@ -2,8 +2,10 @@
 
 namespace Redaxo\Core\View;
 
-class Message
+final class Message
 {
+    private function __construct() {}
+
     /**
      * Returns an info message.
      *

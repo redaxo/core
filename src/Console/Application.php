@@ -32,7 +32,7 @@ use const E_ERROR;
 use const E_PARSE;
 use const E_RECOVERABLE_ERROR;
 
-class Application extends SymfonyApplication
+final class Application extends SymfonyApplication
 {
     public function __construct(
         private readonly AbstractProject $project,

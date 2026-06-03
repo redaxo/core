@@ -37,7 +37,7 @@ use const PHP_VERSION;
 /**
  * @internal
  */
-class Setup
+final class Setup
 {
     /** @var string */
     public const MIN_PHP_VERSION = REX_MIN_PHP_VERSION;
@@ -52,6 +52,8 @@ class Setup
     public const DB_MODE_SETUP_AND_OVERRIDE = 1;
     public const DB_MODE_SETUP_SKIP = 2;
     public const DB_MODE_SETUP_IMPORT_BACKUP = 3;
+
+    private function __construct() {}
 
     /**
      * very basic setup steps, so everything is in place for our browser-based setup wizard.

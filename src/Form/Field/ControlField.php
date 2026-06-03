@@ -14,11 +14,11 @@ class ControlField extends BaseField
 {
     public function __construct(
         AbstractForm $form,
-        private ?BaseField $saveElement = null,
-        private ?BaseField $applyElement = null,
-        private ?BaseField $deleteElement = null,
-        private ?BaseField $resetElement = null,
-        private ?BaseField $abortElement = null,
+        private readonly ?BaseField $saveElement = null,
+        private readonly ?BaseField $applyElement = null,
+        private readonly ?BaseField $deleteElement = null,
+        private readonly ?BaseField $resetElement = null,
+        private readonly ?BaseField $abortElement = null,
     ) {
         parent::__construct('', $form);
     }

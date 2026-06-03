@@ -2,9 +2,9 @@
 
 namespace Redaxo\Core\Log;
 
-class LogEntry
+final readonly class LogEntry
 {
-    public const DATE_FORMAT = 'Y-m-d\TH:i:sP';
+    public const string DATE_FORMAT = 'Y-m-d\TH:i:sP';
 
     private int $timestamp;
 

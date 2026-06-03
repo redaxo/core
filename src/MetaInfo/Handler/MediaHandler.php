@@ -22,7 +22,7 @@ use function in_array;
 /**
  * @internal
  */
-class MediaHandler extends AbstractHandler
+final class MediaHandler extends AbstractHandler
 {
     public const PREFIX = 'med_';
 

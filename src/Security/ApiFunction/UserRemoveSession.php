@@ -16,7 +16,7 @@ use Redaxo\Core\Translation\I18n;
  * @internal
  */
 #[AsApiFunction('user_remove_session')]
-class UserRemoveSession extends ApiFunction
+final class UserRemoveSession extends ApiFunction
 {
     public function execute(): Result
     {

@@ -25,8 +25,10 @@ use function ini_get;
 use function is_array;
 use function is_string;
 
-class View
+final class View
 {
+    private function __construct() {}
+
     /**
      * Returns a toolbar.
      *
