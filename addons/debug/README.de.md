@@ -17,17 +17,29 @@ gerenderte Ansichten und mehr - für HTTP-Anfragen, Befehle, Warteschlangenjobs 
 Es kann sowohl direkt im Browser, als auch mit einer separaten Browser-Erweiterung verwendet werden.
 Eine ausführliche Beschreibung und die Informationen zu optionalen Browser-Erweiterung sind auf der [Clockwork-Website](https://underground.works/clockwork) verfügbar.
 
-Das AddOn integriert Informationen zu folgenden Klassen in Clockwork:
-- `Redaxo\Core\Database\Sql`
-- `rex_logger`
-- `rex_timer`
-- `rex_extension/rex_extension_point`
+## Installation
 
-Um eigenen PHP-Code in Clockwork sichtbar zu machen und damit zu analysieren, kann dieser mittels `rex_timer` gemessen werden:
+Das Addon ist nur für die Entwicklung gedacht. Es wird als Dev-Dependency hinzugefügt und über die REDAXO-Console installiert:
+
+```bash
+composer require --dev redaxo/debug:^2.0@dev
+bin/console addon:install debug
+```
+
+## Verwendung
+
+Das Addon integriert Informationen zu folgenden Klassen in Clockwork:
+- `Redaxo\Core\Database\Sql`
+- `Redaxo\Core\Log\Logger`
+- `Redaxo\Core\Util\Timer`
+- `Redaxo\Core\ExtensionPoint\Extension` / `Redaxo\Core\ExtensionPoint\ExtensionPoint`
+
+Um eigenen PHP-Code in Clockwork sichtbar zu machen und damit zu analysieren, kann dieser mittels `Redaxo\Core\Util\Timer` gemessen werden:
 
 ```php
-<?php
-    rex_timer::measure('ein-repraesentatives-label', function() {
-        // beliebiger php-code
-    });
+use Redaxo\Core\Util\Timer;
+
+Timer::measure('ein-repraesentatives-label', function () {
+    // beliebiger php-code
+});
 ```
