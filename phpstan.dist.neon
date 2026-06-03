@@ -10,16 +10,23 @@ parameters:
     featureToggles:
         internalTag: false
     paths:
-        - .tools/project
+        - .php-cs-fixer.dist.php
+        - .tools/fixtures
         - addons
+        - assets_src/vendor_files.php
         - boot
         - fragments
         - pages
+        - project/bin/console
+        - project/public
+        - project/src
+        - rector.php
         - setup
         - src
         - tests
     excludePaths:
-        - .tools/project/var
+        # Composer script handler — uses Composer's runtime API (not in the dependency tree).
+        - src/Composer/ScriptHandler.php
     # https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Redaxo\Core\View\Fragment

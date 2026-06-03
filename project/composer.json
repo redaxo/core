@@ -1,0 +1,43 @@
+{
+    "name": "redaxo/project",
+    "type": "project",
+    "description": "REDAXO project skeleton for `composer create-project`",
+    "keywords": ["redaxo", "cms", "skeleton", "project"],
+    "homepage": "https://redaxo.org",
+    "authors": [
+        {
+            "name": "Yakamara Media GmbH & Co. KG",
+            "homepage": "https://yakamara.de"
+        },
+        {
+            "name": "REDAXO team & community",
+            "homepage": "https://redaxo.org"
+        }
+    ],
+    "license": "MIT",
+
+    "require": {
+        "php": "^8.5",
+        "redaxo/core": "^6.0@dev",
+        "symfony/runtime": "^8.1"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Project\\": "src/"
+        }
+    },
+
+    "scripts": {
+        "post-create-project-cmd": "Redaxo\\Core\\Composer\\ScriptHandler::postCreateProject"
+    },
+
+    "config": {
+        "allow-plugins": {
+            "symfony/runtime": true
+        },
+        "sort-packages": true
+    },
+
+    "prefer-stable": true
+}

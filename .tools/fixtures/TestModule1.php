@@ -1,6 +1,6 @@
 <?php
 
-namespace Project\Module;
+namespace Redaxo\Core\Fixtures;
 
 use Override;
 use Redaxo\Core\Content\ArticleSlice;

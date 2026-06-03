@@ -46,8 +46,9 @@ abstract class AbstractProject implements RunnerInterface
     }
 
     /** @var non-empty-string */
-    public string $corePath {
-        get => $this->corePath ??= $this->projectPath . '/vendor/redaxo/core';
+    final public string $corePath {
+        // The directory of the core itself (this file lives in core's src/).
+        get => dirname(__DIR__);
     }
 
     /** @var non-empty-string */

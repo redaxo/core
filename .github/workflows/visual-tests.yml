@@ -94,37 +94,37 @@ jobs:
                 run: |
                     sudo /etc/init.d/mysql start
                     mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo6;'
-                    php .tools/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
-                    php .tools/bin/console config:set --type boolean debug.enabled true -v
-                    php .tools/bin/console config:set --type boolean debug.throw_always_exception true -v
-                    php .tools/bin/console addon:install test -v
+                    php project/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
+                    php project/bin/console config:set --type boolean debug.enabled true -v
+                    php project/bin/console config:set --type boolean debug.throw_always_exception true -v
+                    php project/bin/console addon:install test -v
 
             -   name: Import mock data
                 run: |
-                    mkdir -p $GITHUB_WORKSPACE/.tools/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/.tools/project/var/data/core/backup/
-                    cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/.tools/project/public/media/
+                    mkdir -p $GITHUB_WORKSPACE/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/project/var/data/core/backup/
+                    cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/project/public/media/
                     cp -f .tools/visual-tests/fixtures/README.md $GITHUB_WORKSPACE/addons/test/README.de.md
-                    php .tools/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
+                    php project/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
             -   name: Install packages
                 run: |
-                    php .tools/bin/console addon:install debug --ansi -v
+                    php project/bin/console addon:install debug --ansi -v
 
             -   name: Start php server
                 run: |
-                    cat <<EOF > .tools/project/public/router.php
+                    cat <<EOF > project/public/router.php
                     <?php
                     if (preg_match('@redaxo/(?:bin|data|cache|src)@', \$_SERVER['REQUEST_URI'])) http_response_code(403);
                     else return false;
                     EOF
-                    PHP_CLI_SERVER_WORKERS=4 php -S localhost:8080 -t .tools/project/public/ .tools/project/public/router.php &
+                    PHP_CLI_SERVER_WORKERS=4 php -S localhost:8080 -t project/public/ project/public/router.php &
 
             -   name: Take screenshots (differential)
                 run: |
-                    php .tools/bin/console config:set setup true -t boolean --ansi -v
-                    php .tools/bin/console cache:clear --ansi -v
+                    php project/bin/console config:set setup true -t boolean --ansi -v
+                    php project/bin/console cache:clear --ansi -v
                     node .tools/visual-tests/visual-record.js setup
-                    php .tools/bin/console config:set setup false -t boolean --ansi -v
-                    php .tools/bin/console cache:clear --ansi -v
+                    php project/bin/console config:set setup false -t boolean --ansi -v
+                    php project/bin/console cache:clear --ansi -v
                     node .tools/visual-tests/visual-record.js
                     git add .tools/visual-tests/screenshots/
                     git diff --cached --exit-code --name-only .tools/visual-tests/screenshots/

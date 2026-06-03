@@ -12,7 +12,7 @@ curl -# https://cdn.jsdelivr.net/gh/jquery/jquery@3/dist/jquery.min.map > assets
 #printf "\nUpdate assets/jquery-pjax.min.js\n"
 #curl -#d output_info=compiled_code -d compilation_level=SIMPLE_OPTIMIZATIONS -d code_url=https://github.com/defunkt/jquery-pjax/raw/master/jquery.pjax.js https://closure-compiler.appspot.com/compile > assets/jquery-pjax.min.js
 
-cp assets/jquery-pjax.min.js .tools/project/public/assets/core
-cp assets/jquery.js .tools/project/public/assets/core
-cp assets/jquery.min.js .tools/project/public/assets/core
-cp assets/jquery.min.map .tools/project/public/assets/core
+cp assets/jquery-pjax.min.js project/public/assets/core
+cp assets/jquery.js project/public/assets/core
+cp assets/jquery.min.js project/public/assets/core
+cp assets/jquery.min.map project/public/assets/core

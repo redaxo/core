@@ -1,0 +1,17 @@
+# Document root.
+#
+# The project-root .htaccess denies access to everything by default.
+# This re-grants access for the public directory (and everything below it).
+
+<IfModule mod_authz_core.c>
+    # Apache 2.4+
+    Require all granted
+</IfModule>
+<IfModule !mod_authz_core.c>
+    # Apache 2.2 and earlier
+    Order allow,deny
+    Allow from all
+</IfModule>
+
+# Disable directory listings, e.g. of asset folders (needs AllowOverride Options).
+# Options -Indexes

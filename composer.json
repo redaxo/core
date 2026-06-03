@@ -60,6 +60,7 @@
         "rector/rector": "2.4.5",
         "redaxo/debug": "^2.0@dev",
         "redaxo/php-cs-fixer-config": "3.1.0",
+        "redaxo/project": "^6.0@dev",
         "redaxo/psalm-plugin": "2.2.0",
         "redaxo/test": "^1.0@dev",
         "shipmonk/phpstan-baseline-per-identifier": "2.3.0",
@@ -97,7 +98,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Project\\": ".tools/project/src",
+            "Redaxo\\Core\\Fixtures\\": ".tools/fixtures",
             "Redaxo\\Core\\Tests\\": "tests",
             "Redaxo\\Rector\\": ".tools/rector"
         }
@@ -161,7 +162,10 @@
             "@sa",
             "@phpunit",
             "@taint"
-        ]
+        ],
+
+        "post-install-cmd": "bash .tools/bin/init-project",
+        "post-update-cmd": "bash .tools/bin/init-project"
     },
     "scripts-descriptions": {
         "rebase-to-bugfix": "Rebase current branch onto bugfix",
@@ -210,6 +214,13 @@
             "url": "addons/test",
             "options": {
                 "versions": {"redaxo/test": "1.x-dev"}
+            }
+        },
+        {
+            "type": "path",
+            "url": "project",
+            "options": {
+                "versions": {"redaxo/project": "6.x-dev"}
             }
         }
     ]

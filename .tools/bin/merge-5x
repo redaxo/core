@@ -61,7 +61,7 @@ fi
 
 git commit --no-edit -m "Merge branch '5.x' into 6.x"
 
-.tools/bin/console assets:compile-styles
+project/bin/console assets:compile-styles
 composer cs-fixer
 composer sa
 

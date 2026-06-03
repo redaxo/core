@@ -3,14 +3,6 @@
 /node_modules/
 /vendor/
 
-# Local project for testing
-/.tools/project/*
-!/.tools/project/public/
-/.tools/project/public/*
-!/.tools/project/public/index.php
-!/.tools/project/public/redaxo/
-!/.tools/project/src/
-
 # PhpStorm setting
 /.idea/*
 !/.idea/encodings.xml

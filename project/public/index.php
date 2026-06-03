@@ -3,6 +3,6 @@
 use Project\Project;
 use Redaxo\Core\Environment;
 
-require_once dirname(__DIR__, 3) . '/vendor/autoload_runtime.php';
+require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
 return static fn (array $context) => new Project(Environment::Frontend);
