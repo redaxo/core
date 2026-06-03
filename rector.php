@@ -25,10 +25,12 @@ use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\FuncCall\RenameFunctionRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
+use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassAndConstFetch;
 use Rector\Renaming\ValueObject\RenameClassConstFetch;
+use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Transform\Rector\ConstFetch\ConstFetchToClassConstFetchRector;
 use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
@@ -545,7 +547,6 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getArticleId', 'articleId'),
         new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClangId', 'clangId'),
-        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getTemplateKey', 'templateKey'),
 
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
@@ -652,7 +653,6 @@ return RectorConfig::configure()
         new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setMode', 'mode'),
         new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setFunction', 'function'),
         new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setEval', 'eval'),
-        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setTemplateKey', 'templateKey'),
 
         new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
 
@@ -678,6 +678,18 @@ return RectorConfig::configure()
     ])
     ->withConfiguredRule(RedaxoRule\SetterCallToConstructorArgumentRector::class, [
         new SetterCallToConstructorArgument(ApiFunction\Result::class, 'setRequiresReboot', 'requiresReboot'),
+    ])
+    ->withConfiguredRule(RenamePropertyRector::class, [
+        new RenameProperty(Content\ArticleContentBase::class, 'article_id', 'articleId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'clang', 'clangId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'category_id', 'categoryId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'slice_id', 'sliceId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'getSlice', 'singleSliceId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'ctype', 'contentSectionId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'slice_revision', 'sliceRevision'),
+        new RenameProperty(Content\ArticleContentBase::class, 'template', 'templateKey'),
+        new RenameProperty(Content\ArticleContentBase::class, 'warning', 'error'),
+        new RenameProperty(Content\ArticleContentBase::class, 'info', 'success'),
     ])
     ->withConfiguredRule(ArgumentRemoverRector::class, [
         new ArgumentRemover(Util\Str::class, 'buildQuery', 1, null),

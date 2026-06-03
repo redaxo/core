@@ -22,8 +22,8 @@ if ($result = ApiFunction::factory()?->result) {
 }
 
 $CONT = new ArticleContentEditor($articleId, $clang);
-$CONT->info = $info;
-$CONT->warning = $warning;
+$CONT->success = $info;
+$CONT->error = $warning;
 $CONT->sliceId = $sliceId;
 $CONT->mode = 'edit';
 $CONT->eval = true;

@@ -28,13 +28,13 @@ use function sprintf;
  */
 class ArticleContentBase
 {
-    public string $warning = '';
-    public string $info = '';
+    public string $error = '';
+    public string $success = '';
     public bool $debug = false;
 
-    public protected(set) ?string $templateKey = null;
+    protected ?string $templateKey = null;
 
-    protected int $categoryId = 0;
+    protected ?int $categoryId = null;
 
     public int $sliceId = 0;
     protected int $singleSliceId = 0;
@@ -43,7 +43,7 @@ class ArticleContentBase
     /** @var 'add'|'edit'|'' */
     public string $function = '';
 
-    protected int $ctype = -1;
+    protected ?int $contentSectionId = null;
 
     public readonly int $clangId;
 
@@ -88,7 +88,8 @@ class ArticleContentBase
 
         $template = $this->getValue('template');
         $this->templateKey = $template ? (string) $template : null;
-        $this->categoryId = (int) $this->getValue('category_id');
+        $categoryId = (int) $this->getValue('category_id');
+        $this->categoryId = $categoryId > 0 ? $categoryId : null;
     }
 
     /**
@@ -228,28 +229,27 @@ class ArticleContentBase
     }
 
     /**
-     * Returns the content of the article of the given ctype. If no ctype is given, content of all ctypes is returned.
-     *
-     * @param int $curctype The ctype to fetch, or -1 for all ctypes
+     * Returns the content of the article of the given content section. If no content section is given (null),
+     * content of all content sections is returned.
      *
      * @throws ArticleNotFoundException
      * @return string
      */
-    public function getArticle($curctype = -1)
+    public function getArticle(?int $contentSectionId = null)
     {
-        $this->ctype = $curctype;
+        $this->contentSectionId = $contentSectionId;
 
-        if (0 == $this->articleId && 0 == $this->singleSliceId) {
+        if (0 === $this->articleId && 0 === $this->singleSliceId) {
             return I18n::msg('no_article_available');
         }
 
         $articleLimit = '';
-        if (0 != $this->articleId) {
+        if (0 !== $this->articleId) {
             $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . $this->articleId;
         }
 
         $sliceLimit = '';
-        if (0 != $this->singleSliceId) {
+        if (0 !== $this->singleSliceId) {
             $sliceLimit = ' AND ' . Core::getTablePrefix() . "article_slice.id = '" . $this->singleSliceId . "' ";
         }
         if ('edit' !== $this->mode) {
@@ -292,7 +292,7 @@ class ArticleContentBase
      */
     public function getArticleTemplate()
     {
-        if (null !== $this->templateKey && 0 != $this->articleId) {
+        if (null !== $this->templateKey && 0 !== $this->articleId) {
             $template = Template::get($this->templateKey);
 
             if (null === $template) {
@@ -387,12 +387,12 @@ class ArticleContentBase
             $sliceModuleKey = (string) $artDataSql->getValue($prefix . 'article_slice.module');
 
             // ----- ctype unterscheidung
-            if ('edit' != $this->mode && !$this->eval) {
-                if (0 == $i) {
-                    $articleContent = "<?php\n\nif (\$this->ctype == '" . $sliceCtypeId . "' || \$this->ctype == '-1') {\n";
-                } elseif (null !== $prevCtype && $sliceCtypeId != $prevCtype) {
-                    // ----- zwischenstand: ctype .. wenn ctype neu dann if
-                    $articleContent .= "}\n\nif (\$this->ctype == '" . $sliceCtypeId . "' || \$this->ctype == '-1') {\n";
+            if ('edit' !== $this->mode && !$this->eval) {
+                if (0 === $i) {
+                    $articleContent = "<?php\n\nif (null === \$this->contentSectionId || " . $sliceCtypeId . " === \$this->contentSectionId) {\n";
+                } elseif (null !== $prevCtype && $sliceCtypeId !== $prevCtype) {
+                    // ----- zwischenstand: content section .. wenn neu dann if
+                    $articleContent .= "}\n\nif (null === \$this->contentSectionId || " . $sliceCtypeId . " === \$this->contentSectionId) {\n";
                 }
 
                 $slice = ArticleSlice::fromSql($artDataSql);
@@ -400,7 +400,7 @@ class ArticleContentBase
             }
 
             // ------------- EINZELNER SLICE - AUSGABE
-            if ('edit' == $this->mode || $this->eval) {
+            if ('edit' === $this->mode || $this->eval) {
                 $sliceContent = $this->outputSlice(
                     $artDataSql,
                     $moduleKey,
@@ -428,8 +428,8 @@ class ArticleContentBase
                 ),
             );
 
-            // ---------- slice in ausgabe speichern wenn ctype richtig
-            if (-1 == $this->ctype || $this->ctype == $sliceCtypeId) {
+            // ---------- slice in ausgabe speichern wenn content section richtig
+            if (null === $this->contentSectionId || $sliceCtypeId === $this->contentSectionId) {
                 $articleContent .= $sliceContent;
             }
 
@@ -440,7 +440,7 @@ class ArticleContentBase
         }
 
         // ----- end: ctype unterscheidung
-        if ('edit' != $this->mode && !$this->eval && $i > 0) {
+        if ('edit' !== $this->mode && !$this->eval && $i > 0) {
             $articleContent .= "}\n";
         }
 

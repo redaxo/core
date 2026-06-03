@@ -26,7 +26,7 @@ final class ArticleContent extends ArticleContentBase
             throw new ArticleNotFoundException(sprintf('Article with id "%d" and clang "%d" does not exist.', $this->articleId, $this->clangId));
         }
 
-        $this->categoryId = $article->categoryId ?? 0;
+        $this->categoryId = $article->categoryId;
         $this->templateKey = $article->templateKey;
     }
 
@@ -54,13 +54,13 @@ final class ArticleContent extends ArticleContentBase
         return Article::get($this->articleId, $this->clangId)?->hasValue($value) ?? false;
     }
 
-    public function getArticle($curctype = -1)
+    public function getArticle(?int $contentSectionId = null)
     {
-        $this->ctype = $curctype;
+        $this->contentSectionId = $contentSectionId;
 
         // In eval mode (history/work version, single slice) the content is rendered live from the
         // database; otherwise it comes from the published content cache file.
-        if (!$this->eval && !$this->singleSliceId && 0 != $this->articleId) {
+        if (!$this->eval && !$this->singleSliceId && 0 !== $this->articleId) {
             // article caching
             ob_start();
             try {
@@ -79,11 +79,11 @@ final class ArticleContent extends ArticleContentBase
             }
         } else {
             // Inhalt ueber sql generierens
-            $CONTENT = parent::getArticle($curctype);
+            $CONTENT = parent::getArticle($contentSectionId);
         }
 
         return Extension::dispatch(new ExtensionPoint('ART_CONTENT', $CONTENT, [
-            'ctype' => $curctype,
+            'ctype' => $contentSectionId,
             'article' => $this,
         ]));
     }

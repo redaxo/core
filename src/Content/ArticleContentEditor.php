@@ -17,6 +17,7 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
 
+use function assert;
 use function count;
 use function Redaxo\Core\View\escape;
 use function sprintf;
@@ -33,7 +34,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
     protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
-        if ('edit' != $this->mode) {
+        if ('edit' !== $this->mode) {
             // ----- wenn mode nicht edit
             $sliceContent = parent::outputSlice(
                 $artDataSql,
@@ -51,20 +52,20 @@ final class ArticleContentEditor extends ArticleContentBase
             // ----- add select box einbauen
             $sliceContent = $this->getModuleSelect($sliceId);
 
-            if ('add' == $this->function && $this->sliceId == $sliceId) {
+            if ('add' === $this->function && $this->sliceId === $sliceId) {
                 $sliceContent .= $this->addSlice($sliceId, $moduleKeyToAdd);
             }
 
             $panel = '';
             // ----- Display message at current slice
             // if(rex::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
-            if ('add' != $this->function && $this->sliceId == $sliceId) {
+            if ('add' !== $this->function && $this->sliceId === $sliceId) {
                 $msg = '';
-                if ('' != $this->warning) {
-                    $msg .= Message::error($this->warning);
+                if ('' !== $this->error) {
+                    $msg .= Message::error($this->error);
                 }
-                if ('' != $this->info) {
-                    $msg .= Message::success($this->info);
+                if ('' !== $this->success) {
+                    $msg .= Message::success($this->success);
                 }
                 $panel .= $msg;
             }
@@ -72,7 +73,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
             // ----- EDIT/DELETE BLOCK - Wenn Rechte vorhanden
             if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
-                if ('edit' == $this->function && $this->sliceId == $sliceId) {
+                if ('edit' === $this->function && $this->sliceId === $sliceId) {
                     // **************** Aktueller Slice
 
                     $slice = ArticleSlice::fromSql($artDataSql);
@@ -95,7 +96,7 @@ final class ArticleContentEditor extends ArticleContentBase
             $panel .= Extension::dispatch(new ExtensionPoint('SLICE_BE_PREVIEW', $content, [
                 'article_id' => $this->articleId,
                 'clang' => $this->clangId,
-                'ctype' => $this->ctype,
+                'ctype' => $this->contentSectionId,
                 'module_key' => $moduleKey,
                 'slice_id' => $sliceId,
                 'revision' => $sliceRevision,
@@ -134,6 +135,9 @@ final class ArticleContentEditor extends ArticleContentBase
      */
     private function getSliceMenu(Sql $artDataSql)
     {
+        // the editor always operates on a concrete content section
+        assert($this->contentSectionId > 0);
+
         $sliceId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.id');
         $sliceCtype = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.ctype_id');
         $sliceStatus = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.status');
@@ -146,7 +150,7 @@ final class ArticleContentEditor extends ArticleContentBase
             'article_id' => $this->articleId,
             'slice_id' => $sliceId,
             'clang' => $this->clangId,
-            'ctype' => $this->ctype,
+            'ctype' => $this->contentSectionId,
         ]);
         $fragment = '#slice' . $sliceId;
 
@@ -160,7 +164,7 @@ final class ArticleContentEditor extends ArticleContentBase
         if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
             $module = Module::get($moduleKey);
             $category = $this->categoryId > 0 ? Category::get($this->categoryId) : null;
-            $moduleAllowed = (!$this->templateKey || Template::checkModuleAllowed($this->templateKey, $this->ctype, $moduleKey))
+            $moduleAllowed = (!$this->templateKey || Template::checkModuleAllowed($this->templateKey, $this->contentSectionId, $moduleKey))
                 && (null === $module || $module->isAllowedInCategory($category));
             if ($moduleAllowed) {
                 // edit
@@ -283,12 +287,15 @@ final class ArticleContentEditor extends ArticleContentBase
      */
     private function getModuleSelect($sliceId)
     {
+        // the editor always operates on a concrete content section
+        assert($this->contentSectionId > 0);
+
         // ----- BLOCKAUSWAHL - SELECT
         $context = new Context([
             'page' => Controller::getCurrentPage(),
             'article_id' => $this->articleId,
             'clang' => $this->clangId,
-            'ctype' => $this->ctype,
+            'ctype' => $this->contentSectionId,
             'slice_id' => $sliceId,
             'function' => 'add',
         ]);
@@ -296,8 +303,8 @@ final class ArticleContentEditor extends ArticleContentBase
         $position = ++$this->sliceAddPosition;
 
         $items = [];
-        if (isset($this->moduleSelect[$this->ctype])) {
-            foreach ($this->moduleSelect[$this->ctype] as $module) {
+        if (isset($this->moduleSelect[$this->contentSectionId])) {
+            foreach ($this->moduleSelect[$this->contentSectionId] as $module) {
                 $item = [];
                 $item['key'] = $module['key'];
                 $item['title'] = escape($module['name']);
@@ -324,7 +331,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 'page' => Controller::getCurrentPage(),
                 'article_id' => $this->articleId,
                 'clang' => $this->clangId,
-                'ctype' => $this->ctype,
+                'ctype' => $this->contentSectionId,
                 'slice_id' => $sliceId,
             ],
         ));
@@ -337,7 +344,7 @@ final class ArticleContentEditor extends ArticleContentBase
     protected function preArticle(string $articleContent, string $moduleKey): string
     {
         // ---------- moduleselect: nur module nehmen auf die der user rechte hat
-        if ('edit' == $this->mode) {
+        if ('edit' === $this->mode) {
             $template = $this->templateKey ? Template::get($this->templateKey) : null;
             $contentSections = $template?->getContentSections() ?? [new ContentSection(1, 'Content')];
 
@@ -364,8 +371,8 @@ final class ArticleContentEditor extends ArticleContentBase
         $behindlastSliceId = -1;
 
         // ----- add module im edit mode
-        if ('edit' == $this->mode) {
-            if ('add' == $this->function && $this->sliceId == $behindlastSliceId) {
+        if ('edit' === $this->mode) {
+            if ('add' === $this->function && $this->sliceId === $behindlastSliceId) {
                 ++$this->sliceAddPosition;
                 $sliceContent = $this->addSlice($behindlastSliceId, $moduleKey);
             } else {
@@ -380,29 +387,32 @@ final class ArticleContentEditor extends ArticleContentBase
 
     private function addSlice(int $sliceId, string $moduleKey): string
     {
+        // the editor always operates on a concrete content section
+        assert($this->contentSectionId > 0);
+
         $module = Module::get($moduleKey);
 
         if (null === $module) {
             return Message::error(I18n::msg('module_doesnt_exist'));
         }
 
-        $slice = ArticleSlice::forNewSlice($this->articleId, $this->clangId, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->sliceRevision)
+        $slice = ArticleSlice::forNewSlice($this->articleId, $this->clangId, $this->contentSectionId, $moduleKey, $this->sliceAddPosition, $this->sliceRevision)
             ->withRequestValues();
 
         $moduleInput = $module->input($slice);
 
         $msg = '';
-        if ('' != $this->warning) {
-            $msg .= Message::warning($this->warning);
+        if ('' !== $this->error) {
+            $msg .= Message::warning($this->error);
         }
-        if ('' != $this->info) {
-            $msg .= Message::success($this->info);
+        if ('' !== $this->success) {
+            $msg .= Message::success($this->success);
         }
 
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->clangId, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->clangId, 'ctype' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
@@ -436,7 +446,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
         $fragment = new Fragment();
         $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-add']], false);
-        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->clangId, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition);
+        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->clangId, 'ctype' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }
@@ -444,12 +454,12 @@ final class ArticleContentEditor extends ArticleContentBase
     private function editSlice(int $sliceId, ArticleSlice $slice, int $ctypeId, string $moduleKey, Sql $artDataSql): string
     {
         $msg = '';
-        if ($this->sliceId == $sliceId) {
-            if ('' != $this->warning) {
-                $msg .= Message::warning($this->warning);
+        if ($this->sliceId === $sliceId) {
+            if ('' !== $this->error) {
+                $msg .= Message::warning($this->error);
             }
-            if ('' != $this->info) {
-                $msg .= Message::success($this->info);
+            if ('' !== $this->success) {
+                $msg .= Message::success($this->success);
             }
         }
 
