@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Content;
 
+use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
@@ -259,12 +260,12 @@ final readonly class ArticleSlice
      * Gibt den Slice formatiert zurück.
      *
      * @see ArticleContent::getSlice()
+     *
+     * @throws ArticleNotFoundException
      */
     public function getSlice(): string
     {
-        $art = new ArticleContent();
-        $art->setArticleId($this->articleId);
-        $art->setClang($this->clangId);
+        $art = new ArticleContent($this->articleId, $this->clangId);
         $art->setSliceRevision($this->revision);
         return $art->getSlice($this->id);
     }

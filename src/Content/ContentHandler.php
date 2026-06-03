@@ -4,6 +4,7 @@ namespace Redaxo\Core\Content;
 
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\Backend\Controller;
+use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
@@ -357,12 +358,12 @@ final class ContentHandler
                 continue;
             }
 
-            $CONT = new ArticleContentBase();
-            $CONT->setClang($clangId);
-            $CONT->setEval(false); // Content nicht ausführen, damit in Cachedatei gespeichert werden kann
-            if (!$CONT->setArticleId($articleId)) {
-                throw new RuntimeException(sprintf('Article %d does not exist.', $articleId));
+            try {
+                $CONT = new ArticleContentBase($articleId, $clangId);
+            } catch (ArticleNotFoundException $e) {
+                throw new RuntimeException(sprintf('Article %d does not exist.', $articleId), previous: $e);
             }
+            $CONT->setEval(false); // Content nicht ausführen, damit in Cachedatei gespeichert werden kann
 
             // --------------------------------------------------- Artikelcontent speichern
             $articleContentFile = Path::coreCache('structure/' . $articleId . '.' . $clangId . '.content');

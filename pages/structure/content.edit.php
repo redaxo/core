@@ -21,13 +21,11 @@ if ($result = ApiFunction::factory()?->result) {
     }
 }
 
-$CONT = new ArticleContentEditor();
+$CONT = new ArticleContentEditor($articleId, $clang);
 $CONT->info = $info;
 $CONT->warning = $warning;
-$CONT->setArticleId($articleId);
 $CONT->setSliceId($sliceId);
 $CONT->setMode('edit');
-$CONT->setClang($clang);
 $CONT->setEval(true);
 $CONT->setSliceRevision($sliceRevision);
 /** @var 'add'|'edit' $function */

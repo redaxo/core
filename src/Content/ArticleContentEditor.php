@@ -32,15 +32,6 @@ final class ArticleContentEditor extends ArticleContentBase
     /** @var int */
     private $sliceAddPosition = 0;
 
-    /**
-     * @param int|null $articleId
-     * @param int|null $clang
-     */
-    public function __construct($articleId = null, $clang = null)
-    {
-        parent::__construct($articleId, $clang);
-    }
-
     protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
         if ('edit' != $this->mode) {
@@ -103,8 +94,8 @@ final class ArticleContentEditor extends ArticleContentBase
 
             // EP for changing the module preview
             $panel .= Extension::dispatch(new ExtensionPoint('SLICE_BE_PREVIEW', $content, [
-                'article_id' => $this->article_id,
-                'clang' => $this->clang,
+                'article_id' => $this->articleId,
+                'clang' => $this->clangId,
                 'ctype' => $this->ctype,
                 'module_key' => $moduleKey,
                 'slice_id' => $sliceId,
@@ -153,9 +144,9 @@ final class ArticleContentEditor extends ArticleContentBase
 
         $context = new Context([
             'page' => Controller::getCurrentPage(),
-            'article_id' => $this->article_id,
+            'article_id' => $this->articleId,
             'slice_id' => $sliceId,
-            'clang' => $this->clang,
+            'clang' => $this->clangId,
             'ctype' => $this->ctype,
         ]);
         $fragment = '#slice' . $sliceId;
@@ -238,8 +229,8 @@ final class ArticleContentEditor extends ArticleContentBase
             $menuMovedownAction,
             $context,
             $fragment,
-            $this->article_id,
-            $this->clang,
+            $this->articleId,
+            $this->clangId,
             $sliceCtype,
             $moduleKey,
             $sliceId,
@@ -296,8 +287,8 @@ final class ArticleContentEditor extends ArticleContentBase
         // ----- BLOCKAUSWAHL - SELECT
         $context = new Context([
             'page' => Controller::getCurrentPage(),
-            'article_id' => $this->article_id,
-            'clang' => $this->clang,
+            'article_id' => $this->articleId,
+            'clang' => $this->clangId,
             'ctype' => $this->ctype,
             'slice_id' => $sliceId,
             'function' => 'add',
@@ -332,8 +323,8 @@ final class ArticleContentEditor extends ArticleContentBase
             $select,
             [
                 'page' => Controller::getCurrentPage(),
-                'article_id' => $this->article_id,
-                'clang' => $this->clang,
+                'article_id' => $this->articleId,
+                'clang' => $this->clangId,
                 'ctype' => $this->ctype,
                 'slice_id' => $sliceId,
             ],
@@ -396,7 +387,7 @@ final class ArticleContentEditor extends ArticleContentBase
             return Message::error(I18n::msg('module_doesnt_exist'));
         }
 
-        $slice = ArticleSlice::forNewSlice($this->article_id, $this->clang, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->slice_revision)
+        $slice = ArticleSlice::forNewSlice($this->articleId, $this->clangId, $this->ctype, $moduleKey, $this->sliceAddPosition, $this->slice_revision)
             ->withRequestValues();
 
         $moduleInput = $module->input($slice);
@@ -412,7 +403,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'clang' => $this->clang, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->clangId, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
@@ -446,7 +437,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
         $fragment = new Fragment();
         $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-add']], false);
-        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'clang' => $this->clang, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition);
+        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->clangId, 'ctype' => $this->ctype]) . '#slice-add-pos-' . $this->sliceAddPosition);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }
@@ -466,7 +457,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clangId]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
@@ -506,7 +497,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
         $fragment = new Fragment();
         $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-edit'], 'id' => 'slice' . $sliceId], false);
-        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->article_id, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clang, 'function' => 'edit']) . '#slice' . $sliceId);
+        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->clangId, 'function' => 'edit']) . '#slice' . $sliceId);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }

@@ -20,6 +20,7 @@ use function in_array;
 use function is_int;
 use function is_object;
 use function is_string;
+use function sprintf;
 
 /**
  * Klasse regelt den Zugriff auf Artikelinhalte.
@@ -38,8 +39,7 @@ class ArticleContentBase
 
     /** @var int */
     protected $category_id;
-    /** @var int */
-    protected $article_id = 0;
+
     /** @var int */
     protected $slice_id = 0;
     /** @var int */
@@ -51,8 +51,8 @@ class ArticleContentBase
 
     /** @var int */
     protected $ctype = -1;
-    /** @var int */
-    protected $clang;
+
+    public readonly int $clangId;
 
     /** @var bool */
     protected $eval = false;
@@ -63,21 +63,14 @@ class ArticleContentBase
     /** @var Sql|null */
     protected $ARTICLE;
 
-    /**
-     * @param int|null $articleId
-     * @param int|null $clang
-     */
-    public function __construct($articleId = null, $clang = null)
-    {
-        if (null !== $clang) {
-            $this->setClang($clang);
-        } else {
-            $this->setClang(Language::getCurrentId());
-        }
+    /** @throws ArticleNotFoundException */
+    public function __construct(
+        public readonly int $articleId,
+        ?int $clangId = null,
+    ) {
+        $this->clangId = null !== $clangId && Language::exists($clangId) ? $clangId : Language::getCurrentId();
 
-        if (null !== $articleId) {
-            $this->setArticleId($articleId);
-        }
+        $this->loadArticle();
     }
 
     /** @return Sql */
@@ -112,54 +105,20 @@ class ArticleContentBase
         $this->slice_id = $value;
     }
 
-    /**
-     * @param int $value
-     * @return void
-     */
-    public function setClang($value)
+    /** @throws ArticleNotFoundException */
+    protected function loadArticle(): void
     {
-        if (!Language::exists($value)) {
-            $value = Language::getCurrentId();
-        }
-        $this->clang = $value;
-    }
-
-    /** @return int */
-    public function getArticleId()
-    {
-        return $this->article_id;
-    }
-
-    /** @return int */
-    public function getClangId()
-    {
-        return $this->clang;
-    }
-
-    /**
-     * @param int $articleId
-     * @return bool
-     */
-    public function setArticleId($articleId)
-    {
-        $articleId = (int) $articleId;
-        $this->article_id = $articleId;
-
         // ---------- select article
         $sql = $this->getSqlInstance();
-        $sql->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE ' . Core::getTablePrefix() . 'article.id=? AND clang_id=?', [$articleId, $this->clang]);
+        $sql->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE ' . Core::getTablePrefix() . 'article.id=? AND clang_id=?', [$this->articleId, $this->clangId]);
 
-        if (1 == $sql->getRows()) {
-            $template = $this->getValue('template');
-            $this->template = $template ? (string) $template : null;
-            $this->category_id = (int) $this->getValue('category_id');
-            return true;
+        if (1 !== $sql->getRows()) {
+            throw new ArticleNotFoundException(sprintf('Article with id "%d" and clang "%d" does not exist.', $this->articleId, $this->clangId));
         }
 
-        $this->article_id = 0;
-        $this->template = null;
-        $this->category_id = 0;
-        return false;
+        $template = $this->getValue('template');
+        $this->template = $template ? (string) $template : null;
+        $this->category_id = (int) $this->getValue('category_id');
     }
 
     public function setTemplateKey(?string $templateKey): void
@@ -307,8 +266,8 @@ class ArticleContentBase
             'SLICE_OUTPUT',
             $output,
             [
-                'article_id' => $this->article_id,
-                'clang' => $this->clang,
+                'article_id' => $this->articleId,
+                'clang' => $this->clangId,
                 'slice_data' => $artDataSql,
             ],
         ));
@@ -347,13 +306,13 @@ class ArticleContentBase
     {
         $this->ctype = $curctype;
 
-        if (0 == $this->article_id && 0 == $this->getSlice) {
+        if (0 == $this->articleId && 0 == $this->getSlice) {
             return I18n::msg('no_article_available');
         }
 
         $articleLimit = '';
-        if (0 != $this->article_id) {
-            $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . (int) $this->article_id;
+        if (0 != $this->articleId) {
+            $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . $this->articleId;
         }
 
         $sliceLimit = '';
@@ -395,12 +354,12 @@ class ArticleContentBase
     // ----- Template inklusive Artikel zurückgeben
 
     /**
-     * @throws ArticleNotFoundException
+     * @throws ArticleNotFoundException if a template or module aborts rendering to redirect to the error article
      * @return string
      */
     public function getArticleTemplate()
     {
-        if (null !== $this->template && 0 != $this->article_id) {
+        if (null !== $this->template && 0 != $this->articleId) {
             $template = Template::get($this->template);
 
             if (null === $template) {
@@ -435,7 +394,7 @@ class ArticleContentBase
         $result = preg_replace_callback(
             '@redaxo://(\d+)(?:-(\d+))?/?@i',
             function (array $matches) {
-                return Url::article((int) $matches[1], (int) ($matches[2] ?? $this->clang));
+                return Url::article((int) $matches[1], (int) ($matches[2] ?? $this->clangId));
             },
             $content,
         );
@@ -460,8 +419,8 @@ class ArticleContentBase
             FROM {$prefix}article_slice
             LEFT JOIN {$prefix}article ON {$prefix}article_slice.article_id = {$prefix}article.id
             WHERE
-                {$prefix}article_slice.clang_id = {$this->clang} AND
-                {$prefix}article.clang_id = {$this->clang} AND
+                {$prefix}article_slice.clang_id = {$this->clangId} AND
+                {$prefix}article.clang_id = {$this->clangId} AND
                 {$prefix}article_slice.revision = {$this->slice_revision}
                 {$articleLimit}
                 {$sliceLimit}
@@ -523,8 +482,8 @@ class ArticleContentBase
                     'SLICE_SHOW',
                     $sliceContent,
                     [
-                        'article_id' => $this->article_id,
-                        'clang' => $this->clang,
+                        'article_id' => $this->articleId,
+                        'clang' => $this->clangId,
                         'ctype' => $sliceCtypeId,
                         'module_key' => $sliceModuleKey,
                         'slice_id' => $sliceId,

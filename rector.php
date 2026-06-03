@@ -543,6 +543,9 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\Article::class, 'getTemplateKey', 'templateKey'),
         new MethodCallToPropertyFetch(Content\Article::class, 'hasTemplate', 'templateKey'), // changed from bool to ?string, callers using the bool need manual adjustment
 
+        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getArticleId', 'articleId'),
+        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClangId', 'clangId'),
+
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getClang', 'clangId'),
