@@ -49,6 +49,7 @@ final class ArticleHandler
         }
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
+        $data['template'] ??= null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
@@ -139,6 +140,7 @@ final class ArticleHandler
         $data['category_id'] = $ooArt->categoryId;
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
+        $data['template'] ??= null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
