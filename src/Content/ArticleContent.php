@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Content;
 
+use Override;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Path;
@@ -15,6 +16,7 @@ use function is_string;
  */
 final class ArticleContent extends ArticleContentBase
 {
+    #[Override]
     public function renderContent(?int $contentSectionId = null): string
     {
         $this->contentSectionId = $contentSectionId;

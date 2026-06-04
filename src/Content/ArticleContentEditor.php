@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Content;
 
+use Override;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\ApiFunction\ArticleSliceMove;
 use Redaxo\Core\Content\ApiFunction\ArticleSliceStatusChange;
@@ -32,6 +33,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
     private int $sliceAddPosition = 0;
 
+    #[Override]
     protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
         if ('edit' !== $this->mode) {
@@ -331,6 +333,7 @@ final class ArticleContentEditor extends ArticleContentBase
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }
 
+    #[Override]
     protected function preArticle(string $articleContent, string $moduleKey): string
     {
         // ---------- moduleselect: nur module nehmen auf die der user rechte hat
@@ -355,6 +358,7 @@ final class ArticleContentEditor extends ArticleContentBase
         return parent::preArticle($articleContent, $moduleKey);
     }
 
+    #[Override]
     protected function postArticle(string $articleContent, string $moduleKey): string
     {
         // special identifier for the slot behind the last slice
