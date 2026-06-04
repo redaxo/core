@@ -366,7 +366,7 @@ final class ContentHandler
             } catch (ArticleNotFoundException $e) {
                 // renderContent() cannot throw here (modules are not executed while eval is off),
                 // so this only covers a non-existent article from the constructor
-                throw new RuntimeException(sprintf('Article %d does not exist.', $articleId), previous: $e);
+                throw new RuntimeException(sprintf('Article %d (clang %d) does not exist.', $articleId, $clangId), previous: $e);
             }
 
             // --------------------------------------------------- Artikelcontent speichern
