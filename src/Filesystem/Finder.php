@@ -110,7 +110,7 @@ class Finder implements IteratorAggregate, Countable
      * @param string|list<string> $glob Glob pattern or an array of glob patterns
      * @param bool $recursive When FALSE the patterns won't be checked in child directories
      */
-    public function ignoreFiles($glob, bool $recursive = true): static
+    public function ignoreFiles(string|array $glob, bool $recursive = true): static
     {
         $var = $recursive ? 'ignoreFilesRecursive' : 'ignoreFiles';
         if (is_array($glob)) {
@@ -128,7 +128,7 @@ class Finder implements IteratorAggregate, Countable
      * @param string|list<string> $glob Glob pattern or an array of glob patterns
      * @param bool $recursive When FALSE the patterns won't be checked in child directories
      */
-    public function ignoreDirs($glob, bool $recursive = true): static
+    public function ignoreDirs(string|array $glob, bool $recursive = true): static
     {
         $var = $recursive ? 'ignoreDirsRecursive' : 'ignoreDirs';
         if (is_array($glob)) {
@@ -160,7 +160,7 @@ class Finder implements IteratorAggregate, Countable
      *
      * @return $this
      */
-    public function ignoreUnreadableDirs(bool $ignore = true)
+    public function ignoreUnreadableDirs(bool $ignore = true): static
     {
         $this->ignoreUnreadableDirs = $ignore;
 

@@ -160,7 +160,7 @@ final class Setup
      *
      * @return string Error message
      */
-    public static function checkDb($config, $createDb): string
+    public static function checkDb(array $config, bool $createDb): string
     {
         $dbConfig = new Configuration($config['db'][1]);
 

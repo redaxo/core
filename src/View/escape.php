@@ -38,7 +38,7 @@ use const ENT_SUBSTITUTE;
  * @psalm-taint-escape html
  * @psalm-pure
  */
-function escape($value, $strategy = 'html')
+function escape(mixed $value, string $strategy = 'html'): mixed
 {
     if (!is_string($value)) {
         if (is_array($value)) {

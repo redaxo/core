@@ -493,11 +493,10 @@ abstract class AbstractHandler
     /**
      * Übernimmt die gePOSTeten werte in ein Sql-Objekt.
      *
-     * @param array $params
      * @param Sql $sqlSave Sql-objekt, in das die aktuellen Werte gespeichert werden sollen
      * @param Sql $sqlFields Sql-objekt, dass die zu verarbeitenden Felder enthält
      */
-    public static function fetchRequestValues(&$params, &$sqlSave, $sqlFields): void
+    public static function fetchRequestValues(array &$params, Sql &$sqlSave, Sql $sqlFields): void
     {
         if ('post' != Request::requestMethod()) {
             return;
@@ -535,7 +534,7 @@ abstract class AbstractHandler
      * @param int $fieldType One of the Table::FIELD_* constants
      * @param string $fieldAttributes The attributes of the field
      */
-    public static function getSaveValue($fieldName, $fieldType, $fieldAttributes): string|int|null
+    public static function getSaveValue(string $fieldName, int $fieldType, string $fieldAttributes): string|int|null
     {
         if ('post' != Request::requestMethod()) {
             return null;
@@ -596,7 +595,7 @@ abstract class AbstractHandler
      *
      * @return Sql Metainfofelder
      */
-    protected static function getSqlFields($prefix, $filterCondition = ''): Sql
+    protected static function getSqlFields(string $prefix, string $filterCondition = ''): Sql
     {
         $sqlFields = Sql::factory();
         $prefix = $sqlFields->escape($sqlFields->escapeLikeWildcards($prefix) . '%');
@@ -625,7 +624,7 @@ abstract class AbstractHandler
      * @param string $prefix Feldprefix
      * @param array $params EP Params
      */
-    public function renderFormAndSave($prefix, array $params): string
+    public function renderFormAndSave(string $prefix, array $params): string
     {
         $filterCondition = $this->buildFilterCondition($params);
         $sqlFields = static::getSqlFields($prefix, $filterCondition);
@@ -654,7 +653,7 @@ abstract class AbstractHandler
      *
      * @return string The rendered html
      */
-    abstract protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string;
+    abstract protected function renderFormItem(string $field, string $tag, string $tagAttr, string $id, string $label, bool $labelIt, string $inputType): string;
 
     /**
      * Retrieves the activeItem from the current context.

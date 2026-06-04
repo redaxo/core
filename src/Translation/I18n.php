@@ -49,7 +49,7 @@ final class I18n
      *
      * @return string The last locale
      */
-    public static function setLocale($locale, $phpSetLocale = true): string
+    public static function setLocale(string $locale, bool $phpSetLocale = true): string
     {
         $saveLocale = self::getLocale();
         self::$locale = self::validateLocale($locale);
@@ -86,7 +86,7 @@ final class I18n
      *
      * @return non-empty-string The current locale
      */
-    public static function getLocale()
+    public static function getLocale(): string
     {
         if (!self::$locale) {
             self::$locale = self::validateLocale(Core::getProperty('lang'));
@@ -100,18 +100,14 @@ final class I18n
      *
      * @return non-empty-string The current language
      */
-    public static function getLanguage()
+    public static function getLanguage(): string
     {
         [$lang, $country] = explode('_', self::getLocale(), 2);
         return $lang;
     }
 
-    /**
-     * Adds a directory with lang files.
-     *
-     * @param string $dir Path to the directory
-     */
-    public static function addDirectory($dir): void
+    /** Adds a directory with lang files. */
+    public static function addDirectory(string $dir): void
     {
         $dir = rtrim($dir, DIRECTORY_SEPARATOR);
 
@@ -129,9 +125,7 @@ final class I18n
     /**
      * Returns the translation htmlspecialchared for the given key.
      *
-     * @param string $key A Language-Key
      * @param string|int ...$replacements A arbritary number of strings used for interpolating within the resolved message
-     *
      * @return non-empty-string Translation for the key
      *
      * @psalm-taint-escape has_quotes
@@ -145,14 +139,12 @@ final class I18n
     /**
      * Returns the translation for the given key.
      *
-     * @param string $key A Language-Key
      * @param string|int ...$replacements A arbritary number of strings used for interpolating within the resolved message
-     *
      * @return non-empty-string Translation for the key
      *
      * @psalm-taint-specialize
      */
-    public static function rawMsg($key, ...$replacements)
+    public static function rawMsg(string $key, string|int ...$replacements): string
     {
         return self::getMsg($key, false, func_get_args());
     }
@@ -160,16 +152,13 @@ final class I18n
     /**
      * Returns the translation htmlspecialchared for the given key and locale.
      *
-     * @param string $key A Language-Key
-     * @param string $locale A Locale
      * @param string|int ...$replacements A arbritary number of strings used for interpolating within the resolved message
-     *
      * @return non-empty-string Translation for the key
      *
      * @psalm-taint-escape has_quotes
      * @psalm-taint-escape html
      */
-    public static function msgInLocale($key, $locale, ...$replacements)
+    public static function msgInLocale(string $key, string $locale, string|int ...$replacements): string
     {
         $args = func_get_args();
         $args[1] = $key;
@@ -181,13 +170,10 @@ final class I18n
     /**
      * Returns the translation for the given key and locale.
      *
-     * @param string $key A Language-Key
-     * @param string $locale A Locale
      * @param string|int ...$replacements A arbritary number of strings used for interpolating within the resolved message
-     *
      * @return non-empty-string Translation for the key
      */
-    public static function rawMsgInLocale($key, $locale, ...$replacements)
+    public static function rawMsgInLocale(string $key, string $locale, string|int ...$replacements): string
     {
         $args = func_get_args();
         $args[1] = $key;
@@ -199,13 +185,10 @@ final class I18n
     /**
      * Returns the message fallback for a missing key in main locale.
      *
-     * @param string $key A Language-Key
      * @param list<string|int> $replacements A arbritary number of strings/ints used for interpolating within the resolved message
-     * @param string $locale A Locale
-     *
      * @return non-empty-string
      */
-    private static function getMsgFallback($key, array $replacements, $locale)
+    private static function getMsgFallback(string $key, array $replacements, string $locale): string
     {
         $fallback = "[translate:$key]";
 
@@ -235,14 +218,8 @@ final class I18n
         return $fallback;
     }
 
-    /**
-     * Checks if there is a translation for the given key.
-     *
-     * @param string $key Key
-     *
-     * @return bool TRUE on success, else FALSE
-     */
-    public static function hasMsg($key): bool
+    /** Checks if there is a translation for the given key. */
+    public static function hasMsg(string $key): bool
     {
         return isset(self::$msg[self::getLocale()][$key]);
     }
@@ -295,14 +272,8 @@ final class I18n
         return $msg;
     }
 
-    /**
-     * Checks if there is a translation for the given key in current language or any fallback language.
-     *
-     * @param string $key Key
-     *
-     * @return bool TRUE on success, else FALSE
-     */
-    public static function hasMsgOrFallback($key): bool
+    /** Checks if there is a translation for the given key in current language or any fallback language. */
+    public static function hasMsgOrFallback(string $key): bool
     {
         $currentLocale = self::getLocale();
 
@@ -330,10 +301,9 @@ final class I18n
     /**
      * Adds a new translation to the catalogue.
      *
-     * @param string $key Key
      * @param non-empty-string $message Message for the key
      */
-    public static function addMsg($key, $message): void
+    public static function addMsg(string $key, string $message): void
     {
         self::$msg[self::getLocale()][$key] = $message;
     }
@@ -422,13 +392,8 @@ final class I18n
         return $array; // scalar
     }
 
-    /**
-     * Loads the translation definitions of the given file.
-     *
-     * @param string $dir Path to the directory
-     * @param string $locale Locale
-     */
-    private static function loadFile($dir, $locale): void
+    /** Loads the translation definitions of the given file. */
+    private static function loadFile(string $dir, string $locale): void
     {
         $locale = self::validateLocale($locale);
 
@@ -444,12 +409,8 @@ final class I18n
         }
     }
 
-    /**
-     * Loads all translation defintions.
-     *
-     * @param string $locale Locale
-     */
-    private static function loadAll($locale): void
+    /** Loads all translation defintions. */
+    private static function loadAll(string $locale): void
     {
         foreach (self::$directories as $dir) {
             self::loadFile($dir, $locale);
@@ -459,8 +420,6 @@ final class I18n
     }
 
     /**
-     * @param string $locale Locale
-     *
      * @return non-empty-string the validated locale
      *
      * @psalm-taint-escape file

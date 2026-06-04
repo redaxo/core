@@ -100,7 +100,7 @@ final class Backup
      *               'state' => boolean (Status ob fehler aufgetreten sind)
      *               'message' => Evtl. Status/Fehlermeldung
      */
-    public static function importDb($filename): array
+    public static function importDb(string $filename): array
     {
         /** @return array{state: bool, message: string} */
         $returnError = static function (string $message): array {
@@ -217,7 +217,7 @@ final class Backup
      *               'state' => boolean (Status ob fehler aufgetreten sind)
      *               'message' => Evtl. Status/Fehlermeldung
      */
-    public static function importFiles($filename): array
+    public static function importFiles(string $filename): array
     {
         $return = [];
         $return['state'] = false;
@@ -258,12 +258,11 @@ final class Backup
      * Erstellt einen SQL Dump, der die aktuellen Datebankstruktur darstellt.
      * Dieser wird in der Datei $filename gespeichert.
      *
-     * @param string $filename
      * @param array<string>|null $tables
      *
      * @return bool TRUE wenn ein Dump erstellt wurde, sonst FALSE
      */
-    public static function exportDb($filename, ?array $tables = null): bool
+    public static function exportDb(string $filename, ?array $tables = null): bool
     {
         $fp = @tmpfile();
         $tempCacheFile = null;
@@ -380,7 +379,7 @@ final class Backup
      *
      * @return string|null Inhalt des Tar-Archives als string, wenn $archivePath nicht uebergeben wurde - sonst null
      */
-    public static function exportFiles($folders, $archivePath = null): ?string
+    public static function exportFiles(array $folders, ?string $archivePath = null): ?string
     {
         if (null == $archivePath) {
             $tmpArchivePath = false;
@@ -400,11 +399,8 @@ final class Backup
         return null;
     }
 
-    /**
-     * @param array<string> $folders
-     * @param string $archivePath
-     */
-    private static function streamExport($folders, $archivePath): void
+    /** @param array<string> $folders */
+    private static function streamExport(array $folders, string $archivePath): void
     {
         $tar = new Tar();
         $tar->create($archivePath);
@@ -422,13 +418,8 @@ final class Backup
         $tar->close();
     }
 
-    /**
-     * Fügt einem Tar-Archiv ein Ordner von Dateien hinzu.
-     *
-     * @param string $path
-     * @param string $dir
-     */
-    private static function addFolderToTar(Tar $tar, $path, $dir): void
+    /** Fügt einem Tar-Archiv ein Ordner von Dateien hinzu. */
+    private static function addFolderToTar(Tar $tar, string $path, string $dir): void
     {
         $handle = opendir($path . $dir);
 
@@ -477,11 +468,10 @@ final class Backup
     }
 
     /**
-     * @param string $filename
      * @param self::IMPORT_ARCHIVE|self::IMPORT_DB $importType
      * @param self::IMPORT_EVENT_* $eventType
      */
-    private static function importScript($filename, $importType, $eventType): void
+    private static function importScript(string $filename, int $importType, int $eventType): void
     {
         if (is_file($filename)) {
             require $filename;
@@ -489,14 +479,10 @@ final class Backup
     }
 
     /**
-     * @param string $table
-     * @param int $start
-     * @param int $max
      * @param resource $fp
-     * @param string $nl
      * @param list<string> $fields
      */
-    private static function exportTable($table, &$start, $max, $fp, $nl, array $fields): void
+    private static function exportTable(string $table, int &$start, int $max, $fp, string $nl, array $fields): void
     {
         do {
             $sql = Sql::factory();

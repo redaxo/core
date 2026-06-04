@@ -48,12 +48,8 @@ class Logger extends AbstractLogger
         return Path::log('system.log');
     }
 
-    /**
-     * Shorthand: Logs the given Exception.
-     *
-     * @param Throwable $exception The Exception to log
-     */
-    public static function logException($exception, ?string $url = null): void
+    /** Shorthand: Logs the given Exception. */
+    public static function logException(Throwable $exception, ?string $url = null): void
     {
         if ($exception instanceof ErrorException) {
             self::logError($exception->getSeverity(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $url);
@@ -160,7 +156,7 @@ class Logger extends AbstractLogger
      *
      * @param int $errno a php error code, e.g. E_ERROR
      */
-    public static function getLogLevel($errno): string
+    public static function getLogLevel(int $errno): string
     {
         return match ($errno) {
             E_USER_DEPRECATED, E_DEPRECATED, E_USER_WARNING, E_WARNING, E_COMPILE_WARNING => LogLevel::WARNING,

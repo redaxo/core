@@ -13,10 +13,7 @@ use Redaxo\Core\View\View;
 
 assert(isset($PERMALL) && is_bool($PERMALL));
 assert(isset($openerInputField) && is_string($openerInputField));
-
-if (!isset($rexFileCategory)) {
-    $rexFileCategory = 0;
-}
+assert(isset($rexFileCategory) && is_int($rexFileCategory));
 
 if (!$PERMALL && !Core::requireUser()->getComplexPerm('media')->hasCategoryPerm($rexFileCategory)) {
     $rexFileCategory = 0;

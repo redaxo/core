@@ -9,12 +9,9 @@ final class Message
     /**
      * Returns an info message.
      *
-     * @param string $message
-     * @param string $cssClass
-     *
      * @psalm-taint-specialize
      */
-    public static function info($message, $cssClass = ''): string
+    public static function info(string $message, string $cssClass = ''): string
     {
         $cssClassMessage = 'alert-info';
         if ('' != $cssClass) {
@@ -27,12 +24,9 @@ final class Message
     /**
      * Returns a success message.
      *
-     * @param string $message
-     * @param string $cssClass
-     *
      * @psalm-taint-specialize
      */
-    public static function success($message, $cssClass = ''): string
+    public static function success(string $message, string $cssClass = ''): string
     {
         $cssClassMessage = 'alert-success';
         if ('' != $cssClass) {
@@ -45,12 +39,9 @@ final class Message
     /**
      * Returns an warning message.
      *
-     * @param string $message
-     * @param string $cssClass
-     *
      * @psalm-taint-specialize
      */
-    public static function warning($message, $cssClass = ''): string
+    public static function warning(string $message, string $cssClass = ''): string
     {
         $cssClassMessage = 'alert-warning';
         if ('' != $cssClass) {
@@ -63,12 +54,9 @@ final class Message
     /**
      * Returns an error message.
      *
-     * @param string $message
-     * @param string $cssClass
-     *
      * @psalm-taint-specialize
      */
-    public static function error($message, $cssClass = ''): string
+    public static function error(string $message, string $cssClass = ''): string
     {
         $cssClassMessage = 'alert-danger';
         if ('' != $cssClass) {
@@ -78,13 +66,8 @@ final class Message
         return self::message($message, $cssClassMessage);
     }
 
-    /**
-     * Returns a message.
-     *
-     * @param string $message
-     * @param string $cssClass
-     */
-    private static function message($message, $cssClass): string
+    /** Returns a message. */
+    private static function message(string $message, string $cssClass): string
     {
         $cssClassMessage = 'alert';
         if ('' != $cssClass) {

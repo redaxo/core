@@ -24,13 +24,8 @@ final class Asset
 
     private function __construct() {}
 
-    /**
-     * Adds a CSS file.
-     *
-     * @param string $file
-     * @param string $media
-     */
-    public static function addCssFile($file, $media = 'all'): void
+    /** Adds a CSS file. */
+    public static function addCssFile(string $file, string $media = 'all'): void
     {
         if (isset(self::$cssFiles[$media]) && in_array($file, self::$cssFiles[$media])) {
             throw new RuntimeException(sprintf('The CSS file "%s" is already added to media "%s".', $file, $media));
@@ -52,10 +47,9 @@ final class Asset
     /**
      * Adds a JS file.
      *
-     * @param string $file
      * @param array<self::JS_*, bool>|array<self::JS_*> $options
      */
-    public static function addJsFile($file, array $options = []): void
+    public static function addJsFile(string $file, array $options = []): void
     {
         if (empty($options)) {
             $options[self::JS_IMMUTABLE] = false;
@@ -91,13 +85,8 @@ final class Asset
         return self::$jsFiles;
     }
 
-    /**
-     * Sets a JS property.
-     *
-     * @param string $key
-     * @param mixed $value
-     */
-    public static function setJsProperty($key, $value): void
+    /** Sets a JS property. */
+    public static function setJsProperty(string $key, mixed $value): void
     {
         self::$jsProperties[$key] = $value;
     }

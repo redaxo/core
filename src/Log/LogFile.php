@@ -167,7 +167,7 @@ class LogFile implements Iterator
      *
      * @param string $path File path
      */
-    public static function delete($path): bool
+    public static function delete(string $path): bool
     {
         if ($factoryClass = static::getExplicitFactoryClass()) {
             return $factoryClass::delete($path);

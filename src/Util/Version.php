@@ -67,7 +67,7 @@ final class Version
      * @param string|null $repo If given, the version hash is returned only if the remote repository matches the
      *                          given github repo (e.g. `redaxo/core`)
      */
-    public static function gitHash($path, ?string $repo = null): ?string
+    public static function gitHash(string $path, ?string $repo = null): ?string
     {
         if (!function_exists('exec')) {
             return null;

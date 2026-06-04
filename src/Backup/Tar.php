@@ -25,12 +25,8 @@ final readonly class Tar
         $this->tar = new BaseTar();
     }
 
-    /**
-     * Open a TAR file.
-     *
-     * @param string $filename
-     */
-    public function openTAR($filename): bool
+    /** Open a TAR file. */
+    public function openTAR(string $filename): bool
     {
         // If the tar file doesn't exist...
         if (!is_file($filename)) {
@@ -42,19 +38,14 @@ final readonly class Tar
         return true;
     }
 
-    /** @param string $archivePath */
-    public function create($archivePath): void
+    public function create(string $archivePath): void
     {
         $this->tar->create($archivePath);
         $this->tar->setCompression(9, Archive::COMPRESS_GZIP);
     }
 
-    /**
-     * Add a file to the tar archive.
-     *
-     * @param string $filename
-     */
-    public function addFile($filename): bool
+    /** Add a file to the tar archive. */
+    public function addFile(string $filename): bool
     {
         // Make sure the file we are adding exists!
         if (!is_file($filename)) {
@@ -76,7 +67,7 @@ final readonly class Tar
      *
      * @param string $outdir the target directory for extracting
      */
-    public function extractTar($outdir): bool
+    public function extractTar(string $outdir): bool
     {
         // when extracting tars generated with our previous tar class
         // some E_DEPRECATED messages are triggered by `octdec()`:

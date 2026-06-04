@@ -21,8 +21,7 @@ final class Importer
 {
     private function __construct() {}
 
-    /** @param string $importName */
-    public static function loadExistingImport($importName): string
+    public static function loadExistingImport(string $importName): string
     {
         if ('' == $importName || '/' === $importName) {
             return '<p>' . I18n::msg('setup_408') . '</p>';

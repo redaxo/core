@@ -320,7 +320,7 @@ final class CategoryHandler
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
             if (null === $status) {
-                $newstatus = self::nextStatus($KAT->getValue('status'));
+                $newstatus = self::nextStatus((int) $KAT->getValue('status'));
             } else {
                 $newstatus = $status;
             }
@@ -372,13 +372,13 @@ final class CategoryHandler
         return $catStatusTypes;
     }
 
-    public static function nextStatus($currentStatus): int
+    public static function nextStatus(int $currentStatus): int
     {
         $catStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($catStatusTypes);
     }
 
-    public static function prevStatus($currentStatus): int
+    public static function prevStatus(int $currentStatus): int
     {
         $catStatusTypes = self::statusTypes();
         if (($currentStatus - 1) < 0) {

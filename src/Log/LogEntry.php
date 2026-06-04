@@ -25,7 +25,7 @@ final readonly class LogEntry implements Stringable
      *
      * @param string $string Log line
      */
-    public static function createFromString($string): self
+    public static function createFromString(string $string): self
     {
         $data = [];
         foreach (explode(' |', $string) as $part) {

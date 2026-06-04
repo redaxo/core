@@ -7,7 +7,6 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
 
-use function count;
 use function in_array;
 use function is_array;
 use function Redaxo\Core\View\escape;
@@ -40,22 +39,17 @@ class Select
     }
 
     /** @param array<string, int|string> $attributes */
-    public function setAttributes($attributes): void
+    public function setAttributes(array $attributes): void
     {
         $this->attributes = array_merge($this->attributes, $attributes);
     }
 
-    /**
-     * @param string $name
-     * @param string|int $value
-     */
-    public function setAttribute($name, $value): void
+    public function setAttribute(string $name, string|int $value): void
     {
         $this->attributes[$name] = $value;
     }
 
-    /** @param string $name */
-    public function delAttribute($name): bool
+    public function delAttribute(string $name): bool
     {
         if ($this->hasAttribute($name)) {
             unset($this->attributes[$name]);
@@ -64,17 +58,12 @@ class Select
         return false;
     }
 
-    /** @param string $name */
-    public function hasAttribute($name): bool
+    public function hasAttribute(string $name): bool
     {
         return isset($this->attributes[$name]);
     }
 
-    /**
-     * @param string $name
-     * @param string|int $default
-     */
-    public function getAttribute($name, $default = ''): string|int
+    public function getAttribute(string $name, string|int $default = ''): string|int
     {
         if ($this->hasAttribute($name)) {
             return $this->attributes[$name];
@@ -82,8 +71,7 @@ class Select
         return $default;
     }
 
-    /** @param bool $multiple */
-    public function setMultiple($multiple = true): void
+    public function setMultiple(bool $multiple = true): void
     {
         if ($multiple) {
             $this->setAttribute('multiple', 'multiple');
@@ -95,8 +83,7 @@ class Select
         }
     }
 
-    /** @param bool $disabled */
-    public function setDisabled($disabled = true): void
+    public function setDisabled(bool $disabled = true): void
     {
         if ($disabled) {
             $this->setAttribute('disabled', 'disabled');
@@ -105,14 +92,12 @@ class Select
         }
     }
 
-    /** @param string $name */
-    public function setName($name): void
+    public function setName(string $name): void
     {
         $this->setAttribute('name', $name);
     }
 
-    /** @param string $id */
-    public function setId($id): void
+    public function setId(string $id): void
     {
         $this->setAttribute('id', $id);
     }
@@ -125,10 +110,8 @@ class Select
      * $sel_media->setStyle('class="inp100"');
      * und/oder
      * $sel_media->setStyle("width:150px;");
-     *
-     * @param string $style
      */
-    public function setStyle($style): void
+    public function setStyle(string $style): void
     {
         if (str_contains($style, 'class=')) {
             if (preg_match('/class=["\']?([^"\']*)["\']?/i', $style, $matches)) {
@@ -140,13 +123,13 @@ class Select
     }
 
     /** @param int|numeric-string $size */
-    public function setSize($size): void
+    public function setSize(int|string $size): void
     {
         $this->setAttribute('size', $size);
     }
 
     /** @param string|int|list<string|int> $selected */
-    public function setSelected($selected): void
+    public function setSelected(string|int|array $selected): void
     {
         if (is_array($selected)) {
             foreach ($selected as $sectvalue) {
@@ -162,8 +145,7 @@ class Select
         $this->optionSelected = [];
     }
 
-    /** @param string $label */
-    public function addOptgroup($label): void
+    public function addOptgroup(string $label): void
     {
         ++$this->currentOptgroup;
         $this->optgroups[$this->currentOptgroup] = $label;
@@ -176,13 +158,9 @@ class Select
 
     /**
      * Fügt eine Option hinzu.
-     * @param string $name
-     * @param string|int $value
-     * @param int $id
-     * @param int $parentId
      * @param array<string, string|int> $attributes
      */
-    public function addOption($name, $value, $id = 0, $parentId = 0, array $attributes = []): void
+    public function addOption(string $name, string|int $value, int $id = 0, int $parentId = 0, array $attributes = []): void
     {
         $this->options[$this->currentOptgroup][$parentId][] = [$name, $value, $id, $attributes];
         ++$this->optCount;
@@ -191,44 +169,33 @@ class Select
     /**
      * Fügt ein Array von Optionen hinzu, dass eine mehrdimensionale Struktur hat.
      *
-     * Dim   Wert
-     * 0.    Name
-     * 1.    Value
-     * 2.    Id
-     * 3.    parent_id
-     * 4.    Selected
-     * 5.    Attributes
-     *
-     * @param bool $useOnlyValues
+     * @param array<string|int>|list<array{
+     *     0: string, // name
+     *     1: string|int, // value
+     *     2?: int, // id
+     *     3?: int, // parent id
+     *     4?: bool, // selected
+     *     5?: array<string, string|int> // attributes
+     * }> $options
      */
-    public function addOptions($options, $useOnlyValues = false): void
+    public function addOptions(array $options, bool $useOnlyValues = false): void
     {
-        if (is_array($options) && count($options) > 0) {
-            // Hier vorher auf is_array abfragen, da bei Strings auch die Syntax mit [] funktioniert
-            // $ab = "hallo"; $ab[2] -> "l"
-            $grouped = isset($options[0]) && is_array($options[0]) && isset($options[0][2]) && isset($options[0][3]);
-            foreach ($options as $key => $option) {
-                $option = (array) $option;
-                $attributes = [];
-                if (isset($option[5]) && is_array($option[5])) {
-                    $attributes = $option[5];
-                }
-                if ($grouped) {
-                    $this->addOption($option[0], $option[1], $option[2], $option[3], $attributes);
-                    if (isset($option[4]) && $option[4]) {
-                        $this->setSelected($option[1]);
-                    }
-                } else {
-                    if ($useOnlyValues) {
-                        $this->addOption($option[0], $option[0]);
-                    } else {
-                        if (!isset($option[1])) {
-                            $option[1] = $key;
-                        }
+        foreach ($options as $key => $option) {
+            if (!is_array($option)) {
+                $this->addOption((string) $option, $useOnlyValues ? $option : $key);
 
-                        $this->addOption($option[0], $option[1]);
-                    }
-                }
+                continue;
+            }
+
+            $attributes = [];
+            if (isset($option[5]) && is_array($option[5])) {
+                $attributes = $option[5];
+            }
+
+            $this->addOption($option[0], $option[1], $option[2] ?? 0, $option[3] ?? 0, $attributes);
+
+            if (isset($option[4]) && $option[4]) {
+                $this->setSelected($option[1]);
             }
         }
     }
@@ -237,9 +204,8 @@ class Select
      * Fügt ein Array von Optionen hinzu, dass eine Key/Value Struktur hat.
      * Wenn $useKeys mit false, werden die Array-Keys mit den Array-Values überschrieben.
      * @param array<string|int, string> $options
-     * @param bool $useKeys
      */
-    public function addArrayOptions(array $options, $useKeys = true): void
+    public function addArrayOptions(array $options, bool $useKeys = true): void
     {
         foreach ($options as $key => $value) {
             if (!$useKeys) {
@@ -257,25 +223,25 @@ class Select
 
     /**
      * Fügt Optionen anhand der Übergeben SQL-Select-Abfrage hinzu.
-     * @param string $query
      * @param positive-int $db
      */
-    public function addSqlOptions($query, int $db = 1): void
+    public function addSqlOptions(string $query, int $db = 1): void
     {
         $sql = Sql::factory($db);
-        $this->addOptions($sql->getArray($query, [], PDO::FETCH_NUM));
+        /** @psalm-suppress ArgumentTypeCoercion */
+        $this->addOptions($sql->getArray($query, [], PDO::FETCH_NUM)); // @phpstan-ignore argument.type
     }
 
     /**
      * Fügt Optionen anhand der Übergeben DBSQL-Select-Abfrage hinzu.
      *
      * @see Sql::setDBQuery()
-     * @param string $query
      */
-    public function addDBSqlOptions($query): void
+    public function addDBSqlOptions(string $query): void
     {
         $sql = Sql::factory();
-        $this->addOptions($sql->getDBArray($query, [], PDO::FETCH_NUM));
+        /** @psalm-suppress ArgumentTypeCoercion */
+        $this->addOptions($sql->getDBArray($query, [], PDO::FETCH_NUM)); // @phpstan-ignore argument.type
     }
 
     public function get(): string
@@ -332,11 +298,7 @@ class Select
         echo $this->get();
     }
 
-    /**
-     * @param int $parentId
-     * @param int $level
-     */
-    protected function outGroup($parentId, $level = 0): string
+    protected function outGroup(int $parentId, int $level = 0): string
     {
         if ($level > 100) {
             // nur mal so zu sicherheit .. man weiss nie ;)
@@ -366,13 +328,8 @@ class Select
         return $ausgabe;
     }
 
-    /**
-     * @param string $name
-     * @param string|int $value
-     * @param int $level
-     * @param array<string, string|int> $attributes
-     */
-    protected function outOption($name, $value, $level = 0, array $attributes = []): string
+    /** @param array<string, string|int> $attributes */
+    protected function outOption(string $name, string|int $value, int $level = 0, array $attributes = []): string
     {
         $name = escape($name);
         // for BC reasons, we always expect value to be a string.
@@ -396,12 +353,8 @@ class Select
         return '        <option value="' . $value . '"' . $attr . '>' . $bsps . $name . '</option>' . "\n";
     }
 
-    /**
-     * @param int $parentId
-     * @param bool $ignoreMainGroup
-     * @return false|list<list{string, string|int, int, array<string, string|int>}>
-     */
-    protected function getGroup($parentId, $ignoreMainGroup = false): array|false
+    /** @return false|list<list{string, string|int, int, array<string, string|int>}> */
+    protected function getGroup(int $parentId, bool $ignoreMainGroup = false): array|false
     {
         if ($ignoreMainGroup && 0 == $parentId) {
             return false;

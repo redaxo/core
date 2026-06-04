@@ -34,14 +34,7 @@ final readonly class Table
         return $this->tableName;
     }
 
-    /**
-     * @param string $name
-     * @param string $type
-     * @param int|null $length
-     * @param string|null $default
-     * @param bool $nullable
-     */
-    public function addColumn($name, $type, $length, $default = null, $nullable = true): void
+    public function addColumn(string $name, string $type, ?int $length, ?string $default = null, bool $nullable = true): void
     {
         $sql = Sql::factory($this->DBID);
 
@@ -71,15 +64,7 @@ final readonly class Table
         $sql->setQuery($qry);
     }
 
-    /**
-     * @param string $oldname
-     * @param string $name
-     * @param string $type
-     * @param int|null $length
-     * @param string|null $default
-     * @param bool $nullable
-     */
-    public function editColumn($oldname, $name, $type, $length, $default = null, $nullable = true): void
+    public function editColumn(string $oldname, string $name, string $type, ?int $length, ?string $default = null, bool $nullable = true): void
     {
         $sql = Sql::factory($this->DBID);
 
@@ -109,8 +94,7 @@ final readonly class Table
         $sql->setQuery($qry);
     }
 
-    /** @param string $name */
-    public function deleteColumn($name): void
+    public function deleteColumn(string $name): void
     {
         $sql = Sql::factory($this->DBID);
 
@@ -120,8 +104,7 @@ final readonly class Table
         $sql->setQuery($qry);
     }
 
-    /** @param string $name */
-    public function hasColumn($name): bool
+    public function hasColumn(string $name): bool
     {
         $columns = Sql::showColumns($this->tableName, $this->DBID);
 

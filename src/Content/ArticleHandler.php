@@ -14,7 +14,6 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 
 use function count;
-use function is_array;
 
 final class ArticleHandler
 {
@@ -330,7 +329,7 @@ final class ArticleHandler
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
             if (null === $status) {
-                $newstatus = self::nextStatus($GA->getValue('status'));
+                $newstatus = self::nextStatus((int) $GA->getValue('status'));
             } else {
                 $newstatus = $status;
             }
@@ -382,13 +381,13 @@ final class ArticleHandler
         return $artStatusTypes;
     }
 
-    public static function nextStatus($currentStatus): int
+    public static function nextStatus(int $currentStatus): int
     {
         $artStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($artStatusTypes);
     }
 
-    public static function prevStatus($currentStatus): int
+    public static function prevStatus(int $currentStatus): int
     {
         $artStatusTypes = self::statusTypes();
         if (($currentStatus - 1) < 0) {
@@ -398,15 +397,8 @@ final class ArticleHandler
         return ($currentStatus - 1) % count($artStatusTypes);
     }
 
-    /**
-     * Berechnet die Prios der Artikel in einer Kategorie neu.
-     *
-     * @param int|null $parentId KategorieId der Kategorie, die erneuert werden soll
-     * @param int $clang ClangId der Kategorie, die erneuert werden soll
-     * @param int $newPrio Neue PrioNr der Kategorie
-     * @param int $oldPrio Alte PrioNr der Kategorie
-     */
-    public static function newArtPrio($parentId, $clang, $newPrio, $oldPrio): void
+    /** Berechnet die Prios der Artikel in einer Kategorie neu. */
+    public static function newArtPrio(?int $parentId, int $clang, int $newPrio, int $oldPrio): void
     {
         $parentId = (int) $parentId;
 
@@ -420,7 +412,7 @@ final class ArticleHandler
             Util::organizePriorities(
                 Core::getTable('article'),
                 'priority',
-                'clang_id=' . (int) $clang . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
+                'clang_id=' . $clang . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
                 'priority,updatedate ' . $addsql,
             );
 
@@ -635,23 +627,11 @@ final class ArticleHandler
     /**
      * Kopiert die Metadaten eines Artikels in einen anderen Artikel.
      *
-     * @param int $fromId ArtikelId des Artikels, aus dem kopiert werden (Quell ArtikelId)
-     * @param int $toId ArtikelId des Artikel, in den kopiert werden sollen (Ziel ArtikelId)
-     * @param int $fromClang ClangId des Artikels, aus dem kopiert werden soll (Quell ClangId)
-     * @param int $toClang ClangId des Artikels, in den kopiert werden soll (Ziel ClangId)
      * @param array $params Array von Spaltennamen, welche kopiert werden sollen
      */
-    public static function copyMeta($fromId, $toId, $fromClang = 1, $toClang = 1, $params = []): bool
+    public static function copyMeta(int $fromId, int $toId, int $fromClang = 1, int $toClang = 1, array $params = []): bool
     {
-        $fromClang = (int) $fromClang;
-        $toClang = (int) $toClang;
-        $fromId = (int) $fromId;
-        $toId = (int) $toId;
-        if (!is_array($params)) {
-            $params = [];
-        }
-
-        if ($fromId == $toId && $fromClang == $toClang) {
+        if ($fromId === $toId && $fromClang === $toClang) {
             return false;
         }
 
@@ -680,17 +660,11 @@ final class ArticleHandler
     /**
      * Kopieren eines Artikels von einer Kategorie in eine andere.
      *
-     * @param int $id ArtikelId des zu kopierenden Artikels
-     * @param int $toCatId KategorieId in die der Artikel kopiert werden soll
-     *
      * @return int|false FALSE bei Fehler, sonst die Artikel Id des neue kopierten Artikels
      */
-    public static function copyArticle($id, $toCatId): int|false
+    public static function copyArticle(int $id, int $toCatId): int|false
     {
-        $id = (int) $id;
-        $toCatId = (int) $toCatId;
         $newId = false;
-
         $user = self::getUser();
 
         // Artikel in jeder Sprache kopieren
@@ -775,20 +749,10 @@ final class ArticleHandler
         return $newId;
     }
 
-    /**
-     * Verschieben eines Artikels von einer Kategorie in eine Andere.
-     *
-     * @param int $id ArtikelId des zu verschiebenden Artikels
-     * @param int $fromCatId KategorieId des Artikels, der Verschoben wird
-     * @param int $toCatId KategorieId in die der Artikel verschoben werden soll
-     */
-    public static function moveArticle($id, $fromCatId, $toCatId): bool
+    /** Verschieben eines Artikels von einer Kategorie in eine Andere. */
+    public static function moveArticle(int $id, int $fromCatId, int $toCatId): bool
     {
-        $id = (int) $id;
-        $toCatId = (int) $toCatId;
-        $fromCatId = (int) $fromCatId;
-
-        if ($fromCatId == $toCatId) {
+        if ($fromCatId === $toCatId) {
             return false;
         }
 

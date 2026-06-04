@@ -72,7 +72,7 @@ class CategorySelect extends Select
         }
     }
 
-    protected function addCatOption(Category $cat, $group = null): void
+    protected function addCatOption(Category $cat, ?int $group = null): void
     {
         if (!$this->checkPerms || Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($cat->id)
         ) {
@@ -100,7 +100,7 @@ class CategorySelect extends Select
         return parent::get();
     }
 
-    protected function outGroup($parentId, $level = 0): string
+    protected function outGroup(int $parentId, int $level = 0): string
     {
         if ($level > 100) {
             // nur mal so zu sicherheit .. man weiss nie ;)

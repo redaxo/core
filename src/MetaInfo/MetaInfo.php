@@ -19,7 +19,6 @@ use Redaxo\Core\View\Asset;
 use function dirname;
 use function in_array;
 use function is_int;
-use function is_string;
 
 final class MetaInfo
 {
@@ -29,22 +28,18 @@ final class MetaInfo
      * Fügt einen neuen Feldtyp ein.
      *
      * Gibt beim Erfolg die Id des Feldes zurück, bei Fehler die Fehlermeldung
-     *
-     * @param string $label
-     * @param string $dbtype
-     * @param int $dblength
      */
-    public static function addFieldType($label, $dbtype, $dblength): int|string
+    public static function addFieldType(string $label, string $dbtype, int $dblength): int|string
     {
-        if (!is_string($label) || empty($label)) {
+        if ('' === $label) {
             return I18n::msg('minfo_field_error_invalid_name');
         }
 
-        if (!is_string($dbtype) || empty($dbtype)) {
+        if ('' === $dbtype) {
             return I18n::msg('minfo_field_error_invalid_type');
         }
 
-        if (!is_int($dblength) || empty($dblength)) {
+        if ($dblength < 1) {
             return I18n::msg('minfo_field_error_invalid_length');
         }
 
@@ -68,12 +63,10 @@ final class MetaInfo
      * Löscht einen Feldtyp.
      *
      * Gibt beim Erfolg true zurück, sonst eine Fehlermeldung
-     *
-     * @param int $fieldTypeId
      */
-    public static function deleteFieldType($fieldTypeId): bool|string
+    public static function deleteFieldType(int $fieldTypeId): bool|string
     {
-        if (!is_int($fieldTypeId) || empty($fieldTypeId)) {
+        if ($fieldTypeId < 1) {
             return I18n::msg('minfo_field_error_invalid_typeid');
         }
 
@@ -85,20 +78,8 @@ final class MetaInfo
         return 1 == $sql->getRows();
     }
 
-    /**
-     * Fügt ein MetaFeld hinzu und legt dafür eine Spalte in der MetaTable an.
-     *
-     * @param string $title
-     * @param string $name
-     * @param int $priority
-     * @param string $attributes
-     * @param int $type
-     * @param string $default
-     * @param string $params
-     * @param string $validate
-     * @param string $restrictions
-     */
-    public static function addField($title, $name, $priority, $attributes, $type, $default, $params = null, $validate = null, $restrictions = ''): true|string
+    /** Fügt ein MetaFeld hinzu und legt dafür eine Spalte in der MetaTable an. */
+    public static function addField(string $title, string $name, int $priority, string $attributes, int $type, string $default, ?string $params = null, ?string $validate = null, string $restrictions = ''): true|string
     {
         $prefix = self::metaPrefix($name);
         $metaTable = self::metaTable($prefix);

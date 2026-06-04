@@ -29,15 +29,8 @@ final class View
 {
     private function __construct() {}
 
-    /**
-     * Returns a toolbar.
-     *
-     * @param string $content
-     * @param string $brand
-     * @param string $cssClass
-     * @param bool $inverse
-     */
-    public static function toolbar($content, $brand = null, $cssClass = null, $inverse = false): string
+    /** Returns a toolbar. */
+    public static function toolbar(string $content, ?string $brand = null, ?string $cssClass = null, bool $inverse = false): string
     {
         $fragment = new Fragment();
         $fragment->setVar('inverse', $inverse);
@@ -48,13 +41,8 @@ final class View
         return $fragment->parse('core/toolbar.php');
     }
 
-    /**
-     * Returns a content block.
-     *
-     * @param string $content
-     * @param string $title
-     */
-    public static function content($content, $title = ''): string
+    /** Returns a content block. */
+    public static function content(string $content, string $title = ''): string
     {
         $fragment = new Fragment();
         $fragment->setVar('title', $title, false);
@@ -65,26 +53,25 @@ final class View
     /**
      * Returns the formatted title.
      *
-     * @param string $head
-     * @param string|array|null $subtitle
+     * @param string|array<Page>|null $subtitle
      *
      * @psalm-taint-sink html $head
      * @psalm-taint-sink html $subtitle
      */
-    public static function title($head, $subtitle = null): string
+    public static function title(string $head, string|array|null $subtitle = null): string
     {
-        if (null !== $subtitle && !is_string($subtitle) && (!is_array($subtitle) || count($subtitle) > 0 && !reset($subtitle) instanceof Page)) {
-            throw new InvalidArgumentException('Expecting $subtitle to be a string or an array of ' . Page::class . '.');
-        }
-
         if (null === $subtitle) {
             $subtitle = Controller::getPageObject(Controller::getCurrentPagePart(1))->getSubpages();
         }
 
-        if (is_array($subtitle) && count($subtitle) && reset($subtitle) instanceof Page) {
+        if (is_array($subtitle) && count($subtitle) > 0) {
             $nav = Navigation::factory();
             $nav->setHeadline('default', I18n::msg('subnavigation', $head));
             foreach ($subtitle as $pageObj) {
+                if (!$pageObj instanceof Page) {
+                    throw new InvalidArgumentException('Expecting $subtitle to be a string or an array of ' . Page::class . ' objects.');
+                }
+
                 $nav->addPage($pageObj);
             }
             $blocks = $nav->getNavigation();
@@ -115,12 +102,8 @@ final class View
         return $return . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
     }
 
-    /**
-     * Returns a clang switch.
-     *
-     * @param bool $asDropDown
-     */
-    public static function clangSwitch(Context $context, $asDropDown = true): string
+    /** Returns a clang switch. */
+    public static function clangSwitch(Context $context, bool $asDropDown = true): string
     {
         if (1 == Language::count()) {
             return '';
@@ -149,12 +132,8 @@ final class View
         return $fragment->parse('core/navigations/content.php');
     }
 
-    /**
-     * Returns a clang switch.
-     *
-     * @param bool $asDropDown
-     */
-    public static function clangSwitchAsButtons(Context $context, $asDropDown = true): string
+    /** Returns a clang switch. */
+    public static function clangSwitchAsButtons(Context $context, bool $asDropDown = true): string
     {
         if (1 == Language::count()) {
             return '';
@@ -262,7 +241,7 @@ final class View
      *
      * @internal
      */
-    public static function mediaPoolMediaForm($formTitle, $buttonTitle, $rexFileCategory, $fileChooser, $closeForm): string
+    public static function mediaPoolMediaForm(string $formTitle, string $buttonTitle, int $rexFileCategory, bool $fileChooser, bool $closeForm): string
     {
         $s = '';
 

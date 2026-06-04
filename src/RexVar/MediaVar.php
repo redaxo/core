@@ -10,8 +10,7 @@ use function Redaxo\Core\View\escape;
 
 final readonly class MediaVar
 {
-    /** @param int|string $id */
-    public static function getWidget($id, $name, $value, array $args = []): string
+    public static function getWidget(int|string $id, string $name, ?string $value, array $args = []): string
     {
         $openParams = '';
         if (isset($args['category']) && ($category = (int) $args['category'])) {
@@ -43,7 +42,7 @@ final readonly class MediaVar
 
         $e = [];
         $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '">';
-        $e['field'] = '<input class="form-control" type="text" name="' . $name . '" value="' . $value . '" id="REX_MEDIA_' . $id . '" readonly />';
+        $e['field'] = '<input class="form-control" type="text" name="' . $name . '" value="' . ($value ?? '') . '" id="REX_MEDIA_' . $id . '" readonly />';
         $e['functionButtons'] = '
                 <a href="#" class="btn btn-popup" onclick="' . $openFunc . 'return false;" title="' . I18n::msg('var_media_open') . '"' . $disabled . '><i class="rex-icon rex-icon-open-mediapool"></i></a>
                 <a href="#" class="btn btn-popup" onclick="' . $addFunc . 'return false;" title="' . I18n::msg('var_media_new') . '"' . $disabled . '><i class="rex-icon rex-icon-add-media"></i></a>

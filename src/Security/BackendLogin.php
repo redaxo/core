@@ -79,14 +79,13 @@ class BackendLogin extends Login
         $this->passkey = $data;
     }
 
-    /** @param bool $stayLoggedIn */
-    public function setStayLoggedIn($stayLoggedIn = false): void
+    public function setStayLoggedIn(bool $stayLoggedIn = false): void
     {
         if (!$this->getLoginPolicy()->isStayLoggedInEnabled()) {
             $stayLoggedIn = false;
         }
 
-        $this->stayLoggedIn = (bool) $stayLoggedIn;
+        $this->stayLoggedIn = $stayLoggedIn;
     }
 
     public function checkLogin(): bool
