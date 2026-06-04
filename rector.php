@@ -428,6 +428,10 @@ return RectorConfig::configure()
         new MethodCallRename(Security\PasswordPolicy::class, 'getRule', 'getDescription'),
 
         new MethodCallRename(Content\ArticleContentBase::class, 'getClang', 'getClangId'),
+        new MethodCallRename(Content\ArticleContentBase::class, 'getArticle', 'renderContent'),
+        new MethodCallRename(Content\ArticleContentBase::class, 'getArticleTemplate', 'renderTemplate'),
+        new MethodCallRename(Content\ArticleContentBase::class, 'getSlice', 'renderSlice'),
+        new MethodCallRename(Content\ArticleSlice::class, 'getSlice', 'renderSlice'),
         new MethodCallRename(Content\StructureElement::class, 'getClang', 'getClangId'),
         new MethodCallRename(Content\StructureElement::class, 'getTemplateId', 'getTemplateKey'),
         new MethodCallRename(Content\Template::class, 'forKey', 'get'),

@@ -178,14 +178,14 @@ Extension::dispatch(new ExtensionPoint('ART_INIT', $article, [
 ], readonly: true));
 
 try {
-    $content .= $article->getArticleTemplate();
+    $content .= $article->renderTemplate();
 } catch (ArticleNotFoundException) {
     // The error article is a fallback and is always rendered normally from the published content cache,
     // regardless of any history/work-version mode the failed request might have been in.
     $article = new ArticleContent(Article::getNotfoundArticleId());
     Core::setProperty('article_id', Article::getNotfoundArticleId());
 
-    $content .= $article->getArticleTemplate();
+    $content .= $article->renderTemplate();
 }
 
 $artId = $article->articleId;

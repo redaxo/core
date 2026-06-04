@@ -257,17 +257,17 @@ final readonly class ArticleSlice
     }
 
     /**
-     * Gibt den Slice formatiert zurück.
+     * Returns the rendered content of this slice.
      *
-     * @see ArticleContent::getSlice()
+     * @see ArticleContent::renderSlice()
      *
      * @throws ArticleNotFoundException
      */
-    public function getSlice(): string
+    public function renderSlice(): string
     {
         $art = new ArticleContent($this->articleId, $this->clangId);
         $art->sliceRevision = $this->revision;
-        return $art->getSlice($this->id);
+        return $art->renderSlice($this->id);
     }
 
     /**

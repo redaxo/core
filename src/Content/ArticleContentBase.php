@@ -96,20 +96,17 @@ class ArticleContentBase
     }
 
     /**
-     * Returns the content of the given slice-id.
-     *
-     * @param int $sliceId A article-slice id
+     * Returns the rendered content of the given slice.
      *
      * @throws ArticleNotFoundException
-     * @return string
      */
-    public function getSlice($sliceId)
+    public function renderSlice(int $sliceId): string
     {
         $oldEval = $this->eval;
         $this->eval = true;
 
         $this->singleSliceId = $sliceId;
-        $sliceContent = $this->getArticle();
+        $sliceContent = $this->renderContent();
         $this->singleSliceId = 0;
 
         $this->eval = $oldEval;
@@ -117,13 +114,12 @@ class ArticleContentBase
     }
 
     /**
-     * Returns the content of the article of the given content section. If no content section is given (null),
+     * Returns the rendered content of the article of the given content section. If no content section is given (null),
      * content of all content sections is returned.
      *
      * @throws ArticleNotFoundException
-     * @return string
      */
-    public function getArticle(?int $contentSectionId = null)
+    public function renderContent(?int $contentSectionId = null): string
     {
         $this->contentSectionId = $contentSectionId;
 
@@ -174,11 +170,8 @@ class ArticleContentBase
 
     // ----- Template inklusive Artikel zurückgeben
 
-    /**
-     * @throws ArticleNotFoundException if a template or module aborts rendering to switch to the not found article
-     * @return string
-     */
-    public function getArticleTemplate()
+    /** @throws ArticleNotFoundException if a template or module aborts rendering to switch to the not found article */
+    public function renderTemplate(): string
     {
         if (null !== $this->article->templateKey && 0 !== $this->articleId) {
             $template = Template::get($this->article->templateKey);

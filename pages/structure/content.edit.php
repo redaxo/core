@@ -30,7 +30,7 @@ $CONT->eval = true;
 $CONT->sliceRevision = $sliceRevision;
 /** @var 'add'|'edit' $function */
 $CONT->function = $function;
-$content = $CONT->getArticle($ctype);
+$content = $CONT->renderContent($ctype);
 
 $fragment = new Fragment();
 $fragment->setVar('content', $content, false);

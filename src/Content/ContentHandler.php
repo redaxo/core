@@ -362,9 +362,9 @@ final class ContentHandler
                 $CONT = new ArticleContentBase($articleId, $clangId);
 
                 $CONT->eval = false; // Content nicht ausführen, damit in Cachedatei gespeichert werden kann
-                $articleContent = $CONT->getArticle();
+                $articleContent = $CONT->renderContent();
             } catch (ArticleNotFoundException $e) {
-                // getArticle() cannot throw here (modules are not executed while eval is off),
+                // renderContent() cannot throw here (modules are not executed while eval is off),
                 // so this only covers a non-existent article from the constructor
                 throw new RuntimeException(sprintf('Article %d does not exist.', $articleId), previous: $e);
             }

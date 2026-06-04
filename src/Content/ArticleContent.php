@@ -15,7 +15,7 @@ use function is_string;
  */
 final class ArticleContent extends ArticleContentBase
 {
-    public function getArticle(?int $contentSectionId = null)
+    public function renderContent(?int $contentSectionId = null): string
     {
         $this->contentSectionId = $contentSectionId;
 
@@ -40,7 +40,7 @@ final class ArticleContent extends ArticleContentBase
             }
         } else {
             // Inhalt ueber sql generierens
-            $CONTENT = parent::getArticle($contentSectionId);
+            $CONTENT = parent::renderContent($contentSectionId);
         }
 
         return Extension::dispatch(new ExtensionPoint('ART_CONTENT', $CONTENT, [

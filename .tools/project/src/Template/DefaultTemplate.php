@@ -14,7 +14,7 @@ final class DefaultTemplate extends Template
     #[Override]
     public function render(ArticleContent $content): string
     {
-        return $content->getArticle();
+        return $content->renderContent();
     }
 
     #[Override]
