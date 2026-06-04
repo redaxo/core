@@ -69,7 +69,8 @@ if ($ctype < 2 || !$template?->hasContentSection($ctype)) {
 
 // ----- Artikel wurde gefunden - Kategorie holen
 $OOArt = Article::require($articleId, $clang);
-$categoryId = $OOArt->categoryId;
+// Top level articles have no category, default to 0 (root) — backend pages expect an int category id.
+$categoryId = $OOArt->categoryId ?? 0;
 
 // ----- Request Parameter
 $subpage = Controller::getCurrentPagePart(2);
@@ -92,7 +93,7 @@ echo View::title(I18n::msg('content') . ': ' . escape($OOArt->name), '');
 echo View::clangSwitchAsButtons($context);
 
 // ----- category pfad und rechte
-echo View::structureBreadcrumb($categoryId ?? 0, $articleId, $clang);
+echo View::structureBreadcrumb($categoryId, $articleId, $clang);
 
 // ----- EXTENSION POINT
 echo Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_HEADER', '', [

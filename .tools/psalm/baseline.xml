@@ -206,11 +206,7 @@
   <file src="boot/frontend.php">
     <MixedAssignment>
       <code><![CDATA[$article]]></code>
-      <code><![CDATA[$article]]></code>
     </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[setEval]]></code>
-    </MixedMethodCall>
     <PossiblyFalseOperand>
       <code><![CDATA[$content]]></code>
       <code><![CDATA[$content]]></code>
@@ -1749,11 +1745,6 @@
     <PossiblyFalseArgument>
       <code><![CDATA[$CONTENT]]></code>
     </PossiblyFalseArgument>
-  </file>
-  <file src="src/Content/ArticleContentEditor.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$this->ctype]]></code>
-    </ArgumentTypeCoercion>
   </file>
   <file src="src/Content/ArticleHandler.php">
     <ArgumentTypeCoercion>

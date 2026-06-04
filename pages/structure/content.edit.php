@@ -6,7 +6,7 @@ use Redaxo\Core\View\Fragment;
 
 assert(isset($articleId) && is_int($articleId));
 assert(isset($clang) && is_int($clang));
-assert(isset($ctype) && is_int($ctype));
+assert(isset($ctype) && is_int($ctype) && $ctype > 0);
 assert(isset($sliceId) && is_int($sliceId));
 assert(isset($sliceRevision) && is_int($sliceRevision));
 assert(isset($function) && is_string($function));
@@ -21,19 +21,16 @@ if ($result = ApiFunction::factory()?->result) {
     }
 }
 
-$CONT = new ArticleContentEditor();
-$CONT->getContentAsQuery();
-$CONT->info = $info;
-$CONT->warning = $warning;
-$CONT->setArticleId($articleId);
-$CONT->setSliceId($sliceId);
-$CONT->setMode('edit');
-$CONT->setClang($clang);
-$CONT->setEval(true);
-$CONT->setSliceRevision($sliceRevision);
+$CONT = new ArticleContentEditor($articleId, $clang);
+$CONT->success = $info;
+$CONT->error = $warning;
+$CONT->sliceId = $sliceId;
+$CONT->mode = 'edit';
+$CONT->eval = true;
+$CONT->sliceRevision = $sliceRevision;
 /** @var 'add'|'edit' $function */
-$CONT->setFunction($function);
-$content = $CONT->getArticle($ctype);
+$CONT->function = $function;
+$content = $CONT->renderContent($ctype);
 
 $fragment = new Fragment();
 $fragment->setVar('content', $content, false);

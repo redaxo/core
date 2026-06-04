@@ -2,18 +2,14 @@
 
 namespace Redaxo\Core\Tests\Content;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleContent;
-use Redaxo\Core\Content\ArticleContentBase;
-use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Exception\LogicException;
+use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
-use ReflectionProperty;
 
 /** @internal */
 final class ArticleContentTest extends TestCase
@@ -57,96 +53,19 @@ final class ArticleContentTest extends TestCase
         Article::clearInstancePool();
     }
 
-    public function testBcHasValue(): void
-    {
-        $instance = new ArticleContent(1, 1);
-        $viaSql = new ReflectionProperty(ArticleContent::class, 'viasql');
-
-        $viaSql->setValue($instance, true);
-
-        // fake meta field in database structure
-        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'ARTICLE');
-        $propArticle->setValue($instance, Sql::factory()->setValue('art_foo', 'teststring'));
-
-        self::assertTrue($instance->hasValue('foo'));
-        self::assertTrue($instance->hasValue('art_foo'));
-
-        self::assertFalse($instance->hasValue('bar'));
-        self::assertFalse($instance->hasValue('art_bar'));
-    }
-
-    public function testBcGetValue(): void
+    public function testProvidesTheArticle(): void
     {
         $instance = new ArticleContent(1, 1);
 
-        $viaSql = new ReflectionProperty(ArticleContent::class, 'viasql');
-        $viaSql->setValue($instance, true);
-
-        // fake meta field in database structure
-        $propArticle = new ReflectionProperty(ArticleContentBase::class, 'ARTICLE');
-        $propArticle->setValue($instance, Sql::factory()->setValue('art_foo', 'teststring'));
-
-        self::assertEquals('teststring', $instance->getValue('foo'));
-        self::assertEquals('teststring', $instance->getValue('art_foo'));
+        self::assertSame(1, $instance->article->id);
+        self::assertSame('Testarticle', $instance->article->name);
+        self::assertSame('teststring', $instance->article->getValue('foo'));
     }
 
-    #[DataProvider('dataBcGetValueNonExisting')]
-    public function testBcGetValueNonExisting(string $value): void
+    public function testThrowsForMissingArticle(): void
     {
-        $instance = new ArticleContent(1, 1);
+        $this->expectException(ArticleNotFoundException::class);
 
-        $viaSql = new ReflectionProperty(ArticleContent::class, 'viasql');
-        $viaSql->setValue($instance, true);
-
-        $this->expectException(LogicException::class);
-
-        $instance->getValue($value);
-    }
-
-    /** @return list<array{string}> */
-    public static function dataBcGetValueNonExisting(): array
-    {
-        return [
-            ['bar'],
-            ['art_bar'],
-        ];
-    }
-
-    public function testHasValue(): void
-    {
-        $instance = new ArticleContent(1, 1);
-
-        self::assertTrue($instance->hasValue('foo'));
-        self::assertTrue($instance->hasValue('art_foo'));
-
-        self::assertFalse($instance->hasValue('bar'));
-        self::assertFalse($instance->hasValue('art_bar'));
-    }
-
-    public function testGetValue(): void
-    {
-        $instance = new ArticleContent(1, 1);
-
-        self::assertEquals('teststring', $instance->getValue('foo'));
-        self::assertEquals('teststring', $instance->getValue('art_foo'));
-    }
-
-    #[DataProvider('dataGetValueNonExisting')]
-    public function testGetValueNonExisting(string $value): void
-    {
-        $instance = new ArticleContent(1, 1);
-
-        $this->expectException(LogicException::class);
-
-        $instance->getValue($value);
-    }
-
-    /** @return list<array{string}> */
-    public static function dataGetValueNonExisting(): array
-    {
-        return [
-            ['bar'],
-            ['art_bar'],
-        ];
+        new ArticleContent(999, 1);
     }
 }

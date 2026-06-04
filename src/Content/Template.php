@@ -4,6 +4,7 @@ namespace Redaxo\Core\Content;
 
 use InvalidArgumentException;
 use Redaxo\Core\ClassDiscovery;
+use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 
 use function sprintf;
 
@@ -175,5 +176,6 @@ abstract class Template
         return null !== $this->getContentSection($id);
     }
 
-    abstract public function render(ArticleContent $article): string;
+    /** @throws ArticleNotFoundException if rendering should be aborted to switch to the not found article */
+    abstract public function render(ArticleContent $content): string;
 }

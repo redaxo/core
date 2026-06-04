@@ -12,9 +12,9 @@ use Redaxo\Core\Content\Template;
 final class DefaultTemplate extends Template
 {
     #[Override]
-    public function render(ArticleContent $article): string
+    public function render(ArticleContent $content): string
     {
-        return $article->getArticle();
+        return $content->renderContent();
     }
 
     #[Override]

@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Content;
 
 use Redaxo\Core\ClassDiscovery;
+use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 
 abstract class Module
 {
@@ -70,7 +71,11 @@ abstract class Module
     /** Render the backend edit form. */
     abstract public function input(ArticleSlice $slice): string;
 
-    /** Render the frontend output. */
+    /**
+     * Render the frontend output.
+     *
+     * @throws ArticleNotFoundException if rendering should be aborted to switch to the not found article
+     */
     abstract public function output(ArticleSlice $slice): string;
 
     /** Called before slice data is saved to DB. */

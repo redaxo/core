@@ -25,10 +25,12 @@ use Rector\Renaming\Rector\ClassConstFetch\RenameClassConstFetchRector;
 use Rector\Renaming\Rector\FuncCall\RenameFunctionRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
+use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassAndConstFetch;
 use Rector\Renaming\ValueObject\RenameClassConstFetch;
+use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Transform\Rector\ConstFetch\ConstFetchToClassConstFetchRector;
 use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
@@ -425,9 +427,10 @@ return RectorConfig::configure()
 
         new MethodCallRename(Security\PasswordPolicy::class, 'getRule', 'getDescription'),
 
-        new MethodCallRename(Content\ArticleContentBase::class, 'getClang', 'getClangId'),
-        new MethodCallRename(Content\StructureElement::class, 'getClang', 'getClangId'),
-        new MethodCallRename(Content\StructureElement::class, 'getTemplateId', 'getTemplateKey'),
+        new MethodCallRename(Content\ArticleContentBase::class, 'getArticle', 'renderContent'),
+        new MethodCallRename(Content\ArticleContentBase::class, 'getArticleTemplate', 'renderTemplate'),
+        new MethodCallRename(Content\ArticleContentBase::class, 'getSlice', 'renderSlice'),
+        new MethodCallRename(Content\ArticleSlice::class, 'getSlice', 'renderSlice'),
         new MethodCallRename(Content\Template::class, 'forKey', 'get'),
         new MethodCallRename(Content\Template::class, 'getCtypes', 'getContentSections'),
         new MethodCallRename(Content\Template::class, 'getDefaultId', 'getDefaultKey'),
@@ -540,8 +543,11 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Cronjob\CronjobExecutor::class, 'hasMessage', 'message'),
 
         new MethodCallToPropertyFetch(Content\Article::class, 'getCategoryId', 'categoryId'), // changed from int to ?int
-        new MethodCallToPropertyFetch(Content\Article::class, 'getTemplateKey', 'templateKey'),
+        new MethodCallToPropertyFetch(Content\Article::class, 'getTemplateId', 'templateKey'),
         new MethodCallToPropertyFetch(Content\Article::class, 'hasTemplate', 'templateKey'), // changed from bool to ?string, callers using the bool need manual adjustment
+
+        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getArticleId', 'articleId'),
+        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClang', 'clangId'),
 
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
@@ -560,7 +566,7 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getParentId', 'parentId'),
-        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClangId', 'clangId'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClang', 'clangId'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getName', 'name'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPriority', 'priority'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPath', 'path'), // changed from string to array, callers using the string need manual adjustment
@@ -643,6 +649,12 @@ return RectorConfig::configure()
         new MethodCallToPropertyAssign(Cronjob\Type\AbstractType::class, 'setMessage', 'message'),
         new MethodCallToPropertyAssign(Cronjob\CronjobExecutor::class, 'setMessage', 'message'),
 
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setSliceId', 'sliceId'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setSliceRevision', 'sliceRevision'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setMode', 'mode'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setFunction', 'function'),
+        new MethodCallToPropertyAssign(Content\ArticleContentBase::class, 'setEval', 'eval'),
+
         new MethodCallToPropertyAssign(Content\ArticleSliceAction::class, 'setSave', 'save'),
 
         new MethodCallToPropertyAssign(Content\ExtensionPoint\SliceMenu::class, 'setMenuEditAction', 'menuEditAction'),
@@ -668,6 +680,16 @@ return RectorConfig::configure()
     ->withConfiguredRule(RedaxoRule\SetterCallToConstructorArgumentRector::class, [
         new SetterCallToConstructorArgument(ApiFunction\Result::class, 'setRequiresReboot', 'requiresReboot'),
     ])
+    ->withConfiguredRule(RenamePropertyRector::class, [
+        new RenameProperty(Content\ArticleContentBase::class, 'article_id', 'articleId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'clang', 'clangId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'slice_id', 'sliceId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'getSlice', 'singleSliceId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'ctype', 'contentSectionId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'slice_revision', 'sliceRevision'),
+        new RenameProperty(Content\ArticleContentBase::class, 'warning', 'error'),
+        new RenameProperty(Content\ArticleContentBase::class, 'info', 'success'),
+    ])
     ->withConfiguredRule(ArgumentRemoverRector::class, [
         new ArgumentRemover(Util\Str::class, 'buildQuery', 1, null),
         new ArgumentRemover(Base\UrlProviderInterface::class, 'getUrl', 1, null),
@@ -686,6 +708,8 @@ return RectorConfig::configure()
         new ArgumentRemover(Util\Markdown::class, 'parseWithToc', 3, [true]),
     ])
     ->withConfiguredRule(ReplaceArgumentDefaultValueRector::class, [
+        new ReplaceArgumentDefaultValue(Content\ArticleContentBase::class, 'renderContent', 0, -1, null),
+
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'PACKAGE_CACHE_DELETED', 'ADDON_CACHE_DELETED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_ADDED', 'SLICE_ADDED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_UPDATED', 'SLICE_UPDATED'),

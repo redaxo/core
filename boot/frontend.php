@@ -3,7 +3,6 @@
 use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleContent;
-use Redaxo\Core\Content\ArticleContentBase;
 use Redaxo\Core\Content\ArticleRevision;
 use Redaxo\Core\Content\ArticleSliceHistory;
 use Redaxo\Core\Content\Exception\ArticleNotFoundException;
@@ -21,6 +20,7 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Mailer\Mailer;
 use Redaxo\Core\Security\BackendLogin;
+use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
 if (Core::isSetup()) {
@@ -89,21 +89,18 @@ if (Core::getConfig('article_history', false)) {
         }
 
         Extension::register('ART_INIT', static function (ExtensionPoint $ep) {
-            $article = $ep->getParam('article');
-            if ($article instanceof ArticleContent) {
-                $article->getContentAsQuery();
-            }
-            $article->setEval(true);
+            // Render the requested article live from the database instead of the published content cache.
+            Type::instanceOf($ep->subject, ArticleContent::class)->eval = true;
         });
 
         Extension::register('ART_SLICES_QUERY', static function (ExtensionPoint $ep) {
             $historyDate = Request::request('rex_history_date', 'string');
             $article = $ep->getParam('article');
 
-            if ($article instanceof ArticleContent && $article->getArticleId() == Article::getCurrentId()) {
+            if ($article instanceof ArticleContent && $article->articleId == Article::getCurrentId()) {
                 $articleLimit = '';
-                if (0 != $article->getArticleId()) {
-                    $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . $article->getArticleId();
+                if (0 != $article->articleId) {
+                    $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . $article->articleId;
                 }
 
                 ArticleSliceHistory::checkTables();
@@ -117,8 +114,8 @@ if (Core::getConfig('article_history', false)) {
                         ' . ArticleSliceHistory::getTable() . ' as ' . Core::getTablePrefix() . 'article_slice
                     LEFT JOIN ' . Core::getTablePrefix() . 'article ON ' . Core::getTablePrefix() . 'article_slice.article_id=' . Core::getTablePrefix() . 'article.id
                     WHERE
-                        ' . Core::getTablePrefix() . "article_slice.clang_id='" . $article->getClangId() . "' AND
-                        " . Core::getTablePrefix() . "article.clang_id='" . $article->getClangId() . "' AND
+                        ' . Core::getTablePrefix() . "article_slice.clang_id='" . $article->clangId . "' AND
+                        " . Core::getTablePrefix() . "article.clang_id='" . $article->clangId . "' AND
                         " . Core::getTablePrefix() . 'article_slice.revision=0
                         ' . $articleLimit . '
                         ' . $sliceDate . '
@@ -146,13 +143,10 @@ if (Core::getConfig('article_work_version', false)) {
             exit;
         }
 
-        /** @var ArticleContentBase $article */
-        $article = $ep->getParam('article');
-        $article->setSliceRevision($version);
-        if ($article instanceof ArticleContent) {
-            $article->getContentAsQuery();
-        }
-        $article->setEval(true);
+        // Render the working version live from the database instead of the published content cache.
+        $article = Type::instanceOf($ep->subject, ArticleContent::class);
+        $article->sliceRevision = $version;
+        $article->eval = true;
     });
 }
 
@@ -161,10 +155,9 @@ if ($clangId && !Language::exists($clangId)) {
     Response::sendRedirect(Url::article(Article::getNotfoundArticleId(), Language::getStartId()));
 }
 
-$article = new ArticleContent();
-$article->setClang(Language::getCurrentId());
-
-if (!$article->setArticleId(Article::getCurrentId())) {
+try {
+    $article = new ArticleContent(Article::getCurrentId());
+} catch (ArticleNotFoundException) {
     if (!Core::isDebugMode() && !BackendLogin::hasSession()) {
         throw new NotFoundHttpException('Article with id ' . Article::getCurrentId() . ' does not exist.');
     }
@@ -177,18 +170,25 @@ if (!$article->setArticleId(Article::getCurrentId())) {
     exit;
 }
 
+// ----- EXTENSION POINT: lets extensions configure the requested article content object,
+// e.g. to render the history or working version live from the database instead of the cache.
+Extension::dispatch(new ExtensionPoint('ART_INIT', $article, [
+    'article_id' => Article::getCurrentId(),
+    'clang' => Language::getCurrentId(),
+], readonly: true));
+
 try {
-    $content .= $article->getArticleTemplate();
+    $content .= $article->renderTemplate();
 } catch (ArticleNotFoundException) {
-    $article = new ArticleContent();
-    $article->setClang(Language::getCurrentId());
-    $article->setArticleId(Article::getNotfoundArticleId());
+    // The error article is a fallback and is always rendered normally from the published content cache,
+    // regardless of any history/work-version mode the failed request might have been in.
+    $article = new ArticleContent(Article::getNotfoundArticleId());
     Core::setProperty('article_id', Article::getNotfoundArticleId());
 
-    $content .= $article->getArticleTemplate();
+    $content .= $article->renderTemplate();
 }
 
-$artId = $article->getArticleId();
+$artId = $article->articleId;
 if ($artId == Article::getNotfoundArticleId() && $artId != Article::getSiteStartArticleId()) {
     Response::setStatus(Response::HTTP_NOT_FOUND);
 }
