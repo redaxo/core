@@ -10,17 +10,18 @@ $finder = Finder::create()
         __DIR__ . '/boot',
         __DIR__ . '/fragments',
         __DIR__ . '/pages',
+        __DIR__ . '/project',
         __DIR__ . '/setup',
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
     ->exclude([
-        'project/var',
+        'var',
+        'vendor',
     ])
     ->append([
         __FILE__,
-        __DIR__ . '/.tools/bin/console',
-        __DIR__ . '/.tools/bin/update-root-composer',
+        __DIR__ . '/project/bin/console',
         __DIR__ . '/assets_src/vendor_files.php',
         __DIR__ . '/rector.php',
     ])

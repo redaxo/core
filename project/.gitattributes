@@ -1,0 +1,6 @@
+# Files relevant to the skeleton repository itself — kept out of the project created via `composer create-project`
+# (honored for dist installs). README.md is the skeleton's readme; the project's own README is written by the
+# create-project script handler (see Redaxo\Core\Composer\ScriptHandler).
+/.gitattributes export-ignore
+/LICENSE export-ignore
+/README.md export-ignore

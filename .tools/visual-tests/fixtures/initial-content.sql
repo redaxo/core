@@ -2,8 +2,8 @@
 ## Prefix rex_
 
 INSERT IGNORE INTO `rex_article` VALUES
-(1,1,0,'test category','test category',1,1,1,'|',1,'default',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername'),
-(2,2,0,'test article','',0,0,1,'|',0,'default',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
+(1,1,0,'test category','test category',1,1,1,'|',1,'test',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername'),
+(2,2,0,'test article','',0,0,1,'|',0,'test',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
 
 INSERT IGNORE INTO `rex_article_slice` VALUES
 (1,1,1,1,'testmodule1',0,1,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername'),

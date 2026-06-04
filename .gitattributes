@@ -16,6 +16,7 @@
 /.* export-ignore
 /.phpstorm.meta.php -export-ignore
 /addons/ export-ignore
+/project/ export-ignore
 /tests/ export-ignore
 /docker-compose.yml export-ignore
 /phpstan.dist.neon export-ignore

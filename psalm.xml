@@ -12,17 +12,24 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
 >
     <projectFiles>
-        <directory name=".tools/project/public"/>
-        <directory name=".tools/project/src"/>
+        <directory name=".tools/fixtures"/>
         <directory name="addons"/>
         <directory name="boot"/>
         <directory name="fragments"/>
         <directory name="pages"/>
+        <directory name="project/public"/>
+        <directory name="project/src"/>
         <directory name="setup"/>
         <directory name="src"/>
         <directory name="tests"/>
+        <file name=".php-cs-fixer.dist.php"/>
+        <file name="assets_src/vendor_files.php"/>
+        <file name="project/bin/console"/>
+        <file name="rector.php"/>
         <ignoreFiles>
             <directory name="vendor"/>
+            <!-- Composer script handler — uses Composer's runtime API (not in the dependency tree). -->
+            <file name="src/Composer/ScriptHandler.php" />
             <file name=".phpstorm.meta.php" />
         </ignoreFiles>
     </projectFiles>

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Name;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
@@ -82,12 +83,15 @@ use Redaxo\Rector\ValueObject\SetterCallToConstructorArgument;
 
 return RectorConfig::configure()
     ->withPaths([
-        '.tools/project/',
+        '.tools/fixtures/',
         'addons',
         'assets_src/vendor_files.php',
         'boot/',
         'fragments/',
         'pages/',
+        'project/bin/console',
+        'project/public/',
+        'project/src/',
         'setup/',
         'src/',
         'tests/',
@@ -136,7 +140,8 @@ return RectorConfig::configure()
         TypeDeclaration\ArrowFunction\AddArrowFunctionReturnTypeRector::class,
         TypeDeclaration\Closure\AddClosureVoidReturnTypeWhereNoReturnRector::class,
 
-        '.tools/project/var',
+        // Composer script handler — uses Composer's runtime API (not in the dependency tree).
+        __DIR__ . '/src/Composer/ScriptHandler.php',
     ])
 
     // Upgrade REDAXO 5 to 6
@@ -717,7 +722,7 @@ return RectorConfig::configure()
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_MENU', '\\' . Content\ExtensionPoint\SliceMenu::class . '::NAME'),
 
         new ReplaceArgumentDefaultValue(Util\Markdown::class, 'parse', 1, false, $options = [
-            new Expr\ArrayItem(new Expr\ConstFetch(new Name('false')), new Expr\ClassConstFetch(new Name(Util\Markdown::class), 'SOFT_LINE_BREAKS')),
+            new ArrayItem(new Expr\ConstFetch(new Name('false')), new Expr\ClassConstFetch(new Name(Util\Markdown::class), 'SOFT_LINE_BREAKS')),
         ]),
         new ReplaceArgumentDefaultValue(Util\Markdown::class, 'parseWithToc', 3, false, $options),
     ])

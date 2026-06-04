@@ -41,9 +41,9 @@ vendor/bin/phpunit tests/Database/SqlTest.php
 
 ### Console & Docker
 ```bash
-php .tools/bin/console                      # List all CLI commands (Symfony Console)
-php .tools/bin/console setup:run            # Run setup
-php .tools/bin/console migrate              # Sync DB schema with core + addons after a code update
+php project/bin/console                      # List all CLI commands (Symfony Console)
+php project/bin/console setup:run            # Run setup
+php project/bin/console migrate              # Sync DB schema with core + addons after a code update
 docker-compose up -d                        # Start (port 80)
 REDAXO_PORT=8080 docker-compose up -d       # Start on custom port
 ```
@@ -51,14 +51,19 @@ REDAXO_PORT=8080 docker-compose up -d       # Start on custom port
 ## Architecture
 
 ### What belongs to this repo
-This repository contains the **REDAXO core** under `src/` (`Redaxo\Core\`), backend pages (`pages/`), templates (`fragments/`), translations (`lang/`), setup (`setup/`) and assets (`assets/`, `assets_src/`). Two **dev-only addons** live under `addons/`: `debug` and `test`.
+This repository **is** the `redaxo/core` package — the package is the whole repository root, not a subdirectory. Everything in the root ships as core except the dev-only paths excluded from the dist via `.gitattributes` `export-ignore` (notably `addons/`, `project/`, `tests/`, the dotfiles and the analysis configs). Core's PHP classes (`Redaxo\Core\`) live in `src/`, but core equally comprises the boot sequence (`boot/`), backend pages (`pages/`), fragment templates (`fragments/`), translations (`lang/`), setup (`setup/`), DB schemas (`schemas/`) and assets (`assets/`, `assets_src/`).
+
+Two addons live under `addons/`, but they are different in nature: **`debug`** is the `redaxo/debug` package — a real, published addon that is split out into a standalone repository via git subtree split and required here only as a dev dependency. **`test`** is an internal helper used solely within this repo for testing and is *not* published.
+
+The **`project/` skeleton** is the `redaxo/project` package — published standalone via git subtree split and used with `composer create-project` — which also doubles as this repo's local development instance (see *Local dev instance* below). Visual-test fixtures (modules/templates) live under `.tools/fixtures/` (namespace `Redaxo\Core\Fixtures`), so they stay out of the shipped skeleton.
 
 ### Key concepts
 - **`Core` static class** (`src/Core.php`) — central application registry for paths, config, request, current user.
 - **Addon system** — `Addon` / `AddonManager` (`src/Addon/`). Each addon is a subclass of `Addon`, registered via composer.json `extra.redaxo.addon-class`. Metadata comes from composer.json; integration happens through overridable hooks — `boot()` (runtime init), `install()`/`uninstall()` (schema/data setup — must be idempotent, runs on every `console migrate`), `getPages()` (backend pages) — plus the `$load` and `$defaultConfig` properties.
 - **Extension points** — REDAXO's hook/event system: register listeners with `Extension::register('NAME', ...)`, fire points with `Extension::dispatch(new ExtensionPoint(...))`. Classes live under `Redaxo\Core\ExtensionPoint`. This is the primary integration mechanism for addons.
 - **Fragments** (`fragments/`) — template snippets rendered via `Fragment` (`src/View/Fragment.php`).
-- **Boot flow** — `AbstractProject` (Symfony `RuntimeInterface`) drives boot via `boot/core.php` → `boot/addons.php` → environment entry (`boot/backend.php`, `boot/frontend.php`, `boot/console.php`).
+- **Boot flow** — `AbstractProject` (Symfony `RuntimeInterface`) drives boot via `boot/core.php` → `boot/addons.php` → environment entry (`boot/backend.php`, `boot/frontend.php`, `boot/console.php`). The entry points live in the project (`project/public/index.php`, `project/public/redaxo/index.php`, `project/bin/console`).
+- **Local dev instance** — `project/` is loaded as a Composer path repo and symlinked into `vendor/redaxo/project`. `composer install`/`update` runs `.tools/bin/init-project`, which writes the gitignored `project/vendor/autoload_runtime.php` shim (delegating to the root autoloader). Run the app via `project/bin/console` and the `project/public/` document root; runtime data lives in `project/var/` (gitignored).
 
 ### Class naming
 All core classes live in the `Redaxo\Core\` namespace, mapped to `src/`. Tests live under `tests/` mirroring the `src/` layout, namespace `Redaxo\Core\Tests`, files named `*Test.php`.

@@ -1,0 +1,19 @@
+# Safety net — deny access to the project root.
+#
+# The web server's document root MUST point to the "public/" directory. If a (mis)configured vhost serves the project
+# root instead, this prevents source code, configuration, dependencies and runtime data from being exposed. Access for
+# "public/" itself is re-granted in public/.htaccess.
+#
+# Note: this only takes effect on servers that evaluate .htaccess files (typical Apache shared hosting). On nginx etc.
+# configure the document root to point at "public/" — that is the actual line of defense everywhere.
+
+# The check keys on the mod_authz_core module (introduced in 2.3, standard since 2.4), not on a version number.
+<IfModule mod_authz_core.c>
+    # Apache 2.4+
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    # Apache 2.2 and earlier
+    Order deny,allow
+    Deny from all
+</IfModule>

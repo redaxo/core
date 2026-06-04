@@ -1,6 +1,6 @@
 <?php
 
-namespace Project\Template;
+namespace Redaxo\Core\Fixtures;
 
 use Override;
 use Redaxo\Core\Content\ArticleContent;
@@ -8,8 +8,8 @@ use Redaxo\Core\Content\AsTemplate;
 use Redaxo\Core\Content\ContentSection;
 use Redaxo\Core\Content\Template;
 
-#[AsTemplate('default', 'Default')]
-final class DefaultTemplate extends Template
+#[AsTemplate('test', 'Test')]
+final class TestTemplate extends Template
 {
     #[Override]
     public function render(ArticleContent $content): string
@@ -17,6 +17,7 @@ final class DefaultTemplate extends Template
         return $content->renderContent();
     }
 
+    /** @return non-empty-list<ContentSection> */
     #[Override]
     public function getContentSections(): array
     {
