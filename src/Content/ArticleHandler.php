@@ -55,10 +55,7 @@ final class ArticleHandler
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
         if (null === $templateKey || !isset($templates[$templateKey])) {
-            $templateKey = null;
-            if (count($templates) > 0) {
-                $templateKey = key($templates);
-            }
+            $templateKey = array_key_first($templates);
         }
         $data['template'] = $templateKey;
 
@@ -147,10 +144,7 @@ final class ArticleHandler
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
         if (null === $templateKey || !isset($templates[$templateKey])) {
-            $templateKey = null;
-            if (count($templates) > 0) {
-                $templateKey = key($templates);
-            }
+            $templateKey = array_key_first($templates);
         }
         $data['template'] = $templateKey;
 
