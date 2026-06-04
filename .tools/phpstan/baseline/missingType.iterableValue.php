@@ -79,21 +79,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Content/Linkmap/ArticleListRenderer.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureContext::__construct() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureContext.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureContext::getMountpoints() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureContext.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property Redaxo\\Core\\Content\\StructureContext::$params type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/Content/StructureContext.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\StructureElement::getUrl() has parameter $params with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/StructureElement.php',
