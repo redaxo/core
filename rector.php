@@ -569,6 +569,16 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ContentSection::class, 'getName', 'name'),
 
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getCategoryId', 'categoryId'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getArticleId', 'articleId'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getClangId', 'clangId'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getCtypeId', 'ctypeId'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getArtStart', 'artStart'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getCatStart', 'catStart'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getEditId', 'editId'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getFunction', 'function'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getRowsPerPage', 'rowsPerPage'),
+
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getParentId', 'parentId'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClang', 'clangId'),

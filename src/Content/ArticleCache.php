@@ -16,13 +16,8 @@ final class ArticleCache
     /**
      * Löscht die gecachten Dateien eines Artikels. Wenn keine clang angegeben, wird
      * der Artikel-Cache in allen Sprachen gelöscht.
-     *
-     * @param int $id ArtikelId des Artikels
-     * @param int $clangId ClangId des Artikels
-     *
-     * @return bool True on success, False on errro
      */
-    public static function delete($id, $clangId = null)
+    public static function delete(int $id, ?int $clangId = null): bool
     {
         // sanity check
         if ($id < 0) {
@@ -45,13 +40,8 @@ final class ArticleCache
     /**
      * Löscht die gecachten Meta-Dateien eines Artikels. Wenn keine clang angegeben, wird
      * der Artikel in allen Sprachen gelöscht.
-     *
-     * @param int $id ArtikelId des Artikels
-     * @param int $clangId ClangId des Artikels
-     *
-     * @return bool True on success, False on errro
      */
-    public static function deleteMeta($id, $clangId = null)
+    public static function deleteMeta(int $id, ?int $clangId = null): bool
     {
         // sanity check
         if ($id < 0) {
@@ -76,13 +66,8 @@ final class ArticleCache
     /**
      * Löscht die gecachten Content-Dateien eines Artikels. Wenn keine clang angegeben, wird
      * der Artikel in allen Sprachen gelöscht.
-     *
-     * @param int $id ArtikelId des Artikels
-     * @param int $clangId ClangId des Artikels
-     *
-     * @return bool True on success, False on errro
      */
-    public static function deleteContent($id, $clangId = null)
+    public static function deleteContent(int $id, ?int $clangId = null): bool
     {
         // sanity check
         if ($id < 0) {
@@ -105,12 +90,8 @@ final class ArticleCache
     /**
      * Löscht die gecachten List-Dateien eines Artikels. Wenn keine clang angegeben, wird
      * der Artikel in allen Sprachen gelöscht.
-     *
-     * @param int $id ArtikelId des Artikels
-     *
-     * @return bool True on success, False on errro
      */
-    public static function deleteLists($id)
+    public static function deleteLists(int $id): bool
     {
         // sanity check
         if ($id < 0) {
@@ -130,21 +111,18 @@ final class ArticleCache
     /**
      * Generiert den Artikel-Cache der Metainformationen.
      *
-     * @param int $articleId Id des zu generierenden Artikels
-     * @param int $clangId ClangId des Artikels
-     *
      * @return bool|string TRUE bei Erfolg, FALSE wenn eine ungütlige article_id übergeben wird, sonst eine Fehlermeldung
      */
-    public static function generateMeta($articleId, $clangId = null)
+    public static function generateMeta(int $articleId, ?int $clangId = null): bool|string
     {
         // sanity check
         if ($articleId <= 0) {
             return false;
         }
 
-        $qry = 'SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE id=' . (int) $articleId;
+        $qry = 'SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE id=' . $articleId;
         if (null !== $clangId) {
-            $qry .= ' AND clang_id=' . (int) $clangId;
+            $qry .= ' AND clang_id=' . $clangId;
         }
 
         $sql = Sql::factory();
@@ -178,7 +156,7 @@ final class ArticleCache
      *
      * @return bool|string TRUE wenn der Artikel gelöscht wurde, sonst eine Fehlermeldung
      */
-    public static function generateLists($parentId)
+    public static function generateLists(int $parentId): bool|string
     {
         // sanity check
         if ($parentId < 0) {

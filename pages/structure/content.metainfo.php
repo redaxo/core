@@ -43,11 +43,11 @@ $panels[] = '<dt>' . I18n::msg('updated_on') . '</dt><dd>' . Formatter::intlDate
 $articleClass = $articleStatusTypes[$status][1];
 $articleStatus = $articleStatusTypes[$status][0];
 $articleIcon = $articleStatusTypes[$status][2];
-$structureContext = new StructureContext([
-    'article_id' => Request::request('article_id', 'int'),
-    'category_id' => $article->categoryId,
-    'clang_id' => Request::request('clang', 'int'),
-]);
+$structureContext = new StructureContext(
+    categoryId: $article->categoryId ?? 0,
+    articleId: Request::request('article_id', 'int'),
+    clangId: Request::request('clang', 'int'),
+);
 
 if (0 == $article->getValue('startarticle')) {
     if (Core::requireUser()->hasPerm('publishArticle[]')) {

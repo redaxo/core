@@ -16,8 +16,7 @@ use function in_array;
  */
 abstract class CategoryTreeRenderer
 {
-    /** @return string */
-    public function getTree($categoryId)
+    public function getTree(int $categoryId): string
     {
         $category = Category::get($categoryId);
 
@@ -54,7 +53,7 @@ abstract class CategoryTreeRenderer
      *
      * @return string the rendered markup
      */
-    public function renderTree(array $children, array $activeTreeIds)
+    public function renderTree(array $children, array $activeTreeIds): string
     {
         $ul = '';
         $li = '';
@@ -83,8 +82,7 @@ abstract class CategoryTreeRenderer
         return $ul;
     }
 
-    /** @return string */
-    abstract protected function treeItem(Category $cat, $liClasses, $linkClasses, $subHtml, $liIcon);
+    abstract protected function treeItem(Category $cat, string $liClasses, string $linkClasses, string $subHtml, string $liIcon): string;
 
     public static function formatLabel(StructureElement $OOobject): string
     {

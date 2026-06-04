@@ -1273,12 +1273,10 @@
   </file>
   <file src="pages/structure/index.php">
     <ArgumentTypeCoercion>
-      <code><![CDATA[$structureContext->getMountpoints()]]></code>
-      <code><![CDATA[$structureContext->getMountpoints()]]></code>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->getArtStart(), 'art_status' => $artStatusKey] + ArticleStatusChange::getUrlParams()]]></code>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->getArtStart()] + ArticleDelete::getUrlParams()]]></code>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->getArtStart()] + ArticleStatusChange::getUrlParams()]]></code>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'function' => 'edit_art', 'artstart' => $structureContext->getArtStart()]]]></code>
+      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart, 'art_status' => $artStatusKey] + ArticleStatusChange::getUrlParams()]]></code>
+      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart] + ArticleDelete::getUrlParams()]]></code>
+      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart] + ArticleStatusChange::getUrlParams()]]></code>
+      <code><![CDATA[['article_id' => $sql->getValue('id'), 'function' => 'edit_art', 'artstart' => $structureContext->artStart]]]></code>
       <code><![CDATA[['page' => 'content/edit', 'article_id' => $sql->getValue('id'), 'mode' => 'edit']]]></code>
       <code><![CDATA[['page' => 'content/edit', 'article_id' => $sql->getValue('id')]]]></code>
     </ArgumentTypeCoercion>
@@ -1936,7 +1934,6 @@
   <file src="src/Content/Linkmap/ArticleListRenderer.php">
     <MixedArgument>
       <code><![CDATA[$article]]></code>
-      <code><![CDATA[$categoryId]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$article]]></code>
@@ -1944,23 +1941,6 @@
     <PossiblyNullReference>
       <code><![CDATA[getArticles]]></code>
     </PossiblyNullReference>
-  </file>
-  <file src="src/Content/Linkmap/CategoryTree.php">
-    <MixedArgument>
-      <code><![CDATA[$liClasses]]></code>
-      <code><![CDATA[$linkClasses]]></code>
-    </MixedArgument>
-    <MixedOperand>
-      <code><![CDATA[$liClasses]]></code>
-      <code><![CDATA[$liIcon]]></code>
-      <code><![CDATA[$linkClasses]]></code>
-      <code><![CDATA[$subHtml]]></code>
-    </MixedOperand>
-  </file>
-  <file src="src/Content/Linkmap/CategoryTreeRenderer.php">
-    <MixedArgument>
-      <code><![CDATA[$categoryId]]></code>
-    </MixedArgument>
   </file>
   <file src="src/Content/ModulePermission.php">
     <MixedReturnTypeCoercion>
@@ -1971,16 +1951,6 @@
         ]]]></code>
       <code><![CDATA[array]]></code>
     </MixedReturnTypeCoercion>
-  </file>
-  <file src="src/Content/StructureContext.php">
-    <MixedArgument>
-      <code><![CDATA[$params['article_id']]]></code>
-      <code><![CDATA[$params['category_id']]]></code>
-      <code><![CDATA[$params['clang_id']]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$params['category_id']]]></code>
-    </MixedAssignment>
   </file>
   <file src="src/Content/Template.php">
     <MixedReturnStatement>

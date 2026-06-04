@@ -13,81 +13,51 @@ use function count;
  */
 final readonly class StructureContext
 {
-    private array $params;
+    public int $categoryId;
+    public int $articleId;
+    public int $clangId;
 
-    public function __construct(array $params)
-    {
-        if (!isset($params['category_id']) || !Category::get($params['category_id'])) {
-            $params['category_id'] = 0;
+    public function __construct(
+        int $categoryId,
+        int $articleId,
+        int $clangId,
+        public int $ctypeId = 0,
+        public int $artStart = 0,
+        public int $catStart = 0,
+        public int $editId = 0,
+        public string $function = '',
+        public int $rowsPerPage = 30,
+    ) {
+        if (!Category::get($categoryId)) {
+            $categoryId = 0;
         }
         // Only one mountpoint -> jump to category
         $mountpoints = $this->getMountpoints();
-        if (1 == count($mountpoints) && 0 == $params['category_id']) {
-            $params['category_id'] = current($mountpoints);
+        if (1 == count($mountpoints) && 0 == $categoryId) {
+            $categoryId = (int) current($mountpoints);
         }
+        $this->categoryId = $categoryId;
 
-        if (!isset($params['article_id']) || !Article::get($params['article_id'])) {
-            $params['article_id'] = 0;
+        if (!Article::get($articleId)) {
+            $articleId = 0;
         }
+        $this->articleId = $articleId;
 
-        if (!isset($params['clang_id'])) {
-            $params['clang_id'] = 0;
-        }
-        if (Language::count() > 1 && !Core::requireUser()->getComplexPerm('clang')->hasPerm($params['clang_id'])) {
-            $params['clang_id'] = 0;
+        if (Language::count() > 1 && !Core::requireUser()->getComplexPerm('clang')->hasPerm($clangId)) {
+            $clangId = 0;
             foreach (Language::getAllIds() as $key) {
                 if (Core::requireUser()->getComplexPerm('clang')->hasPerm($key)) {
-                    $params['clang_id'] = $key;
+                    $clangId = $key;
                     break;
                 }
             }
-        } elseif (!$params['clang_id']) {
-            $params['clang_id'] = Language::getStartId();
+        } elseif (!$clangId) {
+            $clangId = Language::getStartId();
         }
-
-        $this->params = $params;
+        $this->clangId = $clangId;
     }
 
-    public function getCategoryId(): int
-    {
-        return (int) $this->getValue('category_id', 0);
-    }
-
-    public function getArticleId(): int
-    {
-        return (int) $this->getValue('article_id', 0);
-    }
-
-    public function getClangId(): int
-    {
-        return (int) $this->getValue('clang_id', 0);
-    }
-
-    public function getCtypeId(): int
-    {
-        return (int) $this->getValue('ctype_id', 0);
-    }
-
-    public function getArtStart(): int
-    {
-        return (int) $this->getValue('artstart', 0);
-    }
-
-    public function getCatStart(): int
-    {
-        return (int) $this->getValue('catstart', 0);
-    }
-
-    public function getEditId(): int
-    {
-        return (int) $this->getValue('edit_id', 0);
-    }
-
-    public function getFunction(): string
-    {
-        return (string) $this->getValue('function', '');
-    }
-
+    /** @return list<int> */
     public function getMountpoints(): array
     {
         return Core::requireUser()->getComplexPerm('structure')->getMountpoints();
@@ -95,32 +65,16 @@ final readonly class StructureContext
 
     public function hasCategoryPermission(): bool
     {
-        return Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($this->getCategoryId());
-    }
-
-    public function getRowsPerPage(): int
-    {
-        return (int) $this->getValue('rows_per_page', 30);
+        return Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($this->categoryId);
     }
 
     public function getContext(): Context
     {
         return new Context([
             'page' => 'structure',
-            'category_id' => $this->getCategoryId(),
-            'article_id' => $this->getArticleId(),
-            'clang' => $this->getClangId(),
+            'category_id' => $this->categoryId,
+            'article_id' => $this->articleId,
+            'clang' => $this->clangId,
         ]);
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $default
-     *
-     * @return mixed
-     */
-    private function getValue($key, $default)
-    {
-        return $this->params[$key] ?? $default;
     }
 }

@@ -117,8 +117,6 @@ final class ArticleHandler
     /**
      * Bearbeitet einen Artikel.
      *
-     * @param int $articleId Id des Artikels der verändert werden soll
-     * @param int $clang Id der Sprache
      * @param array $data Array mit den Daten des Artikels
      *
      * @throws ApiFunctionException
@@ -211,13 +209,11 @@ final class ArticleHandler
     /**
      * Löscht einen Artikel und reorganisiert die Prioritäten verbleibender Geschwister-Artikel.
      *
-     * @param int $articleId Id des Artikels die gelöscht werden soll
-     *
      * @throws ApiFunctionException
      *
      * @return string Eine Statusmeldung
      */
-    public static function deleteArticle($articleId)
+    public static function deleteArticle(int $articleId): string
     {
         $Art = Sql::factory();
         $Art->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0', [$articleId]);
@@ -254,13 +250,11 @@ final class ArticleHandler
     /**
      * Löscht einen Artikel.
      *
-     * @param int $id ArtikelId des Artikels, der gelöscht werden soll
-     *
      * @throws ApiFunctionException
      *
      * @return string Eine Statusmeldung
      */
-    public static function _deleteArticle($id)
+    public static function _deleteArticle(int $id): string
     {
         // artikel loeschen
 
@@ -325,15 +319,13 @@ final class ArticleHandler
     /**
      * Ändert den Status des Artikels.
      *
-     * @param int $articleId Id des Artikels die gelöscht werden soll
-     * @param int $clang Id der Sprache
      * @param int|null $status Status auf den der Artikel gesetzt werden soll, oder NULL wenn zum nächsten Status weitergeschaltet werden soll
      *
      * @throws ApiFunctionException
      *
      * @return int Der neue Status des Artikels
      */
-    public static function articleStatus($articleId, $clang, $status = null)
+    public static function articleStatus(int $articleId, int $clang, ?int $status = null): int
     {
         $GA = Sql::factory();
         $GA->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and clang_id=?', [$articleId, $clang]);
@@ -374,7 +366,7 @@ final class ArticleHandler
      *
      * @return list<array{string, string, string}> Array von Stati
      */
-    public static function statusTypes()
+    public static function statusTypes(): array
     {
         /** @var list<array{string, string, string}> $artStatusTypes */
         static $artStatusTypes;
@@ -393,15 +385,13 @@ final class ArticleHandler
         return $artStatusTypes;
     }
 
-    /** @return int */
-    public static function nextStatus($currentStatus)
+    public static function nextStatus($currentStatus): int
     {
         $artStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($artStatusTypes);
     }
 
-    /** @return int */
-    public static function prevStatus($currentStatus)
+    public static function prevStatus($currentStatus): int
     {
         $artStatusTypes = self::statusTypes();
         if (($currentStatus - 1) < 0) {
@@ -418,9 +408,8 @@ final class ArticleHandler
      * @param int $clang ClangId der Kategorie, die erneuert werden soll
      * @param int $newPrio Neue PrioNr der Kategorie
      * @param int $oldPrio Alte PrioNr der Kategorie
-     * @return void
      */
-    public static function newArtPrio($parentId, $clang, $newPrio, $oldPrio)
+    public static function newArtPrio($parentId, $clang, $newPrio, $oldPrio): void
     {
         $parentId = (int) $parentId;
 
@@ -448,14 +437,8 @@ final class ArticleHandler
         }
     }
 
-    /**
-     * Konvertiert einen Artikel in eine Kategorie.
-     *
-     * @param int $artId Artikel ID des Artikels, der in eine Kategorie umgewandelt werden soll
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
-     */
-    public static function article2category($artId)
+    /** Konvertiert einen Artikel in eine Kategorie. */
+    public static function article2category(int $artId): bool
     {
         $sql = Sql::factory();
         $parentId = 0;
@@ -494,14 +477,8 @@ final class ArticleHandler
         return true;
     }
 
-    /**
-     * Konvertiert eine Kategorie in einen Artikel.
-     *
-     * @param int $artId Artikel ID der Kategorie, die in einen Artikel umgewandelt werden soll
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
-     */
-    public static function category2article($artId)
+    /** Konvertiert eine Kategorie in einen Artikel. */
+    public static function category2article(int $artId): bool
     {
         $sql = Sql::factory();
         $parentId = 0;
@@ -552,14 +529,8 @@ final class ArticleHandler
         return true;
     }
 
-    /**
-     * Konvertiert einen Artikel zum Startartikel der eigenen Kategorie.
-     *
-     * @param int $neuId Artikel ID des Artikels, der Startartikel werden soll
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
-     */
-    public static function article2startarticle($neuId)
+    /** Konvertiert einen Artikel zum Startartikel der eigenen Kategorie. */
+    public static function article2startarticle(int $neuId): bool
     {
         $GAID = [];
 
@@ -672,10 +643,8 @@ final class ArticleHandler
      * @param int $fromClang ClangId des Artikels, aus dem kopiert werden soll (Quell ClangId)
      * @param int $toClang ClangId des Artikels, in den kopiert werden soll (Ziel ClangId)
      * @param array $params Array von Spaltennamen, welche kopiert werden sollen
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function copyMeta($fromId, $toId, $fromClang = 1, $toClang = 1, $params = [])
+    public static function copyMeta($fromId, $toId, $fromClang = 1, $toClang = 1, $params = []): bool
     {
         $fromClang = (int) $fromClang;
         $toClang = (int) $toClang;
@@ -719,7 +688,7 @@ final class ArticleHandler
      *
      * @return bool|int FALSE bei Fehler, sonst die Artikel Id des neue kopierten Artikels
      */
-    public static function copyArticle($id, $toCatId)
+    public static function copyArticle($id, $toCatId): bool|int
     {
         $id = (int) $id;
         $toCatId = (int) $toCatId;
@@ -815,10 +784,8 @@ final class ArticleHandler
      * @param int $id ArtikelId des zu verschiebenden Artikels
      * @param int $fromCatId KategorieId des Artikels, der Verschoben wird
      * @param int $toCatId KategorieId in die der Artikel verschoben werden soll
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function moveArticle($id, $fromCatId, $toCatId)
+    public static function moveArticle($id, $fromCatId, $toCatId): bool
     {
         $id = (int) $id;
         $toCatId = (int) $toCatId;
@@ -897,21 +864,16 @@ final class ArticleHandler
     /**
      * Checks whether the required array key $keyName isset.
      *
-     * @param array $array The array
-     * @param string $keyName The key
-     *
      * @throws ApiFunctionException
-     * @return void
      */
-    private static function reqKey($array, $keyName)
+    private static function reqKey(array $array, string $keyName): void
     {
         if (!isset($array[$keyName])) {
             throw new ApiFunctionException('Missing required parameter "' . $keyName . '"!');
         }
     }
 
-    /** @return string */
-    private static function getUser()
+    private static function getUser(): string
     {
         return Core::getUser()->login ?? Core::getEnvironment()->value;
     }
