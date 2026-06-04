@@ -1934,7 +1934,6 @@
   <file src="src/Content/Linkmap/ArticleListRenderer.php">
     <MixedArgument>
       <code><![CDATA[$article]]></code>
-      <code><![CDATA[$categoryId]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$article]]></code>
@@ -1942,23 +1941,6 @@
     <PossiblyNullReference>
       <code><![CDATA[getArticles]]></code>
     </PossiblyNullReference>
-  </file>
-  <file src="src/Content/Linkmap/CategoryTree.php">
-    <MixedArgument>
-      <code><![CDATA[$liClasses]]></code>
-      <code><![CDATA[$linkClasses]]></code>
-    </MixedArgument>
-    <MixedOperand>
-      <code><![CDATA[$liClasses]]></code>
-      <code><![CDATA[$liIcon]]></code>
-      <code><![CDATA[$linkClasses]]></code>
-      <code><![CDATA[$subHtml]]></code>
-    </MixedOperand>
-  </file>
-  <file src="src/Content/Linkmap/CategoryTreeRenderer.php">
-    <MixedArgument>
-      <code><![CDATA[$categoryId]]></code>
-    </MixedArgument>
   </file>
   <file src="src/Content/ModulePermission.php">
     <MixedReturnTypeCoercion>
