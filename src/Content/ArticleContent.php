@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Content;
 
 use Override;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Path;
@@ -19,6 +20,10 @@ final class ArticleContent extends ArticleContentBase
     #[Override]
     public function renderContent(?int $contentSectionId = null): string
     {
+        if (null !== $contentSectionId && $contentSectionId < 1) {
+            throw new InvalidArgumentException('Content section id must be null or greater than 0.');
+        }
+
         $this->contentSectionId = $contentSectionId;
 
         // In eval mode (history/work version, single slice) the content is rendered live from the

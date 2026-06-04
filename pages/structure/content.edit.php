@@ -6,7 +6,7 @@ use Redaxo\Core\View\Fragment;
 
 assert(isset($articleId) && is_int($articleId));
 assert(isset($clang) && is_int($clang));
-assert(isset($ctype) && is_int($ctype));
+assert(isset($ctype) && is_int($ctype) && $ctype > 0);
 assert(isset($sliceId) && is_int($sliceId));
 assert(isset($sliceRevision) && is_int($sliceRevision));
 assert(isset($function) && is_string($function));

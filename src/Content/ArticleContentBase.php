@@ -5,6 +5,7 @@ namespace Redaxo\Core\Content;
 use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -34,8 +35,14 @@ class ArticleContentBase
     final public int $sliceId = 0;
     final public int $sliceRevision = 0;
 
-    /** @internal */ final protected int $singleSliceId = 0;
-    /** @internal */ final protected ?int $contentSectionId = null;
+    /** @internal */
+    final protected int $singleSliceId = 0;
+
+    /**
+     * @internal
+     * @var positive-int|null
+     */
+    final protected ?int $contentSectionId = null;
 
     /** @var 'view'|'edit' */
     final public string $mode = 'view';
@@ -117,10 +124,15 @@ class ArticleContentBase
      * Returns the rendered content of the article of the given content section. If no content section is given (null),
      * content of all content sections is returned.
      *
+     * @param positive-int|null $contentSectionId
      * @throws ArticleNotFoundException
      */
     public function renderContent(?int $contentSectionId = null): string
     {
+        if (null !== $contentSectionId && $contentSectionId < 1) {
+            throw new InvalidArgumentException('Content section id must be null or greater than 0.');
+        }
+
         $this->contentSectionId = $contentSectionId;
 
         if (0 === $this->articleId && 0 === $this->singleSliceId) {
