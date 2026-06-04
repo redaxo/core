@@ -427,13 +427,10 @@ return RectorConfig::configure()
 
         new MethodCallRename(Security\PasswordPolicy::class, 'getRule', 'getDescription'),
 
-        new MethodCallRename(Content\ArticleContentBase::class, 'getClang', 'getClangId'),
         new MethodCallRename(Content\ArticleContentBase::class, 'getArticle', 'renderContent'),
         new MethodCallRename(Content\ArticleContentBase::class, 'getArticleTemplate', 'renderTemplate'),
         new MethodCallRename(Content\ArticleContentBase::class, 'getSlice', 'renderSlice'),
         new MethodCallRename(Content\ArticleSlice::class, 'getSlice', 'renderSlice'),
-        new MethodCallRename(Content\StructureElement::class, 'getClang', 'getClangId'),
-        new MethodCallRename(Content\StructureElement::class, 'getTemplateId', 'getTemplateKey'),
         new MethodCallRename(Content\Template::class, 'forKey', 'get'),
         new MethodCallRename(Content\Template::class, 'getCtypes', 'getContentSections'),
         new MethodCallRename(Content\Template::class, 'getDefaultId', 'getDefaultKey'),
@@ -546,11 +543,11 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Cronjob\CronjobExecutor::class, 'hasMessage', 'message'),
 
         new MethodCallToPropertyFetch(Content\Article::class, 'getCategoryId', 'categoryId'), // changed from int to ?int
-        new MethodCallToPropertyFetch(Content\Article::class, 'getTemplateKey', 'templateKey'),
+        new MethodCallToPropertyFetch(Content\Article::class, 'getTemplateId', 'templateKey'),
         new MethodCallToPropertyFetch(Content\Article::class, 'hasTemplate', 'templateKey'), // changed from bool to ?string, callers using the bool need manual adjustment
 
         new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getArticleId', 'articleId'),
-        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClangId', 'clangId'),
+        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClang', 'clangId'),
 
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
@@ -569,7 +566,7 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getParentId', 'parentId'),
-        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClangId', 'clangId'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClang', 'clangId'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getName', 'name'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPriority', 'priority'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPath', 'path'), // changed from string to array, callers using the string need manual adjustment
