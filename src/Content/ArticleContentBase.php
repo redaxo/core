@@ -23,32 +23,33 @@ use function sprintf;
  */
 class ArticleContentBase
 {
-    public string $error = '';
-    public string $success = '';
-    public bool $debug = false;
+    final public readonly Article $article;
+    final public readonly int $articleId;
+    final public readonly int $clangId;
 
-    public readonly Article $article;
+    final public string $error = '';
+    final public string $success = '';
+    final public bool $debug = false;
 
-    public int $sliceId = 0;
-    protected int $singleSliceId = 0;
+    final public int $sliceId = 0;
+    final public int $sliceRevision = 0;
+
+    /** @internal */ final protected int $singleSliceId = 0;
+    /** @internal */ final protected ?int $contentSectionId = null;
+
     /** @var 'view'|'edit' */
-    public string $mode = 'view';
+    final public string $mode = 'view';
     /** @var 'add'|'edit'|'' */
-    public string $function = '';
+    final public string $function = '';
 
-    protected ?int $contentSectionId = null;
-
-    public readonly int $clangId;
-
-    public bool $eval = false;
-
-    public int $sliceRevision = 0;
+    final public bool $eval = false;
 
     /** @throws ArticleNotFoundException */
     public function __construct(
-        public readonly int $articleId,
+        int $articleId,
         ?int $clangId = null,
     ) {
+        $this->articleId = $articleId;
         $this->clangId = null !== $clangId && Language::exists($clangId) ? $clangId : Language::getCurrentId();
 
         $article = Article::get($this->articleId, $this->clangId);
