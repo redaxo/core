@@ -30,8 +30,7 @@ class Select
         $this->init();
     }
 
-    /** @return void */
-    public function init()
+    public function init(): void
     {
         $this->resetSelected();
         $this->setName('standard');
@@ -40,11 +39,8 @@ class Select
         $this->setDisabled(false);
     }
 
-    /**
-     * @param array<string, int|string> $attributes
-     * @return void
-     */
-    public function setAttributes($attributes)
+    /** @param array<string, int|string> $attributes */
+    public function setAttributes($attributes): void
     {
         $this->attributes = array_merge($this->attributes, $attributes);
     }
@@ -52,9 +48,8 @@ class Select
     /**
      * @param string $name
      * @param string|int $value
-     * @return void
      */
-    public function setAttribute($name, $value)
+    public function setAttribute($name, $value): void
     {
         $this->attributes[$name] = $value;
     }
@@ -94,11 +89,8 @@ class Select
         return $default;
     }
 
-    /**
-     * @param bool $multiple
-     * @return void
-     */
-    public function setMultiple($multiple = true)
+    /** @param bool $multiple */
+    public function setMultiple($multiple = true): void
     {
         if ($multiple) {
             $this->setAttribute('multiple', 'multiple');
@@ -110,11 +102,8 @@ class Select
         }
     }
 
-    /**
-     * @param bool $disabled
-     * @return void
-     */
-    public function setDisabled($disabled = true)
+    /** @param bool $disabled */
+    public function setDisabled($disabled = true): void
     {
         if ($disabled) {
             $this->setAttribute('disabled', 'disabled');
@@ -123,20 +112,14 @@ class Select
         }
     }
 
-    /**
-     * @param string $name
-     * @return void
-     */
-    public function setName($name)
+    /** @param string $name */
+    public function setName($name): void
     {
         $this->setAttribute('name', $name);
     }
 
-    /**
-     * @param string $id
-     * @return void
-     */
-    public function setId($id)
+    /** @param string $id */
+    public function setId($id): void
     {
         $this->setAttribute('id', $id);
     }
@@ -151,9 +134,8 @@ class Select
      * $sel_media->setStyle("width:150px;");
      *
      * @param string $style
-     * @return void
      */
-    public function setStyle($style)
+    public function setStyle($style): void
     {
         if (str_contains($style, 'class=')) {
             if (preg_match('/class=["\']?([^"\']*)["\']?/i', $style, $matches)) {
@@ -164,20 +146,14 @@ class Select
         }
     }
 
-    /**
-     * @param int|numeric-string $size
-     * @return void
-     */
-    public function setSize($size)
+    /** @param int|numeric-string $size */
+    public function setSize($size): void
     {
         $this->setAttribute('size', $size);
     }
 
-    /**
-     * @param string|int|list<string|int> $selected
-     * @return void
-     */
-    public function setSelected($selected)
+    /** @param string|int|list<string|int> $selected */
+    public function setSelected($selected): void
     {
         if (is_array($selected)) {
             foreach ($selected as $sectvalue) {
@@ -188,17 +164,13 @@ class Select
         }
     }
 
-    /** @return void */
-    public function resetSelected()
+    public function resetSelected(): void
     {
         $this->optionSelected = [];
     }
 
-    /**
-     * @param string $label
-     * @return void
-     */
-    public function addOptgroup($label)
+    /** @param string $label */
+    public function addOptgroup($label): void
     {
         ++$this->currentOptgroup;
         $this->optgroups[$this->currentOptgroup] = $label;
@@ -216,9 +188,8 @@ class Select
      * @param int $id
      * @param int $parentId
      * @param array<string, string|int> $attributes
-     * @return void
      */
-    public function addOption($name, $value, $id = 0, $parentId = 0, array $attributes = [])
+    public function addOption($name, $value, $id = 0, $parentId = 0, array $attributes = []): void
     {
         $this->options[$this->currentOptgroup][$parentId][] = [$name, $value, $id, $attributes];
         ++$this->optCount;
@@ -236,9 +207,8 @@ class Select
      * 5.    Attributes
      *
      * @param bool $useOnlyValues
-     * @return void
      */
-    public function addOptions($options, $useOnlyValues = false)
+    public function addOptions($options, $useOnlyValues = false): void
     {
         if (is_array($options) && count($options) > 0) {
             // Hier vorher auf is_array abfragen, da bei Strings auch die Syntax mit [] funktioniert
@@ -275,9 +245,8 @@ class Select
      * Wenn $useKeys mit false, werden die Array-Keys mit den Array-Values überschrieben.
      * @param array<string|int, string> $options
      * @param bool $useKeys
-     * @return void
      */
-    public function addArrayOptions(array $options, $useKeys = true)
+    public function addArrayOptions(array $options, $useKeys = true): void
     {
         foreach ($options as $key => $value) {
             if (!$useKeys) {
@@ -298,9 +267,8 @@ class Select
      * Fügt Optionen anhand der Übergeben SQL-Select-Abfrage hinzu.
      * @param string $query
      * @param positive-int $db
-     * @return void
      */
-    public function addSqlOptions($query, int $db = 1)
+    public function addSqlOptions($query, int $db = 1): void
     {
         $sql = Sql::factory($db);
         $this->addOptions($sql->getArray($query, [], PDO::FETCH_NUM));
@@ -311,9 +279,8 @@ class Select
      *
      * @see Sql::setDBQuery()
      * @param string $query
-     * @return void
      */
-    public function addDBSqlOptions($query)
+    public function addDBSqlOptions($query): void
     {
         $sql = Sql::factory();
         $this->addOptions($sql->getDBArray($query, [], PDO::FETCH_NUM));
@@ -369,8 +336,7 @@ class Select
         return $ausgabe;
     }
 
-    /** @return void */
-    public function show()
+    public function show(): void
     {
         echo $this->get();
     }

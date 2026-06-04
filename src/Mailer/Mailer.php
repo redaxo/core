@@ -172,16 +172,14 @@ class Mailer extends PHPMailer
         $this->xHeader = []; // Bereinigung für die nächste Verwendung
     }
 
-    /** @return void */
-    public function clearQueuedAddresses($kind)
+    public function clearQueuedAddresses($kind): void
     {
         parent::clearQueuedAddresses($kind);
 
         unset($this->xHeader[$kind]);
     }
 
-    /** @return void */
-    public function clearAllRecipients()
+    public function clearAllRecipients(): void
     {
         parent::clearAllRecipients();
 
@@ -210,9 +208,8 @@ class Mailer extends PHPMailer
      * Enable/disable the mail archive.
      *
      * It overwrites the global `archive` configuration for the current mailer object.
-     * @return void
      */
-    public function setArchive(bool $status)
+    public function setArchive(bool $status): void
     {
         $this->archive = $status;
     }

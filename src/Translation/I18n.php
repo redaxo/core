@@ -112,9 +112,8 @@ final class I18n
      * Adds a directory with lang files.
      *
      * @param string $dir Path to the directory
-     * @return void
      */
-    public static function addDirectory($dir)
+    public static function addDirectory($dir): void
     {
         $dir = rtrim($dir, DIRECTORY_SEPARATOR);
 
@@ -335,9 +334,8 @@ final class I18n
      *
      * @param string $key Key
      * @param non-empty-string $message Message for the key
-     * @return void
      */
-    public static function addMsg($key, $message)
+    public static function addMsg($key, $message): void
     {
         self::$msg[self::getLocale()][$key] = $message;
     }
@@ -431,9 +429,8 @@ final class I18n
      *
      * @param string $dir Path to the directory
      * @param string $locale Locale
-     * @return void
      */
-    private static function loadFile($dir, $locale)
+    private static function loadFile($dir, $locale): void
     {
         $locale = self::validateLocale($locale);
 
@@ -453,9 +450,8 @@ final class I18n
      * Loads all translation defintions.
      *
      * @param string $locale Locale
-     * @return void
      */
-    private static function loadAll($locale)
+    private static function loadAll($locale): void
     {
         foreach (self::$directories as $dir) {
             self::loadFile($dir, $locale);

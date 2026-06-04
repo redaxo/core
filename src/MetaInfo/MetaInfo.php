@@ -245,13 +245,9 @@ final class MetaInfo
         return $metaTables[$prefix] ?? false;
     }
 
-    /**
-     * Bindet ggf extensions ein.
-     *
-     * @return void
-     */
+    /** Bindet ggf extensions ein. */
     #[AsExtension('PAGE_CHECKED')]
-    public static function extensionHandler(ExtensionPoint $ep)
+    public static function extensionHandler(ExtensionPoint $ep): void
     {
         $page = $ep->subject;
         $mainpage = Controller::getCurrentPagePart(1);
@@ -276,10 +272,9 @@ final class MetaInfo
      * noch Datensätze zu Feldern stehen, welche nicht als Spalten in der
      * rex_article angelegt wurden!
      * @param ExtensionPoint|array $epOrParams
-     * @return void
      */
     #[AsExtension('BACKUP_BEFORE_DB_IMPORT')]
-    public static function cleanup($epOrParams)
+    public static function cleanup($epOrParams): void
     {
         $params = $epOrParams instanceof ExtensionPoint ? $epOrParams->getParams() : $epOrParams;
         // Cleanup nur durchführen, wenn auch die rex_article Tabelle neu angelegt wird

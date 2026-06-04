@@ -498,9 +498,8 @@ abstract class AbstractHandler
      * @param array $params
      * @param Sql $sqlSave Sql-objekt, in das die aktuellen Werte gespeichert werden sollen
      * @param Sql $sqlFields Sql-objekt, dass die zu verarbeitenden Felder enthält
-     * @return void
      */
-    public static function fetchRequestValues(&$params, &$sqlSave, $sqlFields)
+    public static function fetchRequestValues(&$params, &$sqlSave, $sqlFields): void
     {
         if ('post' != Request::requestMethod()) {
             return;

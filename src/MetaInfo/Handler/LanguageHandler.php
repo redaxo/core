@@ -54,8 +54,7 @@ final class LanguageHandler extends AbstractHandler
         return $params;
     }
 
-    /** @return void */
-    protected function buildFilterCondition(array $params) {}
+    protected function buildFilterCondition(array $params): void {}
 
     public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType)
     {

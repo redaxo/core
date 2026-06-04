@@ -56,9 +56,8 @@ class Logger extends AbstractLogger
      * Shorthand: Logs the given Exception.
      *
      * @param Throwable $exception The Exception to log
-     * @return void
      */
-    public static function logException($exception, ?string $url = null)
+    public static function logException($exception, ?string $url = null): void
     {
         if ($exception instanceof ErrorException) {
             self::logError($exception->getSeverity(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $url);
@@ -143,9 +142,8 @@ class Logger extends AbstractLogger
      * Prepares the logifle for later use.
      *
      * @psalm-assert !null self::$file
-     * @return void
      */
-    public static function open()
+    public static function open(): void
     {
         // check if already opened
         self::$file ??= LogFile::factory(self::getPath(), 2_000_000);
@@ -155,9 +153,8 @@ class Logger extends AbstractLogger
      * Closes the logfile. The logfile is not be able to log further message after beeing closed.
      *
      * You dont need to close the logfile manually when it was registered during the request.
-     * @return void
      */
-    public static function close()
+    public static function close(): void
     {
         self::$file = null;
     }

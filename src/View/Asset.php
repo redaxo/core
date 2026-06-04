@@ -29,9 +29,8 @@ final class Asset
      *
      * @param string $file
      * @param string $media
-     * @return void
      */
-    public static function addCssFile($file, $media = 'all')
+    public static function addCssFile($file, $media = 'all'): void
     {
         if (isset(self::$cssFiles[$media]) && in_array($file, self::$cssFiles[$media])) {
             throw new RuntimeException(sprintf('The CSS file "%s" is already added to media "%s".', $file, $media));
@@ -55,9 +54,8 @@ final class Asset
      *
      * @param string $file
      * @param array<self::JS_*, bool>|array<self::JS_*> $options
-     * @return void
      */
-    public static function addJsFile($file, array $options = [])
+    public static function addJsFile($file, array $options = []): void
     {
         if (empty($options)) {
             $options[self::JS_IMMUTABLE] = false;
@@ -98,9 +96,8 @@ final class Asset
      *
      * @param string $key
      * @param mixed $value
-     * @return void
      */
-    public static function setJsProperty($key, $value)
+    public static function setJsProperty($key, $value): void
     {
         self::$jsProperties[$key] = $value;
     }

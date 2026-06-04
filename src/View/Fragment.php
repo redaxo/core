@@ -162,9 +162,8 @@ class Fragment
      *
      * @param string $filename The filename of the fragment to use
      * @param array<string, mixed> $params A array of key-value pairs to pass as local parameters
-     * @return void
      */
-    protected function subfragment($filename, array $params = [])
+    protected function subfragment($filename, array $params = []): void
     {
         echo $this->getSubfragment($filename, $params);
     }
@@ -216,9 +215,8 @@ class Fragment
      * Add a path to the fragment search path.
      *
      * @param string $dir A path to a directory where fragments can be found
-     * @return void
      */
-    public static function addDirectory($dir)
+    public static function addDirectory($dir): void
     {
         // add the new directory in front of the already know dirs,
         // so a later caller can override core settings/fragments

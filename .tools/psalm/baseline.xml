@@ -2705,7 +2705,6 @@
       <code><![CDATA[$address]]></code>
       <code><![CDATA[$bcc]]></code>
       <code><![CDATA[$exceptions]]></code>
-      <code><![CDATA[$kind]]></code>
       <code><![CDATA[$this->xHeader[$kind]]]></code>
       <code><![CDATA[$this->xHeader['to']]]></code>
     </MixedArgument>
@@ -2713,9 +2712,6 @@
       <code><![CDATA[array_column($this->getReplyToAddresses(), 0)]]></code>
       <code><![CDATA[array_column($this->getToAddresses(), 0)]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedArrayOffset>
-      <code><![CDATA[$this->xHeader[$kind]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$address]]></code>
       <code><![CDATA[$bcc]]></code>
@@ -3378,9 +3374,6 @@
     </MixedReturnStatement>
   </file>
   <file src="src/MetaInfo/Handler/LanguageHandler.php">
-    <ImplementedReturnTypeMismatch>
-      <code><![CDATA[void]]></code>
-    </ImplementedReturnTypeMismatch>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$languageHandler->extendForm(...)]]></code>
       <code><![CDATA[$languageHandler->extendForm(...)]]></code>

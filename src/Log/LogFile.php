@@ -6,7 +6,6 @@ use Iterator;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\File;
-use ReturnTypeWillChange;
 
 use function assert;
 use function strlen;
@@ -59,17 +58,14 @@ class LogFile implements Iterator
      * Adds a log entry.
      *
      * @param list<string|int> $data Log data
-     * @return void
      */
-    public function add(array $data)
+    public function add(array $data): void
     {
         fseek($this->file, 0, SEEK_END);
         fwrite($this->file, new LogEntry(time(), $data) . "\n");
     }
 
-    /** @return LogEntry */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): LogEntry
     {
         if (null === $this->currentLine) {
             throw new LogicException('current() can not be used before calling rewind()/next() or after last line');
@@ -79,8 +75,7 @@ class LogFile implements Iterator
     }
 
     /** Reads the log file backwards line by line (each call reads one line). */
-    #[ReturnTypeWillChange]
-    public function next()
+    public function next(): void
     {
         $bufferSize = 500;
 
@@ -148,21 +143,17 @@ class LogFile implements Iterator
         $this->currentLine = $line;
     }
 
-    /** @return int|null */
-    #[ReturnTypeWillChange]
-    public function key()
+    public function key(): ?int
     {
         return $this->key;
     }
 
-    #[ReturnTypeWillChange]
-    public function valid()
+    public function valid(): bool
     {
         return !empty($this->currentLine);
     }
 
-    #[ReturnTypeWillChange]
-    public function rewind()
+    public function rewind(): void
     {
         $this->second = false;
         $this->pos = null;

@@ -404,9 +404,8 @@ final class Backup
     /**
      * @param array<string> $folders
      * @param string $archivePath
-     * @return void
      */
-    private static function streamExport($folders, $archivePath)
+    private static function streamExport($folders, $archivePath): void
     {
         $tar = new Tar();
         $tar->create($archivePath);
@@ -429,9 +428,8 @@ final class Backup
      *
      * @param string $path
      * @param string $dir
-     * @return void
      */
-    private static function addFolderToTar(Tar $tar, $path, $dir)
+    private static function addFolderToTar(Tar $tar, $path, $dir): void
     {
         $handle = opendir($path . $dir);
 
@@ -483,9 +481,8 @@ final class Backup
      * @param string $filename
      * @param self::IMPORT_ARCHIVE|self::IMPORT_DB $importType
      * @param self::IMPORT_EVENT_* $eventType
-     * @return void
      */
-    private static function importScript($filename, $importType, $eventType)
+    private static function importScript($filename, $importType, $eventType): void
     {
         if (is_file($filename)) {
             require $filename;
@@ -499,9 +496,8 @@ final class Backup
      * @param resource $fp
      * @param string $nl
      * @param list<string> $fields
-     * @return void
      */
-    private static function exportTable($table, &$start, $max, $fp, $nl, array $fields)
+    private static function exportTable($table, &$start, $max, $fp, $nl, array $fields): void
     {
         do {
             $sql = Sql::factory();

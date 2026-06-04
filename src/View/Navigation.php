@@ -117,9 +117,8 @@ class Navigation
      * @param int $depth
      * @param bool $open
      * @param bool $ignoreOfflines
-     * @return void
      */
-    public function show($categoryId = 0, $depth = 3, $open = false, $ignoreOfflines = false)
+    public function show($categoryId = 0, $depth = 3, $open = false, $ignoreOfflines = false): void
     {
         echo $this->get($categoryId, $depth, $open, $ignoreOfflines);
     }
@@ -205,27 +204,20 @@ class Navigation
      * @param string|false $startPageLabel
      * @param bool $includeCurrent
      * @param int $categoryId
-     * @return void
      */
-    public function showBreadcrumb($startPageLabel = false, $includeCurrent = false, $categoryId = 0)
+    public function showBreadcrumb($startPageLabel = false, $includeCurrent = false, $categoryId = 0): void
     {
         echo $this->getBreadcrumb($startPageLabel, $includeCurrent, $categoryId);
     }
 
-    /**
-     * @param array<int, string> $classes
-     * @return void
-     */
-    public function setClasses($classes)
+    /** @param array<int, string> $classes */
+    public function setClasses($classes): void
     {
         $this->classes = $classes;
     }
 
-    /**
-     * @param array<int, string> $classes
-     * @return void
-     */
-    public function setLinkClasses($classes)
+    /** @param array<int, string> $classes */
+    public function setLinkClasses($classes): void
     {
         $this->linkclasses = $classes;
     }
@@ -237,9 +229,8 @@ class Navigation
      * @param int|string $value Wert für den Vergleich
      * @param string $type art des Vergleichs =/</
      * @param int|'' $depth "" wenn auf allen Ebenen, wenn definiert, dann wird der Filter nur auf dieser Ebene angewendet
-     * @return void
      */
-    public function addFilter($metafield = 'id', $value = '1', $type = '=', $depth = '')
+    public function addFilter($metafield = 'id', $value = '1', $type = '=', $depth = ''): void
     {
         $this->filter[] = ['metafield' => $metafield, 'value' => $value, 'type' => $type, 'depth' => $depth];
     }

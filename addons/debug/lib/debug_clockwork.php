@@ -62,8 +62,7 @@ final class rex_debug_clockwork
         return Url::backendPage('debug', rex_api_debug::getUrlParams());
     }
 
-    /** @return void */
-    public static function ensureStoragePath()
+    public static function ensureStoragePath(): void
     {
         $storagePath = self::getStoragePath();
         if (!is_dir($storagePath)) {

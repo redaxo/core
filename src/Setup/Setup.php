@@ -55,12 +55,8 @@ final class Setup
 
     private function __construct() {}
 
-    /**
-     * very basic setup steps, so everything is in place for our browser-based setup wizard.
-     *
-     * @return void
-     */
-    public static function init()
+    /** very basic setup steps, so everything is in place for our browser-based setup wizard. */
+    public static function init(): void
     {
         // initial purge all generated files
         Cache::delete();

@@ -44,11 +44,8 @@ final readonly class Tar
         return true;
     }
 
-    /**
-     * @param string $archivePath
-     * @return void
-     */
-    public function create($archivePath)
+    /** @param string $archivePath */
+    public function create($archivePath): void
     {
         $this->tar->create($archivePath);
         $this->tar->setCompression(9, Archive::COMPRESS_GZIP);

@@ -51,8 +51,7 @@ final class TemplateSelect extends Select
         return parent::get();
     }
 
-    /** @return void */
-    public function setSelectedFromStartArticle()
+    public function setSelectedFromStartArticle(): void
     {
         $selected = null;
 
