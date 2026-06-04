@@ -274,10 +274,8 @@ final readonly class ArticleSlice
      * @param literal-string $where
      * @param array<scalar|null> $params
      * @param self::ORDER_* $orderDirection
-     *
-     * @return self|null
      */
-    private static function getSliceWhere(string $where, array $params = [], string $orderDirection = self::ORDER_ASC)
+    private static function getSliceWhere(string $where, array $params = [], string $orderDirection = self::ORDER_ASC): ?self
     {
         $slices = self::getSlicesWhere($where, $params, $orderDirection, 1);
         return $slices[0] ?? null;
@@ -290,7 +288,7 @@ final readonly class ArticleSlice
      *
      * @return list<self>
      */
-    private static function getSlicesWhere(string $where, array $params = [], string $orderDirection = self::ORDER_ASC, ?int $limit = null)
+    private static function getSlicesWhere(string $where, array $params = [], string $orderDirection = self::ORDER_ASC, ?int $limit = null): array
     {
         $sql = Sql::factory();
         // $sql->setDebug();

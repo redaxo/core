@@ -13,8 +13,7 @@ use function count;
  */
 abstract class ArticleListRenderer
 {
-    /** @return string */
-    public function getList($categoryId)
+    public function getList(int $categoryId): string
     {
         $isRoot = 0 === $categoryId;
 
@@ -36,8 +35,7 @@ abstract class ArticleListRenderer
         return self::renderList($articles, $categoryId);
     }
 
-    /** @return string */
-    public function renderList(array $articles, $categoryId)
+    public function renderList(array $articles, int $categoryId): string
     {
         $list = '';
         if ($articles) {
@@ -52,6 +50,5 @@ abstract class ArticleListRenderer
         return $list;
     }
 
-    /** @return string */
-    abstract protected function listItem(Article $article, $categoryId);
+    abstract protected function listItem(Article $article, int $categoryId): string;
 }

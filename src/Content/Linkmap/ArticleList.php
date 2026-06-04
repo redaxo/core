@@ -12,8 +12,7 @@ use function sprintf;
  */
 final class ArticleList extends ArticleListRenderer
 {
-    /** @return string */
-    protected function listItem(Article $article, $categoryId)
+    protected function listItem(Article $article, int $categoryId): string
     {
         $url = 'javascript:insertLink(\'redaxo://' . $article->id . '\',\'' . escape(trim(sprintf('%s [%s]', $article->name, $article->id)), 'js') . '\');';
 

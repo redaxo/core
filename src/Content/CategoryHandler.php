@@ -32,7 +32,7 @@ final class CategoryHandler
      *
      * @return string Eine Statusmeldung
      */
-    public static function addCategory($categoryId, array $data)
+    public static function addCategory(int $categoryId, array $data): string
     {
         $message = '';
 
@@ -152,7 +152,7 @@ final class CategoryHandler
      *
      * @return string Eine Statusmeldung
      */
-    public static function editCategory($categoryId, $clang, array $data)
+    public static function editCategory(int $categoryId, int $clang, array $data): string
     {
         // --- Kategorie mit alten Daten selektieren
         $thisCat = Sql::factory();
@@ -253,7 +253,7 @@ final class CategoryHandler
      *
      * @return string Eine Statusmeldung
      */
-    public static function deleteCategory($categoryId)
+    public static function deleteCategory(int $categoryId): string
     {
         $clang = Language::getStartId();
 
@@ -318,7 +318,7 @@ final class CategoryHandler
      *
      * @return int Der neue Status der Kategorie
      */
-    public static function categoryStatus($categoryId, $clang, $status = null)
+    public static function categoryStatus(int $categoryId, int $clang, ?int $status = null): int
     {
         $KAT = Sql::factory();
         $KAT->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and clang_id=? and startarticle=1', [$categoryId, $clang]);
@@ -359,7 +359,7 @@ final class CategoryHandler
      *
      * @return list<array{string, string, string}> Array von Stati
      */
-    public static function statusTypes()
+    public static function statusTypes(): array
     {
         /** @var list<array{string, string, string}> $catStatusTypes */
         static $catStatusTypes;
@@ -378,15 +378,13 @@ final class CategoryHandler
         return $catStatusTypes;
     }
 
-    /** @return int */
-    public static function nextStatus($currentStatus)
+    public static function nextStatus($currentStatus): int
     {
         $catStatusTypes = self::statusTypes();
         return ($currentStatus + 1) % count($catStatusTypes);
     }
 
-    /** @return int */
-    public static function prevStatus($currentStatus)
+    public static function prevStatus($currentStatus): int
     {
         $catStatusTypes = self::statusTypes();
         if (($currentStatus - 1) < 0) {
@@ -401,9 +399,8 @@ final class CategoryHandler
      *
      * @param int $fromCat KategorieId der Kategorie, die kopiert werden soll (Quelle)
      * @param int $toCat KategorieId der Kategorie, IN die kopiert werden soll (Ziel)
-     * @return void
      */
-    public static function copyCategory($fromCat, $toCat)
+    public static function copyCategory(int $fromCat, int $toCat): void
     {
         // TODO copyCategory implementieren
     }
@@ -415,9 +412,8 @@ final class CategoryHandler
      * @param int $clang ClangId der Kategorie, die erneuert werden soll
      * @param int $newPrio Neue PrioNr der Kategorie
      * @param int $oldPrio Alte PrioNr der Kategorie
-     * @return void
      */
-    public static function newCatPrio($parentId, $clang, $newPrio, $oldPrio)
+    public static function newCatPrio(int $parentId, int $clang, int $newPrio, int $oldPrio): void
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -429,7 +425,7 @@ final class CategoryHandler
             Util::organizePriorities(
                 Core::getTable('article'),
                 'catpriority',
-                'clang_id=' . (int) $clang . ' AND parent_id=' . (int) $parentId . ' AND startarticle=1',
+                'clang_id=' . $clang . ' AND parent_id=' . $parentId . ' AND startarticle=1',
                 'catpriority,updatedate ' . $addsql,
             );
 
@@ -451,11 +447,8 @@ final class CategoryHandler
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function moveCategory($fromCat, $toCat)
+    public static function moveCategory(int $fromCat, int $toCat): bool
     {
-        $fromCat = (int) $fromCat;
-        $toCat = (int) $toCat;
-
         if ($fromCat == $toCat) {
             // kann nicht in gleiche kategroie kopiert werden
             return false;
@@ -555,21 +548,16 @@ final class CategoryHandler
     /**
      * Checks whether the required array key $keyName isset.
      *
-     * @param array $array The array
-     * @param string $keyName The key
-     *
      * @throws ApiFunctionException
-     * @return void
      */
-    private static function reqKey(array $array, $keyName)
+    private static function reqKey(array $array, string $keyName): void
     {
         if (!isset($array[$keyName])) {
             throw new ApiFunctionException('Missing required parameter "' . $keyName . '"!');
         }
     }
 
-    /** @return string */
-    private static function getUser()
+    private static function getUser(): string
     {
         return Core::getUser()->login ?? Core::getEnvironment()->value;
     }

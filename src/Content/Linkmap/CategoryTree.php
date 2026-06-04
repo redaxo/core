@@ -17,8 +17,7 @@ final class CategoryTree extends CategoryTreeRenderer
         private readonly Context $context,
     ) {}
 
-    /** @return string */
-    protected function treeItem(Category $cat, $liClasses, $linkClasses, $subHtml, $liIcon)
+    protected function treeItem(Category $cat, string $liClasses, string $linkClasses, string $subHtml, string $liIcon): string
     {
         if ('' != $liClasses) {
             $liClasses = ' class="' . rtrim($liClasses) . '"';

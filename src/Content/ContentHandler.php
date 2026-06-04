@@ -99,7 +99,7 @@ final class ContentHandler
      *
      * @return string Eine Statusmeldung
      */
-    public static function moveSlice($sliceId, $clang, $direction)
+    public static function moveSlice(int $sliceId, int $clang, string $direction): string
     {
         // ctype beachten
         // verschieben / vertauschen
@@ -146,7 +146,7 @@ final class ContentHandler
                 Util::organizePriorities(
                     Core::getTable('article_slice'),
                     'priority',
-                    'article_id=' . (int) $articleId . ' AND clang_id=' . (int) $clang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . (int) $sliceRevision,
+                    'article_id=' . (int) $articleId . ' AND clang_id=' . $clang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . (int) $sliceRevision,
                     'priority, updatedate ' . $updSort,
                 );
 
@@ -179,7 +179,7 @@ final class ContentHandler
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function deleteSlice($sliceId)
+    public static function deleteSlice(int $sliceId): bool
     {
         // check if slice id is valid
         $curr = Sql::factory();
@@ -211,8 +211,7 @@ final class ContentHandler
         return 1 == $curr->getRows();
     }
 
-    /** @return void */
-    public static function sliceStatus(int $sliceId, int $status)
+    public static function sliceStatus(int $sliceId, int $status): void
     {
         $sql = Sql::factory();
         $sql->setQuery('SELECT article_id, clang_id FROM ' . Core::getTable('article_slice') . ' WHERE id = ?', [$sliceId]);
@@ -245,7 +244,7 @@ final class ContentHandler
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function copyContent($fromId, $toId, $fromClang = 1, $toClang = 1, $revision = null, $overwrite = false)
+    public static function copyContent(int $fromId, int $toId, int $fromClang = 1, int $toClang = 1, ?int $revision = null, bool $overwrite = false): bool
     {
         if ($fromId == $toId && $fromClang == $toClang) {
             return false;
@@ -330,7 +329,7 @@ final class ContentHandler
                 Util::organizePriorities(
                     Core::getTable('article_slice'),
                     'priority',
-                    'article_id=' . (int) $toId . ' AND clang_id=' . (int) $toClang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . $revision,
+                    'article_id=' . $toId . ' AND clang_id=' . $toClang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . $revision,
                     'priority, updatedate',
                 );
             }
@@ -348,10 +347,10 @@ final class ContentHandler
      * Generiert den Artikel-Cache des Artikelinhalts.
      *
      * @param int $articleId Id des zu generierenden Artikels
-     * @param int $clang ClangId des Artikels
+     * @param int|null $clang ClangId des Artikels
      * @return true
      */
-    public static function generateArticleContent($articleId, $clang = null)
+    public static function generateArticleContent(int $articleId, ?int $clang = null): bool
     {
         foreach (Language::getAllIds() as $clangId) {
             if (null !== $clang && $clangId != $clang) {
@@ -391,8 +390,7 @@ final class ContentHandler
         return true;
     }
 
-    /** @return string */
-    private static function getUser()
+    private static function getUser(): string
     {
         return Core::getUser()->login ?? Core::getEnvironment()->value;
     }
