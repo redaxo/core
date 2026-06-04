@@ -1768,16 +1768,10 @@
       <code><![CDATA[$data['priority']]]></code>
       <code><![CDATA[$data['priority']]]></code>
       <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$data['template']]]></code>
-      <code><![CDATA[$data['template']]]></code>
       <code><![CDATA[$id]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedArgument>
-    <MixedArrayOffset>
-      <code><![CDATA[$templates[$data['template']]]]></code>
-      <code><![CDATA[$templates[$data['template']]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
       <code><![CDATA[$data['path']]]></code>
       <code><![CDATA[$data['priority']]]></code>
@@ -1803,10 +1797,6 @@
       <code><![CDATA[$toSql->getValue('path')]]></code>
       <code><![CDATA[$toSql->getValue('path')]]></code>
     </PossiblyNullOperand>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$data['template']]]></code>
-      <code><![CDATA[$data['template']]]></code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Content/ArticleRevision.php">
     <NoValue>
