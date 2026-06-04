@@ -1746,11 +1746,6 @@
       <code><![CDATA[$CONTENT]]></code>
     </PossiblyFalseArgument>
   </file>
-  <file src="src/Content/ArticleContentEditor.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$this->ctype]]></code>
-    </ArgumentTypeCoercion>
-  </file>
   <file src="src/Content/ArticleHandler.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$id]]></code>
