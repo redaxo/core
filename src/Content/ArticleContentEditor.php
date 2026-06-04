@@ -126,14 +126,8 @@ final class ArticleContentEditor extends ArticleContentBase
         return null !== $module ? I18n::translate($module->name) : $moduleKey;
     }
 
-    /**
-     * Returns the slice menu.
-     *
-     * @param Sql $artDataSql Sql instance containing all the slice and module information
-     *
-     * @return string
-     */
-    private function getSliceMenu(Sql $artDataSql)
+    /** Returns the slice menu. */
+    private function getSliceMenu(Sql $artDataSql): string
     {
         // the editor always operates on a concrete content section
         assert($this->contentSectionId > 0);
@@ -281,11 +275,7 @@ final class ArticleContentEditor extends ArticleContentBase
         return $headerRight;
     }
 
-    /**
-     * @param int $sliceId
-     * @return string
-     */
-    private function getModuleSelect($sliceId)
+    private function getModuleSelect(int $sliceId): string
     {
         // the editor always operates on a concrete content section
         assert($this->contentSectionId > 0);

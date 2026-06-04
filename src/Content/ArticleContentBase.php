@@ -100,7 +100,7 @@ class ArticleContentBase
      *
      * @throws ArticleNotFoundException
      */
-    public function renderSlice(int $sliceId): string
+    final public function renderSlice(int $sliceId): string
     {
         $oldEval = $this->eval;
         $this->eval = true;
@@ -171,7 +171,7 @@ class ArticleContentBase
     // ----- Template inklusive Artikel zurückgeben
 
     /** @throws ArticleNotFoundException if a template or module aborts rendering to switch to the not found article */
-    public function renderTemplate(): string
+    final public function renderTemplate(): string
     {
         if (null !== $this->article->templateKey && 0 !== $this->articleId) {
             $template = Template::get($this->article->templateKey);
@@ -199,11 +199,7 @@ class ArticleContentBase
         return 'no template';
     }
 
-    /**
-     * @param string $content
-     * @return string
-     */
-    protected function replaceLinks($content)
+    private function replaceLinks(string $content): string
     {
         $result = preg_replace_callback(
             '@redaxo://(\d+)(?:-(\d+))?/?@i',
