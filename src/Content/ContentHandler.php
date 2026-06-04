@@ -91,10 +91,6 @@ final class ContentHandler
     /**
      * Verschiebt einen Slice.
      *
-     * @param int $sliceId Id des Slices
-     * @param int $clang Id der Sprache
-     * @param string $direction Richtung in die verschoben werden soll
-     *
      * @throws ApiFunctionException
      *
      * @return string Eine Statusmeldung
@@ -172,13 +168,7 @@ final class ContentHandler
         return $info;
     }
 
-    /**
-     * Löscht einen Slice.
-     *
-     * @param int $sliceId Id des Slices
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
-     */
+    /** Löscht einen Slice. */
     public static function deleteSlice(int $sliceId): bool
     {
         // check if slice id is valid
@@ -235,14 +225,8 @@ final class ContentHandler
     /**
      * Kopiert die Inhalte eines Artikels in einen anderen Artikel.
      *
-     * @param int $fromId ArtikelId des Artikels, aus dem kopiert werden (Quell ArtikelId)
-     * @param int $toId ArtikelId des Artikel, in den kopiert werden sollen (Ziel ArtikelId)
-     * @param int $fromClang ClangId des Artikels, aus dem kopiert werden soll (Quell ClangId)
-     * @param int $toClang ClangId des Artikels, in den kopiert werden soll (Ziel ClangId)
      * @param int|null $revision If null, slices of all revisions are copied
      * @param bool $overwrite If true, existing content in target language will be deleted before copying
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
      */
     public static function copyContent(int $fromId, int $toId, int $fromClang = 1, int $toClang = 1, ?int $revision = null, bool $overwrite = false): bool
     {
@@ -346,8 +330,6 @@ final class ContentHandler
     /**
      * Generiert den Artikel-Cache des Artikelinhalts.
      *
-     * @param int $articleId Id des zu generierenden Artikels
-     * @param int|null $clang ClangId des Artikels
      * @return true
      */
     public static function generateArticleContent(int $articleId, ?int $clang = null): bool

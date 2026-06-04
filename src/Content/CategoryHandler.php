@@ -144,8 +144,6 @@ final class CategoryHandler
     /**
      * Bearbeitet einer Kategorie.
      *
-     * @param int $categoryId Id der Kategorie die verändert werden soll
-     * @param int $clang Id der Sprache
      * @param array $data Array mit den Daten der Kategorie
      *
      * @throws ApiFunctionException
@@ -247,8 +245,6 @@ final class CategoryHandler
     /**
      * Löscht eine Kategorie und reorganisiert die Prioritäten verbleibender Geschwister-Kategorien.
      *
-     * @param int $categoryId Id der Kategorie die gelöscht werden soll
-     *
      * @throws ApiFunctionException
      *
      * @return string Eine Statusmeldung
@@ -310,8 +306,6 @@ final class CategoryHandler
     /**
      * Ändert den Status der Kategorie.
      *
-     * @param int $categoryId Id der Kategorie die gelöscht werden soll
-     * @param int $clang Id der Sprache
      * @param int|null $status Status auf den die Kategorie gesetzt werden soll, oder NULL wenn zum nächsten Status weitergeschaltet werden soll
      *
      * @throws ApiFunctionException
@@ -394,25 +388,13 @@ final class CategoryHandler
         return ($currentStatus - 1) % count($catStatusTypes);
     }
 
-    /**
-     * Kopiert eine Kategorie in eine andere.
-     *
-     * @param int $fromCat KategorieId der Kategorie, die kopiert werden soll (Quelle)
-     * @param int $toCat KategorieId der Kategorie, IN die kopiert werden soll (Ziel)
-     */
+    /** Kopiert eine Kategorie in eine andere. */
     public static function copyCategory(int $fromCat, int $toCat): void
     {
         // TODO copyCategory implementieren
     }
 
-    /**
-     * Berechnet die Prios der Kategorien in einer Kategorie neu.
-     *
-     * @param int $parentId KategorieId der Kategorie, die erneuert werden soll
-     * @param int $clang ClangId der Kategorie, die erneuert werden soll
-     * @param int $newPrio Neue PrioNr der Kategorie
-     * @param int $oldPrio Alte PrioNr der Kategorie
-     */
+    /** Berechnet die Prios der Kategorien in einer Kategorie neu. */
     public static function newCatPrio(int $parentId, int $clang, int $newPrio, int $oldPrio): void
     {
         if ($newPrio != $oldPrio) {
@@ -439,14 +421,7 @@ final class CategoryHandler
         }
     }
 
-    /**
-     * Verschieben einer Kategorie in eine andere.
-     *
-     * @param int $fromCat KategorieId der Kategorie, die verschoben werden soll (Quelle)
-     * @param int $toCat KategorieId der Kategorie, IN die verschoben werden soll (Ziel)
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
-     */
+    /** Verschieben einer Kategorie in eine andere. */
     public static function moveCategory(int $fromCat, int $toCat): bool
     {
         if ($fromCat == $toCat) {
