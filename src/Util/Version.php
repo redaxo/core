@@ -40,10 +40,8 @@ final class Version
      * @param string $version1 First version number
      * @param string $version2 Second version number
      * @param '='|'=='|'!='|'<>'|'<'|'<='|'>'|'>='|null $comparator Optional comparator
-     *
-     * @return bool
      */
-    public static function compare(string $version1, string $version2, ?string $comparator = '<')
+    public static function compare(string $version1, string $version2, ?string $comparator = '<'): bool
     {
         // bc
         $comparator ??= '<';

@@ -28,8 +28,7 @@ final class TemplateSelect extends Select
         parent::__construct();
     }
 
-    /** @return string */
-    public function get()
+    public function get(): string
     {
         if (!$this->loaded) {
             $templates = $this->getTemplates();

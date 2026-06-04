@@ -70,8 +70,7 @@ final class rex_debug_clockwork
         }
     }
 
-    /** @return string */
-    public static function getStoragePath()
+    public static function getStoragePath(): string
     {
         return Addon::require('debug')->getCachePath('clockwork.db');
     }

@@ -29,8 +29,7 @@ final readonly class Table
         private int $DBID = 1,
     ) {}
 
-    /** @return string */
-    public function getTableName()
+    public function getTableName(): string
     {
         return $this->tableName;
     }
@@ -121,11 +120,8 @@ final readonly class Table
         $sql->setQuery($qry);
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasColumn($name)
+    /** @param string $name */
+    public function hasColumn($name): bool
     {
         $columns = Sql::showColumns($this->tableName, $this->DBID);
 

@@ -51,10 +51,8 @@ class Fragment
      *
      * @param string $name Variable name
      * @param mixed $default Default value
-     *
-     * @return mixed
      */
-    public function getVar($name, $default = null)
+    public function getVar($name, $default = null): mixed
     {
         return $this->vars[$name] ?? $default;
     }
@@ -185,10 +183,8 @@ class Fragment
      * Magic getter to reference variables from within the fragment.
      *
      * @param string $name The name of the variable to get
-     *
-     * @return mixed
      */
-    public function __get($name)
+    public function __get($name): mixed
     {
         if (isset($this->vars[$name]) || array_key_exists($name, $this->vars)) {
             return $this->vars[$name];
@@ -203,10 +199,8 @@ class Fragment
      * Magic method to check if a variable is set.
      *
      * @param string $name The name of the variable to check
-     *
-     * @return bool
      */
-    public function __isset($name)
+    public function __isset($name): bool
     {
         return isset($this->vars[$name]) || array_key_exists($name, $this->vars);
     }

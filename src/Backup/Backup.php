@@ -35,8 +35,7 @@ final class Backup
 
     private function __construct() {}
 
-    /** @return string */
-    public static function getDir()
+    public static function getDir(): string
     {
         $dir = Path::coreData('backup');
         Dir::create($dir);
@@ -62,7 +61,7 @@ final class Backup
      *
      * @return list<string>
      */
-    public static function getBackupFiles($fileType)
+    public static function getBackupFiles($fileType): array
     {
         $dir = self::getDir();
 
@@ -101,7 +100,7 @@ final class Backup
      *               'state' => boolean (Status ob fehler aufgetreten sind)
      *               'message' => Evtl. Status/Fehlermeldung
      */
-    public static function importDb($filename)
+    public static function importDb($filename): array
     {
         /** @return array{state: bool, message: string} */
         $returnError = static function (string $message): array {
@@ -218,7 +217,7 @@ final class Backup
      *               'state' => boolean (Status ob fehler aufgetreten sind)
      *               'message' => Evtl. Status/Fehlermeldung
      */
-    public static function importFiles($filename)
+    public static function importFiles($filename): array
     {
         $return = [];
         $return['state'] = false;
@@ -264,7 +263,7 @@ final class Backup
      *
      * @return bool TRUE wenn ein Dump erstellt wurde, sonst FALSE
      */
-    public static function exportDb($filename, ?array $tables = null)
+    public static function exportDb($filename, ?array $tables = null): bool
     {
         $fp = @tmpfile();
         $tempCacheFile = null;
@@ -381,7 +380,7 @@ final class Backup
      *
      * @return string|null Inhalt des Tar-Archives als string, wenn $archivePath nicht uebergeben wurde - sonst null
      */
-    public static function exportFiles($folders, $archivePath = null)
+    public static function exportFiles($folders, $archivePath = null): ?string
     {
         if (null == $archivePath) {
             $tmpArchivePath = false;
@@ -466,7 +465,7 @@ final class Backup
     }
 
     /** @return list<string> */
-    public static function getTables()
+    public static function getTables(): array
     {
         $tables = [];
         foreach (Sql::factory()->getTables(Core::getTablePrefix()) as $table) {

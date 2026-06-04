@@ -44,7 +44,7 @@ final class Asset
      *
      * @return array<string, list<string>>
      */
-    public static function getCssFiles()
+    public static function getCssFiles(): array
     {
         return self::$cssFiles;
     }
@@ -73,7 +73,7 @@ final class Asset
      *
      * @return list<string>
      */
-    public static function getJsFiles()
+    public static function getJsFiles(): array
     {
         // transform for BC
         return array_map(static function ($jsFile) {
@@ -86,7 +86,7 @@ final class Asset
      *
      * @return list<array{string, array}>
      */
-    public static function getJsFilesWithOptions()
+    public static function getJsFilesWithOptions(): array
     {
         return self::$jsFiles;
     }
@@ -107,7 +107,7 @@ final class Asset
      *
      * @return array<string, mixed>
      */
-    public static function getJsProperties()
+    public static function getJsProperties(): array
     {
         return self::$jsProperties;
     }

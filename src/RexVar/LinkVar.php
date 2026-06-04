@@ -14,11 +14,8 @@ use function sprintf;
 
 final readonly class LinkVar
 {
-    /**
-     * @param int|string $id
-     * @return string
-     */
-    public static function getWidget($id, $name, $value, array $args = [])
+    /** @param int|string $id */
+    public static function getWidget($id, $name, $value, array $args = []): string
     {
         $artName = '';
         $art = $value ? Article::get($value) : null;

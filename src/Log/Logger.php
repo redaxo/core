@@ -42,12 +42,8 @@ class Logger extends AbstractLogger
         return new $class();
     }
 
-    /**
-     * Returns the path to the system.log file.
-     *
-     * @return string
-     */
-    public static function getPath()
+    /** Returns the path to the system.log file. */
+    public static function getPath(): string
     {
         return Path::log('system.log');
     }
@@ -163,10 +159,8 @@ class Logger extends AbstractLogger
      * Map php error codes to PSR3 error levels.
      *
      * @param int $errno a php error code, e.g. E_ERROR
-     *
-     * @return string
      */
-    public static function getLogLevel($errno)
+    public static function getLogLevel($errno): string
     {
         return match ($errno) {
             E_USER_DEPRECATED, E_DEPRECATED, E_USER_WARNING, E_WARNING, E_COMPILE_WARNING => LogLevel::WARNING,

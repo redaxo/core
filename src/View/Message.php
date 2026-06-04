@@ -12,11 +12,9 @@ final class Message
      * @param string $message
      * @param string $cssClass
      *
-     * @return string
-     *
      * @psalm-taint-specialize
      */
-    public static function info($message, $cssClass = '')
+    public static function info($message, $cssClass = ''): string
     {
         $cssClassMessage = 'alert-info';
         if ('' != $cssClass) {
@@ -32,11 +30,9 @@ final class Message
      * @param string $message
      * @param string $cssClass
      *
-     * @return string
-     *
      * @psalm-taint-specialize
      */
-    public static function success($message, $cssClass = '')
+    public static function success($message, $cssClass = ''): string
     {
         $cssClassMessage = 'alert-success';
         if ('' != $cssClass) {
@@ -52,11 +48,9 @@ final class Message
      * @param string $message
      * @param string $cssClass
      *
-     * @return string
-     *
      * @psalm-taint-specialize
      */
-    public static function warning($message, $cssClass = '')
+    public static function warning($message, $cssClass = ''): string
     {
         $cssClassMessage = 'alert-warning';
         if ('' != $cssClass) {
@@ -72,11 +66,9 @@ final class Message
      * @param string $message
      * @param string $cssClass
      *
-     * @return string
-     *
      * @psalm-taint-specialize
      */
-    public static function error($message, $cssClass = '')
+    public static function error($message, $cssClass = ''): string
     {
         $cssClassMessage = 'alert-danger';
         if ('' != $cssClass) {
@@ -91,10 +83,8 @@ final class Message
      *
      * @param string $message
      * @param string $cssClass
-     *
-     * @return string
      */
-    private static function message($message, $cssClass)
+    private static function message($message, $cssClass): string
     {
         $cssClassMessage = 'alert';
         if ('' != $cssClass) {

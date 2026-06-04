@@ -54,11 +54,8 @@ class Select
         $this->attributes[$name] = $value;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function delAttribute($name)
+    /** @param string $name */
+    public function delAttribute($name): bool
     {
         if ($this->hasAttribute($name)) {
             unset($this->attributes[$name]);
@@ -67,11 +64,8 @@ class Select
         return false;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasAttribute($name)
+    /** @param string $name */
+    public function hasAttribute($name): bool
     {
         return isset($this->attributes[$name]);
     }
@@ -79,9 +73,8 @@ class Select
     /**
      * @param string $name
      * @param string|int $default
-     * @return string|int
      */
-    public function getAttribute($name, $default = '')
+    public function getAttribute($name, $default = ''): string|int
     {
         if ($this->hasAttribute($name)) {
             return $this->attributes[$name];
@@ -257,8 +250,7 @@ class Select
         }
     }
 
-    /** @return int */
-    public function countOptions()
+    public function countOptions(): int
     {
         return $this->optCount;
     }
@@ -286,8 +278,7 @@ class Select
         $this->addOptions($sql->getDBArray($query, [], PDO::FETCH_NUM));
     }
 
-    /** @return string */
-    public function get()
+    public function get(): string
     {
         $useRexSelectStyle = false;
 
@@ -344,9 +335,8 @@ class Select
     /**
      * @param int $parentId
      * @param int $level
-     * @return string
      */
-    protected function outGroup($parentId, $level = 0)
+    protected function outGroup($parentId, $level = 0): string
     {
         if ($level > 100) {
             // nur mal so zu sicherheit .. man weiss nie ;)
@@ -381,9 +371,8 @@ class Select
      * @param string|int $value
      * @param int $level
      * @param array<string, string|int> $attributes
-     * @return string
      */
-    protected function outOption($name, $value, $level = 0, array $attributes = [])
+    protected function outOption($name, $value, $level = 0, array $attributes = []): string
     {
         $name = escape($name);
         // for BC reasons, we always expect value to be a string.
@@ -412,7 +401,7 @@ class Select
      * @param bool $ignoreMainGroup
      * @return false|list<list{string, string|int, int, array<string, string|int>}>
      */
-    protected function getGroup($parentId, $ignoreMainGroup = false)
+    protected function getGroup($parentId, $ignoreMainGroup = false): array|false
     {
         if ($ignoreMainGroup && 0 == $parentId) {
             return false;

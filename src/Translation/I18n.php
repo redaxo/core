@@ -14,10 +14,8 @@ use Redaxo\Core\Filesystem\Finder;
 use function call_user_func;
 use function count;
 use function func_get_args;
-use function gettype;
 use function in_array;
 use function is_array;
-use function is_scalar;
 use function is_string;
 use function Redaxo\Core\View\escape;
 use function strlen;
@@ -51,7 +49,7 @@ final class I18n
      *
      * @return string The last locale
      */
-    public static function setLocale($locale, $phpSetLocale = true)
+    public static function setLocale($locale, $phpSetLocale = true): string
     {
         $saveLocale = self::getLocale();
         self::$locale = self::validateLocale($locale);
@@ -244,7 +242,7 @@ final class I18n
      *
      * @return bool TRUE on success, else FALSE
      */
-    public static function hasMsg($key)
+    public static function hasMsg($key): bool
     {
         return isset(self::$msg[self::getLocale()][$key]);
     }
@@ -304,7 +302,7 @@ final class I18n
      *
      * @return bool TRUE on success, else FALSE
      */
-    public static function hasMsgOrFallback($key)
+    public static function hasMsgOrFallback($key): bool
     {
         $currentLocale = self::getLocale();
 
@@ -345,7 +343,7 @@ final class I18n
      *
      * @return list<string> Array of Locales
      */
-    public static function getLocales()
+    public static function getLocales(): array
     {
         if (empty(self::$locales) && isset(self::$directories[0]) && is_readable(self::$directories[0])) {
             self::$locales = [];
@@ -395,33 +393,33 @@ final class I18n
     /**
      * Translates all array elements.
      *
-     * @param mixed $array The Array of Strings for translation
+     * @param scalar|array<scalar|array<mixed>> $array The Array of Strings for translation
      * @param bool $escape Flag whether the translated text should be escaped
-     * @param callable $i18nFunction Function that returns the translation for the i18n key
+     * @param callable|null $i18nFunction Function that returns the translation for the i18n key
      *
      * @psalm-taint-escape ($escape is true ? "html" : null)
      *
-     * @return mixed
+     * @return scalar|array<scalar|array<mixed>>
      */
-    public static function translateArray($array, $escape = true, ?callable $i18nFunction = null)
+    public static function translateArray(array|string|int|float|bool|null $array, bool $escape = true, ?callable $i18nFunction = null): array|string|int|float|bool|null
     {
         if (is_array($array)) {
             foreach ($array as $key => $value) {
                 if (is_string($value)) {
                     $array[$key] = self::translate($value, $escape, $i18nFunction);
                 } else {
+                    /** @psalm-suppress MixedArgumentTypeCoercion */
                     $array[$key] = self::translateArray($value, $escape, $i18nFunction);
                 }
             }
-            return $array;
+            /** @var scalar|array<scalar|array<mixed>> */
+            return $array; // @phpstan-ignore varTag.nativeType
         }
         if (is_string($array)) {
             return self::translate($array, $escape, $i18nFunction);
         }
-        if (null === $array || is_scalar($array)) {
-            return $array;
-        }
-        throw new InvalidArgumentException('Expecting $array to be a string or an array of scalar, "' . gettype($array) . '" given.');
+
+        return $array; // scalar
     }
 
     /**

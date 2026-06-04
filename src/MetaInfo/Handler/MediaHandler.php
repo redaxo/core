@@ -31,7 +31,7 @@ final class MediaHandler extends AbstractHandler
      *
      * @return list<string>
      */
-    public static function isMediaInUse(ExtensionPoint $ep)
+    public static function isMediaInUse(ExtensionPoint $ep): array
     {
         $params = $ep->getParams();
         $warning = $ep->subject;
@@ -130,8 +130,7 @@ final class MediaHandler extends AbstractHandler
         return $warning;
     }
 
-    /** @return string */
-    protected function buildFilterCondition(array $params)
+    protected function buildFilterCondition(array $params): string
     {
         $restrictionsCondition = '';
 
@@ -162,8 +161,7 @@ final class MediaHandler extends AbstractHandler
         return $restrictionsCondition;
     }
 
-    /** @return array */
-    protected function handleSave(array $params, Sql $sqlFields)
+    protected function handleSave(array $params, Sql $sqlFields): array
     {
         if ('post' != Request::requestMethod() || !isset($params['id'])) {
             return $params;
@@ -184,12 +182,12 @@ final class MediaHandler extends AbstractHandler
         return $params;
     }
 
-    protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType)
+    protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string
     {
         return $field;
     }
 
-    public function extendForm(ExtensionPoint $ep)
+    public function extendForm(ExtensionPoint $ep): string
     {
         $params = $ep->getParams();
         $params['save'] = in_array($ep->name, ['MEDIA_ADDED', 'MEDIA_UPDATED'], true);

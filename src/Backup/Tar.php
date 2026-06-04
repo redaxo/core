@@ -29,10 +29,8 @@ final readonly class Tar
      * Open a TAR file.
      *
      * @param string $filename
-     *
-     * @return bool
      */
-    public function openTAR($filename)
+    public function openTAR($filename): bool
     {
         // If the tar file doesn't exist...
         if (!is_file($filename)) {
@@ -55,10 +53,8 @@ final readonly class Tar
      * Add a file to the tar archive.
      *
      * @param string $filename
-     *
-     * @return bool
      */
-    public function addFile($filename)
+    public function addFile($filename): bool
     {
         // Make sure the file we are adding exists!
         if (!is_file($filename)) {
@@ -79,10 +75,8 @@ final readonly class Tar
      * Extract an existing TAR archive.
      *
      * @param string $outdir the target directory for extracting
-     *
-     * @return bool
      */
-    public function extractTar($outdir)
+    public function extractTar($outdir): bool
     {
         // when extracting tars generated with our previous tar class
         // some E_DEPRECATED messages are triggered by `octdec()`:

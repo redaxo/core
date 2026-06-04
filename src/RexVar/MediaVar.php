@@ -10,11 +10,8 @@ use function Redaxo\Core\View\escape;
 
 final readonly class MediaVar
 {
-    /**
-     * @param int|string $id
-     * @return string
-     */
-    public static function getWidget($id, $name, $value, array $args = [])
+    /** @param int|string $id */
+    public static function getWidget($id, $name, $value, array $args = []): string
     {
         $openParams = '';
         if (isset($args['category']) && ($category = (int) $args['category'])) {

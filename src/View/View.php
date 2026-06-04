@@ -36,10 +36,8 @@ final class View
      * @param string $brand
      * @param string $cssClass
      * @param bool $inverse
-     *
-     * @return string
      */
-    public static function toolbar($content, $brand = null, $cssClass = null, $inverse = false)
+    public static function toolbar($content, $brand = null, $cssClass = null, $inverse = false): string
     {
         $fragment = new Fragment();
         $fragment->setVar('inverse', $inverse);
@@ -55,10 +53,8 @@ final class View
      *
      * @param string $content
      * @param string $title
-     *
-     * @return string
      */
-    public static function content($content, $title = '')
+    public static function content($content, $title = ''): string
     {
         $fragment = new Fragment();
         $fragment->setVar('title', $title, false);
@@ -72,12 +68,10 @@ final class View
      * @param string $head
      * @param string|array|null $subtitle
      *
-     * @return string
-     *
      * @psalm-taint-sink html $head
      * @psalm-taint-sink html $subtitle
      */
-    public static function title($head, $subtitle = null)
+    public static function title($head, $subtitle = null): string
     {
         if (null !== $subtitle && !is_string($subtitle) && (!is_array($subtitle) || count($subtitle) > 0 && !reset($subtitle) instanceof Page)) {
             throw new InvalidArgumentException('Expecting $subtitle to be a string or an array of ' . Page::class . '.');
@@ -125,10 +119,8 @@ final class View
      * Returns a clang switch.
      *
      * @param bool $asDropDown
-     *
-     * @return string
      */
-    public static function clangSwitch(Context $context, $asDropDown = true)
+    public static function clangSwitch(Context $context, $asDropDown = true): string
     {
         if (1 == Language::count()) {
             return '';
@@ -161,10 +153,8 @@ final class View
      * Returns a clang switch.
      *
      * @param bool $asDropDown
-     *
-     * @return string
      */
-    public static function clangSwitchAsButtons(Context $context, $asDropDown = true)
+    public static function clangSwitchAsButtons(Context $context, $asDropDown = true): string
     {
         if (1 == Language::count()) {
             return '';
@@ -195,12 +185,8 @@ final class View
         return '<div class="rex-nav-btn rex-nav-language"><div class="btn-toolbar">' . $fragment->parse('core/buttons/button_group.php') . '</div></div>';
     }
 
-    /**
-     * Returns a clang switch.
-     *
-     * @return string
-     */
-    public static function clangSwitchAsDropdown(Context $context)
+    /** Returns a clang switch. */
+    public static function clangSwitchAsDropdown(Context $context): string
     {
         if (1 == Language::count()) {
             return '';
@@ -275,9 +261,8 @@ final class View
      * Ausgabe des Medienpool Formulars.
      *
      * @internal
-     * @return string
      */
-    public static function mediaPoolMediaForm($formTitle, $buttonTitle, $rexFileCategory, $fileChooser, $closeForm)
+    public static function mediaPoolMediaForm($formTitle, $buttonTitle, $rexFileCategory, $fileChooser, $closeForm): string
     {
         $s = '';
 

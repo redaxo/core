@@ -166,10 +166,8 @@ class LogFile implements Iterator
      * Deletes a log file and its rotations.
      *
      * @param string $path File path
-     *
-     * @return bool
      */
-    public static function delete($path)
+    public static function delete($path): bool
     {
         if ($factoryClass = static::getExplicitFactoryClass()) {
             return $factoryClass::delete($path);

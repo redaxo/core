@@ -21,7 +21,7 @@ final class FileCompressor
      * @param int $level GZIP compression level (default: 9)
      * @return string|false New filename (with .gz appended) if success, or false if operation fails
      */
-    public function gzCompress(string $source, int $level = 9)
+    public function gzCompress(string $source, int $level = 9): string|false
     {
         $dest = $source . '.gz';
         $mode = 'wb' . $level;
@@ -52,7 +52,7 @@ final class FileCompressor
      * @param string $source Path to a .gz file that should be decompressed
      * @return string|false The uncompressed content if success, or false if operation fails
      */
-    public function gzReadDeCompressed(string $source)
+    public function gzReadDeCompressed(string $source): string|false
     {
         if ('gz' !== File::extension($source)) {
             throw new InvalidArgumentException('Expecting a file with .gz suffix');

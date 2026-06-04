@@ -17,8 +17,7 @@ final class LanguageHandler extends AbstractHandler
     public const PREFIX = 'clang_';
     public const CONTAINER = 'rex-clang-metainfo';
 
-    /** @return string */
-    public function renderToggleButton(ExtensionPoint $ep)
+    public function renderToggleButton(ExtensionPoint $ep): string
     {
         $fields = parent::getSqlFields(self::PREFIX);
         if ($fields->getRows() >= 1) {
@@ -30,8 +29,7 @@ final class LanguageHandler extends AbstractHandler
         return $ep->subject;
     }
 
-    /** @return array */
-    public function handleSave(array $params, Sql $sqlFields)
+    public function handleSave(array $params, Sql $sqlFields): array
     {
         if ('post' != Request::requestMethod() || !isset($params['id'])) {
             return $params;
@@ -54,9 +52,12 @@ final class LanguageHandler extends AbstractHandler
         return $params;
     }
 
-    protected function buildFilterCondition(array $params): void {}
+    protected function buildFilterCondition(array $params): string
+    {
+        return '';
+    }
 
-    public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType)
+    public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string
     {
         if ('legend' == $inputType) {
             return '<h3 class="form-legend">' . $label . '</h3>';
@@ -65,7 +66,7 @@ final class LanguageHandler extends AbstractHandler
         return $field;
     }
 
-    public function extendForm(ExtensionPoint $ep)
+    public function extendForm(ExtensionPoint $ep): string
     {
         $params = $ep->getParams();
         if (isset($params['sql'])) {

@@ -33,10 +33,8 @@ final class MetaInfo
      * @param string $label
      * @param string $dbtype
      * @param int $dblength
-     *
-     * @return int|string
      */
-    public static function addFieldType($label, $dbtype, $dblength)
+    public static function addFieldType($label, $dbtype, $dblength): int|string
     {
         if (!is_string($label) || empty($label)) {
             return I18n::msg('minfo_field_error_invalid_name');
@@ -72,10 +70,8 @@ final class MetaInfo
      * Gibt beim Erfolg true zurück, sonst eine Fehlermeldung
      *
      * @param int $fieldTypeId
-     *
-     * @return bool|string
      */
-    public static function deleteFieldType($fieldTypeId)
+    public static function deleteFieldType($fieldTypeId): bool|string
     {
         if (!is_int($fieldTypeId) || empty($fieldTypeId)) {
             return I18n::msg('minfo_field_error_invalid_typeid');
@@ -101,10 +97,8 @@ final class MetaInfo
      * @param string $params
      * @param string $validate
      * @param string $restrictions
-     *
-     * @return bool|string
      */
-    public static function addField($title, $name, $priority, $attributes, $type, $default, $params = null, $validate = null, $restrictions = '')
+    public static function addField($title, $name, $priority, $attributes, $type, $default, $params = null, $validate = null, $restrictions = ''): true|string
     {
         $prefix = self::metaPrefix($name);
         $metaTable = self::metaTable($prefix);
@@ -166,8 +160,7 @@ final class MetaInfo
         return true;
     }
 
-    /** @return bool|string */
-    public static function deleteField(string|int $fieldIdOrName)
+    public static function deleteField(string|int $fieldIdOrName): true|string
     {
         // Löschen anhand der FieldId
         if (is_int($fieldIdOrName)) {
@@ -214,12 +207,8 @@ final class MetaInfo
         return true;
     }
 
-    /**
-     * Extrahiert den Prefix aus dem Namen eine Spalte.
-     *
-     * @return string
-     */
-    public static function metaPrefix(string $name)
+    /** Extrahiert den Prefix aus dem Namen eine Spalte. */
+    public static function metaPrefix(string $name): string
     {
         if (false === ($pos = strpos($name, '_'))) {
             throw new InvalidArgumentException('Parameter $name must be like "prefix_name".');
@@ -233,12 +222,8 @@ final class MetaInfo
         return $prefix;
     }
 
-    /**
-     * Gibt die mit dem Prefix verbundenen Tabellennamen zurück.
-     *
-     * @return string|false
-     */
-    public static function metaTable(string $prefix)
+    /** Gibt die mit dem Prefix verbundenen Tabellennamen zurück. */
+    public static function metaTable(string $prefix): string|false
     {
         $metaTables = Core::getProperty('metainfo_metaTables', []);
 

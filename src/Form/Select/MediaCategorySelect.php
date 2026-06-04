@@ -70,7 +70,7 @@ class MediaCategorySelect extends Select
         }
     }
 
-    public function get()
+    public function get(): string
     {
         if (!$this->loaded) {
             $this->addCatOptions();

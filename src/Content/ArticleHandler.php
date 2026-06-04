@@ -683,9 +683,9 @@ final class ArticleHandler
      * @param int $id ArtikelId des zu kopierenden Artikels
      * @param int $toCatId KategorieId in die der Artikel kopiert werden soll
      *
-     * @return bool|int FALSE bei Fehler, sonst die Artikel Id des neue kopierten Artikels
+     * @return int|false FALSE bei Fehler, sonst die Artikel Id des neue kopierten Artikels
      */
-    public static function copyArticle($id, $toCatId): bool|int
+    public static function copyArticle($id, $toCatId): int|false
     {
         $id = (int) $id;
         $toCatId = (int) $toCatId;

@@ -120,8 +120,7 @@ class Mailer extends PHPMailer
         return parent::addOrEnqueueAnAddress($kind, $address, $name);
     }
 
-    /** @return bool */
-    public function send()
+    public function send(): bool
     {
         return Timer::measure(__METHOD__, function () {
             $logging = (int) Core::getConfig('phpmailer_logging');

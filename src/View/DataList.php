@@ -212,32 +212,20 @@ class DataList implements UrlProviderInterface
 
     // ---------------------- setters/getters
 
-    /**
-     * Gibt den Namen es Formulars zurück.
-     *
-     * @return string
-     */
-    public function getName()
+    /** Gibt den Namen es Formulars zurück. */
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Gibt eine Status Nachricht zurück.
-     *
-     * @return string
-     */
-    public function getMessage()
+    /** Gibt eine Status Nachricht zurück. */
+    public function getMessage(): string
     {
         return escape(Request::request($this->getName() . '_msg', 'string'));
     }
 
-    /**
-     * Gibt eine Warnung zurück.
-     *
-     * @return string
-     */
-    public function getWarning()
+    /** Gibt eine Warnung zurück. */
+    public function getWarning(): string
     {
         return escape(Request::request($this->getName() . '_warning', 'string'));
     }
@@ -253,12 +241,8 @@ class DataList implements UrlProviderInterface
         $this->caption = $caption;
     }
 
-    /**
-     * Gibt die Caption/den Titel der Tabelle zurück.
-     *
-     * @return string
-     */
-    public function getCaption()
+    /** Gibt die Caption/den Titel der Tabelle zurück. */
+    public function getCaption(): string
     {
         return $this->caption;
     }
@@ -269,8 +253,7 @@ class DataList implements UrlProviderInterface
         $this->noRowsMessage = $message;
     }
 
-    /** @return string */
-    public function getNoRowsMessage()
+    public function getNoRowsMessage(): string
     {
         return $this->noRowsMessage;
     }
@@ -285,7 +268,7 @@ class DataList implements UrlProviderInterface
     }
 
     /** @return array<string, string|int> */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -305,7 +288,7 @@ class DataList implements UrlProviderInterface
     }
 
     /** @return array<string, string|int> */
-    public function getTableAttributes()
+    public function getTableAttributes(): array
     {
         return $this->tableAttributes;
     }
@@ -320,7 +303,7 @@ class DataList implements UrlProviderInterface
     }
 
     /** @return array<string, string|int> */
-    public function getFormAttributes()
+    public function getFormAttributes(): array
     {
         return $this->formAttributes;
     }
@@ -336,7 +319,7 @@ class DataList implements UrlProviderInterface
     }
 
     /** @return array<string, string|int>|null */
-    public function getLinkAttributes($column, $default = null)
+    public function getLinkAttributes($column, $default = null): ?array
     {
         return $this->linkAttributes[$column] ?? $default;
     }
@@ -359,7 +342,7 @@ class DataList implements UrlProviderInterface
      * @return array<string, string|int>|callable(self):string Entweder ein array: [attributname => attribut, ...]
      *                                                         oder eine Callback-Funktion
      */
-    public function getRowAttributes()
+    public function getRowAttributes(): array|callable
     {
         return $this->rowAttributes;
     }
@@ -414,7 +397,7 @@ class DataList implements UrlProviderInterface
      *
      * @return array{string, string}
      */
-    public function getColumnLayout($columnName)
+    public function getColumnLayout($columnName): array
     {
         if (isset($this->columnLayouts[$columnName]) && is_array($this->columnLayouts[$columnName])) {
             return $this->columnLayouts[$columnName];
@@ -427,7 +410,7 @@ class DataList implements UrlProviderInterface
      * Gibt die Layouts aller Spalten zurück.
      * @return array<string, array{string, string}>
      */
-    public function getColumnLayouts()
+    public function getColumnLayouts(): array
     {
         return $this->columnLayouts;
     }
@@ -437,10 +420,8 @@ class DataList implements UrlProviderInterface
      *
      * @param int $columnIndex Nummer der Spalte
      * @param mixed $default Defaultrückgabewert, falls keine Spalte mit der angegebenen Nummer vorhanden ist
-     *
-     * @return string|null
      */
-    public function getColumnName($columnIndex, $default = null)
+    public function getColumnName($columnIndex, $default = null): ?string
     {
         return $this->columnNames[$columnIndex] ?? $default;
     }
@@ -450,7 +431,7 @@ class DataList implements UrlProviderInterface
      *
      * @return list<string>
      */
-    public function getColumnNames()
+    public function getColumnNames(): array
     {
         return $this->columnNames;
     }
@@ -471,9 +452,8 @@ class DataList implements UrlProviderInterface
     /**
      * @param string $columnName
      * @param array{string, mixed, array<mixed>}|null $columnFormat
-     * @return string
      */
-    protected function getColumnValue($columnName, $columnFormat)
+    protected function getColumnValue($columnName, $columnFormat): string
     {
         return $this->formatValue(
             $this->getValue($columnName),
@@ -526,14 +506,14 @@ class DataList implements UrlProviderInterface
     /**
      * Gibt das Format für eine Spalte zurück.
      *
-     * @template T
+     * @template T of array{string, mixed, array<mixed>}|null
      *
      * @param string $columnName Name der Spalte
      * @param T $default Defaultrückgabewert, falls keine Formatierung gesetzt ist
      *
      * @return array{string, mixed, array<mixed>}|T
      */
-    public function getColumnFormat($columnName, $default = null)
+    public function getColumnFormat($columnName, ?array $default = null): ?array
     {
         return $this->columnFormates[$columnName] ?? $default;
     }
@@ -569,10 +549,8 @@ class DataList implements UrlProviderInterface
      * @param string $columnName Name der Spalte
      * @param string|int $option Name/Id der Option
      * @param mixed $default Defaultrückgabewert, falls die Option nicht gesetzt ist
-     *
-     * @return mixed|null
      */
-    public function getColumnOption($columnName, $option, $default = null)
+    public function getColumnOption($columnName, $option, $default = null): mixed
     {
         if ($this->hasColumnOption($columnName, $option)) {
             return $this->columnOptions[$columnName][$option];
@@ -585,10 +563,8 @@ class DataList implements UrlProviderInterface
      *
      * @param string $columnName Name der Spalte
      * @param string|int $option Name/Id der Option
-     *
-     * @return bool
      */
-    public function hasColumnOption($columnName, $option)
+    public function hasColumnOption($columnName, $option): bool
     {
         return isset($this->columnOptions[$columnName][$option]);
     }
@@ -608,10 +584,8 @@ class DataList implements UrlProviderInterface
      * Gibt die Parameter für eine Spalte zurück.
      *
      * @param string $columnName Name der Spalte
-     *
-     * @return array
      */
-    public function getColumnParams($columnName)
+    public function getColumnParams($columnName): array
     {
         if (isset($this->columnParams[$columnName]) && is_array($this->columnParams[$columnName])) {
             return $this->columnParams[$columnName];
@@ -623,10 +597,8 @@ class DataList implements UrlProviderInterface
      * Gibt zurück, ob Parameter für eine Spalte existieren.
      *
      * @param string $columnName Name der Spalte
-     *
-     * @return bool
      */
-    public function hasColumnParams($columnName)
+    public function hasColumnParams($columnName): bool
     {
         return isset($this->columnParams[$columnName]) && is_array($this->columnParams[$columnName]) && count($this->columnParams[$columnName]) > 0;
     }
@@ -720,7 +692,7 @@ class DataList implements UrlProviderInterface
     }
 
     /** @return array<int, array> */
-    public function getTableColumnGroups()
+    public function getTableColumnGroups(): array
     {
         return $this->tableColumnGroups;
     }
@@ -804,9 +776,8 @@ class DataList implements UrlProviderInterface
      * @see #replaceVariable, #replaceVariables
      *
      * @param array $params
-     * @return string
      */
-    public function getParsedUrl($params = [])
+    public function getParsedUrl($params = []): string
     {
         $params = array_merge($this->getParams(), $params);
 
@@ -844,10 +815,8 @@ class DataList implements UrlProviderInterface
      *
      * @param string $query SQL Statement
      * @param array<string, 'asc'|'desc'> $defaultSort
-     *
-     * @return string
      */
-    protected function prepareQuery($query, array $defaultSort = [])
+    protected function prepareQuery($query, array $defaultSort = []): string
     {
         $sortColumn = $this->getSortColumn();
         if ('' != $sortColumn) {
@@ -886,12 +855,8 @@ class DataList implements UrlProviderInterface
         return 'SELECT COUNT(*) AS `rows` FROM (' . $query . ') t';
     }
 
-    /**
-     * Gibt die Anzahl der Zeilen zurück, welche vom ursprüngliche SQL Statement betroffen werden.
-     *
-     * @return int
-     */
-    public function getRows()
+    /** Gibt die Anzahl der Zeilen zurück, welche vom ursprüngliche SQL Statement betroffen werden. */
+    public function getRows(): int
     {
         return $this->rows;
     }
@@ -909,12 +874,8 @@ class DataList implements UrlProviderInterface
         return $maxRows;
     }
 
-    /**
-     * Returns the pager for this list.
-     *
-     * @return Pager|null
-     */
-    public function getPager()
+    /** Returns the pager for this list. */
+    public function getPager(): ?Pager
     {
         return $this->pager;
     }
@@ -923,10 +884,8 @@ class DataList implements UrlProviderInterface
      * Gibt zurück, nach welcher Spalte sortiert werden soll.
      *
      * @param string|null $default
-     *
-     * @return string|null
      */
-    public function getSortColumn($default = null)
+    public function getSortColumn($default = null): ?string
     {
         if (Request::request('list', 'string') == $this->getName()) {
             return Request::request('sort', 'string', $default);
@@ -939,12 +898,10 @@ class DataList implements UrlProviderInterface
      *
      * @param 'asc'|'desc'|null $default
      *
-     * @return string|null
-     *
      * @psalm-taint-escape html
      * @psalm-taint-escape sql
      */
-    public function getSortType(?string $default = null)
+    public function getSortType(?string $default = null): ?string
     {
         if (Request::request('list', 'string') == $this->getName()) {
             $sortType = strtolower(Request::request('sorttype', 'string'));
@@ -966,12 +923,8 @@ class DataList implements UrlProviderInterface
         return $default;
     }
 
-    /**
-     * Gibt die Navigation der Liste zurück.
-     *
-     * @return string
-     */
-    protected function getPagination()
+    /** Gibt die Navigation der Liste zurück. */
+    protected function getPagination(): string
     {
         if (null === $this->pager) {
             return '';
@@ -983,12 +936,8 @@ class DataList implements UrlProviderInterface
         return $fragment->parse('core/navigations/pagination.php');
     }
 
-    /**
-     * Gibt den Footer der Liste zurück.
-     *
-     * @return string
-     */
-    public function getFooter()
+    /** Gibt den Footer der Liste zurück. */
+    public function getFooter(): string
     {
         $s = '';
         /*
@@ -999,12 +948,8 @@ class DataList implements UrlProviderInterface
         return $s;
     }
 
-    /**
-     * Gibt den Header der Liste zurück.
-     *
-     * @return string
-     */
-    public function getHeader()
+    /** Gibt den Header der Liste zurück. */
+    public function getHeader(): string
     {
         return $this->getPagination();
     }
@@ -1014,9 +959,8 @@ class DataList implements UrlProviderInterface
     /**
      * @param string $string
      * @param string $varname
-     * @return string
      */
-    public function replaceVariable($string, $varname)
+    public function replaceVariable($string, $varname): string
     {
         return str_replace('###' . $varname . '###', escape((string) $this->getValue($varname)), $string);
     }
@@ -1026,33 +970,27 @@ class DataList implements UrlProviderInterface
      *
      * @param string $value Zu durchsuchender String
      *
-     * @return string
-     *
      * @psalm-taint-specialize
      */
-    public function replaceVariables($value)
+    public function replaceVariables($value): string
     {
         if (!str_contains($value, '###')) {
             return $value;
         }
 
-        $columnNames = $this->getColumnNames();
-
-        if (is_array($columnNames)) {
-            foreach ($columnNames as $columnName) {
-                // Spalten, die mit addColumn eingefügt wurden
-                if (isset($this->customColumns[$columnName])) {
-                    continue;
-                }
-
-                $value = $this->replaceVariable($value, $columnName);
+        foreach ($this->getColumnNames() as $columnName) {
+            // Spalten, die mit addColumn eingefügt wurden
+            if (isset($this->customColumns[$columnName])) {
+                continue;
             }
+
+            $value = $this->replaceVariable($value, $columnName);
         }
+
         return $value;
     }
 
-    /** @return bool */
-    public function isCustomFormat($format)
+    public function isCustomFormat($format): bool
     {
         return is_array($format) && isset($format[0]) && 'custom' == $format[0];
     }
@@ -1064,10 +1002,8 @@ class DataList implements UrlProviderInterface
      * @param array|null $format mit den Formatierungsinformationen
      * @param bool $escape Flag, Ob escapen von $value erlaubt ist
      * @param string $field
-     *
-     * @return string
      */
-    public function formatValue($value, $format, $escape, $field = null)
+    public function formatValue($value, $format, $escape, $field = null): string
     {
         if (is_array($format)) {
             // Callbackfunktion -> Parameterliste aufbauen
@@ -1106,8 +1042,7 @@ class DataList implements UrlProviderInterface
         return '';
     }
 
-    /** @return string */
-    protected function _getAttributeString($array)
+    protected function _getAttributeString($array): string
     {
         $s = '';
 
@@ -1118,8 +1053,7 @@ class DataList implements UrlProviderInterface
         return $s;
     }
 
-    /** @return string */
-    public function getColumnLink($columnName, $columnValue, $params = [])
+    public function getColumnLink($columnName, $columnValue, $params = []): string
     {
         $attributes = $this->getLinkAttributes($columnName, []);
         if (!isset($attributes['class']) && Core::isBackend()) {
@@ -1128,30 +1062,20 @@ class DataList implements UrlProviderInterface
         return '<a href="' . $this->getParsedUrl(array_merge($this->getColumnParams($columnName), $params)) . '"' . $this->_getAttributeString($attributes) . '>' . $columnValue . '</a>';
     }
 
-    /**
-     * @param string $column
-     * @return scalar|null
-     */
-    public function getValue($column)
+    /** @param string $column */
+    public function getValue($column): string|int|float|bool|null
     {
         return $this->customColumns[$column] ?? $this->sql->getValue($column);
     }
 
-    /**
-     * @param string $column
-     * @return array
-     */
-    public function getArrayValue($column)
+    /** @param string $column */
+    public function getArrayValue($column): array
     {
         return json_decode($this->getValue($column), true);
     }
 
-    /**
-     * Erstellt den Tabellen Quellcode.
-     *
-     * @return string
-     */
-    public function get()
+    /** Erstellt den Tabellen Quellcode. */
+    public function get(): string
     {
         Extension::dispatch(new ExtensionPoint('REX_LIST_GET', $this, [], true));
 

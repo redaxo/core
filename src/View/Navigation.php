@@ -92,10 +92,8 @@ class Navigation
      * @param int $depth Anzahl der Ebenen die angezeigt werden sollen
      * @param bool $open True, wenn nur Elemente der aktiven Kategorie angezeigt werden sollen, sonst FALSE
      * @param bool $ignoreOfflines FALSE, wenn offline Elemente angezeigt werden, sonst TRUE
-     *
-     * @return string
      */
-    public function get($categoryId = 0, $depth = 3, $open = false, $ignoreOfflines = false)
+    public function get($categoryId = 0, $depth = 3, $open = false, $ignoreOfflines = false): string
     {
         if (!$this->_setActivePath()) {
             return '';
@@ -129,10 +127,8 @@ class Navigation
      * @param string|false $startPageLabel Label der Startseite, falls FALSE keine Start-Page anzeigen
      * @param bool $includeCurrent True wenn der aktuelle Artikel enthalten sein soll, sonst FALSE
      * @param int $categoryId Id der Wurzelkategorie
-     *
-     * @return string
      */
-    public function getBreadcrumb($startPageLabel, $includeCurrent = false, $categoryId = 0)
+    public function getBreadcrumb($startPageLabel, $includeCurrent = false, $categoryId = 0): string
     {
         if (!$this->_setActivePath()) {
             return '';
@@ -251,8 +247,7 @@ class Navigation
         return $this;
     }
 
-    /** @return bool */
-    private function _setActivePath()
+    private function _setActivePath(): bool
     {
         $articleId = Article::getCurrentId();
         if ($OOArt = Article::get($articleId)) {
@@ -265,11 +260,8 @@ class Navigation
         return false;
     }
 
-    /**
-     * @param int $depth
-     * @return bool
-     */
-    private function checkFilter(Category $category, $depth)
+    /** @param int $depth */
+    private function checkFilter(Category $category, $depth): bool
     {
         foreach ($this->filter as $f) {
             if ('' == $f['depth'] || $f['depth'] == $depth) {
@@ -327,9 +319,8 @@ class Navigation
      * @param array<int|string, int|string|list<string>> $li
      * @param array<int|string, int|string|list<string>> $a
      * @param string $aContent
-     * @return bool
      */
-    private function checkCallbacks(Category $category, $depth, &$li, &$a, &$aContent)
+    private function checkCallbacks(Category $category, $depth, &$li, &$a, &$aContent): bool
     {
         foreach ($this->callbacks as $c) {
             if ('' == $c['depth'] || $c['depth'] == $depth) {
@@ -361,10 +352,8 @@ class Navigation
     /**
      * @param int $categoryId
      * @param int $depth
-     *
-     * @return string
      */
-    protected function _getNavigation($categoryId, $depth = 1)
+    protected function _getNavigation($categoryId, $depth = 1): string
     {
         if ($categoryId < 1) {
             $navObj = Category::getRootCategories();

@@ -90,7 +90,7 @@ class CategorySelect extends Select
         }
     }
 
-    public function get()
+    public function get(): string
     {
         if (!$this->loaded) {
             $this->addCatOptions();
@@ -100,7 +100,7 @@ class CategorySelect extends Select
         return parent::get();
     }
 
-    protected function outGroup($parentId, $level = 0)
+    protected function outGroup($parentId, $level = 0): string
     {
         if ($level > 100) {
             // nur mal so zu sicherheit .. man weiss nie ;)
