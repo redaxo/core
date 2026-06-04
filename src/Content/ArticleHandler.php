@@ -14,6 +14,7 @@ use Redaxo\Core\Translation\I18n;
 
 use function count;
 use function is_array;
+use function is_string;
 
 final class ArticleHandler
 {
@@ -49,16 +50,17 @@ final class ArticleHandler
         }
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
-        $data['template'] ??= null;
+        $templateKey = isset($data['template']) && is_string($data['template']) ? $data['template'] : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (!isset($templates[$data['template']])) {
-            $data['template'] = null;
+        if (null === $templateKey || !isset($templates[$templateKey])) {
+            $templateKey = null;
             if (count($templates) > 0) {
-                $data['template'] = key($templates);
+                $templateKey = key($templates);
             }
         }
+        $data['template'] = $templateKey;
 
         $message = I18n::msg('article_added');
 
@@ -140,16 +142,17 @@ final class ArticleHandler
         $data['category_id'] = $ooArt->categoryId;
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
-        $data['template'] ??= null;
+        $templateKey = isset($data['template']) && is_string($data['template']) ? $data['template'] : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (!isset($templates[$data['template']])) {
-            $data['template'] = null;
+        if (null === $templateKey || !isset($templates[$templateKey])) {
+            $templateKey = null;
             if (count($templates) > 0) {
-                $data['template'] = key($templates);
+                $templateKey = key($templates);
             }
         }
+        $data['template'] = $templateKey;
 
         if (isset($data['priority'])) {
             if ($data['priority'] <= 0) {
