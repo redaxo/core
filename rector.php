@@ -682,12 +682,10 @@ return RectorConfig::configure()
     ->withConfiguredRule(RenamePropertyRector::class, [
         new RenameProperty(Content\ArticleContentBase::class, 'article_id', 'articleId'),
         new RenameProperty(Content\ArticleContentBase::class, 'clang', 'clangId'),
-        new RenameProperty(Content\ArticleContentBase::class, 'category_id', 'categoryId'),
         new RenameProperty(Content\ArticleContentBase::class, 'slice_id', 'sliceId'),
         new RenameProperty(Content\ArticleContentBase::class, 'getSlice', 'singleSliceId'),
         new RenameProperty(Content\ArticleContentBase::class, 'ctype', 'contentSectionId'),
         new RenameProperty(Content\ArticleContentBase::class, 'slice_revision', 'sliceRevision'),
-        new RenameProperty(Content\ArticleContentBase::class, 'template', 'templateKey'),
         new RenameProperty(Content\ArticleContentBase::class, 'warning', 'error'),
         new RenameProperty(Content\ArticleContentBase::class, 'info', 'success'),
     ])

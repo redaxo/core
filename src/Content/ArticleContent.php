@@ -2,15 +2,12 @@
 
 namespace Redaxo\Core\Content;
 
-use Redaxo\Core\Content\Exception\ArticleNotFoundException;
-use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Path;
 
 use function assert;
 use function is_string;
-use function sprintf;
 
 /**
  * Klasse regelt den Zugriff auf Artikelinhalte.
@@ -18,42 +15,6 @@ use function sprintf;
  */
 final class ArticleContent extends ArticleContentBase
 {
-    protected function loadArticle(): void
-    {
-        $article = Article::get($this->articleId, $this->clangId);
-
-        if (!$article instanceof Article) {
-            throw new ArticleNotFoundException(sprintf('Article with id "%d" and clang "%d" does not exist.', $this->articleId, $this->clangId));
-        }
-
-        $this->categoryId = $article->categoryId;
-        $this->templateKey = $article->templateKey;
-    }
-
-    public function getValue($value)
-    {
-        $value = $this->correctValue($value);
-
-        $article = Article::get($this->articleId, $this->clangId);
-
-        if (!$article) {
-            throw new LogicException('Article for id=' . $this->articleId . ' and clang=' . $this->clangId . ' does not exist');
-        }
-
-        if (!$article->hasValue($value)) {
-            throw new LogicException('Articles do not have the property "' . $value . '"');
-        }
-
-        return $article->getValue($value);
-    }
-
-    public function hasValue($value)
-    {
-        $value = $this->correctValue($value);
-
-        return Article::get($this->articleId, $this->clangId)?->hasValue($value) ?? false;
-    }
-
     public function getArticle(?int $contentSectionId = null)
     {
         $this->contentSectionId = $contentSectionId;

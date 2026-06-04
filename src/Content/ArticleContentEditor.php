@@ -163,8 +163,8 @@ final class ArticleContentEditor extends ArticleContentBase
         $menuMovedownAction = [];
         if (Core::requireUser()->getComplexPerm('modules')->hasPerm($moduleKey)) {
             $module = Module::get($moduleKey);
-            $category = $this->categoryId > 0 ? Category::get($this->categoryId) : null;
-            $moduleAllowed = (!$this->templateKey || Template::checkModuleAllowed($this->templateKey, $this->contentSectionId, $moduleKey))
+            $category = $this->article->categoryId > 0 ? Category::get($this->article->categoryId) : null;
+            $moduleAllowed = (!$this->article->templateKey || Template::checkModuleAllowed($this->article->templateKey, $this->contentSectionId, $moduleKey))
                 && (null === $module || $module->isAllowedInCategory($category));
             if ($moduleAllowed) {
                 // edit
@@ -345,10 +345,10 @@ final class ArticleContentEditor extends ArticleContentBase
     {
         // ---------- moduleselect: nur module nehmen auf die der user rechte hat
         if ('edit' === $this->mode) {
-            $template = $this->templateKey ? Template::get($this->templateKey) : null;
+            $template = $this->article->templateKey ? Template::get($this->article->templateKey) : null;
             $contentSections = $template?->getContentSections() ?? [new ContentSection(1, 'Content')];
 
-            $category = $this->categoryId > 0 ? Category::get($this->categoryId) : null;
+            $category = $this->article->categoryId > 0 ? Category::get($this->article->categoryId) : null;
 
             $this->moduleSelect = [];
             foreach ($contentSections as $section) {

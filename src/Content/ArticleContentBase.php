@@ -15,11 +15,6 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 
-use function assert;
-use function in_array;
-use function is_int;
-use function is_object;
-use function is_string;
 use function sprintf;
 
 /**
@@ -32,9 +27,7 @@ class ArticleContentBase
     public string $success = '';
     public bool $debug = false;
 
-    protected ?string $templateKey = null;
-
-    protected ?int $categoryId = null;
+    public readonly Article $article;
 
     public int $sliceId = 0;
     protected int $singleSliceId = 0;
@@ -51,8 +44,6 @@ class ArticleContentBase
 
     public int $sliceRevision = 0;
 
-    private ?Sql $articleSql = null;
-
     /** @throws ArticleNotFoundException */
     public function __construct(
         public readonly int $articleId,
@@ -60,117 +51,13 @@ class ArticleContentBase
     ) {
         $this->clangId = null !== $clangId && Language::exists($clangId) ? $clangId : Language::getCurrentId();
 
-        $this->loadArticle();
-    }
+        $article = Article::get($this->articleId, $this->clangId);
 
-    /** @return Sql */
-    protected function getSqlInstance()
-    {
-        if (!is_object($this->articleSql)) {
-            $this->articleSql = Sql::factory();
-            if ($this->debug) {
-                $this->articleSql->setDebug();
-            }
-        }
-        return $this->articleSql;
-    }
-
-    /** @throws ArticleNotFoundException */
-    protected function loadArticle(): void
-    {
-        // ---------- select article
-        $sql = $this->getSqlInstance();
-        $sql->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE ' . Core::getTablePrefix() . 'article.id=? AND clang_id=?', [$this->articleId, $this->clangId]);
-
-        if (1 !== $sql->getRows()) {
+        if (!$article instanceof Article) {
             throw new ArticleNotFoundException(sprintf('Article with id "%d" and clang "%d" does not exist.', $this->articleId, $this->clangId));
         }
 
-        $template = $this->getValue('template');
-        $this->templateKey = $template ? (string) $template : null;
-        $categoryId = (int) $this->getValue('category_id');
-        $this->categoryId = $categoryId > 0 ? $categoryId : null;
-    }
-
-    /**
-     * @param string $value
-     * @return string
-     */
-    protected function correctValue($value)
-    {
-        if ('category_id' == $value) {
-            if (1 != $this->getValue('startarticle')) {
-                $value = 'parent_id';
-            } else {
-                $value = 'id';
-            }
-        } elseif ('article_id' == $value) {
-            $value = 'id';
-        }
-
-        return $value;
-    }
-
-    /**
-     * @param string $value
-     * @return string|int|null
-     */
-    protected function _getValue($value)
-    {
-        $value = $this->correctValue($value);
-
-        // use same timestamp format like in frontend via `ArticleContent`
-        if (in_array($value, ['createdate', 'updatedate'], true)) {
-            return $this->getSqlInstance()->getDateTimeValue($value);
-        }
-
-        $value = $this->getSqlInstance()->getValue($value);
-        assert(null === $value || is_int($value) || is_string($value));
-
-        return $value;
-    }
-
-    /**
-     * @param string $value
-     * @return string|int|null
-     */
-    public function getValue($value)
-    {
-        // damit alte rex_article felder wie teaser, online_from etc
-        // noch funktionieren
-        // gleicher BC code nochmals in StructureElement::getValue
-        foreach (['', 'art_', 'cat_'] as $prefix) {
-            $val = $prefix . $value;
-            if ($this->_hasValue($val)) {
-                return $this->_getValue($val);
-            }
-        }
-
-        throw new LogicException('Articles do not have the property "' . $value . '"');
-    }
-
-    /**
-     * @param string $value
-     * @return bool
-     */
-    public function hasValue($value)
-    {
-        foreach (['', 'art_', 'cat_'] as $prefix) {
-            $val = $prefix . $value;
-            if ($this->_hasValue($val)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param string $value
-     * @return bool
-     */
-    private function _hasValue($value)
-    {
-        return $this->getSqlInstance()->hasValue($this->correctValue($value));
+        $this->article = $article;
     }
 
     /**
@@ -292,8 +179,8 @@ class ArticleContentBase
      */
     public function getArticleTemplate()
     {
-        if (null !== $this->templateKey && 0 !== $this->articleId) {
-            $template = Template::get($this->templateKey);
+        if (null !== $this->article->templateKey && 0 !== $this->articleId) {
+            $template = Template::get($this->article->templateKey);
 
             if (null === $template) {
                 return 'no template';

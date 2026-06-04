@@ -2,11 +2,10 @@
 
 namespace Redaxo\Core\Tests\Content;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleContent;
-use Redaxo\Core\Exception\LogicException;
+use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Finder;
@@ -54,41 +53,19 @@ final class ArticleContentTest extends TestCase
         Article::clearInstancePool();
     }
 
-    public function testHasValue(): void
+    public function testProvidesTheArticle(): void
     {
         $instance = new ArticleContent(1, 1);
 
-        self::assertTrue($instance->hasValue('foo'));
-        self::assertTrue($instance->hasValue('art_foo'));
-
-        self::assertFalse($instance->hasValue('bar'));
-        self::assertFalse($instance->hasValue('art_bar'));
+        self::assertSame(1, $instance->article->id);
+        self::assertSame('Testarticle', $instance->article->name);
+        self::assertSame('teststring', $instance->article->getValue('foo'));
     }
 
-    public function testGetValue(): void
+    public function testThrowsForMissingArticle(): void
     {
-        $instance = new ArticleContent(1, 1);
+        $this->expectException(ArticleNotFoundException::class);
 
-        self::assertEquals('teststring', $instance->getValue('foo'));
-        self::assertEquals('teststring', $instance->getValue('art_foo'));
-    }
-
-    #[DataProvider('dataGetValueNonExisting')]
-    public function testGetValueNonExisting(string $value): void
-    {
-        $instance = new ArticleContent(1, 1);
-
-        $this->expectException(LogicException::class);
-
-        $instance->getValue($value);
-    }
-
-    /** @return list<array{string}> */
-    public static function dataGetValueNonExisting(): array
-    {
-        return [
-            ['bar'],
-            ['art_bar'],
-        ];
+        new ArticleContent(999, 1);
     }
 }
