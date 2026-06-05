@@ -11,6 +11,7 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Security\ComplexPermission;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Type;
 
 use function count;
 use function is_array;
@@ -49,14 +50,12 @@ final class ArticleHandler
         }
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
+        $data['template'] = isset($data['template']) ? Type::string($data['template']) : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (!isset($templates[$data['template']])) {
-            $data['template'] = null;
-            if (count($templates) > 0) {
-                $data['template'] = key($templates);
-            }
+        if (null === $data['template'] || !isset($templates[$data['template']])) {
+            $data['template'] = array_key_first($templates);
         }
 
         $message = I18n::msg('article_added');
@@ -139,14 +138,12 @@ final class ArticleHandler
         $data['category_id'] = $ooArt->categoryId;
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
+        $data['template'] = isset($data['template']) ? Type::string($data['template']) : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (!isset($templates[$data['template']])) {
-            $data['template'] = null;
-            if (count($templates) > 0) {
-                $data['template'] = key($templates);
-            }
+        if (null === $data['template'] || !isset($templates[$data['template']])) {
+            $data['template'] = array_key_first($templates);
         }
 
         if (isset($data['priority'])) {
