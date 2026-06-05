@@ -11,10 +11,10 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Security\ComplexPermission;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Type;
 
 use function count;
 use function is_array;
-use function is_string;
 
 final class ArticleHandler
 {
@@ -50,7 +50,7 @@ final class ArticleHandler
         }
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
-        $templateKey = isset($data['template']) && is_string($data['template']) ? $data['template'] : null;
+        $templateKey = isset($data['template']) ? Type::string($data['template']) : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
@@ -139,7 +139,7 @@ final class ArticleHandler
         $data['category_id'] = $ooArt->categoryId;
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
-        $templateKey = isset($data['template']) && is_string($data['template']) ? $data['template'] : null;
+        $templateKey = isset($data['template']) ? Type::string($data['template']) : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
