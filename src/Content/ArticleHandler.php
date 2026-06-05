@@ -50,14 +50,13 @@ final class ArticleHandler
         }
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
-        $templateKey = isset($data['template']) ? Type::string($data['template']) : null;
+        $data['template'] = isset($data['template']) ? Type::string($data['template']) : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (null === $templateKey || !isset($templates[$templateKey])) {
-            $templateKey = array_key_first($templates);
+        if (null === $data['template'] || !isset($templates[$data['template']])) {
+            $data['template'] = array_key_first($templates);
         }
-        $data['template'] = $templateKey;
 
         $message = I18n::msg('article_added');
 
@@ -139,14 +138,13 @@ final class ArticleHandler
         $data['category_id'] = $ooArt->categoryId;
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
-        $templateKey = isset($data['template']) ? Type::string($data['template']) : null;
+        $data['template'] = isset($data['template']) ? Type::string($data['template']) : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
         // oder leer setzen.
-        if (null === $templateKey || !isset($templates[$templateKey])) {
-            $templateKey = array_key_first($templates);
+        if (null === $data['template'] || !isset($templates[$data['template']])) {
+            $data['template'] = array_key_first($templates);
         }
-        $data['template'] = $templateKey;
 
         if (isset($data['priority'])) {
             if ($data['priority'] <= 0) {
