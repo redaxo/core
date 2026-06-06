@@ -118,8 +118,6 @@ class CategorySelect extends Select
             $id = $option[2];
             if (0 == $id || !$this->checkPerms || Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($option[2])) {
                 $ausgabe .= $this->outOption($name, $value, $level);
-            } elseif ($this->checkPerms && Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($option[2])) {
-                --$level;
             }
 
             $subgroup = $this->getGroup($id, true);

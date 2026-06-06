@@ -2526,11 +2526,6 @@
       <code><![CDATA[$this->languageSupport['id']]]></code>
     </MixedArgument>
   </file>
-  <file src="src/Form/Select/CategorySelect.php">
-    <RedundantCondition>
-      <code><![CDATA[$this->checkPerms]]></code>
-    </RedundantCondition>
-  </file>
   <file src="src/Form/Select/TemplateSelect.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$selected]]></code>
@@ -2598,9 +2593,6 @@
       <code><![CDATA[$_SERVER['HTTP_HOST']]]></code>
       <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
     </PossiblyUndefinedArrayOffset>
-    <RedundantCondition>
-      <code><![CDATA[$path]]></code>
-    </RedundantCondition>
   </file>
   <file src="src/HttpClient/Request.php">
     <PossiblyFalseArgument>
@@ -3512,32 +3504,19 @@
   <file src="src/Security/Login.php">
     <MixedArrayAccess>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId]]]></code>
-      <code><![CDATA[$sessionConfig[$key]]]></code>
-      <code><![CDATA[$sessionConfig[$key]['cookie']]]></code>
     </MixedArrayAccess>
     <MixedArrayAssignment>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId]]]></code>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId]]]></code>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId][$varname]]]></code>
     </MixedArrayAssignment>
-    <MixedArrayOffset>
-      <code><![CDATA[$cookieParams[$name]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
-      <code><![CDATA[$cookieParams[$name]]]></code>
-      <code><![CDATA[$name]]></code>
       <code><![CDATA[$rexSessId]]></code>
-      <code><![CDATA[$sessionConfig]]></code>
       <code><![CDATA[$this->sessionMaxOverallDuration]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedReturnStatement>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId][$varname] ?? $default]]></code>
     </MixedReturnStatement>
-    <MixedReturnTypeCoercion>
-      <code><![CDATA[$cookieParams]]></code>
-      <code><![CDATA[array{lifetime: ?int, path: ?string, domain: ?string, secure: ?bool, httponly: ?bool, samesite: ?string}]]></code>
-    </MixedReturnTypeCoercion>
     <PossiblyInvalidArrayOffset>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()]]]></code>
     </PossiblyInvalidArrayOffset>

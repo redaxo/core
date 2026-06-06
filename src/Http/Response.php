@@ -470,9 +470,7 @@ final class Response
                 $str .= '; expires=' . gmdate('D, d-M-Y H:i:s T', $expire) . '; Max-Age=' . $maxAge;
             }
         }
-        if ($path) {
-            $str .= '; path=' . $path;
-        }
+        $str .= '; path=' . $path;
         if ($domain) {
             $str .= '; domain=' . $domain;
         }
