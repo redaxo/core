@@ -960,7 +960,7 @@ class DataList implements UrlProviderInterface
             $value = escape($value);
         }
 
-        return null === $value ? '' : $value;
+        return $value ?? '';
     }
 
     protected function formatRowAttributes(): string
