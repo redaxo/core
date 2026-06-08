@@ -963,16 +963,6 @@
       <code><![CDATA[escape(Core::getConfig('phpmailer_username'))]]></code>
       <code><![CDATA[escape(Core::getConfig('phpmailer_wordwrap'))]]></code>
     </MixedOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[Core::getConfig('phpmailer_encoding')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_logging')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_mailer')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_priority')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_security_mode')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_smtp_debug')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_smtpauth')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_smtpsecure')]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="pages/mailer/log.php">
     <PossiblyNullReference>
@@ -1012,9 +1002,6 @@
       <code><![CDATA[escape(Core::getConfig('media_manager_webp_quality'))]]></code>
       <code><![CDATA[escape(Core::getConfig('media_manager_webp_quality'))]]></code>
     </MixedOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[Core::getConfig('media_manager_interlace')]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="pages/media_manager/types.php">
     <MixedArrayAssignment>
@@ -1156,11 +1143,6 @@
       <code><![CDATA[escape($id)]]></code>
     </InvalidOperand>
   </file>
-  <file src="pages/profile/index.php">
-    <PossiblyNullArgument>
-      <code><![CDATA[$usertheme]]></code>
-    </PossiblyNullArgument>
-  </file>
   <file src="pages/setup/index.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$config['timezone']]]></code>
@@ -1232,10 +1214,6 @@
     <MixedOperand>
       <code><![CDATA[escape($hiddenFields)]]></code>
     </MixedOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[Request::request('clang_a', 'int', null)]]></code>
-      <code><![CDATA[Request::request('clang_b', 'int', null)]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="pages/structure/content.metainfo.php">
     <InvalidOperand>
@@ -1384,10 +1362,6 @@
     <NullOperand>
       <code><![CDATA[escape($editor->getBasepath())]]></code>
     </NullOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$editor->getName()]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_errormail', 1)]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="pages/user/roles.php">
     <MixedArgument>
@@ -1430,8 +1404,6 @@
     <PossiblyNullArgument>
       <code><![CDATA[$role->getValue('id')]]></code>
       <code><![CDATA[$role->getValue('name')]]></code>
-      <code><![CDATA[$userpermBeSprache]]></code>
-      <code><![CDATA[$userpermStartpage]]></code>
       <code><![CDATA[$userrole]]></code>
     </PossiblyNullArgument>
     <PossiblyNullArrayOffset>
@@ -2511,9 +2483,6 @@
     <PossiblyInvalidOperand>
       <code><![CDATA[$this->getAttribute('name')]]></code>
     </PossiblyInvalidOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$this->getValue()]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$this->getAttribute('name')]]></code>
     </PossiblyNullOperand>
@@ -3170,11 +3139,6 @@
       <code><![CDATA[$end]]></code>
       <code><![CDATA[$start]]></code>
     </MixedArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$value['day']]]></code>
-      <code><![CDATA[$value['month']]]></code>
-      <code><![CDATA[$value['year']]]></code>
-    </PossiblyNullArgument>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$value['day']]]></code>
       <code><![CDATA[$value['month']]]></code>
@@ -3199,10 +3163,6 @@
       <code><![CDATA[$end]]></code>
       <code><![CDATA[$start]]></code>
     </MixedArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$value['hour']]]></code>
-      <code><![CDATA[$value['minute']]]></code>
-    </PossiblyNullArgument>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$value['hour']]]></code>
       <code><![CDATA[$value['minute']]]></code>
@@ -3779,7 +3739,6 @@
   <file src="src/View/DataList.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$this->getValue($column)]]></code>
-      <code><![CDATA[$this->getValue($columnName)]]></code>
     </ArgumentTypeCoercion>
     <MixedArgument>
       <code><![CDATA[$column]]></code>
@@ -3814,11 +3773,9 @@
       <code><![CDATA[json_decode($this->getValue($column), true)]]></code>
     </MixedReturnStatement>
     <PossiblyNullArgument>
-      <code><![CDATA[$columnLayout]]></code>
       <code><![CDATA[$column['width'] ?? null]]></code>
       <code><![CDATA[$sortColumn]]></code>
       <code><![CDATA[$this->getValue($column)]]></code>
-      <code><![CDATA[$this->getValue($columnName)]]></code>
     </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$sortType]]></code>
