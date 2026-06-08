@@ -17,8 +17,7 @@ final class ArticleHandler extends AbstractHandler
 {
     public const PREFIX = 'art_';
 
-    /** @return array */
-    protected function handleSave(array $params, Sql $sqlFields)
+    protected function handleSave(array $params, Sql $sqlFields): array
     {
         // Nur speichern wenn auch das MetaForm ausgefüllt wurde
         // z.b. nicht speichern wenn über be_search select navigiert wurde
@@ -47,8 +46,7 @@ final class ArticleHandler extends AbstractHandler
         return $params;
     }
 
-    /** @return string */
-    protected function buildFilterCondition(array $params)
+    protected function buildFilterCondition(array $params): string
     {
         $restrictionsCondition = '';
 
@@ -69,13 +67,12 @@ final class ArticleHandler extends AbstractHandler
         return $restrictionsCondition;
     }
 
-    protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType)
+    protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string
     {
         return $field;
     }
 
-    /** @return string */
-    public function getForm(array $params)
+    public function getForm(array $params): string
     {
         $OOArt = Article::get($params['id'], $params['clang']);
 
@@ -86,7 +83,7 @@ final class ArticleHandler extends AbstractHandler
         return parent::renderFormAndSave(self::PREFIX, $params);
     }
 
-    public function extendForm(ExtensionPoint $ep)
+    public function extendForm(ExtensionPoint $ep): string
     {
         // noop
         return '';

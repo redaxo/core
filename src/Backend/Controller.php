@@ -466,9 +466,8 @@ final class Controller
      * Includes the sub-path of current page.
      *
      * @param array<literal-string, mixed> $context
-     * @return mixed
      */
-    public static function includeCurrentPageSubPath(array $context = [])
+    public static function includeCurrentPageSubPath(array $context = []): mixed
     {
         $page = self::requireCurrentPageObject();
         $path = $page->getSubPath();

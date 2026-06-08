@@ -24,7 +24,6 @@ final class LogEntryTest extends TestCase
         $time = time();
         $entry = LogEntry::createFromString(date(LogEntry::DATE_FORMAT, $time) . ' | test1 |  |  test2\nt \| test3 |');
 
-        self::assertInstanceOf(LogEntry::class, $entry);
         self::assertSame($time, $entry->getTimestamp());
         self::assertSame(['test1', '', "test2\nt | test3", ''], $entry->getData());
     }

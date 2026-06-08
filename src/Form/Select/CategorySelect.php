@@ -10,28 +10,17 @@ use function is_array;
 
 class CategorySelect extends Select
 {
-    /** @var bool */
-    private $ignoreOfflines;
-    /** @var int|null */
-    private $clang;
-    /** @var bool */
-    private $checkPerms;
-    /** @var bool */
-    private $addHomepage;
-
     /** @var int|list<int>|null */
-    private $rootId;
+    private int|array|null $rootId = null;
 
-    /** @var bool */
-    private $loaded = false;
+    private bool $loaded = false;
 
-    public function __construct($ignoreOfflines = false, $clang = false, $checkPerms = true, $addHomepage = true)
-    {
-        $this->ignoreOfflines = $ignoreOfflines;
-        $this->clang = false === $clang ? null : $clang;
-        $this->checkPerms = $checkPerms;
-        $this->addHomepage = $addHomepage;
-
+    public function __construct(
+        private readonly bool $ignoreOfflines = false,
+        private readonly ?int $clang = null,
+        private readonly bool $checkPerms = true,
+        private readonly bool $addHomepage = true,
+    ) {
         parent::__construct();
     }
 
@@ -39,15 +28,13 @@ class CategorySelect extends Select
      * Kategorie-Id oder ein Array von Kategorie-Ids als Wurzelelemente der Select-Box.
      *
      * @param int|list<int>|null $rootId Kategorie-Id oder Array von Kategorie-Ids zur Identifikation der Wurzelelemente
-     * @return void
      */
-    public function setRootId($rootId)
+    public function setRootId(int|array|null $rootId): void
     {
         $this->rootId = $rootId;
     }
 
-    /** @return void */
-    protected function addCatOptions()
+    protected function addCatOptions(): void
     {
         if ($this->addHomepage) {
             $this->addOption('Homepage', 0);
@@ -85,8 +72,7 @@ class CategorySelect extends Select
         }
     }
 
-    /** @return void */
-    protected function addCatOption(Category $cat, $group = null)
+    protected function addCatOption(Category $cat, ?int $group = null): void
     {
         if (!$this->checkPerms || Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($cat->id)
         ) {
@@ -104,7 +90,7 @@ class CategorySelect extends Select
         }
     }
 
-    public function get()
+    public function get(): string
     {
         if (!$this->loaded) {
             $this->addCatOptions();
@@ -114,7 +100,7 @@ class CategorySelect extends Select
         return parent::get();
     }
 
-    protected function outGroup($parentId, $level = 0)
+    protected function outGroup(int $parentId, int $level = 0): string
     {
         if ($level > 100) {
             // nur mal so zu sicherheit .. man weiss nie ;)
@@ -132,8 +118,6 @@ class CategorySelect extends Select
             $id = $option[2];
             if (0 == $id || !$this->checkPerms || Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($option[2])) {
                 $ausgabe .= $this->outOption($name, $value, $level);
-            } elseif ($this->checkPerms && Core::requireUser()->getComplexPerm('structure')->hasCategoryPerm($option[2])) {
-                --$level;
             }
 
             $subgroup = $this->getGroup($id, true);

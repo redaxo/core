@@ -17,7 +17,7 @@ final class Timer
      * @internal
      * @var array<string, array{sum: float, timings: list<array{start: float, end: float}>}>
      */
-    public static $serverTimings = [];
+    public static array $serverTimings = [];
 
     private float $start;
     private ?float $duration = null;

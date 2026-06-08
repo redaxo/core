@@ -4,6 +4,7 @@ namespace Redaxo\Core\MetaInfo\Form\Input;
 
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Form\Select\Select;
+use Redaxo\Core\Util\Type;
 
 use function is_array;
 use function sprintf;
@@ -89,11 +90,13 @@ final class DateInput extends AbstractInput
 
     public function setAttribute($name, $value)
     {
-        if ('name' == $name) {
+        if ('name' === $name) {
+            Type::string($value);
             $this->yearSelect->setName($value . '[year]');
             $this->monthSelect->setName($value . '[month]');
             $this->daySelect->setName($value . '[day]');
-        } elseif ('id' == $name) {
+        } elseif ('id' === $name) {
+            Type::string($value);
             $this->yearSelect->setId($value . '_year');
             $this->monthSelect->setId($value . '_month');
             $this->daySelect->setId($value);

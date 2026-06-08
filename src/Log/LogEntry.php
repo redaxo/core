@@ -2,7 +2,9 @@
 
 namespace Redaxo\Core\Log;
 
-final readonly class LogEntry
+use Stringable;
+
+final readonly class LogEntry implements Stringable
 {
     public const string DATE_FORMAT = 'Y-m-d\TH:i:sP';
 
@@ -22,10 +24,8 @@ final readonly class LogEntry
      * Creates a log entry from string.
      *
      * @param string $string Log line
-     *
-     * @return LogEntry
      */
-    public static function createFromString($string)
+    public static function createFromString(string $string): self
     {
         $data = [];
         foreach (explode(' |', $string) as $part) {
@@ -42,7 +42,7 @@ final readonly class LogEntry
      *
      * @return int Unix timestamp
      */
-    public function getTimestamp()
+    public function getTimestamp(): int
     {
         return $this->timestamp;
     }
@@ -52,13 +52,12 @@ final readonly class LogEntry
      *
      * @return list<string>
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
-    /** @return string */
-    public function __toString()
+    public function __toString(): string
     {
         $data = array_map(static function ($part) {
             return trim(addcslashes($part, "|\n\\"));

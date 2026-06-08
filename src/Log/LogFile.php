@@ -6,7 +6,6 @@ use Iterator;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\File;
-use ReturnTypeWillChange;
 
 use function assert;
 use function strlen;
@@ -15,15 +14,12 @@ use const SEEK_END;
 
 /**
  * @implements Iterator<int, LogEntry>
- *
- * @psalm-consistent-constructor
  */
 class LogFile implements Iterator
 {
     use FactoryTrait;
 
-    /** @var string */
-    private $path;
+    private readonly string $path;
 
     /** @var resource */
     private $file;
@@ -31,23 +27,12 @@ class LogFile implements Iterator
     /** @var resource|null */
     private $file2;
 
-    /** @var bool */
-    private $second = false;
-
-    /** @var int|null */
-    private $pos;
-
-    /** @var int|null */
-    private $key;
-
-    /** @var string|null */
-    private $currentLine;
-
-    /** @var string */
-    private $buffer;
-
-    /** @var int */
-    private $bufferPos;
+    private bool $second = false;
+    private ?int $pos = null;
+    private ?int $key = null;
+    private ?string $currentLine = null;
+    private string $buffer;
+    private int $bufferPos;
 
     private function __construct(string $path, ?int $maxFileSize = null)
     {
@@ -71,17 +56,14 @@ class LogFile implements Iterator
      * Adds a log entry.
      *
      * @param list<string|int> $data Log data
-     * @return void
      */
-    public function add(array $data)
+    public function add(array $data): void
     {
         fseek($this->file, 0, SEEK_END);
         fwrite($this->file, new LogEntry(time(), $data) . "\n");
     }
 
-    /** @return LogEntry */
-    #[ReturnTypeWillChange]
-    public function current()
+    public function current(): LogEntry
     {
         if (null === $this->currentLine) {
             throw new LogicException('current() can not be used before calling rewind()/next() or after last line');
@@ -91,8 +73,7 @@ class LogFile implements Iterator
     }
 
     /** Reads the log file backwards line by line (each call reads one line). */
-    #[ReturnTypeWillChange]
-    public function next()
+    public function next(): void
     {
         $bufferSize = 500;
 
@@ -160,21 +141,17 @@ class LogFile implements Iterator
         $this->currentLine = $line;
     }
 
-    /** @return int|null */
-    #[ReturnTypeWillChange]
-    public function key()
+    public function key(): ?int
     {
         return $this->key;
     }
 
-    #[ReturnTypeWillChange]
-    public function valid()
+    public function valid(): bool
     {
         return !empty($this->currentLine);
     }
 
-    #[ReturnTypeWillChange]
-    public function rewind()
+    public function rewind(): void
     {
         $this->second = false;
         $this->pos = null;
@@ -187,10 +164,8 @@ class LogFile implements Iterator
      * Deletes a log file and its rotations.
      *
      * @param string $path File path
-     *
-     * @return bool
      */
-    public static function delete($path)
+    public static function delete(string $path): bool
     {
         if ($factoryClass = static::getExplicitFactoryClass()) {
             return $factoryClass::delete($path);

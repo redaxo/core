@@ -152,7 +152,7 @@ final class MetaInfoForm extends Form
             $field->setAllCheckboxLabel(I18n::msg('minfo_field_label_no_restrictions'));
 
             if (ArticleHandler::PREFIX == $this->metaPrefix || CategoryHandler::PREFIX == $this->metaPrefix) {
-                $field->setSelect(new CategorySelect(false, false, true, false));
+                $field->setSelect(new CategorySelect(false, null, true, false));
             } elseif (MediaHandler::PREFIX == $this->metaPrefix) {
                 $field->setSelect(new MediaCategorySelect());
             } else {

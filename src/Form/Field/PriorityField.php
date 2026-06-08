@@ -96,7 +96,7 @@ class PriorityField extends SelectField
         $this->select->addOption(I18n::msg($this->firstOptionMsg), 1);
         $value = 1;
         foreach ($sql as $opt) {
-            $value = $opt->getValue($name) + 1;
+            $value = (int) $opt->getValue($name) + 1;
             $label = $opt->getValue($this->labelField);
 
             if ($this->labelCallback) {

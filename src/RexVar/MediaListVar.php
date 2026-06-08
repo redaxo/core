@@ -10,11 +10,7 @@ use function Redaxo\Core\View\escape;
 
 final readonly class MediaListVar
 {
-    /**
-     * @param int|string $id
-     * @return string
-     */
-    public static function getWidget($id, $name, $value, array $args = [])
+    public static function getWidget(int|string $id, string $name, ?string $value, array $args = []): string
     {
         $openParams = '';
         if (isset($args['category']) && ($category = (int) $args['category'])) {
@@ -54,7 +50,7 @@ final readonly class MediaListVar
 
         $e = [];
         $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '">';
-        $e['field'] = '<select class="form-control" name="REX_MEDIALIST_SELECT[' . $id . ']" id="REX_MEDIALIST_SELECT_' . $id . '" size="10">' . $options . '</select><input type="hidden" name="' . $name . '" id="REX_MEDIALIST_' . $id . '" value="' . $value . '" />';
+        $e['field'] = '<select class="form-control" name="REX_MEDIALIST_SELECT[' . $id . ']" id="REX_MEDIALIST_SELECT_' . $id . '" size="10">' . $options . '</select><input type="hidden" name="' . $name . '" id="REX_MEDIALIST_' . $id . '" value="' . ($value ?? '') . '" />';
         $e['moveButtons'] = '
                 <a href="#" class="btn btn-popup" onclick="moveREXMedialist(' . $quotedId . ',\'top\');return false;" title="' . I18n::msg('var_medialist_move_top') . '"><i class="rex-icon rex-icon-top"></i></a>
                 <a href="#" class="btn btn-popup" onclick="moveREXMedialist(' . $quotedId . ',\'up\');return false;" title="' . I18n::msg('var_medialist_move_up') . '"><i class="rex-icon rex-icon-up"></i></a>

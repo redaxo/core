@@ -3,6 +3,7 @@
 namespace Redaxo\Core\MetaInfo\Form\Input;
 
 use Redaxo\Core\Form\Select\Select;
+use Redaxo\Core\Util\Type;
 
 /**
  * @internal
@@ -30,9 +31,9 @@ final class SelectInput extends AbstractInput
     public function setAttribute($name, $value)
     {
         if ('name' == $name) {
-            $this->select->setName($value);
+            $this->select->setName(Type::string($value));
         } elseif ('id' == $name) {
-            $this->select->setId($value);
+            $this->select->setId(Type::string($value));
         } else {
             $this->select->setAttribute($name, $value);
         }

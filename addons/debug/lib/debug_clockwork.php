@@ -15,12 +15,11 @@ use Redaxo\Core\Filesystem\Url;
  */
 final class rex_debug_clockwork
 {
-    /** @var VanillaClockwork|null */
-    private static $instance;
+    private static ?VanillaClockwork $instance = null;
 
-    /** @psalm-assert VanillaClockwork self::$instance */
-    private static function init(): void
+    private static function init(): VanillaClockwork
     {
+        /** @var VanillaClockwork $clockwork */
         $clockwork = VanillaClockwork::init([
             'storage_files_path' => self::getStoragePath(),
             'storage_files_compress' => true,
@@ -32,7 +31,7 @@ final class rex_debug_clockwork
             $clockwork->getClockwork()->addDataSource(new XdebugDataSource());
         }
 
-        self::$instance = $clockwork;
+        return $clockwork;
     }
 
     public static function getInstance(): Clockwork
@@ -42,10 +41,7 @@ final class rex_debug_clockwork
 
     public static function getHelper(): VanillaClockwork
     {
-        if (!self::$instance) {
-            self::init();
-        }
-        return self::$instance;
+        return self::$instance ??= self::init();
     }
 
     public static function getFullClockworkApiUrl(): string
@@ -66,8 +62,7 @@ final class rex_debug_clockwork
         return Url::backendPage('debug', rex_api_debug::getUrlParams());
     }
 
-    /** @return void */
-    public static function ensureStoragePath()
+    public static function ensureStoragePath(): void
     {
         $storagePath = self::getStoragePath();
         if (!is_dir($storagePath)) {
@@ -75,8 +70,7 @@ final class rex_debug_clockwork
         }
     }
 
-    /** @return string */
-    public static function getStoragePath()
+    public static function getStoragePath(): string
     {
         return Addon::require('debug')->getCachePath('clockwork.db');
     }

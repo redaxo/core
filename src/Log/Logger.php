@@ -34,8 +34,7 @@ class Logger extends AbstractLogger
 {
     use FactoryTrait;
 
-    /** @var LogFile|null */
-    private static $file;
+    private static ?LogFile $file = null;
 
     public static function factory(): static
     {
@@ -43,23 +42,14 @@ class Logger extends AbstractLogger
         return new $class();
     }
 
-    /**
-     * Returns the path to the system.log file.
-     *
-     * @return string
-     */
-    public static function getPath()
+    /** Returns the path to the system.log file. */
+    public static function getPath(): string
     {
         return Path::log('system.log');
     }
 
-    /**
-     * Shorthand: Logs the given Exception.
-     *
-     * @param Throwable $exception The Exception to log
-     * @return void
-     */
-    public static function logException($exception, ?string $url = null)
+    /** Shorthand: Logs the given Exception. */
+    public static function logException(Throwable $exception, ?string $url = null): void
     {
         if ($exception instanceof ErrorException) {
             self::logError($exception->getSeverity(), $exception->getMessage(), $exception->getFile(), $exception->getLine(), $url);
@@ -144,23 +134,19 @@ class Logger extends AbstractLogger
      * Prepares the logifle for later use.
      *
      * @psalm-assert !null self::$file
-     * @return void
      */
-    public static function open()
+    public static function open(): void
     {
         // check if already opened
-        if (!self::$file) {
-            self::$file = LogFile::factory(self::getPath(), 2_000_000);
-        }
+        self::$file ??= LogFile::factory(self::getPath(), 2_000_000);
     }
 
     /**
      * Closes the logfile. The logfile is not be able to log further message after beeing closed.
      *
      * You dont need to close the logfile manually when it was registered during the request.
-     * @return void
      */
-    public static function close()
+    public static function close(): void
     {
         self::$file = null;
     }
@@ -169,10 +155,8 @@ class Logger extends AbstractLogger
      * Map php error codes to PSR3 error levels.
      *
      * @param int $errno a php error code, e.g. E_ERROR
-     *
-     * @return string
      */
-    public static function getLogLevel($errno)
+    public static function getLogLevel(int $errno): string
     {
         return match ($errno) {
             E_USER_DEPRECATED, E_DEPRECATED, E_USER_WARNING, E_WARNING, E_COMPILE_WARNING => LogLevel::WARNING,

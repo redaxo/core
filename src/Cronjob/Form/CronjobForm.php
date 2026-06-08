@@ -11,10 +11,8 @@ use Redaxo\Core\Form\Form;
  */
 final class CronjobForm extends Form
 {
-    /** @var string */
-    private $mainFieldset;
-    /** @var IntervalField|null */
-    private $intervalField;
+    private readonly string $mainFieldset;
+    private ?IntervalField $intervalField = null;
 
     /**
      * @param non-empty-string $tableName

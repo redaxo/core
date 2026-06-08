@@ -120,8 +120,7 @@ class Mailer extends PHPMailer
         return parent::addOrEnqueueAnAddress($kind, $address, $name);
     }
 
-    /** @return bool */
-    public function send()
+    public function send(): bool
     {
         return Timer::measure(__METHOD__, function () {
             $logging = (int) Core::getConfig('phpmailer_logging');
@@ -172,16 +171,14 @@ class Mailer extends PHPMailer
         $this->xHeader = []; // Bereinigung für die nächste Verwendung
     }
 
-    /** @return void */
-    public function clearQueuedAddresses($kind)
+    public function clearQueuedAddresses($kind): void
     {
         parent::clearQueuedAddresses($kind);
 
         unset($this->xHeader[$kind]);
     }
 
-    /** @return void */
-    public function clearAllRecipients()
+    public function clearAllRecipients(): void
     {
         parent::clearAllRecipients();
 
@@ -210,9 +207,8 @@ class Mailer extends PHPMailer
      * Enable/disable the mail archive.
      *
      * It overwrites the global `archive` configuration for the current mailer object.
-     * @return void
      */
-    public function setArchive(bool $status)
+    public function setArchive(bool $status): void
     {
         $this->archive = $status;
     }

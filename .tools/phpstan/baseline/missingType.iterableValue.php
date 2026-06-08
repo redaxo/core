@@ -584,6 +584,11 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/View/DataList.php',
 ];
 $ignoreErrors[] = [
+    'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::getColumnLink() has parameter $params with no value type specified in iterable type array.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../src/View/DataList.php',
+];
+$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::getColumnParams() return type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/DataList.php',
@@ -595,6 +600,11 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::getTableColumnGroups() return type has no value type specified in iterable type array.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../src/View/DataList.php',
+];
+$ignoreErrors[] = [
+    'rawMessage' => 'Method Redaxo\\Core\\View\\DataList::isCustomFormat() has parameter $format with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/DataList.php',
 ];
@@ -627,11 +637,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Class Redaxo\\Core\\View\\Fragment has PHPDoc tag @method for method subfragment() parameter #2 $params with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/Fragment.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\View\\View::title() has parameter $subtitle with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/View/View.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Tests\\MediaPool\\MediaPoolTest::testIsAllowedExtension() has parameter $args with no value type specified in iterable type array.',

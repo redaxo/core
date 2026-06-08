@@ -30,8 +30,7 @@ final class IntervalField extends BaseField
         'months' => 'all',
     ];
 
-    /** @var array */
-    private $intervalElements = [];
+    private array $intervalElements = [];
 
     public function setValue($value)
     {

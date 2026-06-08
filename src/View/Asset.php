@@ -19,19 +19,13 @@ final class Asset
     private static array $jsFiles = [];
     /** @var array<string, mixed> */
     private static array $jsProperties = [];
-    /** @var string */
-    private static $favicon;
+
+    private static ?string $favicon = null;
 
     private function __construct() {}
 
-    /**
-     * Adds a CSS file.
-     *
-     * @param string $file
-     * @param string $media
-     * @return void
-     */
-    public static function addCssFile($file, $media = 'all')
+    /** Adds a CSS file. */
+    public static function addCssFile(string $file, string $media = 'all'): void
     {
         if (isset(self::$cssFiles[$media]) && in_array($file, self::$cssFiles[$media])) {
             throw new RuntimeException(sprintf('The CSS file "%s" is already added to media "%s".', $file, $media));
@@ -45,7 +39,7 @@ final class Asset
      *
      * @return array<string, list<string>>
      */
-    public static function getCssFiles()
+    public static function getCssFiles(): array
     {
         return self::$cssFiles;
     }
@@ -53,11 +47,9 @@ final class Asset
     /**
      * Adds a JS file.
      *
-     * @param string $file
      * @param array<self::JS_*, bool>|array<self::JS_*> $options
-     * @return void
      */
-    public static function addJsFile($file, array $options = [])
+    public static function addJsFile(string $file, array $options = []): void
     {
         if (empty($options)) {
             $options[self::JS_IMMUTABLE] = false;
@@ -75,7 +67,7 @@ final class Asset
      *
      * @return list<string>
      */
-    public static function getJsFiles()
+    public static function getJsFiles(): array
     {
         // transform for BC
         return array_map(static function ($jsFile) {
@@ -88,19 +80,13 @@ final class Asset
      *
      * @return list<array{string, array}>
      */
-    public static function getJsFilesWithOptions()
+    public static function getJsFilesWithOptions(): array
     {
         return self::$jsFiles;
     }
 
-    /**
-     * Sets a JS property.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public static function setJsProperty($key, $value)
+    /** Sets a JS property. */
+    public static function setJsProperty(string $key, mixed $value): void
     {
         self::$jsProperties[$key] = $value;
     }
@@ -110,28 +96,19 @@ final class Asset
      *
      * @return array<string, mixed>
      */
-    public static function getJsProperties()
+    public static function getJsProperties(): array
     {
         return self::$jsProperties;
     }
 
-    /**
-     * Sets the favicon path.
-     *
-     * @param string $file
-     * @return void
-     */
-    public static function setFavicon($file)
+    /** Sets the favicon path. */
+    public static function setFavicon(?string $file): void
     {
         self::$favicon = $file;
     }
 
-    /**
-     * Returns the favicon.
-     *
-     * @return string
-     */
-    public static function getFavicon()
+    /** Returns the favicon. */
+    public static function getFavicon(): ?string
     {
         return self::$favicon;
     }

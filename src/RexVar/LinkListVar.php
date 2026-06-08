@@ -14,11 +14,7 @@ use function sprintf;
 
 final readonly class LinkListVar
 {
-    /**
-     * @param int|string $id
-     * @return string
-     */
-    public static function getWidget($id, $name, $value, array $args = [])
+    public static function getWidget(int|string $id, string $name, ?string $value, array $args = []): string
     {
         $category = Category::getCurrent()->id ?? 0; // Aktuelle Kategorie vorauswählen
 
@@ -55,7 +51,7 @@ final readonly class LinkListVar
                 <select class="form-control" name="REX_LINKLIST_SELECT[' . $id . ']" id="REX_LINKLIST_SELECT_' . $id . '" size="10">
                     ' . $options . '
                 </select>
-                <input type="hidden" name="' . $name . '" id="REX_LINKLIST_' . $id . '" value="' . $value . '" />';
+                <input type="hidden" name="' . $name . '" id="REX_LINKLIST_' . $id . '" value="' . ($value ?? '') . '" />';
         $e['moveButtons'] = '
                     <a href="#" class="btn btn-popup" onclick="moveREXLinklist(' . $quotedId . ',\'top\');return false;" title="' . I18n::msg('var_linklist_move_top') . '"><i class="rex-icon rex-icon-top"></i></a>
                     <a href="#" class="btn btn-popup" onclick="moveREXLinklist(' . $quotedId . ',\'up\');return false;" title="' . I18n::msg('var_linklist_move_up') . '"><i class="rex-icon rex-icon-up"></i></a>

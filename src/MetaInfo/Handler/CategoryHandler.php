@@ -19,8 +19,7 @@ final class CategoryHandler extends AbstractHandler
     public const PREFIX = 'cat_';
     public const CONTAINER = 'rex-structure-category-metainfo';
 
-    /** @return string */
-    public function renderToggleButton(ExtensionPoint $ep)
+    public function renderToggleButton(ExtensionPoint $ep): string
     {
         $restrictionsCondition = $this->buildFilterCondition($ep->getParams());
 
@@ -34,8 +33,7 @@ final class CategoryHandler extends AbstractHandler
         return $ep->subject;
     }
 
-    /** @return array */
-    public function handleSave(array $params, Sql $sqlFields)
+    public function handleSave(array $params, Sql $sqlFields): array
     {
         if ('post' != Request::requestMethod()) {
             return $params;
@@ -59,8 +57,7 @@ final class CategoryHandler extends AbstractHandler
         return $params;
     }
 
-    /** @return string */
-    protected function buildFilterCondition(array $params)
+    protected function buildFilterCondition(array $params): string
     {
         $s = '';
 
@@ -79,7 +76,7 @@ final class CategoryHandler extends AbstractHandler
         return 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ')';
     }
 
-    public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType)
+    public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string
     {
         if ('legend' == $inputType) {
             return '<h3 class="form-legend">' . $label . '</h3>';
@@ -88,7 +85,7 @@ final class CategoryHandler extends AbstractHandler
         return $field;
     }
 
-    public function extendForm(ExtensionPoint $ep)
+    public function extendForm(ExtensionPoint $ep): string
     {
         $params = $ep->getParams();
         if (isset($params['category'])) {

@@ -391,13 +391,15 @@ class Login
     /**
      * Einstellen der Cookie Paramter bevor die session gestartet wird.
      *
-     * @return array{lifetime: ?int, path: ?string, domain: ?string, secure: ?bool, httponly: ?bool, samesite: ?string}
+     * @return array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string}
      */
     public static function getCookieParams(): array
     {
         $cookieParams = session_get_cookie_params();
 
         $key = Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
+
+        /** @var array<string, array{cookie: array{lifetime: ?int, path: ?string, domain: ?string, secure: ?bool, httponly: ?bool, samesite: ?string}}> $sessionConfig */
         $sessionConfig = Core::getProperty('session', []);
 
         if ($sessionConfig) {
@@ -408,6 +410,7 @@ class Login
             }
         }
 
+        /** @var array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string} */
         return $cookieParams;
     }
 

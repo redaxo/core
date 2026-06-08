@@ -55,12 +55,8 @@ final class Setup
 
     private function __construct() {}
 
-    /**
-     * very basic setup steps, so everything is in place for our browser-based setup wizard.
-     *
-     * @return void
-     */
-    public static function init()
+    /** very basic setup steps, so everything is in place for our browser-based setup wizard. */
+    public static function init(): void
     {
         // initial purge all generated files
         Cache::delete();
@@ -86,7 +82,7 @@ final class Setup
      *
      * @return list<string> An array of error messages
      */
-    public static function checkEnvironment()
+    public static function checkEnvironment(): array
     {
         $errors = [];
 
@@ -164,7 +160,7 @@ final class Setup
      *
      * @return string Error message
      */
-    public static function checkDb($config, $createDb)
+    public static function checkDb(array $config, bool $createDb): string
     {
         $dbConfig = new Configuration($config['db'][1]);
 
@@ -198,7 +194,7 @@ final class Setup
      *
      * @return list<string>
      */
-    public static function checkPhpSecurity()
+    public static function checkPhpSecurity(): array
     {
         $security = [];
 
@@ -240,7 +236,7 @@ final class Setup
      *
      * @return list<string>
      */
-    public static function checkDbSecurity()
+    public static function checkDbSecurity(): array
     {
         $sql = Sql::factory();
         $dbVersion = $sql->getDbVersion();
@@ -343,7 +339,7 @@ final class Setup
     }
 
     /** @return string|false Single-User-Setup URL or `false` on failure */
-    public static function startWithToken()
+    public static function startWithToken(): string|false
     {
         $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
 

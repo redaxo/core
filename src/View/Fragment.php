@@ -24,26 +24,11 @@ use const E_USER_WARNING;
  */
 class Fragment
 {
-    /**
-     * filename of the actual fragmentfile.
-     *
-     * @var string
-     */
-    private $filename;
+    /** filename of the actual fragmentfile. */
+    private string $filename;
 
-    /**
-     * key-value pair which represents all variables defined inside the fragment.
-     *
-     * @var array<string, mixed>
-     */
-    private array $vars;
-
-    /**
-     * another fragment which can optionaly be used to decorate the current fragment.
-     *
-     * @var self|null
-     */
-    private $decorator;
+    /** another fragment which can optionaly be used to decorate the current fragment. */
+    private ?self $decorator = null;
 
     /**
      * array which contains all folders in which fragments will be searched for at runtime.
@@ -57,20 +42,12 @@ class Fragment
      *
      * @param array<string, mixed> $vars A array of key-value pairs to pass as local parameters
      */
-    public function __construct(array $vars = [])
-    {
-        $this->vars = $vars;
-    }
+    public function __construct(
+        private array $vars = [],
+    ) {}
 
-    /**
-     * Returns the value of the given variable $name.
-     *
-     * @param string $name Variable name
-     * @param mixed $default Default value
-     *
-     * @return mixed
-     */
-    public function getVar($name, $default = null)
+    /** Returns the value of the given variable $name. */
+    public function getVar(string $name, mixed $default = null): mixed
     {
         return $this->vars[$name] ?? $default;
     }
@@ -78,8 +55,6 @@ class Fragment
     /**
      * Set the variable $name to the given value.
      *
-     * @param string $name The name of the variable
-     * @param mixed $value The value for the variable
      * @param bool $escape Flag which indicates if the value should be escaped or not
      */
     public function setVar(string $name, mixed $value, bool $escape = true): static
@@ -133,7 +108,7 @@ class Fragment
      *
      * @return $this
      */
-    public function decorate($filename, array $params)
+    public function decorate(string $filename, array $params): static
     {
         $this->decorator = new self($params);
         $this->decorator->filename = $filename;
@@ -152,7 +127,7 @@ class Fragment
      *
      * @return (T is Stringable ? string : T)
      */
-    protected function escape($value, $strategy = 'html')
+    protected function escape(mixed $value, string $strategy = 'html'): mixed
     {
         return escape($value, $strategy);
     }
@@ -178,9 +153,8 @@ class Fragment
      *
      * @param string $filename The filename of the fragment to use
      * @param array<string, mixed> $params A array of key-value pairs to pass as local parameters
-     * @return void
      */
-    protected function subfragment($filename, array $params = [])
+    protected function subfragment(string $filename, array $params = []): void
     {
         echo $this->getSubfragment($filename, $params);
     }
@@ -198,14 +172,8 @@ class Fragment
         return I18n::msg($key, ...$replacements);
     }
 
-    /**
-     * Magic getter to reference variables from within the fragment.
-     *
-     * @param string $name The name of the variable to get
-     *
-     * @return mixed
-     */
-    public function __get($name)
+    /** Magic getter to reference variables from within the fragment. */
+    public function __get(string $name): mixed
     {
         if (isset($this->vars[$name]) || array_key_exists($name, $this->vars)) {
             return $this->vars[$name];
@@ -216,14 +184,8 @@ class Fragment
         return null;
     }
 
-    /**
-     * Magic method to check if a variable is set.
-     *
-     * @param string $name The name of the variable to check
-     *
-     * @return bool
-     */
-    public function __isset($name)
+    /** Magic method to check if a variable is set. */
+    public function __isset(string $name): bool
     {
         return isset($this->vars[$name]) || array_key_exists($name, $this->vars);
     }
@@ -232,9 +194,8 @@ class Fragment
      * Add a path to the fragment search path.
      *
      * @param string $dir A path to a directory where fragments can be found
-     * @return void
      */
-    public static function addDirectory($dir)
+    public static function addDirectory(string $dir): void
     {
         // add the new directory in front of the already know dirs,
         // so a later caller can override core settings/fragments

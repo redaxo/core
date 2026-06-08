@@ -37,10 +37,8 @@ abstract class AbstractHandler
      *
      * @param Sql $sqlFields Sql-objekt, dass die zu verarbeitenden Felder enthält
      * @param array $epParams Array of all EP parameters
-     *
-     * @return string
      */
-    public function renderMetaFields(Sql $sqlFields, array $epParams)
+    public function renderMetaFields(Sql $sqlFields, array $epParams): string
     {
         $s = '';
 
@@ -495,12 +493,10 @@ abstract class AbstractHandler
     /**
      * Übernimmt die gePOSTeten werte in ein Sql-Objekt.
      *
-     * @param array $params
      * @param Sql $sqlSave Sql-objekt, in das die aktuellen Werte gespeichert werden sollen
      * @param Sql $sqlFields Sql-objekt, dass die zu verarbeitenden Felder enthält
-     * @return void
      */
-    public static function fetchRequestValues(&$params, &$sqlSave, $sqlFields)
+    public static function fetchRequestValues(array &$params, Sql &$sqlSave, Sql $sqlFields): void
     {
         if ('post' != Request::requestMethod()) {
             return;
@@ -537,10 +533,8 @@ abstract class AbstractHandler
      * @param string $fieldName The name of the field
      * @param int $fieldType One of the Table::FIELD_* constants
      * @param string $fieldAttributes The attributes of the field
-     *
-     * @return string|int|null
      */
-    public static function getSaveValue($fieldName, $fieldType, $fieldAttributes)
+    public static function getSaveValue(string $fieldName, int $fieldType, string $fieldAttributes): string|int|null
     {
         if ('post' != Request::requestMethod()) {
             return null;
@@ -601,7 +595,7 @@ abstract class AbstractHandler
      *
      * @return Sql Metainfofelder
      */
-    protected static function getSqlFields($prefix, $filterCondition = '')
+    protected static function getSqlFields(string $prefix, string $filterCondition = ''): Sql
     {
         $sqlFields = Sql::factory();
         $prefix = $sqlFields->escape($sqlFields->escapeLikeWildcards($prefix) . '%');
@@ -629,10 +623,8 @@ abstract class AbstractHandler
      *
      * @param string $prefix Feldprefix
      * @param array $params EP Params
-     *
-     * @return string
      */
-    public function renderFormAndSave($prefix, array $params)
+    public function renderFormAndSave(string $prefix, array $params): string
     {
         $filterCondition = $this->buildFilterCondition($params);
         $sqlFields = static::getSqlFields($prefix, $filterCondition);
@@ -645,9 +637,8 @@ abstract class AbstractHandler
      * Build a SQL Filter String which fits for the current context params.
      *
      * @param array $params EP Params
-     * @return string
      */
-    abstract protected function buildFilterCondition(array $params);
+    abstract protected function buildFilterCondition(array $params): string;
 
     /**
      * Renders a field of the metaform. The rendered html will be returned.
@@ -662,19 +653,14 @@ abstract class AbstractHandler
      *
      * @return string The rendered html
      */
-    abstract protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType);
+    abstract protected function renderFormItem(string $field, string $tag, string $tagAttr, string $id, string $label, bool $labelIt, string $inputType): string;
 
     /**
      * Retrieves the activeItem from the current context.
      * Afterwards the actual metaForm extension will be rendered.
-     *
-     * @return string
      */
-    abstract public function extendForm(ExtensionPoint $ep);
+    abstract public function extendForm(ExtensionPoint $ep): string;
 
-    /**
-     * Retrieves the POST values from the metaform, fill it into a Sql object and save it to a database table.
-     * @return array
-     */
-    abstract protected function handleSave(array $params, Sql $sqlFields);
+    /** Retrieves the POST values from the metaform, fill it into a Sql object and save it to a database table. */
+    abstract protected function handleSave(array $params, Sql $sqlFields): array;
 }

@@ -21,12 +21,7 @@ final class Importer
 {
     private function __construct() {}
 
-    /**
-     * @param string $importName
-     *
-     * @return string
-     */
-    public static function loadExistingImport($importName)
+    public static function loadExistingImport(string $importName): string
     {
         if ('' == $importName || '/' === $importName) {
             return '<p>' . I18n::msg('setup_408') . '</p>';
@@ -54,15 +49,13 @@ final class Importer
         return $errMsg;
     }
 
-    /** @return string */
-    public static function databaseAlreadyExists()
+    public static function databaseAlreadyExists(): string
     {
         // ----- db schon vorhanden, nichts tun
         return self::reinstallPackages();
     }
 
-    /** @return string */
-    public static function overrideExisting()
+    public static function overrideExisting(): string
     {
         // ----- volle Datenbank, alte DB löschen / drop
         $errMsg = '';
@@ -85,8 +78,7 @@ final class Importer
         return $errMsg;
     }
 
-    /** @return string */
-    public static function prepareEmptyDb()
+    public static function prepareEmptyDb(): string
     {
         // ----- leere Datenbank neu einrichten
         $errMsg = '';
@@ -102,8 +94,7 @@ final class Importer
         return $errMsg;
     }
 
-    /** @return string */
-    public static function verifyDbSchema()
+    public static function verifyDbSchema(): string
     {
         $errMsg = '';
 
@@ -117,7 +108,7 @@ final class Importer
     }
 
     /** @return list<string> */
-    private static function getRequiredTables()
+    private static function getRequiredTables(): array
     {
         return [
             Core::getTablePrefix() . 'clang',

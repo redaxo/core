@@ -38,7 +38,7 @@ use const ENT_SUBSTITUTE;
  * @psalm-taint-escape html
  * @psalm-pure
  */
-function escape($value, $strategy = 'html')
+function escape(mixed $value, string $strategy = 'html'): mixed
 {
     if (!is_string($value)) {
         if (is_array($value)) {
@@ -52,7 +52,7 @@ function escape($value, $strategy = 'html')
         if ($value instanceof stdClass) {
             $clone = clone $value;
             foreach (get_object_vars($value) as $k => $v) { // @phpstan-ignore impure.functionCall
-                $clone->$k = escape($v, $strategy);
+                $clone->$k = escape($v, $strategy); // @phpstan-ignore impure.propertyAssign
             }
 
             return $clone;

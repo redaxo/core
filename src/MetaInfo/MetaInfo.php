@@ -19,7 +19,6 @@ use Redaxo\Core\View\Asset;
 use function dirname;
 use function in_array;
 use function is_int;
-use function is_string;
 
 final class MetaInfo
 {
@@ -29,24 +28,18 @@ final class MetaInfo
      * Fügt einen neuen Feldtyp ein.
      *
      * Gibt beim Erfolg die Id des Feldes zurück, bei Fehler die Fehlermeldung
-     *
-     * @param string $label
-     * @param string $dbtype
-     * @param int $dblength
-     *
-     * @return int|string
      */
-    public static function addFieldType($label, $dbtype, $dblength)
+    public static function addFieldType(string $label, string $dbtype, int $dblength): int|string
     {
-        if (!is_string($label) || empty($label)) {
+        if ('' === $label) {
             return I18n::msg('minfo_field_error_invalid_name');
         }
 
-        if (!is_string($dbtype) || empty($dbtype)) {
+        if ('' === $dbtype) {
             return I18n::msg('minfo_field_error_invalid_type');
         }
 
-        if (!is_int($dblength) || empty($dblength)) {
+        if ($dblength < 1) {
             return I18n::msg('minfo_field_error_invalid_length');
         }
 
@@ -70,14 +63,10 @@ final class MetaInfo
      * Löscht einen Feldtyp.
      *
      * Gibt beim Erfolg true zurück, sonst eine Fehlermeldung
-     *
-     * @param int $fieldTypeId
-     *
-     * @return bool|string
      */
-    public static function deleteFieldType($fieldTypeId)
+    public static function deleteFieldType(int $fieldTypeId): bool|string
     {
-        if (!is_int($fieldTypeId) || empty($fieldTypeId)) {
+        if ($fieldTypeId < 1) {
             return I18n::msg('minfo_field_error_invalid_typeid');
         }
 
@@ -89,22 +78,8 @@ final class MetaInfo
         return 1 == $sql->getRows();
     }
 
-    /**
-     * Fügt ein MetaFeld hinzu und legt dafür eine Spalte in der MetaTable an.
-     *
-     * @param string $title
-     * @param string $name
-     * @param int $priority
-     * @param string $attributes
-     * @param int $type
-     * @param string $default
-     * @param string $params
-     * @param string $validate
-     * @param string $restrictions
-     *
-     * @return bool|string
-     */
-    public static function addField($title, $name, $priority, $attributes, $type, $default, $params = null, $validate = null, $restrictions = '')
+    /** Fügt ein MetaFeld hinzu und legt dafür eine Spalte in der MetaTable an. */
+    public static function addField(string $title, string $name, int $priority, string $attributes, int $type, string $default, ?string $params = null, ?string $validate = null, string $restrictions = ''): true|string
     {
         $prefix = self::metaPrefix($name);
         $metaTable = self::metaTable($prefix);
@@ -166,8 +141,7 @@ final class MetaInfo
         return true;
     }
 
-    /** @return bool|string */
-    public static function deleteField(string|int $fieldIdOrName)
+    public static function deleteField(string|int $fieldIdOrName): true|string
     {
         // Löschen anhand der FieldId
         if (is_int($fieldIdOrName)) {
@@ -214,12 +188,8 @@ final class MetaInfo
         return true;
     }
 
-    /**
-     * Extrahiert den Prefix aus dem Namen eine Spalte.
-     *
-     * @return string
-     */
-    public static function metaPrefix(string $name)
+    /** Extrahiert den Prefix aus dem Namen eine Spalte. */
+    public static function metaPrefix(string $name): string
     {
         if (false === ($pos = strpos($name, '_'))) {
             throw new InvalidArgumentException('Parameter $name must be like "prefix_name".');
@@ -233,25 +203,17 @@ final class MetaInfo
         return $prefix;
     }
 
-    /**
-     * Gibt die mit dem Prefix verbundenen Tabellennamen zurück.
-     *
-     * @return string|false
-     */
-    public static function metaTable(string $prefix)
+    /** Gibt die mit dem Prefix verbundenen Tabellennamen zurück. */
+    public static function metaTable(string $prefix): string|false
     {
         $metaTables = Core::getProperty('metainfo_metaTables', []);
 
         return $metaTables[$prefix] ?? false;
     }
 
-    /**
-     * Bindet ggf extensions ein.
-     *
-     * @return void
-     */
+    /** Bindet ggf extensions ein. */
     #[AsExtension('PAGE_CHECKED')]
-    public static function extensionHandler(ExtensionPoint $ep)
+    public static function extensionHandler(ExtensionPoint $ep): void
     {
         $page = $ep->subject;
         $mainpage = Controller::getCurrentPagePart(1);
@@ -276,10 +238,9 @@ final class MetaInfo
      * noch Datensätze zu Feldern stehen, welche nicht als Spalten in der
      * rex_article angelegt wurden!
      * @param ExtensionPoint|array $epOrParams
-     * @return void
      */
     #[AsExtension('BACKUP_BEFORE_DB_IMPORT')]
-    public static function cleanup($epOrParams)
+    public static function cleanup($epOrParams): void
     {
         $params = $epOrParams instanceof ExtensionPoint ? $epOrParams->getParams() : $epOrParams;
         // Cleanup nur durchführen, wenn auch die rex_article Tabelle neu angelegt wird

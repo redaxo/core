@@ -327,12 +327,8 @@ final class ContentHandler
         return true;
     }
 
-    /**
-     * Generiert den Artikel-Cache des Artikelinhalts.
-     *
-     * @return true
-     */
-    public static function generateArticleContent(int $articleId, ?int $clang = null): bool
+    /** Generiert den Artikel-Cache des Artikelinhalts. */
+    public static function generateArticleContent(int $articleId, ?int $clang = null): void
     {
         foreach (Language::getAllIds() as $clangId) {
             if (null !== $clang && $clangId != $clang) {
@@ -368,8 +364,6 @@ final class ContentHandler
                 opcache_invalidate($articleContentFile);
             }
         }
-
-        return true;
     }
 
     private static function getUser(): string

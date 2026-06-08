@@ -55,11 +55,11 @@ class Navigation
     private array $classes = [];
     /** @var array<int, string> */
     private array $linkclasses = [];
-    /** @var list<array{metafield: string, value: int|string, type: string, depth: int|''}> */
+    /** @var list<array{metafield: string, value: int|string, type: string, depth: int|null}> */
     private array $filter = [];
     /** @var list<array{
      *     callback: callable(Category, int, array<int|string, int|string|list<string>>, array<int|string, int|string|list<string>>, string):bool,
-     *     depth: int|''
+     *     depth: int|null
      * }>
      */
     private array $callbacks = [];
@@ -92,10 +92,8 @@ class Navigation
      * @param int $depth Anzahl der Ebenen die angezeigt werden sollen
      * @param bool $open True, wenn nur Elemente der aktiven Kategorie angezeigt werden sollen, sonst FALSE
      * @param bool $ignoreOfflines FALSE, wenn offline Elemente angezeigt werden, sonst TRUE
-     *
-     * @return string
      */
-    public function get($categoryId = 0, $depth = 3, $open = false, $ignoreOfflines = false)
+    public function get(int $categoryId = 0, int $depth = 3, bool $open = false, bool $ignoreOfflines = false): string
     {
         if (!$this->_setActivePath()) {
             return '';
@@ -110,16 +108,8 @@ class Navigation
         return $this->_getNavigation($categoryId);
     }
 
-    /**
-     * @see get()
-     *
-     * @param int $categoryId
-     * @param int $depth
-     * @param bool $open
-     * @param bool $ignoreOfflines
-     * @return void
-     */
-    public function show($categoryId = 0, $depth = 3, $open = false, $ignoreOfflines = false)
+    /** @see get() */
+    public function show(int $categoryId = 0, int $depth = 3, bool $open = false, bool $ignoreOfflines = false): void
     {
         echo $this->get($categoryId, $depth, $open, $ignoreOfflines);
     }
@@ -130,10 +120,8 @@ class Navigation
      * @param string|false $startPageLabel Label der Startseite, falls FALSE keine Start-Page anzeigen
      * @param bool $includeCurrent True wenn der aktuelle Artikel enthalten sein soll, sonst FALSE
      * @param int $categoryId Id der Wurzelkategorie
-     *
-     * @return string
      */
-    public function getBreadcrumb($startPageLabel, $includeCurrent = false, $categoryId = 0)
+    public function getBreadcrumb(string|false $startPageLabel, bool $includeCurrent = false, int $categoryId = 0): string
     {
         if (!$this->_setActivePath()) {
             return '';
@@ -199,33 +187,20 @@ class Navigation
         ]);
     }
 
-    /**
-     * @see getBreadcrumb()
-     *
-     * @param string|false $startPageLabel
-     * @param bool $includeCurrent
-     * @param int $categoryId
-     * @return void
-     */
-    public function showBreadcrumb($startPageLabel = false, $includeCurrent = false, $categoryId = 0)
+    /** @see getBreadcrumb() */
+    public function showBreadcrumb(string|false $startPageLabel = false, bool $includeCurrent = false, int $categoryId = 0): void
     {
         echo $this->getBreadcrumb($startPageLabel, $includeCurrent, $categoryId);
     }
 
-    /**
-     * @param array<int, string> $classes
-     * @return void
-     */
-    public function setClasses($classes)
+    /** @param array<int, string> $classes */
+    public function setClasses(array $classes): void
     {
         $this->classes = $classes;
     }
 
-    /**
-     * @param array<int, string> $classes
-     * @return void
-     */
-    public function setLinkClasses($classes)
+    /** @param array<int, string> $classes */
+    public function setLinkClasses(array $classes): void
     {
         $this->linkclasses = $classes;
     }
@@ -236,10 +211,9 @@ class Navigation
      * @param string $metafield Datenbankfeld der Kategorie
      * @param int|string $value Wert für den Vergleich
      * @param string $type art des Vergleichs =/</
-     * @param int|'' $depth "" wenn auf allen Ebenen, wenn definiert, dann wird der Filter nur auf dieser Ebene angewendet
-     * @return void
+     * @param int|null $depth NULL wenn auf allen Ebenen, wenn definiert, dann wird der Filter nur auf dieser Ebene angewendet
      */
-    public function addFilter($metafield = 'id', $value = '1', $type = '=', $depth = '')
+    public function addFilter(string $metafield, int|string $value = '1', string $type = '=', ?int $depth = null): void
     {
         $this->filter[] = ['metafield' => $metafield, 'value' => $value, 'type' => $type, 'depth' => $depth];
     }
@@ -248,20 +222,16 @@ class Navigation
      * Fügt einen Callback hinzu.
      *
      * @param callable(Category, int, array<(int|string), (int|string|list<string>)>, array<(int|string), (int|string|list<string>)>, string):bool $callback z.B. myFunc oder myClass::myMethod
-     * @param int|'' $depth "" wenn auf allen Ebenen, wenn definiert, dann wird der Filter nur auf dieser Ebene angewendet
-     *
-     * @return $this
+     * @param int|null $depth NULL wenn auf allen Ebenen, wenn definiert, dann wird der Filter nur auf dieser Ebene angewendet
      */
-    public function addCallback($callback, $depth = '')
+    public function addCallback(callable $callback, ?int $depth = null): void
     {
         if ('' != $callback) {
             $this->callbacks[] = ['callback' => $callback, 'depth' => $depth];
         }
-        return $this;
     }
 
-    /** @return bool */
-    private function _setActivePath()
+    private function _setActivePath(): bool
     {
         $articleId = Article::getCurrentId();
         if ($OOArt = Article::get($articleId)) {
@@ -274,14 +244,10 @@ class Navigation
         return false;
     }
 
-    /**
-     * @param int $depth
-     * @return bool
-     */
-    private function checkFilter(Category $category, $depth)
+    private function checkFilter(Category $category, int $depth): bool
     {
         foreach ($this->filter as $f) {
-            if ('' == $f['depth'] || $f['depth'] == $depth) {
+            if (null === $f['depth'] || $f['depth'] === $depth) {
                 $mf = $category->getValue($f['metafield']);
                 $va = $f['value'];
                 switch ($f['type']) {
@@ -332,16 +298,13 @@ class Navigation
     }
 
     /**
-     * @param int $depth
      * @param array<int|string, int|string|list<string>> $li
      * @param array<int|string, int|string|list<string>> $a
-     * @param string $aContent
-     * @return bool
      */
-    private function checkCallbacks(Category $category, $depth, &$li, &$a, &$aContent)
+    private function checkCallbacks(Category $category, int $depth, array &$li, array &$a, string &$aContent): bool
     {
         foreach ($this->callbacks as $c) {
-            if ('' == $c['depth'] || $c['depth'] == $depth) {
+            if (null === $c['depth'] || $c['depth'] === $depth) {
                 $callback = $c['callback'];
                 if (is_string($callback)) {
                     $callback = explode('::', $callback, 2);
@@ -367,18 +330,12 @@ class Navigation
         return true;
     }
 
-    /**
-     * @param int $categoryId
-     * @param int $depth
-     *
-     * @return string
-     */
-    protected function _getNavigation($categoryId, $depth = 1)
+    protected function _getNavigation(int $categoryId, int $depth = 1): string
     {
         if ($categoryId < 1) {
             $navObj = Category::getRootCategories();
         } else {
-            $navObj = Category::get($categoryId)->getChildren();
+            $navObj = Category::require($categoryId)->getChildren();
         }
 
         $lis = [];

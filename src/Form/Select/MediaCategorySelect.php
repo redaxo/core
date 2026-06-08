@@ -9,19 +9,14 @@ use function is_array;
 
 class MediaCategorySelect extends Select
 {
-    /** @var bool */
-    private $checkPerms;
-
     /** @var int|list<int>|null */
-    private $rootId;
+    private int|array|null $rootId = null;
 
-    /** @var bool */
-    private $loaded = false;
+    private bool $loaded = false;
 
-    public function __construct($checkPerms = true)
-    {
-        $this->checkPerms = $checkPerms;
-
+    public function __construct(
+        private readonly bool $checkPerms = true,
+    ) {
         parent::__construct();
     }
 
@@ -29,15 +24,13 @@ class MediaCategorySelect extends Select
      * Kategorie-Id oder ein Array von Kategorie-Ids als Wurzelelemente der Select-Box.
      *
      * @param int|list<int>|null $rootId Kategorie-Id oder Array von Kategorie-Ids zur Identifikation der Wurzelelemente
-     * @return void
      */
-    public function setRootId($rootId)
+    public function setRootId(int|array|null $rootId): void
     {
         $this->rootId = $rootId;
     }
 
-    /** @return void */
-    protected function addCatOptions()
+    protected function addCatOptions(): void
     {
         if (null !== $this->rootId) {
             if (is_array($this->rootId)) {
@@ -60,8 +53,7 @@ class MediaCategorySelect extends Select
         }
     }
 
-    /** @return void */
-    protected function addCatOption(MediaCategory $mediacat, int $parentId = 0)
+    protected function addCatOption(MediaCategory $mediacat, int $parentId = 0): void
     {
         if (!$this->checkPerms || Core::requireUser()->getComplexPerm('media')->hasCategoryPerm($mediacat->id)
         ) {
@@ -78,7 +70,7 @@ class MediaCategorySelect extends Select
         }
     }
 
-    public function get()
+    public function get(): string
     {
         if (!$this->loaded) {
             $this->addCatOptions();
