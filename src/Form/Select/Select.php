@@ -129,7 +129,7 @@ class Select
     }
 
     /** @param string|int|list<string|int> $selected */
-    public function setSelected(string|int|array $selected): void
+    public function setSelected(string|int|array|null $selected): void
     {
         if (is_array($selected)) {
             foreach ($selected as $sectvalue) {

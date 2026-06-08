@@ -346,7 +346,10 @@ class DataList implements UrlProviderInterface
 
         array_splice($this->columnNames, $columnIndex, 0, [$columnHead]);
         $this->customColumns[$columnHead] = $columnBody;
-        $this->setColumnLayout($columnHead, $columnLayout);
+
+        if ($columnLayout) {
+            $this->setColumnLayout($columnHead, $columnLayout);
+        }
     }
 
     /** Entfernt eine Spalte aus der Anzeige. */
@@ -933,12 +936,15 @@ class DataList implements UrlProviderInterface
     /**
      * Formatiert einen übergebenen String anhand der rexFormatter Klasse.
      *
-     * @param string $value Zu formatierender String
      * @param array|null $format mit den Formatierungsinformationen
      * @param bool $escape Flag, Ob escapen von $value erlaubt ist
      */
-    public function formatValue(string $value, ?array $format, bool $escape, ?string $field = null): string
+    public function formatValue(string|int|float|bool|null $value, ?array $format, bool $escape, ?string $field = null): string
     {
+        if (null !== $value && !is_string($value)) {
+            $value = (string) $value;
+        }
+
         if (is_array($format)) {
             // Callbackfunktion -> Parameterliste aufbauen
             if ($this->isCustomFormat($format)) {
@@ -954,7 +960,7 @@ class DataList implements UrlProviderInterface
             $value = escape($value);
         }
 
-        return $value;
+        return null === $value ? '' : $value;
     }
 
     protected function formatRowAttributes(): string
