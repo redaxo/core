@@ -528,22 +528,23 @@ function getCookie(cookieName) {
     return unescape(theCookie.substring(ind + cookieName.length + 1, ind1));
 }
 
-// scroll to anchor element + adjust scroll-padding-top
-function scrollToAnchor() {
+// scroll to anchor element
+var scrollToAnchor = function () {
     if (window.location.hash) {
-        var scrollPadding = window.getComputedStyle(document.documentElement).getPropertyValue('scroll-padding-top');
-        scrollPadding = parseInt(scrollPadding, 10); // so 65px will be 65
-        if (scrollPadding > 0) {
-            var anchorItem = document.querySelector(window.location.hash);
-            if (anchorItem) {
-                var anchorItemPosition = anchorItem.getBoundingClientRect().top;
-                if (!isNaN(scrollPadding) && scrollPadding > 0 && anchorItemPosition < scrollPadding) {
-                    window.scrollBy(0, -scrollPadding);
-                }
-            }
+        var hash = window.location.hash;
+        var anchorItem = document.querySelector(hash);
+
+        if (anchorItem) {
+            // Ein minimaler Timeout (0-10ms) hilft oft Wunder bei Pjax-Updates
+            setTimeout(function () {
+                anchorItem.scrollIntoView({
+                    block: "start",
+                    behavior: "smooth"
+                });
+            }, 200);
         }
     }
-}
+};
 
 var rex_loader = {
     timeoutId: null,
