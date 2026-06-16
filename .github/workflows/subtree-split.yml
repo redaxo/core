@@ -7,6 +7,8 @@ on:
         paths:
             - project/**
             - addons/debug/**
+            - .github/subtree-splits.json
+            - .github/workflows/subtree-split.yml
 
 permissions:
     contents: read
