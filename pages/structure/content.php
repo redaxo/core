@@ -23,7 +23,9 @@ use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\View\Component\MainContent;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
 
@@ -459,6 +461,7 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
     $contentMain = '<section id="rex-js-page-main-content" data-pjax-container="#rex-js-page-main-content">' . $contentMain . '</section>';
 
     // ----- EXTENSION POINT
+    /** @var string $contentSidebar (extensions may replace the empty subject with sidebar markup) */
     $contentSidebar = Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_SIDEBAR', '', [
         'article_id' => $articleId,
         'clang' => $clang,
@@ -471,9 +474,8 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
         'slice_revision' => &$sliceRevision,
     ]));
 
-    $fragment = new Fragment();
-    $fragment->setVar('content', $contentMain, false);
-    $fragment->setVar('sidebar', $contentSidebar, false);
-
-    echo $fragment->parse('core/page/main_content.php');
+    echo new MainContent(
+        content: Html::raw($contentMain),
+        sidebar: '' === $contentSidebar ? null : Html::raw($contentSidebar),
+    )->render();
 }

@@ -4,6 +4,7 @@ use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Util\Timer;
+use Redaxo\Core\View\Component\PageBottom;
 use Redaxo\Core\View\Fragment;
 
 $curPage = Controller::requireCurrentPageObject();
@@ -33,6 +34,4 @@ if ('login' !== Controller::getCurrentPage()) {
     unset($footerfragment);
 }
 
-$bottomfragment = new Fragment();
-echo $bottomfragment->parse('core/bottom.php');
-unset($bottomfragment);
+echo new PageBottom()->render();

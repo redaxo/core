@@ -1,14 +1,10 @@
 <?php
 
-use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Component\PageBottom;
 
-/**
- * @var Fragment $this
- * @psalm-scope-this Fragment
- */
-
-?>
+return static function (PageBottom $pageBottom): void { ?>
 </div><!-- END .rex-page -->
 
 </body>
 </html>
+<?php };

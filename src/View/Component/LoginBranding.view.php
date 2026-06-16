@@ -1,13 +1,11 @@
 <?php
+
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
-use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Component\LoginBranding;
 
-/**
- * @var Fragment $this
- * @psalm-scope-this Fragment
- */
-?>
+return static function (LoginBranding $loginBranding): void { ?>
 <div class="rex-branding">
     <?= File::get(Path::coreAssets('redaxo-logo.svg')) ?>
 </div>
+<?php };

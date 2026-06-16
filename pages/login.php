@@ -7,6 +7,7 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\WebAuthn;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\View\Component\LoginBranding;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
@@ -21,8 +22,7 @@ echo View::title(I18n::msg('login'));
 
 $content = '';
 
-$fragment = new Fragment();
-$content .= $fragment->parse('core/login_branding.php');
+$content .= (string) new LoginBranding()->render();
 
 $js = '';
 if ('' != $rexUserLoginmessage) {
