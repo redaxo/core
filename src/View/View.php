@@ -19,6 +19,7 @@ use Redaxo\Core\Language\Language;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\PageHeader;
 
 use function count;
 use function ini_get;
@@ -94,10 +95,10 @@ final class View
 
         $title = Extension::dispatch(new ExtensionPoint('PAGE_TITLE', $head));
 
-        $fragment = new Fragment();
-        $fragment->setVar('heading', $title, false);
-        $fragment->setVar('subtitle', $subtitle, false);
-        $return = $fragment->parse('core/page/header.php');
+        $return = (string) new PageHeader(
+            heading: Html::raw($title),
+            subtitle: '' === $subtitle ? null : Html::raw($subtitle),
+        )->render();
 
         return $return . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
     }
