@@ -1,0 +1,51 @@
+name: Subtree split
+
+on:
+    push:
+        branches:
+            - 6.x
+        paths:
+            - project/**
+            - addons/debug/**
+            - .github/subtree-splits.json
+            - .github/workflows/subtree-split.yml
+
+permissions:
+    contents: read
+
+concurrency:
+    group: subtree-split
+    cancel-in-progress: false
+
+jobs:
+    split:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+                with:
+                    fetch-depth: 0
+                    persist-credentials: false
+
+            -   name: Configure Git credentials
+                uses: frankdejonge/use-github-token@15e6289d07c12b3b1603268a628bb74f2e9765f4 # 1.1.0
+                with:
+                    authentication: x-access-token:${{ secrets.BOT_TOKEN }}
+                    user_name: rex-bot
+                    user_email: rex-bot@users.noreply.github.com
+
+            -   name: Cache splitsh-lite
+                uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+                with:
+                    path: ./.splitsh
+                    key: ${{ runner.os }}-splitsh-v1.0.1
+
+            -   name: Publish sub-splits
+                uses: frankdejonge/use-subsplit-publish@0001015147267203898034927e8cccad3a7a9aa7 # 1.1.0
+                with:
+                    source-branch: 6.x
+                    config-path: ./.github/subtree-splits.json
+                    splitsh-path: ./.splitsh/splitsh-lite
+                    splitsh-version: v1.0.1

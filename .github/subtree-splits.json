@@ -1,0 +1,16 @@
+{
+    "sub-splits": [
+        {
+            "name": "project",
+            "directory": "project",
+            "target": "git@github.com:redaxo/project.git",
+            "target-branch": "6.x"
+        },
+        {
+            "name": "debug",
+            "directory": "addons/debug",
+            "target": "git@github.com:redaxo/debug.git",
+            "target-branch": "2.x"
+        }
+    ]
+}
