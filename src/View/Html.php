@@ -29,8 +29,11 @@ final readonly class Html implements Renderable, Stringable
     /**
      * Wraps already-safe HTML markup unchanged.
      *
-     * The caller vouches that `$html` is safe to emit. Passing untrusted input here is the
-     * deliberate escaping bypass — handle with care.
+     * The caller vouches that `$html` is safe to emit — this is the explicit trust boundary, so it
+     * is marked as an HTML taint sink: feeding tainted (e.g. user) input here is reported by the
+     * taint analysis, just as echoing it unescaped would be.
+     *
+     * @psalm-taint-sink html $html
      */
     public static function raw(string $html): self
     {
@@ -52,6 +55,8 @@ final readonly class Html implements Renderable, Stringable
      * Lets callers write inline HTML at a call site (leaving PHP mode inside the closure) rather
      * than assembling markup inside a string. The closure is responsible for escaping its own
      * dynamic values, exactly like a view file.
+     *
+     * @param Closure(): void $closure
      */
     public static function capture(Closure $closure): self
     {

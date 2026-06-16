@@ -16,8 +16,7 @@ final class DefaultTemplate extends Template
     #[Override]
     public function render(ArticleContent $content): string
     {
-        // The markup lives in the co-located DefaultTemplate.view.php; the article's content object
-        // is handed to it. Build out the <head>, navigation, asset handling etc. over there.
+        // The markup lives in the co-located DefaultTemplate.view.php.
         return $this->renderView($content);
     }
 }

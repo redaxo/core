@@ -4,6 +4,7 @@ namespace Redaxo\Core\View;
 
 use Closure;
 use Redaxo\Core\Exception\InvalidArgumentException;
+use Redaxo\Core\Util\Type;
 use Throwable;
 
 use function is_file;
@@ -33,7 +34,11 @@ final class Renderer
         });
     }
 
-    /** Runs the closure and returns whatever it emitted, cleaning up the output buffer on a throw. */
+    /**
+     * Runs the closure and returns whatever it emitted, cleaning up the output buffer on a throw.
+     *
+     * @param Closure(): void $closure
+     */
     public static function capture(Closure $closure): string
     {
         ob_start();
@@ -45,9 +50,10 @@ final class Renderer
             throw $e;
         }
 
-        return (string) ob_get_clean();
+        return Type::string(ob_get_clean());
     }
 
+    /** @return Closure(mixed...): void */
     private static function load(string $path): Closure
     {
         if (!is_file($path)) {
@@ -60,6 +66,7 @@ final class Renderer
             throw new InvalidArgumentException(sprintf('View file "%s" must return a closure.', $path));
         }
 
+        /** @var Closure(mixed...): void $closure */
         return $closure;
     }
 }
