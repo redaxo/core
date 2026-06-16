@@ -30,3 +30,7 @@ src/                      Your project code (Project class, templates, modules, 
 src/Project.php           Project class (boot configuration)
 var/                      Runtime data (cache, data, logs, …)
 ```
+
+## Contributing
+
+This repository is read-only. The project skeleton is developed in the [REDAXO core repository](https://github.com/redaxo/core) and split out here automatically. That's why issues and pull requests are disabled — please report issues and open pull requests in the core repository.

@@ -53,6 +53,12 @@ Bist du noch nicht drauf? [So kannst du deinen Eintrag hinzufügen](https://gith
 
 &nbsp;
 
+## Ein neues Projekt starten
+
+Um eine Website mit REDAXO zu bauen, starte vom [`redaxo/project`](https://github.com/redaxo/project)-Skeleton. Es ist der empfohlene Ausgangspunkt für neue Projekte und enthält die Anleitung zur Einrichtung.
+
+&nbsp;
+
 ## Mitarbeit
 
 Um am Core und an den Core-Addons zu entwickeln, setze das Projekt mit diesen Schritten lokal auf:

@@ -53,6 +53,12 @@ Your marker still missing? [Learn how to place it on the map](https://github.com
 
 &nbsp;
 
+## Start a new project
+
+To build a website with REDAXO, start from the [`redaxo/project`](https://github.com/redaxo/project) skeleton. It's the recommended starting point for new projects and contains the setup instructions.
+
+&nbsp;
+
 ## Contributions
 
 To develop on core and core addons, set up the project with these steps:

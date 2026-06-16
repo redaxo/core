@@ -43,3 +43,7 @@ Timer::measure('ein-repraesentatives-label', function () {
     // beliebiger php-code
 });
 ```
+
+## Mitarbeit
+
+Dieses Repository ist schreibgeschützt. Das Addon wird im [REDAXO-Core-Repository](https://github.com/redaxo/core) entwickelt und von dort automatisch hierher ausgekoppelt. Deshalb sind Issues und Pull Requests deaktiviert — bitte melde Fehler und stelle Pull Requests im Core-Repository.
