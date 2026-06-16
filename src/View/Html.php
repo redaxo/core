@@ -56,7 +56,7 @@ final readonly class Html implements Renderable, Stringable
      * than assembling markup inside a string. The closure is responsible for escaping its own
      * dynamic values, exactly like a view file.
      *
-     * @param Closure(): void $closure
+     * @param Closure():void $closure
      */
     public static function capture(Closure $closure): self
     {

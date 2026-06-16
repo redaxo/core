@@ -37,7 +37,7 @@ final class Renderer
     /**
      * Runs the closure and returns whatever it emitted, cleaning up the output buffer on a throw.
      *
-     * @param Closure(): void $closure
+     * @param Closure():void $closure
      */
     public static function capture(Closure $closure): string
     {
@@ -53,7 +53,7 @@ final class Renderer
         return Type::string(ob_get_clean());
     }
 
-    /** @return Closure(mixed...): void */
+    /** @return Closure(mixed...):void */
     private static function load(string $path): Closure
     {
         if (!is_file($path)) {
@@ -66,7 +66,7 @@ final class Renderer
             throw new InvalidArgumentException(sprintf('View file "%s" must return a closure.', $path));
         }
 
-        /** @var Closure(mixed...): void $closure */
+        /** @var Closure(mixed...):void $closure */
         return $closure;
     }
 }
