@@ -4,6 +4,7 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Type;
 
 $addon = Addon::require('debug');
 
@@ -26,8 +27,8 @@ try {
 
         $indexPath = $addon->getAssetsPath('clockwork/index.html');
 
-        $index = file_get_contents($indexPath);
-        $index = preg_replace('/(href|src)=("?)([^>\s]+)/', '$1=$2' . $addon->getAssetsUrl('clockwork/$3'), $index);
+        $index = Type::string(file_get_contents($indexPath));
+        $index = Type::string(preg_replace('/(href|src)=("?)([^>\s]+)/', '$1=$2' . $addon->getAssetsUrl('clockwork/$3'), $index));
         file_put_contents($indexPath, $index);
     } else {
         $message = I18n::msg('debug_error_unzip') . '<br>' . $path;

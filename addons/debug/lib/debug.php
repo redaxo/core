@@ -22,7 +22,10 @@ final class rex_debug
         ErrorHandler::class,
     ];
 
-    /** @param list<class-string> $ignoredClasses */
+    /**
+     * @param list<class-string> $ignoredClasses
+     * @return array{file: string|null, line: int|null, trace: list<array{function: string, line?: int, file?: string, class?: class-string, type?: string, args?: list<mixed>, object?: object}>}
+     */
     public static function getTrace(array $ignoredClasses = []): array
     {
         $ignoredClasses = array_merge(self::$ignoreClasses, $ignoredClasses);
@@ -30,7 +33,8 @@ final class rex_debug
 
         $start = 0;
         for ($i = 0; $i < count($trace); ++$i) {
-            if (isset($trace[$i + 1]['class']) && in_array($trace[$i + 1]['class'], $ignoredClasses)) {
+            /** @psalm-suppress PossiblyUndefinedArrayOffset */
+            if (isset($trace[$i + 1]['class']) && in_array($trace[$i + 1]['class'], $ignoredClasses, true)) {
                 continue;
             }
 
