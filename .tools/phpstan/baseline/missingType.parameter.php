@@ -64,11 +64,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/MediaManager/Effect/MirrorEffect.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MetaInfo\\Form\\Input\\AbstractInput::getAttribute() has parameter $default with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MetaInfo/Form/Input/AbstractInput.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Util\\Parsedown::blockFencedCodeComplete() has parameter $Block with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Util/Parsedown.php',

@@ -4,88 +4,70 @@ namespace Redaxo\Core\MetaInfo\Handler;
 
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleCache;
+use Redaxo\Core\Content\Category;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\MetaInfo\MetaContext;
+use Redaxo\Core\MetaInfo\MetaEntity;
 
 /**
  * @internal
  */
 final class ArticleHandler extends AbstractHandler
 {
-    public const PREFIX = 'art_';
-
-    protected function handleSave(array $params, Sql $sqlFields): array
+    /**
+     * Renders (and on save persists) the article meta form.
+     *
+     * @param array{id: int, clang: int, article: object} $params
+     */
+    public function getForm(array $params): string
     {
-        // Nur speichern wenn auch das MetaForm ausgefüllt wurde
-        // z.b. nicht speichern wenn über be_search select navigiert wurde
-        if (!Request::post('savemeta', 'boolean')) {
-            return $params;
+        $ooArt = Article::get($params['id'], $params['clang']);
+        $categoryId = $ooArt->categoryId ?? 0;
+        $category = $categoryId > 0 ? Category::get($categoryId, $params['clang']) : null;
+
+        $ctx = new MetaContext(MetaEntity::Article, $params['article'], $category);
+
+        // Only save when the meta form was actually submitted (e.g. not when navigating via be_search).
+        if (Request::post('savemeta', 'boolean')) {
+            $ctx = $this->save($params, $ctx);
         }
 
-        $article = Sql::factory();
-        // $article->setDebug();
-        $article->setTable(Core::getTablePrefix() . 'article');
-        $article->setWhere('id=:id AND clang_id=:clang', ['id' => $params['id'], 'clang' => $params['clang']]);
-        $article->setValue('name', Request::post('meta_article_name', 'string'));
+        return $this->renderFields($ctx);
+    }
 
-        parent::fetchRequestValues($params, $article, $sqlFields);
+    /** @param array{id: int, clang: int, article: object} $params */
+    private function save(array $params, MetaContext $ctx): MetaContext
+    {
+        $id = $params['id'];
+        $clang = $params['clang'];
 
-        // do the save only when metafields are defined
-        if ($article->hasValues()) {
-            $article->addGlobalUpdateFields();
-            $article->update();
+        $sql = Sql::factory();
+        $sql->setTable(Core::getTablePrefix() . 'article');
+        $sql->setWhere('id=:id AND clang_id=:clang', ['id' => $id, 'clang' => $clang]);
+        $sql->setValue('name', Request::post('meta_article_name', 'string'));
+
+        $saved = $this->saveRequestValues($sql, $ctx);
+
+        if ($sql->hasValues()) {
+            $sql->addGlobalUpdateFields();
+            $sql->update();
         }
 
-        ArticleCache::deleteMeta($params['id'], $params['clang']);
+        ArticleCache::deleteMeta($id, $clang);
 
         Extension::dispatch(new ExtensionPoint('ART_META_UPDATED', '', $params));
 
-        return $params;
-    }
-
-    protected function buildFilterCondition(array $params): string
-    {
-        $restrictionsCondition = '';
-
-        if (!empty($params['id'])) {
-            $s = '';
-            $OOArt = Article::require($params['id'], $params['clang']);
-
-            // Alle Metafelder des Pfades sind erlaubt
-            foreach ($OOArt->path as $pathElement) {
-                $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
-            }
-
-            $t = ' OR FIND_IN_SET(' . Sql::factory()->escape($OOArt->templateKey ?? '') . ', `p`.`templates`)';
-
-            $restrictionsCondition = 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ') AND (`p`.`templates` = "" OR `p`.`templates` IS NULL ' . $t . ')';
-        }
-
-        return $restrictionsCondition;
-    }
-
-    protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string
-    {
-        return $field;
-    }
-
-    public function getForm(array $params): string
-    {
-        $OOArt = Article::get($params['id'], $params['clang']);
-
-        $params['activeItem'] = $params['article'];
-        // Hier die category_id setzen, damit beim klick auf den REX_LINK_BUTTON der Medienpool in der aktuellen Kategorie startet
-        $params['activeItem']->setValue('category_id', $OOArt->categoryId ?? 0);
-
-        return parent::renderFormAndSave(self::PREFIX, $params);
+        // Redisplay the freshly submitted values.
+        return new MetaContext($ctx->entity, $ctx->subject, $ctx->category, $ctx->mediaCategory, $saved);
     }
 
     public function extendForm(ExtensionPoint $ep): string
     {
-        // noop
+        // noop — the article form is rendered directly via getForm()
         return '';
     }
 }

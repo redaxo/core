@@ -6,7 +6,12 @@ use Override;
 use Redaxo\Core\Content\ArticleHandler;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Database\Table;
 use Redaxo\Core\Translation\I18n;
+
+use function array_filter;
+use function array_values;
+use function implode;
 
 /** @internal */
 final class ArticleStatusType extends AbstractType
@@ -25,26 +30,17 @@ final class ArticleStatusType extends AbstractType
             'after' => 0,
         ];
 
-        $sql = Sql::factory();
-        $sql->setQuery(
-            '
-            SELECT  name
-            FROM    ' . Core::getTablePrefix() . 'metainfo_field
-            WHERE   name=? OR name=?',
+        $table = Table::get(Core::getTable('article'));
+        $missing = array_values(array_filter(
             [$from['field'], $to['field']],
-        );
-        $rows = $sql->getRows();
-        if ($rows < 2) {
-            if (0 == $rows) {
-                $msg = 'Metainfo fields `' . $from['field'] . '` and `' . $to['field'] . '` not found. Please add them to the metainfo fields.';
-            } else {
-                $field = $sql->getValue('name') == $from['field'] ? $to['field'] : $from['field'];
-                $msg = 'Metainfo field `' . $field . '` not found. Please add it to the metainfo fields.';
-            }
-            $this->message = $msg;
+            static fn (string $field): bool => !$table->hasColumn($field),
+        ));
+        if ([] !== $missing) {
+            $this->message = 'Metainfo field(s) `' . implode('`, `', $missing) . '` not found. Please define them in your meta schema.';
             return false;
         }
 
+        $sql = Sql::factory();
         $time = time();
         $sql->setQuery(
             '

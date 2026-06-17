@@ -4,7 +4,6 @@ namespace Redaxo\Core\MetaInfo\Handler;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
@@ -12,11 +11,15 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MediaPool\MediaCategory;
-use Redaxo\Core\MetaInfo\Form\DefaultType;
-use Redaxo\Core\MetaInfo\MetaInfo;
+use Redaxo\Core\MetaInfo\Field\MediaField;
+use Redaxo\Core\MetaInfo\MetaContext;
+use Redaxo\Core\MetaInfo\MetaEntity;
+use Redaxo\Core\MetaInfo\MetaSchema;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Type;
 
+use function array_merge;
+use function array_values;
+use function implode;
 use function in_array;
 
 /**
@@ -24,8 +27,6 @@ use function in_array;
  */
 final class MediaHandler extends AbstractHandler
 {
-    public const PREFIX = 'med_';
-
     /**
      * Extension to check whether the given media is still in use.
      *
@@ -38,36 +39,25 @@ final class MediaHandler extends AbstractHandler
         $warning = $ep->subject;
 
         $sql = Sql::factory();
-        $sql->setQuery('SELECT `name`, `type_id` FROM `' . Core::getTablePrefix() . 'metainfo_field` WHERE `type_id` IN(6,7)');
+        $escapedFilename = $sql->escape($params['filename']);
 
-        $rows = $sql->getRows();
-        if (0 == $rows) {
-            return $warning;
+        $where = ['articles' => [], 'categories' => [], 'media' => [], 'clangs' => []];
+        $map = [
+            [MetaEntity::Article, 'articles'],
+            [MetaEntity::Category, 'categories'],
+            [MetaEntity::Media, 'media'],
+            [MetaEntity::Clang, 'clangs'],
+        ];
+        foreach ($map as [$entity, $key]) {
+            foreach (MetaSchema::getFields($entity) as $field) {
+                if ($field instanceof MediaField) {
+                    $where[$key][] = 'FIND_IN_SET(' . $escapedFilename . ', ' . $sql->escapeIdentifier($field->columnName($entity)) . ')';
+                }
+            }
         }
 
-        $where = [
-            'articles' => [],
-            'media' => [],
-            'clangs' => [],
-        ];
-        $escapedFilename = $sql->escape($params['filename']);
-        for ($i = 0; $i < $rows; ++$i) {
-            $name = (string) $sql->getValue('name');
-            $prefix = MetaInfo::metaPrefix($name);
-            if (self::PREFIX === $prefix) {
-                $key = 'media';
-            } elseif (LanguageHandler::PREFIX === $prefix) {
-                $key = 'clangs';
-            } elseif (CategoryHandler::PREFIX === $prefix) {
-                $key = 'categories';
-            } else {
-                $key = 'articles';
-            }
-            $where[$key][] = match ((int) $sql->getValue('type_id')) {
-                DefaultType::REX_MEDIA_WIDGET => 'FIND_IN_SET(' . $escapedFilename . ', ' . $sql->escapeIdentifier($name) . ')',
-                default => throw new LogicException('Unexpected fieldtype "' . $sql->getValue('type_id') . '".'),
-            };
-            $sql->next();
+        if ([] === array_merge(...array_values($where))) {
+            return $warning;
         }
 
         $articles = '';
@@ -76,7 +66,6 @@ final class MediaHandler extends AbstractHandler
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $clang = (int) $artArr['clang_id'];
-                $parentId = (int) $artArr['parent_id'];
                 $articles .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $clang]) . '\')">' . (string) $artArr['name'] . '</a></li>';
             }
             if ('' != $articles) {
@@ -131,63 +120,6 @@ final class MediaHandler extends AbstractHandler
         return $warning;
     }
 
-    protected function buildFilterCondition(array $params): string
-    {
-        $restrictionsCondition = '';
-
-        $catId = Request::session('media[rex_file_category]', 'int');
-        if (isset($params['activeItem'])) {
-            $catId = $params['activeItem']->getValue('category_id');
-        }
-
-        if ('' !== $catId) {
-            $s = '';
-            if (0 != $catId) {
-                $OOCat = Type::notNull(MediaCategory::get($catId));
-
-                // Alle Metafelder des Pfades sind erlaubt
-                foreach ($OOCat->path as $pathElement) {
-                    if ('' != $pathElement) {
-                        $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
-                    }
-                }
-            }
-
-            // Auch die Kategorie selbst kann Metafelder haben
-            $s .= ' OR FIND_IN_SET(' . $catId . ', `p`.`restrictions`)';
-
-            $restrictionsCondition = 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ')';
-        }
-
-        return $restrictionsCondition;
-    }
-
-    protected function handleSave(array $params, Sql $sqlFields): array
-    {
-        if ('post' != Request::requestMethod() || !isset($params['id'])) {
-            return $params;
-        }
-
-        $media = Sql::factory();
-        //  $media->setDebug();
-        $media->setTable(Core::getTablePrefix() . 'media');
-        $media->setWhere('id=:mediaid', ['mediaid' => $params['id']]);
-
-        parent::fetchRequestValues($params, $media, $sqlFields);
-
-        // do the save only when EP = MEDIA_ADDED/UPDATED and metafields are defined
-        if ($params['save'] && $media->hasValues()) {
-            $media->update();
-        }
-
-        return $params;
-    }
-
-    protected function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string
-    {
-        return $field;
-    }
-
     #[AsExtension('MEDIA_FORM_EDIT')]
     #[AsExtension('MEDIA_FORM_ADD')]
     #[AsExtension('MEDIA_ADDED', ExtensionLevel::Early)]
@@ -195,17 +127,16 @@ final class MediaHandler extends AbstractHandler
     public function extendForm(ExtensionPoint $ep): string
     {
         $params = $ep->getParams();
-        $params['save'] = in_array($ep->name, ['MEDIA_ADDED', 'MEDIA_UPDATED'], true);
+        $save = in_array($ep->name, ['MEDIA_ADDED', 'MEDIA_UPDATED'], true);
 
-        // Nur beim EDIT gibts auch ein Medium zum bearbeiten
+        $media = null;
         if ('MEDIA_FORM_EDIT' == $ep->name) {
-            $params['activeItem'] = $params['media'];
-            unset($params['media']);
+            // Only on edit there is an existing medium to edit.
+            /** @var object|null $media */
+            $media = $params['media'] ?? null;
         } elseif ('MEDIA_ADDED' == $ep->name) {
             $sql = Sql::factory();
-
-            $qry = 'SELECT id FROM ' . Core::getTablePrefix() . 'media WHERE filename=:filename';
-            $sql->setQuery($qry, ['filename' => $params['filename']]);
+            $sql->setQuery('SELECT id FROM ' . Core::getTablePrefix() . 'media WHERE filename=:filename', ['filename' => $params['filename']]);
             if (1 == $sql->getRows()) {
                 $params['id'] = (int) $sql->getValue('id');
             } else {
@@ -213,6 +144,26 @@ final class MediaHandler extends AbstractHandler
             }
         }
 
-        return $ep->subject . parent::renderFormAndSave(self::PREFIX, $params);
+        $catId = Request::session('media[rex_file_category]', 'int');
+        $ctx = new MetaContext(MetaEntity::Media, $media, mediaCategory: $catId > 0 ? MediaCategory::get($catId) : null);
+
+        if ($save && isset($params['id'])) {
+            $this->save((int) $params['id'], $ctx);
+        }
+
+        return $ep->subject . $this->renderFields($ctx);
+    }
+
+    private function save(int $id, MetaContext $ctx): void
+    {
+        $sql = Sql::factory();
+        $sql->setTable(Core::getTablePrefix() . 'media');
+        $sql->setWhere('id=:mediaid', ['mediaid' => $id]);
+
+        $this->saveRequestValues($sql, $ctx);
+
+        if ($sql->hasValues()) {
+            $sql->update();
+        }
     }
 }

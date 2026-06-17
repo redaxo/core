@@ -7,8 +7,6 @@ use Redaxo\Core\Database\ForeignKey;
 use Redaxo\Core\Database\Index;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
-use Redaxo\Core\MetaInfo\Database\Table as MetaInfoTable;
-use Redaxo\Core\MetaInfo\Form\DefaultType;
 
 Table::get(Core::getTable('clang'))
     ->ensurePrimaryIdColumn()
@@ -310,29 +308,6 @@ foreach ($data as $row) {
 
 $sql->insertOrUpdate();
 
-Table::get(Core::getTable('metainfo_type'))
-    ->ensurePrimaryIdColumn()
-    ->ensureColumn(new Column('label', 'varchar(255)', true))
-    ->ensureColumn(new Column('dbtype', 'varchar(255)'))
-    ->ensureColumn(new Column('dblength', 'int(11)'))
-    ->ensure();
-
-Table::get(Core::getTable('metainfo_field'))
-    ->ensurePrimaryIdColumn()
-    ->ensureColumn(new Column('title', 'varchar(255)', true))
-    ->ensureColumn(new Column('name', 'varchar(255)', true))
-    ->ensureColumn(new Column('priority', 'int(10) unsigned'))
-    ->ensureColumn(new Column('attributes', 'text'))
-    ->ensureColumn(new Column('type_id', 'int(10) unsigned', true))
-    ->ensureColumn(new Column('default', 'varchar(255)'))
-    ->ensureColumn(new Column('params', 'text', true))
-    ->ensureColumn(new Column('validate', 'text', true))
-    ->ensureColumn(new Column('restrictions', 'text', true))
-    ->ensureColumn(new Column('templates', 'text', true))
-    ->ensureGlobalColumns()
-    ->ensureIndex(new Index('name', ['name'], Index::UNIQUE))
-    ->ensure();
-
 Table::get(Core::getTable('user'))
     ->ensurePrimaryIdColumn()
     ->ensureColumn(new Column('name', 'varchar(255)', true))
@@ -436,67 +411,8 @@ foreach ($defaultConfig as $key => $value) {
     }
 }
 
-$data = [
-    ['id' => DefaultType::TEXT, 'label' => 'text', 'dbtype' => 'text', 'dblength' => 0],
-    ['id' => DefaultType::TEXTAREA, 'label' => 'textarea', 'dbtype' => 'text', 'dblength' => 0],
-    ['id' => DefaultType::SELECT, 'label' => 'select', 'dbtype' => 'varchar', 'dblength' => 255],
-    ['id' => DefaultType::RADIO, 'label' => 'radio', 'dbtype' => 'varchar', 'dblength' => 255],
-    ['id' => DefaultType::CHECKBOX, 'label' => 'checkbox', 'dbtype' => 'varchar', 'dblength' => 255],
-    ['id' => DefaultType::REX_MEDIA_WIDGET, 'label' => 'REX_MEDIA_WIDGET', 'dbtype' => 'text', 'dblength' => 0],
-    ['id' => DefaultType::REX_LINK_WIDGET, 'label' => 'REX_LINK_WIDGET', 'dbtype' => 'text', 'dblength' => 0],
-    ['id' => DefaultType::DATE, 'label' => 'date', 'dbtype' => 'text', 'dblength' => 0],
-    ['id' => DefaultType::DATETIME, 'label' => 'datetime', 'dbtype' => 'text', 'dblength' => 0],
-    ['id' => DefaultType::LEGEND, 'label' => 'legend', 'dbtype' => 'text', 'dblength' => 0],
-    ['id' => DefaultType::TIME, 'label' => 'time', 'dbtype' => 'text', 'dblength' => 0],
-    // XXX neue konstanten koennen hier nicht verwendet werden, da die updates mit der vorherigen version der klasse ausgefuehrt werden
-];
-
+// Drop the legacy metainfo definition tables; field/type definitions now live in code (MetaSchema).
+// The actual meta value columns in rex_article/rex_media/rex_clang are managed by MetaSync on migrate.
 $sql = Sql::factory();
-$sql->setTable(Core::getTable('metainfo_type'));
-foreach ($data as $row) {
-    $sql->addRecord(static function (Sql $record) use ($row) {
-        $record->setValues($row);
-    });
-}
-$sql->insertOrUpdate();
-
-$tablePrefixes = ['article' => ['art_', 'cat_'], 'media' => ['med_'], 'clang' => ['clang_']];
-$columns = ['article' => [], 'media' => [], 'clang' => []];
-foreach ($tablePrefixes as $table => $prefixes) {
-    foreach (Sql::showColumns(Core::getTable($table)) as $column) {
-        $column = $column['name'];
-        if (in_array(substr($column, 0, 4), $prefixes)) {
-            $columns[$table][$column] = true;
-        }
-    }
-}
-
-$sql = Sql::factory();
-$sql->setQuery('SELECT p.name, p.default, t.dbtype, t.dblength FROM ' . Core::getTable('metainfo_field') . ' p, ' . Core::getTable('metainfo_type') . ' t WHERE p.type_id = t.id');
-$managers = [
-    'article' => new MetaInfoTable(Core::getTable('article')),
-    'media' => new MetaInfoTable(Core::getTable('media')),
-    'clang' => new MetaInfoTable(Core::getTable('clang')),
-];
-for ($i = 0; $i < $sql->getRows(); ++$i) {
-    $column = (string) $sql->getValue('name');
-    if (str_starts_with($column, 'med_')) {
-        $table = 'media';
-    } elseif (str_starts_with($column, 'clang_')) {
-        $table = 'clang';
-    } else {
-        $table = 'article';
-    }
-
-    $default = $sql->getValue('default');
-    $default = null === $default ? $default : (string) $default;
-
-    if (isset($columns[$table][$column])) {
-        $managers[$table]->editColumn($column, $column, (string) $sql->getValue('dbtype'), (int) $sql->getValue('dblength'), $default);
-    } else {
-        $managers[$table]->addColumn($column, (string) $sql->getValue('dbtype'), (int) $sql->getValue('dblength'), $default);
-    }
-
-    unset($columns[$table][$column]);
-    $sql->next();
-}
+$sql->setQuery('DROP TABLE IF EXISTS ' . $sql->escapeIdentifier(Core::getTable('metainfo_field')));
+$sql->setQuery('DROP TABLE IF EXISTS ' . $sql->escapeIdentifier(Core::getTable('metainfo_type')));

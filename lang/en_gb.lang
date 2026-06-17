@@ -1106,73 +1106,7 @@ var_medialist_move_bottom  = move selected media to bottom
 perm_general_media[sync] = Mediapool: Synchronise files
 
 # metainfo
-metainfo = Metainfo
-metainfo_media = Media
-metainfo_categories = Categories
-metainfo_articles = Articles
-metainfo_clangs = Languages
-metainfo_help = Help
-
-minfo_title = Expand metainfos
-minfo_metainfos_not_found = No metainfo found
-
-minfo_field_list_caption = Field list
-
-minfo_field_fieldset = Edit/create field
-minfo_field_label_prefix = Prefix
-minfo_field_label_title = Field title
-minfo_field_label_name = Label name
-minfo_field_label_function = Function
-minfo_field_label_functions = Functions
-minfo_field_label_id = ID
-minfo_field_label_type = Field type
-minfo_field_label_attributes = Field attributes
-minfo_field_label_default = Default value
-minfo_field_label_nullable = Mandatory field
-minfo_field_label_params = Parameter
-minfo_field_label_priority = Field position
-minfo_field_label_restrictions = Available only in the following categories
-minfo_field_label_no_restrictions = Available in all categories
-minfo_field_label_all_templates = Available for all templates
-minfo_field_label_templates = Available only for the following templates
-
-minfo_field_notice_title = prefix "translate:" translates the value via I18N
-
-minfo_field_first_priority = At the beginning
-minfo_field_after_priority = After the field "{0}"
-
-minfo_field_params_notice_3 = Examples:<br />a) all|user|admin<br />b) 1:all|2:user|3:admin<br />c) SELECT label,id FROM my_table WHERE a=4<br />d) (DB2) SELECT label,id FROM my_table WHERE a=4
-minfo_field_params_notice_4 = Examples:<br />a) all|user|admin<br />b) 1:all|2:user|3:admin<br />c) SELECT label,id FROM my_table WHERE a=4<br />d) (DB2) SELECT label,id FROM my_table WHERE a=4
-minfo_field_params_notice_5 = Examples:<br />a) all|user|admin<br />b) 1:all|2:user|3:admin<br />c) SELECT label,id FROM my_table WHERE a=4<br />d) (DB2) SELECT label,id FROM my_table WHERE a=4
-minfo_field_params_notice_6 = Example:<br /> <code>category="1" types="gif,jpg" preview="1"</code>
-minfo_field_params_notice_7 = Example:<br /> <code>category="1" types="gif,jpg" preview="1"</code>
-minfo_field_params_notice_8 = Example:<br /> <code>category="1"</code>
-minfo_field_params_notice_9 = Example:<br /> <code>category="1"</code>
-minfo_field_params_notice_10 = Example:<br /> <code>start-year="1990" end-year="2030"</code>
-minfo_field_params_notice_11 = Example:<br /> <code>start-year="1990" end-year="2030"</code>
-
-minfo_field_attributes_notice = Example:<br /> style=color:red multiple=multiple class=my_css_class perm=admin[]
-
-minfo_field_error_name = Please enter the columns name!
-minfo_field_error_unique_name = This column name already exists!
-minfo_field_error_unique_type = This type name already exists!
-minfo_field_error_chars_name = This column name hat unallowed characters (allowed chars are A-Z, 0-9 and _)!
-minfo_field_error_invalid_prefix = This prefix is not valid!
-minfo_field_error_invalid_type = This type is not valid!
-minfo_field_error_invalid_length = This field length is not valid!
-minfo_field_error_invalid_name = This column name is not valid!
-minfo_field_error_invalid_fieldid = This field-id is not valid!
-minfo_field_error_invalid_typeid = This type-id is not valid!
-minfo_field_error_deleted = Field has not been deleted!
-minfo_field_successfull_deleted = Field has been deleted!
-minfo_field_successfull_saved = Field has been successfully saved!
-
-minfo_default_fields_create = Create default fields
-minfo_default_fields_created = Default fields successfully created!
-
-minfo_edit_metadata = Edit metainfo
 minfo_metadata_saved = Metainfos have been saved.
-
 minfo_media_in_use_art = Article (metadata)
 minfo_media_in_use_cat = Categories (metadata)
 minfo_media_in_use_med = Languages (metadata)

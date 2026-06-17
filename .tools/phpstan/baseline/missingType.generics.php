@@ -59,16 +59,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/MetaInfo/Handler/MediaHandler.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MetaInfo\\MetaInfo::cleanup() has parameter $epOrParams with generic class Redaxo\\Core\\ExtensionPoint\\ExtensionPoint but does not specify its types: T',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MetaInfo/MetaInfo.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MetaInfo\\MetaInfo::extensionHandler() has parameter $ep with generic class Redaxo\\Core\\ExtensionPoint\\ExtensionPoint but does not specify its types: T',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MetaInfo/MetaInfo.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Security\\UserRole::removeOrReplaceItem() has parameter $ep with generic class Redaxo\\Core\\ExtensionPoint\\ExtensionPoint but does not specify its types: T',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Security/UserRole.php',

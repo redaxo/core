@@ -10,80 +10,32 @@ use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\MetaInfo\MetaContext;
+use Redaxo\Core\MetaInfo\MetaEntity;
+
+use function in_array;
 
 /**
  * @internal
  */
 final class CategoryHandler extends AbstractHandler
 {
-    public const PREFIX = 'cat_';
     public const CONTAINER = 'rex-structure-category-metainfo';
 
     #[AsExtension('CAT_FORM_BUTTONS')]
     public function renderToggleButton(ExtensionPoint $ep): string
     {
-        $restrictionsCondition = $this->buildFilterCondition($ep->getParams());
+        $params = $ep->getParams();
 
-        $fields = parent::getSqlFields(self::PREFIX, $restrictionsCondition);
-        if ($fields->getRows() >= 1) {
-            $return = '<a class="btn btn-default collapsed" data-toggle="collapse" href="#' . self::CONTAINER . '"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>';
+        /** @var object|null $subject */
+        $subject = $params['category'] ?? null;
+        $category = isset($params['id']) ? Category::get((int) $params['id'], (int) $params['clang']) : null;
 
-            return $ep->subject . $return;
+        if ($this->hasFields(new MetaContext(MetaEntity::Category, $subject, $category))) {
+            return $ep->subject . '<a class="btn btn-default collapsed" data-toggle="collapse" href="#' . self::CONTAINER . '"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>';
         }
 
         return $ep->subject;
-    }
-
-    public function handleSave(array $params, Sql $sqlFields): array
-    {
-        if ('post' != Request::requestMethod()) {
-            return $params;
-        }
-
-        $article = Sql::factory();
-        // $article->setDebug();
-        $article->setTable(Core::getTablePrefix() . 'article');
-        $article->setWhere('id=:id AND clang_id=:clang', ['id' => $params['id'], 'clang' => $params['clang']]);
-
-        parent::fetchRequestValues($params, $article, $sqlFields);
-
-        // do the save only when metafields are defined
-        if ($article->hasValues()) {
-            $article->update();
-        }
-
-        // Artikel nochmal mit den zusätzlichen Werten neu generieren
-        ArticleCache::generateMeta($params['id'], $params['clang']);
-
-        return $params;
-    }
-
-    protected function buildFilterCondition(array $params): string
-    {
-        $s = '';
-
-        if (!empty($params['id'])) {
-            $OOCat = Category::require($params['id'], $params['clang']);
-
-            // Alle Metafelder des Pfades sind erlaubt
-            foreach ($OOCat->path as $pathElement) {
-                $s .= ' OR FIND_IN_SET(' . $pathElement . ', `p`.`restrictions`)';
-            }
-
-            // Auch die Kategorie selbst kann Metafelder haben
-            $s .= ' OR FIND_IN_SET(' . $params['id'] . ', `p`.`restrictions`)';
-        }
-
-        return 'AND (`p`.`restrictions` = "" OR `p`.`restrictions` IS NULL ' . $s . ')';
-    }
-
-    public function renderFormItem($field, $tag, $tagAttr, $id, $label, $labelIt, $inputType): string
-    {
-        if ('legend' == $inputType) {
-            return '<h3 class="form-legend">' . $label . '</h3>';
-        }
-
-        return $field;
     }
 
     #[AsExtension('CAT_FORM_ADD')]
@@ -93,27 +45,47 @@ final class CategoryHandler extends AbstractHandler
     public function extendForm(ExtensionPoint $ep): string
     {
         $params = $ep->getParams();
-        if (isset($params['category'])) {
-            $params['activeItem'] = $params['category'];
 
-            // Hier die category_id setzen, damit beim klick auf den REX_LINK_BUTTON der Medienpool in der aktuellen Kategorie startet
-            $params['activeItem']->setValue('category_id', $params['id']);
+        /** @var object|null $subject */
+        $subject = $params['category'] ?? null;
+        // The surrounding category (the edited category, or the parent when adding); null = root.
+        $category = isset($params['id']) ? Category::get((int) $params['id'], (int) $params['clang']) : null;
+
+        $ctx = new MetaContext(MetaEntity::Category, $subject, $category);
+
+        if ('post' == Request::requestMethod() && isset($params['id'])) {
+            $this->save((int) $params['id'], (int) $params['clang'], $ctx);
         }
 
-        $result = '
+        // On CAT_ADDED and CAT_UPDATED only save, render no form.
+        if (in_array($ep->name, ['CAT_UPDATED', 'CAT_ADDED'], true)) {
+            return $ep->subject;
+        }
+
+        return $ep->subject . '
             <tr id="' . self::CONTAINER . '" class="collapse mark">
                 <td colspan="2"></td>
                 <td colspan="5">
                     <div class="rex-collapse-content">
-                    ' . parent::renderFormAndSave(self::PREFIX, $params) . '
+                    ' . $this->renderFields($ctx) . '
                     </div>
                 </td>
             </tr>';
+    }
 
-        // Bei CAT_ADDED und CAT_UPDATED nur speichern und kein Formular zurückgeben
-        if ('CAT_UPDATED' == $ep->name || 'CAT_ADDED' == $ep->name) {
-            return $ep->subject;
+    private function save(int $id, int $clang, MetaContext $ctx): void
+    {
+        $sql = Sql::factory();
+        $sql->setTable(Core::getTablePrefix() . 'article');
+        $sql->setWhere('id=:id AND clang_id=:clang', ['id' => $id, 'clang' => $clang]);
+
+        $this->saveRequestValues($sql, $ctx);
+
+        if ($sql->hasValues()) {
+            $sql->update();
         }
-        return $ep->subject . $result;
+
+        // Regenerate the article with the additional values.
+        ArticleCache::generateMeta($id, $clang);
     }
 }

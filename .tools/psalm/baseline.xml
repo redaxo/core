@@ -1008,11 +1008,6 @@
       <code><![CDATA[$data['filename']]]></code>
     </MixedOperand>
   </file>
-  <file src="pages/metainfo/field.php">
-    <TypeDoesNotContainType>
-      <code><![CDATA[!is_string($metaTable)]]></code>
-    </TypeDoesNotContainType>
-  </file>
   <file src="pages/profile/auth_methods.php">
     <InvalidOperand>
       <code><![CDATA[escape($id)]]></code>
@@ -2963,205 +2958,10 @@
       <code><![CDATA[Core::getProperty('blocked_extensions', [])]]></code>
     </NullableReturnStatement>
   </file>
-  <file src="src/MetaInfo/ApiFunction/DefaultFieldsCreate.php">
-    <InvalidScalarArgument>
-      <code><![CDATA[$field]]></code>
-      <code><![CDATA[$field]]></code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="src/MetaInfo/Form/Field/RestrictionField.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$value]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$this->value]]></code>
-    </MixedAssignment>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-    </PossiblyInvalidOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$id]]></code>
-      <code><![CDATA[$id]]></code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/MetaInfo/Form/Input/AbstractInput.php">
-    <InvalidPropertyAssignmentValue>
-      <code><![CDATA[$value]]></code>
-    </InvalidPropertyAssignmentValue>
-    <MixedReturnStatement>
-      <code><![CDATA[$this->attributes[$name] ?? $default]]></code>
-      <code><![CDATA[$this->attributes[$name] ?? $default]]></code>
-    </MixedReturnStatement>
-    <MixedReturnTypeCoercion>
-      <code><![CDATA[$this->getValue()]]></code>
-    </MixedReturnTypeCoercion>
-    <PossiblyInvalidPropertyAssignmentValue>
-      <code><![CDATA[$value]]></code>
-    </PossiblyInvalidPropertyAssignmentValue>
-  </file>
-  <file src="src/MetaInfo/Form/Input/ArticleInput.php">
-    <InvalidScalarArgument>
-      <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="src/MetaInfo/Form/Input/DateInput.php">
-    <InvalidArgument>
-      <code><![CDATA[$value]]></code>
-    </InvalidArgument>
-    <MixedArgument>
-      <code><![CDATA[$end]]></code>
-      <code><![CDATA[$start]]></code>
-    </MixedArgument>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$value['day']]]></code>
-      <code><![CDATA[$value['month']]]></code>
-      <code><![CDATA[$value['year']]]></code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="src/MetaInfo/Form/Input/MediaInput.php">
-    <InvalidScalarArgument>
-      <code><![CDATA[$name]]></code>
-    </InvalidScalarArgument>
-  </file>
-  <file src="src/MetaInfo/Form/Input/SelectInput.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$value]]></code>
-    </ArgumentTypeCoercion>
-  </file>
-  <file src="src/MetaInfo/Form/Input/TimeInput.php">
-    <InvalidArgument>
-      <code><![CDATA[$value]]></code>
-    </InvalidArgument>
-    <MixedArgument>
-      <code><![CDATA[$end]]></code>
-      <code><![CDATA[$start]]></code>
-    </MixedArgument>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$value['hour']]]></code>
-      <code><![CDATA[$value['minute']]]></code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="src/MetaInfo/Form/MetaInfoForm.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$tableName]]></code>
-    </ArgumentTypeCoercion>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$params]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$params['id']]]></code>
-    </MixedAssignment>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$field->getAttribute('id')]]></code>
-    </PossiblyInvalidOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$fieldAttributes]]></code>
-      <code><![CDATA[$fieldDefault]]></code>
-      <code><![CDATA[$fieldDefault]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand>
-      <code><![CDATA[$field->getAttribute('id')]]></code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/MetaInfo/Handler/AbstractHandler.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$dbvalues]]></code>
-      <code><![CDATA[$dbvalues[0]]]></code>
-      <code><![CDATA[$dbvalues[0]]]></code>
-    </ArgumentTypeCoercion>
-    <MixedArgument>
-      <code><![CDATA[$activeItem->getValue($name)]]></code>
-      <code><![CDATA[$activeItem->getValue($name)]]></code>
-      <code><![CDATA[$itemValue]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$attrArray]]></code>
-      <code><![CDATA[$attrArray]]></code>
-      <code><![CDATA[$attrArray]]></code>
-      <code><![CDATA[$attrArray]]></code>
-      <code><![CDATA[$attrArray]]></code>
-      <code><![CDATA[$attrArray]]></code>
-      <code><![CDATA[$attrArray]]></code>
-      <code><![CDATA[$attrName]]></code>
-      <code><![CDATA[$postValue]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$activeItem]]></code>
-      <code><![CDATA[$category]]></code>
-      <code><![CDATA[$itemValue]]></code>
-      <code><![CDATA[$postValue]]></code>
-      <code><![CDATA[$saveValue]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getValue]]></code>
-      <code><![CDATA[getValue]]></code>
-      <code><![CDATA[getValue]]></code>
-      <code><![CDATA[getValue]]></code>
-      <code><![CDATA[setValue]]></code>
-    </MixedMethodCall>
-    <MixedOperand>
-      <code><![CDATA[$postValue]]></code>
-    </MixedOperand>
-    <MixedReturnStatement>
-      <code><![CDATA[$saveValue]]></code>
-      <code><![CDATA[$saveValue]]></code>
-    </MixedReturnStatement>
-    <NullOperand>
-      <code><![CDATA[escape(preg_replace('/[^a-zA-Z0-9_-]/', '_', $name))]]></code>
-    </NullOperand>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$dbvalues[0]]]></code>
-      <code><![CDATA[$dbvalues[0]]]></code>
-      <code><![CDATA[$dbvalues[0]]]></code>
-      <code><![CDATA[$temp[1]]]></code>
-      <code><![CDATA[$temp[1]]]></code>
-    </PossiblyUndefinedArrayOffset>
-    <RedundantCondition>
-      <code><![CDATA['datetime' == $typeLabel]]></code>
-    </RedundantCondition>
-  </file>
-  <file src="src/MetaInfo/Handler/ArticleHandler.php">
-    <MixedArgument>
-      <code><![CDATA[$params['clang']]]></code>
-      <code><![CDATA[$params['clang']]]></code>
-      <code><![CDATA[$params['clang']]]></code>
-      <code><![CDATA[$params['id']]]></code>
-      <code><![CDATA[$params['id']]]></code>
-      <code><![CDATA[$params['id']]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$params]]></code>
-      <code><![CDATA[['id' => $params['id'], 'clang' => $params['clang']]]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$params['activeItem']]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[setValue]]></code>
-    </MixedMethodCall>
-  </file>
   <file src="src/MetaInfo/Handler/CategoryHandler.php">
-    <MixedArgument>
-      <code><![CDATA[$params['clang']]]></code>
-      <code><![CDATA[$params['clang']]]></code>
-      <code><![CDATA[$params['id']]]></code>
-      <code><![CDATA[$params['id']]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[['id' => $params['id'], 'clang' => $params['clang']]]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$params['activeItem']]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[setValue]]></code>
-    </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$ep->subject]]></code>
       <code><![CDATA[$ep->subject]]></code>
-      <code><![CDATA[$params['id']]]></code>
     </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[$ep->subject]]></code>
@@ -3169,12 +2969,6 @@
     </MixedReturnStatement>
   </file>
   <file src="src/MetaInfo/Handler/LanguageHandler.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[['id' => $params['id']]]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$params['activeItem']]]></code>
-    </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$ep->subject]]></code>
       <code><![CDATA[$ep->subject]]></code>
@@ -3188,16 +2982,11 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[['clang_id' => $clangArr['id'], 'func' => 'editclang']]]></code>
     </ArgumentTypeCoercion>
-    <InvalidOperand>
-      <code><![CDATA[$sql->getValue('type_id')]]></code>
-    </InvalidOperand>
     <MixedArgument>
-      <code><![CDATA[$catId]]></code>
       <code><![CDATA[$params['filename']]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[['filename' => $params['filename']]]]></code>
-      <code><![CDATA[['mediaid' => $params['id']]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedArrayAssignment>
       <code><![CDATA[$warning[]]]></code>
@@ -3206,15 +2995,9 @@
       <code><![CDATA[$warning[]]]></code>
     </MixedArrayAssignment>
     <MixedAssignment>
-      <code><![CDATA[$catId]]></code>
-      <code><![CDATA[$params['activeItem']]]></code>
       <code><![CDATA[$warning]]></code>
     </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getValue]]></code>
-    </MixedMethodCall>
     <MixedOperand>
-      <code><![CDATA[$catId]]></code>
       <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
     <MixedReturnStatement>
@@ -3222,35 +3005,6 @@
       <code><![CDATA[$warning]]></code>
       <code><![CDATA[$warning]]></code>
     </MixedReturnStatement>
-    <PossiblyNullOperand>
-      <code><![CDATA[$sql->getValue('type_id')]]></code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="src/MetaInfo/MetaInfo.php">
-    <InvalidArgument>
-      <code><![CDATA[['id' => $fieldId]]]></code>
-    </InvalidArgument>
-    <MixedArgument>
-      <code><![CDATA[$params['content']]]></code>
-      <code><![CDATA[$params['content']]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$metaTables[$prefix]]]></code>
-    </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$metaTables]]></code>
-      <code><![CDATA[$page]]></code>
-    </MixedAssignment>
-    <MixedReturnStatement>
-      <code><![CDATA[$metaTables[$prefix] ?? false]]></code>
-      <code><![CDATA[$metaTables[$prefix] ?? false]]></code>
-    </MixedReturnStatement>
-    <NullableReturnStatement>
-      <code><![CDATA[$metaTables[$prefix] ?? false]]></code>
-    </NullableReturnStatement>
-    <PossiblyNullArrayAccess>
-      <code><![CDATA[$metaTables[$prefix]]]></code>
-    </PossiblyNullArrayAccess>
   </file>
   <file src="src/RexVar/MediaListVar.php">
     <MixedArgument>

@@ -1143,73 +1143,7 @@ var_medialist_move_bottom = Ausgewähltes Medium an das Ende verschieben
 perm_general_media[sync] = Medienpool: Dateien synchronisieren
 
 # metainfo
-metainfo = Metainfo
-metainfo_media = Medien
-metainfo_categories = Kategorien
-metainfo_articles = Artikel
-metainfo_clangs = Sprachen
-metainfo_help = Hilfe
-
-minfo_title = Metainformationen erweitern
-minfo_metainfos_not_found = Es wurden keine Metainformationen gefunden
-
-minfo_field_list_caption = Liste der Metafelder
-
-minfo_field_fieldset = Feld bearbeiten/erstellen
-minfo_field_label_prefix = Prefix
-minfo_field_label_title = Feldbezeichnung
-minfo_field_label_name = Spaltenname
-minfo_field_label_function = Funktion
-minfo_field_label_functions = Funktionen
-minfo_field_label_id = Id
-minfo_field_label_type = Feldtyp
-minfo_field_label_attributes = Feld-Attribute
-minfo_field_label_default = Standardwert
-minfo_field_label_nullable = Pflichtfeld
-minfo_field_label_params = Parameter
-minfo_field_label_priority = Feldposition
-minfo_field_label_restrictions = Nur in folgenden Kategorien verfügbar
-minfo_field_label_no_restrictions = In allen Kategorien verfügbar
-minfo_field_label_all_templates = Für alle Templates verfügbar
-minfo_field_label_templates = Nur für folgende Templates verfügbar
-
-minfo_field_notice_title = Prefix "translate:" übersetzt den Wert via I18N
-
-minfo_field_first_priority = Am Anfang
-minfo_field_after_priority = Nach dem Feld "{0}"
-
-minfo_field_params_notice_3 = Beispiele:<br />a) <code>all|user|admin</code><br />b) <code>1:all|2:user|3:admin</code><br />c) <code>SELECT label,id FROM my_table WHERE a=4</code><br />d) <code>(DB2) SELECT label,id FROM my_table WHERE a=4</code>
-minfo_field_params_notice_4 = Beispiele:<br />a) <code>all|user|admin</code><br />b) <code>1:all|2:user|3:admin</code><br />c) <code>SELECT label,id FROM my_table WHERE a=4</code><br />d) <code>(DB2) SELECT label,id FROM my_table WHERE a=4</code>
-minfo_field_params_notice_5 = Beispiele:<br />a) <code>all|user|admin</code><br />b) <code>1:all|2:user|3:admin</code><br />c) <code>SELECT label,id FROM my_table WHERE a=4</code><br />d) <code>(DB2) SELECT label,id FROM my_table WHERE a=4</code>
-minfo_field_params_notice_6 = Beispiel:<br /> <code>category="1" types="gif,jpg" preview="1"</code>
-minfo_field_params_notice_7 = Beispiel:<br /> <code>category="1" types="gif,jpg" preview="1"</code>
-minfo_field_params_notice_8 = Beispiel:<br /> <code>category="1"</code>
-minfo_field_params_notice_9 = Beispiel:<br /> <code>category="1"</code>
-minfo_field_params_notice_10 = Beispiel:<br /> <code>start-year="1990" end-year="2030"</code>
-minfo_field_params_notice_11 = Beispiel:<br /> <code>start-year="1990" end-year="2030"</code>
-
-minfo_field_attributes_notice = HTML-Attribute beim input-Feld und Permissions, zum Beispiel:<br /><code>style="color:red;" multiple="multiple" class="my_css_class" perm="admin[]" note="Notiz"</code>
-
-minfo_field_error_name = Bitte Spaltennamen eingeben!
-minfo_field_error_unique_name = Der angegebene Spaltenname existiert schon!
-minfo_field_error_unique_type = Der angegebene Typename existiert schon!
-minfo_field_error_chars_name = Der Spaltennamen enthält ungültige Zeichen (Erlaubt sind A-Z, 0-9 und _)!
-minfo_field_error_invalid_prefix = Der angegebene Prefix ist ungültig!
-minfo_field_error_invalid_type = Der angegebene Type ist ungültig!
-minfo_field_error_invalid_length = Die angegebene Feldlänge ist ungültig!
-minfo_field_error_invalid_name = Der angegebene Spaltenname ist ungültig!
-minfo_field_error_invalid_fieldid = Die angegebene Feld-Id ist ungültig!
-minfo_field_error_invalid_typeid = Die angegebene Type-Id ist ungültig!
-minfo_field_error_deleted = Feld wurde nicht gelöscht!
-minfo_field_successfull_deleted = Feld erfolgreich gelöscht!
-minfo_field_successfull_saved = Daten erfolgreich gespeichert!
-
-minfo_default_fields_create = Standardfelder erstellen
-minfo_default_fields_created = Standardfelder erfolgreich erstellt!
-
-minfo_edit_metadata = Metadaten bearbeiten
 minfo_metadata_saved = Die Metadaten wurden gespeichert.
-
 minfo_media_in_use_art = Artikel (Metadaten)
 minfo_media_in_use_cat = Kategorien (Metadaten)
 minfo_media_in_use_med = Medien (Metadaten)
