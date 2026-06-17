@@ -18,8 +18,8 @@ use Redaxo\Core\Language\Language;
 use Redaxo\Core\Log\Logger;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Timer;
-
 use Redaxo\Core\Util\Type;
+
 use function Redaxo\Core\View\escape;
 
 if (!rex_debug_clockwork::isRexDebugEnabled() || 'debug' === Request::get(ApiFunction::REQ_CALL_PARAM)) {
