@@ -6,7 +6,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
-use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
@@ -31,6 +31,7 @@ final class MediaHandler extends AbstractHandler
      *
      * @return list<string>
      */
+    #[AsExtension('MEDIA_IS_IN_USE')]
     public static function isMediaInUse(ExtensionPoint $ep): array
     {
         $params = $ep->getParams();
@@ -187,6 +188,10 @@ final class MediaHandler extends AbstractHandler
         return $field;
     }
 
+    #[AsExtension('MEDIA_FORM_EDIT')]
+    #[AsExtension('MEDIA_FORM_ADD')]
+    #[AsExtension('MEDIA_ADDED', ExtensionLevel::Early)]
+    #[AsExtension('MEDIA_UPDATED', ExtensionLevel::Early)]
     public function extendForm(ExtensionPoint $ep): string
     {
         $params = $ep->getParams();
@@ -211,13 +216,3 @@ final class MediaHandler extends AbstractHandler
         return $ep->subject . parent::renderFormAndSave(self::PREFIX, $params);
     }
 }
-
-$mediaHandler = new MediaHandler();
-
-Extension::register('MEDIA_FORM_EDIT', $mediaHandler->extendForm(...));
-Extension::register('MEDIA_FORM_ADD', $mediaHandler->extendForm(...));
-
-Extension::register('MEDIA_ADDED', $mediaHandler->extendForm(...), ExtensionLevel::Early);
-Extension::register('MEDIA_UPDATED', $mediaHandler->extendForm(...), ExtensionLevel::Early);
-
-Extension::register('MEDIA_IS_IN_USE', MediaHandler::isMediaInUse(...));
