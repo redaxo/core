@@ -2,6 +2,7 @@
 
 use Clockwork\Clockwork;
 use Clockwork\DataSource\XdebugDataSource;
+use Clockwork\Request\Request;
 use Clockwork\Support\Vanilla\Clockwork as VanillaClockwork;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
@@ -9,6 +10,7 @@ use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
+use Redaxo\Core\Util\Type;
 
 /**
  * @internal
@@ -28,7 +30,9 @@ final class rex_debug_clockwork
             'storage_expiration' => 60 * 24 * 2,
         ]);
         if (extension_loaded('xdebug')) {
-            $clockwork->getClockwork()->addDataSource(new XdebugDataSource());
+            /** @var Clockwork $instance */
+            $instance = $clockwork->getClockwork();
+            $instance->addDataSource(new XdebugDataSource());
         }
 
         return $clockwork;
@@ -36,7 +40,14 @@ final class rex_debug_clockwork
 
     public static function getInstance(): Clockwork
     {
+        /** @var Clockwork */
         return self::getHelper()->getClockwork();
+    }
+
+    public static function getRequest(): Request
+    {
+        /** @var Request */
+        return self::getInstance()->getRequest();
     }
 
     public static function getHelper(): VanillaClockwork
@@ -47,9 +58,9 @@ final class rex_debug_clockwork
     public static function getFullClockworkApiUrl(): string
     {
         $https = isset($_SERVER['HTTPS']) && 'on' == $_SERVER['HTTPS'];
-        $host = $_SERVER['HTTP_HOST'];
+        $host = Type::string($_SERVER['HTTP_HOST'] ?? null);
         $port = $_SERVER['SERVER_PORT'] ?? null;
-        $uri = dirname($_SERVER['REQUEST_URI']) . '/' . self::getClockworkApiUrl();
+        $uri = dirname(Type::string($_SERVER['REQUEST_URI'] ?? null)) . '/' . self::getClockworkApiUrl();
 
         $scheme = $https ? 'https' : 'http';
         $port = (!$https && 80 != $port || $https && 443 != $port) ? ":{$port}" : '';

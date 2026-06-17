@@ -1,6 +1,8 @@
 <?php
 
 use Clockwork\Clockwork;
+use Clockwork\Request\Timeline\Timeline;
+use Clockwork\Request\UserData;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\Backend\Controller;
@@ -16,6 +18,7 @@ use Redaxo\Core\Language\Language;
 use Redaxo\Core\Log\Logger;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Timer;
+use Redaxo\Core\Util\Type;
 
 use function Redaxo\Core\View\escape;
 
@@ -24,7 +27,7 @@ if (!rex_debug_clockwork::isRexDebugEnabled() || 'debug' === Request::get(ApiFun
 }
 
 if (Core::isBackend() && 'debug' === Request::get('page') && Core::getUser()?->admin) {
-    $index = file_get_contents(Addon::require('debug')->getAssetsPath('clockwork/index.html'));
+    $index = Type::string(file_get_contents(Addon::require('debug')->getAssetsPath('clockwork/index.html')));
 
     $editor = Editor::factory();
     $curEditor = $editor->getName();
@@ -40,7 +43,7 @@ if (Core::isBackend() && 'debug' === Request::get('page') && Core::getUser()?->a
     }
 
     // prepend backend folder
-    $apiUrl = dirname($_SERVER['REQUEST_URI']) . '/' . rex_debug_clockwork::getClockworkApiUrl();
+    $apiUrl = dirname(Type::string($_SERVER['REQUEST_URI'] ?? null)) . '/' . rex_debug_clockwork::getClockworkApiUrl();
     $appearance = Core::getTheme();
     if (!$appearance) {
         $appearance = 'auto';
@@ -84,25 +87,26 @@ Extension::setFactoryClass(rex_extension_debug::class);
 Logger::setFactoryClass(rex_logger_debug::class);
 ApiFunction::setFactoryClass(rex_api_function_debug::class);
 
-Response::setHeader('X-Clockwork-Id', rex_debug_clockwork::getInstance()->getRequest()->id);
+Response::setHeader('X-Clockwork-Id', Type::string(rex_debug_clockwork::getRequest()->id));
 Response::setHeader('X-Clockwork-Version', Clockwork::VERSION);
 
 Response::setHeader('X-Clockwork-Path', rex_debug_clockwork::getClockworkApiUrl());
 
 $shutdownFn = static function () {
     $clockwork = rex_debug_clockwork::getInstance();
+    $req = rex_debug_clockwork::getRequest();
 
-    $clockwork->timeline()->finalize($clockwork->getRequest()->time);
+    /** @var Timeline $timeline */
+    $timeline = $clockwork->timeline();
+    $timeline->finalize($req->time);
 
     foreach (Timer::$serverTimings as $label => $timings) {
         foreach ($timings['timings'] as $timing) {
             if ($timing['end'] - $timing['start'] >= 0.001) {
-                $clockwork->timeline()->event($label, ['start' => $timing['start'], 'end' => $timing['end']]);
+                $timeline->event($label, ['start' => $timing['start'], 'end' => $timing['end']]);
             }
         }
     }
-
-    $req = $clockwork->getRequest();
 
     if (Core::isFrontend()) {
         $req->controller = 'article: ' . Article::getCurrentId() . '; clang: ' . Language::getCurrent()->code;
@@ -110,7 +114,9 @@ $shutdownFn = static function () {
         $req->controller = 'page: ' . Controller::getCurrentPage();
     }
 
+    /** @var array{query: string, duration: float} $query */
     foreach ($req->databaseQueries as $query) {
+        /** @psalm-suppress MixedOperand */
         match (Sql::getQueryType($query['query'])) {
             'SELECT' => $req->databaseSelects++,
             'INSERT' => $req->databaseInserts++,
@@ -119,19 +125,21 @@ $shutdownFn = static function () {
             default => $req->databaseOthers++,
         };
         if ($query['duration'] > 20) {
+            /** @psalm-suppress MixedOperand */
             ++$req->databaseSlowQueries;
         }
     }
 
-    $ep = $clockwork->getRequest()->userData('ep');
+    /** @var UserData $ep */
+    $ep = $req->userData('ep');
     $ep->title('Extension Point');
     $ep->counters([
-        'Extension Points' => count(rex_extension_debug::getExtensionPoints()),
-        'Registered Extensions' => count(rex_extension_debug::getExtensions()),
+        'Extension Points' => count(rex_extension_debug::$extensionPoints),
+        'Registered Extensions' => count(rex_extension_debug::$extensions),
     ]);
 
-    $ep->table('Executed Extension Points', rex_extension_debug::getExtensionPoints());
-    $ep->table('Registered Extensions', rex_extension_debug::getExtensions());
+    $ep->table('Executed Extension Points', rex_extension_debug::$extensionPoints);
+    $ep->table('Registered Extensions', rex_extension_debug::$extensions);
 };
 
 if ('cli' === PHP_SAPI) {
@@ -147,22 +155,21 @@ if ('cli' === PHP_SAPI) {
         rex_debug_clockwork::ensureStoragePath();
 
         $clockwork = rex_debug_clockwork::getInstance();
-        $clockwork
-            ->resolveAsCommand(
-                $command->getName(),
-                $exitCode,
-                array_diff($input->getArguments(), $command->getDefinition()->getArgumentDefaults()),
-                array_diff($input->getOptions(), $command->getDefinition()->getOptionDefaults()),
-                $command->getDefinition()->getArgumentDefaults(),
-                $command->getDefinition()->getOptionDefaults(),
-                // $output->fetch()
-            )
-        ->storeRequest();
+        $clockwork->resolveAsCommand(
+            $command->getName(),
+            $exitCode,
+            array_diff($input->getArguments(), $command->getDefinition()->getArgumentDefaults()),
+            array_diff($input->getOptions(), $command->getDefinition()->getOptionDefaults()),
+            $command->getDefinition()->getArgumentDefaults(),
+            $command->getDefinition()->getOptionDefaults(),
+            // $output->fetch()
+        );
+        $clockwork->storeRequest();
     });
 } else {
     register_shutdown_function(static function () use ($shutdownFn) {
         // don't track preflight requests
-        if (in_array($_SERVER['REQUEST_URI'], ['/__clockwork/latest', '/assets/addons/debug/clockwork/manifest.json'], true)) {
+        if (in_array($_SERVER['REQUEST_URI'] ?? null, ['/__clockwork/latest', '/assets/addons/debug/clockwork/manifest.json'], true)) {
             return;
         }
 
@@ -172,6 +179,7 @@ if ('cli' === PHP_SAPI) {
         rex_debug_clockwork::ensureStoragePath();
 
         $clockwork = rex_debug_clockwork::getInstance();
-        $clockwork->resolveRequest()->storeRequest();
+        $clockwork->resolveRequest();
+        $clockwork->storeRequest();
     });
 }

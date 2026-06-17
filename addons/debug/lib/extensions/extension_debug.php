@@ -12,8 +12,11 @@ use Redaxo\Core\Util\Timer;
  */
 final class rex_extension_debug extends Extension
 {
-    private static array $extensionPoints = [];
-    private static array $extensions = [];
+    /** @var list<array<string, mixed>> */
+    public static array $extensionPoints = [];
+    /** @var list<array<string, mixed>> */
+    public static array $extensions = [];
+    /** @var array<string, list<string>> */
     private static array $listeners = [];
 
     public static function dispatch(ExtensionPoint $extensionPoint): mixed
@@ -67,7 +70,7 @@ final class rex_extension_debug extends Extension
         }
 
         foreach ($extensionPoint as $ep) {
-            self::$listeners[$ep][] = $trace['file'] . ':' . $trace['line'];
+            self::$listeners[$ep][] = ($trace['file'] ?? 'unknown') . (isset($trace['line']) ? ':' . $trace['line'] : '');
 
             self::$extensions[] = [
                 '#' => count(self::$extensions),
@@ -76,15 +79,5 @@ final class rex_extension_debug extends Extension
                 'line' => $trace['line'],
             ];
         }
-    }
-
-    public static function getExtensionPoints(): array
-    {
-        return self::$extensionPoints;
-    }
-
-    public static function getExtensions(): array
-    {
-        return self::$extensions;
     }
 }
