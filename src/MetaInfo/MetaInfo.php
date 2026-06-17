@@ -9,14 +9,17 @@ use Redaxo\Core\Database\Table;
 use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\ExtensionPoint\AsExtension;
+use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\MetaInfo\Database\Table as MetaInfoTable;
+use Redaxo\Core\MetaInfo\Handler\CategoryHandler;
+use Redaxo\Core\MetaInfo\Handler\LanguageHandler;
+use Redaxo\Core\MetaInfo\Handler\MediaHandler;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Asset;
 
-use function dirname;
 use function in_array;
 use function is_int;
 
@@ -223,13 +226,13 @@ final class MetaInfo
             Asset::addJsFile(Url::coreAssets('js/metainfo.js'), [Asset::JS_IMMUTABLE => true]);
         }
 
-        // include extensions
+        // Register the handler instance backing the non-static #[AsExtension] methods for the current page.
         if ('structure' == $page) {
-            require_once dirname(__DIR__) . '/MetaInfo/Handler/CategoryHandler.php';
+            Extension::registerInstance(new CategoryHandler());
         } elseif ('mediapool' == $mainpage) {
-            require_once dirname(__DIR__) . '/MetaInfo/Handler/MediaHandler.php';
+            Extension::registerInstance(new MediaHandler());
         } elseif ('system/lang' == $page) {
-            require_once dirname(__DIR__) . '/MetaInfo/Handler/LanguageHandler.php';
+            Extension::registerInstance(new LanguageHandler());
         }
     }
 
