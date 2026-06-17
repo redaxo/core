@@ -225,7 +225,10 @@ class Sql implements Iterator
         return self::$pdo[$this->DBID];
     }
 
-    /** @param string $host the host. might optionally include a port. */
+    /**
+     * @param string $host the host. might optionally include a port.
+     * @param array<int, bool|string> $options
+     */
     protected static function createConnection(
         #[SensitiveParameter] string $host,
         #[SensitiveParameter] string $database,
@@ -1785,7 +1788,7 @@ class Sql implements Iterator
      * Datenbank an.
      *
      * @param string $host the host. might optionally include a port.
-     * @param array<array-key, bool|string> $options Additional PDO options (e.g., SSL options)
+     * @param array<int, bool|string> $options Additional PDO options (e.g., SSL options)
      */
     public static function checkDbConnection(
         #[SensitiveParameter] string $host,
@@ -1892,7 +1895,7 @@ class Sql implements Iterator
     /**
      * Create SSL options array from database configuration.
      *
-     * @return array<array-key, bool|string> SSL options for PDO connection
+     * @return array<int, bool|string> SSL options for PDO connection
      *
      * @internal
      */

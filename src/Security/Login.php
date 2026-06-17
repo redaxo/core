@@ -289,7 +289,7 @@ class Login
     /**
      * Setzte eine Session-Variable.
      *
-     * @param scalar|array|null $value
+     * @param scalar|array<array-key, scalar>|null $value
      */
     public function setSessionVar(string $varname, mixed $value): void
     {
@@ -306,7 +306,7 @@ class Login
      *     ($varname is 'password' ? string|null :
      *     ($varname is 'impersonator' ? int|null :
      *     ($varname is 'last_db_update' ? int|null :
-     *     mixed
+     *     scalar|array<array-key, scalar>|null
      *     )))))
      * )
      */

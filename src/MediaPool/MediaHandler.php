@@ -47,6 +47,7 @@ final class MediaHandler
      * @param array{category_id: int, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}} $data
      * @param bool $doSubindexing // echte Dateinamen anpassen, falls schon vorhanden
      * @param list<string> $types Restrict the allowed file extensions to these types
+     * @return array{category_id: int, title: string, file: array{name: string, path: string, tmp_name?: string, error?: int, name_new: string, type: string|null}, width?: int, height?: int, message: string, type: string|null, msg: string, filename: string, old_filename: string, ok: 1}
      */
     public static function addMedia(array $data, bool $doSubindexing = true, array $types = []): array
     {
@@ -180,6 +181,7 @@ final class MediaHandler
      * wird eventuell angepasst, weiterhin werden die Fileinformationen übergeben.
      *
      * @param array{category_id: int, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}} $data
+     * @return array{category_id: int, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}, ok: 1, msg: string, id: int, filename: string, type: string|null, filetype: string|null}
      */
     public static function updateMedia(string $filename, array $data): array
     {

@@ -223,7 +223,7 @@ Asset::addJsFile(Url::coreAssets('jquery-ui.custom.min.js'), [Asset::JS_IMMUTABL
 Asset::addJsFile(Url::coreAssets('jquery-pjax.min.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('standard.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('clipboard-copy-element.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE]);
+Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => true]);
 
 Asset::setJsProperty('backend', true);
 Asset::setJsProperty('accesskeys', Accesskey::$enabled);

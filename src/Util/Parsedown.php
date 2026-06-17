@@ -37,7 +37,7 @@ final class Parsedown extends ParsedownExtra
         }
     }
 
-    /** @return array|null */
+    /** @return array<string, mixed>|null */
     #[Override]
     protected function blockHeader($Line)
     {
@@ -46,7 +46,10 @@ final class Parsedown extends ParsedownExtra
         return $this->handleHeader($block);
     }
 
-    /** @return array|null */
+    /**
+     * @param array<array-key, mixed>|null $Block
+     * @return array<string, mixed>|null
+     */
     #[Override]
     protected function blockSetextHeader($Line, ?array $Block = null)
     {
@@ -55,11 +58,11 @@ final class Parsedown extends ParsedownExtra
         return $this->handleHeader($block);
     }
 
-    /** @return array */
+    /** @return array<string, mixed> */
     #[Override]
     protected function blockFencedCodeComplete($Block)
     {
-        /** @var array $Block */
+        /** @var array<string, mixed> $Block */
         $Block = parent::blockFencedCodeComplete($Block);
 
         if (!$this->highlightPhp) {
@@ -101,6 +104,10 @@ final class Parsedown extends ParsedownExtra
         return $Block;
     }
 
+    /**
+     * @param array<string, mixed>|null $block
+     * @return array<string, mixed>|null
+     */
     private function handleHeader(?array $block = null): ?array
     {
         if (!$this->generateToc) {
