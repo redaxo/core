@@ -4,36 +4,6 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method rex_debug::getTrace() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../addons/debug/lib/debug.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_extension_debug::getExtensionPoints() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_extension_debug::getExtensions() return type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property rex_extension_debug::$extensionPoints type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property rex_extension_debug::$extensions type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Property rex_extension_debug::$listeners type has no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../addons/debug/lib/extensions/extension_debug.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Content\\ArticleHandler::addArticle() has parameter $data with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Content/ArticleHandler.php',
