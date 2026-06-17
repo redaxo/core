@@ -7,6 +7,7 @@ use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Setup\Setup;
 
 use function count;
 use function dirname;
@@ -238,12 +239,20 @@ final class Config
     private static function load(): void
     {
         // check if we can load the config from the filesystem
-        if (!self::loadFromFile()) {
-            // if not possible, fallback to load config from the db
-            self::loadFromDb();
-            // afterwards persist loaded data into file-cache
-            self::generateCache();
+        if (self::loadFromFile()) {
+            return;
         }
+
+        // during setup there may be no (working) database yet, so skip the db fallback
+        // and keep the config empty (consumers fall back to their defaults)
+        if (Setup::isEnabled()) {
+            return;
+        }
+
+        // fallback to load config from the db
+        self::loadFromDb();
+        // afterwards persist loaded data into file-cache
+        self::generateCache();
     }
 
     /**
