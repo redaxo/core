@@ -4,7 +4,7 @@ namespace Redaxo\Core\MetaInfo\Handler;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
@@ -17,6 +17,7 @@ final class LanguageHandler extends AbstractHandler
     public const PREFIX = 'clang_';
     public const CONTAINER = 'rex-clang-metainfo';
 
+    #[AsExtension('CLANG_FORM_BUTTONS')]
     public function renderToggleButton(ExtensionPoint $ep): string
     {
         $fields = parent::getSqlFields(self::PREFIX);
@@ -66,6 +67,10 @@ final class LanguageHandler extends AbstractHandler
         return $field;
     }
 
+    #[AsExtension('CLANG_FORM_ADD')]
+    #[AsExtension('CLANG_FORM_EDIT')]
+    #[AsExtension('CLANG_ADDED', ExtensionLevel::Early)]
+    #[AsExtension('CLANG_UPDATED', ExtensionLevel::Early)]
     public function extendForm(ExtensionPoint $ep): string
     {
         $params = $ep->getParams();
@@ -90,13 +95,3 @@ final class LanguageHandler extends AbstractHandler
         return $ep->subject . $result;
     }
 }
-
-$languageHandler = new LanguageHandler();
-
-Extension::register('CLANG_FORM_ADD', $languageHandler->extendForm(...));
-Extension::register('CLANG_FORM_EDIT', $languageHandler->extendForm(...));
-
-Extension::register('CLANG_ADDED', $languageHandler->extendForm(...), ExtensionLevel::Early);
-Extension::register('CLANG_UPDATED', $languageHandler->extendForm(...), ExtensionLevel::Early);
-
-Extension::register('CLANG_FORM_BUTTONS', $languageHandler->renderToggleButton(...));

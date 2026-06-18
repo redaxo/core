@@ -30,6 +30,15 @@ class Extension
      */
     private static array $extensions = [];
 
+    /**
+     * Object instances backing non-static `#[AsExtension]` methods, in registration order.
+     * Populated via {@see self::registerInstance()} and read lazily on dispatch: an attributed method
+     * runs once for every registered instance that is an `instanceof` the method's declaring class.
+     *
+     * @var list<object>
+     */
+    private static array $instances = [];
+
     final private function __construct() {}
 
     /**
@@ -56,16 +65,7 @@ class Extension
                 }
 
                 foreach (self::$extensions[$name][$level->name] as $extension) {
-                    /** @var T|null $subject */
-                    $subject = call_user_func($extension, $extensionPoint);
-                    // Update subject only if the EP is not readonly and the extension has returned something
-                    if ($extensionPoint->readonly) {
-                        continue;
-                    }
-                    if (null === $subject) {
-                        continue;
-                    }
-                    $extensionPoint->subject = $subject;
+                    self::runExtension($extensionPoint, $extension);
                 }
             }
         });
@@ -94,11 +94,34 @@ class Extension
     }
 
     /**
+     * Registers an object instance to back non-static `#[AsExtension]` methods.
+     *
+     * Instances are matched to attributed methods by `instanceof` on dispatch, so an instance also serves
+     * attributed methods declared on its parent classes. Multiple instances (of the same or related classes)
+     * may be registered; each attributed method then runs once per matching instance, in registration order.
+     *
+     * The instances are read lazily on dispatch, so this may be called at any point before the extension
+     * point is actually dispatched (e.g. only on the page where the extension is relevant).
+     *
+     * @see self::registerByAttribute()
+     */
+    public static function registerInstance(object $instance): void
+    {
+        if ($factoryClass = static::getExplicitFactoryClass()) {
+            $factoryClass::registerInstance($instance);
+            return;
+        }
+
+        self::$instances[] = $instance;
+    }
+
+    /**
      * Registers all extensions for methods carrying the `#[AsExtension]` attribute,
      * discovered via {@see ClassDiscovery}.
      *
-     * Static methods are bound to their class; non-static methods are allowed on
-     * the project class and on addon classes (where the instance is available).
+     * Static methods are bound to their class. Non-static methods on the project class or on addon classes
+     * are bound to those (already available) instances; all other non-static methods run on dispatch for every
+     * matching instance registered via {@see self::registerInstance()}.
      *
      * @internal
      */
@@ -128,12 +151,26 @@ class Extension
                 }
                 $callable = [$addonByClass[$entry['class']], $entry['method']];
             } else {
-                throw new LogicException(sprintf(
-                    'Non-static #[AsExtension] is only allowed on the project class or on addon classes. Method "%s::%s()" is neither static nor defined on a parent of %s or on a registered addon class.',
-                    $entry['class'],
-                    $entry['method'],
-                    $project::class,
-                ));
+                // Generic instance method: the backing objects are resolved lazily on dispatch from the
+                // instances registered via self::registerInstance(). Resolving lazily (rather than here at boot)
+                // keeps registration timing flexible — instances only need to exist when the EP fires. The method
+                // runs once per matching instance, chaining the subject between them exactly like separately
+                // registered extensions (see self::dispatch()). If no instance matches, it is simply a no-op.
+                $class = $entry['class'];
+                $method = $entry['method'];
+                $callable = static function (ExtensionPoint $ep) use ($class, $method): mixed {
+                    foreach (self::$instances as $instance) {
+                        if (!$instance instanceof $class) {
+                            continue;
+                        }
+
+                        /** @var callable(ExtensionPoint<mixed>):mixed $callback */
+                        $callback = [$instance, $method];
+                        self::runExtension($ep, $callback);
+                    }
+
+                    return $ep->subject;
+                };
             }
 
             $extensionPoint = $entry['attribute']->extensionPoint
@@ -198,5 +235,24 @@ class Extension
             return $factoryClass::hasExtensions($extensionPoint);
         }
         return !empty(self::$extensions[$extensionPoint]);
+    }
+
+    /**
+     * Runs a single extension callback against the extension point and applies its return value to the subject,
+     * honoring the "readonly" flag and the convention that a `null` return means "no change". Shared by
+     * {@see self::dispatch()} and the instance-method wrapper built in {@see self::registerByAttribute()}.
+     *
+     * @param ExtensionPoint<mixed> $extensionPoint
+     */
+    private static function runExtension(ExtensionPoint $extensionPoint, callable $extension): void
+    {
+        /** @var mixed $result */
+        $result = call_user_func($extension, $extensionPoint);
+
+        if ($extensionPoint->readonly || null === $result) {
+            return;
+        }
+
+        $extensionPoint->subject = $result;
     }
 }

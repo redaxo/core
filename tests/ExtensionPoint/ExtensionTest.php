@@ -6,10 +6,14 @@ use PHPUnit\Framework\TestCase;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+use Redaxo\Core\Tests\ExtensionPoint\Fixtures\InstanceExtensionFixture;
+use ReflectionProperty;
 
 /** @internal */
 final class ExtensionTest extends TestCase
 {
+    private const INSTANCE_EP = 'TEST_INSTANCE_EXTENSION_EP';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -17,6 +21,9 @@ final class ExtensionTest extends TestCase
 
     protected function tearDown(): void
     {
+        // Reset the static instance registry so instance-method tests don't leak into each other.
+        new ReflectionProperty(Extension::class, 'instances')->setValue(null, []);
+
         parent::tearDown();
     }
 
@@ -124,5 +131,37 @@ final class ExtensionTest extends TestCase
 
         self::assertSame('foo', Extension::dispatch(new ExtensionPoint($EP1, $subject)));
         self::assertSame('foo', Extension::dispatch(new ExtensionPoint($EP2, $subject)));
+    }
+
+    public function testInstanceExtensionNoInstanceIsNoop(): void
+    {
+        // The #[AsExtension] method is discovered and wired at boot, but with no registered instance it's a no-op.
+        self::assertSame('start', Extension::dispatch(new ExtensionPoint(self::INSTANCE_EP, 'start')));
+    }
+
+    public function testInstanceExtensionRunsForEachRegisteredInstance(): void
+    {
+        Extension::registerInstance(new InstanceExtensionFixture('A'));
+        Extension::registerInstance(new InstanceExtensionFixture('B'));
+
+        // The method runs once per instance, in registration order, chaining the subject between them.
+        self::assertSame('startAB', Extension::dispatch(new ExtensionPoint(self::INSTANCE_EP, 'start')));
+    }
+
+    public function testInstanceExtensionMatchesSubclassInstances(): void
+    {
+        // The attribute sits on the parent; a registered subclass instance must still serve it. Discovery only
+        // needs to find the parent, so an anonymous subclass created here is enough — it matches via instanceof.
+        Extension::registerInstance(new class('C') extends InstanceExtensionFixture {});
+
+        self::assertSame('startC', Extension::dispatch(new ExtensionPoint(self::INSTANCE_EP, 'start')));
+    }
+
+    public function testInstanceExtensionRespectsReadonly(): void
+    {
+        Extension::registerInstance(new InstanceExtensionFixture('A'));
+
+        // Readonly EP: the method still runs (no exception), but the subject is not changed.
+        self::assertSame('start', Extension::dispatch(new ExtensionPoint(self::INSTANCE_EP, 'start', [], true)));
     }
 }
