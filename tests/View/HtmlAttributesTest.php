@@ -1,9 +1,8 @@
 <?php
 
-namespace Redaxo\Core\Tests\Fragment;
+namespace Redaxo\Core\Tests\View;
 
 use BackedEnum;
-use http\Env;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Environment;
@@ -63,7 +62,7 @@ final class HtmlAttributesTest extends TestCase
         self::assertSame($expected, $with->toString());
     }
 
-    /** @return list<array{string, array<literal-string, bool|string|int|BackedEnum|array<string|int, string|bool>|null>, array<literal-string, bool|string|int|BackedEnum|array<string|int, string|bool>|list<BackedEnum>|null>}> */
+    /** @return list<array{string, array<literal-string, bool|string|int|BackedEnum|array<string|int, string|bool>|list<BackedEnum>|null>, array<literal-string, bool|string|int|BackedEnum|array<string|int, string|bool>|list<BackedEnum>|null>}> */
     public static function dataWith(): array
     {
         return [
