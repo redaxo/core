@@ -410,9 +410,3 @@ foreach ($defaultConfig as $key => $value) {
         Core::setConfig($key, $value);
     }
 }
-
-// Drop the legacy metainfo definition tables; field/type definitions now live in code (MetaSchema).
-// The actual meta value columns in rex_article/rex_media/rex_clang are managed by MetaSync on migrate.
-$sql = Sql::factory();
-$sql->setQuery('DROP TABLE IF EXISTS ' . $sql->escapeIdentifier(Core::getTable('metainfo_field')));
-$sql->setQuery('DROP TABLE IF EXISTS ' . $sql->escapeIdentifier(Core::getTable('metainfo_type')));
