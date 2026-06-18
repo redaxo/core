@@ -75,10 +75,6 @@ const allPages = {
     'media_manager_types_edit.png': START_URL + '?page=media_manager/types&type_id=4&effects=1',
     'media_manager_settings.png': START_URL + '?page=media_manager/settings',
 
-    'metainfo_articles_add.png': START_URL + '?page=metainfo/articles&func=add',
-    'metainfo_categories.png': START_URL + '?page=metainfo/categories',
-    'metainfo_clangs.png': START_URL + '?page=metainfo/clangs',
-
     'phpmailer_config.png': START_URL + '?page=phpmailer/config',
 };
 
@@ -356,17 +352,6 @@ async function main() {
             // test customizer
             await goToUrlOrThrow(page, START_URL + '?page=system/be_style/customizer', { waitUntil: 'load' });
             await createScreenshots(page, 'system_customizer.png');
-
-            // metainfo
-            for (const type of ['articles', 'media']) {
-                await goToUrlOrThrow(page, START_URL + '?page=metainfo/' + type, { waitUntil: 'load' });
-                await Promise.all([
-                    page.waitForNavigation({ waitUntil: 'load' }),
-                    page.click('.btn[href*="rex-api-call=metainfo_default_fields_create"]') // install default fields
-                ]);
-                await page.waitForSelector('.alert-success');
-                await createScreenshots(page, 'metainfo_' + type + '.png');
-            }
 
             // logout
             await page.click('#rex-js-nav-top .rex-logout');
