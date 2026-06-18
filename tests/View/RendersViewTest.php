@@ -45,4 +45,37 @@ final class RendersViewTest extends TestCase
 
         self::assertStringContainsString('<span class="foo">inline</span>', $html);
     }
+
+    public function testUnfilledOptionalContentFallsBackToInlineDefault(): void
+    {
+        $html = (string) new Card(title: 'Hi')->render();
+
+        self::assertStringContainsString('No content yet.', $html); // inline default from the view
+        self::assertStringNotContainsString('card-footer', $html);  // optional content omitted entirely
+    }
+
+    public function testOptionalContentIsFilledWithNamedArguments(): void
+    {
+        $html = (string) new Card(
+            title: 'Hi',
+            body: Html::capture(static function (): void { ?>
+                <p>Real body</p>
+            <?php }),
+            footer: Html::raw('<small>foot</small>'),
+        )->render();
+
+        self::assertStringContainsString('<p>Real body</p>', $html);
+        self::assertStringNotContainsString('No content yet.', $html);
+        self::assertStringContainsString('<small>foot</small>', $html);
+    }
+
+    public function testStringContentOnAStringOrRenderablePropertyIsEscaped(): void
+    {
+        // Card::$footer is string|Renderable|null — a plain string goes through Html::from() and is escaped
+        $html = (string) new Card(title: 'Hi', footer: '<script>alert(1)</script>')->render();
+
+        self::assertStringContainsString('<footer class="card-footer">', $html);
+        self::assertStringContainsString('&lt;script&gt;alert(1)&lt;/script&gt;', $html);
+        self::assertStringNotContainsString('<script>alert(1)', $html);
+    }
 }
