@@ -6,14 +6,13 @@ use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
-use Redaxo\Core\View\HtmlAttributes;
 
 use function explode;
 use function gmdate;
 use function sprintf;
 
 /** Time picker (HTML5), stored as seconds since midnight. */
-class TimeField extends MetaField
+class TimeField extends AbstractInputField
 {
     public function column(MetaEntity $entity): ?Column
     {
@@ -39,7 +38,7 @@ class TimeField extends MetaField
         $value = null === $stored || '' === $stored ? '' : gmdate('H:i', (int) $stored);
         $name = $this->columnName($context->entity);
 
-        $attributes = new HtmlAttributes([
+        $attributes = $this->attributes->with([
             'class' => ['form-control'],
             'type' => 'time',
             'name' => $name,

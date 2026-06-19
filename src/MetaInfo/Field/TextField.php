@@ -10,7 +10,7 @@ use Redaxo\Core\View\HtmlAttributes;
 use function sprintf;
 
 /** Single-line text input, stored as a varchar column. */
-class TextField extends MetaField
+class TextField extends AbstractInputField
 {
     public function __construct(
         string $name,
@@ -19,8 +19,9 @@ class TextField extends MetaField
         ?string $note = null,
         bool $required = false,
         ?string $default = null,
+        HtmlAttributes $attributes = new HtmlAttributes(),
     ) {
-        parent::__construct($name, $label, $note, $required, $default);
+        parent::__construct($name, $label, $note, $required, $default, $attributes);
     }
 
     public function column(MetaEntity $entity): ?Column
@@ -32,7 +33,7 @@ class TextField extends MetaField
     {
         $name = $this->columnName($context->entity);
 
-        $attributes = new HtmlAttributes([
+        $attributes = $this->attributes->with([
             'class' => ['form-control'],
             'type' => 'text',
             'name' => $name,

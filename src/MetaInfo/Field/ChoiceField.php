@@ -35,8 +35,11 @@ use function trim;
  * Pass a static set via the `$choices` constructor argument, or override {@see self::choices()} to provide them
  * dynamically (#1480). Choices may be grouped by nesting: a value that is itself an array becomes an optgroup
  * (its key being the group label).
+ *
+ * Extra `$attributes` are applied to the `<select>` control only; the `expanded` radio/checkbox group has no
+ * single element to carry them and ignores them for now.
  */
-class ChoiceField extends MetaField
+class ChoiceField extends AbstractInputField
 {
     /**
      * @param array<int|string, string|array<int|string, string>> $choices the selectable choices as `value => label`,
@@ -51,8 +54,9 @@ class ChoiceField extends MetaField
         ?string $note = null,
         bool $required = false,
         ?string $default = null,
+        HtmlAttributes $attributes = new HtmlAttributes(),
     ) {
-        parent::__construct($name, $label, $note, $required, $default);
+        parent::__construct($name, $label, $note, $required, $default, $attributes);
     }
 
     /**
@@ -99,7 +103,7 @@ class ChoiceField extends MetaField
             return $this->renderExpanded($this->choices(), $selected, $name);
         }
 
-        $attributes = new HtmlAttributes([
+        $attributes = $this->attributes->with([
             'class' => ['form-control', 'selectpicker'],
             'name' => $this->multiple ? $name . '[]' : $name,
             'id' => $name,

@@ -6,14 +6,13 @@ use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
-use Redaxo\Core\View\HtmlAttributes;
 
 use function date;
 use function sprintf;
 use function strtotime;
 
 /** Date picker (HTML5), stored as a Unix timestamp (local midnight). */
-class DateField extends MetaField
+class DateField extends AbstractInputField
 {
     public function column(MetaEntity $entity): ?Column
     {
@@ -33,7 +32,7 @@ class DateField extends MetaField
         $value = null === $stored || '' === $stored ? '' : date('Y-m-d', (int) $stored);
         $name = $this->columnName($context->entity);
 
-        $attributes = new HtmlAttributes([
+        $attributes = $this->attributes->with([
             'class' => ['form-control'],
             'type' => 'date',
             'name' => $name,

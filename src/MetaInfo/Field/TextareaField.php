@@ -11,7 +11,7 @@ use function Redaxo\Core\View\escape;
 use function sprintf;
 
 /** Multi-line text input, stored as a text column. */
-class TextareaField extends MetaField
+class TextareaField extends AbstractInputField
 {
     public function __construct(
         string $name,
@@ -19,8 +19,9 @@ class TextareaField extends MetaField
         public readonly int $rows = 5,
         ?string $note = null,
         bool $required = false,
+        HtmlAttributes $attributes = new HtmlAttributes(),
     ) {
-        parent::__construct($name, $label, $note, $required);
+        parent::__construct($name, $label, $note, $required, null, $attributes);
     }
 
     public function column(MetaEntity $entity): ?Column
@@ -33,7 +34,7 @@ class TextareaField extends MetaField
     {
         $name = $this->columnName($context->entity);
 
-        $attributes = new HtmlAttributes([
+        $attributes = $this->attributes->with([
             'class' => ['form-control'],
             'name' => $name,
             'id' => $name,
