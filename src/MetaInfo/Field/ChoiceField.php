@@ -6,6 +6,7 @@ use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
+use Redaxo\Core\View\HtmlAttributes;
 
 use function array_filter;
 use function array_values;
@@ -98,16 +99,15 @@ class ChoiceField extends MetaField
             return $this->renderExpanded($this->choices(), $selected, $name);
         }
 
-        $nameAttr = $this->multiple ? $name . '[]' : $name;
+        $attributes = new HtmlAttributes([
+            'class' => ['form-control', 'selectpicker'],
+            'name' => $this->multiple ? $name . '[]' : $name,
+            'id' => $name,
+            'multiple' => $this->multiple,
+            'required' => $this->required,
+        ]);
 
-        return sprintf(
-            '<select class="form-control selectpicker" name="%s" id="%s"%s%s>%s</select>',
-            escape($nameAttr),
-            escape($name),
-            $this->multiple ? ' multiple' : '',
-            $this->required ? ' required' : '',
-            $this->renderOptions($this->choices(), $selected),
-        );
+        return sprintf('<select %s>%s</select>', $attributes, $this->renderOptions($this->choices(), $selected));
     }
 
     /**
@@ -123,12 +123,12 @@ class ChoiceField extends MetaField
                 continue;
             }
 
-            $html .= sprintf(
-                '<option value="%s"%s>%s</option>',
-                escape((string) $value),
-                in_array((string) $value, $selected, true) ? ' selected' : '',
-                escape($label),
-            );
+            $attributes = new HtmlAttributes([
+                'value' => (string) $value,
+                'selected' => in_array((string) $value, $selected, true),
+            ]);
+
+            $html .= sprintf('<option %s>%s</option>', $attributes, escape($label));
         }
 
         return $html;
@@ -152,14 +152,20 @@ class ChoiceField extends MetaField
             }
 
             $id = $name . '_' . (string) preg_replace('/[^A-Za-z0-9_]/', '_', (string) $value);
+
+            $attributes = new HtmlAttributes([
+                'type' => $type,
+                'name' => $nameAttr,
+                'id' => $id,
+                'value' => (string) $value,
+                'checked' => in_array((string) $value, $selected, true),
+            ]);
+
             $html .= sprintf(
-                '<div class="%s"><label for="%s"><input type="%s" name="%s" id="%2$s" value="%s"%s> %s</label></div>',
-                $type,
+                '<div class="%s"><label for="%s"><input %s> %s</label></div>',
+                escape($type),
                 escape($id),
-                $type,
-                escape($nameAttr),
-                escape((string) $value),
-                in_array((string) $value, $selected, true) ? ' checked' : '',
+                $attributes,
                 escape($label),
             );
         }

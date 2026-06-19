@@ -6,9 +6,9 @@ use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
+use Redaxo\Core\View\HtmlAttributes;
 
 use function date;
-use function Redaxo\Core\View\escape;
 use function sprintf;
 use function strtotime;
 
@@ -31,12 +31,17 @@ class DateField extends MetaField
     {
         $stored = $context->value($this);
         $value = null === $stored || '' === $stored ? '' : date('Y-m-d', (int) $stored);
+        $name = $this->columnName($context->entity);
 
-        return sprintf(
-            '<input class="form-control" type="date" name="%s" id="%1$s" value="%s"%s>',
-            escape($this->columnName($context->entity)),
-            escape($value),
-            $this->required ? ' required' : '',
-        );
+        $attributes = new HtmlAttributes([
+            'class' => ['form-control'],
+            'type' => 'date',
+            'name' => $name,
+            'id' => $name,
+            'value' => $value,
+            'required' => $this->required,
+        ]);
+
+        return sprintf('<input %s>', $attributes);
     }
 }

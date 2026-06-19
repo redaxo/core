@@ -6,6 +6,7 @@ use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
+use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
 use function sprintf;
@@ -32,11 +33,15 @@ class CheckboxField extends MetaField
     {
         $name = $this->columnName($context->entity);
 
-        return sprintf(
-            '<input type="checkbox" name="%s" id="%1$s" value="1"%s>',
-            escape($name),
-            (bool) $context->value($this) ? ' checked' : '',
-        );
+        $attributes = new HtmlAttributes([
+            'type' => 'checkbox',
+            'name' => $name,
+            'id' => $name,
+            'value' => '1',
+            'checked' => (bool) $context->value($this),
+        ]);
+
+        return sprintf('<input %s>', $attributes);
     }
 
     public function render(MetaContext $context): string

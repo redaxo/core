@@ -5,6 +5,7 @@ namespace Redaxo\Core\MetaInfo\Field;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
+use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
 use function sprintf;
@@ -30,12 +31,16 @@ class TextareaField extends MetaField
 
     public function renderInput(MetaContext $context): string
     {
-        return sprintf(
-            '<textarea class="form-control" name="%s" id="%1$s" rows="%d"%s>%s</textarea>',
-            escape($this->columnName($context->entity)),
-            $this->rows,
-            $this->required ? ' required' : '',
-            escape((string) $context->value($this)),
-        );
+        $name = $this->columnName($context->entity);
+
+        $attributes = new HtmlAttributes([
+            'class' => ['form-control'],
+            'name' => $name,
+            'id' => $name,
+            'rows' => $this->rows,
+            'required' => $this->required,
+        ]);
+
+        return sprintf('<textarea %s>%s</textarea>', $attributes, escape((string) $context->value($this)));
     }
 }

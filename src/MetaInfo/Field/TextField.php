@@ -5,8 +5,8 @@ namespace Redaxo\Core\MetaInfo\Field;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
+use Redaxo\Core\View\HtmlAttributes;
 
-use function Redaxo\Core\View\escape;
 use function sprintf;
 
 /** Single-line text input, stored as a varchar column. */
@@ -30,12 +30,18 @@ class TextField extends MetaField
 
     public function renderInput(MetaContext $context): string
     {
-        return sprintf(
-            '<input class="form-control" type="text" name="%s" id="%1$s" value="%s" maxlength="%d"%s>',
-            escape($this->columnName($context->entity)),
-            escape((string) $context->value($this)),
-            $this->maxLength,
-            $this->required ? ' required' : '',
-        );
+        $name = $this->columnName($context->entity);
+
+        $attributes = new HtmlAttributes([
+            'class' => ['form-control'],
+            'type' => 'text',
+            'name' => $name,
+            'id' => $name,
+            'value' => (string) $context->value($this),
+            'maxlength' => $this->maxLength,
+            'required' => $this->required,
+        ]);
+
+        return sprintf('<input %s>', $attributes);
     }
 }
