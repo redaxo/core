@@ -13,6 +13,18 @@ use Redaxo\Core\View\HtmlAttributes;
  */
 final class HtmlAttributesTest extends TestCase
 {
+    public function testValuesAreEscaped(): void
+    {
+        // the security-critical bit: values (plain and inside arrays) are escaped, names are not
+        // touched because they are typed as literal-string and therefore never user input
+        $attributes = new HtmlAttributes([
+            'title' => '"><script>',
+            'class' => ['"><x'],
+        ]);
+
+        self::assertSame('title="&quot;&gt;&lt;script&gt;" class="&quot;&gt;&lt;x"', $attributes->toString());
+    }
+
     /** @param array<literal-string, bool|string|int|BackedEnum|array<string|int, string|bool>|list<BackedEnum>|null> $attributes */
     #[DataProvider('dataConstruct')]
     public function testConstruct(string $expected, array $attributes): void
