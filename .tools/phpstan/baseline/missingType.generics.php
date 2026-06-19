@@ -9,11 +9,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Form/Field/PriorityField.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\MediaManager::mediaIsInUse() has parameter $ep with generic class Redaxo\\Core\\ExtensionPoint\\ExtensionPoint but does not specify its types: T',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaManager/MediaManager.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\MediaManager::mediaUpdated() has parameter $ep with generic class Redaxo\\Core\\ExtensionPoint\\ExtensionPoint but does not specify its types: T',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaManager/MediaManager.php',

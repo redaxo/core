@@ -322,22 +322,6 @@ final class Controller
             ->setPrio(60)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-package-addon');
-
-        self::$pages['media_manager'] = new MainPage('system', 'media_manager', I18n::msg('media_manager'))
-            ->setPath(Path::core('pages/media_manager/index.php'))
-            ->setRequiredPermissions('isAdmin')
-            ->setPrio(70)
-            ->setPjax()
-            ->setIcon('rex-icon rex-icon-media')
-            ->addSubpage(new Page('types', I18n::msg('media_manager_subpage_types'))->setSubPath(Path::core('pages/media_manager/types.php')))
-            ->addSubpage(new Page('settings', I18n::msg('media_manager_subpage_config'))->setSubPath(Path::core('pages/media_manager/settings.php')))
-            ->addSubpage(new Page('overview', I18n::msg('media_manager_subpage_desc'))->setSubPath(Path::core('pages/media_manager/help.md')))
-            ->addSubpage(new Page('clear_cache', I18n::msg('media_manager_subpage_clear_cache'))
-                ->setItemAttr('class', 'pull-right')
-                ->setLinkAttr('class', 'btn btn-delete')
-                ->setHref(['page' => 'media_manager/types', 'func' => 'clear_cache']),
-            )
-        ;
     }
 
     public static function appendPackagePages(): void
