@@ -145,22 +145,22 @@ final class MediaHandler extends AbstractHandler
         }
 
         $catId = Request::session('media[rex_file_category]', 'int');
-        $ctx = new MetaContext(MetaEntity::Media, $media, mediaCategory: $catId > 0 ? MediaCategory::get($catId) : null);
+        $context = new MetaContext(MetaEntity::Media, $media, mediaCategory: $catId > 0 ? MediaCategory::get($catId) : null);
 
         if ($save && isset($params['id'])) {
-            $this->save((int) $params['id'], $ctx);
+            $this->save((int) $params['id'], $context);
         }
 
-        return $ep->subject . $this->renderFields($ctx);
+        return $ep->subject . $this->renderFields($context);
     }
 
-    private function save(int $id, MetaContext $ctx): void
+    private function save(int $id, MetaContext $context): void
     {
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'media');
         $sql->setWhere('id=:mediaid', ['mediaid' => $id]);
 
-        $this->saveRequestValues($sql, $ctx);
+        $this->saveRequestValues($sql, $context);
 
         if ($sql->hasValues()) {
             $sql->update();

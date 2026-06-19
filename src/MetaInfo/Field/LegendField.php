@@ -22,19 +22,19 @@ final class LegendField extends MetaField
         return null;
     }
 
-    public function parseRequest(MetaContext $ctx): int|string|null
+    public function parseRequest(MetaContext $context): int|string|null
     {
         return null;
     }
 
-    public function renderInput(MetaContext $ctx): string
+    public function renderInput(MetaContext $context): string
     {
         return sprintf('<legend>%s</legend>', escape($this->label));
     }
 
-    public function render(MetaContext $ctx): string
+    public function render(MetaContext $context): string
     {
         // No label/form-group wrapper — the legend is the grouping element itself.
-        return $this->renderInput($ctx);
+        return $this->renderInput($context);
     }
 }

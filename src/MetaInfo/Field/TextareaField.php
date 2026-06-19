@@ -28,14 +28,14 @@ class TextareaField extends MetaField
         return new Column($this->columnName($entity), 'text', nullable: true);
     }
 
-    public function renderInput(MetaContext $ctx): string
+    public function renderInput(MetaContext $context): string
     {
         return sprintf(
             '<textarea class="form-control" name="%s" id="%1$s" rows="%d"%s>%s</textarea>',
-            escape($this->columnName($ctx->entity)),
+            escape($this->columnName($context->entity)),
             $this->rows,
             $this->required ? ' required' : '',
-            escape((string) $ctx->value($this)),
+            escape((string) $context->value($this)),
         );
     }
 }

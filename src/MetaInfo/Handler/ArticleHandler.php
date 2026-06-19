@@ -29,18 +29,18 @@ final class ArticleHandler extends AbstractHandler
         $categoryId = $ooArt->categoryId ?? 0;
         $category = $categoryId > 0 ? Category::get($categoryId, $params['clang']) : null;
 
-        $ctx = new MetaContext(MetaEntity::Article, $params['article'], $category);
+        $context = new MetaContext(MetaEntity::Article, $params['article'], $category);
 
         // Only save when the meta form was actually submitted (e.g. not when navigating via be_search).
         if (Request::post('savemeta', 'boolean')) {
-            $ctx = $this->save($params, $ctx);
+            $context = $this->save($params, $context);
         }
 
-        return $this->renderFields($ctx);
+        return $this->renderFields($context);
     }
 
     /** @param array{id: int, clang: int, article: object} $params */
-    private function save(array $params, MetaContext $ctx): MetaContext
+    private function save(array $params, MetaContext $context): MetaContext
     {
         $id = $params['id'];
         $clang = $params['clang'];
@@ -50,7 +50,7 @@ final class ArticleHandler extends AbstractHandler
         $sql->setWhere('id=:id AND clang_id=:clang', ['id' => $id, 'clang' => $clang]);
         $sql->setValue('name', Request::post('meta_article_name', 'string'));
 
-        $saved = $this->saveRequestValues($sql, $ctx);
+        $saved = $this->saveRequestValues($sql, $context);
 
         if ($sql->hasValues()) {
             $sql->addGlobalUpdateFields();
@@ -62,7 +62,7 @@ final class ArticleHandler extends AbstractHandler
         Extension::dispatch(new ExtensionPoint('ART_META_UPDATED', '', $params));
 
         // Redisplay the freshly submitted values.
-        return new MetaContext($ctx->entity, $ctx->subject, $ctx->category, $ctx->mediaCategory, $saved);
+        return new MetaContext($context->entity, $context->subject, $context->category, $context->mediaCategory, $saved);
     }
 
     public function extendForm(ExtensionPoint $ep): string

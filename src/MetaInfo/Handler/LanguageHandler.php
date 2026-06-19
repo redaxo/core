@@ -40,10 +40,10 @@ final class LanguageHandler extends AbstractHandler
 
         /** @var object|null $subject */
         $subject = $params['sql'] ?? null;
-        $ctx = new MetaContext(MetaEntity::Clang, $subject);
+        $context = new MetaContext(MetaEntity::Clang, $subject);
 
         if ('post' == Request::requestMethod() && isset($params['id'])) {
-            $this->save((int) $params['id'], $ctx);
+            $this->save((int) $params['id'], $context);
         }
 
         // On CLANG_ADDED and CLANG_UPDATED only save, render no form.
@@ -56,19 +56,19 @@ final class LanguageHandler extends AbstractHandler
                 <td colspan="2"></td>
                 <td colspan="6">
                     <div class="rex-collapse-content">
-                        ' . $this->renderFields($ctx) . '
+                        ' . $this->renderFields($context) . '
                     </div>
                 </td>
             </tr>';
     }
 
-    private function save(int $id, MetaContext $ctx): void
+    private function save(int $id, MetaContext $context): void
     {
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'clang');
         $sql->setWhere('id=:id', ['id' => $id]);
 
-        $this->saveRequestValues($sql, $ctx);
+        $this->saveRequestValues($sql, $context);
 
         if ($sql->hasValues()) {
             $sql->update();

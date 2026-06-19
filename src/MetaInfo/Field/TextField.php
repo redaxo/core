@@ -28,12 +28,12 @@ class TextField extends MetaField
         return new Column($this->columnName($entity), 'varchar(' . $this->maxLength . ')', nullable: true, default: $this->default);
     }
 
-    public function renderInput(MetaContext $ctx): string
+    public function renderInput(MetaContext $context): string
     {
         return sprintf(
             '<input class="form-control" type="text" name="%s" id="%1$s" value="%s" maxlength="%d"%s>',
-            escape($this->columnName($ctx->entity)),
-            escape((string) $ctx->value($this)),
+            escape($this->columnName($context->entity)),
+            escape((string) $context->value($this)),
             $this->maxLength,
             $this->required ? ' required' : '',
         );

@@ -21,13 +21,13 @@ abstract class AbstractHandler
      * A {@see LegendField} opens a new (nested) fieldset that wraps the following fields; it is closed by the
      * next legend or after the last field. Fields before the first legend stay outside any fieldset.
      */
-    public function renderFields(MetaContext $ctx): string
+    public function renderFields(MetaContext $context): string
     {
         $html = '';
         $openFieldset = false;
 
-        foreach (MetaSchema::getFields($ctx->entity) as $field) {
-            if (!$field->isAllowed($ctx)) {
+        foreach (MetaSchema::getFields($context->entity) as $field) {
+            if (!$field->isAllowed($context)) {
                 continue;
             }
 
@@ -35,12 +35,12 @@ abstract class AbstractHandler
                 if ($openFieldset) {
                     $html .= '</fieldset>';
                 }
-                $html .= '<fieldset>' . $field->render($ctx);
+                $html .= '<fieldset>' . $field->render($context);
                 $openFieldset = true;
                 continue;
             }
 
-            $html .= $field->render($ctx);
+            $html .= $field->render($context);
         }
 
         if ($openFieldset) {
@@ -51,10 +51,10 @@ abstract class AbstractHandler
     }
 
     /** Whether the schema defines at least one field visible in the given context. */
-    public function hasFields(MetaContext $ctx): bool
+    public function hasFields(MetaContext $context): bool
     {
-        foreach (MetaSchema::getFields($ctx->entity) as $field) {
-            if ($field->isAllowed($ctx)) {
+        foreach (MetaSchema::getFields($context->entity) as $field) {
+            if ($field->isAllowed($context)) {
                 return true;
             }
         }
@@ -67,17 +67,17 @@ abstract class AbstractHandler
      *
      * @return array<string, int|string|null> the parsed values keyed by column name (e.g. to redisplay them after the save)
      */
-    public function saveRequestValues(Sql $sqlSave, MetaContext $ctx): array
+    public function saveRequestValues(Sql $sqlSave, MetaContext $context): array
     {
         $saved = [];
-        foreach (MetaSchema::getFields($ctx->entity) as $field) {
-            if (!$field->isAllowed($ctx) || null === $field->column($ctx->entity)) {
+        foreach (MetaSchema::getFields($context->entity) as $field) {
+            if (!$field->isAllowed($context) || null === $field->column($context->entity)) {
                 // hidden field, or a structural field without a value (e.g. legend)
                 continue;
             }
 
-            $column = $field->columnName($ctx->entity);
-            $value = $field->parseRequest($ctx);
+            $column = $field->columnName($context->entity);
+            $value = $field->parseRequest($context);
             $sqlSave->setValue($column, $value);
             $saved[$column] = $value;
         }

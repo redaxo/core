@@ -40,9 +40,9 @@ class MediaField extends MetaField
         return new Column($this->columnName($entity), 'text', nullable: true);
     }
 
-    public function renderInput(MetaContext $ctx): string
+    public function renderInput(MetaContext $context): string
     {
-        $category = $this->category ?? $ctx->mediaCategory?->id;
+        $category = $this->category ?? $context->mediaCategory?->id;
 
         $args = [];
         if (null !== $category) {
@@ -56,9 +56,9 @@ class MediaField extends MetaField
             $args['preview'] = true;
         }
 
-        $name = $this->columnName($ctx->entity);
+        $name = $this->columnName($context->entity);
         $id = ++self::$widgetCounter;
-        $value = (string) $ctx->value($this);
+        $value = (string) $context->value($this);
 
         return $this->multiple
             ? MediaListVar::getWidget($id, $name, $value, $args)

@@ -69,9 +69,9 @@ class ChoiceField extends MetaField
         return new Column($this->columnName($entity), 'varchar(255)', nullable: true, default: $this->default);
     }
 
-    public function parseRequest(MetaContext $ctx): int|string|null
+    public function parseRequest(MetaContext $context): int|string|null
     {
-        $name = $this->columnName($ctx->entity);
+        $name = $this->columnName($context->entity);
 
         if (!$this->multiple) {
             return Request::post($name, 'string', '');
@@ -89,10 +89,10 @@ class ChoiceField extends MetaField
         return $this->multiple ? self::splitMultiple((string) $stored) : (string) $stored;
     }
 
-    public function renderInput(MetaContext $ctx): string
+    public function renderInput(MetaContext $context): string
     {
-        $name = $this->columnName($ctx->entity);
-        $selected = $this->multiple ? self::splitMultiple((string) $ctx->value($this)) : [(string) $ctx->value($this)];
+        $name = $this->columnName($context->entity);
+        $selected = $this->multiple ? self::splitMultiple((string) $context->value($this)) : [(string) $context->value($this)];
 
         if ($this->expanded) {
             return $this->renderExpanded($this->choices(), $selected, $name);

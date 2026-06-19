@@ -35,18 +35,18 @@ class ArticleField extends MetaField
         return new Column($this->columnName($entity), 'text', nullable: true);
     }
 
-    public function renderInput(MetaContext $ctx): string
+    public function renderInput(MetaContext $context): string
     {
-        $category = $this->category ?? $ctx->category?->id;
+        $category = $this->category ?? $context->category?->id;
 
         $args = [];
         if (null !== $category) {
             $args['category'] = $category;
         }
 
-        $name = $this->columnName($ctx->entity);
+        $name = $this->columnName($context->entity);
         $id = ++self::$widgetCounter;
-        $value = (string) $ctx->value($this);
+        $value = (string) $context->value($this);
 
         if ($this->multiple) {
             return LinkListVar::getWidget($id, $name, $value, $args);

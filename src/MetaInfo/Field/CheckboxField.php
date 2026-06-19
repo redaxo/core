@@ -18,9 +18,9 @@ class CheckboxField extends MetaField
         return new Column($this->columnName($entity), 'tinyint(1)', nullable: false, default: '0');
     }
 
-    public function parseRequest(MetaContext $ctx): int|string|null
+    public function parseRequest(MetaContext $context): int|string|null
     {
-        return Request::post($this->columnName($ctx->entity), 'bool', false) ? 1 : 0;
+        return Request::post($this->columnName($context->entity), 'bool', false) ? 1 : 0;
     }
 
     public function format(mixed $stored): bool
@@ -28,18 +28,18 @@ class CheckboxField extends MetaField
         return (bool) $stored;
     }
 
-    public function renderInput(MetaContext $ctx): string
+    public function renderInput(MetaContext $context): string
     {
-        $name = $this->columnName($ctx->entity);
+        $name = $this->columnName($context->entity);
 
         return sprintf(
             '<input type="checkbox" name="%s" id="%1$s" value="1"%s>',
             escape($name),
-            (bool) $ctx->value($this) ? ' checked' : '',
+            (bool) $context->value($this) ? ' checked' : '',
         );
     }
 
-    public function render(MetaContext $ctx): string
+    public function render(MetaContext $context): string
     {
         $note = null !== $this->note
             ? sprintf('<p class="help-block rex-note">%s</p>', escape($this->note))
@@ -47,7 +47,7 @@ class CheckboxField extends MetaField
 
         return sprintf(
             '<div class="checkbox"><label>%s %s</label>%s</div>',
-            $this->renderInput($ctx),
+            $this->renderInput($context),
             escape($this->label),
             $note,
         );

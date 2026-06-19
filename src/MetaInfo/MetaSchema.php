@@ -41,6 +41,7 @@ abstract class MetaSchema
         return null;
     }
 
+    /** @internal */
     final public static function forEntity(MetaEntity $entity): ?self
     {
         return self::getAll()[$entity->name] ?? null;
@@ -50,6 +51,8 @@ abstract class MetaSchema
      * Returns the fields of the given entity in display order.
      *
      * @return list<MetaField>
+     *
+     * @internal
      */
     final public static function getFields(MetaEntity $entity): array
     {

@@ -44,7 +44,7 @@ abstract class MetaField
     abstract public function column(MetaEntity $entity): ?Column;
 
     /** Renders the form control only (without label/note wrapper). */
-    abstract public function renderInput(MetaContext $ctx): string;
+    abstract public function renderInput(MetaContext $context): string;
 
     /**
      * Renders the complete form group (label, control, note).
@@ -52,7 +52,7 @@ abstract class MetaField
      * The default wraps {@see self::renderInput()}; override for fully custom markup
      * (a {@see LegendField} for example renders no label wrapper at all).
      */
-    public function render(MetaContext $ctx): string
+    public function render(MetaContext $context): string
     {
         $note = null !== $this->note
             ? sprintf('<p class="help-block rex-note">%s</p>', escape($this->note))
@@ -60,17 +60,17 @@ abstract class MetaField
 
         return sprintf(
             '<div class="form-group"><label for="%s">%s</label>%s%s</div>',
-            escape($this->columnName($ctx->entity)),
+            escape($this->columnName($context->entity)),
             escape($this->label),
-            $this->renderInput($ctx),
+            $this->renderInput($context),
             $note,
         );
     }
 
     /** Reads and normalises the submitted value into its DB representation. */
-    public function parseRequest(MetaContext $ctx): int|string|null
+    public function parseRequest(MetaContext $context): int|string|null
     {
-        return Request::post($this->columnName($ctx->entity), 'string', '');
+        return Request::post($this->columnName($context->entity), 'string', '');
     }
 
     /** Converts the stored DB value into the value exposed to the application (e.g. `getValue()`). */
@@ -95,7 +95,7 @@ abstract class MetaField
      * The default allows it everywhere; override to restrict (analogous to
      * {@see Template::isAllowedInCategory()}).
      */
-    public function isAllowed(MetaContext $ctx): bool
+    public function isAllowed(MetaContext $context): bool
     {
         return true;
     }

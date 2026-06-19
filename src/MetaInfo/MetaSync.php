@@ -4,6 +4,7 @@ namespace Redaxo\Core\MetaInfo;
 
 use Redaxo\Core\Database\Table;
 
+use function array_any;
 use function array_map;
 use function str_starts_with;
 
@@ -90,12 +91,6 @@ final class MetaSync
     /** @param list<string> $prefixes */
     private static function hasManagedPrefix(string $column, array $prefixes): bool
     {
-        foreach ($prefixes as $prefix) {
-            if (str_starts_with($column, $prefix)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($prefixes, static fn (string $prefix): bool => str_starts_with($column, $prefix));
     }
 }
