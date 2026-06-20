@@ -4,7 +4,7 @@ namespace Redaxo\Core\MetaInfo\Handler;
 
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
-use Redaxo\Core\MetaInfo\Field\LegendField;
+use Redaxo\Core\MetaInfo\Field\Fieldset;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaSchema;
 
@@ -18,8 +18,8 @@ abstract class AbstractHandler
     /**
      * Renders all fields visible in the given context.
      *
-     * A {@see LegendField} opens a new (nested) fieldset that wraps the following fields; it is closed by the
-     * next legend or after the last field. Fields before the first legend stay outside any fieldset.
+     * A {@see Fieldset} opens a new fieldset that wraps the following fields; it is closed by the next
+     * fieldset or after the last field. Fields before the first fieldset stay outside any fieldset.
      */
     public function renderFields(MetaContext $context): string
     {
@@ -31,11 +31,11 @@ abstract class AbstractHandler
                 continue;
             }
 
-            if ($field instanceof LegendField) {
+            if ($field instanceof Fieldset) {
                 if ($openFieldset) {
                     $html .= '</fieldset>';
                 }
-                $html .= '<fieldset>' . $field->render($context);
+                $html .= $field->render($context);
                 $openFieldset = true;
                 continue;
             }

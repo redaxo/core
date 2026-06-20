@@ -39,7 +39,7 @@ abstract class MetaField
 
     /**
      * The database column backing this field, or `null` if the field stores no value
-     * (e.g. a {@see LegendField}). Used by the migrate column sync.
+     * (e.g. a {@see Fieldset}). Used by the migrate column sync.
      */
     abstract public function column(MetaEntity $entity): ?Column;
 
@@ -50,7 +50,7 @@ abstract class MetaField
      * Renders the complete form group (label, control, note).
      *
      * The default wraps {@see self::renderInput()}; override for fully custom markup
-     * (a {@see LegendField} for example renders no label wrapper at all).
+     * (a {@see Fieldset} for example renders no label wrapper at all).
      */
     public function render(MetaContext $context): string
     {
