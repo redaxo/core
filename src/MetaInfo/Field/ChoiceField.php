@@ -150,8 +150,12 @@ class ChoiceField extends AbstractInputField
         $html = '';
         foreach ($choices as $value => $label) {
             if (is_array($label)) {
-                $html .= sprintf('<p class="rex-choice-group"><strong>%s</strong></p>', escape((string) $value));
-                $html .= $this->renderExpanded($label, $selected, $name);
+                // The semantic equivalent of a <select> optgroup for radios/checkboxes is a nested fieldset.
+                $html .= sprintf(
+                    '<fieldset class="rex-choice-group"><legend>%s</legend>%s</fieldset>',
+                    escape((string) $value),
+                    $this->renderExpanded($label, $selected, $name),
+                );
                 continue;
             }
 
