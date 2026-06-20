@@ -111,14 +111,14 @@ if (1 == $article->getRows()) {
         'article' => $article,
     ]);
 
-    $formElements = [];
-    $formElements[] = [
-        'label' => '<label for="rex-id-meta-article-name">' . I18n::msg('header_article_name') . '</label>',
-        'field' => '<input class="form-control" type="text" id="rex-id-meta-article-name" name="meta_article_name" value="' . escape(Article::require($articleId, $clang)->name) . '" />',
-    ];
-    $fragment = new Fragment();
-    $fragment->setVar('elements', $formElements, false);
-    $form = $fragment->parse('core/form/form.php') . $form;
+    // The article name is not a meta field, but it is offered in the same form. Render it with the same
+    // markup as the meta fields (see MetaField::render) so it lines up with them instead of using the
+    // legacy horizontal form fragment.
+    $articleName = '<div class="form-group">'
+        . '<label for="rex-id-meta-article-name">' . escape(I18n::msg('header_article_name')) . '</label>'
+        . '<input class="form-control" type="text" id="rex-id-meta-article-name" name="meta_article_name" value="' . escape(Article::require($articleId, $clang)->name) . '">'
+        . '</div>';
+    $form = $articleName . $form;
 
     $content[] = '
               <div id="rex-page-sidebar-metainfo" data-pjax-container="#rex-page-sidebar-metainfo">
