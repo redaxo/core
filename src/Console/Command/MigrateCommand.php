@@ -8,14 +8,18 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\MetaInfo\MetaSync;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Throwable;
 
+use function array_map;
+use function array_merge;
 use function sprintf;
 
 /**
@@ -24,7 +28,7 @@ use function sprintf;
 #[AsCommand(name: 'migrate', description: 'Runs install scripts of core and addons to ensure schema is up to date')]
 final class MigrateCommand extends AbstractCommand implements StandaloneInterface
 {
-    public function __invoke(SymfonyStyle $io): int
+    public function __invoke(InputInterface $input, SymfonyStyle $io): int
     {
         // verify the database server meets the minimum version requirements
         $sql = Sql::factory();
@@ -76,7 +80,40 @@ final class MigrateCommand extends AbstractCommand implements StandaloneInterfac
             $io->writeln('<info>OK</info>');
         }
 
+        $this->syncMetaInfo($input, $io);
+
         $io->success('Migration completed.');
         return Command::SUCCESS;
+    }
+
+    private function syncMetaInfo(InputInterface $input, SymfonyStyle $io): void
+    {
+        $io->section('MetaInfo fields');
+
+        $confirmDrop = $input->isInteractive()
+            ? static fn (string $table, string $column): bool => $io->confirm(
+                sprintf('Obsolete metainfo column "%s" in "%s" has no field anymore. Drop it (the data will be lost)?', $column, $table),
+                false,
+            )
+            : static fn (): bool => false;
+
+        $result = MetaSync::run($confirmDrop);
+
+        foreach ($result['added'] as $column) {
+            $io->writeln(sprintf('  added <info>%s</info>', $column));
+        }
+        foreach ($result['modified'] as $column) {
+            $io->writeln(sprintf('  modified <info>%s</info>', $column));
+        }
+        foreach ($result['dropped'] as $column) {
+            $io->writeln(sprintf('  dropped <comment>%s</comment>', $column));
+        }
+
+        if ([] !== $result['kept']) {
+            $io->warning(array_merge(
+                ['Obsolete metainfo columns kept (no field defines them). Run `migrate` interactively to drop them:'],
+                array_map(static fn (string $column): string => '  ' . $column, $result['kept']),
+            ));
+        }
     }
 }

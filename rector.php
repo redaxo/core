@@ -30,7 +30,6 @@ use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
 use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassAndConstFetch;
-use Rector\Renaming\ValueObject\RenameClassConstFetch;
 use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Transform\Rector\ConstFetch\ConstFetchToClassConstFetchRector;
@@ -158,7 +157,6 @@ return RectorConfig::configure()
         'rex_api_exception' => ApiFunction\Exception\ApiFunctionException::class,
         'rex_api_function' => ApiFunction\ApiFunction::class,
         'rex_api_result' => ApiFunction\Result::class,
-        'rex_api_metainfo_default_fields_create' => MetaInfo\ApiFunction\DefaultFieldsCreate::class,
         'rex_api_package' => Addon\ApiFunction\AddonOperation::class,
         'rex_api_article2category' => Content\ApiFunction\ArticleToCategory::class,
         'rex_api_article2startarticle' => Content\ApiFunction\ArticleToStartArticle::class,
@@ -259,7 +257,6 @@ return RectorConfig::configure()
         'rex_form_select_element' => Form\Field\SelectField::class,
         'rex_form_prio_element' => Form\Field\PriorityField::class,
         'rex_form_perm_select_element' => Form\Field\PermissionSelectField::class,
-        'rex_form_restrictons_element' => MetaInfo\Form\Field\RestrictionField::class,
         'rex_form_raw_element' => Form\Field\RawField::class,
         'rex_form_widget_linkmap_element' => Form\Field\ArticleField::class,
         'rex_form_widget_media_element' => Form\Field\MediaField::class,
@@ -269,15 +266,6 @@ return RectorConfig::configure()
         'rex_template_select' => Form\Select\TemplateSelect::class,
         'rex_formatter' => Util\Formatter::class,
         'rex_i18n' => Translation\I18n::class,
-        'rex_input' => MetaInfo\Form\Input\AbstractInput::class,
-        'rex_input_date' => MetaInfo\Form\Input\DateInput::class,
-        'rex_input_datetime' => MetaInfo\Form\Input\DateTimeInput::class,
-        'rex_input_linkbutton' => MetaInfo\Form\Input\ArticleInput::class,
-        'rex_input_mediabutton' => MetaInfo\Form\Input\MediaInput::class,
-        'rex_input_select' => MetaInfo\Form\Input\SelectInput::class,
-        'rex_input_text' => MetaInfo\Form\Input\TextInput::class,
-        'rex_input_textarea' => MetaInfo\Form\Input\TextareaInput::class,
-        'rex_input_time' => MetaInfo\Form\Input\TimeInput::class,
         'rex_log_entry' => Log\LogEntry::class,
         'rex_log_file' => Log\LogFile::class,
         'rex_logger' => Log\Logger::class,
@@ -313,14 +301,11 @@ return RectorConfig::configure()
         'rex_effect_rotate' => MediaManager\Effect\RotateEffect::class,
         'rex_effect_rounded_corners' => MediaManager\Effect\RoundedCornersEffect::class,
         'rex_effect_workspace' => MediaManager\Effect\WorkspaceEffect::class,
-        'rex_metainfo_default_type' => MetaInfo\Form\DefaultType::class,
         'rex_metainfo_handler' => MetaInfo\Handler\AbstractHandler::class,
         'rex_metainfo_article_handler' => MetaInfo\Handler\ArticleHandler::class,
         'rex_metainfo_category_handler' => MetaInfo\Handler\CategoryHandler::class,
         'rex_metainfo_clang_handler' => MetaInfo\Handler\LanguageHandler::class,
         'rex_metainfo_media_handler' => MetaInfo\Handler\MediaHandler::class,
-        'rex_metainfo_table_expander' => MetaInfo\Form\MetaInfoForm::class,
-        'rex_metainfo_table_manager' => MetaInfo\Database\Table::class,
         'rex_pager' => Util\Pager::class,
         'rex_parsedown' => Util\Parsedown::class,
         'rex_path' => Filesystem\Path::class,
@@ -503,15 +488,6 @@ return RectorConfig::configure()
         new FuncCallToStaticCall('rex_mediapool_updateMedia', MediaPool\MediaPool::class, 'updateMedia'), // different params
         new FuncCallToStaticCall('rex_mediapool_syncFile', MediaPool\MediaPool::class, 'addMedia'), // different params
         new FuncCallToStaticCall('rex_mediapool_deleteMedia', MediaPool\MediaPool::class, 'deleteMedia'), // different return value
-
-        new FuncCallToStaticCall('rex_metainfo_add_field', MetaInfo\MetaInfo::class, 'addField'),
-        new FuncCallToStaticCall('rex_metainfo_add_field_type', MetaInfo\MetaInfo::class, 'addFieldType'),
-        new FuncCallToStaticCall('rex_metainfo_cleanup', MetaInfo\MetaInfo::class, 'cleanup'),
-        new FuncCallToStaticCall('rex_metainfo_delete_field', MetaInfo\MetaInfo::class, 'deleteField'),
-        new FuncCallToStaticCall('rex_metainfo_delete_field_type', MetaInfo\MetaInfo::class, 'deleteFieldType'),
-        new FuncCallToStaticCall('rex_metainfo_extensions_handler', MetaInfo\MetaInfo::class, 'extensionHandler'),
-        new FuncCallToStaticCall('rex_metainfo_meta_prefix', MetaInfo\MetaInfo::class, 'metaPrefix'),
-        new FuncCallToStaticCall('rex_metainfo_meta_table', MetaInfo\MetaInfo::class, 'metaTable'),
 
         new FuncCallToStaticCall('rex_cookie', Http\Request::class, 'cookie'),
         new FuncCallToStaticCall('rex_env', Http\Request::class, 'env'),
@@ -740,28 +716,8 @@ return RectorConfig::configure()
     ])
     ->withConfiguredRule(ConstFetchToClassConstFetchRector::class, [
         new ConstFetchToClassConstFetch('REX_FORM_ERROR_VIOLATE_UNIQUE_KEY', Form\Form::class, 'ERROR_VIOLATE_UNIQUE_KEY'),
-
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_TEXT', MetaInfo\Database\Table::class, 'FIELD_TEXT'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_TEXTAREA', MetaInfo\Database\Table::class, 'FIELD_TEXTAREA'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_SELECT', MetaInfo\Database\Table::class, 'FIELD_SELECT'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_RADIO', MetaInfo\Database\Table::class, 'FIELD_RADIO'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_CHECKBOX', MetaInfo\Database\Table::class, 'FIELD_CHECKBOX'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_REX_MEDIA_WIDGET', MetaInfo\Database\Table::class, 'FIELD_REX_MEDIA_WIDGET'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_REX_MEDIALIST_WIDGET', MetaInfo\Database\Table::class, 'FIELD_REX_MEDIA_WIDGET'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_REX_LINK_WIDGET', MetaInfo\Database\Table::class, 'FIELD_REX_LINK_WIDGET'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_REX_LINKLIST_WIDGET', MetaInfo\Database\Table::class, 'FIELD_REX_LINK_WIDGET'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_DATE', MetaInfo\Database\Table::class, 'FIELD_DATE'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_DATETIME', MetaInfo\Database\Table::class, 'FIELD_DATETIME'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_LEGEND', MetaInfo\Database\Table::class, 'FIELD_LEGEND'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_TIME', MetaInfo\Database\Table::class, 'FIELD_TIME'),
-        new ConstFetchToClassConstFetch('REX_METAINFO_FIELD_COUNT', MetaInfo\Database\Table::class, 'FIELD_COUNT'),
     ])
     ->withConfiguredRule(RenameClassConstFetchRector::class, [
-        new RenameClassConstFetch(MetaInfo\Database\Table::class, 'FIELD_REX_MEDIALIST_WIDGET', 'FIELD_REX_MEDIA_WIDGET'),
-        new RenameClassConstFetch(MetaInfo\Database\Table::class, 'FIELD_REX_LINKLIST_WIDGET', 'FIELD_REX_LINK_WIDGET'),
-        new RenameClassConstFetch(MetaInfo\Form\DefaultType::class, 'REX_MEDIALIST_WIDGET', 'REX_MEDIA_WIDGET'),
-        new RenameClassConstFetch(MetaInfo\Form\DefaultType::class, 'REX_LINKLIST_WIDGET', 'REX_LINK_WIDGET'),
-
         new RenameClassAndConstFetch(ExtensionPoint\Extension::class, 'EARLY', ExtensionPoint\ExtensionLevel::class, 'Early'),
         new RenameClassAndConstFetch(ExtensionPoint\Extension::class, 'NORMAL', ExtensionPoint\ExtensionLevel::class, 'Normal'),
         new RenameClassAndConstFetch(ExtensionPoint\Extension::class, 'LATE', ExtensionPoint\ExtensionLevel::class, 'Late'),

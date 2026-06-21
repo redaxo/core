@@ -81,12 +81,6 @@
       <code><![CDATA[$__context]]></code>
     </TaintedExtract>
   </file>
-  <file src="src/Database/Sql.php">
-    <TaintedSql>
-      <code><![CDATA[$query]]></code>
-      <code><![CDATA[$query]]></code>
-    </TaintedSql>
-  </file>
   <file src="src/Http/Response.php">
     <TaintedHeader>
       <code><![CDATA['Location: ' . $url]]></code>

@@ -338,19 +338,6 @@ final class Controller
                 ->setHref(['page' => 'media_manager/types', 'func' => 'clear_cache']),
             )
         ;
-
-        self::$pages['metainfo'] = new MainPage('system', 'metainfo', I18n::msg('metainfo'))
-            ->setPath(Path::core('pages/metainfo/index.php'))
-            ->setRequiredPermissions('isAdmin')
-            ->setPrio(75)
-            ->setPjax()
-            ->setIcon('rex-icon rex-icon-metainfo')
-            ->addSubpage(new Page('articles', I18n::msg('metainfo_articles')))
-            ->addSubpage(new Page('categories', I18n::msg('metainfo_categories')))
-            ->addSubpage(new Page('media', I18n::msg('metainfo_media')))
-            ->addSubpage(new Page('clangs', I18n::msg('metainfo_clangs')))
-            ->addSubpage(new Page('help', I18n::msg('metainfo_help'))->setSubPath(Path::core('pages/metainfo/help.md')))
-        ;
     }
 
     public static function appendPackagePages(): void

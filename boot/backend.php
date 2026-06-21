@@ -20,6 +20,9 @@ use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\MetaInfo\Handler\CategoryHandler as MetaInfoCategoryHandler;
+use Redaxo\Core\MetaInfo\Handler\LanguageHandler as MetaInfoLanguageHandler;
+use Redaxo\Core\MetaInfo\Handler\MediaHandler as MetaInfoMediaHandler;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
@@ -547,11 +550,6 @@ if ('' === $theme && $user) {
 }
 Asset::setJsProperty('theme', $theme ?: 'auto');
 
-if ('content' == Controller::getCurrentPagePart(1)) {
-    Asset::addCssFile(Url::coreAssets('css/metainfo.css'));
-    Asset::addJsFile(Url::coreAssets('js/metainfo.js'));
-}
-
 Permission::register('users[]');
 
 Permission::register('addArticle[]', null, Permission::OPTIONS);
@@ -579,14 +577,10 @@ if (Core::getConfig('article_work_version', false)) {
     Permission::register('version[live_version]', null, Permission::OPTIONS);
 }
 
-// Metainfo
-Core::setProperty('metainfo_prefixes', ['art_', 'cat_', 'med_', 'clang_']);
-Core::setProperty('metainfo_metaTables', [
-    'art_' => Core::getTablePrefix() . 'article',
-    'cat_' => Core::getTablePrefix() . 'article',
-    'med_' => Core::getTablePrefix() . 'media',
-    'clang_' => Core::getTablePrefix() . 'clang',
-]);
+// Metainfo: register the handler instances backing their non-static #[AsExtension] methods.
+Extension::registerInstance(new MetaInfoCategoryHandler());
+Extension::registerInstance(new MetaInfoMediaHandler());
+Extension::registerInstance(new MetaInfoLanguageHandler());
 
 Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
     $subject = $ep->subject;
