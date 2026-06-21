@@ -20,6 +20,7 @@ final class LanguageHandler extends AbstractHandler
 {
     public const CONTAINER = 'rex-clang-metainfo';
 
+    /** @param ExtensionPoint<string> $ep */
     #[AsExtension('CLANG_FORM_BUTTONS')]
     public function renderToggleButton(ExtensionPoint $ep): string
     {
@@ -30,6 +31,7 @@ final class LanguageHandler extends AbstractHandler
         return $ep->subject;
     }
 
+    /** @param ExtensionPoint<string> $ep */
     #[AsExtension('CLANG_FORM_ADD')]
     #[AsExtension('CLANG_FORM_EDIT')]
     #[AsExtension('CLANG_ADDED', ExtensionLevel::Early)]

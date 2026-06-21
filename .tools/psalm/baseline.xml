@@ -2958,26 +2958,6 @@
       <code><![CDATA[Core::getProperty('blocked_extensions', [])]]></code>
     </NullableReturnStatement>
   </file>
-  <file src="src/MetaInfo/Handler/CategoryHandler.php">
-    <MixedOperand>
-      <code><![CDATA[$ep->subject]]></code>
-      <code><![CDATA[$ep->subject]]></code>
-    </MixedOperand>
-    <MixedReturnStatement>
-      <code><![CDATA[$ep->subject]]></code>
-      <code><![CDATA[$ep->subject]]></code>
-    </MixedReturnStatement>
-  </file>
-  <file src="src/MetaInfo/Handler/LanguageHandler.php">
-    <MixedOperand>
-      <code><![CDATA[$ep->subject]]></code>
-      <code><![CDATA[$ep->subject]]></code>
-    </MixedOperand>
-    <MixedReturnStatement>
-      <code><![CDATA[$ep->subject]]></code>
-      <code><![CDATA[$ep->subject]]></code>
-    </MixedReturnStatement>
-  </file>
   <file src="src/MetaInfo/Handler/MediaHandler.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[['clang_id' => $clangArr['id'], 'func' => 'editclang']]]></code>
@@ -2988,23 +2968,6 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[['filename' => $params['filename']]]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedArrayAssignment>
-      <code><![CDATA[$warning[]]]></code>
-      <code><![CDATA[$warning[]]]></code>
-      <code><![CDATA[$warning[]]]></code>
-      <code><![CDATA[$warning[]]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$warning]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$ep->subject]]></code>
-    </MixedOperand>
-    <MixedReturnStatement>
-      <code><![CDATA[$warning]]></code>
-      <code><![CDATA[$warning]]></code>
-      <code><![CDATA[$warning]]></code>
-    </MixedReturnStatement>
   </file>
   <file src="src/RexVar/MediaListVar.php">
     <MixedArgument>

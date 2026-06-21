@@ -85,6 +85,10 @@ abstract class AbstractHandler
         return $saved;
     }
 
-    /** Retrieves the subject from the current context and renders (and saves) the meta form. */
+    /**
+     * Retrieves the subject from the current context and renders (and saves) the meta form.
+     *
+     * @param ExtensionPoint<string> $ep
+     */
     abstract public function extendForm(ExtensionPoint $ep): string;
 }

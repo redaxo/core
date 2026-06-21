@@ -17,8 +17,6 @@ use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\MetaInfo\MetaSchema;
 use Redaxo\Core\Translation\I18n;
 
-use function array_merge;
-use function array_values;
 use function implode;
 use function in_array;
 
@@ -29,6 +27,8 @@ final class MediaHandler extends AbstractHandler
 {
     /**
      * Extension to check whether the given media is still in use.
+     *
+     * @param ExtensionPoint<list<string>> $ep
      *
      * @return list<string>
      */
@@ -54,10 +54,6 @@ final class MediaHandler extends AbstractHandler
                     $where[$key][] = 'FIND_IN_SET(' . $escapedFilename . ', ' . $sql->escapeIdentifier($field->columnName($entity)) . ')';
                 }
             }
-        }
-
-        if ([] === array_merge(...array_values($where))) {
-            return $warning;
         }
 
         $articles = '';
@@ -120,6 +116,7 @@ final class MediaHandler extends AbstractHandler
         return $warning;
     }
 
+    /** @param ExtensionPoint<string> $ep */
     #[AsExtension('MEDIA_FORM_EDIT')]
     #[AsExtension('MEDIA_FORM_ADD')]
     #[AsExtension('MEDIA_ADDED', ExtensionLevel::Early)]

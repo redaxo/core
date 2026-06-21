@@ -22,6 +22,7 @@ final class CategoryHandler extends AbstractHandler
 {
     public const CONTAINER = 'rex-structure-category-metainfo';
 
+    /** @param ExtensionPoint<string> $ep */
     #[AsExtension('CAT_FORM_BUTTONS')]
     public function renderToggleButton(ExtensionPoint $ep): string
     {
@@ -38,6 +39,7 @@ final class CategoryHandler extends AbstractHandler
         return $ep->subject;
     }
 
+    /** @param ExtensionPoint<string> $ep */
     #[AsExtension('CAT_FORM_ADD')]
     #[AsExtension('CAT_FORM_EDIT')]
     #[AsExtension('CAT_ADDED', ExtensionLevel::Early)]

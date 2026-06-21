@@ -65,6 +65,7 @@ final class ArticleHandler extends AbstractHandler
         return new MetaContext($context->entity, $context->subject, $context->category, $context->mediaCategory, $saved);
     }
 
+    /** @param ExtensionPoint<string> $ep */
     public function extendForm(ExtensionPoint $ep): string
     {
         // noop — the article form is rendered directly via getForm()
