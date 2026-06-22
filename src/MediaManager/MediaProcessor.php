@@ -60,10 +60,18 @@ final readonly class MediaProcessor
 
         if (null === $format) {
             // unknown source extension: let Intervention figure it out
-            return $context->image->encodeUsingFileExtension($context->sourceFormat);
+            $encoded = $context->image->encodeUsingFileExtension($context->sourceFormat);
+        } else {
+            $encoded = $context->image->encodeUsingFormat($format, ...$this->options($context, $format));
         }
 
-        return $context->image->encodeUsingFormat($format, ...$this->options($context, $format));
+        // Some drivers (e.g. Imagick with only the read delegate for AVIF) silently produce an empty
+        // result instead of throwing. Never cache or deliver that as a successful image.
+        if ('' === (string) $encoded) {
+            throw new MediaNotFoundException(sprintf('Encoding the image as "%s" produced an empty result; the image driver is likely missing an encoder for this format.', $format?->name ?? $context->sourceFormat));
+        }
+
+        return $encoded;
     }
 
     /**

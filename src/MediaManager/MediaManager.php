@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\MediaManager;
 
+use Intervention\Image\Format;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
@@ -15,6 +16,8 @@ use Redaxo\Core\MediaManager\Attribute\AsMediaType;
 use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
 use Redaxo\Core\MediaPool\Media;
 
+use function array_filter;
+use function array_values;
 use function assert;
 use function filemtime;
 use function glob;
@@ -153,13 +156,19 @@ final class MediaManager
         assert(null !== $type);
 
         // content negotiation (resolved before processing so cached variants need no re-processing).
-        // a negotiating type needs the driver here even on a cache hit, to pick the right variant.
+        // a negotiating type needs the manager here even on a cache hit, to pick the right variant.
+        // candidates are limited to formats the driver can actually encode, so a missing AVIF/WebP
+        // encoder degrades gracefully to the next format instead of producing an empty result.
         $negotiatedFormat = null;
         $manager = null;
         if ($type instanceof NegotiatesFormat) {
             $manager = ImageManagerFactory::create();
+            $candidates = array_values(array_filter(
+                $type->negotiableFormats(),
+                static fn (Format $format): bool => ImageManagerFactory::canEncode($manager, $format),
+            ));
             $accept = Request::server('HTTP_ACCEPT', 'string', '');
-            $negotiatedFormat = FormatNegotiator::negotiate($type->negotiableFormats(), $accept, $manager->driver);
+            $negotiatedFormat = FormatNegotiator::negotiate($candidates, $accept);
         }
 
         $variant = null === $negotiatedFormat ? '' : $negotiatedFormat->name;
