@@ -15,6 +15,7 @@ final class ImageManagerFactoryTest extends TestCase
     protected function tearDown(): void
     {
         ImageManagerFactory::setDriver(null);
+        ImageManagerFactory::reset();
     }
 
     public function testCreateReturnsUsableManager(): void
