@@ -13,6 +13,9 @@ use Intervention\Image\Format;
  * so browsers and CDNs cache per format. If the client accepts none of the candidates, the source
  * (or the type's own) format is kept.
  *
+ * A {@see MediaType} opts in by additionally implementing this interface
+ * (`implements MediaType, NegotiatesFormat`).
+ *
  * Example — serve AVIF/WebP to clients that support them, otherwise the original format:
  *
  *     public function negotiableFormats(): array
@@ -20,7 +23,7 @@ use Intervention\Image\Format;
  *         return [Format::AVIF, Format::WEBP];
  *     }
  */
-interface NegotiatesFormat extends MediaType
+interface NegotiatesFormat
 {
     /** @return list<Format> Candidate output formats, best first; the first the client accepts wins. */
     public function negotiableFormats(): array;
