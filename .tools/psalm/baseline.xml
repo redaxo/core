@@ -900,6 +900,9 @@
     </PossiblyNullOperand>
   </file>
   <file src="pages/mediapool/media.list.php">
+    <InvalidScalarArgument>
+      <code><![CDATA[$media->getValue('updatedate')]]></code>
+    </InvalidScalarArgument>
     <MixedArgument>
       <code><![CDATA[$error]]></code>
       <code><![CDATA[$fileName]]></code>
@@ -915,9 +918,6 @@
       <code><![CDATA[$fileName]]></code>
       <code><![CDATA[$filename]]></code>
     </MixedAssignment>
-    <PossiblyInvalidArgument>
-      <code><![CDATA[$media->getValue('updatedate')]]></code>
-    </PossiblyInvalidArgument>
     <PossiblyInvalidOperand>
       <code><![CDATA[$media->getValue('updatedate')]]></code>
     </PossiblyInvalidOperand>

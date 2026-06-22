@@ -87,9 +87,8 @@ final class MediaManager
      * @param string|Media $file Media file (a {@see Media} object provides its own change timestamp)
      * @param int|null $timestamp Last change timestamp of the file, used for the cache-buster
      *                            (not necessary when the file is given by a {@see Media} object)
-     * @return string
      */
-    public static function getUrl($type, $file, $timestamp = null)
+    public static function getUrl(string $type, Media|string $file, ?int $timestamp = null): string
     {
         if ($file instanceof Media) {
             if (null === $timestamp) {
@@ -149,14 +148,10 @@ final class MediaManager
         return $counter;
     }
 
-    /**
-     * @return void
-     *
-     * @internal
-     */
+    /** @internal */
     #[AsExtension('MEDIA_UPDATED')]
     #[AsExtension('MEDIA_DELETED')]
-    public static function mediaUpdated(ExtensionPoint $ep)
+    public static function mediaUpdated(ExtensionPoint $ep): void
     {
         self::deleteCache((string) $ep->getParam('filename'));
     }
