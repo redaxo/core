@@ -41,7 +41,7 @@ final class Setup
 {
     /** @var string */
     public const MIN_PHP_VERSION = REX_MIN_PHP_VERSION;
-    public const MIN_PHP_EXTENSIONS = ['ctype', 'fileinfo', 'gd', 'iconv', 'intl', 'mbstring', 'pdo_mysql', 'session', 'tokenizer'];
+    public const MIN_PHP_EXTENSIONS = ['ctype', 'fileinfo', 'iconv', 'intl', 'mbstring', 'pdo_mysql', 'session', 'tokenizer'];
     public const MIN_MYSQL_VERSION = '8.0';
     public const MIN_MARIADB_VERSION = '10.4';
 

@@ -39,31 +39,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Form/Field/SelectField.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\Effect\\MirrorEffect::imagereflection() has parameter $bgColor with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaManager/Effect/MirrorEffect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\Effect\\MirrorEffect::imagereflection() has parameter $image with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaManager/Effect/MirrorEffect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\Effect\\MirrorEffect::imagereflection() has parameter $reflectionHeight with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaManager/Effect/MirrorEffect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\Effect\\MirrorEffect::imagereflection() has parameter $reflectionOpacity with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaManager/Effect/MirrorEffect.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaManager\\Effect\\MirrorEffect::imagereflection() has parameter $transparent with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaManager/Effect/MirrorEffect.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Util\\Parsedown::blockFencedCodeComplete() has parameter $Block with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Util/Parsedown.php',
