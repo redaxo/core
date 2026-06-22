@@ -412,7 +412,6 @@ class Mailer extends PHPMailer
             $tokenUrl = "https://login.microsoftonline.com/$this->graphTenantId/oauth2/v2.0/token";
 
             try {
-                // The array passed as `body` is sent as application/x-www-form-urlencoded automatically
                 $tokenResponse = Core::getHttpClient()->request('POST', $tokenUrl, [
                     'body' => [
                         'client_id' => $this->graphClientId,

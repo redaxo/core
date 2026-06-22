@@ -14,8 +14,7 @@ final class UrlRequestType extends AbstractType
     #[Override]
     public function execute(): bool
     {
-        // Redirects are followed automatically by the HTTP client when enabled (on by default)
-        $options = ['max_redirects' => $this->getParam('redirect', true) ? 10 : 0];
+        $options = [];
 
         if ('|1|' == $this->getParam('http-auth')) {
             $options['auth_basic'] = [$this->getParam('user'), $this->getParam('password')];
