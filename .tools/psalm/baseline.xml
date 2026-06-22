@@ -1880,10 +1880,7 @@
   </file>
   <file src="src/Cronjob/Type/UrlRequestType.php">
     <MixedArgument>
-      <code><![CDATA[$post]]></code>
-      <code><![CDATA[$this->getParam('password')]]></code>
       <code><![CDATA[$this->getParam('url')]]></code>
-      <code><![CDATA[$this->getParam('user')]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$post]]></code>
@@ -2467,7 +2464,6 @@
       <code><![CDATA[$this->xHeader['to']]]></code>
     </MixedOperand>
     <PossiblyFalseArgument>
-      <code><![CDATA[json_encode($mailData)]]></code>
       <code><![CDATA[json_encode($mailData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)]]></code>
     </PossiblyFalseArgument>
     <PossiblyNullArgument>
