@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\MediaManager;
 
+use FilesystemIterator;
 use Intervention\Image\Format;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -17,12 +18,16 @@ use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
 use Redaxo\Core\MediaPool\Media;
 
 use function array_filter;
+use function array_keys;
 use function array_values;
 use function assert;
+use function dirname;
 use function filemtime;
 use function glob;
 use function hash;
+use function is_dir;
 use function is_file;
+use function rmdir;
 use function rtrim;
 use function session_abort;
 use function session_status;
@@ -128,13 +133,37 @@ final class MediaManager
         $pattern = $base . '*/*/' . ($filename ?? '') . '*';
 
         $counter = 0;
+        $hashDirs = [];
         foreach (glob($pattern, GLOB_NOSORT) ?: [] as $file) {
             if (File::delete($file)) {
                 ++$counter;
+                $hashDirs[dirname($file)] = true;
             }
         }
 
+        // remove the {hash} dirs that are now empty, and any {type} dir that emptied with them.
+        // a {hash} dir may still hold other files (the hash does not depend on the filename), so
+        // rmdir only succeeds — and is only attempted — when the dir is actually empty.
+        $typeDirs = [];
+        foreach (array_keys($hashDirs) as $hashDir) {
+            if (self::removeEmptyDir($hashDir)) {
+                $typeDirs[dirname($hashDir)] = true;
+            }
+        }
+        foreach (array_keys($typeDirs) as $typeDir) {
+            self::removeEmptyDir($typeDir);
+        }
+
         return $counter;
+    }
+
+    private static function removeEmptyDir(string $dir): bool
+    {
+        if (!is_dir($dir) || new FilesystemIterator($dir)->valid()) {
+            return false;
+        }
+
+        return rmdir($dir);
     }
 
     /**
