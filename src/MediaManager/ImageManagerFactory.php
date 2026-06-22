@@ -6,7 +6,6 @@ use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\DriverInterface;
-use Intervention\Image\Interfaces\ImageManagerInterface;
 use Redaxo\Core\Exception\RuntimeException;
 
 use function extension_loaded;
@@ -31,7 +30,7 @@ final class ImageManagerFactory
     }
 
     /** @internal */
-    public static function create(): ImageManagerInterface
+    public static function create(): ImageManager
     {
         $driver = null !== self::$driver ? new self::$driver() : self::detectDriver();
 

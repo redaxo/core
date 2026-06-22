@@ -152,11 +152,14 @@ final class MediaManager
         $type = MediaTypeRegistry::get($typeName);
         assert(null !== $type);
 
-        // content negotiation (resolved before processing so cached variants need no re-processing)
+        // content negotiation (resolved before processing so cached variants need no re-processing).
+        // a negotiating type needs the driver here even on a cache hit, to pick the right variant.
         $negotiatedFormat = null;
+        $manager = null;
         if ($type instanceof NegotiatesFormat) {
+            $manager = ImageManagerFactory::create();
             $accept = Request::server('HTTP_ACCEPT', 'string', '');
-            $negotiatedFormat = FormatNegotiator::negotiate($type->negotiableFormats(), $accept);
+            $negotiatedFormat = FormatNegotiator::negotiate($type->negotiableFormats(), $accept, $manager->driver);
         }
 
         $variant = null === $negotiatedFormat ? '' : $negotiatedFormat->name;
@@ -176,8 +179,9 @@ final class MediaManager
         $meta = is_file($cacheFile) ? File::getCache($metaFile, null) : null;
 
         if (null === $meta) {
+            $manager ??= ImageManagerFactory::create();
             try {
-                $result = new MediaProcessor(ImageManagerFactory::create())->render($type, $sourcePath, $file, $negotiatedFormat);
+                $result = new MediaProcessor($manager)->render($type, $sourcePath, $file, $negotiatedFormat);
             } catch (MediaNotFoundException) {
                 header('HTTP/1.1 ' . Response::HTTP_NOT_FOUND);
 
