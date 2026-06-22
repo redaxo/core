@@ -3,11 +3,10 @@
 namespace Redaxo\Core\Cronjob\Type;
 
 use Override;
-use Redaxo\Core\HttpClient\Exception\HttpClientException;
-use Redaxo\Core\HttpClient\Request;
+use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
-
-use function in_array;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /** @internal */
 final class UrlRequestType extends AbstractType
@@ -15,37 +14,26 @@ final class UrlRequestType extends AbstractType
     #[Override]
     public function execute(): bool
     {
+        $options = [];
+
+        if ('|1|' == $this->getParam('http-auth')) {
+            $options['auth_basic'] = [$this->getParam('user'), $this->getParam('password')];
+        }
+
+        if ('' != ($post = $this->getParam('post'))) {
+            $options['body'] = (string) $post;
+        }
+
+        $method = isset($options['body']) ? 'POST' : 'GET';
+
         try {
-            $socket = Request::factoryUrl($this->getParam('url'));
-            if ('|1|' == $this->getParam('http-auth')) {
-                $socket->addBasicAuthorization($this->getParam('user'), $this->getParam('password'));
-            }
-            if ('' != ($post = $this->getParam('post'))) {
-                $response = $socket->doPost($post);
-            } else {
-                $response = $socket->doGet();
-            }
+            $response = Core::getHttpClient()->request($method, $this->getParam('url'), $options);
+
             $statusCode = $response->getStatusCode();
-            $success = $response->isSuccessful();
-            $message = $statusCode . ' ' . $response->getStatusMessage();
-            if (in_array($statusCode, [301, 302, 303, 307])
-                && $this->getParam('redirect', true)
-                && ($location = $response->getHeader('Location'))
-            ) {
-                // maximal eine Umleitung zulassen
-                $this->setParam('redirect', false);
-                $this->setParam('url', $location);
-                // rekursiv erneut ausfuehren
-                $success = $this->execute();
-                if ($this->message) {
-                    $message .= ' -> ' . $this->message;
-                } else {
-                    $message .= ' -> Unknown error';
-                }
-            }
-            $this->message = $message;
-            return $success;
-        } catch (HttpClientException $e) {
+            $this->message = trim($statusCode . ' ' . (HttpResponse::$statusTexts[$statusCode] ?? ''));
+
+            return $statusCode >= 200 && $statusCode < 300;
+        } catch (TransportExceptionInterface $e) {
             $this->message = $e->getMessage();
             return false;
         }

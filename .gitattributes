@@ -9,9 +9,6 @@
 *.json  text eol=lf whitespace=blank-at-eol,blank-at-eof,space-before-tab,tab-in-indent,tabwidth=4
 *.yml   text eol=lf whitespace=blank-at-eol,blank-at-eof,space-before-tab,tab-in-indent,tabwidth=4
 
-# To avoid line changes in the test responses for the socket unit tests the response files should be transfered binary
-*.testresp binary
-
 # Exclude non-essential files from dist
 /.* export-ignore
 /.phpstorm.meta.php -export-ignore
