@@ -8,6 +8,7 @@ use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
@@ -18,10 +19,9 @@ use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
 use Redaxo\Core\MediaPool\Media;
 
 use function array_filter;
-use function array_keys;
 use function array_values;
 use function assert;
-use function dirname;
+use function count;
 use function filemtime;
 use function glob;
 use function hash;
@@ -35,6 +35,7 @@ use function substr;
 
 use const DIRECTORY_SEPARATOR;
 use const GLOB_NOSORT;
+use const GLOB_ONLYDIR;
 use const PHP_SESSION_ACTIVE;
 
 /**
@@ -129,34 +130,29 @@ final class MediaManager
     {
         $base = self::$cacheDirectory ?? Path::coreCache('media_manager/');
 
-        // cache layout: {type}/{hash}/{filename}
-        $pattern = $base . '*/*/' . ($filename ?? '') . '*';
-
+        // cache layout: {type}/{filename}/{hash} -- a media file's whole cache lives under
+        // {type}/{filename}, so it can be dropped as a directory; an emptied {type} dir follows.
         $counter = 0;
-        $hashDirs = [];
-        foreach (glob($pattern, GLOB_NOSORT) ?: [] as $file) {
-            if (File::delete($file)) {
-                ++$counter;
-                $hashDirs[dirname($file)] = true;
+        foreach (glob($base . '*', GLOB_NOSORT | GLOB_ONLYDIR) ?: [] as $typeDir) {
+            if (null === $filename) {
+                $fileDirs = glob($typeDir . '/*', GLOB_NOSORT | GLOB_ONLYDIR) ?: [];
+            } else {
+                $fileDir = $typeDir . '/' . $filename;
+                $fileDirs = is_dir($fileDir) ? [$fileDir] : [];
             }
-        }
 
-        // remove the {hash} dirs that are now empty, and any {type} dir that emptied with them.
-        // a {hash} dir may still hold other files (the hash does not depend on the filename), so
-        // rmdir only succeeds — and is only attempted — when the dir is actually empty.
-        $typeDirs = [];
-        foreach (array_keys($hashDirs) as $hashDir) {
-            if (self::removeEmptyDir($hashDir)) {
-                $typeDirs[dirname($hashDir)] = true;
+            foreach ($fileDirs as $fileDir) {
+                $counter += count(glob($fileDir . '/*', GLOB_NOSORT) ?: []);
+                Dir::delete($fileDir);
             }
-        }
-        foreach (array_keys($typeDirs) as $typeDir) {
+
             self::removeEmptyDir($typeDir);
         }
 
         return $counter;
     }
 
+    /** Removes the directory if (and only if) it is empty. */
     private static function removeEmptyDir(string $dir): bool
     {
         if (!is_dir($dir) || new FilesystemIterator($dir)->valid()) {
@@ -269,8 +265,11 @@ final class MediaManager
     }
 
     /**
-     * Cache file path; the key embeds the type's source hash, the media's mtime and the variant
-     * (e.g. negotiated format), so edits and per-request variants invalidate/separate automatically.
+     * Cache file path, laid out as `{type}/{filename}/{hash}` so a single media file's entire cache
+     * (all variants and versions) lives under one directory and can be dropped wholesale.
+     *
+     * The hash embeds the type's source hash, the media's mtime and the variant (e.g. negotiated
+     * format), so type edits and per-request variants invalidate/separate automatically.
      */
     private static function typeCacheFile(string $typeName, string $file, string $sourcePath, string $variant = ''): string
     {
@@ -278,6 +277,6 @@ final class MediaManager
         $mtime = is_file($sourcePath) ? (int) filemtime($sourcePath) : 0;
         $key = hash('xxh128', MediaTypeRegistry::sourceHash($typeName) . '|' . $mtime . '|' . $variant);
 
-        return $base . $typeName . '/' . $key . '/' . $file;
+        return $base . $typeName . '/' . $file . '/' . $key;
     }
 }

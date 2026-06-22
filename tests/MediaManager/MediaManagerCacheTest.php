@@ -7,6 +7,7 @@ use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\MediaManager\MediaManager;
 
 use function dirname;
+use function file_put_contents;
 use function sys_get_temp_dir;
 use function uniqid;
 
@@ -26,34 +27,41 @@ final class MediaManagerCacheTest extends TestCase
         Dir::delete($this->dir);
     }
 
-    public function testDeleteCacheRemovesFilesAndEmptiedDirectories(): void
+    public function testDeleteCacheForFilenameDropsItsWholeDirAndEmptiedTypeDir(): void
     {
-        // foto.jpg is cached in several type/hash dirs; "hashD" additionally holds an unrelated file
-        $this->write('rex_media_small/hashA/foto.jpg');
-        $this->write('rex_media_small/hashA/foto.jpg.meta');
-        $this->write('rex_media_small/hashB/other.jpg'); // same type, different file -> hashB stays
-        $this->write('rex_media_large/hashC/foto.jpg');
-        $this->write('rex_media_large/hashC/foto.jpg.meta');
-        $this->write('rex_media_medium/hashD/foto.jpg');
-        $this->write('rex_media_medium/hashD/shared.jpg'); // hashD keeps a file -> dir stays
+        // cache layout: {type}/{filename}/{hash} -- foto.jpg has several hashes (variants/versions)
+        $this->write('rex_media_small/foto.jpg/hashA');
+        $this->write('rex_media_small/foto.jpg/hashA.meta');
+        $this->write('rex_media_small/foto.jpg/hashV2'); // another variant of the same file
+        $this->write('rex_media_small/other.jpg/hashB'); // different file, same type -> type dir stays
+        $this->write('rex_media_large/foto.jpg/hashC');
+        $this->write('rex_media_large/foto.jpg/hashC.meta');
 
         $deleted = MediaManager::deleteCache('foto.jpg');
 
-        // all foto.jpg variants (incl. .meta) across the three hash dirs are gone, others remain
+        // every hash/variant of foto.jpg across all types is gone in one go
         self::assertSame(5, $deleted);
-        self::assertFileDoesNotExist($this->dir . '/rex_media_small/hashA/foto.jpg');
-        self::assertFileDoesNotExist($this->dir . '/rex_media_large/hashC/foto.jpg.meta');
-        self::assertFileExists($this->dir . '/rex_media_small/hashB/other.jpg');
-        self::assertFileExists($this->dir . '/rex_media_medium/hashD/shared.jpg');
+        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_small/foto.jpg');
+        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large/foto.jpg');
 
-        // emptied hash dirs are removed; a type dir is removed once all its hash dirs are gone
-        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_small/hashA');
-        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large/hashC');
+        // unrelated file is untouched, its type dir survives
+        self::assertFileExists($this->dir . '/rex_media_small/other.jpg/hashB');
+        self::assertDirectoryExists($this->dir . '/rex_media_small');
+
+        // the type dir that held only foto.jpg is removed too -- no empty orphan
         self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large');
+    }
 
-        // dirs that still hold files are kept
-        self::assertDirectoryExists($this->dir . '/rex_media_small'); // hashB remains
-        self::assertDirectoryExists($this->dir . '/rex_media_medium/hashD'); // shared.jpg remains
+    public function testDeleteCacheWithoutFilenameClearsEverything(): void
+    {
+        $this->write('rex_media_small/foto.jpg/hashA');
+        $this->write('rex_media_large/bar.png/hashB');
+
+        $deleted = MediaManager::deleteCache();
+
+        self::assertSame(2, $deleted);
+        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_small');
+        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large');
     }
 
     private function write(string $relative): void
