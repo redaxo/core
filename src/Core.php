@@ -389,7 +389,7 @@ final class Core
     public static function getHttpClient(): HttpClientInterface
     {
         return self::$httpClient ??= HttpClientFactory::create([
-            // Neutraler User-Agent ohne Version, um kein Fingerprinting der Installation zu ermöglichen
+            // Neutral User-Agent without version to avoid fingerprinting the installation
             'headers' => ['User-Agent' => 'REDAXO'],
         ]);
     }

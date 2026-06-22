@@ -412,7 +412,7 @@ class Mailer extends PHPMailer
             $tokenUrl = "https://login.microsoftonline.com/$this->graphTenantId/oauth2/v2.0/token";
 
             try {
-                // Das array als `body` wird automatisch als application/x-www-form-urlencoded gesendet
+                // The array passed as `body` is sent as application/x-www-form-urlencoded automatically
                 $tokenResponse = Core::getHttpClient()->request('POST', $tokenUrl, [
                     'body' => [
                         'client_id' => $this->graphClientId,
@@ -479,7 +479,7 @@ class Mailer extends PHPMailer
             ]);
             $statusCode = $mailResponse->getStatusCode();
             if ($statusCode < 200 || $statusCode >= 300) {
-                // `getContent(false)` verhindert das Werfen einer Exception bei Fehler-Statuscodes
+                // `getContent(false)` prevents an exception from being thrown on error status codes
                 $this->setError(I18n::msg('phpmailer_msgraph_api_error') . $mailResponse->getContent(false));
                 return false;
             }
