@@ -20,7 +20,6 @@
         "php": "^8.5",
         "ext-ctype": "*",
         "ext-fileinfo": "*",
-        "ext-gd": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
