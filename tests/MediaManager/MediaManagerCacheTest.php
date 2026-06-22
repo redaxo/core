@@ -27,13 +27,13 @@ final class MediaManagerCacheTest extends TestCase
         Dir::delete($this->dir);
     }
 
-    public function testDeleteCacheForFilenameDropsItsWholeDirAndEmptiedTypeDir(): void
+    public function testDeleteCacheForFilenameDropsItsWholeDir(): void
     {
         // cache layout: {type}/{filename}/{hash} -- foto.jpg has several hashes (variants/versions)
         $this->write('rex_media_small/foto.jpg/hashA');
         $this->write('rex_media_small/foto.jpg/hashA.meta');
         $this->write('rex_media_small/foto.jpg/hashV2'); // another variant of the same file
-        $this->write('rex_media_small/other.jpg/hashB'); // different file, same type -> type dir stays
+        $this->write('rex_media_small/other.jpg/hashB'); // different file, same type
         $this->write('rex_media_large/foto.jpg/hashC');
         $this->write('rex_media_large/foto.jpg/hashC.meta');
 
@@ -44,15 +44,13 @@ final class MediaManagerCacheTest extends TestCase
         self::assertDirectoryDoesNotExist($this->dir . '/rex_media_small/foto.jpg');
         self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large/foto.jpg');
 
-        // unrelated file is untouched, its type dir survives
+        // unrelated file is untouched; the (reused) type dirs are left in place
         self::assertFileExists($this->dir . '/rex_media_small/other.jpg/hashB');
         self::assertDirectoryExists($this->dir . '/rex_media_small');
-
-        // the type dir that held only foto.jpg is removed too -- no empty orphan
-        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large');
+        self::assertDirectoryExists($this->dir . '/rex_media_large');
     }
 
-    public function testDeleteCacheWithoutFilenameClearsEverything(): void
+    public function testDeleteCacheWithoutFilenameRemovesAllCachedFiles(): void
     {
         $this->write('rex_media_small/foto.jpg/hashA');
         $this->write('rex_media_large/bar.png/hashB');
@@ -60,8 +58,8 @@ final class MediaManagerCacheTest extends TestCase
         $deleted = MediaManager::deleteCache();
 
         self::assertSame(2, $deleted);
-        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_small');
-        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large');
+        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_small/foto.jpg');
+        self::assertDirectoryDoesNotExist($this->dir . '/rex_media_large/bar.png');
     }
 
     private function write(string $relative): void

@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\MediaManager;
 
-use FilesystemIterator;
 use Intervention\Image\Format;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -27,7 +26,6 @@ use function glob;
 use function hash;
 use function is_dir;
 use function is_file;
-use function rmdir;
 use function rtrim;
 use function session_abort;
 use function session_status;
@@ -131,7 +129,8 @@ final class MediaManager
         $base = self::$cacheDirectory ?? Path::coreCache('media_manager/');
 
         // cache layout: {type}/{filename}/{hash} -- a media file's whole cache lives under
-        // {type}/{filename}, so it can be dropped as a directory; an emptied {type} dir follows.
+        // {type}/{filename}, so it can be dropped as a directory. The few {type} dirs are a fixed,
+        // reused set, so they are left in place (they never accumulate per file).
         $counter = 0;
         foreach (glob($base . '*', GLOB_NOSORT | GLOB_ONLYDIR) ?: [] as $typeDir) {
             if (null === $filename) {
@@ -145,21 +144,9 @@ final class MediaManager
                 $counter += count(glob($fileDir . '/*', GLOB_NOSORT) ?: []);
                 Dir::delete($fileDir);
             }
-
-            self::removeEmptyDir($typeDir);
         }
 
         return $counter;
-    }
-
-    /** Removes the directory if (and only if) it is empty. */
-    private static function removeEmptyDir(string $dir): bool
-    {
-        if (!is_dir($dir) || new FilesystemIterator($dir)->valid()) {
-            return false;
-        }
-
-        return rmdir($dir);
     }
 
     /**
