@@ -4,6 +4,7 @@ namespace Redaxo\Core\Util;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Http\Response;
 use Redaxo\Core\Security\BackendLogin;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
@@ -48,6 +49,7 @@ final class VarDumper
             } else {
                 $styleAll = 'font-family: "Fira Code", Menlo, Monaco, Consolas, monospace; font-size: 14px; line-height: 1.4 !important;';
                 $dumper = new HtmlDumper();
+                $dumper->setNonce(static fn () => Response::getNonce());
                 $dumper->setDumpBoundaries('<pre class="rex-var-dumper sf-dump" id="%s" data-indent-pad="%s">', '</pre><script>Sfdump(%s)</script>');
                 $dumper->setIndentPad('    ');
                 $dumper->setStyles([
