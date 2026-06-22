@@ -8,7 +8,8 @@ use Intervention\Image\ImageManager;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\MediaManager\MediaContext;
 use Redaxo\Core\MediaManager\MediaTypeRegistry;
-use Redaxo\Core\MediaManager\Type\ScaleDown;
+use Redaxo\Core\MediaManager\NegotiatesFormat;
+use Redaxo\Core\MediaManager\Type\ResizedImage;
 
 use function base64_decode;
 
@@ -19,12 +20,20 @@ final class MediaTypeTest extends TestCase
     {
         self::assertTrue(MediaTypeRegistry::has('rex_media_small'));
         // all three default types are backed by the same parametric class
-        self::assertInstanceOf(ScaleDown::class, MediaTypeRegistry::get('rex_media_small'));
-        self::assertInstanceOf(ScaleDown::class, MediaTypeRegistry::get('rex_media_medium'));
-        self::assertInstanceOf(ScaleDown::class, MediaTypeRegistry::get('rex_media_large'));
+        self::assertInstanceOf(ResizedImage::class, MediaTypeRegistry::get('rex_media_small'));
+        self::assertInstanceOf(ResizedImage::class, MediaTypeRegistry::get('rex_media_medium'));
+        self::assertInstanceOf(ResizedImage::class, MediaTypeRegistry::get('rex_media_large'));
 
         self::assertNull(MediaTypeRegistry::get('non_existing_type'));
         self::assertFalse(MediaTypeRegistry::has('non_existing_type'));
+    }
+
+    public function testDefaultTypesNegotiateModernFormats(): void
+    {
+        $type = MediaTypeRegistry::get('rex_media_small');
+
+        self::assertInstanceOf(NegotiatesFormat::class, $type);
+        self::assertSame([Format::AVIF, Format::WEBP], $type->negotiableFormats());
     }
 
     public function testSourceHashSharedPerClass(): void
