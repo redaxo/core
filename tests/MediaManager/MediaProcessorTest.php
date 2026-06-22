@@ -107,7 +107,7 @@ final class MediaProcessorTest extends TestCase
 
         self::assertTrue($result->isRaw());
         self::assertSame($source, $result->sourcePath);
-        self::assertTrue($result->response->isDownload());
+        self::assertTrue($result->response->download);
     }
 
     public function testThrowsWhenRawSourceMissing(): void

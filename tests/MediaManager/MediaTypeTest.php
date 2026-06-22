@@ -84,26 +84,24 @@ final class MediaTypeTest extends TestCase
         $context->response->forceDownload();
 
         self::assertFalse($context->isImageDecoded());
-        self::assertTrue($context->response->isDownload());
+        self::assertTrue($context->response->download);
     }
 
     public function testResponseOutputIntent(): void
     {
         $response = new MediaContext('test.jpg', '/path/test.jpg', new ImageManager(new Driver()))->response;
 
-        self::assertNull($response->getFormat());
-        self::assertNull($response->getQuality());
-        self::assertSame([], $response->getHeaders());
+        self::assertNull($response->format);
+        self::assertNull($response->quality);
+        self::assertSame([], $response->headers);
 
         $response->setFormat(Format::WEBP)->setQuality(70)->noIndex()->forceDownload();
 
-        self::assertSame(Format::WEBP, $response->getFormat());
-        self::assertSame(70, $response->getQuality());
-        self::assertTrue($response->isDownload());
-        self::assertSame('test.jpg', $response->getDownloadFilename());
+        self::assertSame(Format::WEBP, $response->format);
+        self::assertSame(70, $response->quality);
+        self::assertTrue($response->download);
+        self::assertSame('test.jpg', $response->downloadFilename);
 
-        $headers = $response->getHeaders();
-        self::assertArrayHasKey('X-Robots-Tag', $headers);
-        self::assertSame('noindex', $headers['X-Robots-Tag']);
+        self::assertSame(['X-Robots-Tag' => 'noindex'], $response->headers);
     }
 }

@@ -56,7 +56,7 @@ final readonly class MediaProcessor
     private function encode(MediaContext $context, ?Format $forceFormat): EncodedImageInterface
     {
         // output format: forced (negotiation) > type override > source format
-        $format = $forceFormat ?? $context->response->getFormat() ?? Format::tryCreate($context->sourceFormat);
+        $format = $forceFormat ?? $context->response->format ?? Format::tryCreate($context->sourceFormat);
 
         if (null === $format) {
             // unknown source extension: let Intervention figure it out
@@ -86,13 +86,13 @@ final readonly class MediaProcessor
     {
         $options = [];
 
-        $quality = $context->response->getQuality() ?? MediaQuality::get($format);
+        $quality = $context->response->quality ?? MediaQuality::get($format);
         if (null !== $quality) {
             $options['quality'] = $quality;
         }
 
         // Sensible default: progressive JPEG, baseline for everything else. A type may override it.
-        $interlaced = $context->response->getInterlaced() ?? (Format::JPEG === $format);
+        $interlaced = $context->response->interlaced ?? (Format::JPEG === $format);
         if ($interlaced) {
             // Intervention names the option differently per encoder
             if (Format::JPEG === $format) {

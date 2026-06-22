@@ -47,10 +47,10 @@ final readonly class MediaResult
     {
         return [
             'mediaType' => $this->mediaType,
-            'download' => $this->response->isDownload(),
-            'downloadFilename' => $this->response->getDownloadFilename(),
-            'cacheControl' => $this->response->getCacheControl(),
-            'headers' => $this->response->getHeaders(),
+            'download' => $this->response->download,
+            'downloadFilename' => $this->response->downloadFilename,
+            'cacheControl' => $this->response->cacheControl,
+            'headers' => $this->response->headers,
         ];
     }
 }
