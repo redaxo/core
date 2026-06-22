@@ -85,4 +85,5 @@ REDAXO has a large addon ecosystem; public APIs are part of the contract:
 - Don't change signatures, remove public methods, or rename public classes/constants on the `5.x` branch — deprecate via `@deprecated` and keep a working shim.
 - `@internal`-marked symbols may change without notice.
 - New parameters on public methods must be optional.
+- Mark new classes `@internal` by default. Only omit it when the class is deliberately part of the public API. In that case, review every public property, constant, and method individually and mark `@internal` each one that isn't meant to be a public contract — public visibility alone shouldn't lock you into supporting it.
 - DB schema changes belong in the relevant addon's install/update path.
