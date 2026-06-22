@@ -83,7 +83,7 @@ jobs:
                 with:
                     php-version: '8.5'
                     ini-values: 'error_reporting=E_ALL, display_errors=On, display_startup_errors=On'
-                    extensions: gd, pdo_mysql
+                    extensions: imagick, pdo_mysql
                     coverage: none # disable xdebug, pcov
                     tools: cs2pr
 
