@@ -86,9 +86,4 @@
       <code><![CDATA['Location: ' . $url]]></code>
     </TaintedHeader>
   </file>
-  <file src="src/HttpClient/Request.php">
-    <TaintedCallable>
-      <code><![CDATA[$data]]></code>
-    </TaintedCallable>
-  </file>
 </files>

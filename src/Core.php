@@ -17,8 +17,10 @@ use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\Validator\Validator;
+use Symfony\Component\HttpClient\HttpClient as HttpClientFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Tag\TaggedValue;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 use function constant;
 use function in_array;
@@ -43,6 +45,8 @@ final class Core
      * @var array<string, mixed>
      */
     private static array $properties = [];
+
+    private static ?HttpClientInterface $httpClient = null;
 
     private function __construct() {}
 
@@ -176,14 +180,13 @@ final class Core
      *      ($key is 'instname' ? non-empty-string :
      *      ($key is 'theme' ? string :
      *      ($key is 'start_page' ? non-empty-string :
-     *      ($key is 'http_client_proxy' ? non-empty-string|null :
      *      ($key is 'password_policy' ? array<string, scalar> :
      *      ($key is 'backend_login_policy' ? array<string, bool|int> :
      *      ($key is 'db' ? array<int, string[]> :
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      ))))))))))))))))))))))))))
+     *      )))))))))))))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -375,6 +378,20 @@ final class Core
         }
 
         return $request;
+    }
+
+    /**
+     * Returns a shared HTTP client for outgoing requests, backed by the Symfony HTTP client.
+     *
+     * The client honors the standard proxy environment variables (`HTTP_PROXY`, `HTTPS_PROXY`,
+     * `NO_PROXY`) out of the box, so a global proxy is configured purely via the environment.
+     */
+    public static function getHttpClient(): HttpClientInterface
+    {
+        return self::$httpClient ??= HttpClientFactory::create([
+            // Neutraler User-Agent ohne Version, um kein Fingerprinting der Installation zu ermöglichen
+            'headers' => ['User-Agent' => 'REDAXO'],
+        ]);
     }
 
     /** @param positive-int $db */

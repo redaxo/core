@@ -2377,25 +2377,6 @@
       <code><![CDATA[$_SERVER['REQUEST_URI']]]></code>
     </PossiblyUndefinedArrayOffset>
   </file>
-  <file src="src/HttpClient/Request.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[fread($file, 1024)]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand>
-      <code><![CDATA[filesize($file['path'])]]></code>
-    </PossiblyFalseOperand>
-    <PossiblyFalsePropertyAssignmentValue>
-      <code><![CDATA[stream_socket_client($host . ':' . $this->port, $errno, $errstr, (float) ini_get('default_socket_timeout'), STREAM_CLIENT_CONNECT, $context)]]></code>
-    </PossiblyFalsePropertyAssignmentValue>
-  </file>
-  <file src="src/HttpClient/Response.php">
-    <PossiblyFalseOperand>
-      <code><![CDATA[fgets($this->stream)]]></code>
-    </PossiblyFalseOperand>
-  </file>
   <file src="src/Log/LogEntry.php">
     <PossiblyFalseArgument>
       <code><![CDATA[$timestamp]]></code>
@@ -3062,28 +3043,6 @@
       <code><![CDATA[$ep->subject]]></code>
       <code><![CDATA[$ep->subject]]></code>
     </MixedOperand>
-  </file>
-  <file src="tests/HttpClient/RequestTest.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$stream]]></code>
-      <code><![CDATA[$stream]]></code>
-      <code><![CDATA[$stream]]></code>
-    </PossiblyFalseArgument>
-  </file>
-  <file src="tests/HttpClient/ResponseTest.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$stream]]></code>
-      <code><![CDATA[$stream]]></code>
-      <code><![CDATA[$stream]]></code>
-      <code><![CDATA[$temp]]></code>
-      <code><![CDATA[$temp]]></code>
-      <code><![CDATA[$temp]]></code>
-      <code><![CDATA[$temp]]></code>
-      <code><![CDATA[file_get_contents(__DIR__ . '/ResponseTestFiles/response_chunked.testresp')]]></code>
-      <code><![CDATA[file_get_contents(__DIR__ . '/ResponseTestFiles/response_chunked_gzip.testresp')]]></code>
-      <code><![CDATA[zlib_encode($body, ZLIB_ENCODING_DEFLATE)]]></code>
-      <code><![CDATA[zlib_encode($body, ZLIB_ENCODING_GZIP)]]></code>
-    </PossiblyFalseArgument>
   </file>
   <file src="tests/Security/PasswordPolicyTest.php">
     <MixedArgument>

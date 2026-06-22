@@ -13,7 +13,6 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Response;
-use Redaxo\Core\HttpClient\Request;
 use Redaxo\Core\Log\LogEntry;
 use Redaxo\Core\Log\LogFile;
 use Redaxo\Core\Translation\I18n;
@@ -411,19 +410,19 @@ class Mailer extends PHPMailer
         if (!isset($token['access_token']) || $token['expires'] - 300 < time()) {
             // Token abgelaufen oder nicht vorhanden, neues Token holen
             $tokenUrl = "https://login.microsoftonline.com/$this->graphTenantId/oauth2/v2.0/token";
-            $tokenSocket = Request::factoryUrl($tokenUrl);
-            $tokenSocket->addHeader('Content-Type', 'application/x-www-form-urlencoded');
-            $tokenData = [
-                'client_id' => $this->graphClientId,
-                'scope' => 'https://graph.microsoft.com/.default',
-                'client_secret' => $this->graphClientSecret,
-                'grant_type' => 'client_credentials',
-            ];
 
             try {
-                $tokenResponse = $tokenSocket->doPost($tokenData);
+                // Das array als `body` wird automatisch als application/x-www-form-urlencoded gesendet
+                $tokenResponse = Core::getHttpClient()->request('POST', $tokenUrl, [
+                    'body' => [
+                        'client_id' => $this->graphClientId,
+                        'scope' => 'https://graph.microsoft.com/.default',
+                        'client_secret' => $this->graphClientSecret,
+                        'grant_type' => 'client_credentials',
+                    ],
+                ]);
                 /** @var array{expires_in?: int, access_token?: string} $token */
-                $token = json_decode($tokenResponse->getBody(), true);
+                $token = $tokenResponse->toArray();
                 $token['expires'] = time() + ($token['expires_in'] ?? 3600);
 
                 if (!isset($token['access_token'])) {
@@ -437,11 +436,8 @@ class Mailer extends PHPMailer
             }
         }
 
-        // Mail senden via Redaxo\Core\HttpClient
+        // Mail senden via Microsoft Graph
         $mailUrl = "https://graph.microsoft.com/v1.0/users/$from/sendMail";
-        $mailSocket = Request::factoryUrl($mailUrl);
-        $mailSocket->addHeader('Authorization', 'Bearer ' . $token['access_token']);
-        $mailSocket->addHeader('Content-Type', 'application/json');
         $mailData = [
             'message' => [
                 'subject' => $subject,
@@ -477,9 +473,14 @@ class Mailer extends PHPMailer
             File::put($debugPath, json_encode($mailData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         }
         try {
-            $mailResponse = $mailSocket->doPost(json_encode($mailData));
-            if (!$mailResponse->isSuccessful()) {
-                $this->setError(I18n::msg('phpmailer_msgraph_api_error') . $mailResponse->getBody());
+            $mailResponse = Core::getHttpClient()->request('POST', $mailUrl, [
+                'auth_bearer' => $token['access_token'],
+                'json' => $mailData,
+            ]);
+            $statusCode = $mailResponse->getStatusCode();
+            if ($statusCode < 200 || $statusCode >= 300) {
+                // `getContent(false)` verhindert das Werfen einer Exception bei Fehler-Statuscodes
+                $this->setError(I18n::msg('phpmailer_msgraph_api_error') . $mailResponse->getContent(false));
                 return false;
             }
         } catch (Exception $e) {

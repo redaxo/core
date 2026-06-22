@@ -183,4 +183,9 @@ final class CoreTest extends TestCase
         $versParts = explode('.', $vers);
         self::assertTrue(6 == $versParts[0], 'the major version is 6');
     }
+
+    public function testGetHttpClient(): void
+    {
+        self::assertSame(Core::getHttpClient(), Core::getHttpClient(), 'the same shared client instance is returned');
+    }
 }
