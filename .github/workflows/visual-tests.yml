@@ -118,18 +118,6 @@ jobs:
                     EOF
                     PHP_CLI_SERVER_WORKERS=4 php -S localhost:8080 -t project/public/ project/public/router.php &
 
-            -   name: DEBUG media manager
-                run: |
-                    sleep 2
-                    php -r '$i=function_exists("gd_info")?gd_info():[]; echo "GD avif=",var_export($i["AVIF Support"]??null,true)," webp=",var_export($i["WebP Support"]??null,true),"\n"; echo "imagick loaded=",var_export(extension_loaded("imagick"),true),"\n";'
-                    php -r 'require "vendor/autoload.php"; echo "driver=",get_class(\Redaxo\Core\MediaManager\ImageManagerFactory::create()->driver),"\n";'
-                    echo "--- curl media manager (avif accept) ---"
-                    curl -s -D - -o /tmp/mm.bin -H 'Accept: image/avif,image/webp,image/*,*/*;q=0.8' "http://localhost:8080/index.php?rex_media_type=rex_media_small&rex_media_file=redaxo_2018_berlin_sticker.jpg" || true
-                    echo "--- body info ---"; file /tmp/mm.bin; wc -c /tmp/mm.bin; head -c 200 /tmp/mm.bin | xxd | head -5 || true
-                    echo "--- curl WITHOUT avif (plain) ---"
-                    curl -s -o /tmp/mm2.bin -w 'HTTP %{http_code} type=%{content_type} size=%{size_download}\n' -H 'Accept: text/html' "http://localhost:8080/index.php?rex_media_type=rex_media_small&rex_media_file=redaxo_2018_berlin_sticker.jpg" || true
-                    file /tmp/mm2.bin
-
             -   name: Take screenshots (differential)
                 run: |
                     php project/bin/console config:set setup true -t boolean --ansi -v
