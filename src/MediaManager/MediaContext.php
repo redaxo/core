@@ -7,7 +7,6 @@ use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\ImageManagerInterface;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
-use Stringable;
 
 use function strtolower;
 
@@ -28,9 +27,6 @@ use function strtolower;
  */
 final class MediaContext
 {
-    /** Backing store for the lazily decoded image; kept separate so {@see self::isImageDecoded()} can be queried without triggering decoding. */
-    private ?ImageInterface $decoded = null;
-
     /**
      * Path to the source file. Assigning a new path switches the source (e.g. to a file outside the
      * media pool) and discards any image decoded so far.
@@ -38,7 +34,7 @@ final class MediaContext
     public string $sourcePath {
         set(string $path) {
             $this->sourcePath = $path;
-            $this->decoded = null;
+            $this->decodedImage = null;
         }
     }
 
@@ -50,11 +46,14 @@ final class MediaContext
     /** The working image. Decoded lazily from the current source on first read; assignable directly. */
     public ImageInterface $image {
         /** @throws MediaNotFoundException if the source cannot be decoded as an image */
-        get => $this->decoded ??= $this->load($this->sourcePath);
+        get => $this->decodedImage ??= $this->load($this->sourcePath);
         set {
-            $this->decoded = $value;
+            $this->decodedImage = $value;
         }
     }
+
+    /** Backing store for {@see self::$image}; kept separate so {@see self::isImageDecoded()} can be queried without triggering decoding. */
+    private ?ImageInterface $decodedImage = null;
 
     public readonly MediaResponse $response;
 
@@ -79,13 +78,13 @@ final class MediaContext
      *
      * @throws MediaNotFoundException if the source cannot be decoded as an image
      */
-    public function decode(string|Stringable $source): ImageInterface
+    public function decode(string $source): ImageInterface
     {
-        return $this->decoded = $this->load($source);
+        return $this->decodedImage = $this->load($source);
     }
 
     /** @throws MediaNotFoundException if the source cannot be decoded as an image */
-    private function load(string|Stringable $source): ImageInterface
+    private function load(string $source): ImageInterface
     {
         try {
             return $this->manager->decode($source);
@@ -97,6 +96,6 @@ final class MediaContext
     /** Whether the media was decoded as an image (i.e. `$image` was accessed or assigned). */
     public function isImageDecoded(): bool
     {
-        return null !== $this->decoded;
+        return null !== $this->decodedImage;
     }
 }

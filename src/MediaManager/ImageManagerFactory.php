@@ -76,7 +76,11 @@ final class ImageManagerFactory
         return self::$encodeSupport[$key];
     }
 
-    /** Reset the in-memory probe cache (mainly for tests). */
+    /**
+     * Reset the in-memory probe cache (mainly for tests).
+     *
+     * @internal
+     */
     public static function reset(): void
     {
         self::$encodeSupport = null;
