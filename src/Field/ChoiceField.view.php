@@ -8,6 +8,14 @@ return static function (ChoiceField $field): void {
 
         return;
     }
+
+    $binding = $field->binding;
     ?>
-    <select <?= $field->selectAttributes() ?>><?= $field->renderOptions() ?></select>
+    <select <?= $field->attributes->with([
+        'class' => ['form-control', 'selectpicker'],
+        'name' => $field->multiple ? $binding->name . '[]' : $binding->name,
+        'id' => $binding->name,
+        'multiple' => $field->multiple,
+        'required' => $field->required,
+    ]) ?>><?= $field->renderOptions() ?></select>
 <?php };

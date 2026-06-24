@@ -70,8 +70,8 @@ final class FieldTest extends TestCase
         $field = new TextField('x');
         $bound = $field->withValue('changed');
 
-        self::assertNull($field->binding()->value);
-        self::assertSame('changed', $bound->binding()->value);
+        self::assertNull($field->binding->value);
+        self::assertSame('changed', $bound->binding->value);
     }
 
     public function testFieldGroupViewIsOverridable(): void

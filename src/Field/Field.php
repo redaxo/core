@@ -33,7 +33,8 @@ abstract class Field implements Renderable
 {
     use HasView;
 
-    protected FieldBinding $binding;
+    /** The concrete name/value/error this field is bound to for the current render pass. */
+    public private(set) FieldBinding $binding;
 
     public function __construct(
         public readonly string $name,
@@ -41,7 +42,8 @@ abstract class Field implements Renderable
         public readonly ?string $note = null,
         public readonly bool $required = false,
         public readonly ?string $default = null,
-        protected readonly HtmlAttributes $attributes = new HtmlAttributes(),
+        /** Presentational base attributes (placeholder, data-*, …); the view merges its structural ones on top. */
+        public readonly HtmlAttributes $attributes = new HtmlAttributes(),
     ) {
         $this->binding = new FieldBinding($name, $default);
     }
@@ -66,17 +68,6 @@ abstract class Field implements Renderable
         return $this->boundTo(new FieldBinding($this->name, $value));
     }
 
-    public function binding(): FieldBinding
-    {
-        return $this->binding;
-    }
-
-    /** The presentational base attributes; concrete fields merge their structural attributes on top. */
-    public function attributes(): HtmlAttributes
-    {
-        return $this->attributes;
-    }
-
     /** Reads and normalises the submitted value (for the given, already-resolved name) into its storage representation. */
     public function parseRequest(string $name): mixed
     {
@@ -98,7 +89,7 @@ abstract class Field implements Renderable
     /** Renders the bare form control (without label/note/error wrapper). */
     public function renderInput(): Html
     {
-        return Html::raw($this->renderView($this, $this->binding));
+        return Html::raw($this->renderView($this));
     }
 
     /** Renders the full form group (label, control, note, error). */

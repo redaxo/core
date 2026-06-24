@@ -19,17 +19,6 @@ class TextareaField extends Field implements ProvidesColumn
         parent::__construct($name, $label, $note, $required, null, $attributes);
     }
 
-    public function textareaAttributes(): HtmlAttributes
-    {
-        return $this->attributes()->with([
-            'class' => ['form-control'],
-            'name' => $this->binding->name,
-            'id' => $this->binding->name,
-            'rows' => $this->rows,
-            'required' => $this->required,
-        ]);
-    }
-
     public function column(string $name): Column
     {
         // `text` columns can not carry a default value in MySQL.

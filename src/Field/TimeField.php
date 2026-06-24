@@ -11,12 +11,7 @@ use function gmdate;
 /** Time picker (HTML5), stored as seconds since midnight. */
 class TimeField extends InputField
 {
-    protected function inputType(): string
-    {
-        return 'time';
-    }
-
-    protected function displayValue(): string
+    public function displayValue(): string
     {
         return null === $this->binding->value || '' === $this->binding->value
             ? ''

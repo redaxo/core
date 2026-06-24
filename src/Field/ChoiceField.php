@@ -72,18 +72,6 @@ class ChoiceField extends Field implements ProvidesColumn
             : [(string) $this->binding->value];
     }
 
-    /** Attributes for the `<select>` control (ignored by the expanded radio/checkbox rendering). */
-    public function selectAttributes(): HtmlAttributes
-    {
-        return $this->attributes()->with([
-            'class' => ['form-control', 'selectpicker'],
-            'name' => $this->multiple ? $this->binding->name . '[]' : $this->binding->name,
-            'id' => $this->binding->name,
-            'multiple' => $this->multiple,
-            'required' => $this->required,
-        ]);
-    }
-
     /**
      * The `<option>`/`<optgroup>` markup for the (multi-)select rendering. The recursion lives here
      * rather than in the view because it is logic, not layout.

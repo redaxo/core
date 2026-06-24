@@ -5,22 +5,10 @@ namespace Redaxo\Core\Field;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\View\Html;
-use Redaxo\Core\View\HtmlAttributes;
 
 /** A single boolean checkbox, stored as 0/1. */
 class CheckboxField extends Field implements ProvidesColumn
 {
-    public function checkboxAttributes(): HtmlAttributes
-    {
-        return $this->attributes()->with([
-            'type' => 'checkbox',
-            'name' => $this->binding->name,
-            'id' => $this->binding->name,
-            'value' => '1',
-            'checked' => (bool) $this->binding->value,
-        ]);
-    }
-
     public function parseRequest(string $name): mixed
     {
         return Request::post($name, 'bool', false) ? 1 : 0;

@@ -11,12 +11,7 @@ use function strtotime;
 /** Date picker (HTML5), stored as a Unix timestamp (local midnight). */
 class DateField extends InputField
 {
-    protected function inputType(): string
-    {
-        return 'date';
-    }
-
-    protected function displayValue(): string
+    public function displayValue(): string
     {
         return null === $this->binding->value || '' === $this->binding->value
             ? ''

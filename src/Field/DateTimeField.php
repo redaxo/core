@@ -12,12 +12,7 @@ use function strtotime;
 /** Date+time picker (HTML5), stored as a Unix timestamp. */
 class DateTimeField extends InputField
 {
-    protected function inputType(): string
-    {
-        return 'datetime-local';
-    }
-
-    protected function displayValue(): string
+    public function displayValue(): string
     {
         return null === $this->binding->value || '' === $this->binding->value
             ? ''

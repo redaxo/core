@@ -7,18 +7,14 @@ use function Redaxo\Core\View\escape;
 
 return static function (FieldGroup $group): void {
     $field = $group->field;
-    $binding = $field->binding();
-
-    $attributes = new HtmlAttributes([
-        'class' => [
-            'rex-form-group',
-            'form-group',
-            'has-error' => null !== $binding->error,
-            'rex-is-required' => $field->required,
-        ],
-    ]);
+    $binding = $field->binding;
     ?>
-    <dl <?= $attributes ?>>
+    <dl <?= new HtmlAttributes(['class' => [
+        'rex-form-group',
+        'form-group',
+        'has-error' => null !== $binding->error,
+        'rex-is-required' => $field->required,
+    ]]) ?>>
         <?php if ('' !== $field->label): ?>
             <dt><label for="<?= escape($binding->name) ?>"><?= escape($field->label) ?></label></dt>
         <?php endif ?>
