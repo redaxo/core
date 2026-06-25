@@ -529,22 +529,61 @@ function getCookie(cookieName) {
 }
 
 // scroll to anchor element
-var scrollToAnchor = function () {
-    if (window.location.hash) {
-        var hash = window.location.hash;
-        var anchorItem = document.querySelector(hash);
-
-        if (anchorItem) {
-            // Ein minimaler Timeout (0-10ms) hilft oft Wunder bei Pjax-Updates
-            setTimeout(function () {
-                anchorItem.scrollIntoView({
-                    block: "start",
-                    behavior: "smooth"
-                });
-            }, 200);
-        }
+// (scrollIntoView honors the CSS scroll-padding-top, so the sticky navbar
+// offset is handled automatically — no manual correction needed)
+function scrollToAnchor() {
+    if (!window.location.hash) {
+        return;
     }
-};
+    var anchorItem = document.querySelector(window.location.hash);
+    if (!anchorItem) {
+        return;
+    }
+
+    var scrollToItem = function () {
+        anchorItem.scrollIntoView({block: 'start'});
+    };
+
+    // Defer to the next frame so the freshly swapped-in pjax content is laid
+    // out before we scroll, instead of guessing a fixed timeout.
+    requestAnimationFrame(function () {
+        requestAnimationFrame(scrollToItem);
+    });
+
+    // Images that are still loading will shift the layout once they arrive and
+    // push the anchor out of position. Re-scroll whenever one finishes, but
+    // stop as soon as the user scrolls manually so we don't hijack the page.
+    var container = anchorItem.closest('[data-pjax-container]') || document;
+    var pending = Array.prototype.filter.call(container.querySelectorAll('img'), function (img) {
+        return !img.complete;
+    });
+    if (!pending.length) {
+        return;
+    }
+
+    var remaining = pending.length;
+    var stop = function () {
+        window.removeEventListener('wheel', stop);
+        window.removeEventListener('touchstart', stop);
+        pending.forEach(function (img) {
+            img.removeEventListener('load', onImageDone);
+            img.removeEventListener('error', onImageDone);
+        });
+    };
+    var onImageDone = function () {
+        scrollToItem();
+        if (--remaining === 0) {
+            stop();
+        }
+    };
+
+    window.addEventListener('wheel', stop, {passive: true});
+    window.addEventListener('touchstart', stop, {passive: true});
+    pending.forEach(function (img) {
+        img.addEventListener('load', onImageDone);
+        img.addEventListener('error', onImageDone);
+    });
+}
 
 var rex_loader = {
     timeoutId: null,
