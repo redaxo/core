@@ -121,6 +121,46 @@ final class MediaProcessorTest extends TestCase
         new MediaProcessor($this->manager)->render($type, $this->tmpDir . '/missing.bin', 'missing.bin');
     }
 
+    public function testNonEncodableSourceFormatFallsBackToRaster(): void
+    {
+        // PNG content stored under a .pdf name: the driver decodes it by its binary signature, but
+        // the source *format* (pdf) can never be re-encoded -> a preview must still be produced.
+        // This mirrors a real PDF page rendered through an image type without content negotiation.
+        $source = $this->tmpDir . '/doc.pdf';
+        file_put_contents($source, (string) $this->manager->createImage(80, 60)->encodeUsingFormat(Format::PNG));
+
+        $type = new class implements MediaType {
+            public function process(MediaContext $context): void
+            {
+                $context->image->scaleDown(40, 40);
+            }
+        };
+
+        $result = new MediaProcessor($this->manager)->render($type, $source, 'doc.pdf');
+
+        self::assertSame('image/png', $result->mediaType);
+        self::assertNotNull($result->content);
+    }
+
+    public function testExplicitUnencodableFormatThrows(): void
+    {
+        $source = $this->tmpDir . '/source.png';
+        $this->manager->createImage(100, 100)->save($source);
+
+        // a type forcing TIFF, which the GD driver cannot encode -> clean 404, not a silent switch
+        $type = new class implements MediaType {
+            public function process(MediaContext $context): void
+            {
+                $context->image->scaleDown(50, 50);
+                $context->response->setFormat(Format::TIFF);
+            }
+        };
+
+        $this->expectException(MediaNotFoundException::class);
+
+        new MediaProcessor($this->manager)->render($type, $source, 'source.png');
+    }
+
     public function testQualityOverrideAffectsEncoding(): void
     {
         $source = $this->tmpDir . '/photo.jpg';

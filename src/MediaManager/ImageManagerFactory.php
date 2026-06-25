@@ -12,7 +12,9 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Throwable;
 
+use function base64_decode;
 use function extension_loaded;
+use function strtolower;
 
 /**
  * Creates the Intervention {@see ImageManager} with a usable driver.
@@ -29,6 +31,9 @@ final class ImageManagerFactory
 
     /** @var array<string, bool>|null Encode-capability probes (driver id + format => bool), lazily loaded from cache */
     private static ?array $encodeSupport = null;
+
+    /** @var array<string, bool>|null Decode-capability probes (driver id + extension => bool), lazily loaded from cache */
+    private static ?array $decodeSupport = null;
 
     /** @param class-string<DriverInterface>|null $driver `null` restores automatic detection */
     public static function setDriver(?string $driver): void
@@ -77,18 +82,64 @@ final class ImageManagerFactory
     }
 
     /**
-     * Reset the in-memory probe cache (mainly for tests).
+     * Whether the manager's driver can actually *decode* a source with the given file extension —
+     * i.e. whether a raster preview can be produced from it.
+     *
+     * This is what separates "is conceptually an image" (a static extension list) from "the active
+     * driver can rasterize this here and now". The answer is runtime-dependent: GD cannot decode
+     * PDF/TIFF/PSD at all, and even Imagick only can when the matching delegate is installed
+     * (Ghostscript for PDF, libtiff for TIFF, …) — which {@see DriverInterface::supports()} does not
+     * reflect. We therefore probe by actually decoding a tiny sample of that format.
+     *
+     * The sample is either a shipped fixture (for decode-only formats Intervention cannot encode,
+     * such as PDF and PSD) or, for symmetric raster formats, generated on the fly by encoding a 1×1
+     * image as that extension. An unknown/unsupported extension yields no sample and thus `false`.
+     *
+     * Like {@see self::canEncode()} the probe is comparatively expensive (the first PDF decode spins
+     * up Ghostscript), so results are persisted in the cache (keyed per driver and extension) and
+     * only computed once until the cache is cleared.
+     *
+     * @internal
+     */
+    public static function canDecode(ImageManager $manager, string $extension): bool
+    {
+        $extension = strtolower($extension);
+
+        if (null === self::$decodeSupport) {
+            /** @var array<string, bool> $cached */
+            $cached = File::getCache(self::decodeSupportCacheFile(), []) ?? [];
+            self::$decodeSupport = $cached;
+        }
+
+        $key = $manager->driver->id() . ':' . $extension;
+
+        if (!isset(self::$decodeSupport[$key])) {
+            self::$decodeSupport[$key] = self::probeDecode($manager, $extension);
+            File::putCache(self::decodeSupportCacheFile(), self::$decodeSupport);
+        }
+
+        return self::$decodeSupport[$key];
+    }
+
+    /**
+     * Reset the in-memory probe caches (mainly for tests).
      *
      * @internal
      */
     public static function reset(): void
     {
         self::$encodeSupport = null;
+        self::$decodeSupport = null;
     }
 
     private static function encodeSupportCacheFile(): string
     {
         return Path::coreCache('media_manager/encode_support.json');
+    }
+
+    private static function decodeSupportCacheFile(): string
+    {
+        return Path::coreCache('media_manager/decode_support.json');
     }
 
     private static function probeEncode(ImageManager $manager, Format $format): bool
@@ -97,6 +148,57 @@ final class ImageManagerFactory
             return '' !== (string) $manager->createImage(1, 1)->encodeUsingFormat($format);
         } catch (Throwable) {
             return false;
+        }
+    }
+
+    private static function probeDecode(ImageManager $manager, string $extension): bool
+    {
+        $sample = self::probeSample($extension) ?? self::selfEncodedSample($manager, $extension);
+
+        if (null === $sample) {
+            return false;
+        }
+
+        try {
+            $manager->decode($sample);
+
+            return true;
+        } catch (Throwable) {
+            return false;
+        }
+    }
+
+    /**
+     * Minimal valid sample files for decode-only formats that Intervention cannot encode (so a
+     * sample cannot be self-generated). Each is just large enough for the driver's delegate to
+     * recognise and rasterise the format. Add an arm here to make a further format previewable.
+     */
+    private static function probeSample(string $extension): ?string
+    {
+        $base64 = match ($extension) {
+            // 324-byte single empty page, valid xref — decoded by Imagick via the Ghostscript delegate
+            'pdf' => 'JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFszIDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL1BhZ2UgL1BhcmVudCAyIDAgUiAvTWVkaWFCb3ggWzAgMCAxIDFdID4+CmVuZG9iagp4cmVmCjAgNAowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCnRyYWlsZXIKPDwgL1NpemUgNCAvUm9vdCAxIDAgUiA+PgpzdGFydHhyZWYKMTgyCiUlRU9G',
+            // 108-byte 1×1 grayscale Photoshop document
+            'psd' => 'OEJQUwABAAAAAAAAAAEAAAABAAAAAQAQAAEAAAAAAAAAAAAAAEIAAAA6AAEAAAAAAAAAAAAAAAEAAAABAAEAAAAAAAQ4QklNbm9ybf8AAQAAAAAMAAAAAAAAAAACTDEAAAD//wAAAAAAAP//',
+            default => null,
+        };
+
+        if (null === $base64) {
+            return null;
+        }
+
+        return base64_decode($base64, true) ?: null;
+    }
+
+    /** Generate a 1×1 sample by encoding it as the given extension; `null` if the driver cannot encode it. */
+    private static function selfEncodedSample(ImageManager $manager, string $extension): ?string
+    {
+        try {
+            $sample = (string) $manager->createImage(1, 1)->encodeUsingFileExtension($extension);
+
+            return '' === $sample ? null : $sample;
+        } catch (Throwable) {
+            return null;
         }
     }
 

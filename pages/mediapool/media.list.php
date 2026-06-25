@@ -291,11 +291,12 @@ foreach ($items as $media) {
         $fileExt = File::extension($media->fileName);
         $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '"></i><span class="sr-only">' . $media->fileName . '</span>';
 
-        if (Media::isImageType(File::extension($media->fileName))) {
+        if ('svg' === $fileExt) {
+            // SVG is rendered by the browser directly, no image driver involved
             $thumbnail = '<img class="thumbnail" src="' . Url::media($media->fileName) . '?buster=' . $media->getValue('updatedate') . '" width="80" height="80" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
-            if ('svg' != File::extension($media->fileName)) {
-                $thumbnail = '<img class="thumbnail" src="' . MediaManager::getUrl('rex_media_small', urlencode($media->fileName), $media->getValue('updatedate')) . '" width="100" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
-            }
+        } elseif (MediaManager::canPreview($fileExt)) {
+            // a rasterised preview can be produced (image formats always, plus e.g. PDF when the driver supports it)
+            $thumbnail = '<img class="thumbnail" src="' . MediaManager::getUrl('rex_media_small', urlencode($media->fileName), $media->getValue('updatedate')) . '" width="100" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
         }
     }
 

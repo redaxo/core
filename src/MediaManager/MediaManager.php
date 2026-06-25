@@ -3,6 +3,7 @@
 namespace Redaxo\Core\MediaManager;
 
 use Intervention\Image\Format;
+use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
@@ -116,6 +117,28 @@ final class MediaManager
             'file' => $file,
             'buster' => $params['buster'] ?? null,
         ]));
+    }
+
+    /**
+     * Whether a raster preview can be generated for a file with the given extension on this system.
+     *
+     * Use this to decide between showing an actual thumbnail and falling back to a generic mime-type
+     * icon: the answer depends on the available image driver and its delegates, so e.g. a PDF is
+     * previewable on a server with Imagick + Ghostscript but not with the GD driver. SVG is *not*
+     * covered here — it is displayed by the browser directly and needs no driver.
+     *
+     * Returns `false` when no image driver is available at all, so callers can rely on it without
+     * guarding against a missing driver.
+     */
+    public static function canPreview(string $extension): bool
+    {
+        try {
+            $manager = ImageManagerFactory::create();
+        } catch (RuntimeException) {
+            return false;
+        }
+
+        return ImageManagerFactory::canDecode($manager, $extension);
     }
 
     /**
