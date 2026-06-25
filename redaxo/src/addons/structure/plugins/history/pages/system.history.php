@@ -14,8 +14,3 @@ $fragment = new rex_fragment();
 $fragment->setVar('title', $plugin->i18n('title_info'));
 $fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');
-
-$fragment = new rex_fragment();
-$fragment->setVar('title', $plugin->i18n('todos'));
-$fragment->setVar('body', rex_i18n::rawMsg('structure_history_todos_content'), false);
-echo $fragment->parse('core/page/section.php');

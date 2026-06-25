@@ -5,8 +5,6 @@ structure_history_snapshot_reactivated = Versionen har sparas
 structure_history_overview_versions = Historiköversikt
 structure_history_current_version = Aktuell version
 structure_history_info_content = <P> Historik PlugIn registrerar alla ändringar som gjorts i en artikel och skapar ögonblicksbilder som senare kan användas för att återställa en specifik artikel till ett tidigare tillstånd. </ P>
-structure_history_todos = Att göra
-structure_history_todos_content = <Ul> <li> Förbered cronjob </ li> <li> Tillåta historiken att stängas av </ li> <li> Gör inställningar för att minska antalet versioner. Exempel: Behåll bara en version efter en månad / vecka / dag. </ Li> <li> Ange skalvärden för webbplatsen </ li> <li> Gör det visuella utseendet snyggare som t.ex. Time Machine? </ Li> </ ul>
 
 perm_options_history[article_rollback] = återskapa artikeln fån historiken
 

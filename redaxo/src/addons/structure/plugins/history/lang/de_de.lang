@@ -5,8 +5,6 @@ structure_history_snapshot_reactivated = Version wurde übernommen
 structure_history_overview_versions = history_overview_versions
 structure_history_current_version = Aktuelle Version
 structure_history_info_content = <p>Ein History PlugIn mit welchem man Änderungen in den Artikelinhalten aufnehmen kann. Es wird jeweils ein Snapshot der Version erstellt und mit einem Datum versehen. Nachträglich können dann ältere Versionen wieder aktiviert werden.</p>
-structure_history_todos = Todos
-structure_history_todos_content = <ul><li>cronjob vorbereiten</li><li>History deaktivierbar machen</li><li>Einstellungen einbauen, um die Anzahl der Version einzuschränken. Z.B. nach einer Woche nur eine Version/Tag behalten. nach einem Monat nur noch eine Version/Monat behalten..</li><li>Skalierungswerte der Webseite setzen</li><li>Darstellung aufhübschen ala Time Machine ?</li></ul>
 
 perm_options_history[article_rollback] = Artikel wiederherstellen (Historie)
 
