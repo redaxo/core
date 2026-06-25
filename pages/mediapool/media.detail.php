@@ -144,16 +144,13 @@ $sidebar = '';
 $addExtInfo = '';
 $encodedFname = urlencode($fname);
 
-$isImage = Media::isImageType(File::extension($fname));
+$fileExt = File::extension($fname);
+$isImage = Media::isImageType($fileExt);
+$isSvg = 'svg' === $fileExt;
+
 if ($isImage) {
     $fwidth = (int) $gf->getValue('width');
     $fheight = (int) $gf->getValue('height');
-
-    if ($fwidth > 199) {
-        $rfwidth = 200;
-    } else {
-        $rfwidth = $fwidth;
-    }
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_img_width') . ' / ' . I18n::msg('pool_img_height') . '</label>';
@@ -162,25 +159,25 @@ if ($isImage) {
     $fragment = new Fragment();
     $fragment->setVar('elements', [$e], false);
     $addExtInfo = $fragment->parse('core/form/form.php');
+}
 
-    $imgn = Url::media($fname) . '?buster=' . $gf->getDateTimeValue('updatedate');
-    $width = '';
-
-    if ($rfwidth > 0) {
-        $width = ' width="' . $rfwidth . '"';
-    }
-    $imgMax = Url::media($fname);
-
-    if ('svg' != File::extension($fname)) {
-        $imgn = MediaManager::getUrl('rex_media_medium', $encodedFname, $gf->getDateTimeValue('updatedate'));
-        $imgMax = MediaManager::getUrl('rex_media_large', $encodedFname, $gf->getDateTimeValue('updatedate'));
-
-        $width = '';
-    }
-
+// show a preview whenever one can be produced: actual images, SVG (rendered by the browser) or any
+// other format the image driver can rasterise here (e.g. PDF with Imagick + Ghostscript)
+if ($isImage || $isSvg || MediaManager::canPreview($fileExt)) {
     if (!is_file(Path::media($fname))) {
         $sidebar = '<i class="rex-mime rex-mime-error"></i><span class="sr-only">' . $fname . '</span>';
     } else {
+        if ($isSvg) {
+            $rfwidth = min((int) $gf->getValue('width'), 200);
+            $width = $rfwidth > 0 ? ' width="' . $rfwidth . '"' : '';
+            $imgn = Url::media($fname) . '?buster=' . $gf->getDateTimeValue('updatedate');
+            $imgMax = Url::media($fname);
+        } else {
+            $width = '';
+            $imgn = MediaManager::getUrl('rex_media_medium', $encodedFname, $gf->getDateTimeValue('updatedate'));
+            $imgMax = MediaManager::getUrl('rex_media_large', $encodedFname, $gf->getDateTimeValue('updatedate'));
+        }
+
         $sidebar = '
                 <a href="' . $imgMax . '">
                     <img class="img-responsive" src="' . $imgn . '"' . $width . ' alt="' . escape($ftitle) . '" title="' . escape($ftitle) . '" />

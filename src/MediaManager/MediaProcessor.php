@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\MediaManager;
 
+use Intervention\Image\Exceptions\ImageException;
 use Intervention\Image\Format;
 use Intervention\Image\Interfaces\EncodedImageInterface;
 use Intervention\Image\Interfaces\ImageManagerInterface;
@@ -58,13 +59,28 @@ final readonly class MediaProcessor
         // output format: forced (negotiation) > type override > source format
         $format = $forceFormat ?? $context->response->format ?? Format::tryCreate($context->sourceFormat);
 
-        if (null === $format) {
-            // unknown source extension: let Intervention figure it out
-            $label = $context->sourceFormat;
-            $encoded = $context->image->encodeUsingFileExtension($context->sourceFormat);
-        } else {
-            $label = $format->name;
-            $encoded = $context->image->encodeUsingFormat($format, ...$this->options($context, $format));
+        try {
+            if (null === $format) {
+                // unknown source extension: let Intervention figure it out
+                $label = $context->sourceFormat;
+                $encoded = $context->image->encodeUsingFileExtension($context->sourceFormat);
+            } else {
+                $label = $format->name;
+                $encoded = $context->image->encodeUsingFormat($format, ...$this->options($context, $format));
+            }
+        } catch (ImageException $e) {
+            // The driver has no encoder for the chosen output format. When the format was only
+            // implied by the source (e.g. the source is a PDF page that can never be re-encoded as
+            // PDF, or a TIFF on a GD build), degrade to a universally supported raster format so a
+            // preview is still produced. An explicitly forced/requested format failing is a real
+            // error and surfaces as a 404 rather than a silent format switch.
+            $requested = $forceFormat ?? $context->response->format;
+            if (null !== $requested) {
+                throw new MediaNotFoundException(sprintf('Encoding the image as "%s" failed; the image driver is missing an encoder for this format.', $requested->name), $e);
+            }
+
+            $label = Format::PNG->name;
+            $encoded = $context->image->encodeUsingFormat(Format::PNG, ...$this->options($context, Format::PNG));
         }
 
         // Some drivers (e.g. Imagick with only the read delegate for AVIF) silently produce an empty
