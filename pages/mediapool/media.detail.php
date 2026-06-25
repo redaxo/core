@@ -161,9 +161,9 @@ if ($isImage) {
     $addExtInfo = $fragment->parse('core/form/form.php');
 }
 
-// show a preview whenever one can be produced: actual images, SVG (rendered by the browser) or any
-// other format the image driver can rasterise here (e.g. PDF with Imagick + Ghostscript)
-if ($isImage || $isSvg || MediaManager::canPreview($fileExt)) {
+// show a preview whenever one can be produced: SVG (rendered by the browser) or any format the
+// image driver can actually rasterise here (images always, plus e.g. PDF with Imagick + Ghostscript)
+if ($isSvg || MediaManager::canPreview($fileExt)) {
     if (!is_file(Path::media($fname))) {
         $sidebar = '<i class="rex-mime rex-mime-error"></i><span class="sr-only">' . $fname . '</span>';
     } else {
