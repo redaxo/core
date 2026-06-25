@@ -54,9 +54,6 @@ expectedArguments(\Redaxo\Core\Http\Response::preload(), 1, 'audio', 'document',
 expectedArguments(\Redaxo\Core\Http\Response::sendFile(), 2, 'inline', 'attachment');
 expectedArguments(\Redaxo\Core\Http\Response::sendResource(), 4, 'inline', 'attachment');
 
-expectedArguments(\Redaxo\Core\HttpClient\Request::factory(), 1, 80, 443);
-expectedArguments(\Redaxo\Core\HttpClient\ProxyRequest::setDestination(), 1, 80, 443);
-
 expectedReturnValues(\Redaxo\Core\Database\Sql::getDbType(), \Redaxo\Core\Database\Sql::MYSQL, \Redaxo\Core\Database\Sql::MARIADB);
 
 registerArgumentsSet('column_type', 'int(10) unsigned', 'int(11)', 'tinyint(1)', 'date', 'datetime', 'time', 'varchar(255)', 'varchar(191)', 'text', 'longtext');
@@ -89,14 +86,14 @@ expectedArguments(\Redaxo\Core\Util\Timer::getFormattedDelta(), 0, \Redaxo\Core\
 
 registerArgumentsSet('cast_type', 'bool', 'int', 'float', 'string', 'object', 'array');
 expectedArguments(\Redaxo\Core\Util\Type::cast(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::get(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::post(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::request(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::server(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::session(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::cookie(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::files(), 1, argumentsSet('cast_type'));
-expectedArguments(\Redaxo\Core\HttpClient\Request::env(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::get(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::post(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::request(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::server(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::session(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::cookie(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::files(), 1, argumentsSet('cast_type'));
+expectedArguments(\Redaxo\Core\Http\Request::env(), 1, argumentsSet('cast_type'));
 
 override(
     \Redaxo\Core\Security\User::getComplexPerm(0),

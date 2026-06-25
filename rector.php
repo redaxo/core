@@ -60,7 +60,6 @@ use Redaxo\Core\ExtensionPoint;
 use Redaxo\Core\Filesystem;
 use Redaxo\Core\Form;
 use Redaxo\Core\Http;
-use Redaxo\Core\HttpClient;
 use Redaxo\Core\Language;
 use Redaxo\Core\Log;
 use Redaxo\Core\Mailer;
@@ -288,9 +287,6 @@ return RectorConfig::configure()
         'rex_parsedown' => Util\Parsedown::class,
         'rex_path' => Filesystem\Path::class,
         'rex_path_default_provider' => Filesystem\DefaultPathProvider::class,
-        'rex_socket' => HttpClient\Request::class,
-        'rex_socket_response' => HttpClient\Response::class,
-        'rex_socket_proxy' => HttpClient\ProxyRequest::class,
         'rex_sortable_iterator' => Util\SortableIterator::class,
         'rex_sql' => Database\Sql::class,
         'rex_sql_column' => Database\Column::class,
@@ -368,7 +364,6 @@ return RectorConfig::configure()
         'rex_functional_exception' => Exception\UserMessageException::class,
         'rex_http_exception' => Http\Exception\HttpException::class,
         'rex_media_manager_not_found_exception' => MediaManager\Exception\MediaNotFoundException::class,
-        'rex_socket_exception' => HttpClient\Exception\HttpClientException::class,
         'rex_sql_exception' => Database\Exception\SqlException::class,
         'rex_sql_could_not_connect_exception' => Database\Exception\CouldNotConnectException::class,
         'rex_yaml_parse_exception' => Util\Exception\YamlParseException::class,

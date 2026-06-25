@@ -287,10 +287,6 @@
             "description": "Timezone (e.g. Europe/Berlin)",
             "type": "string"
         },
-        "http_client_proxy": {
-            "description": "Proxy used for all HttpClient connections",
-            "type": ["null", "string"]
-        },
         "setup_addons": {
             "description": "Addons loaded in setup and in safe mode",
             "type": "array",

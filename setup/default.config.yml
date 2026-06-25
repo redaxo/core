@@ -59,7 +59,6 @@ hsts_max_age: 31536000 # 1 year
 use_etag: true
 start_page: structure
 timezone: Europe/Berlin
-http_client_proxy: null
 setup_addons: []
 table_prefix: rex_
 temp_prefix: tmp_

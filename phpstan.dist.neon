@@ -39,12 +39,10 @@ parameters:
         checkedExceptionClasses:
             - Redaxo\Core\Content\Exception\ArticleNotFoundException
             - Redaxo\Core\Exception\UserMessageException
-            - Redaxo\Core\HttpClient\Exception\HttpClientException
             - Redaxo\Core\MediaManager\Exception\MediaNotFoundException
     symfony:
         consoleApplicationLoader: .tools/phpstan/console.php
     ignoreErrors:
-        - '#^Unsafe usage of new static\(\)#'
         - '#^Constructor of class .*Field has an unused parameter \$tag.#'
         - '#^Offset .* on .* always exists#'
         # https://github.com/phpstan/phpstan/issues/10698
