@@ -190,7 +190,7 @@ $(document).ready(function () {
             width = 246;
         }
 
-        if(value && value.length != 0 && $.inArray(value.split('.').pop(), rex.imageExtensions))
+        if(value && value.length != 0)
         {
             // img tag nur einmalig einfuegen, ggf erzeugen wenn nicht vorhanden
             var img = $('img', div);

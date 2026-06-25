@@ -2470,15 +2470,6 @@
       <code><![CDATA[$address]]></code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/MediaPool/Media.php">
-    <MixedReturnStatement>
-      <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
-      <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
-    </MixedReturnStatement>
-    <NullableReturnStatement>
-      <code><![CDATA[Core::getProperty('image_extensions', [])]]></code>
-    </NullableReturnStatement>
-  </file>
   <file src="src/MediaPool/MediaHandler.php">
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$countQueryParams]]></code>

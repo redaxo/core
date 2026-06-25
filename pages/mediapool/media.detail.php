@@ -145,13 +145,12 @@ $addExtInfo = '';
 $encodedFname = urlencode($fname);
 
 $fileExt = File::extension($fname);
-$isImage = Media::isImageType($fileExt);
 $isSvg = 'svg' === $fileExt;
 
-if ($isImage) {
-    $fwidth = (int) $gf->getValue('width');
-    $fheight = (int) $gf->getValue('height');
+$fwidth = (int) $gf->getValue('width');
+$fheight = (int) $gf->getValue('height');
 
+if ($fwidth > 0 && $fheight > 0) {
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_img_width') . ' / ' . I18n::msg('pool_img_height') . '</label>';
     $e['field'] = '<p class="form-control-static">' . $fwidth . 'px / ' . $fheight . 'px</p>';
@@ -210,7 +209,6 @@ $sidebar = Extension::dispatch(new ExtensionPoint('MEDIA_DETAIL_SIDEBAR', $sideb
     'id' => $fileId,
     'filename' => $fname,
     'media' => $gf,
-    'is_image' => $isImage,
 ]));
 
 if ($TPERM) {
