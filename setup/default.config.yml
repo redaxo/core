@@ -136,5 +136,4 @@ allowed_mime_types:
     mpeg: [video/mpeg]
     mpg: [video/mpeg]
     mp4: [video/mp4]
-image_extensions: [avif, bmp, gif, jpeg, jpg, png, svg, tif, tiff, webp]
 sanitize_svgs: true

@@ -13,8 +13,6 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Util\Formatter;
 
-use function in_array;
-
 /**
  * Bildet ein Medium des Medienpools ab.
  */
@@ -135,11 +133,6 @@ final class Media
         return Formatter::bytes($this->size);
     }
 
-    public function isImage(): bool
-    {
-        return self::isImageType($this->getExtension());
-    }
-
     public function getExtension(): string
     {
         return File::extension($this->fileName);
@@ -148,18 +141,6 @@ final class Media
     public function fileExists(): bool
     {
         return is_file(Path::media($this->fileName));
-    }
-
-    // allowed image upload types
-    /** @return list<string> */
-    public static function getImageTypes(): array
-    {
-        return Core::getProperty('image_extensions', []);
-    }
-
-    public static function isImageType(string $extension): bool
-    {
-        return in_array($extension, self::getImageTypes());
     }
 
     public function hasValue(string $value): bool

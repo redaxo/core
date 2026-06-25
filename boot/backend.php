@@ -242,7 +242,6 @@ Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE]);
 Asset::setJsProperty('backend', true);
 Asset::setJsProperty('accesskeys', Core::getProperty('use_accesskeys'));
 Asset::setJsProperty('cookie_params', Login::getCookieParams());
-Asset::setJsProperty('imageExtensions', Core::getProperty('image_extensions'));
 
 if (Core::getUser()) {
     Asset::addJsFile(Url::coreAssets('session-timeout.js'), [Asset::JS_IMMUTABLE => true]);
