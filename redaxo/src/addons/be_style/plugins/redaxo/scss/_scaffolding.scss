@@ -24,10 +24,6 @@ html {
         height: auto;
         min-height: 100%;
         padding-top: 0;
-
-        .rex-is-popup& {
-            padding-top: 0; // required due to specificity
-        }
     }
 
     .rex-page-main {
@@ -39,10 +35,6 @@ html {
         @media (max-width: $grid-float-breakpoint-max) {
             padding-top: $top-mobile-navbar-height;
         }
-
-        .rex-is-popup& {
-            padding-top: $top-popup-navbar-height;
-        }
     }
 
     .rex-page-main-inner {
@@ -50,8 +42,18 @@ html {
             padding-left: $grid-gutter-width;
             padding-right: $grid-gutter-width;
         }
+    }
 
-        .rex-is-popup& {
+    &.rex-is-popup {
+        .rex-page-container {
+            padding-top: 0; // required due to specificity
+        }
+
+        .rex-page-main {
+            padding-top: $top-popup-navbar-height;
+        }
+
+        .rex-page-main-inner {
             padding-left: floor($grid-gutter-width / 2);
             padding-right: floor($grid-gutter-width / 2);
         }
