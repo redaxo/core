@@ -260,11 +260,6 @@ $transitionDuration: 300ms;
                 height: 22px;
                 transform: translate(-50%, -50%) rotate(0);
                 transition: transform $transitionDuration $easeInCubic;
-
-                .rex-nav-main-is-visible& {
-                    transform: translate(-50%, -50%) rotate(-180deg);
-                    transition: transform $transitionDuration $easeOutCubic;
-                }
             }
 
             .icon-bar {
@@ -289,22 +284,6 @@ $transitionDuration: 300ms;
 
                 &:nth-child(3) {
                     transform: translate(-50%, 5px);
-                }
-
-                .rex-nav-main-is-visible& {
-                    transition: transform $transitionDuration $easeOutCubic, opacity $transitionDuration $easeOutCubic;
-
-                    &:nth-child(1) {
-                        transform: translate(-50%, -50%) rotate(45deg);
-                    }
-
-                    &:nth-child(2) {
-                        opacity: 0;
-                    }
-
-                    &:nth-child(3) {
-                        transform: translate(-50%, -50%) rotate(-45deg);
-                    }
                 }
             }
 
@@ -335,27 +314,9 @@ $transitionDuration: 300ms;
                 transform: translateY(-$navbar-height); // hide above navbar
                 transition: opacity ($transitionDuration * 2) $easeInOutCubic, transform 0ms linear ($transitionDuration * 2); // fade out and transform afterwards
 
-                .rex-nav-main-is-visible& {
-                    display: block;
-                    opacity: 1;
-                    transform: translateY(0); // show at target position
-                    transition: opacity ($transitionDuration * 2) $easeInOutCubic ($transitionDuration * 2), transform 0ms linear 0ms; // fade in and immediately transform
-                }
-
                 > .nav {
                     margin: 0;
                 }
-            }
-        }
-
-        .rex-is-popup& {
-            z-index: auto;
-
-            .navbar {
-                min-height: $top-popup-navbar-height;
-                box-shadow: none;
-                padding-top: 0;
-                padding-bottom: 0;
             }
         }
     }
@@ -364,8 +325,7 @@ $transitionDuration: 300ms;
         position: fixed;
     }
 
-    .rex-nav-top-is-elevated,
-    .rex-nav-main-is-visible& {
+    .rex-nav-top-is-elevated {
         .navbar {
             box-shadow: 0 2px 2px 0 rgba($color-a-darker, 0.2);
         }
@@ -385,10 +345,59 @@ $transitionDuration: 300ms;
         @media (min-width: $screen-lg-min) {
             padding-right: $grid-gutter-width;
         }
+    }
 
-        .rex-is-popup& {
+    &.rex-is-popup {
+        .rex-nav-top {
+            z-index: auto;
+
+            .navbar {
+                min-height: $top-popup-navbar-height;
+                box-shadow: none;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+        }
+
+        .rex-nav-top .container-fluid {
             padding-right: floor($grid-gutter-width / 2);
             justify-content: flex-start;
+        }
+    }
+
+    &.rex-nav-main-is-visible {
+        .rex-nav-top .navbar-toggle .icon-bars {
+            transform: translate(-50%, -50%) rotate(-180deg);
+            transition: transform $transitionDuration $easeOutCubic;
+        }
+
+        .rex-nav-top .navbar-toggle .icon-bar {
+            transition: transform $transitionDuration $easeOutCubic, opacity $transitionDuration $easeOutCubic;
+
+            &:nth-child(1) {
+                transform: translate(-50%, -50%) rotate(45deg);
+            }
+
+            &:nth-child(2) {
+                opacity: 0;
+            }
+
+            &:nth-child(3) {
+                transform: translate(-50%, -50%) rotate(-45deg);
+            }
+        }
+
+        .navbar {
+            box-shadow: 0 2px 2px 0 rgba($color-a-darker, 0.2);
+        }
+
+        @media (max-width: $grid-float-breakpoint-max) {
+            .rex-nav-top .rex-nav-meta {
+                display: block;
+                opacity: 1;
+                transform: translateY(0); // show at target position
+                transition: opacity ($transitionDuration * 2) $easeInOutCubic ($transitionDuration * 2), transform 0ms linear 0ms; // fade in and immediately transform
+            }
         }
     }
 }
