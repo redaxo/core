@@ -24,7 +24,6 @@ final class ConfigGetCommand extends AbstractCommand implements StandaloneInterf
         SymfonyStyle $io,
         OutputInterface $output,
         #[Argument('config path separated by periods, e.g. "setup" or "db.1.host"')] string $key,
-        #[Option('php type of the returned value, e.g. "octal"', shortcut: 't')] string $type = 'string',
         #[Option('addon to inspect, defaults to redaxo-core', name: 'addon', shortcut: 'p')] string $package = 'core',
     ): int {
         if (!$key) {
@@ -59,12 +58,7 @@ final class ConfigGetCommand extends AbstractCommand implements StandaloneInterf
             $config = $config[$pathPart];
         }
 
-        if ('octal' === $type) {
-            // turn fileperm/dirperm into the expected values like e.g. 755
-            $output->writeln(decoct($config));
-        } else {
-            $output->writeln(json_encode($config));
-        }
+        $output->writeln(json_encode($config));
 
         return Command::SUCCESS;
     }

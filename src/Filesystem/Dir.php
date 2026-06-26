@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Filesystem;
 
-use Redaxo\Core\Core;
 use SplFileInfo;
 use Traversable;
 
@@ -43,15 +42,11 @@ final class Dir
             return false;
         }
 
-        // suppress "File exists" warning in case of concurrent processes
-        @mkdir($dir, Core::getDirPerm());
+        // suppress "File exists" warning in case of concurrent processes.
+        // the mode is masked by the process umask, so the actual perms follow the server policy.
+        @mkdir($dir, 0o777);
 
-        if (is_dir($dir)) {
-            @chmod($dir, Core::getDirPerm());
-            return true;
-        }
-
-        return false;
+        return is_dir($dir);
     }
 
     /**
