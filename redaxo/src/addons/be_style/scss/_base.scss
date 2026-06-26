@@ -74,10 +74,10 @@ body:after {
             //margin-top: -$navbar-height;
             padding-top: $top-navbar-height;
             table-layout: fixed;
+        }
 
-            .rex-is-popup& {
-                padding-top: $top-popup-navbar-height;
-            }
+        &.rex-is-popup .rex-page-container {
+            padding-top: $top-popup-navbar-height;
         }
 
         .rex-nav-main {
@@ -347,11 +347,10 @@ body:after {
     &, a {
         color: $alert-success-text;
     }
-
-    tr&:hover > th,
-    tr&:hover > td {
-        background-color: darken($alert-success-bg, 10%);
-    }
+}
+tr.rex-state-success:hover > th,
+tr.rex-state-success:hover > td {
+    background-color: darken($alert-success-bg, 10%);
 }
 .rex-state-info,
 .rex-state-notice {
@@ -360,11 +359,12 @@ body:after {
     &, a {
         color: $alert-info-text;
     }
-
-    tr&:hover > th,
-    tr&:hover > td {
-        background-color: darken($alert-info-bg, 10%);
-    }
+}
+tr.rex-state-info:hover > th,
+tr.rex-state-info:hover > td,
+tr.rex-state-notice:hover > th,
+tr.rex-state-notice:hover > td {
+    background-color: darken($alert-info-bg, 10%);
 }
 .rex-state-warning {
     background-color: $alert-warning-bg;
@@ -372,11 +372,10 @@ body:after {
     &, a {
         color: $alert-warning-text;
     }
-
-    tr&:hover > th,
-    tr&:hover > td {
-        background-color: darken($alert-warning-bg, 10%);
-    }
+}
+tr.rex-state-warning:hover > th,
+tr.rex-state-warning:hover > td {
+    background-color: darken($alert-warning-bg, 10%);
 }
 .rex-state-danger,
 .rex-state-error {
@@ -385,11 +384,12 @@ body:after {
     &, a {
         color: $alert-danger-text;
     }
-
-    tr&:hover > th,
-    tr&:hover > td {
-        background-color: darken($alert-danger-bg, 10%);
-    }
+}
+tr.rex-state-danger:hover > th,
+tr.rex-state-danger:hover > td,
+tr.rex-state-error:hover > th,
+tr.rex-state-error:hover > td {
+    background-color: darken($alert-danger-bg, 10%);
 }
 
 .rex-primary-id {
@@ -609,13 +609,15 @@ body:after {
 
 // correcting bootstrap vendor regarding Quick fix for badges in buttons
 // https://github.com/redaxo/core/blob/80925bba7235e5866c3eb99c881db8ddeab4ee25/redaxo/src/addons/be_style/vendor/bootstrap/assets/stylesheets/bootstrap/_badges.scss#L26
-  .btn & {
-    position: relative;
-    top: 0px;
-  }
+.badge {
+    .btn & {
+        position: relative;
+        top: 0px;
+    }
 
-  .btn-xs &,
-  .btn-group-xs > .btn & {
-    top: 0;
-    padding: 1px 5px;
-  }
+    .btn-xs &,
+    .btn-group-xs > .btn & {
+        top: 0;
+        padding: 1px 5px;
+    }
+}
