@@ -11,25 +11,33 @@ use function date;
 use function sprintf;
 use function strtotime;
 
-/** Date picker (HTML5), stored as a Unix timestamp (local midnight). */
+/** Date picker (HTML5), stored as a SQL `date` (`Y-m-d`). */
 class DateField extends AbstractInputField
 {
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'int(11)', nullable: true);
+        return new Column($this->columnName($entity), 'date', nullable: true);
     }
 
     public function parseRequest(MetaContext $context): int|string|null
     {
         $value = Request::post($this->columnName($context->entity), 'string', '');
+        $time = '' === $value ? false : strtotime($value);
 
-        return '' === $value ? null : (strtotime($value) ?: null);
+        return false === $time ? null : date('Y-m-d', $time);
+    }
+
+    public function format(mixed $stored): ?int
+    {
+        // Expose a Unix timestamp (local midnight), consistent with Sql::getDateTimeValue().
+        return null === $stored || '' === $stored ? null : (strtotime((string) $stored) ?: null);
     }
 
     public function renderInput(MetaContext $context): string
     {
         $stored = $context->value($this);
-        $value = null === $stored || '' === $stored ? '' : date('Y-m-d', (int) $stored);
+        // The stored value is already `Y-m-d`, exactly what the date input expects.
+        $value = null === $stored || '' === $stored ? '' : (string) $stored;
         $name = $this->columnName($context->entity);
 
         $attributes = $this->attributes->with([

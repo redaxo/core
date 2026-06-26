@@ -8,12 +8,15 @@ use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\RexVar\MediaListVar;
 use Redaxo\Core\RexVar\MediaVar;
 
+use function array_filter;
+use function array_values;
+use function explode;
 use function implode;
 
 /**
  * Media picker (REX_MEDIA_WIDGET), stored as a text column.
  *
- * With `multiple: true` several media may be selected (pipe-delimited filenames).
+ * With `multiple: true` several media may be selected (comma-separated filenames).
  */
 class MediaField extends MetaField
 {
@@ -37,7 +40,20 @@ class MediaField extends MetaField
 
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'text', nullable: true);
+        // A single filename fits a varchar; multiple filenames are pipe-delimited and need a text column.
+        return $this->multiple
+            ? new Column($this->columnName($entity), 'text', nullable: true)
+            : new Column($this->columnName($entity), 'varchar(255)', nullable: true);
+    }
+
+    /** @return string|list<string> the filename, or the list of filenames for `multiple` */
+    public function format(mixed $stored): string|array
+    {
+        if ($this->multiple) {
+            return array_values(array_filter(explode(',', (string) $stored), static fn (string $f): bool => '' !== $f));
+        }
+
+        return (string) $stored;
     }
 
     public function renderInput(MetaContext $context): string
