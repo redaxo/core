@@ -3,15 +3,21 @@
 namespace Redaxo\Core\MetaInfo\Field;
 
 use Redaxo\Core\Database\Column;
+use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\RexVar\LinkListVar;
 use Redaxo\Core\RexVar\LinkVar;
 
+use function array_filter;
+use function array_map;
+use function array_values;
+use function explode;
+
 /**
  * Article/category picker (REX_LINK_WIDGET), stored as a text column.
  *
- * With `multiple: true` several articles may be selected (pipe-delimited article ids).
+ * With `multiple: true` several articles may be selected (comma-separated article ids).
  */
 class ArticleField extends MetaField
 {
@@ -32,7 +38,34 @@ class ArticleField extends MetaField
 
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'text', nullable: true);
+        // A single article is just an id; multiple ids stay short enough for a varchar.
+        return $this->multiple
+            ? new Column($this->columnName($entity), 'varchar(255)', nullable: true)
+            : new Column($this->columnName($entity), 'int(11)', nullable: true);
+    }
+
+    public function parseRequest(MetaContext $context): int|string|null
+    {
+        $value = Request::post($this->columnName($context->entity), 'string', '');
+
+        if ($this->multiple) {
+            return $value;
+        }
+
+        return '' === $value ? null : (int) $value;
+    }
+
+    /** @return int|list<int>|null the article id, or the list of ids for `multiple` */
+    public function format(mixed $stored): int|array|null
+    {
+        if ($this->multiple) {
+            return array_values(array_map(
+                static fn (string $id): int => (int) $id,
+                array_filter(explode(',', (string) $stored), static fn (string $id): bool => '' !== $id),
+            ));
+        }
+
+        return null === $stored || '' === $stored ? null : (int) $stored;
     }
 
     public function renderInput(MetaContext $context): string

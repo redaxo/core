@@ -17,7 +17,6 @@ use function is_array;
 use function preg_replace;
 use function Redaxo\Core\View\escape;
 use function sprintf;
-use function trim;
 
 /**
  * A choice among a fixed set of options, rendered as a select, multi-select, radio group or checkbox group
@@ -30,7 +29,8 @@ use function trim;
  * | true     | false    | radio buttons      |
  * | true     | true     | checkbox group     |
  *
- * Single values are stored as-is, multiple values pipe-delimited (`|a|b|`).
+ * Single values are stored as-is, multiple values comma-separated (`a,b,c`) so they stay queryable
+ * via SQL `FIND_IN_SET()`.
  *
  * Pass a static set via the `$choices` constructor argument, or override {@see self::choices()} to provide them
  * dynamically (#1480). Choices may be grouped by nesting: a value that is itself an array becomes an optgroup
@@ -71,7 +71,11 @@ class ChoiceField extends AbstractInputField
 
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'varchar(255)', nullable: true, default: $this->default);
+        // Multiple values are comma-separated and can outgrow a varchar; a single value never does.
+        // `text` can not carry a default, so the default only applies to the single-value case.
+        return $this->multiple
+            ? new Column($this->columnName($entity), 'text', nullable: true)
+            : new Column($this->columnName($entity), 'varchar(255)', nullable: true, default: $this->default);
     }
 
     public function parseRequest(MetaContext $context): int|string|null
@@ -85,7 +89,7 @@ class ChoiceField extends AbstractInputField
         /** @var list<string> $values */
         $values = Request::post($name, 'array', []);
 
-        return [] === $values ? '' : '|' . implode('|', $values) . '|';
+        return implode(',', $values);
     }
 
     /** @return string|list<string> the single value, or the list of values for `multiple` */
@@ -184,6 +188,6 @@ class ChoiceField extends AbstractInputField
     /** @return list<string> */
     private static function splitMultiple(string $stored): array
     {
-        return array_values(array_filter(explode('|', trim($stored, '|')), static fn (string $v): bool => '' !== $v));
+        return array_values(array_filter(explode(',', $stored), static fn (string $v): bool => '' !== $v));
     }
 }
