@@ -470,18 +470,6 @@ final class Core
         return ' title="' . $title . '"';
     }
 
-    /** Returns the file perm. */
-    public static function getFilePerm(): int
-    {
-        return (int) self::getProperty('fileperm', 0o664);
-    }
-
-    /** Returns the dir perm. */
-    public static function getDirPerm(): int
-    {
-        return (int) self::getProperty('dirperm', 0o775);
-    }
-
     /**
      * Returns the current backend theme.
      *
@@ -536,10 +524,6 @@ final class Core
         foreach ($config as $key => $value) {
             /** @psalm-suppress MixedAssignment */
             $value = self::convertEnvVariables($value);
-
-            if (in_array($key, ['fileperm', 'dirperm'])) {
-                $value = octdec((string) $value);
-            }
 
             self::setProperty($key, $value);
         }

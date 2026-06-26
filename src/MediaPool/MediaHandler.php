@@ -111,11 +111,15 @@ final class MediaHandler
             throw new ApiFunctionException($errorMessage);
         }
 
+        // preserve the perms of an existing file, otherwise use the umask-derived default
+        $perm = is_file($dstFile) ? fileperms($dstFile) : false;
+
         if (!File::move($srcFile, $dstFile)) {
             throw new ApiFunctionException(I18n::msg('pool_file_movefailed'));
         }
 
-        @chmod($dstFile, Core::getFilePerm());
+        // the uploaded temp file may carry restrictive perms (e.g. 0600), restore the preserved or umask-derived perms
+        @chmod($dstFile, $perm ?: 0o666 & ~umask());
 
         $size = @getimagesize($dstFile);
         if ('' == $data['file']['type'] && isset($size['mime'])) {
@@ -231,11 +235,15 @@ final class MediaHandler
                     $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape($extensionNew) . '</code> (<code>' . escape($filetype ?? 'unknown mime type') . '</code>)';
                     throw new ApiFunctionException($warning);
                 }
+                // preserve the perms of an existing file, otherwise use the umask-derived default
+                $perm = is_file($dstFile) ? fileperms($dstFile) : false;
+
                 if (!File::move($srcFile, $dstFile)) {
                     throw new ApiFunctionException(I18n::msg('pool_file_movefailed'));
                 }
 
-                @chmod($dstFile, Core::getFilePerm());
+                // the uploaded temp file may carry restrictive perms (e.g. 0600), restore the preserved or umask-derived perms
+                @chmod($dstFile, $perm ?: 0o666 & ~umask());
 
                 self::sanitizeMedia($dstFile, $filetype);
 
@@ -247,7 +255,6 @@ final class MediaHandler
                     $saveObject->setValue('width', $size[0]);
                     $saveObject->setValue('height', $size[1]);
                 }
-                @chmod($dstFile, Core::getFilePerm());
             } else {
                 throw new ApiFunctionException(I18n::msg('pool_file_upload_errortype'));
             }

@@ -41,7 +41,7 @@ final class ConfigSetCommand extends AbstractCommand implements StandaloneInterf
         SymfonyStyle $io,
         #[Argument('config path separated by periods, e.g. "setup" or "db.1.host"')] string $key,
         #[Argument('new value for config key, e.g. "somestring" or "1"')] ?string $value = null,
-        #[Option('php type of new value, e.g. "bool", "octal" or "int"', shortcut: 't')] string $type = 'string',
+        #[Option('php type of new value, e.g. "bool" or "int"', shortcut: 't')] string $type = 'string',
         #[Option('sets the config key to null')] bool $unset = false,
     ): int {
         if (null === $value && false === $unset) {
@@ -53,10 +53,6 @@ final class ConfigSetCommand extends AbstractCommand implements StandaloneInterf
         } elseif ('bool' === $type || 'boolean' === $type) {
             $value = in_array($value, ['true', 'on', '1'], true) ? true : $value;
             $value = in_array($value, ['false', 'off', '0'], true) ? false : $value;
-        } elseif ('octal' === $type) {
-            // turns e.g. 755 into 0755
-            // a leading zero marks a octal-string
-            $value = '0' . $value;
         } else {
             $value = Type::cast($value, $type);
         }
