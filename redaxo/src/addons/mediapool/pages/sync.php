@@ -116,11 +116,11 @@ if ($diffCount > 0) {
     foreach ($diffFiles as $file) {
         if (is_writable(rex_path::media($file))) {
             $e = [];
-            $e['label'] = '<label>' . $file . '</label>';
-            $e['field'] = '<input type="checkbox" name="sync_files[]" value="' . $file . '" />';
+            $e['label'] = '<label>' . rex_escape($file) . '</label>';
+            $e['field'] = '<input type="checkbox" name="sync_files[]" value="' . rex_escape($file) . '" />';
             $writable[] = $e;
         } else {
-            $notWritable[] = $file;
+            $notWritable[] = rex_escape($file);
         }
     }
 

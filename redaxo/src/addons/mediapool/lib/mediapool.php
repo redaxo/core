@@ -83,7 +83,7 @@ final class rex_mediapool
                 $aid = (int) $artArr['article_id'];
                 $clang = (int) $artArr['clang_id'];
                 $ooa = rex_article::get($aid, $clang);
-                $name = ($ooa) ? $ooa->getName() : '';
+                $name = ($ooa) ? rex_escape($ooa->getName()) : '';
                 $warning[0] .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'clang' => $clang]) . '\')">' . $name . '</a></li>';
             }
             $warning[0] .= '</ul>';
