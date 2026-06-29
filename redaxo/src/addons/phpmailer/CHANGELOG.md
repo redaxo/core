@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.17.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* XSS via Debug/Error-Ausgabe (@gharlan)
+
+
 Version 2.17.0 – 09.04.2026
 ---------------------------
 

@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.18.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* Stored XSS via Artikelname in `mediaIsInUse` und Dateinamen in Sync-Page (gemeldet von @de3erve-hunter) (@gharlan)
+
+
 Version 2.18.1 – 01.06.2026
 ---------------------------
 

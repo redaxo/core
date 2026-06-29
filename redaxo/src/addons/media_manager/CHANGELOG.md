@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.18.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* Stored XSS via Type-Name in `mediaIsInUse` (gemeldet von @de3erve) (@gharlan)
+
+
 Version 2.18.1 – 01.06.2026
 ---------------------------
 

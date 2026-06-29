@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.14.1 – 29.06.2026
+---------------------------
+
+### Security
+
+* CSRF-Schutz für Addon-Update-ApiFunction fehlte (gemeldet von @de3erve-hunter) (@gharlan)
+
+
 Version 2.14.0 – 09.04.2026
 ---------------------------
 

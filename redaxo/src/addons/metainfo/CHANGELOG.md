@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.12.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* Stored XSS via `isMediaInUse` (@gharlan)
+
+
 Version 2.12.1 – 01.06.2026
 ---------------------------
 
