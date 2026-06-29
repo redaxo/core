@@ -62,7 +62,7 @@ class rex_metainfo_media_handler extends rex_metainfo_handler
                 $aid = (int) $artArr['id'];
                 $clang = (int) $artArr['clang_id'];
                 $parentId = (int) $artArr['parent_id'];
-                $articles .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $clang]) . '\')">' . (string) $artArr['name'] . '</a></li>';
+                $articles .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $clang]) . '\')">' . rex_escape((string) $artArr['name']) . '</a></li>';
             }
             if ('' != $articles) {
                 $warning[] = rex_i18n::msg('minfo_media_in_use_art') . '<br /><ul>' . $articles . '</ul>';
@@ -76,7 +76,7 @@ class rex_metainfo_media_handler extends rex_metainfo_handler
                 $aid = (int) $artArr['id'];
                 $clang = (int) $artArr['clang_id'];
                 $parentId = (int) $artArr['parent_id'];
-                $categories .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'clang' => $clang]) . '\')">' . (string) $artArr['catname'] . '</a></li>';
+                $categories .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'clang' => $clang]) . '\')">' . rex_escape((string) $artArr['catname']) . '</a></li>';
             }
             if ('' != $categories) {
                 $warning[] = rex_i18n::msg('minfo_media_in_use_cat') . '<br /><ul>' . $categories . '</ul>';
@@ -88,7 +88,7 @@ class rex_metainfo_media_handler extends rex_metainfo_handler
             $items = $sql->getArray('SELECT id, filename, category_id FROM ' . rex::getTablePrefix() . 'media WHERE ' . implode(' OR ', $where['media']));
             foreach ($items as $medArr) {
                 $id = (int) $medArr['id'];
-                $filename = (string) $medArr['filename'];
+                $filename = rex_escape((string) $medArr['filename']);
                 $catId = (int) $medArr['category_id'];
                 $media .= '<li><a href="' . rex_url::backendPage('mediapool/detail', ['file_id' => $id, 'rex_file_category' => $catId]) . '">' . $filename . '</a></li>';
             }
@@ -101,7 +101,7 @@ class rex_metainfo_media_handler extends rex_metainfo_handler
         if (!empty($where['clangs'])) {
             $items = $sql->getArray('SELECT id, name FROM ' . rex::getTablePrefix() . 'clang WHERE ' . implode(' OR ', $where['clangs']));
             foreach ($items as $clangArr) {
-                $name = (string) $clangArr['name'];
+                $name = rex_escape((string) $clangArr['name']);
                 if (rex::getUser()?->isAdmin()) {
                     $clangs .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('system/lang', ['clang_id' => $clangArr['id'], 'func' => 'editclang']) . '\')">' . $name . '</a></li>';
                 } else {

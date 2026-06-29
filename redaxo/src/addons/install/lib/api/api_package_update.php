@@ -37,4 +37,9 @@ class rex_api_install_package_update extends rex_api_function
         }
         return new rex_api_result($success, $message);
     }
+
+    protected function requiresCsrfProtection()
+    {
+        return true;
+    }
 }
