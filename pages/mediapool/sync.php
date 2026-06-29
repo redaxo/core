@@ -16,6 +16,8 @@ use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
 
+use function Redaxo\Core\View\escape;
+
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
 
 $csrf = CsrfToken::factory('mediapool');
@@ -132,11 +134,11 @@ if ($diffCount > 0) {
     foreach ($diffFiles as $file) {
         if (is_writable(Path::media($file))) {
             $e = [];
-            $e['label'] = '<label>' . $file . '</label>';
-            $e['field'] = '<input type="checkbox" name="sync_files[]" value="' . $file . '" />';
+            $e['label'] = '<label>' . escape($file) . '</label>';
+            $e['field'] = '<input type="checkbox" name="sync_files[]" value="' . escape($file) . '" />';
             $writable[] = $e;
         } else {
-            $notWritable[] = $file;
+            $notWritable[] = escape($file);
         }
     }
 

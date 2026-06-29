@@ -15,6 +15,7 @@ use Redaxo\Core\Util\Str;
 
 use function count;
 use function in_array;
+use function Redaxo\Core\View\escape;
 use function strlen;
 
 final class MediaPool
@@ -92,7 +93,7 @@ final class MediaPool
                 $aid = (int) $artArr['article_id'];
                 $clang = (int) $artArr['clang_id'];
                 $article = Article::get($aid, $clang);
-                $name = $article ? $article->name : '';
+                $name = $article ? escape($article->name) : '';
                 $warning[0] .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'clang' => $clang]) . '\')">' . $name . '</a></li>';
             }
             $warning[0] .= '</ul>';

@@ -19,6 +19,7 @@ use Redaxo\Core\Translation\I18n;
 
 use function implode;
 use function in_array;
+use function Redaxo\Core\View\escape;
 
 /**
  * @internal
@@ -62,7 +63,7 @@ final class MediaHandler extends AbstractHandler
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $clang = (int) $artArr['clang_id'];
-                $articles .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $clang]) . '\')">' . (string) $artArr['name'] . '</a></li>';
+                $articles .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $clang]) . '\')">' . escape((string) $artArr['name']) . '</a></li>';
             }
             if ('' != $articles) {
                 $warning[] = I18n::msg('minfo_media_in_use_art') . '<br /><ul>' . $articles . '</ul>';
@@ -76,7 +77,7 @@ final class MediaHandler extends AbstractHandler
                 $aid = (int) $artArr['id'];
                 $clang = (int) $artArr['clang_id'];
                 $parentId = (int) $artArr['parent_id'];
-                $categories .= '<li><a href="javascript:openPage(\'' . Url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'clang' => $clang]) . '\')">' . (string) $artArr['catname'] . '</a></li>';
+                $categories .= '<li><a href="javascript:openPage(\'' . Url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'clang' => $clang]) . '\')">' . escape((string) $artArr['catname']) . '</a></li>';
             }
             if ('' != $categories) {
                 $warning[] = I18n::msg('minfo_media_in_use_cat') . '<br /><ul>' . $categories . '</ul>';
@@ -88,7 +89,7 @@ final class MediaHandler extends AbstractHandler
             $items = $sql->getArray('SELECT id, filename, category_id FROM ' . Core::getTablePrefix() . 'media WHERE ' . implode(' OR ', $where['media']));
             foreach ($items as $medArr) {
                 $id = (int) $medArr['id'];
-                $filename = (string) $medArr['filename'];
+                $filename = escape((string) $medArr['filename']);
                 $catId = (int) $medArr['category_id'];
                 $media .= '<li><a href="' . Url::backendPage('mediapool/detail', ['file_id' => $id, 'rex_file_category' => $catId]) . '">' . $filename . '</a></li>';
             }
@@ -101,7 +102,7 @@ final class MediaHandler extends AbstractHandler
         if (!empty($where['clangs'])) {
             $items = $sql->getArray('SELECT id, name FROM ' . Core::getTablePrefix() . 'clang WHERE ' . implode(' OR ', $where['clangs']));
             foreach ($items as $clangArr) {
-                $name = (string) $clangArr['name'];
+                $name = escape((string) $clangArr['name']);
                 if (Core::getUser()?->admin) {
                     $clangs .= '<li><a href="javascript:openPage(\'' . Url::backendPage('system/lang', ['clang_id' => $clangArr['id'], 'func' => 'editclang']) . '\')">' . $name . '</a></li>';
                 } else {

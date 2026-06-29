@@ -76,7 +76,8 @@ All core classes live in the `Redaxo\Core\` namespace, mapped to `src/`. Tests l
 - PHPStan level 6 + Psalm level 1, both with baselines in `.tools/phpstan/` and `.tools/psalm/`
 - PHPUnit strict mode: warnings, notices, deprecations all fail the build
 - In YAML files, prefer single quotes when quoting is needed
-- Comments and commit messages in English; commits use conventional commits (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`, `style:`, `ci:`)
+- Comments and commit messages in English; commits use conventional commits (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`, `style:`, `ci:`). The same rules (English + conventional commit prefix) apply to PR titles, since they become the commit message on squash merge
+- Don't write bare `@name` tokens in commit messages (e.g. annotations like `@internal`/`@deprecated`, or anything that looks like a username): GitHub autolinks them into user mentions and pings a random account. Wrap them in backticks (`` `@internal` ``) — GitHub renders code spans in commit messages and doesn't link mentions inside them
 - **Properties**: prefer modern public properties (with `readonly`, asymmetric visibility, property hooks as appropriate) over getter/setter methods
 
 ### Baselines
@@ -86,5 +87,6 @@ The static analysis baselines exist to grandfather pre-existing issues. **New co
 
 - `6.x` is actively under development and has not shipped a stable release yet. Breaking changes to public APIs are acceptable while we still can — prefer **fixing the design** over piling on `@deprecated` shims.
 - `@internal`-marked symbols may change without notice.
+- Mark new classes `@internal` by default. Only omit it when the class is deliberately part of the public API. In that case, review every public property, constant, and method individually and mark `@internal` each one that isn't meant to be a public contract — public visibility alone shouldn't lock you into supporting it.
 - DB schema changes belong in the relevant install/update path.
 - Behavior that needs to stay aligned with `5.x` (because changes are regularly merged up) should be kept structurally close to its `5.x` counterpart unless the divergence is intentional.

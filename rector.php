@@ -98,7 +98,7 @@ return RectorConfig::configure()
     ->withPhpVersion(PhpVersion::PHP_85)
     ->withPreparedSets(typeDeclarations: false, privatization: true)
     // ->withPhpSets()
-    ->withImportNames()
+    ->withImportNames(removeUnusedImports: false)
     ->withRules([
         CodeQuality\Assign\CombinedAssignRector::class,
         CodeQuality\BooleanNot\SimplifyDeMorganBinaryRector::class,

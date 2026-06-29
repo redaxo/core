@@ -830,7 +830,10 @@ class DataList implements UrlProviderInterface
     public function getSortColumn(?string $default = null): ?string
     {
         if (Request::request('list', 'string') == $this->getName()) {
-            return Request::request('sort', 'string', $default);
+            $sortColumn = Request::request('sort', 'string', $default);
+            if ($this->hasColumnOption($sortColumn, REX_LIST_OPT_SORT)) {
+                return $sortColumn;
+            }
         }
         return $default;
     }

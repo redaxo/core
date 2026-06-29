@@ -1119,8 +1119,6 @@ structure_history_snapshot_reactivated = Version has been revertet
 structure_history_overview_versions = History overview
 structure_history_current_version = Current version
 structure_history_info_content = <p>The History extension records all changes made to an article and creates snapshots which can later be used to restore a specific article to a previous state.</p>
-structure_history_todos = To do
-structure_history_todos_content = <ul><li>prepare cronjob</li><li>allow History to be turned off</li><li>Build settings, to reduce the number of version. Example: keep only one version after a month/week/day.</li><li>set scaling values for the website</li><li>make the visual appearance prettier similar to Time Machine?</li></ul>
 
 perm_options_history[article_rollback] = Restore article (History)
 

@@ -19,8 +19,3 @@ $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('structure_history_title_info'));
 $fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');
-
-$fragment = new Fragment();
-$fragment->setVar('title', I18n::msg('structure_history_todos'));
-$fragment->setVar('body', I18n::rawMsg('structure_history_todos_content'), false);
-echo $fragment->parse('core/page/section.php');

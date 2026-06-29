@@ -41,13 +41,13 @@ if ('' == Core::getConfig('phpmailer_from') || '' == Core::getConfig('phpmailer_
 
     $mail->Body .= "\nMailer: " . Core::getConfig('phpmailer_mailer') . $devider . $securityMode;
     $mail->Body .= "\n" . I18n::msg('phpmailer_checkmail_domain_note') . "\n" . $devider;
-    $mail->Debugoutput = static function ($str) use (&$mailerDebug) {
-        $mailerDebug .= date('Y-m-d H:i:s', time()) . ' phpmailer.checkmail.php' . nl2br($str);
+    $mail->Debugoutput = static function (string $str) use (&$mailerDebug) {
+        $mailerDebug .= date('Y-m-d H:i:s', time()) . ' phpmailer.checkmail.php' . nl2br(escape($str));
     };
 
     if (!$mail->send()) {
         $alert = '<h2>' . I18n::msg('phpmailer_checkmail_error_headline') . '</h2><hr>';
-        $alert .= I18n::msg('phpmailer_checkmail_error') . ': ' . $mail->ErrorInfo;
+        $alert .= I18n::msg('phpmailer_checkmail_error') . ': ' . escape($mail->ErrorInfo);
         $content .= Message::error($alert);
     } else {
         $success = '<h2>' . I18n::msg('phpmailer_checkmail_send') . '</h2> ' . escape(Core::getConfig('phpmailer_test_address')) . '<br>' . I18n::msg('phpmailer_checkmail_info');

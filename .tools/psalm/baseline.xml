@@ -784,7 +784,6 @@
   </file>
   <file src="pages/mailer/checkmail.php">
     <MixedArgument>
-      <code><![CDATA[$str]]></code>
       <code><![CDATA[Core::getConfig('phpmailer_test_address')]]></code>
     </MixedArgument>
     <MixedAssignment>
