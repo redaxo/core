@@ -454,7 +454,7 @@ class rex_media_manager
         ', ['%' . $sql->escapeLikeWildcards(json_encode($filename)) . '%']);
 
         for ($i = 0; $i < $sql->getRows(); ++$i) {
-            $message = '<a href="javascript:openPage(\'' . rex_url::backendPage('media_manager/types', ['effects' => 1, 'type_id' => $sql->getValue('type_id'), 'effect_id' => $sql->getValue('effect_id'), 'func' => 'edit']) . '\')">' . rex_i18n::msg('media_manager') . ' ' . rex_i18n::msg('media_manager_effect_name') . ': ' . (string) $sql->getValue('name') . '</a>';
+            $message = '<a href="javascript:openPage(\'' . rex_url::backendPage('media_manager/types', ['effects' => 1, 'type_id' => $sql->getValue('type_id'), 'effect_id' => $sql->getValue('effect_id'), 'func' => 'edit']) . '\')">' . rex_i18n::msg('media_manager') . ' ' . rex_i18n::msg('media_manager_effect_name') . ': ' . rex_escape((string) $sql->getValue('name')) . '</a>';
 
             if (!in_array($message, $warning)) {
                 $warning[] = $message;

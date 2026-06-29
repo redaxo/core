@@ -85,7 +85,7 @@ if ('' == $func) {
     $list->setColumnLabel('effect', rex_i18n::msg('media_manager_type_name'));
     $list->setColumnFormat('effect', 'custom', static function ($params) use ($effects) {
         $shortName = $params['value'];
-        return isset($effects[$shortName]) ? $effects[$shortName]->getName() : $shortName;
+        return isset($effects[$shortName]) ? $effects[$shortName]->getName() : rex_escape((string) $shortName);
     });
 
     $list->setColumnLabel('priority', rex_i18n::msg('media_manager_type_priority'));
