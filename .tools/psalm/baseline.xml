@@ -1923,7 +1923,6 @@
   <file src="redaxo/src/addons/phpmailer/pages/checkmail.php">
     <MixedArgument>
       <code><![CDATA[$addon->getConfig('test_address')]]></code>
-      <code><![CDATA[$str]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$securityMode]]></code>

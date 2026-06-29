@@ -34,7 +34,7 @@ if ('' == $addon->getConfig('from') || '' == $addon->getConfig('test_address')) 
 
     $mail->Body .= "\nMailer: " . $addon->getConfig('mailer') . $devider . $securityMode;
     $mail->Body .= "\n" . $addon->i18n('checkmail_domain_note') . "\n" . $devider;
-    $mail->Debugoutput = static function ($str) use (&$mailerDebug) {
+    $mail->Debugoutput = static function (string $str) use (&$mailerDebug) {
         $mailerDebug .= date('Y-m-d H:i:s', time()) . ' ' . nl2br(rex_escape($str));
     };
 
