@@ -977,7 +977,7 @@ class rex_list implements rex_url_provider_interface
     {
         if (rex_request('list', 'string') == $this->getName()) {
             $sortColumn = rex_request('sort', 'string', $default);
-            if ($this->hasColumnOption($sortColumn, REX_LIST_OPT_SORT)) {
+            if (null !== $sortColumn && $this->hasColumnOption($sortColumn, REX_LIST_OPT_SORT)) {
                 return $sortColumn;
             }
         }
