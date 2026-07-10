@@ -14,7 +14,7 @@
         "symfony/http-foundation": "^7.4.14",
         "symfony/var-dumper": "^7.4.14",
         "symfony/yaml": "^7.4.14",
-        "voku/anti-xss": "^4.1.43",
+        "voku/anti-xss": "^4.1.44",
         "voku/portable-utf8": "^6.1.1"
     },
 
