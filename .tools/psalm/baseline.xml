@@ -4370,7 +4370,6 @@
       <code><![CDATA[$columnLayout]]></code>
       <code><![CDATA[$column['width'] ?? null]]></code>
       <code><![CDATA[$sortColumn]]></code>
-      <code><![CDATA[$sortColumn]]></code>
       <code><![CDATA[$this->getValue($column)]]></code>
       <code><![CDATA[$this->getValue($columnName)]]></code>
     </PossiblyNullArgument>
