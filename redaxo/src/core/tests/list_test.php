@@ -50,6 +50,78 @@ final class rex_list_test extends TestCase
         unset($_REQUEST['list'], $_REQUEST['sort']);
     }
 
+    public function testSortableColumnRegisteredAfterConstructionIsApplied(): void
+    {
+        $table = 'rex_tests_list';
+
+        $sql = rex_sql::factory();
+        $sql->setQuery('DROP TABLE IF EXISTS `' . $table . '`');
+        $sql->setQuery('CREATE TABLE `' . $table . '` (
+                `id` INT NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE = InnoDB');
+        $sql->setQuery('INSERT INTO `' . $table . '` (`name`) VALUES ("aaa"), ("zzz")');
+
+        $_REQUEST['list'] = 'sortlist';
+        $_REQUEST['sort'] = 'name';
+        $_REQUEST['sorttype'] = 'desc';
+
+        try {
+            // setColumnSortable() is called after the constructor already executed the query,
+            // the requested sort order must still be applied (https://github.com/redaxo/core/issues/6585)
+            $list = rex_list::factory('SELECT id, name FROM ' . $table, rex_list::DISABLE_PAGINATION, 'sortlist');
+            $list->setColumnSortable('name');
+
+            $html = $list->get();
+
+            $posZzz = strpos($html, 'zzz');
+            $posAaa = strpos($html, 'aaa');
+            self::assertNotFalse($posZzz);
+            self::assertNotFalse($posAaa);
+            self::assertLessThan($posAaa, $posZzz, 'rows must be sorted desc by name');
+            self::assertSame(2, $list->getRows());
+            self::assertSame(['id', 'name'], $list->getColumnNames());
+        } finally {
+            unset($_REQUEST['list'], $_REQUEST['sort'], $_REQUEST['sorttype']);
+            $sql->setQuery('DROP TABLE `' . $table . '`');
+        }
+    }
+
+    public function testNonSortableSortParamFallsBackToDefaultOrder(): void
+    {
+        $table = 'rex_tests_list';
+
+        $sql = rex_sql::factory();
+        $sql->setQuery('DROP TABLE IF EXISTS `' . $table . '`');
+        $sql->setQuery('CREATE TABLE `' . $table . '` (
+                `id` INT NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE = InnoDB');
+        $sql->setQuery('INSERT INTO `' . $table . '` (`name`) VALUES ("aaa"), ("zzz")');
+
+        $_REQUEST['list'] = 'sortlist';
+        $_REQUEST['sort'] = 'name';
+        $_REQUEST['sorttype'] = 'desc';
+
+        try {
+            // "name" is never marked as sortable, so the requested sort must be ignored
+            $list = rex_list::factory('SELECT id, name FROM ' . $table, rex_list::DISABLE_PAGINATION, 'sortlist', defaultSort: ['id' => 'asc']);
+
+            $html = $list->get();
+
+            $posZzz = strpos($html, 'zzz');
+            $posAaa = strpos($html, 'aaa');
+            self::assertNotFalse($posZzz);
+            self::assertNotFalse($posAaa);
+            self::assertLessThan($posZzz, $posAaa, 'rows must keep the default sort order');
+        } finally {
+            unset($_REQUEST['list'], $_REQUEST['sort'], $_REQUEST['sorttype']);
+            $sql->setQuery('DROP TABLE `' . $table . '`');
+        }
+    }
+
     private function createListWithSortableColumn(string $name, string $sortableColumn): rex_list
     {
         $list = (new ReflectionClass(rex_list::class))->newInstanceWithoutConstructor();

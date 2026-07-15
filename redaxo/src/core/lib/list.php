@@ -66,6 +66,11 @@ class rex_list implements rex_url_provider_interface
     // --------- List Attributes
     /** @var string */
     private $name;
+    private string $query;
+    /** @var array<string, 'asc'|'desc'> */
+    private array $defaultSort;
+    private string $executedQuery;
+    private bool $dataLoaded = false;
     /** @var array<string, string|int> */
     private array $params;
     private int $rows;
@@ -139,6 +144,8 @@ class rex_list implements rex_url_provider_interface
         $this->debug = $debug;
         $this->sql->setDebug($this->debug);
         $this->name = $listName;
+        $this->query = $query;
+        $this->defaultSort = $defaultSort;
         $this->caption = '';
         $this->rows = 0;
         $this->params = [];
@@ -186,9 +193,14 @@ class rex_list implements rex_url_provider_interface
         }
 
         // --------- Load Data
-        $this->sql->setQuery($this->prepareQuery($query, $defaultSort));
-        if (self::DISABLE_PAGINATION === $rowsPerPage) {
-            $this->rows = (int) $this->sql->getRows();
+        if (rex_request('list', 'string') == $this->getName() && '' !== rex_request('sort', 'string', '')) {
+            // The requested sort column can not be validated yet since the sortable columns are registered
+            // after construction (getSortColumn() checks against them). Fetch only the field names here,
+            // the data is loaded in get() after the sortable columns are known.
+            $this->executedQuery = 'SELECT * FROM (' . $query . ') t LIMIT 0';
+            $this->sql->setQuery($this->executedQuery);
+        } else {
+            $this->loadData();
         }
 
         foreach ($this->sql->getFieldnames() as $columnName) {
@@ -934,12 +946,36 @@ class rex_list implements rex_url_provider_interface
     }
 
     /**
+     * Executes the query unless it already ran and the effective query is still the same
+     * (it changes when columns are marked as sortable after construction).
+     */
+    private function loadData(): void
+    {
+        $query = $this->prepareQuery($this->query, $this->defaultSort);
+        if ($this->dataLoaded && $query === $this->executedQuery) {
+            return;
+        }
+
+        $this->dataLoaded = true;
+        $this->executedQuery = $query;
+        $this->sql->setQuery($query);
+
+        if (null === $this->pager) {
+            $this->rows = (int) $this->sql->getRows();
+        }
+    }
+
+    /**
      * Gibt die Anzahl der Zeilen zurück, welche vom ursprüngliche SQL Statement betroffen werden.
      *
      * @return int
      */
     public function getRows()
     {
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+
         return $this->rows;
     }
 
@@ -1184,6 +1220,12 @@ class rex_list implements rex_url_provider_interface
      */
     public function getValue($column)
     {
+        // only initial loading here, no unconditional loadData(): the query (and with it the
+        // result pointer) must not change anymore while the rows are iterated in get()
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+
         return $this->customColumns[$column] ?? $this->sql->getValue($column);
     }
 
@@ -1204,6 +1246,10 @@ class rex_list implements rex_url_provider_interface
     public function get()
     {
         rex_extension::registerPoint(new rex_extension_point('REX_LIST_GET', $this, [], true));
+
+        // By now the sortable columns are registered (including via the extension point above),
+        // so the deferred data query can run with the validated ORDER BY
+        $this->loadData();
 
         $s = "\n";
 
