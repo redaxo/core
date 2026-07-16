@@ -784,8 +784,6 @@ phpmailer_archive_purge_info = The archive can be regularly cleaned using the Pu
 
 # be_style
 be_style = Backend style
-be_style_help = Help
-be_style_icons = Icons
 be_style_themes = Themes
 customizer = customizer
 customizer_features = Functions

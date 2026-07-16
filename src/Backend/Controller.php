@@ -174,9 +174,7 @@ final class Controller
 
         $beStylePage = (new Page('be_style', I18n::msg('be_style')));
         $beStylePage
-            ->addSubpage(new Page('customizer', I18n::msg('customizer'))->setSubPath(Path::core('pages/system/be_style.customizer.php')))
-            ->addSubpage(new Page('icons', I18n::msg('be_style_icons'))->setSubPath(Path::core('pages/system/be_style.icons.php')))
-            ->addSubpage(new Page('help', I18n::msg('be_style_help'))->setSubPath(Path::core('pages/system/be_style.help.md')));
+            ->addSubpage(new Page('customizer', I18n::msg('customizer'))->setSubPath(Path::core('pages/system/be_style.customizer.php')));
 
         self::$pages['structure'] = new MainPage('system', 'structure', I18n::msg('structure'))
             ->setPath(Path::core('pages/structure/index.php'))
