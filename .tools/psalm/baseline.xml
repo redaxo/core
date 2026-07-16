@@ -1084,12 +1084,6 @@
       <code><![CDATA[$sql->getValue('id')]]></code>
     </PossiblyNullOperand>
   </file>
-  <file src="pages/system/be_style.customizer.php">
-    <MixedOperand>
-      <code><![CDATA[escape(Core::getConfig('be_style_labelcolor', ''))]]></code>
-      <code><![CDATA[escape(Core::getConfig('be_style_labelcolor', ''))]]></code>
-    </MixedOperand>
-  </file>
   <file src="pages/system/clangs.php">
     <NullOperand>
       <code><![CDATA[escape($sql->getValue('code'))]]></code>

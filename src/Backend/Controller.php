@@ -172,10 +172,6 @@ final class Controller
 
         $logsPage->addSubpage(new Page('cronjob', I18n::msg('cronjob_title'))->setSubPath(Path::core('pages/cronjob/log.php')));
 
-        $beStylePage = (new Page('be_style', I18n::msg('be_style')));
-        $beStylePage
-            ->addSubpage(new Page('customizer', I18n::msg('customizer'))->setSubPath(Path::core('pages/system/be_style.customizer.php')));
-
         self::$pages['structure'] = new MainPage('system', 'structure', I18n::msg('structure'))
             ->setPath(Path::core('pages/structure/index.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')
@@ -220,7 +216,6 @@ final class Controller
                 ->addSubpage(new Page('html', I18n::msg('system_report'))->setSubPath(Path::core('pages/system/report.html.php')))
                 ->addSubpage(new Page('markdown', I18n::msg('system_report_markdown'))->setSubPath(Path::core('pages/system/report.markdown.php'))),
             )
-            ->addSubpage($beStylePage)
             ->addSubpage(new Page('phpinfo', 'phpinfo')
                 ->setHidden(true)
                 ->setHasLayout(false)

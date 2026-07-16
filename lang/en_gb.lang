@@ -87,6 +87,8 @@ general_info_header = General information:
 db1_can_only_be_changed_by_setup = Database[1] can only be changed during setup.
 system_others = Misc.
 system_update = update
+system_setting_be_style_labelcolor = Label color
+system_setting_be_style_labelcolor_notice = Any valid css color expression (<code>#03f0ab</code>, <code>rgba(255, 100, 0, 0.5)</code> etc.)
 main_preferences = Settings
 language = Language
 languages = Languages
@@ -781,26 +783,6 @@ perm_general_phpmailer[] = PHPMailer settings
 # Archive Maintenance
 phpmailer_archive_maintenance = Archive Maintenance
 phpmailer_archive_purge_info = The archive can be regularly cleaned using the Purge Cronjob to automatically remove older emails.
-
-# be_style
-be_style = Backend style
-be_style_themes = Themes
-customizer = customizer
-customizer_features = Functions
-customizer_labeling = Additions
-customizer_labelcolor = Color
-customizer_labelcolor_notice = Any valid css color expression (<code>#03f0ab</code>, <code>rgba(255, 100, 0, 0.5)</code> etc.)
-customizer_showlink = Show link to website?
-
-customizer_config_updated = Settings have been saved
-customizer_config_update_failed = Settings were not saved
-
-customizer_update = Save settings
-
-customizer_projectname = Project name
-customizer_textarea = Width of textarea in templates and modules
-customizer_liquid = Liquid layout
-customizer_nav_flyout = Navigation with flyout
 
 # mediapool
 pool_name = Mediapool

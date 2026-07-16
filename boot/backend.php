@@ -281,12 +281,10 @@ if (Core::getUser()) {
     if ('' != Core::getConfig('be_style_labelcolor')) {
         Asset::setJsProperty('customizer_labelcolor', Core::getConfig('be_style_labelcolor'));
     }
-    if (Core::getConfig('be_style_showlink')) {
-        Asset::setJsProperty(
-            'customizer_showlink',
-            '<h1 class="be-style-customizer-title"><a href="' . Url::frontend() . '" target="_blank" rel="noreferrer noopener"><span class="be-style-customizer-title-name">' . escape(Core::getServerName()) . '</span><i class="rex-icon rex-icon-external-link"></i></a></h1>',
-        );
-    }
+    Asset::setJsProperty(
+        'customizer_showlink',
+        '<h1 class="be-style-customizer-title"><a href="' . Url::frontend() . '" target="_blank" rel="noreferrer noopener"><span class="be-style-customizer-title-name">' . escape(Core::getServerName()) . '</span><i class="rex-icon rex-icon-external-link"></i></a></h1>',
+    );
 
     Asset::addJsFile(Url::coreAssets('js/linkmap.js'), [Asset::JS_IMMUTABLE => true]);
 

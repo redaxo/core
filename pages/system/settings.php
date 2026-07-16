@@ -96,6 +96,10 @@ if ($func && !$csrfToken->isValid()) {
                 $value = (int) $value;
                 Core::setConfig('phpmailer_errormail', $value);
                 break;
+
+            case 'be_style_labelcolor':
+                Core::setConfig('be_style_labelcolor', (string) $value);
+                break;
         }
     }
 
@@ -342,6 +346,19 @@ $select->setSelected(Core::getConfig('phpmailer_errormail', 1));
 $content .= $field->get();
 
 $formElements = [];
+
+$n = [];
+$n['label'] = '<label for="rex-id-be-style-labelcolor">' . I18n::msg('system_setting_be_style_labelcolor') . '</label>';
+$n['field'] = '
+    <div class="input-group">
+        <div class="input-group-addon">
+            <input id="rex-id-be-style-labelcolor-picker" type="color" value="' . escape((string) Core::getConfig('be_style_labelcolor', '')) . '" oninput="jQuery(\'#rex-id-be-style-labelcolor\').val(this.value)" />
+        </div>
+        <input class="form-control" id="rex-id-be-style-labelcolor" type="text" name="settings[be_style_labelcolor]" value="' . escape((string) Core::getConfig('be_style_labelcolor', '')) . '" oninput="jQuery(\'#rex-id-be-style-labelcolor-picker\').val(this.value)" />
+    </div>
+';
+$n['note'] = I18n::msg('system_setting_be_style_labelcolor_notice');
+$formElements[] = $n;
 
 $editor = Editor::factory();
 $configYml = Path::coreData('config.yml');
