@@ -150,7 +150,7 @@ final class rex_mediapool
             return false;
         }
 
-        $mimeType = rex_file::mimeType($path);
+        $mimeType = rex_file::mimeType($path, $filename);
 
         return in_array($mimeType, $allowedMimetypes[$extension]);
     }

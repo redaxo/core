@@ -49,7 +49,7 @@ final class rex_media_service
         }
 
         if (!rex_mediapool::isAllowedMimeType($data['file']['path'], $data['file']['name'])) {
-            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape(rex_file::extension($data['file']['name'])) . '</code> (<code>' . rex_escape(rex_file::mimeType($data['file']['path'])) . '</code>)';
+            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape(rex_file::extension($data['file']['name'])) . '</code> (<code>' . rex_escape(rex_file::mimeType($data['file']['path'], $data['file']['name']) ?? 'unknown mime type') . '</code>)';
             throw new rex_api_exception($warning);
         }
 
@@ -62,7 +62,7 @@ final class rex_media_service
         $srcFile = $data['file']['path'];
         $dstFile = rex_path::media($data['file']['name_new']);
 
-        $data['file']['type'] = rex_file::mimeType($srcFile);
+        $data['file']['type'] = rex_file::mimeType($srcFile, $data['file']['name']);
 
         // Bevor die Datei engueltig in den Medienpool uebernommen wird, koennen
         // Addons ueber einen Extension-Point ein Veto einlegen.
@@ -189,7 +189,7 @@ final class rex_media_service
                 throw new rex_api_exception(rex_i18n::msg('pool_file_not_found'));
             }
 
-            $filetype = rex_file::mimeType($file['path']);
+            $filetype = rex_file::mimeType($file['path'], $file['name']);
 
             $srcFile = $file['path'];
             $dstFile = rex_path::media($filename);
