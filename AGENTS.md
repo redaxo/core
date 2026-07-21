@@ -69,6 +69,7 @@ All core classes use the `rex_` prefix (e.g., `rex_sql`, `rex_addon`, `rex_file`
 
 - 4 spaces indentation, LF line endings, UTF-8
 - Soft line limit ~120 chars (applies to comments too — don't wrap at 80)
+- In multi-line phpdoc descriptions (e.g. for `@param`), indent continuation lines by 4 spaces — don't align them with the start of the description text
 - Code style enforced by rector + php-cs-fixer (custom REDAXO config) — run `composer cs` after edits
 - PHPStan level 6 + Psalm level 1, both with baselines in `.tools/phpstan/` and `.tools/psalm/`
 - PHPUnit strict mode: warnings, notices, deprecations all fail the build
