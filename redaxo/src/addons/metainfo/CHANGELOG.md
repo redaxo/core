@@ -1,6 +1,22 @@
 Changelog
 =========
 
+Version 2.12.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* Stored XSS via `isMediaInUse` (@gharlan)
+
+
+Version 2.12.1 – 01.06.2026
+---------------------------
+
+### Bugfixes
+
+* Status-Toggle in Metainfo-Sidebar funktionierte nicht bei Usern mit mehreren Mountpoints (@isospin)
+
+
 Version 2.11.3 – 17.07.2025
 ---------------------------
 

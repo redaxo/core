@@ -10,31 +10,18 @@ sed -i '' 's/protected function execute(InputInterface $input, OutputInterface $
 rm -rf redaxo/src/core/vendor/bin/
 rm -rf redaxo/src/core/vendor/erusev/parsedown/.github/
 rm -rf redaxo/src/core/vendor/erusev/parsedown-extra/.github/
-rm -rf redaxo/src/core/vendor/filp/whoops/.github/
 rm -rf redaxo/src/core/vendor/lbuchs/webauthn/_test/
-rm -rf redaxo/src/core/vendor/ramsey/http-range/tests/
-rm -rf redaxo/src/core/vendor/symfony/console/Tests/
 rm -rf redaxo/src/core/vendor/symfony/http-foundation/Test/
 rm -rf redaxo/src/core/vendor/symfony/service-contracts/Test/
 rm -rf redaxo/src/core/vendor/symfony/var-dumper/Resources/bin/
 rm -rf redaxo/src/core/vendor/symfony/var-dumper/Test/
-rm -rf redaxo/src/core/vendor/symfony/var-dumper/Tests/
 rm -rf redaxo/src/core/vendor/symfony/yaml/Resources/
-rm -rf redaxo/src/core/vendor/symfony/yaml/Tests/
-rm -rf redaxo/src/core/vendor/voku/anti-xss/build/
-rm -rf redaxo/src/core/vendor/voku/portable-ascii/build/
 
 find redaxo/src/core/vendor -name ".deepsource.toml" -type f -delete
 find redaxo/src/core/vendor -name ".gitattributes" -type f -delete
-find redaxo/src/core/vendor -name ".github" -type d -delete
 find redaxo/src/core/vendor -name ".gitignore" -type f -delete
 find redaxo/src/core/vendor -name ".mailmap" -type f -delete
-find redaxo/src/core/vendor -name ".travis.yml" -type f -delete
-find redaxo/src/core/vendor -name "conventional-commits.json" -type f -delete
-find redaxo/src/core/vendor -name "phpcs.xml" -type f -delete
-find redaxo/src/core/vendor -name "phpstan.neon" -type f -delete
-find redaxo/src/core/vendor -name "phpunit.xml.dist" -type f -delete
-find redaxo/src/core/vendor -name "psalm.xml" -type f -delete
+find redaxo/src/core/vendor -name "phpunit*.xml*" -type f -delete
 find redaxo/src/core/vendor -name "*.md" ! -name "LICENSE.md" -type f -delete
 
 composer dumpautoload --ansi --no-dev --classmap-authoritative -d redaxo/src/core/

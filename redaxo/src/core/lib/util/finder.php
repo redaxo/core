@@ -30,6 +30,7 @@ class rex_finder implements IteratorAggregate, Countable
     /** @var list<string> */
     private array $ignoreDirsRecursive = [];
     private bool $ignoreSystemStuff = true;
+    private bool $ignoreUnreadableDirs = false;
     /** @var false|rex_sortable_iterator::*|callable(mixed, mixed): int */
     private $sort = false;
 
@@ -174,6 +175,25 @@ class rex_finder implements IteratorAggregate, Countable
     }
 
     /**
+     * Silently skips sub-directories that can not be opened on recursive descent
+     * (e.g. because they vanished between scandir() and descent in a concurrent run,
+     * or because permissions deny access).
+     *
+     * Default is `false`: an unreadable sub-directory throws `UnexpectedValueException`
+     * mid-iteration. Enable only when partial loss is acceptable — typically for
+     * cleanup loops over a tree that other workers may modify in parallel.
+     * Don't enable for backup/copy paths where read errors must surface.
+     *
+     * @return $this
+     */
+    public function ignoreUnreadableDirs(bool $ignore = true)
+    {
+        $this->ignoreUnreadableDirs = $ignore;
+
+        return $this;
+    }
+
+    /**
      * Sorts the elements.
      *
      * @param rex_sortable_iterator::*|callable(mixed, mixed): int $sort Sort mode, see {@link rex_sortable_iterator::__construct()}
@@ -239,8 +259,9 @@ class rex_finder implements IteratorAggregate, Countable
         });
 
         if ($this->recursive) {
+            $flags = $this->ignoreUnreadableDirs ? RecursiveIteratorIterator::CATCH_GET_CHILD : 0;
             /** @var Traversable<string, SplFileInfo> */
-            $iterator = new RecursiveIteratorIterator($iterator, $this->recursiveMode);
+            $iterator = new RecursiveIteratorIterator($iterator, $this->recursiveMode, $flags);
         }
 
         if ($this->sort) {

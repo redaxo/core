@@ -5,8 +5,6 @@ structure_history_snapshot_reactivated = Versão foi revertida
 structure_history_overview_versions = Panorama da história
 structure_history_current_version = Versão atual
 structure_history_info_content = <p> O PlugIn história grava todas as alterações feitas em um produto e cria snapshots que podem ser utilizados posteriormente para restaurar um status anterior de produto específico. <p>
-structure_history_todos = A ser feito
-structure_history_todos_content = <ul><li>preparar cronjob</li><li>permite que o PlugIn "história" seja desligado</li><li>Criar configurações, para reduzir o número de versão. Exemplo: mantenha apenas uma versão após um mês / semana / diaLi> <li> definir valores de escala para o site </ li> <li>Tornar a aparência mais bonita, semelhante ao Time Machine? </ Li> </ ul>
 
 perm_options_history[article_rollback] = Restaurar produto (história)
 

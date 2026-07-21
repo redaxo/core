@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Version 3.8.1 – 29.06.2026
+--------------------------
+
+* SCSS: Nutzung Parent-Selector `&` in Dart-Sass-kompatibler Version (@tbaddade)
+* Button-Styling korrigiert (@tbaddade)
+
+
 Version 3.8.0 – 09.04.2026
 --------------------------
 

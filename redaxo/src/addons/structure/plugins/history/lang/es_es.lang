@@ -5,8 +5,6 @@ structure_history_snapshot_reactivated = Se adoptó la versión
 structure_history_overview_versions = Versiones generales de la historia
 structure_history_current_version = Versión actual
 structure_history_info_content = <p>Un plug-in de la historia con la que puede registrar los cambios en el contenido del artículo. En cada caso, una versión instantánea y dado una fecha. Posteriormente versiones anteriores pueden entonces ser re-activados.</p>
-structure_history_todos = Todos
-structure_history_todos_content = <ul><li>cronjob preparar </li> <li> Historia hacer desactivado </li><li>Instalar las opciones para restringir el número de versiones. Por ejemplo, mantener sólo una versión / día después de una semana. retener meses después de un mes sólo una versión /.. </li><li> Los valores escalados el sitio web creado </li><li> representación aufhübschen ala máquina del tiempo? </li> </ul>
 
 perm_options_history[article_rollback] = Restablecimiento del artículo (Historia)
 

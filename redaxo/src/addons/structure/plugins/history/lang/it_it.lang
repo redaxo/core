@@ -5,8 +5,6 @@ structure_history_snapshot_reactivated =
 structure_history_overview_versions = 
 structure_history_current_version = 
 structure_history_info_content = 
-structure_history_todos = 
-structure_history_todos_content = 
 
 perm_options_history[article_rollback] = 
 

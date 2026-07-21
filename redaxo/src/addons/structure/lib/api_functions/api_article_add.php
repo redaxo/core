@@ -9,15 +9,19 @@ class rex_api_article_add extends rex_api_function
 {
     public function execute()
     {
-        if (!rex::requireUser()->hasPerm('addArticle[]')) {
+        $user = rex::requireUser();
+        if (!$user->hasPerm('addArticle[]')) {
             throw new rex_api_exception('User has no permission to add articles!');
         }
 
         $categoryId = rex_request('category_id', 'int');
 
-        // check permissions
-        if (!rex::requireUser()->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
-            throw new rex_api_exception('user has no permission for this category!');
+        if (0 !== $categoryId && !rex_category::get($categoryId)) {
+            throw new rex_api_exception('Unable to find category with id "' . $categoryId . '"!');
+        }
+
+        if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
+            throw new rex_api_exception(rex_i18n::msg('no_rights_to_this_function'));
         }
 
         $data = [];

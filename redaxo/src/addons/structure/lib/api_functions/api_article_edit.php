@@ -9,20 +9,26 @@ class rex_api_article_edit extends rex_api_function
 {
     public function execute()
     {
-        if (!rex::requireUser()->hasPerm('editArticle[]')) {
+        $user = rex::requireUser();
+        if (!$user->hasPerm('editArticle[]')) {
             throw new rex_api_exception('User has no permission to edit articles!');
         }
 
-        $categoryId = rex_request('category_id', 'int');
         $articleId = rex_request('article_id', 'int');
         $clang = rex_request('clang', 'int');
 
-        // check permissions
-        if (!rex::requireUser()->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
-            throw new rex_api_exception('user has no permission for this category!');
+        $article = rex_article::get($articleId, $clang);
+        if (!$article instanceof rex_article) {
+            throw new rex_api_exception('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
         }
 
-        // --------------------- ARTIKEL EDIT
+        if (
+            !$user->getComplexPerm('clang')->hasPerm($clang)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($article->getCategoryId())
+        ) {
+            throw new rex_api_exception(rex_i18n::msg('no_rights_to_this_function'));
+        }
+
         $data = [];
         $data['priority'] = rex_post('article-position', 'int');
         $data['name'] = rex_post('article-name', 'string');

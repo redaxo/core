@@ -1,6 +1,26 @@
 Changelog
 =========
 
+Version 2.18.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* Stored XSS via Artikelname in `mediaIsInUse` und Dateinamen in Sync-Page (gemeldet von @de3erve-hunter) (@gharlan)
+
+
+Version 2.18.1 – 01.06.2026
+---------------------------
+
+### Security
+
+* Geblockte Extensions werden wieder an beliebiger Position im Dateinamen geblockt (z.B. in `foo.php.any.jpg`) (gemeldet von @riodrwn) (@gharlan)
+
+### Bugfixes
+
+* Deprecated-Message in Mediapool-Suche aufgelöst (@gharlan)
+
+
 Version 2.18.0 – 09.04.2026
 ---------------------------
 

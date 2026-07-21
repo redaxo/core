@@ -93,4 +93,38 @@ final class rex_finder_test extends TestCase
         $iterator = rex_finder::factory($this->getPath())->recursive()->ignoreSystemStuff(false);
         $this->assertIteratorContains($iterator, ['file1.txt', 'file2.yml', 'dir1', 'dir1/file3.txt', 'dir1/dir', 'dir2', 'dir2/file4.yml', 'dir2/dir', 'dir2/dir/file5.yml', 'dir2/dir1', 'dir', '.DS_Store', 'dir1/Thumbs.db']);
     }
+
+    public function testIgnoreUnreadableDirsToleratesVanishingSubdir(): void
+    {
+        // Race condition: a sub-directory is listed by scandir() but disappears
+        // before RecursiveDirectoryIterator descends into it (e.g. concurrent
+        // rex_delete_cache() calls on a multi-worker PHP server).
+        // With ignoreUnreadableDirs() the iteration must keep going instead of
+        // throwing UnexpectedValueException.
+        $sub = $this->getPath('dir2/dir');
+
+        foreach (rex_finder::factory($this->getPath())->recursive()->ignoreUnreadableDirs() as $file) {
+            if ($file->isDir() && (string) $file === rtrim($sub, '/')) {
+                rex_dir::delete($sub);
+            }
+        }
+
+        self::assertDirectoryDoesNotExist($sub);
+    }
+
+    public function testRecursiveThrowsOnVanishingSubdirByDefault(): void
+    {
+        // Default semantics: an unreadable/vanishing sub-directory surfaces as
+        // UnexpectedValueException. Callers like backup/copy rely on this so
+        // partial reads can't pass for success.
+        $sub = $this->getPath('dir2/dir');
+
+        $this->expectException(UnexpectedValueException::class);
+
+        foreach (rex_finder::factory($this->getPath())->recursive() as $file) {
+            if ($file->isDir() && (string) $file === rtrim($sub, '/')) {
+                rex_dir::delete($sub);
+            }
+        }
+    }
 }
