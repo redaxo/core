@@ -42,13 +42,10 @@ class MediaField extends BaseField
         $this->categoryId = $categoryId;
     }
 
-    /**
-     * @param string $types comma-separated file extensions
-     * @return void
-     */
-    public function setTypes($types)
+    /** @param list<string> $types file extensions */
+    public function setTypes(array $types): void
     {
-        $this->types = '' === $types ? [] : explode(',', $types);
+        $this->types = $types;
     }
 
     /**
