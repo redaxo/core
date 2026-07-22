@@ -22,7 +22,7 @@ final readonly class MediaListVar
             $openParams .= '&amp;rex_file_category=' . $category;
         }
         if ($types) {
-            $openParams .= '&amp;args[types]=' . urlencode(implode(',', $types));
+            $openParams .= '&amp;types=' . urlencode(implode(',', $types));
         }
 
         $wdgtClass = ' rex-js-widget-medialist';

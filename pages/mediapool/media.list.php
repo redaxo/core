@@ -42,7 +42,7 @@ if (!isset($error)) {
     $error = '';
 }
 
-/** @var array{args?: array{types: string}, opener_input_field?: string} $argUrl */
+/** @var array{types?: string, opener_input_field?: string} $argUrl */
 $argUrl ??= [];
 
 $mediaMethod = Request::request('media_method', 'string');
@@ -144,8 +144,8 @@ if ($success) {
     $success = '';
 }
 
-if (!empty($argUrl['args']['types'])) {
-    echo Message::info(I18n::msg('pool_file_filter') . ' <code>' . escape($argUrl['args']['types']) . '</code>');
+if (!empty($argUrl['types'])) {
+    echo Message::info(I18n::msg('pool_file_filter') . ' <code>' . escape($argUrl['types']) . '</code>');
 }
 
 // Add Filter to the Query
@@ -162,9 +162,8 @@ if ('' != $mediaName) {
     $filter['category_id'] = $rexFileCategory;
 }
 
-if (isset($argUrl['args']['types']) && is_string($argUrl['args']['types'])) {
-    $types = explode(',', $argUrl['args']['types']);
-    $filter['types'] = $types;
+if (isset($argUrl['types'])) {
+    $filter['types'] = explode(',', $argUrl['types']);
 }
 
 $context = new Context([

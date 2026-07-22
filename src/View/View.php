@@ -260,8 +260,9 @@ final class View
         }
 
         $argFields = '';
-        foreach (Request::request('args', 'array') as $argName => $argValue) {
-            $argFields .= '<input type="hidden" name="args[' . escape($argName) . ']" value="' . escape($argValue) . '" />' . "\n";
+        $types = Request::request('types', 'string');
+        if ('' !== $types) {
+            $argFields .= '<input type="hidden" name="types" value="' . escape($types) . '" />' . "\n";
         }
 
         $openerInputField = Request::request('opener_input_field', 'string');

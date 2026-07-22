@@ -844,15 +844,6 @@
     </PossiblyNullReference>
   </file>
   <file src="pages/mediapool/index.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$argUrl]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$argValue]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[escape($argValue)]]></code>
-    </MixedOperand>
     <PossiblyNullArgument>
       <code><![CDATA[$error]]></code>
       <code><![CDATA[$success]]></code>
@@ -2907,12 +2898,6 @@
     </MixedMethodCall>
   </file>
   <file src="src/View/View.php">
-    <MixedAssignment>
-      <code><![CDATA[$argValue]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[escape($argValue)]]></code>
-    </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
     </PossiblyFalseArgument>

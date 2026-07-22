@@ -38,11 +38,10 @@ if ('add_file' == $mediaMethod) {
                 ['error', 'int'],
             ]);
 
-            $postArgs = Request::post('args', 'array');
-            $types = isset($postArgs['types']) && is_string($postArgs['types']) && '' !== $postArgs['types'] ? explode(',', $postArgs['types']) : [];
+            $types = Request::post('types', 'string');
 
             try {
-                $data = MediaHandler::addMedia($data, true, $types);
+                $data = MediaHandler::addMedia($data, true, '' === $types ? [] : explode(',', $types));
                 $info = I18n::msg('pool_file_added');
                 if (Request::post('saveandexit', 'boolean')) {
                     if ('' != $openerInputField) {
