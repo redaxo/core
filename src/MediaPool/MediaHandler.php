@@ -46,8 +46,9 @@ final class MediaHandler
      *
      * @param array{category_id: int, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}} $data
      * @param bool $doSubindexing // echte Dateinamen anpassen, falls schon vorhanden
+     * @param list<string> $types Restrict the allowed file extensions to these types
      */
-    public static function addMedia(array $data, bool $doSubindexing = true, array $allowedExtensions = []): array
+    public static function addMedia(array $data, bool $doSubindexing = true, array $types = []): array
     {
         $error = $data['file']['error'] ?? null;
 
@@ -64,9 +65,9 @@ final class MediaHandler
             throw new ApiFunctionException(I18n::msg('pool_file_not_found'));
         }
 
-        if (!MediaPool::isAllowedExtension($data['file']['name'], $allowedExtensions)) {
+        if (!MediaPool::isAllowedExtension($data['file']['name'], $types)) {
             $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape(File::extension($data['file']['name'])) . '</code>';
-            $allowedExtensions = MediaPool::getAllowedExtensions($allowedExtensions);
+            $allowedExtensions = MediaPool::getAllowedExtensions($types);
             $warning .= count($allowedExtensions) > 0
                     ? '<br />' . I18n::msg('pool_file_allowed_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', escape($allowedExtensions)), ', ') . '</code>'
                     : '<br />' . I18n::msg('pool_file_banned_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', escape(MediaPool::getBlockedExtensions())), ', ') . '</code>';

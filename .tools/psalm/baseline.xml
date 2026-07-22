@@ -2475,9 +2475,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/MediaPool/MediaPool.php">
-    <MixedArgument>
-      <code><![CDATA[$args['types']]]></code>
-    </MixedArgument>
     <MixedReturnStatement>
       <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
       <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>

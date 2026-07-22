@@ -111,8 +111,12 @@ final class MediaPool
         return false;
     }
 
-    /** check if mediatpye(extension) is allowed for upload. */
-    public static function isAllowedExtension(string $filename, array $args = []): bool
+    /**
+     * Check if the media type (extension) is allowed for upload.
+     *
+     * @param list<string> $types Restrict to these file extensions (in addition to the global block list)
+     */
+    public static function isAllowedExtension(string $filename, array $types = []): bool
     {
         $fileExt = mb_strtolower(File::extension($filename));
 
@@ -135,7 +139,7 @@ final class MediaPool
             }
         }
 
-        $allowedExtensions = self::getAllowedExtensions($args);
+        $allowedExtensions = self::getAllowedExtensions($types);
         return !count($allowedExtensions) || in_array($fileExt, $allowedExtensions);
     }
 
@@ -166,23 +170,21 @@ final class MediaPool
     }
 
     /**
-     * Get allowed mediatype extensions given via media widget "types" param.
+     * Get allowed media type extensions given via media widget "types" param.
      *
-     * @param array $args widget params
+     * @param list<string> $types
      * @return list<string> allowed extensions
      */
-    public static function getAllowedExtensions(array $args = []): array
+    public static function getAllowedExtensions(array $types = []): array
     {
         $blockedExtensions = self::getBlockedExtensions();
 
         $allowedExtensions = [];
-        if (isset($args['types'])) {
-            foreach (explode(',', $args['types']) as $ext) {
-                $ext = ltrim($ext, '.');
-                $ext = mb_strtolower($ext);
-                if (!in_array($ext, $blockedExtensions)) { // allowedExtensions cannot override any blockedExtensions entry from master
-                    $allowedExtensions[] = $ext;
-                }
+        foreach ($types as $ext) {
+            $ext = ltrim($ext, '.');
+            $ext = mb_strtolower($ext);
+            if (!in_array($ext, $blockedExtensions)) { // allowedExtensions cannot override any blockedExtensions entry from master
+                $allowedExtensions[] = $ext;
             }
         }
         return $allowedExtensions;
