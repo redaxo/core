@@ -72,19 +72,14 @@ class ArticleField extends MetaField
     {
         $category = $this->category ?? $context->category?->id;
 
-        $args = [];
-        if (null !== $category) {
-            $args['category'] = $category;
-        }
-
         $name = $this->columnName($context->entity);
         $id = ++self::$widgetCounter;
         $value = (string) $context->value($this);
 
         if ($this->multiple) {
-            return LinkListVar::getWidget($id, $name, $value, $args);
+            return LinkListVar::getWidget($id, $name, $value, $category);
         }
 
-        return LinkVar::getWidget($id, $name, '' === $value ? null : (int) $value, $args);
+        return LinkVar::getWidget($id, $name, '' === $value ? null : (int) $value, $category);
     }
 }

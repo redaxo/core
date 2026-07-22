@@ -14,22 +14,22 @@ use function sprintf;
 
 final readonly class LinkVar
 {
-    public static function getWidget(int|string $id, string $name, ?int $value, array $args = []): string
+    /**
+     * @param int|null $category Open the linkmap in this category; defaults to the category of the selected
+     *                           article resp. the current category
+     */
+    public static function getWidget(int|string $id, string $name, ?int $value, ?int $category = null): string
     {
         $artName = '';
         $art = $value ? Article::get($value) : null;
-        $category = Category::getCurrent()->id ?? 0; // Aktuelle Kategorie vorauswählen
 
         // Falls ein Artikel vorausgewählt ist, dessen Namen anzeigen und beim Öffnen der Linkmap dessen Kategorie anzeigen
         if ($art instanceof Article) {
             $artName = trim(sprintf('%s [%s]', $art->name, $art->id));
-            $category = $art->categoryId ?? 0;
+            $category ??= $art->categoryId ?? 0;
         }
 
-        // Falls ein Kategorie-Parameter angegeben wurde, die Linkmap in dieser Kategorie öffnen
-        if (isset($args['category'])) {
-            $category = (int) $args['category'];
-        }
+        $category ??= Category::getCurrent()->id ?? 0; // Aktuelle Kategorie vorauswählen
 
         $openParams = '&clang=' . Language::getCurrentId() . '&category_id=' . $category;
 

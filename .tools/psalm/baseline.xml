@@ -2500,25 +2500,6 @@
       <code><![CDATA[['filename' => $params['filename']]]]></code>
     </MixedArgumentTypeCoercion>
   </file>
-  <file src="src/RexVar/MediaListVar.php">
-    <MixedArgument>
-      <code><![CDATA[$avalue]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$avalue]]></code>
-    </MixedAssignment>
-  </file>
-  <file src="src/RexVar/MediaVar.php">
-    <MixedArgument>
-      <code><![CDATA[$avalue]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$aname]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$avalue]]></code>
-    </MixedAssignment>
-  </file>
   <file src="src/Security/ApiFunction/UserHasSession.php">
     <MixedArgument>
       <code><![CDATA[$perm]]></code>

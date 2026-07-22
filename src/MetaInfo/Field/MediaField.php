@@ -11,7 +11,6 @@ use Redaxo\Core\RexVar\MediaVar;
 use function array_filter;
 use function array_values;
 use function explode;
-use function implode;
 
 /**
  * Media picker (REX_MEDIA_WIDGET), stored as a text column.
@@ -60,24 +59,12 @@ class MediaField extends MetaField
     {
         $category = $this->category ?? $context->mediaCategory?->id;
 
-        $args = [];
-        if (null !== $category) {
-            $args['category'] = $category;
-        }
-        if ([] !== $this->types) {
-            // the widget expects a comma-separated string in the args query
-            $args['types'] = implode(',', $this->types);
-        }
-        if ($this->preview) {
-            $args['preview'] = true;
-        }
-
         $name = $this->columnName($context->entity);
         $id = ++self::$widgetCounter;
         $value = (string) $context->value($this);
 
         return $this->multiple
-            ? MediaListVar::getWidget($id, $name, $value, $args)
-            : MediaVar::getWidget($id, $name, $value, $args);
+            ? MediaListVar::getWidget($id, $name, $value, $category, $this->types, $this->preview)
+            : MediaVar::getWidget($id, $name, $value, $category, $this->types, $this->preview);
     }
 }

@@ -10,19 +10,23 @@ use function Redaxo\Core\View\escape;
 
 final readonly class MediaListVar
 {
-    public static function getWidget(int|string $id, string $name, ?string $value, array $args = []): string
+    /**
+     * @param int|null $category Open the mediapool in this category
+     * @param list<string> $types Restrict the mediapool (listing and upload) to these file extensions
+     * @param bool $preview Show a preview of the selected files
+     */
+    public static function getWidget(int|string $id, string $name, ?string $value, ?int $category = null, array $types = [], bool $preview = false): string
     {
         $openParams = '';
-        if (isset($args['category']) && ($category = (int) $args['category'])) {
+        if ($category) {
             $openParams .= '&amp;rex_file_category=' . $category;
         }
-
-        foreach ($args as $aname => $avalue) {
-            $openParams .= '&amp;args[' . $aname . ']=' . urlencode($avalue);
+        if ($types) {
+            $openParams .= '&amp;args[types]=' . urlencode(implode(',', $types));
         }
 
         $wdgtClass = ' rex-js-widget-medialist';
-        if (isset($args['preview']) && $args['preview']) {
+        if ($preview) {
             $wdgtClass .= ' rex-js-widget-preview rex-js-widget-preview-media-manager';
         }
 

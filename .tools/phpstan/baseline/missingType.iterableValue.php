@@ -244,26 +244,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/MediaPool/MediaPool.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\LinkListVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/LinkListVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\LinkVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/LinkVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\MediaListVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/MediaListVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\MediaVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/MediaVar.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Security\\Login::setSessionVar() has parameter $value with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Security/Login.php',
