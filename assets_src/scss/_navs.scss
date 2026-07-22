@@ -170,6 +170,63 @@ $transitionDuration: 300ms;
     color: $color-a-lighter;
     font-size: $font-size-large;
 }
+.rex-nav-top-title {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 250px;
+    margin: 0;
+    line-height: 0;
+    white-space: nowrap;
+
+    @media (max-width: $screen-md-max) {
+        left: 235px;
+    }
+
+    a {
+        display: block;
+        padding: 15px;
+        color: #fff;
+
+        &:hover,
+        &:focus {
+            .rex-nav-top-title-name {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .rex-nav-top-title-name,
+    i {
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 14px;
+        line-height: 20px;
+    }
+
+    .rex-nav-top-title-name {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 8px;
+    }
+
+    @media (max-width: $grid-float-breakpoint-max) {
+        left: 50%;
+        // center inside brand element, move to the right half the viewport size (50vw), move back by itself (100%) and 10 px
+        transform: translate(calc(50vw - 100% - 10px), -50%);
+        font-size: 20px;
+
+        .rex-nav-top-title-name {
+            display: none;
+        }
+
+        a {
+            padding: 5px 10px;
+        }
+    }
+}
 .rex-nav-meta {
     .navbar-nav {
         > li {
@@ -672,6 +729,14 @@ $transitionDuration: 300ms;
                     background-color: transparent;
                 }
             }
+        }
+    }
+
+    .rex-nav-top-title {
+        a,
+        a:hover,
+        a:focus {
+            color: $color-text-light;
         }
     }
 

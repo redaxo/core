@@ -274,18 +274,6 @@ Asset::addCssFile(Url::coreAssets('css/redaxo.css'));
 Asset::addJsFile(Url::coreAssets('js/redaxo.js'), [Asset::JS_IMMUTABLE => true]);
 
 if (Core::getUser()) {
-    /* Customizer Ergänzungen */
-    Asset::addCssFile(Url::coreAssets('css/customizer.css'));
-    Asset::addJsFile(Url::coreAssets('js/customizer.js'), [Asset::JS_IMMUTABLE => true]);
-
-    if ('' != Core::getConfig('be_style_labelcolor')) {
-        Asset::setJsProperty('customizer_labelcolor', Core::getConfig('be_style_labelcolor'));
-    }
-    Asset::setJsProperty(
-        'customizer_showlink',
-        '<h1 class="be-style-customizer-title"><a href="' . Url::frontend() . '" target="_blank" rel="noreferrer noopener"><span class="be-style-customizer-title-name">' . escape(Core::getServerName()) . '</span><i class="rex-icon rex-icon-external-link"></i></a></h1>',
-    );
-
     Asset::addJsFile(Url::coreAssets('js/linkmap.js'), [Asset::JS_IMMUTABLE => true]);
 
     if ('content' == Controller::getCurrentPagePart(1)) {
