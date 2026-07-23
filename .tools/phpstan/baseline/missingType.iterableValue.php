@@ -219,11 +219,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../src/Mailer/Mailer.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaHandler::addMedia() has parameter $allowedExtensions with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/MediaHandler.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaHandler::addMedia() return type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaPool/MediaHandler.php',
@@ -232,36 +227,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaHandler::updateMedia() return type has no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/MediaPool/MediaHandler.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaPool::getAllowedExtensions() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/MediaPool.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\MediaPool\\MediaPool::isAllowedExtension() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/MediaPool/MediaPool.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\LinkListVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/LinkListVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\LinkVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/LinkVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\MediaListVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/MediaListVar.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\RexVar\\MediaVar::getWidget() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/RexVar/MediaVar.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Security\\Login::setSessionVar() has parameter $value with no value type specified in iterable type array.',
@@ -397,11 +362,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Class Redaxo\\Core\\View\\Fragment has PHPDoc tag @method for method subfragment() parameter #2 $params with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/View/Fragment.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method Redaxo\\Core\\Tests\\MediaPool\\MediaPoolTest::testIsAllowedExtension() has parameter $args with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/MediaPool/MediaPoolTest.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method Redaxo\\Core\\Tests\\Security\\PasswordPolicyTest::testCheck() has parameter $options with no value type specified in iterable type array.',

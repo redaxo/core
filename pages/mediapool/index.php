@@ -19,17 +19,18 @@ $subpage = Controller::getCurrentPagePart(2);
 $func = Request::request('func', 'string');
 $success = escape(Request::request('info', 'string'));
 $error = escape(Request::request('warning', 'string'));
-$args = Request::request('args', 'array');
+$types = Request::request('types', 'string');
 
 $regex = '@&lt;(/?(?:b|i|code)|br ?/?)&gt;@i';
 $success = preg_replace($regex, '<$1>', $success);
 $error = preg_replace($regex, '<$1>', $error);
 
 // -------------- Additional Args
-$argUrl = ['args' => $args];
+$argUrl = [];
 $argFields = '';
-foreach ($args as $argName => $argValue) {
-    $argFields .= '<input type="hidden" name="args[' . escape($argName) . ']" value="' . escape($argValue) . '" />' . "\n";
+if ('' !== $types) {
+    $argUrl['types'] = $types;
+    $argFields .= '<input type="hidden" name="types" value="' . escape($types) . '" />' . "\n";
 }
 
 // ----- opener_input_field setzen
@@ -113,4 +114,4 @@ if (!Request::isXmlHttpRequest()) {
 }
 
 // -------------- Include Page
-Controller::includeCurrentPageSubPath(compact('openerInputField', 'openerLink', 'argUrl', 'args', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));
+Controller::includeCurrentPageSubPath(compact('openerInputField', 'openerLink', 'argUrl', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));

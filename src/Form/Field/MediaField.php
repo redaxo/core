@@ -8,8 +8,12 @@ use Redaxo\Core\RexVar\MediaVar;
 
 class MediaField extends BaseField
 {
-    /** @var array{category?: int, types?: string, preview?: bool} */
-    private array $args = [];
+    private ?int $categoryId = null;
+
+    /** @var list<string> */
+    private array $types = [];
+
+    private bool $preview = false;
 
     private bool $multiple = false;
 
@@ -35,16 +39,13 @@ class MediaField extends BaseField
      */
     public function setCategoryId($categoryId)
     {
-        $this->args['category'] = $categoryId;
+        $this->categoryId = $categoryId;
     }
 
-    /**
-     * @param string $types
-     * @return void
-     */
-    public function setTypes($types)
+    /** @param list<string> $types file extensions */
+    public function setTypes(array $types): void
     {
-        $this->args['types'] = $types;
+        $this->types = $types;
     }
 
     /**
@@ -53,7 +54,7 @@ class MediaField extends BaseField
      */
     public function setPreview($preview = true)
     {
-        $this->args['preview'] = $preview;
+        $this->preview = $preview;
     }
 
     public function setMultiple(bool $multiple = true): void
@@ -67,9 +68,9 @@ class MediaField extends BaseField
         static $widgetCounter = 1;
 
         if ($this->multiple) {
-            $html = MediaListVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), $this->args);
+            $html = MediaListVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), $this->categoryId, $this->types, $this->preview);
         } else {
-            $html = MediaVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), $this->args);
+            $html = MediaVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), $this->categoryId, $this->types, $this->preview);
         }
 
         ++$widgetCounter;

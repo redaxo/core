@@ -844,15 +844,6 @@
     </PossiblyNullReference>
   </file>
   <file src="pages/mediapool/index.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$argUrl]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$argValue]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[escape($argValue)]]></code>
-    </MixedOperand>
     <PossiblyNullArgument>
       <code><![CDATA[$error]]></code>
       <code><![CDATA[$success]]></code>
@@ -2475,9 +2466,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/MediaPool/MediaPool.php">
-    <MixedArgument>
-      <code><![CDATA[$args['types']]]></code>
-    </MixedArgument>
     <MixedReturnStatement>
       <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
       <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
@@ -2499,25 +2487,6 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[['filename' => $params['filename']]]]></code>
     </MixedArgumentTypeCoercion>
-  </file>
-  <file src="src/RexVar/MediaListVar.php">
-    <MixedArgument>
-      <code><![CDATA[$avalue]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$avalue]]></code>
-    </MixedAssignment>
-  </file>
-  <file src="src/RexVar/MediaVar.php">
-    <MixedArgument>
-      <code><![CDATA[$avalue]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$aname]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$avalue]]></code>
-    </MixedAssignment>
   </file>
   <file src="src/Security/ApiFunction/UserHasSession.php">
     <MixedArgument>
@@ -2929,12 +2898,6 @@
     </MixedMethodCall>
   </file>
   <file src="src/View/View.php">
-    <MixedAssignment>
-      <code><![CDATA[$argValue]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[escape($argValue)]]></code>
-    </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
     </PossiblyFalseArgument>

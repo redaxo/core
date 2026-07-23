@@ -9,13 +9,14 @@ use Redaxo\Core\MediaPool\MediaPool;
 /** @internal */
 final class MediaPoolTest extends TestCase
 {
+    /** @param list<string> $types */
     #[DataProvider('provideIsAllowedExtension')]
-    public function testIsAllowedExtension(bool $expected, string $filename, array $args = []): void
+    public function testIsAllowedExtension(bool $expected, string $filename, array $types = []): void
     {
-        self::assertSame($expected, MediaPool::isAllowedExtension($filename, $args));
+        self::assertSame($expected, MediaPool::isAllowedExtension($filename, $types));
     }
 
-    /** @return list<array{0: bool, 1: string, 2?: array{types: string}}> */
+    /** @return list<array{0: bool, 1: string, 2?: list<string>}> */
     public static function provideIsAllowedExtension(): array
     {
         return [
@@ -36,9 +37,9 @@ final class MediaPoolTest extends TestCase
             [true, 'foo.any.json'],
             [true, 'php_logo.jpg'],
             [true, 'php_logo.any.jpg'],
-            [true, 'foo.bar.png', ['types' => 'jpg,png,gif']],
-            [false, 'foo.bar.txt', ['types' => 'jpg,png,gif']],
-            [false, 'foo.bar.php', ['types' => 'jpg,png,gif,php']],
+            [true, 'foo.bar.png', ['jpg', 'png', 'gif']],
+            [false, 'foo.bar.txt', ['jpg', 'png', 'gif']],
+            [false, 'foo.bar.php', ['jpg', 'png', 'gif', 'php']],
         ];
     }
 

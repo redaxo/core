@@ -48,9 +48,9 @@ class ArticleField extends BaseField
         static $widgetCounter = 1;
 
         if ($this->multiple) {
-            $html = LinkListVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), ['category' => $this->categoryId]);
+            $html = LinkListVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), $this->categoryId);
         } else {
-            $html = LinkVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), ['category' => $this->categoryId]);
+            $html = LinkVar::getWidget($widgetCounter, $this->getAttribute('name'), $this->getValue(), $this->categoryId);
         }
 
         ++$widgetCounter;
