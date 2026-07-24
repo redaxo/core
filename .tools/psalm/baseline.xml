@@ -2465,18 +2465,6 @@
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
     </PossiblyFalseArgument>
   </file>
-  <file src="src/MediaPool/MediaPool.php">
-    <MixedReturnStatement>
-      <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
-      <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
-      <code><![CDATA[Core::getProperty('blocked_extensions', [])]]></code>
-      <code><![CDATA[Core::getProperty('blocked_extensions', [])]]></code>
-    </MixedReturnStatement>
-    <NullableReturnStatement>
-      <code><![CDATA[Core::getProperty('allowed_mime_types', [])]]></code>
-      <code><![CDATA[Core::getProperty('blocked_extensions', [])]]></code>
-    </NullableReturnStatement>
-  </file>
   <file src="src/MetaInfo/Handler/MediaHandler.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[['clang_id' => $clangArr['id'], 'func' => 'editclang']]]></code>
