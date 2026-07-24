@@ -35,7 +35,6 @@ use const FILTER_FLAG_HOSTNAME;
 use const FILTER_VALIDATE_DOMAIN;
 use const JSON_THROW_ON_ERROR;
 use const PHP_SAPI;
-use const PHP_VERSION_ID;
 
 /**
  * Connect and interact with the database.
@@ -101,7 +100,7 @@ class Sql implements Iterator
 
     protected ?PDOStatement $stmt = null;
 
-    /** @var array<positive-int, PDO> */
+    /** @var array<positive-int, Mysql> */
     protected static array $pdo = [];
 
     /** @param positive-int $db */
@@ -159,11 +158,11 @@ class Sql implements Iterator
     }
 
     /**
-     * return the PDO Instance, create database connection when not already created.
+     * Returns the `Pdo\Mysql` instance, creates the database connection when not already created.
      *
      * @throws SqlException
      */
-    public function getConnection(): PDO
+    public function getConnection(): Mysql
     {
         if (!isset(self::$pdo[$this->DBID])) {
             $this->selectDB($this->DBID);
@@ -180,7 +179,7 @@ class Sql implements Iterator
         #[SensitiveParameter] string $password,
         bool $persistent = false,
         array $options = [],
-    ): PDO {
+    ): Mysql {
         if (!$database) {
             throw new InvalidArgumentException('Database name can not be empty.');
         }
@@ -203,13 +202,7 @@ class Sql implements Iterator
             PDO::ATTR_FETCH_TABLE_NAMES => true,
         ];
 
-        if (PHP_VERSION_ID >= 8_04_00) {
-            $dbh = @new Mysql($dsn, $login, $password, $options);
-        } else {
-            $dbh = @new PDO($dsn, $login, $password, $options);
-        }
-
-        return $dbh;
+        return @new Mysql($dsn, $login, $password, $options);
     }
 
     /**
