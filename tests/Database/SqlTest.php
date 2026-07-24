@@ -6,6 +6,7 @@ use DateTime;
 use DateTimeZone;
 use Override;
 use PDO;
+use Pdo\Mysql;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
@@ -135,7 +136,7 @@ final class SqlTest extends TestCase
             {
                 parent::__construct($db);
 
-                self::$pdo[$db] = new class(Type::notNull($version)) extends PDO {
+                self::$pdo[$db] = new class(Type::notNull($version)) extends Mysql {
                     public function __construct(
                         private readonly string $version,
                     ) {}
