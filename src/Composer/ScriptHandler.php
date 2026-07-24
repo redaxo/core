@@ -29,9 +29,10 @@ final class ScriptHandler
     public static function postCreateProject(): void
     {
         self::cleanUpComposerJson();
+        self::generateInstanceId();
         self::writeReadme();
 
-        echo "Initialized composer.json and README.md for the new project.\n";
+        echo "Initialized composer.json, .env and README.md for the new project.\n";
     }
 
     private static function cleanUpComposerJson(): void
@@ -51,6 +52,19 @@ final class ScriptHandler
         $manipulator->removeMainKey('scripts');
 
         file_put_contents($file, $manipulator->getContents());
+    }
+
+    private static function generateInstanceId(): void
+    {
+        $file = getcwd() . '/.env';
+
+        $name = trim(strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', basename((string) getcwd()))), '-');
+        $id = ($name ?: 'redaxo') . '-' . bin2hex(random_bytes(4));
+
+        $content = (string) file_get_contents($file);
+        $content = (string) preg_replace('/^REX_INSTANCE_ID=.*$/m', 'REX_INSTANCE_ID=' . $id, $content, 1);
+
+        file_put_contents($file, $content);
     }
 
     private static function writeReadme(): void

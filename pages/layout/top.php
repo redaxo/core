@@ -85,7 +85,7 @@ $hasNavigation = $curPage->hasNavigation();
 
 $metaItems = [];
 if ($user && $hasNavigation) {
-    if (Core::isSafeMode() && $user->admin) {
+    if (Core::isSafeMode() && !Core::isSafeModeForced() && $user->admin) {
         $item = [];
         $item['title'] = I18n::msg('safemode_deactivate');
         $item['href'] = Url::backendController(['safemode' => 0]);

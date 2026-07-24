@@ -2,3 +2,4 @@
 /public/media/
 /var/
 /vendor/
+/.env.local
