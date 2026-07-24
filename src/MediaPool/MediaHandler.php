@@ -70,7 +70,7 @@ final class MediaHandler
             $allowedExtensions = MediaPool::getAllowedExtensions($types);
             $warning .= count($allowedExtensions) > 0
                     ? '<br />' . I18n::msg('pool_file_allowed_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', escape($allowedExtensions)), ', ') . '</code>'
-                    : '<br />' . I18n::msg('pool_file_banned_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', escape(MediaPool::getBlockedExtensions())), ', ') . '</code>';
+                    : '<br />' . I18n::msg('pool_file_banned_mediatypes') . ' <code>' . rtrim(implode('</code>, <code>', escape(MediaPool::$blockedExtensions)), ', ') . '</code>';
 
             throw new ApiFunctionException($warning);
         }
@@ -427,7 +427,7 @@ final class MediaHandler
 
     private static function sanitizeMedia(string $path, ?string $type): void
     {
-        if (!Core::getProperty('sanitize_svgs', true)) {
+        if (!MediaPool::$sanitizeSvgs) {
             return;
         }
 
