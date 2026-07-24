@@ -6,7 +6,6 @@ use DateTimeImmutable;
 use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
@@ -285,12 +284,7 @@ class BackendLogin extends Login
 
     public static function getStayLoggedInCookieName(): string
     {
-        $instname = Core::getProperty('instname');
-        if (!$instname) {
-            throw new LogicException('Property "instname" is empty');
-        }
-
-        return 'rex_user_' . sha1($instname);
+        return 'rex_user_' . sha1(Core::getInstanceId());
     }
 
     public static function hasSession(): bool
@@ -364,7 +358,7 @@ class BackendLogin extends Login
     /** returns the backends session namespace. */
     protected static function getSessionNamespace(): string
     {
-        return Core::getProperty('instname') . '_backend';
+        return Core::getInstanceId() . '_backend';
     }
 
     public function getLoginPolicy(): LoginPolicy

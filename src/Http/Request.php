@@ -273,6 +273,6 @@ final class Request
         // so we can e.g. clear the backend session without
         // logging out the users from the frontend
         $suffix = Core::isBackend() ? '_backend' : '';
-        return Core::getProperty('instname') . $suffix;
+        return Core::getInstanceId() . $suffix;
     }
 }

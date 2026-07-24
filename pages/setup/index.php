@@ -109,7 +109,6 @@ $configFile = Path::coreData('config.yml');
 /**
  * @var array{
  *     setup: bool,
- *     instname: string|null,
  *     lang: string|null,
  *     server: string|null,
  *     servername: string|null,
@@ -183,10 +182,6 @@ if ($step > 3) {
     }
 
     $redaxoDbCreate = Request::post('redaxo_db_create', 'boolean');
-
-    if (empty($config['instname'])) {
-        $config['instname'] = 'rex' . date('YmdHis');
-    }
 
     // check if timezone is valid
     if (!@date_default_timezone_set($config['timezone'])) {

@@ -6,7 +6,6 @@
     "required": [
         "setup",
         "debug",
-        "instname",
         "server",
         "servername",
         "error_email",
@@ -27,14 +26,6 @@
                     }
                 }
             ]
-        },
-        "live_mode": {
-            "description": "Live mode",
-            "type": "boolean"
-        },
-        "safe_mode": {
-            "description": "Safe mode",
-            "type": "boolean"
         },
         "debug": {
             "description": "Debug mode",
@@ -65,10 +56,6 @@
                     "additionalProperties": false
                 }
             ]
-        },
-        "instname": {
-            "description": "Unique instance name",
-            "type": ["null", "string"]
         },
         "server": {
             "description": "Server URL",

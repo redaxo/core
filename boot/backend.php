@@ -202,15 +202,6 @@ if (Core::isSetup()) {
                 Request::setSession('safemode', true);
             } else {
                 Request::unsetSession('safemode');
-                if (Core::getProperty('safe_mode')) {
-                    $configFile = Path::coreData('config.yml');
-                    $config = array_merge(
-                        File::getConfig(Path::core('setup/default.config.yml')),
-                        File::getConfig($configFile),
-                    );
-                    $config['safe_mode'] = false;
-                    File::putConfig($configFile, $config);
-                }
             }
         }
     }
