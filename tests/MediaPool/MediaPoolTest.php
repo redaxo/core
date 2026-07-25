@@ -46,15 +46,17 @@ final class MediaPoolTest extends TestCase
     #[DataProvider('provideIsAllowedMimeType')]
     public function testIsAllowedMimeType(bool $expected, string $path, ?string $filename = null): void
     {
-        $allowedMimeTypes = MediaPool::getAllowedMimeTypes();
+        $allowedMimeTypes = MediaPool::$allowedMimeTypes;
 
-        MediaPool::setAllowedMimeTypes([
+        MediaPool::$allowedMimeTypes = [
             'md' => ['text/markdown'],
-        ]);
+        ];
 
-        self::assertSame($expected, MediaPool::isAllowedMimeType($path, $filename));
-
-        MediaPool::setAllowedMimeTypes($allowedMimeTypes);
+        try {
+            self::assertSame($expected, MediaPool::isAllowedMimeType($path, $filename));
+        } finally {
+            MediaPool::$allowedMimeTypes = $allowedMimeTypes;
+        }
     }
 
     /** @return list<array{0: bool, 1: string, 2?: string}> */

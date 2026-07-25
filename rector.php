@@ -78,6 +78,8 @@ use Redaxo\Rector\Rule as RedaxoRule;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyAssign;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyFetch;
 use Redaxo\Rector\ValueObject\SetterCallToConstructorArgument;
+use Redaxo\Rector\ValueObject\StaticCallToStaticPropertyAssign;
+use Redaxo\Rector\ValueObject\StaticCallToStaticPropertyFetch;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -448,7 +450,7 @@ return RectorConfig::configure()
         new FuncCallToStaticCall('rex_mediapool_isAllowedMediaType', MediaPool\MediaPool::class, 'isAllowedExtension'),
         new FuncCallToStaticCall('rex_mediapool_isAllowedMimeType', MediaPool\MediaPool::class, 'isAllowedMimeType'),
         new FuncCallToStaticCall('rex_mediapool_getMediaTypeWhitelist', MediaPool\MediaPool::class, 'getAllowedExtensions'),
-        new FuncCallToStaticCall('rex_mediapool_getMediaTypeBlacklist', MediaPool\MediaPool::class, 'getBlockedExtensions'),
+        new FuncCallToStaticCall('rex_mediapool_getMediaTypeBlacklist', MediaPool\MediaPool::class, 'getBlockedExtensions'), // 2 step modification, see StaticCallToStaticPropertyFetchRector
         new FuncCallToStaticCall('rex_mediapool_Mediaform', View\View::class, 'mediaPoolMediaForm'),
         new FuncCallToStaticCall('rex_mediapool_Uploadform', View\View::class, 'mediaPoolMediaForm'),
         new FuncCallToStaticCall('rex_mediapool_Syncform', View\View::class, 'mediaPoolMediaForm'),
@@ -637,6 +639,13 @@ return RectorConfig::configure()
         new MethodCallToPropertyAssign(Security\Login::class, 'setIdColumn', 'idColumn'),
         new MethodCallToPropertyAssign(Security\Login::class, 'setPasswordColumn', 'passwordColumn'),
         new MethodCallToPropertyAssign(Security\Login::class, 'setMessage', 'message'),
+    ])
+    ->withConfiguredRule(RedaxoRule\StaticCallToStaticPropertyFetchRector::class, [
+        new StaticCallToStaticPropertyFetch(MediaPool\MediaPool::class, 'getBlockedExtensions', 'blockedExtensions'),
+        new StaticCallToStaticPropertyFetch(MediaPool\MediaPool::class, 'getAllowedMimeTypes', 'allowedMimeTypes'),
+    ])
+    ->withConfiguredRule(RedaxoRule\StaticCallToStaticPropertyAssignRector::class, [
+        new StaticCallToStaticPropertyAssign(MediaPool\MediaPool::class, 'setAllowedMimeTypes', 'allowedMimeTypes'),
     ])
     ->withConfiguredRule(RedaxoRule\SetterCallToConstructorArgumentRector::class, [
         new SetterCallToConstructorArgument(ApiFunction\Result::class, 'setRequiresReboot', 'requiresReboot'),

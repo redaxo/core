@@ -20,6 +20,81 @@ use function strlen;
 
 final class MediaPool
 {
+    /** Whether SVG files are sanitized while being added to the media pool. */
+    public static bool $sanitizeSvgs = true;
+
+    /**
+     * Globally blocked file extensions (lowercase, without leading dot).
+     *
+     * A blocked extension must not appear as any dot-separated segment of a filename, see isAllowedExtension().
+     * Extensions starting with `php` are always blocked, independently of this list.
+     *
+     * @var list<lowercase-string>
+     */
+    public static array $blockedExtensions = ['asp', 'aspx', 'bat', 'cfm', 'cgi', 'flv', 'hh', 'html', 'htaccess', 'htpasswd', 'ini', 'jsp', 'jsf', 'js', 'jsphp', 'log', 'mjs', 'pht', 'php', 'php3', 'php4', 'php5', 'php6', 'php7', 'php8', 'phar', 'pl', 'ps1', 'phtml', 'py', 'rb', 'rm', 'sh', 'shmtl', 'shtml', 'swf', 'wasm', 'wmv', 'wma', 'xhtml', 'xht', 'xml'];
+
+    /**
+     * Mapping of file extensions (lowercase) to their allowed mime types, see isAllowedMimeType().
+     *
+     * The mapping acts as an additional allowlist on top of $blockedExtensions.
+     * If empty, mime types are not checked at all.
+     * The mime types must match the output of `File::mimeType()` and are compared case-sensitively.
+     *
+     * @var array<lowercase-string, list<lowercase-string>>
+     */
+    public static array $allowedMimeTypes = [
+        // images
+        'avif' => ['image/avif'],
+        'eps' => ['application/postscript'],
+        'gif' => ['image/gif'],
+        'jpeg' => ['image/jpeg', 'image/pjpeg'],
+        'jpg' => ['image/jpeg', 'image/pjpeg'],
+        'png' => ['image/png'],
+        'svg' => ['image/svg+xml'],
+        'tif' => ['image/tiff'],
+        'tiff' => ['image/tiff'],
+        'webp' => ['image/webp'],
+
+        // documents
+        'doc' => ['application/msword', 'application/octet-stream', 'application/encrypted'],
+        'docx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/octet-stream', 'application/encrypted'],
+        'dot' => ['application/msword', 'application/octet-stream', 'application/encrypted'],
+        'dotx' => ['application/vnd.openxmlformats-officedocument.wordprocessingml.template', 'application/octet-stream', 'application/encrypted'],
+        'pdf' => ['application/pdf'],
+        'pot' => ['application/vnd.ms-powerpoint'],
+        'potx' => ['application/vnd.openxmlformats-officedocument.presentationml.template'],
+        'pps' => ['application/vnd.ms-powerpoint'],
+        'ppsx' => ['application/vnd.openxmlformats-officedocument.presentationml.slideshow'],
+        'ppt' => ['application/vnd.ms-powerpoint'],
+        'pptx' => ['application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+        'rtf' => ['application/rtf'],
+        'xls' => ['application/vnd.ms-excel', 'application/octet-stream', 'application/encrypted'],
+        'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/octet-stream', 'application/encrypted'],
+
+        // text
+        'csv' => ['text/csv', 'application/octet-stream'],
+        'ics' => ['text/calendar'],
+        'md' => ['text/markdown'],
+        'srt' => ['text/plain'],
+        'txt' => ['text/plain', 'application/octet-stream'],
+        'vcf' => ['text/vcard'],
+        'vtt' => ['text/vtt'],
+
+        // archives
+        'gz' => ['application/x-gzip'],
+        'tar' => ['application/x-tar'],
+        'zip' => ['application/x-zip-compressed', 'application/zip'],
+
+        // audio/video
+        'mov' => ['video/quicktime'],
+        'movie' => ['video/quicktime'],
+        'mp3' => ['audio/mpeg'],
+        'mp4' => ['video/mp4'],
+        'mpe' => ['video/mpeg'],
+        'mpeg' => ['video/mpeg'],
+        'mpg' => ['video/mpeg'],
+    ];
+
     /** Erstellt einen Filename der eindeutig ist für den Medienpool. */
     public static function filename(string $mediaName, bool $doSubindexing = true): string
     {
@@ -132,9 +207,8 @@ final class MediaPool
         // to prevent double/multi extension vulnerabilities: some webspaces execute a file named
         // e.g. `foo.php.txt` or `foo.php.any.jpg` as php. Matching whole segments (instead of a
         // substring) avoids false positives like `foo.json` (contains `.js`) or `js_datei.txt`.
-        $blockedExtensions = self::getBlockedExtensions();
         foreach (explode('.', mb_strtolower($filename)) as $segment) {
-            if (in_array($segment, $blockedExtensions, true)) {
+            if (in_array($segment, self::$blockedExtensions, true)) {
                 return false;
             }
         }
@@ -144,7 +218,7 @@ final class MediaPool
     }
 
     /**
-     * Checks file against optional property `allowed_mime_types`.
+     * Checks file against the optional allowlist in `self::$allowedMimeTypes`.
      *
      * @param string $path Path to the physical file
      * @param string|null $filename Optional filename, will be used for extracting the file extension.
@@ -152,7 +226,7 @@ final class MediaPool
      */
     public static function isAllowedMimeType(string $path, ?string $filename = null): bool
     {
-        $allowedMimetypes = self::getAllowedMimeTypes();
+        $allowedMimetypes = self::$allowedMimeTypes;
 
         if (!$allowedMimetypes) {
             return true;
@@ -177,46 +251,14 @@ final class MediaPool
      */
     public static function getAllowedExtensions(array $types = []): array
     {
-        $blockedExtensions = self::getBlockedExtensions();
-
         $allowedExtensions = [];
         foreach ($types as $ext) {
             $ext = ltrim($ext, '.');
             $ext = mb_strtolower($ext);
-            if (!in_array($ext, $blockedExtensions)) { // allowedExtensions cannot override any blockedExtensions entry from master
+            if (!in_array($ext, self::$blockedExtensions)) { // allowedExtensions cannot override any blockedExtensions entry from master
                 $allowedExtensions[] = $ext;
             }
         }
         return $allowedExtensions;
-    }
-
-    /**
-     * Get global blocked mediatype extensions.
-     *
-     * @return list<string> blocked mediatype extensions
-     */
-    public static function getBlockedExtensions(): array
-    {
-        return Core::getProperty('blocked_extensions', []);
-    }
-
-    /**
-     * Get global list of allowed mime types.
-     *
-     * @return array<string, list<string>> Mapping of file extensions to corresponding list of allowed mime types
-     */
-    public static function getAllowedMimeTypes(): array
-    {
-        return Core::getProperty('allowed_mime_types', []);
-    }
-
-    /**
-     * Set global list of allowed mime types.
-     *
-     * @param array<string, list<string>> $mimeTypes Mapping of file extensions to corresponding list of allowed mime types
-     */
-    public static function setAllowedMimeTypes(array $mimeTypes): void
-    {
-        Core::setProperty('allowed_mime_types', $mimeTypes);
     }
 }
