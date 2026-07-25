@@ -28,6 +28,7 @@ use function is_array;
 use function is_string;
 use function sprintf;
 
+use const FILTER_VALIDATE_BOOL;
 use const PHP_SESSION_ACTIVE;
 
 /**
@@ -161,8 +162,6 @@ final class Core
      *
      * @return (
      *      $key is 'login' ? BackendLogin|null :
-     *      ($key is 'live_mode' ? bool :
-     *      ($key is 'safe_mode' ? bool :
      *      ($key is 'debug' ? array{enabled: bool, throw_always_exception: bool|int} :
      *      ($key is 'lang_fallback' ? string[] :
      *      ($key is 'use_accesskeys' ? bool :
@@ -177,7 +176,6 @@ final class Core
      *      ($key is 'servername' ? string :
      *      ($key is 'error_email' ? string :
      *      ($key is 'lang' ? non-empty-string :
-     *      ($key is 'instname' ? non-empty-string :
      *      ($key is 'theme' ? string :
      *      ($key is 'start_page' ? non-empty-string :
      *      ($key is 'password_policy' ? array<string, scalar> :
@@ -186,7 +184,7 @@ final class Core
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      )))))))))))))))))))))))))
+     *      ))))))))))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -282,17 +280,53 @@ final class Core
             return false;
         }
 
-        if (self::getProperty('safe_mode')) {
+        if (self::isSafeModeForced()) {
             return true;
         }
 
         return PHP_SESSION_ACTIVE == session_status() && Http\Request::session('safemode', 'boolean', false);
     }
 
-    /** Returns if the live mode is active. */
+    /**
+     * Returns if the safe mode is forced via the env var `REX_SAFE_MODE`.
+     *
+     * In contrast to the session based safe mode, the forced safe mode can not be deactivated in the backend.
+     *
+     * @internal
+     */
+    public static function isSafeModeForced(): bool
+    {
+        return self::getBoolEnv('REX_SAFE_MODE');
+    }
+
+    /** Returns if the live mode is active (env var `REX_LIVE_MODE`). */
     public static function isLiveMode(): bool
     {
-        return (bool) self::getProperty('live_mode');
+        return self::getBoolEnv('REX_LIVE_MODE');
+    }
+
+    /**
+     * Returns the unique id of this installation, defined by the env var `REX_INSTANCE_ID` (usually in the `.env`
+     * file).
+     *
+     * @return non-empty-string
+     */
+    public static function getInstanceId(): string
+    {
+        $id = $_SERVER['REX_INSTANCE_ID'] ?? $_ENV['REX_INSTANCE_ID'] ?? null;
+
+        if (!is_string($id) || '' === $id) {
+            throw new LogicException('The env var "REX_INSTANCE_ID" is missing, it must be defined in the ".env" file.');
+        }
+
+        return $id;
+    }
+
+    private static function getBoolEnv(string $name): bool
+    {
+        $value = $_SERVER[$name] ?? $_ENV[$name] ?? null;
+
+        return null !== $value && filter_var($value, FILTER_VALIDATE_BOOL);
     }
 
     /**

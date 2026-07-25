@@ -4,6 +4,7 @@ namespace Redaxo\Core\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
+use Redaxo\Core\Exception\LogicException;
 
 use const E_NOTICE;
 use const E_WARNING;
@@ -124,26 +125,60 @@ final class CoreTest extends TestCase
 
     public function testLiveModeFlag(): void
     {
-        $origLiveMode = Core::getProperty('live_mode');
-        $origSafeMode = Core::getProperty('safe_mode');
+        $origLiveMode = $_SERVER['REX_LIVE_MODE'] ?? null;
+        $origSafeMode = $_SERVER['REX_SAFE_MODE'] ?? null;
         $origDebug = Core::getProperty('debug');
 
         try {
-            Core::setProperty('live_mode', false);
-            Core::setProperty('safe_mode', true);
+            $_SERVER['REX_LIVE_MODE'] = '0';
+            $_SERVER['REX_SAFE_MODE'] = '1';
             Core::setProperty('debug', true);
             self::assertFalse(Core::isLiveMode());
             self::assertTrue(Core::isSafeMode());
+            self::assertTrue(Core::isSafeModeForced());
             self::assertTrue(Core::isDebugMode());
 
-            Core::setProperty('live_mode', true);
+            $_SERVER['REX_LIVE_MODE'] = '1';
             self::assertTrue(Core::isLiveMode());
             self::assertFalse(Core::isSafeMode());
             self::assertFalse(Core::isDebugMode());
         } finally {
-            Core::setProperty('live_mode', $origLiveMode);
-            Core::setProperty('safe_mode', $origSafeMode);
+            self::restoreEnv('REX_LIVE_MODE', $origLiveMode);
+            self::restoreEnv('REX_SAFE_MODE', $origSafeMode);
             Core::setProperty('debug', $origDebug);
+        }
+    }
+
+    public function testGetInstanceId(): void
+    {
+        $origServer = $_SERVER['REX_INSTANCE_ID'] ?? null;
+        $origEnv = $_ENV['REX_INSTANCE_ID'] ?? null;
+
+        try {
+            $_SERVER['REX_INSTANCE_ID'] = 'test-instance';
+            self::assertSame('test-instance', Core::getInstanceId());
+
+            unset($_SERVER['REX_INSTANCE_ID'], $_ENV['REX_INSTANCE_ID']);
+            $this->expectException(LogicException::class);
+            Core::getInstanceId();
+        } finally {
+            self::restoreEnv('REX_INSTANCE_ID', $origServer);
+
+            if (null === $origEnv) {
+                unset($_ENV['REX_INSTANCE_ID']);
+            } else {
+                $_ENV['REX_INSTANCE_ID'] = $origEnv;
+            }
+        }
+    }
+
+    /** @param non-empty-string $name */
+    private static function restoreEnv(string $name, ?string $value): void
+    {
+        if (null === $value) {
+            unset($_SERVER[$name]);
+        } else {
+            $_SERVER[$name] = $value;
         }
     }
 

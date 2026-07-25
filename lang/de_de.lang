@@ -70,6 +70,7 @@ safemode = Safe Mode
 safemode_text = Im Safe Mode werden vorübergehend alle AddOns deaktiviert. Falls bspw. ein AddOn nach der Installation Probleme macht, kann dieses über den Safe Mode deaktiviert oder deinstalliert werden.
 safemode_activate = Safe Mode aktivieren
 safemode_deactivate = Safe Mode deaktivieren
+safemode_forced = Der Safe Mode wurde über die Umgebungsvariable <code>REX_SAFE_MODE</code> aktiviert und kann daher nicht im Backend deaktiviert werden.
 
 # redaxo/include/classes/class.form.php
 form_field_first_priority = Am Anfang

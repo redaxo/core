@@ -78,7 +78,6 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         /**
          * @var array{
          *     setup: bool,
-         *     instname: string|null,
          *     lang: string|null,
          *     server: string|null,
          *     servername: string|null,
@@ -542,10 +541,6 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         }
 
         // ---------------------------------- last step. save config
-
-        if (empty($config['instname'])) {
-            $config['instname'] = 'rex' . date('YmdHis');
-        }
 
         $config['setup'] = is_array($config['setup']) ? $config['setup'] : false;
         if (!File::putConfig($configFile, $config)) {

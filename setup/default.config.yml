@@ -1,10 +1,7 @@
 setup: true
-live_mode: false
-safe_mode: false
 debug:
     enabled: false
     throw_always_exception: false # `true` for all error levels, `[E_WARNING, E_NOTICE]` for subset
-instname: null
 server: https://www.redaxo.org/
 servername: REDAXO
 error_email: null

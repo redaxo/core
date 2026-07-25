@@ -223,14 +223,20 @@ if (!Core::isLiveMode()) {
         <h3>' . I18n::msg('safemode') . '</h3>
         <p>' . I18n::msg('safemode_text') . '</p>';
 
-    $safemodeUrl = Url::currentBackendPage(['safemode' => '1'] + $csrfToken->getUrlParams());
-    if (Core::isSafeMode()) {
-        $safemodeUrl = Url::currentBackendPage(['safemode' => '0'] + $csrfToken->getUrlParams());
+    if (Core::isSafeModeForced()) {
+        $content .= '
+        <p>' . I18n::msg('safemode_forced') . '</p>';
+    } else {
+        $safemodeUrl = Url::currentBackendPage(['safemode' => '1'] + $csrfToken->getUrlParams());
+        if (Core::isSafeMode()) {
+            $safemodeUrl = Url::currentBackendPage(['safemode' => '0'] + $csrfToken->getUrlParams());
+        }
+
+        $content .= '
+        <p><a class="btn btn-safemode-activate" href="' . $safemodeUrl . '" data-pjax="false">' . (Core::isSafeMode() ? I18n::msg('safemode_deactivate') : I18n::msg('safemode_activate')) . '</a></p>';
     }
 
     $content .= '
-        <p><a class="btn btn-safemode-activate" href="' . $safemodeUrl . '" data-pjax="false">' . (Core::isSafeMode() ? I18n::msg('safemode_deactivate') : I18n::msg('safemode_activate')) . '</a></p>
-
 
         <h3>' . I18n::msg('setup') . '</h3>
         <p>' . I18n::msg('setup_text') . '</p>

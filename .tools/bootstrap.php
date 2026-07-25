@@ -4,8 +4,12 @@ use Project\Project;
 use Redaxo\Core\Core;
 use Redaxo\Core\Environment;
 use Redaxo\Core\ErrorHandler;
+use Symfony\Component\Dotenv\Dotenv;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+// this bootstrap does not run through symfony/runtime, so load the env vars ourselves
+new Dotenv()->bootEnv(dirname(__DIR__) . '/project/.env');
 
 $project = new Project(Environment::Console);
 
