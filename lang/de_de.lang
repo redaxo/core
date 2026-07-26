@@ -845,11 +845,6 @@ customizer_textarea = breite Textarea unter Template und Module
 customizer_liquid = Liquid Layout
 customizer_nav_flyout = Navigation mit Flyout
 
-# debug
-debug=Debug
-debug_activate_debugmode = Aktiviere den Debug-Modus, um das Debug-Addon verwenden zu können.
-debug_error_unzip = Beim Entpacken der Assets aus dem Clockwork-Frontend-Archiv ist ein Fehler aufgetreten!
-
 # mediapool
 pool_name = Medienpool
 pool_kats = Kategorien
