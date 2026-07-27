@@ -359,6 +359,8 @@ final class ErrorHandler
      * Defaults to warnings and notices in the dev mode, and to none in the live and hardened modes. The default can
      * be overridden by the env var `REX_ERROR_THROW`, containing `none`, `all` or a comma-separated list of error
      * level constant names, e.g. `E_WARNING,E_NOTICE,E_DEPRECATED`.
+     *
+     * @phpstan-impure
      */
     public static function getThrowErrorLevels(): int
     {
