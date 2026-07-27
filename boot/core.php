@@ -84,10 +84,11 @@ Fragment::addDirectory(Path::core('fragments/'));
 
 ErrorHandler::register();
 
-// Mirror the mode to APP_ENV for third-party code keying off Symfony's conventional env var
+// Derive APP_ENV from REX_MODE for third-party code keying off Symfony's conventional env var
 // (dev => "dev", live/hardened => "prod"); APP_DEBUG is derived from REX_MODE by the runtime already.
-$_SERVER['APP_ENV'] ??= $_ENV['APP_ENV'] ?? (Core::isDevMode() ? 'dev' : 'prod');
-$_ENV['APP_ENV'] ??= $_SERVER['APP_ENV'];
+// A pre-defined APP_ENV is overridden deliberately: REX_MODE is the single source of truth, and a stray
+// APP_ENV (hosting panel default, copied Symfony .env) must not leak a different environment.
+$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = Core::isDevMode() ? 'dev' : 'prod';
 
 Core::loadConfigYml();
 
