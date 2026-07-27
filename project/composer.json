@@ -32,17 +32,17 @@
         "post-create-project-cmd": "Redaxo\\Core\\Composer\\ScriptHandler::postCreateProject"
     },
 
-    "extra": {
-        "runtime": {
-            "class": "Redaxo\\Core\\Runtime"
-        }
-    },
-
     "config": {
         "allow-plugins": {
             "symfony/runtime": true
         },
         "sort-packages": true
+    },
+
+    "extra": {
+        "runtime": {
+            "class": "Redaxo\\Core\\Runtime"
+        }
     },
 
     "prefer-stable": true
