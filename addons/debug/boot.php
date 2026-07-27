@@ -22,7 +22,7 @@ use Redaxo\Core\Util\Type;
 
 use function Redaxo\Core\View\escape;
 
-if (!rex_debug_clockwork::isRexDebugEnabled() || 'debug' === Request::get(ApiFunction::REQ_CALL_PARAM)) {
+if (!Core::isDevMode() || 'debug' === Request::get(ApiFunction::REQ_CALL_PARAM)) {
     return;
 }
 

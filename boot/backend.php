@@ -23,6 +23,7 @@ use Redaxo\Core\Language\Language;
 use Redaxo\Core\MetaInfo\Handler\CategoryHandler as MetaInfoCategoryHandler;
 use Redaxo\Core\MetaInfo\Handler\LanguageHandler as MetaInfoLanguageHandler;
 use Redaxo\Core\MetaInfo\Handler\MediaHandler as MetaInfoMediaHandler;
+use Redaxo\Core\Mode;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
@@ -197,7 +198,7 @@ if (Core::isSetup()) {
         Core::setProperty('user', $user);
 
         // Safe Mode
-        if (!Core::isLiveMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
+        if (!Core::isHardenedMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
             if ($safeMode) {
                 Request::setSession('safemode', true);
             } else {

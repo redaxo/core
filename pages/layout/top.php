@@ -47,8 +47,8 @@ $bodyAttr['class'] = ['rex-is-logged-out'];
 if ($user) {
     $bodyAttr['class'] = ['rex-is-logged-in'];
 }
-if (Core::isDebugMode()) {
-    $bodyAttr['class'][] = 'rex-is-debugmode';
+if (Core::isDevMode()) {
+    $bodyAttr['class'][] = 'rex-is-devmode';
 }
 if (Core::isSafeMode()) {
     $bodyAttr['class'][] = 'rex-is-safemode';

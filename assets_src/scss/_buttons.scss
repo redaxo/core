@@ -82,7 +82,6 @@
     @include button-variant(#fff, $color-d, $color-d);
 }
 
-.btn-debug-mode,
 .btn-safemode-activate {
     $normal: (color: darken(#a86500, 20%), background: #f90, border: darken(#f90, 3%));
     $hover: (color: darken(#a86500, 20%), background: darken(#f90, 3%), border: darken(#f90, 10%));
@@ -183,7 +182,6 @@
     }
 
     // yellow
-    .btn-debug-mode,
     .btn-safemode-activate {
         @include dark-button-variant($color-text-light, $dark-brand-warning, darken($dark-brand-warning, 15%));
     }

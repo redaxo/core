@@ -35,7 +35,7 @@ final class Timer
     /**
      * Measures the runtime of the given callable.
      *
-     * On sufficient user permissions - or in debug mode - this timings will be sent over the wire to the browser via server timing api http headers.
+     * On sufficient user permissions - or in dev mode - this timings will be sent over the wire to the browser via server timing api http headers.
      *
      * @template T
      *
@@ -45,7 +45,7 @@ final class Timer
      */
     public static function measure(string $label, callable $callable): mixed
     {
-        if (!Core::isDebugMode()) {
+        if (!Core::isDevMode()) {
             return $callable();
         }
 

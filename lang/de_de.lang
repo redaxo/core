@@ -155,14 +155,7 @@ system_editor_success_cookie = Die Editor-Einstellungen wurden als Browser-Cooki
 system_editor_success_cookie_deleted = Die Cookies für die Editor-Einstellungen wurden gelöscht, es werden nun wieder die globalen Einstellungen verwendet.
 system_edit_config_note = Die REDAXO Hauptkonfiguration bietet die Möglichkeit interne Systemparameter zu verändern. Die Datei sollte nur von erfahrenen Nutzern bearbeitet werden.
 lang_required = Es wird eine Sprache benötigt!
-debug_mode = Debug-Modus
-debug_mode_note = Mit dem Debug-Modus werden bei PHP-Skriptfehlern im Frontend und Backend zusätzliche Angaben zum Fehler ausgegeben. Außerdem werden keine immutable cache-http-header verwendet. Im Live-Betrieb nicht aktivieren, da die Fehlermeldungen auch sensible Daten beinhalten können.
-debug_mode_on = Debug-Modus aktivieren
-debug_mode_off = Debug-Modus deaktivieren
-debug_mode_info_on = Der Debug-Modus wurde aktiviert
-debug_mode_info_off = Der Debug-Modus wurde deaktiviert
-debug_mode_marker = Der Debug-Modus ist aktiv
-debug_confirm = Der Debug-Modus sollte nicht im Live-Betrieb verwendet werden. Dennoch den Debug-Modus aktivieren?
+dev_mode_marker = Der Dev-Modus ist aktiv
 
 system_report = Systembericht
 system_report_markdown = Als Markdown

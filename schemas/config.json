@@ -5,7 +5,6 @@
     "type": "object",
     "required": [
         "setup",
-        "debug",
         "server",
         "servername",
         "error_email",
@@ -24,36 +23,6 @@
                         "type": "string",
                         "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
                     }
-                }
-            ]
-        },
-        "debug": {
-            "description": "Debug mode",
-            "oneOf": [
-                {
-                    "type": "boolean"
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {
-                            "type": "boolean"
-                        },
-                        "throw_always_exception": {
-                            "oneOf": [
-                                {
-                                    "type": "boolean"
-                                },
-                                {
-                                    "type": "array",
-                                    "items": {
-                                        "enum": ["E_WARNING", "E_NOTICE", "E_DEPRECATED"]
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "additionalProperties": false
                 }
             ]
         },

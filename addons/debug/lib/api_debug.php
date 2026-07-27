@@ -16,7 +16,7 @@ final class rex_api_debug extends ApiFunction
 
     public function execute(): Result
     {
-        if (!Core::isDebugMode() || !Core::getUser()?->admin) {
+        if (!Core::isDevMode() || !Core::getUser()?->admin) {
             return new Result(false);
         }
 

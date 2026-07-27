@@ -22,7 +22,7 @@ final class DebugAddon extends Addon
     #[Override]
     public function getPages(): iterable
     {
-        if (Core::isLiveMode()) {
+        if (Core::isHardenedMode()) {
             return;
         }
 

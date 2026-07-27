@@ -45,6 +45,7 @@ final class SystemReport
 
         $data[self::TITLE_REDAXO] = [
             'Version' => $rexVersion,
+            'Mode' => Core::getMode()->value,
         ];
 
         $data[self::TITLE_PHP] = [

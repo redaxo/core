@@ -307,7 +307,7 @@ final class Controller
             )
         ;
 
-        if (Core::isLiveMode()) {
+        if (Core::isHardenedMode()) {
             return;
         }
 

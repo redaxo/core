@@ -203,6 +203,12 @@
         }
     },
 
+    "extra": {
+        "runtime": {
+            "class": "Redaxo\\Core\\Runtime"
+        }
+    },
+
     "repositories": [
         {
             "type": "path",

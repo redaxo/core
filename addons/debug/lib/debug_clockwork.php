@@ -5,10 +5,7 @@ use Clockwork\DataSource\XdebugDataSource;
 use Clockwork\Request\Request;
 use Clockwork\Support\Vanilla\Clockwork as VanillaClockwork;
 use Redaxo\Core\Addon\Addon;
-use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Dir;
-use Redaxo\Core\Filesystem\File;
-use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Util\Type;
 
@@ -84,23 +81,5 @@ final class rex_debug_clockwork
     public static function getStoragePath(): string
     {
         return Addon::require('debug')->getCachePath('clockwork.db');
-    }
-
-    /**
-     * We cannot rely on rex::isDebugMode() because it is always true on the console.
-     * So we have to check the config file itself.
-     */
-    public static function isRexDebugEnabled(): bool
-    {
-        if (PHP_SAPI !== 'cli') {
-            return Core::isDebugMode();
-        }
-
-        $coreConfigCacheFile = Path::coreCache('config.yml.cache');
-        $coreConfigCache = File::getCache($coreConfigCacheFile);
-        /** @var bool $debugEnabled */
-        $debugEnabled = $coreConfigCache['debug']['enabled'] ?? false;
-
-        return $debugEnabled;
     }
 }

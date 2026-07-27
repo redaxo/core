@@ -42,7 +42,7 @@ use function Redaxo\Core\View\escape;
         foreach ($files as $file) {
             $file = (string) $file;
             $path = Path::frontend(Path::absolute($file));
-            if (!Core::isDebugMode() && str_starts_with($path, $assetDir) && $mtime = @filemtime($path)) {
+            if (!Core::isDevMode() && str_starts_with($path, $assetDir) && $mtime = @filemtime($path)) {
                 $file = Url::backendController(['asset' => ltrim($file, '.'), 'buster' => $mtime]);
             } elseif ($mtime = @filemtime($path)) {
                 $file .= '?buster=' . $mtime;
@@ -67,7 +67,7 @@ use function Redaxo\Core\View\escape;
         $file = (string) $file;
         $path = Path::frontend(Path::absolute($file));
         if (array_key_exists(Asset::JS_IMMUTABLE, $options) && $options[Asset::JS_IMMUTABLE]) {
-            if (!Core::isDebugMode() && str_starts_with($path, $assetDir) && $mtime = @filemtime($path)) {
+            if (!Core::isDevMode() && str_starts_with($path, $assetDir) && $mtime = @filemtime($path)) {
                 $file = Url::backendController(['asset' => ltrim($file, '.'), 'buster' => $mtime]);
             }
         } elseif ($mtime = @filemtime($path)) {

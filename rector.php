@@ -414,6 +414,8 @@ return RectorConfig::configure()
         new RenameStaticMethod(Core::class, 'getPackageConfig', Addon\AddonManager::class, 'getAddonConfig'),
         new RenameStaticMethod(Core::class, 'getPackageOrder', Addon\AddonManager::class, 'getAddonOrder'),
         new RenameStaticMethod(Core::class, 'getVersionHash', Util\Version::class, 'gitHash'),
+        new RenameStaticMethod(Core::class, 'isDebugMode', Core::class, 'isDevMode'),
+        new RenameStaticMethod(Core::class, 'isLiveMode', Core::class, 'isHardenedMode'),
 
         new RenameStaticMethod(ExtensionPoint\Extension::class, 'registerPoint', ExtensionPoint\Extension::class, 'dispatch'),
         new RenameStaticMethod(ExtensionPoint\Extension::class, 'isRegistered', ExtensionPoint\Extension::class, 'hasExtensions'),
