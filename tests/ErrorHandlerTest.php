@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Tests;
 
 use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\ErrorHandler;
 use Redaxo\Core\Exception\LogicException;
@@ -41,56 +42,51 @@ final class ErrorHandlerTest extends TestCase
         }
     }
 
-    public function testGetThrowErrorLevelsDefaultsByMode(): void
+    /** @return list<array{int, string, string|null}> */
+    public static function throwErrorLevelsProvider(): array
     {
-        unset($_SERVER['REX_ERROR_THROW']);
+        return [
+            // mode based defaults
+            [E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE, 'dev', null],
+            [0, 'live', null],
+            [0, 'hardened', null],
 
-        $_SERVER['REX_MODE'] = 'dev';
-        self::assertSame(E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE, ErrorHandler::getThrowErrorLevels());
-
-        $_SERVER['REX_MODE'] = 'live';
-        self::assertSame(0, ErrorHandler::getThrowErrorLevels());
-
-        $_SERVER['REX_MODE'] = 'hardened';
-        self::assertSame(0, ErrorHandler::getThrowErrorLevels());
+            // explicit values via env var
+            [0, 'dev', 'none'],
+            [E_ALL, 'live', 'all'],
+            [E_WARNING, 'live', 'E_WARNING'],
+            [E_WARNING | E_NOTICE, 'live', 'E_WARNING,E_NOTICE'],
+            [E_WARNING | E_DEPRECATED, 'live', ' E_WARNING , E_DEPRECATED '],
+        ];
     }
 
-    public function testGetThrowErrorLevelsNoneAndAll(): void
+    #[DataProvider('throwErrorLevelsProvider')]
+    public function testGetThrowErrorLevels(int $expected, string $mode, ?string $levels): void
     {
-        $_SERVER['REX_MODE'] = 'dev';
-        $_SERVER['REX_ERROR_THROW'] = 'none';
-        self::assertSame(0, ErrorHandler::getThrowErrorLevels());
+        $_SERVER['REX_MODE'] = $mode;
+        if (null === $levels) {
+            unset($_SERVER['REX_ERROR_THROW']);
+        } else {
+            $_SERVER['REX_ERROR_THROW'] = $levels;
+        }
 
-        $_SERVER['REX_MODE'] = 'live';
-        $_SERVER['REX_ERROR_THROW'] = 'all';
-        self::assertSame(E_ALL, ErrorHandler::getThrowErrorLevels());
+        self::assertSame($expected, ErrorHandler::getThrowErrorLevels());
     }
 
-    public function testGetThrowErrorLevelsConstantNames(): void
+    /** @return list<array{string}> */
+    public static function invalidThrowErrorLevelsProvider(): array
     {
-        $_SERVER['REX_MODE'] = 'live';
-
-        $_SERVER['REX_ERROR_THROW'] = 'E_WARNING';
-        self::assertSame(E_WARNING, ErrorHandler::getThrowErrorLevels());
-
-        $_SERVER['REX_ERROR_THROW'] = 'E_WARNING,E_NOTICE';
-        self::assertSame(E_WARNING | E_NOTICE, ErrorHandler::getThrowErrorLevels());
-
-        $_SERVER['REX_ERROR_THROW'] = ' E_WARNING , E_DEPRECATED ';
-        self::assertSame(E_WARNING | E_DEPRECATED, ErrorHandler::getThrowErrorLevels());
+        return [
+            ['E_WARNING,E_FOO'],
+            ['warning'],
+            ['e_warning'],
+        ];
     }
 
-    public function testGetThrowErrorLevelsUnknownConstant(): void
+    #[DataProvider('invalidThrowErrorLevelsProvider')]
+    public function testGetThrowErrorLevelsInvalid(string $levels): void
     {
-        $_SERVER['REX_ERROR_THROW'] = 'E_WARNING,E_FOO';
-
-        $this->expectException(LogicException::class);
-        ErrorHandler::getThrowErrorLevels();
-    }
-
-    public function testGetThrowErrorLevelsInvalidFormat(): void
-    {
-        $_SERVER['REX_ERROR_THROW'] = 'warning';
+        $_SERVER['REX_ERROR_THROW'] = $levels;
 
         $this->expectException(LogicException::class);
         ErrorHandler::getThrowErrorLevels();
