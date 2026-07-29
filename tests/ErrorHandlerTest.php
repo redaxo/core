@@ -42,8 +42,21 @@ final class ErrorHandlerTest extends TestCase
         }
     }
 
+    #[DataProvider('provideThrowErrorLevels')]
+    public function testGetThrowErrorLevels(int $expected, string $mode, ?string $levels): void
+    {
+        $_SERVER['REX_MODE'] = $mode;
+        if (null === $levels) {
+            unset($_SERVER['REX_ERROR_THROW']);
+        } else {
+            $_SERVER['REX_ERROR_THROW'] = $levels;
+        }
+
+        self::assertSame($expected, ErrorHandler::getThrowErrorLevels());
+    }
+
     /** @return list<array{int, string, string|null}> */
-    public static function throwErrorLevelsProvider(): array
+    public static function provideThrowErrorLevels(): array
     {
         return [
             // mode based defaults
@@ -60,35 +73,22 @@ final class ErrorHandlerTest extends TestCase
         ];
     }
 
-    #[DataProvider('throwErrorLevelsProvider')]
-    public function testGetThrowErrorLevels(int $expected, string $mode, ?string $levels): void
-    {
-        $_SERVER['REX_MODE'] = $mode;
-        if (null === $levels) {
-            unset($_SERVER['REX_ERROR_THROW']);
-        } else {
-            $_SERVER['REX_ERROR_THROW'] = $levels;
-        }
-
-        self::assertSame($expected, ErrorHandler::getThrowErrorLevels());
-    }
-
-    /** @return list<array{string}> */
-    public static function invalidThrowErrorLevelsProvider(): array
-    {
-        return [
-            ['E_WARNING,E_FOO'],
-            ['warning'],
-            ['e_warning'],
-        ];
-    }
-
-    #[DataProvider('invalidThrowErrorLevelsProvider')]
+    #[DataProvider('provideInvalidThrowErrorLevels')]
     public function testGetThrowErrorLevelsInvalid(string $levels): void
     {
         $_SERVER['REX_ERROR_THROW'] = $levels;
 
         $this->expectException(LogicException::class);
         ErrorHandler::getThrowErrorLevels();
+    }
+
+    /** @return list<array{string}> */
+    public static function provideInvalidThrowErrorLevels(): array
+    {
+        return [
+            ['E_WARNING,E_FOO'],
+            ['warning'],
+            ['e_warning'],
+        ];
     }
 }
