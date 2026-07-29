@@ -3041,13 +3041,6 @@
     </PossiblyNullReference>
   </file>
   <file src="redaxo/src/core/backend.php">
-    <MixedArgument>
-      <code><![CDATA[$userAgent]]></code>
-      <code><![CDATA[$userAgent]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$userAgent]]></code>
-    </MixedAssignment>
     <PossiblyFalseArgument>
       <code><![CDATA[$CONTENT]]></code>
     </PossiblyFalseArgument>
