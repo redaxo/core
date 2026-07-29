@@ -3966,8 +3966,6 @@
       <code><![CDATA[$backups]]></code>
     </InvalidArgument>
     <MixedArgument>
-      <code><![CDATA[$config['db'][1]['host']]]></code>
-      <code><![CDATA[$config['db'][1]['login']]]></code>
       <code><![CDATA[$config['db'][1]['name']]]></code>
       <code><![CDATA[$dbCreate]]></code>
       <code><![CDATA[$login]]></code>

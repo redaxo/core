@@ -68,7 +68,7 @@ class rex_command_setup_run extends rex_console_command implements rex_command_o
          *     servername: string|null,
          *     error_email: string|null,
          *     timezone: string|null,
-         *     db: array{1: array{
+         *     db: array{1?: array{
          *         host: string|null,
          *         login: string|null,
          *         password: string|null,
@@ -103,7 +103,7 @@ class rex_command_setup_run extends rex_console_command implements rex_command_o
         ksort($langs);
 
         $config['lang'] = $this->getOptionOrAsk(
-            new ChoiceQuestion('Please select a language', $langs, $config['lang'] ?? null),
+            new ChoiceQuestion('Please select a language', $langs, $config['lang']),
             'lang',
             null,
             'Language "%s" selected.',
@@ -187,14 +187,14 @@ class rex_command_setup_run extends rex_console_command implements rex_command_o
             $config['db'][1]['host'] = $this->getOptionOrAsk(
                 'MySQL Host',
                 'db-host',
-                $config['db'][1]['host'],
+                $previousHost,
                 'Using MySQL Host "%s"',
                 $requiredValue,
             );
             $config['db'][1]['login'] = $this->getOptionOrAsk(
                 'Login',
                 'db-login',
-                $config['db'][1]['login'],
+                $previousLogin,
                 'Using database login "%s"',
                 $requiredValue,
             );
