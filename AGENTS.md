@@ -73,6 +73,7 @@ All core classes use the `rex_` prefix (e.g., `rex_sql`, `rex_addon`, `rex_file`
 - Code style enforced by rector + php-cs-fixer (custom REDAXO config) — run `composer cs` after edits
 - PHPStan level 6 + Psalm level 1, both with baselines in `.tools/phpstan/` and `.tools/psalm/`
 - PHPUnit strict mode: warnings, notices, deprecations all fail the build
+- In tests, prefer data providers over repeating similar test methods; name providers with a `provide` prefix and place each one directly after its test method
 - In YAML files, prefer single quotes when quoting is needed
 - Comments and commit messages in English; commits use conventional commits (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`, `style:`, `ci:`). The same rules (English + conventional commit prefix) apply to PR titles, since they become the commit message on squash merge
 - Don't write bare `@name` tokens in commit messages (e.g. annotations like `@internal`/`@deprecated`, or anything that looks like a username): GitHub autolinks them into user mentions and pings a random account. Wrap them in backticks (`` `@internal` ``) — GitHub renders code spans in commit messages and doesn't link mentions inside them
