@@ -98,7 +98,7 @@ $adminchecked = '';
 
 $passwordPolicy = rex_backend_password_policy::factory();
 
-if ($save && ($fUNCADD || $fUNCUPDATE || $fUNCAPPLY)) {
+if ($fUNCUPDATE || $fUNCAPPLY || ($fUNCADD && $save)) {
     if (!rex_csrf_token::factory('user_edit')->isValid()) {
         $warnings[] = rex_i18n::msg('csrf_token_invalid');
     }
