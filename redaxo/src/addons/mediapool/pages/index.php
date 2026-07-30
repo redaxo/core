@@ -21,7 +21,6 @@ foreach ($args as $argName => $argValue) {
 }
 
 // ----- opener_input_field setzen
-$openerLink = rex_request('opener_link', 'string');
 $openerInputField = rex_request('opener_input_field', 'string', '');
 
 if ('' != $openerInputField) {
@@ -101,4 +100,4 @@ if (!rex_request::isXmlHttpRequest()) {
 }
 
 // -------------- Include Page
-rex_be_controller::includeCurrentPageSubPath(compact('openerInputField', 'openerLink', 'argUrl', 'args', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));
+rex_be_controller::includeCurrentPageSubPath(compact('openerInputField', 'argUrl', 'args', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));
