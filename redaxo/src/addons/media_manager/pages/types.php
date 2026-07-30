@@ -13,6 +13,13 @@ if (rex_request('effects', 'boolean')) {
 $success = '';
 $error = '';
 
+$csrfToken = rex_csrf_token::factory('media_manager_type');
+
+if (in_array($func, ['delete', 'delete_cache', 'copy'], true) && !$csrfToken->isValid()) {
+    $error = rex_i18n::msg('csrf_token_invalid');
+    $func = '';
+}
+
 // -------------- delete type
 if ('delete' == $func && $typeId > 0) {
     // must be called before deletion, otherwise the method can not resolve the id to type name
@@ -118,7 +125,7 @@ if ('' == $func) {
     });
 
     $list->addColumn('deleteCache', '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('media_manager_type_cache_delete'), -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('deleteCache', ['type_id' => '###id###', 'func' => 'delete_cache']);
+    $list->setColumnParams('deleteCache', ['type_id' => '###id###', 'func' => 'delete_cache'] + $csrfToken->getUrlParams());
     $list->addLinkAttribute('deleteCache', 'data-confirm', rex_i18n::msg('media_manager_type_cache_delete') . ' ?');
 
     $list->addColumn('editType', '', -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
@@ -131,11 +138,11 @@ if ('' == $func) {
     });
 
     $list->addColumn('copyType', '<i class="rex-icon rex-icon-duplicate"></i> ' . rex_i18n::msg('media_manager_type_copy'), -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('copyType', ['func' => 'copy', 'type_id' => '###id###']);
+    $list->setColumnParams('copyType', ['func' => 'copy', 'type_id' => '###id###'] + $csrfToken->getUrlParams());
 
     // override delete link on internal types
     $list->addColumn('deleteType', '', -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('deleteType', ['type_id' => '###id###', 'func' => 'delete']);
+    $list->setColumnParams('deleteType', ['type_id' => '###id###', 'func' => 'delete'] + $csrfToken->getUrlParams());
     $list->addLinkAttribute('deleteType', 'data-confirm', rex_i18n::msg('delete') . ' ?');
     $list->setColumnFormat('deleteType', 'custom', static function () use ($list) {
         if (rex_media_manager::STATUS_SYSTEM_TYPE == $list->getValue('status')) {

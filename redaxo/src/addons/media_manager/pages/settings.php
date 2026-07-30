@@ -11,7 +11,11 @@ $addon = rex_addon::get('media_manager');
 
 $func = rex_request('func', 'string');
 
-if ('update' == $func) {
+$csrfToken = rex_csrf_token::factory('media_manager_settings');
+
+if ('update' == $func && !$csrfToken->isValid()) {
+    echo rex_view::error(rex_i18n::msg('csrf_token_invalid'));
+} elseif ('update' == $func) {
     $config = rex_post('settings', [
         ['jpg_quality', 'int'],
         ['png_compression', 'int'],
@@ -154,6 +158,7 @@ $content = $fragment->parse('core/page/section.php');
 
 $content = '
     <form action="' . rex_url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         <fieldset>
             <input type="hidden" name="func" value="update" />
             ' . $content . '
