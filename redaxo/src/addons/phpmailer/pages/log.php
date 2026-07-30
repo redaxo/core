@@ -5,7 +5,11 @@ $error = '';
 $success = '';
 $logFile = rex_mailer::logFile();
 
-if ('mailer_delLog' == $func) {
+$csrfToken = rex_csrf_token::factory('phpmailer-delete-log');
+
+if ('mailer_delLog' == $func && !$csrfToken->isValid()) {
+    $error = rex_i18n::msg('csrf_token_invalid');
+} elseif ('mailer_delLog' == $func) {
     if (rex_log_file::delete($logFile)) {
         $success = rex_i18n::msg('syslog_deleted');
     } else {
@@ -69,6 +73,7 @@ $fragment->setVar('buttons', $buttons, false);
 $content = $fragment->parse('core/page/section.php');
 $content = '
     <form action="' . rex_url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         <input type="hidden" name="func" value="mailer_delLog" />
         ' . $content . '
     </form>';
