@@ -21,8 +21,13 @@ if (empty($metaTable) || !is_string($metaTable)) {
 $func = rex_request('func', 'string');
 $fieldId = rex_request('field_id', 'int');
 
+$csrfToken = rex_csrf_token::factory('metainfo_field');
+
 // ------------------------------> Feld loeschen
-if ('delete' == $func) {
+if ('delete' == $func && !$csrfToken->isValid()) {
+    echo rex_view::error(rex_i18n::msg('csrf_token_invalid'));
+    $func = '';
+} elseif ('delete' == $func) {
     $fieldId = rex_request('field_id', 'int', 0);
     if (0 != $fieldId) {
         if (rex_metainfo_delete_field($fieldId)) {
@@ -69,7 +74,7 @@ if ('' == $func) {
 
     $list->addColumn('delete', '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('delete'));
     $list->setColumnLayout('delete', ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('delete', ['func' => 'delete', 'field_id' => '###id###']);
+    $list->setColumnParams('delete', ['func' => 'delete', 'field_id' => '###id###'] + $csrfToken->getUrlParams());
     $list->addLinkAttribute('delete', 'data-confirm', rex_i18n::msg('delete') . ' ?');
     $list->addLinkAttribute('delete', 'class', 'rex-delete');
 
