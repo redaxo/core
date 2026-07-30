@@ -101,6 +101,11 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
     // ----- hat rechte an diesem artikel
 
     // ------------------------------------------ Slice add/edit/delete
+    if (rex_request('save', 'boolean') && in_array($function, ['add', 'edit', 'delete']) && !rex_csrf_token::factory('structure_content_slice')->isValid()) {
+        $globalWarning = rex_i18n::msg('csrf_token_invalid');
+        $function = '';
+    }
+
     if (rex_request('save', 'boolean') && in_array($function, ['add', 'edit', 'delete'])) {
         // ----- check module
 
