@@ -11,13 +11,17 @@ $config = array_merge([
     'api_key' => null,
 ], rex_file::getCache($configFile));
 
+$csrfToken = rex_csrf_token::factory('install_settings');
+
 $newConfig = rex_post('settings', [
     ['backups', 'bool', false],
     ['api_login', 'string'],
     ['api_key', 'string'],
 ], null);
 
-if (is_array($newConfig)) {
+if (is_array($newConfig) && !$csrfToken->isValid()) {
+    echo rex_view::error(rex_i18n::msg('csrf_token_invalid'));
+} elseif (is_array($newConfig)) {
     $config = $newConfig;
     if (rex_file::putCache($configFile, $config)) {
         echo rex_view::success($addon->i18n('settings_saved'));
@@ -89,6 +93,7 @@ $content = $fragment->parse('core/page/section.php');
 
 $content = '
     <form action="' . rex_url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         ' . $content . '
     </form>';
 
