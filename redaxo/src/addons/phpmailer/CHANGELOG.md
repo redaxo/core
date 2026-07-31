@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 2.17.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfungen beim Speichern der Konfiguration und beim Löschen des Logs ergänzt (@gharlan)
+
+### Bugfixes
+
+* MS-Graph-Transport: Custom-Header ohne `x`-Präfix ließen den kompletten Mail-Versand fehlschlagen; `List-Unsubscribe` wird jetzt als MAPI-Property übertragen, alle übrigen werden verworfen (@gharlan)
+
+
 Version 2.17.2 – 29.06.2026
 ---------------------------
 

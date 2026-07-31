@@ -1,6 +1,22 @@
 Changelog
 =========
 
+Version 5.21.3 – 31.07.2026
+---------------------------
+
+### Neu
+
+* `rex_file`: `mimeType` akzeptiert optional den Original-Dateinamen, sodass die Endungs-basierte Verfeinerung auch für Upload-Tempdateien greift (@gharlan)
+
+### Bugfixes
+
+* Backend: Bei einer abgelaufenen Session wurde der HTTP-Cache des Browsers geleert, wodurch der Aufbau der Login-Seite mehrere Sekunden dauern konnte (@gharlan)
+* `rex_list`:
+  - Sortierung über die Spaltenköpfe funktionierte nicht mehr, wenn die Spalten erst nach der Konstruktion als sortierbar markiert wurden (@gharlan)
+  - Deprecated-Meldung unter PHP 8.5, wenn der `list`-Parameter gesetzt war, aber kein `sort`-Parameter (@tbaddade)
+* `rex_escape`: Deprecated-Meldung unter PHP 8.4 bei Mehrbyte-Zeichen im Modus `html_attr` (@tbaddade)
+
+
 Version 5.21.2 – 29.06.2026
 ---------------------------
 

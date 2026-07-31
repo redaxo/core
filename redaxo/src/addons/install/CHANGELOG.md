@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.14.2 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfung beim Speichern der Einstellungen ergänzt (@gharlan)
+
+
 Version 2.14.1 – 29.06.2026
 ---------------------------
 

@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 2.18.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Reflected XSS über den Request-Parameter `opener_link` behoben; der Parameter wurde ersatzlos entfernt (gemeldet von @V-C-Williams) (@gharlan)
+
+### Bugfixes
+
+* Mime-Type-Erkennung beim Upload nutzt den Original-Dateinamen, wodurch z.B. `vtt`-Dateien nicht mehr fälschlich abgelehnt werden (@gharlan)
+
+
 Version 2.18.2 – 29.06.2026
 ---------------------------
 

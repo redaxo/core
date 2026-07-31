@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 3.8.2 – 31.07.2026
+--------------------------
+
+### Security
+
+* Customizer: Fehlende CSRF-Prüfung beim Speichern der Einstellungen ergänzt (@gharlan)
+
+
 Version 3.8.1 – 29.06.2026
 --------------------------
 

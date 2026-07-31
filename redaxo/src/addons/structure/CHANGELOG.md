@@ -1,6 +1,17 @@
 Changelog
 =========
 
+Version 2.20.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfungen ergänzt:
+  - Content: Slices anlegen, bearbeiten und löschen (@gharlan)
+  - History: Version wiederherstellen und komplette Historie löschen (gemeldet von @VietTinNguyen) (@gharlan)
+  - Version: Arbeitsversion übernehmen, aus Live-Version erzeugen und leeren (@gharlan)
+
+
 Version 2.20.1 – 01.06.2026
 ---------------------------
 

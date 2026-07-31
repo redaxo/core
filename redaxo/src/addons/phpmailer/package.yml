@@ -1,5 +1,5 @@
 package: phpmailer
-version: '2.17.2'
+version: '2.17.3'
 author: 'Markus Staab, Thomas Skerbis, Jan Kristinus, Brent R. Matzelle'
 supportpage: https://github.com/redaxo/core
 

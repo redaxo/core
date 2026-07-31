@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.12.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfung beim Löschen von Feldern ergänzt (@gharlan)
+
+
 Version 2.12.2 – 29.06.2026
 ---------------------------
 

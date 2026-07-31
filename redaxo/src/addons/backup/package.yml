@@ -1,5 +1,5 @@
 package: backup
-version: '2.10.1'
+version: '2.10.2'
 author: 'Jan Kristinus, Markus Staab'
 supportpage: https://github.com/redaxo/core
 

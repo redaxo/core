@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.18.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfungen beim Bearbeiten von Typen und Effekten, beim Leeren des Cache und beim Speichern der Einstellungen ergänzt (@gharlan)
+
+
 Version 2.18.2 – 29.06.2026
 ---------------------------
 
