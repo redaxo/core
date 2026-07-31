@@ -830,8 +830,11 @@ class DataList implements UrlProviderInterface
     public function getSortColumn(?string $default = null): ?string
     {
         if (Request::request('list', 'string') == $this->getName()) {
-            $sortColumn = Request::request('sort', 'string', $default);
-            if ($this->hasColumnOption($sortColumn, REX_LIST_OPT_SORT)) {
+            // Only a column the request actually asked for is validated here; $default is returned as-is
+            // below either way. Passing $default as cast default would let a null through to
+            // hasColumnOption(), which only accepts a string.
+            $sortColumn = Request::request('sort', 'string');
+            if ('' !== $sortColumn && $this->hasColumnOption($sortColumn, REX_LIST_OPT_SORT)) {
                 return $sortColumn;
             }
         }

@@ -43,6 +43,20 @@ final class DataListTest extends TestCase
         unset($_REQUEST['list'], $_REQUEST['sort']);
     }
 
+    public function testGetSortColumnWithoutSortParameter(): void
+    {
+        $list = $this->createListWithSortableColumn('mylist', 'name');
+
+        // The list is addressed, but no sort column is requested. This is the shape of the row action
+        // urls a list generates itself ("?…&func=delete&id=…&list=mylist").
+        $_REQUEST['list'] = 'mylist';
+
+        self::assertNull($list->getSortColumn());
+        self::assertSame('id', $list->getSortColumn('id'));
+
+        unset($_REQUEST['list']);
+    }
+
     public function testGetSortColumnIgnoredForOtherList(): void
     {
         $list = $this->createListWithSortableColumn('mylist', 'name');
