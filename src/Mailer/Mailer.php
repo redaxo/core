@@ -488,7 +488,7 @@ class Mailer extends PHPMailer
             $mailData['message']['isReadReceiptRequested'] = true;
         }
 
-        if (Core::isDebugMode()) {
+        if (Core::isDevMode()) {
             // Debug: JSON-Body loggen ins REDAXO-Addon-Data-Verzeichnis
             $debugPath = Path::coreData('phpmailer/graph_mail_debug.json');
             File::put($debugPath, json_encode($mailData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));

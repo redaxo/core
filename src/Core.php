@@ -22,7 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Tag\TaggedValue;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-use function constant;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -48,6 +47,8 @@ final class Core
     private static array $properties = [];
 
     private static ?HttpClientInterface $httpClient = null;
+
+    private static bool $invalidModeReported = false;
 
     private function __construct() {}
 
@@ -111,27 +112,6 @@ final class Core
     public static function setProperty(string $key, mixed $value): bool
     {
         switch ($key) {
-            case 'debug':
-                // bc for boolean "debug" property
-                if (!is_array($value)) {
-                    $debug = self::getDebugFlags();
-                    $debug['enabled'] = (bool) $value;
-                    $value = $debug;
-                }
-                $value['enabled'] = isset($value['enabled']) && $value['enabled'];
-                if (!isset($value['throw_always_exception']) || !$value['throw_always_exception']) {
-                    $value['throw_always_exception'] = false;
-                } elseif (is_array($value['throw_always_exception'])) {
-                    $value['throw_always_exception'] = array_reduce($value['throw_always_exception'], static function ($result, $item): int {
-                        if (is_string($item)) {
-                            // $item is string, e.g. "E_WARNING"
-                            $item = constant($item);
-                        }
-
-                        return $result | $item;
-                    }, 0);
-                }
-                break;
             case 'server':
                 if (!Validator::factory()->url($value)) {
                     throw new InvalidArgumentException('"' . $key . '" property: expecting $value to be a full URL.');
@@ -162,7 +142,6 @@ final class Core
      *
      * @return (
      *      $key is 'login' ? BackendLogin|null :
-     *      ($key is 'debug' ? array{enabled: bool, throw_always_exception: bool|int} :
      *      ($key is 'lang_fallback' ? string[] :
      *      ($key is 'use_accesskeys' ? bool :
      *      ($key is 'accesskeys' ? array<string, string> :
@@ -184,7 +163,7 @@ final class Core
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      ))))))))))))))))))))))
+     *      )))))))))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -246,42 +225,63 @@ final class Core
         return self::getProperty('redaxo', false) ? Environment::Backend : Environment::Frontend;
     }
 
-    /** Returns if the debug mode is active. */
-    public static function isDebugMode(): bool
+    /**
+     * Returns the mode this instance runs in, defined by the env var `REX_MODE` (usually in the `.env` file).
+     *
+     * When the env var is not defined at all, the fail-safe fallback is the live mode.
+     *
+     * @phpstan-impure
+     */
+    public static function getMode(): Mode
     {
-        if (self::isLiveMode()) {
-            return false;
+        $mode = $_SERVER['REX_MODE'] ?? $_ENV['REX_MODE'] ?? null;
+
+        if (!is_string($mode) || '' === $mode) {
+            return Mode::Live;
         }
 
-        $debug = self::getDebugFlags();
+        if (null === $modeEnum = Mode::tryFrom($mode)) {
+            // Throw only on the first call and fall back to the (fail-safe) live mode afterwards, so that the
+            // exception itself can be reported properly (the error handling asks for the mode, too).
+            if (!self::$invalidModeReported) {
+                self::$invalidModeReported = true;
 
-        return $debug['enabled'];
+                throw new LogicException(sprintf('The env var "REX_MODE" contains the invalid value "%s", it must be one of "dev", "live" or "hardened".', $mode));
+            }
+
+            return Mode::Live;
+        }
+
+        return $modeEnum;
     }
 
-    /**
-     * Returns the debug flags.
-     *
-     * @return array{enabled: bool, throw_always_exception: bool|int}
-     */
-    public static function getDebugFlags(): array
+    /** Returns if the dev mode is active. */
+    public static function isDevMode(): bool
     {
-        $flags = self::getProperty('debug', []);
+        return Mode::Dev === self::getMode();
+    }
 
-        $flags['enabled'] ??= false;
-        $flags['throw_always_exception'] ??= false;
-
-        return $flags;
+    /** Returns if the hardened mode is active. */
+    public static function isHardenedMode(): bool
+    {
+        return Mode::Hardened === self::getMode();
     }
 
     /** Returns if the safe mode is active. */
     public static function isSafeMode(): bool
     {
-        if (!self::isBackend() || self::isLiveMode()) {
+        if (!self::isBackend()) {
             return false;
         }
 
         if (self::isSafeModeForced()) {
             return true;
+        }
+
+        // In the hardened mode, the (session based) safe mode can not be activated in the backend,
+        // it can only be forced via the env var.
+        if (self::isHardenedMode()) {
+            return false;
         }
 
         return PHP_SESSION_ACTIVE == session_status() && Http\Request::session('safemode', 'boolean', false);
@@ -297,12 +297,6 @@ final class Core
     public static function isSafeModeForced(): bool
     {
         return self::getBoolEnv('REX_SAFE_MODE');
-    }
-
-    /** Returns if the live mode is active (env var `REX_LIVE_MODE`). */
-    public static function isLiveMode(): bool
-    {
-        return self::getBoolEnv('REX_LIVE_MODE');
     }
 
     /**

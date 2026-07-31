@@ -39,5 +39,11 @@
         "sort-packages": true
     },
 
+    "extra": {
+        "runtime": {
+            "class": "Redaxo\\Core\\Runtime"
+        }
+    },
+
     "prefer-stable": true
 }

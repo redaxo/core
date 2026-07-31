@@ -387,8 +387,8 @@ final class ClassDiscovery
             return $this->cacheData = [];
         }
 
-        // In debug mode, check if PHP files were added, removed or modified since the cache was built
-        if (Core::isDebugMode()) {
+        // In dev mode, check if PHP files were added, removed or modified since the cache was built
+        if (Core::isDevMode()) {
             if (!isset($cache['files_hash']) || $cache['files_hash'] !== $this->getPhpFilesHash()) {
                 return $this->cacheData = [];
             }
@@ -430,7 +430,7 @@ final class ClassDiscovery
     /**
      * Builds a hash of all PHP files in the relevant directories, combining each file's path with its mtime.
      * Cheap — only directory listing and stat calls, no file reading — and detects added, removed or modified
-     * files so the cache is invalidated automatically in debug mode.
+     * files so the cache is invalidated automatically in dev mode.
      */
     private function getPhpFilesHash(): string
     {

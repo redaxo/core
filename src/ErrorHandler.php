@@ -3,6 +3,7 @@
 namespace Redaxo\Core;
 
 use ErrorException;
+use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
@@ -19,12 +20,16 @@ use Throwable;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
+use function constant;
+use function defined;
 use function in_array;
 use function ini_get;
 use function is_array;
-use function is_int;
+use function is_string;
 use function Redaxo\Core\View\escape;
+use function sprintf;
 
+use const E_ALL;
 use const E_COMPILE_ERROR;
 use const E_COMPILE_WARNING;
 use const E_DEPRECATED;
@@ -101,7 +106,7 @@ final class ErrorHandler
             }
             Response::setStatus($status);
 
-            if (Core::isSetup() || Core::isDebugMode() || !Core::isLiveMode() && BackendLogin::createUser()?->admin) {
+            if (Core::isSetup() || Core::isDevMode() || !Core::isHardenedMode() && BackendLogin::createUser()?->admin) {
                 [$errPage, $contentType] = self::renderWhoops($exception);
                 Response::sendContent($errPage, $contentType);
                 exit(1);
@@ -325,17 +330,11 @@ final class ErrorHandler
             return false;
         }
 
-        $debug = Core::getDebugFlags();
-        $alwaysThrow = $debug['throw_always_exception'];
-
-        if (
-            true === $alwaysThrow
-            || is_int($alwaysThrow) && $errno === ($errno & $alwaysThrow)
-        ) {
+        if ($errno === ($errno & self::getThrowErrorLevels())) {
             throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
         }
 
-        if (ini_get('display_errors') && (Core::isSetup() || Core::isDebugMode() || !Core::isLiveMode() && BackendLogin::createUser()?->admin)) {
+        if (ini_get('display_errors') && (Core::isSetup() || Core::isDevMode() || 'cli' === PHP_SAPI || !Core::isHardenedMode() && BackendLogin::createUser()?->admin)) {
             $file = Path::relative($errfile);
             if ('cli' === PHP_SAPI) {
                 echo self::getErrorType($errno) . ": $errstr in $file on line $errline";
@@ -351,6 +350,43 @@ final class ErrorHandler
         Logger::logError($errno, $errstr, $errfile, $errline, self::getUrl());
 
         return true;
+    }
+
+    /**
+     * Returns the error levels (bitmask) that are thrown as exceptions (unless they are silenced via the `@`
+     * operator or excluded from `error_reporting`).
+     *
+     * Defaults to warnings and notices in the dev mode, and to none in the live and hardened modes. The default can
+     * be overridden by the env var `REX_ERROR_THROW`, containing `none`, `all` or a comma-separated list of error
+     * level constant names, e.g. `E_WARNING,E_NOTICE,E_DEPRECATED`.
+     *
+     * @phpstan-impure
+     */
+    public static function getThrowErrorLevels(): int
+    {
+        $levels = $_SERVER['REX_ERROR_THROW'] ?? $_ENV['REX_ERROR_THROW'] ?? null;
+
+        if (!is_string($levels) || '' === $levels) {
+            return Core::isDevMode() ? E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE : 0;
+        }
+
+        if ('none' === $levels) {
+            return 0;
+        }
+        if ('all' === $levels) {
+            return E_ALL;
+        }
+
+        $bitmask = 0;
+        foreach (explode(',', $levels) as $level) {
+            $level = trim($level);
+            if (!preg_match('/^E_[A-Z_]+$/', $level) || !defined($level)) {
+                throw new LogicException(sprintf('The env var "REX_ERROR_THROW" contains the invalid error level "%s", it must contain "none", "all" or a comma-separated list of error level constant names, e.g. "E_WARNING,E_NOTICE".', $level));
+            }
+            $bitmask |= (int) constant($level);
+        }
+
+        return $bitmask;
     }
 
     /** Shutdown-handler which is called at the very end of the request. */

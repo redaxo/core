@@ -14,9 +14,6 @@ use Redaxo\Core\Translation\I18n;
  * @var AbstractProject $this
  */
 
-// force debug mode to enable output of notices/warnings and dump() function
-Core::setProperty('debug', true);
-
 Core::setProperty('lang', 'en_gb');
 I18n::setLocale('en_gb');
 

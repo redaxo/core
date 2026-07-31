@@ -1703,7 +1703,6 @@
       <code><![CDATA[$value]]></code>
     </MixedArgument>
     <MixedAssignment>
-      <code><![CDATA[$item]]></code>
       <code><![CDATA[$login]]></code>
       <code><![CDATA[$request]]></code>
       <code><![CDATA[self::$properties[$key]]]></code>
@@ -1711,14 +1710,10 @@
     <MixedMethodCall>
       <code><![CDATA[getImpersonator]]></code>
     </MixedMethodCall>
-    <MixedOperand>
-      <code><![CDATA[$result]]></code>
-    </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>
       <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>
       <code><![CDATA[$request]]></code>
-      <code><![CDATA[$result | $item]]></code>
       <code><![CDATA[Config::get(self::CONFIG_NAMESPACE, $key, $default)]]></code>
     </MixedReturnStatement>
     <PossiblyUndefinedArrayOffset>

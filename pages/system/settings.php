@@ -31,13 +31,9 @@ $func = Request::request('func', 'string');
 
 $csrfToken = CsrfToken::factory('system');
 
-if (Request::request('rex_debug_updated', 'bool', false)) {
-    $success = (Core::isDebugMode()) ? I18n::msg('debug_mode_info_on') : I18n::msg('debug_mode_info_off');
-}
-
 if ($func && !$csrfToken->isValid()) {
     $error[] = I18n::msg('csrf_token_invalid');
-} elseif ('setup' == $func && !Core::isLiveMode()) {
+} elseif ('setup' == $func && !Core::isHardenedMode()) {
     // REACTIVATE SETUP
     if (false !== $url = Setup::startWithToken()) {
         header('Location:' . $url);
@@ -47,7 +43,7 @@ if ($func && !$csrfToken->isValid()) {
 } elseif ('generate' == $func) {
     // generate all articles,cats,templates,caches
     $success = Cache::delete();
-} elseif ('updateassets' == $func && !Core::isLiveMode()) {
+} elseif ('updateassets' == $func && !Core::isHardenedMode()) {
     Dir::copy(Path::core('assets'), Path::coreAssets());
 
     $files = require Path::core('assets_src/vendor_files.php');
@@ -56,23 +52,6 @@ if ($func && !$csrfToken->isValid()) {
     }
 
     $success = 'Updated assets';
-} elseif ('debugmode' == $func && !Core::isLiveMode()) {
-    $configFile = Path::coreData('config.yml');
-    $config = array_merge(
-        File::getConfig(Path::core('setup/default.config.yml')),
-        File::getConfig($configFile),
-    );
-
-    if (!is_array($config['debug'])) {
-        $config['debug'] = [];
-    }
-
-    $config['debug']['enabled'] = !Core::isDebugMode();
-    Core::setProperty('debug', $config['debug']);
-    if (File::putConfig($configFile, $config)) {
-        // reload the page so that debug mode is immediately visible
-        Response::sendRedirect(Url::currentBackendPage(['rex_debug_updated' => true]));
-    }
 } elseif ('updateinfos' == $func) {
     $configFile = Path::coreData('config.yml');
     $config = array_merge(
@@ -203,23 +182,14 @@ if (Version::isUnstable($rexVersion)) {
 
 $mainContent = [];
 $sideContent = [];
-$debugConfirm = '';
-
-if (!Core::isDebugMode()) {
-    $debugConfirm = ' data-confirm="' . I18n::msg('debug_confirm') . '" ';
-}
 
 $content = '
     <h3>' . I18n::msg('delete_cache') . '</h3>
     <p>' . I18n::msg('delete_cache_description') . '</p>
     <p><a class="btn btn-delete" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('delete_cache') . '</a></p>';
 
-if (!Core::isLiveMode()) {
+if (!Core::isHardenedMode()) {
     $content .= '
-        <h3>' . I18n::msg('debug_mode') . '</h3>
-        <p>' . I18n::msg('debug_mode_note') . '</p>
-        <p><a class="btn btn-debug-mode" href="' . Url::currentBackendPage(['func' => 'debugmode'] + $csrfToken->getUrlParams()) . '" data-pjax="false"' . $debugConfirm . '><i class="rex-icon rex-icon-heartbeat"></i> ' . (Core::isDebugMode() ? I18n::msg('debug_mode_off') : I18n::msg('debug_mode_on')) . '</a></p>
-
         <h3>' . I18n::msg('safemode') . '</h3>
         <p>' . I18n::msg('safemode_text') . '</p>';
 
@@ -252,6 +222,10 @@ $content = '
         <tr>
             <th class="rex-table-width-3">REDAXO</th>
             <td>' . $rexVersion . '</td>
+        </tr>
+        <tr>
+            <th>' . I18n::msg('mode') . '</th>
+            <td>' . Core::getMode()->value . '</td>
         </tr>
         <tr>
             <th>PHP</th>

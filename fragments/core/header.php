@@ -38,8 +38,8 @@ $isSetup = ('setup' === Controller::getCurrentPage());
                         <?php else: ?>
                             <a class="navbar-brand" href="<?= Url::backendController() ?>"><?= File::get(Path::coreAssets('redaxo-logo.svg')) ?></a>
                         <?php endif ?>
-                        <?php if (!$isPopup && Core::getUser()?->admin && Core::isDebugMode()): ?>
-                            <a class="rex-marker-debugmode" href="<?= Url::backendPage('system/settings') ?>" title="<?= I18n::msg('debug_mode_marker') ?>">
+                        <?php if (!$isPopup && Core::getUser()?->admin && Core::isDevMode()): ?>
+                            <a class="rex-marker-devmode" href="<?= Url::backendPage('system/settings') ?>" title="<?= I18n::msg('dev_mode_marker') ?>">
                                 <i class="rex-icon rex-icon-heartbeat rex-pulse"></i>
                             </a>
                         <?php endif ?>

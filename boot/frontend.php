@@ -27,7 +27,7 @@ if (Core::isSetup()) {
     Response::sendRedirect(Url::backendController());
 }
 
-if (Core::isDebugMode()) {
+if (Core::isDevMode()) {
     header('X-Robots-Tag: noindex, nofollow, noarchive');
 }
 
@@ -158,7 +158,7 @@ if ($clangId && !Language::exists($clangId)) {
 try {
     $article = new ArticleContent(Article::getCurrentId());
 } catch (ArticleNotFoundException) {
-    if (!Core::isDebugMode() && !BackendLogin::hasSession()) {
+    if (!Core::isDevMode() && !BackendLogin::hasSession()) {
         throw new NotFoundHttpException('Article with id ' . Article::getCurrentId() . ' does not exist.');
     }
 

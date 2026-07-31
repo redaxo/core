@@ -4,7 +4,6 @@ namespace Redaxo\Core\Tests\Util;
 
 use Override;
 use PHPUnit\Framework\TestCase;
-use Redaxo\Core\Core;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Util\Timer;
 use Throwable;
@@ -12,21 +11,24 @@ use Throwable;
 /** @internal */
 final class TimerTest extends TestCase
 {
-    /** @var array{enabled: bool, throw_always_exception: bool|int} */
-    private array $orgDebug;
+    private ?string $orgMode;
 
     #[Override]
     protected function setUp(): void
     {
         // Timer internals depend on debug mode..
-        $this->orgDebug = Core::getProperty('debug');
-        Core::setProperty('debug', true);
+        $this->orgMode = $_SERVER['REX_MODE'] ?? null;
+        $_SERVER['REX_MODE'] = 'dev';
     }
 
     #[Override]
     protected function tearDown(): void
     {
-        Core::setProperty('debug', $this->orgDebug);
+        if (null === $this->orgMode) {
+            unset($_SERVER['REX_MODE']);
+        } else {
+            $_SERVER['REX_MODE'] = $this->orgMode;
+        }
     }
 
     public function testMeasure(): void

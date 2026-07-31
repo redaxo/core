@@ -5,9 +5,7 @@ namespace Redaxo\Core\Tests;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
 use Redaxo\Core\Exception\LogicException;
-
-use const E_NOTICE;
-use const E_WARNING;
+use Redaxo\Core\Mode;
 
 /** @internal */
 final class CoreTest extends TestCase
@@ -74,78 +72,62 @@ final class CoreTest extends TestCase
         // TODO find more appropriate tests
     }
 
-    public function testDebugFlags(): void
+    public function testGetMode(): void
     {
-        $orgDebug = Core::getProperty('debug');
+        $origServer = $_SERVER['REX_MODE'] ?? null;
+        $origEnv = $_ENV['REX_MODE'] ?? null;
+
         try {
-            $debug = [
-                'enabled' => false,
-                'throw_always_exception' => false,
-            ];
-            Core::setProperty('debug', $debug);
+            $_SERVER['REX_MODE'] = 'dev';
+            self::assertSame(Mode::Dev, Core::getMode());
+            self::assertTrue(Core::isDevMode());
 
-            self::assertFalse(Core::isDebugMode());
-            self::assertSame($debug, Core::getDebugFlags());
+            $_SERVER['REX_MODE'] = 'live';
+            self::assertSame(Mode::Live, Core::getMode());
+            self::assertFalse(Core::isDevMode());
 
-            Core::setProperty('debug', true);
+            $_SERVER['REX_MODE'] = 'hardened';
+            self::assertSame(Mode::Hardened, Core::getMode());
+            self::assertFalse(Core::isDevMode());
 
-            self::assertTrue(Core::isDebugMode());
-            self::assertArrayHasKey('throw_always_exception', Core::getDebugFlags());
-            self::assertFalse(Core::getDebugFlags()['throw_always_exception']); // @phpstan-ignore-line
+            unset($_SERVER['REX_MODE'], $_ENV['REX_MODE']);
+            self::assertSame(Mode::Live, Core::getMode(), 'the fail-safe fallback is the live mode');
 
-            Core::setProperty('debug', ['enabled' => false]);
-
-            self::assertFalse(Core::isDebugMode());
-            self::assertArrayHasKey('throw_always_exception', Core::getDebugFlags());
-            self::assertFalse(Core::getDebugFlags()['throw_always_exception']);
-
-            $debug = [
-                'enabled' => true,
-                'throw_always_exception' => true,
-            ];
-            Core::setProperty('debug', $debug);
-            self::assertSame($debug, Core::getDebugFlags());
-
-            $debug = [
-                'enabled' => true,
-                'throw_always_exception' => E_WARNING | E_NOTICE,
-            ];
-            Core::setProperty('debug', $debug);
-            self::assertSame($debug, Core::getDebugFlags());
-
-            Core::setProperty('debug', [
-                'enabled' => true,
-                'throw_always_exception' => ['E_WARNING', 'E_NOTICE'],
-            ]);
-            self::assertSame($debug, Core::getDebugFlags());
+            $_SERVER['REX_MODE'] = 'prod';
+            $this->expectException(LogicException::class);
+            Core::getMode();
         } finally {
-            Core::setProperty('debug', $orgDebug);
+            self::restoreEnv('REX_MODE', $origServer);
+
+            if (null === $origEnv) {
+                unset($_ENV['REX_MODE']);
+            } else {
+                $_ENV['REX_MODE'] = $origEnv;
+            }
         }
     }
 
-    public function testLiveModeFlag(): void
+    public function testIsSafeMode(): void
     {
-        $origLiveMode = $_SERVER['REX_LIVE_MODE'] ?? null;
+        $origMode = $_SERVER['REX_MODE'] ?? null;
         $origSafeMode = $_SERVER['REX_SAFE_MODE'] ?? null;
-        $origDebug = Core::getProperty('debug');
 
         try {
-            $_SERVER['REX_LIVE_MODE'] = '0';
+            $_SERVER['REX_MODE'] = 'dev';
             $_SERVER['REX_SAFE_MODE'] = '1';
-            Core::setProperty('debug', true);
-            self::assertFalse(Core::isLiveMode());
-            self::assertTrue(Core::isSafeMode());
             self::assertTrue(Core::isSafeModeForced());
-            self::assertTrue(Core::isDebugMode());
+            self::assertTrue(Core::isSafeMode());
 
-            $_SERVER['REX_LIVE_MODE'] = '1';
-            self::assertTrue(Core::isLiveMode());
+            // the env var based safe mode works even in the hardened mode (only the session based one is blocked)
+            $_SERVER['REX_MODE'] = 'hardened';
+            self::assertTrue(Core::isSafeMode());
+
+            $_SERVER['REX_SAFE_MODE'] = '0';
+            self::assertFalse(Core::isSafeModeForced());
             self::assertFalse(Core::isSafeMode());
-            self::assertFalse(Core::isDebugMode());
         } finally {
-            self::restoreEnv('REX_LIVE_MODE', $origLiveMode);
+            self::restoreEnv('REX_MODE', $origMode);
             self::restoreEnv('REX_SAFE_MODE', $origSafeMode);
-            Core::setProperty('debug', $origDebug);
         }
     }
 

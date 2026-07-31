@@ -25,8 +25,8 @@ final class AddonOperation extends ApiFunction
     #[Override]
     public function execute(): Result
     {
-        if (Core::isLiveMode()) {
-            throw new ApiFunctionException('Package management is not available in live mode!');
+        if (Core::isHardenedMode()) {
+            throw new ApiFunctionException('Package management is not available in hardened mode!');
         }
 
         $function = Request::request('function', 'string');

@@ -26,14 +26,14 @@ final class VarDumper
     public static function register(): void
     {
         BaseVarDumper::setHandler(static function ($var, ?string $label = null) {
-            if (Core::isDebugMode() || ($user = BackendLogin::createUser()) && $user->admin) {
+            if (Core::isDevMode() || 'cli' === PHP_SAPI || ($user = BackendLogin::createUser()) && $user->admin) {
                 BaseVarDumper::setHandler(self::dump(...));
                 self::dump($var, $label);
 
                 return;
             }
 
-            // register noop handler for non-admins (if not in debug mode)
+            // register noop handler for non-admins (if not in dev mode)
             BaseVarDumper::setHandler(static function () {
                 // noop
             });
