@@ -828,7 +828,7 @@ class Zip extends Archive
      */
     protected function writebytesAt($data, $offset) {
         if (!$this->file) {
-            $this->memory .= substr_replace($this->memory, $data, $offset);
+            $this->memory = substr_replace($this->memory, $data, $offset, strlen($data));
             $written = strlen($data);
         } else {
             @fseek($this->fh, $offset);
