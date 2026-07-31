@@ -20,7 +20,7 @@
         "phpunit/phpunit": "^12.5.17 || ^13.1.14",
         "psalm/plugin-phpunit": "0.19.7",
         "psalm/plugin-symfony": "v5.3.0",
-        "rector/rector": "2.5.8",
+        "rector/rector": "2.5.9",
         "redaxo/php-cs-fixer-config": "3.1.2",
         "redaxo/psalm-plugin": "2.2.1",
         "shipmonk/phpstan-baseline-per-identifier": "2.3.0",
