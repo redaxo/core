@@ -57,6 +57,7 @@ class rex_var_media extends rex_var
      */
     public static function getWidget($id, $name, $value, array $args = [])
     {
+        // TODO
         $openParams = '';
         if (isset($args['category']) && ($category = (int) $args['category'])) {
             $openParams .= '&amp;rex_file_category=' . $category;
@@ -75,27 +76,22 @@ class rex_var_media extends rex_var
         }
 
         $disabled = ' disabled';
-        $openFunc = '';
-        $addFunc = '';
-        $deleteFunc = '';
-        $viewFunc = '';
         if (rex::requireUser()->getComplexPerm('media')->hasMediaPerm()) {
             $disabled = '';
-            $quotedId = "'" . rex_escape($id, 'js') . "'";
-            $openFunc = 'openREXMedia(' . $quotedId . ', \'' . $openParams . '\');';
-            $addFunc = 'addREXMedia(' . $quotedId . ', \'' . $openParams . '\');';
-            $deleteFunc = 'deleteREXMedia(' . $quotedId . ');';
-            $viewFunc = 'viewREXMedia(' . $quotedId . ', \'' . $openParams . '\');';
         }
 
         $e = [];
-        $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '">';
+        $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '"
+            data-id="' . rex_escape($id) . '"
+            data-category="' . (int) rex_escape($args['category'] ?? 0) . '"
+            data-params="' . json_encode($args) . '"
+            >';
         $e['field'] = '<input class="form-control" type="text" name="' . $name . '" value="' . $value . '" id="REX_MEDIA_' . $id . '" readonly />';
         $e['functionButtons'] = '
-                <a href="#" class="btn btn-popup" onclick="' . $openFunc . 'return false;" title="' . rex_i18n::msg('var_media_open') . '"' . $disabled . '><i class="rex-icon rex-icon-open-mediapool"></i></a>
-                <a href="#" class="btn btn-popup" onclick="' . $addFunc . 'return false;" title="' . rex_i18n::msg('var_media_new') . '"' . $disabled . '><i class="rex-icon rex-icon-add-media"></i></a>
-                <a href="#" class="btn btn-popup" onclick="' . $deleteFunc . 'return false;" title="' . rex_i18n::msg('var_media_remove') . '"' . $disabled . '><i class="rex-icon rex-icon-delete-media"></i></a>
-                <a href="#" class="btn btn-popup" onclick="' . $viewFunc . 'return false;" title="' . rex_i18n::msg('var_media_view') . '"' . $disabled . '><i class="rex-icon rex-icon-view-media"></i></a>';
+                <a class="btn btn-popup rex-js-widget-media-open" title="' . rex_i18n::msg('var_media_open') . '"' . $disabled . '><i class="rex-icon rex-icon-open-mediapool"></i></a>
+                <a class="btn btn-popup rex-js-widget-media-add" title="' . rex_i18n::msg('var_media_new') . '"' . $disabled . '><i class="rex-icon rex-icon-add-media"></i></a>
+                <a class="btn btn-popup rex-js-widget-media-delete" title="' . rex_i18n::msg('var_media_remove') . '"' . $disabled . '><i class="rex-icon rex-icon-delete-media"></i></a>
+                <a class="btn btn-popup rex-js-widget-media-view" title="' . rex_i18n::msg('var_media_view') . '"' . $disabled . '><i class="rex-icon rex-icon-view-media"></i></a>';
         $e['after'] = '<div class="rex-js-media-preview"></div></div>';
 
         $fragment = new rex_fragment();

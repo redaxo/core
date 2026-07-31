@@ -302,10 +302,7 @@ foreach ($items as $media) {
 
     $openerLink = '';
     if ('' != $openerInputField) {
-        $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $media->getFileName() . '\', \'' . rex_escape($media->getTitle(), 'js') . '\'); return false;">' . rex_i18n::msg('pool_file_get') . '</a>';
-        if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-            $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $media->getFileName() . '\', this);return false;">' . rex_i18n::msg('pool_file_get') . '</a>';
-        }
+        $openerLink = '<a class="btn btn-xs btn-select rex-js-media-select" data-id="' . $media->getId() . '" data-file_name="'.rex_escape($media->getFileName()).'" data-title="' . rex_escape($media->getTitle()) . '" data-select_type="' . (str_starts_with($openerInputField, 'REX_MEDIALIST_') ? "multiple" : "single") . '">' . rex_i18n::msg('pool_file_get') . '</a>';
     }
 
     $ilink = rex_url::currentBackendPage(array_merge(['file_id' => $media->getId(), 'rex_file_category' => $rexFileCategory], $argUrl));

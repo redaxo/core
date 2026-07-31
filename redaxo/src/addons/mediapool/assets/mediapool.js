@@ -2,6 +2,120 @@
  REDAXO Mediapool JavaScript library
  */
 
+$(document).on('rex:ready',function() {
+
+    $(".rex-js-widget-media").each(function () {
+
+        // todo:
+        // additional params
+
+        let id = this.dataset.id;
+        let media_field = 'REX_MEDIA_'+id;
+        let params = this.dataset.params;
+        let category = intval(this.dataset.category);
+        let media_input = $(this).find("input");
+        if (media_input[0] === undefined) {
+            console.log("Media input field " + media_field + "not found");
+        }
+        media_input = $(media_input[0]);
+
+        // TODO: params ergänzen aus array umbauen
+        params = '';
+
+        if(0 < category) {
+            params += '&rex_file_category=' + category;
+        }
+
+        $(this).find("a").each(function () {
+            if (this.classList.contains('rex-js-widget-media-open')) {
+                this.onclick = function () {
+                    return newPoolWindow('index.php?page=mediapool/media' + params + '&opener_input_field=' + media_field);
+                }
+            }
+
+            if (this.classList.contains('rex-js-widget-media-add')) {
+                this.onclick = function () {
+                    return newPoolWindow('index.php?page=mediapool/upload' + params + '&opener_input_field=' + media_field);
+                }
+            }
+
+            if (this.classList.contains('rex-js-widget-media-delete')) {
+                this.onclick = function () {
+                    media_input.val("");
+                    media_input.trigger('change');
+                }
+            }
+
+            if (this.classList.contains('rex-js-widget-media-view')) {
+                this.onclick = function () {
+                    media_file_name = media_input.val();
+                    return newPoolWindow('index.php?page=mediapool/media' + params + '&opener_input_field=' + media_field + "&file_name=" + media_file_name);
+                }
+            }
+
+        });
+    });
+
+    $(".rex-js-media-select").each(function () {
+        this.onclick = function () {
+            let id = this.dataset.id || '';
+            let file_name = this.dataset.file_name || '';
+            let title  = this.dataset.title || '';
+            let select_type = this.dataset.select_type || 'single';
+
+            if (select_type === 'single') {
+                var event = opener.jQuery.Event("rex:selectMedia");
+                opener.jQuery(window).trigger(event, [file_name, title]);
+                if (!event.isDefaultPrevented()) {
+                    if (rex.mediapoolOpenerInputField) {
+                        var input = opener.document.getElementById(rex.mediapoolOpenerInputField);
+                        if (input !== null) {
+                            input.value = file_name;
+                            opener.jQuery(input).trigger('change');
+                            self.close();
+                        } else {
+                            console.log("Media input field not found");
+                        }
+                    } else {
+                        self.close();
+                    }
+                }
+            }
+
+            if (select_type === 'multiple') {
+                if (rex.mediapoolOpenerInputField && 0 === rex.mediapoolOpenerInputField.indexOf('REX_MEDIALIST_')) {
+                    var openerId = rex.mediapoolOpenerInputField.slice('REX_MEDIALIST_'.length);
+                    var medialist = "REX_MEDIALIST_SELECT_" + openerId;
+
+                    var source = opener.document.getElementById(medialist);
+                    var sourcelength = source.options.length;
+
+                    option = opener.document.createElement("OPTION");
+                    option.text = file_name;
+                    option.value = file_name;
+
+                    source.options.add(option, sourcelength);
+                    opener.writeREX(openerId, 'REX_MEDIALIST_', 'REX_MEDIALIST_SELECT_');
+                }
+            }
+        }
+    });
+
+});
+
+// TODO
+// writeREXMedialist
+
+
+// rex-js-media-select
+
+
+
+
+
+
+
+
 function setAllCheckBoxes(FieldName, mthis)
 {
     var CheckValue;
@@ -55,50 +169,6 @@ function openMediaPool(id)
         id = '';
     }
     return newPoolWindow('index.php?page=mediapool/media&opener_input_field='+ id);
-}
-
-function openREXMedia(id,param)
-{
-    var mediaid = 'REX_MEDIA_'+id;
-    if (typeof(param) == 'undefined')
-    {
-        param = '';
-    }
-    return newPoolWindow('index.php?page=mediapool/media' + param + '&opener_input_field=' + mediaid);
-}
-
-function viewREXMedia(id,param)
-{
-    var mediaid = 'REX_MEDIA_'+id;
-    var value = document.getElementById(mediaid).value;
-    if ( typeof(param) == 'undefined')
-    {
-        param = '';
-    }
-    if (value != '') {
-        param = param + '&file_name='+ value;
-        return newPoolWindow('index.php?page=mediapool/media' + param + '&opener_input_field=' + mediaid);
-    }
-}
-
-function deleteREXMedia(id)
-{
-    var input = new getObj("REX_MEDIA_" + id).obj;
-    if (input !== null) {
-        input.value = "";
-        jQuery(input).trigger('change');
-    } else {
-        console.log("Media input field not found");
-    }
-}
-
-function addREXMedia(id,params)
-{
-    if (typeof(params) == 'undefined')
-    {
-        params = '';
-    }
-    return newPoolWindow('index.php?page=mediapool/upload&opener_input_field=REX_MEDIA_'+id+params);
 }
 
 function openREXMedialist(id,param)
@@ -182,7 +252,7 @@ $(document).ready(function () {
 
         var url;
         var width = 0;
-        if('.svg' != value.substr(value.length - 4) && $(this).hasClass("rex-js-widget-preview-media-manager"))
+        if('.svg' !== value.substr(value.length - 4) && $(this).hasClass("rex-js-widget-preview-media-manager"))
             url = './index.php?rex_media_type='+ img_type +'&rex_media_file='+ value;
         else
         {
@@ -190,17 +260,17 @@ $(document).ready(function () {
             width = 246;
         }
 
-        if(value && value.length != 0 && $.inArray(value.split('.').pop(), rex.imageExtensions))
+        if(value && value.length !== 0 && $.inArray(value.split('.').pop(), rex.imageExtensions))
         {
             // img tag nur einmalig einfuegen, ggf erzeugen wenn nicht vorhanden
             var img = $('img', div);
-            if(img.length == 0)
+            if(img.length === 0)
             {
                 div.html('<img />');
                 img = $('img', div);
             }
             img.attr('src', url);
-            if (width != 0)
+            if (width !== 0)
                 img.attr('width', width);
 
             div.stop(true, false).slideDown("fast");
@@ -217,7 +287,7 @@ $(document).ready(function () {
         .on('mouseenter', '.rex-js-widget-media.rex-js-widget-preview, .rex-js-widget-medialist.rex-js-widget-preview', rexShowMediaPreview)
         .on('mouseleave', '.rex-js-widget-media.rex-js-widget-preview, .rex-js-widget-medialist.rex-js-widget-preview', function() {
             var div = $('.rex-js-media-preview', this);
-            if(div.css('height') != 'auto')
+            if(div.css('height') !== 'auto')
             {
                 div.slideUp("normal");
             }
@@ -227,44 +297,7 @@ $(document).ready(function () {
 });
 
 
-function selectMedia(filename, alt)
-{
-    var event = opener.jQuery.Event("rex:selectMedia");
 
-    opener.jQuery(window).trigger(event, [filename, alt]);
-    if (!event.isDefaultPrevented()) {
-        if (rex.mediapoolOpenerInputField) {
-            var input = opener.document.getElementById(rex.mediapoolOpenerInputField);
-            if (input !== null) {
-                input.value = filename;
-                opener.jQuery(input).trigger('change');
-                self.close();
-            } else {
-                console.log("Media input field not found");
-            }
-        } else {
-            self.close();
-        }
-    }
-}
-
-function selectMedialist(filename)
-{
-    if (rex.mediapoolOpenerInputField && 0 === rex.mediapoolOpenerInputField.indexOf('REX_MEDIALIST_')) {
-        var openerId = rex.mediapoolOpenerInputField.slice('REX_MEDIALIST_'.length);
-        var medialist = "REX_MEDIALIST_SELECT_" + openerId;
-
-        var source = opener.document.getElementById(medialist);
-        var sourcelength = source.options.length;
-
-        option = opener.document.createElement("OPTION");
-        option.text = filename;
-        option.value = filename;
-
-        source.options.add(option, sourcelength);
-        opener.writeREXMedialist(openerId);
-    }
-}
 
 function selectMediaListArray(files)
 {

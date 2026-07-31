@@ -88,6 +88,14 @@ class rex_var_medialist extends rex_var
 
         $e = [];
         $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '">';
+
+        $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '"
+            data-id="' . rex_escape($id) . '"
+            data-category="' . (int) rex_escape($args['category'] ?? 0) . '"
+            data-params="' . json_encode($args) . '"
+            >';
+
+
         $e['field'] = '<select class="form-control" name="REX_MEDIALIST_SELECT[' . $id . ']" id="REX_MEDIALIST_SELECT_' . $id . '" size="10">' . $options . '</select><input type="hidden" name="' . $name . '" id="REX_MEDIALIST_' . $id . '" value="' . $value . '" />';
         $e['moveButtons'] = '
                 <a href="#" class="btn btn-popup" onclick="moveREXMedialist(' . $quotedId . ',\'top\');return false;" title="' . rex_i18n::msg('var_medialist_move_top') . '"><i class="rex-icon rex-icon-top"></i></a>

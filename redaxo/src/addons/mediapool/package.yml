@@ -7,7 +7,7 @@ rows_per_page: 100
 
 page:
     title: translate:mediapool
-    popup: openMediaPool(); return false;
+    popup: 1
     perm: media/hasMediaPerm
     prio: 20
     block: system

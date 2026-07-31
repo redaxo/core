@@ -175,10 +175,9 @@ if ('' != $success) {
 }
 
 if ('' != $openerInputField) {
-    $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $encodedFname . '\', \'' . rex_escape($gf->getValue('title'), 'js') . '\'); return false;">' . rex_i18n::msg('pool_file_get') . '</a>';
-    if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-        $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $encodedFname . '\'); return false;">' . rex_i18n::msg('pool_file_get') . '</a>';
-    }
+    $openerLink = '<a class="btn btn-xs btn-select rex-js-media-select"
+        data-id="' . $gf->getValue('id') . '" data-file_name="'.rex_escape($encodedFname).'" data-title="' . rex_escape($gf->getValue('title')) . '"
+        data-select_type="' . (str_starts_with($openerInputField, 'REX_MEDIALIST_') ? "multiple" : "single") . '">' . rex_i18n::msg('pool_file_get') . '</a>';
 }
 
 if ('' != $openerLink) {
