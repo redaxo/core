@@ -22,6 +22,7 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
@@ -118,6 +119,11 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
     // ----- hat rechte an diesem artikel
 
     // ------------------------------------------ Slice add/edit/delete
+    if (Request::request('save', 'boolean') && in_array($function, ['add', 'edit', 'delete']) && !CsrfToken::factory('structure_content_slice')->isValid()) {
+        $globalWarning = I18n::msg('csrf_token_invalid');
+        $function = '';
+    }
+
     if (Request::request('save', 'boolean') && in_array($function, ['add', 'edit', 'delete'])) {
         // ----- check module
 

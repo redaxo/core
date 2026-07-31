@@ -3,17 +3,24 @@
 use Redaxo\Core\Content\ArticleSliceHistory;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
 
+$csrfToken = CsrfToken::factory('structure_history');
+
 if ('clearall' == Request::request('func', 'string')) {
-    ArticleSliceHistory::clearAllHistory();
-    echo Message::success(I18n::msg('structure_history_deleted'));
+    if (!$csrfToken->isValid()) {
+        echo Message::error(I18n::msg('csrf_token_invalid'));
+    } else {
+        ArticleSliceHistory::clearAllHistory();
+        echo Message::success(I18n::msg('structure_history_deleted'));
+    }
 }
 
 $content = I18n::rawMsg('structure_history_info_content');
-$content .= '<p><a href="' . Url::currentBackendPage(['func' => 'clearall']) . '" class="btn btn-setup">' . I18n::msg('structure_history_button_delete_history') . '</a></p>';
+$content .= '<p><a href="' . Url::currentBackendPage(['func' => 'clearall'] + $csrfToken->getUrlParams()) . '" class="btn btn-setup">' . I18n::msg('structure_history_button_delete_history') . '</a></p>';
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('structure_history_title_info'));

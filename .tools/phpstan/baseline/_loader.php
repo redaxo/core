@@ -8,4 +8,5 @@ return ['includes' => [
     __DIR__ . '/missingType.generics.php',
     __DIR__ . '/missingType.iterableValue.php',
     __DIR__ . '/missingType.parameter.php',
+    __DIR__ . '/nullCoalesce.unnecessary.php',
 ]];

@@ -4,10 +4,6 @@
     <InvalidOperand>
       <code><![CDATA[strtotime($version['history_date'])]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$userAgent]]></code>
-      <code><![CDATA[$userAgent]]></code>
-    </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[[
             'page' => $params['page'],
@@ -19,7 +15,6 @@
     <MixedAssignment>
       <code><![CDATA[$metaSidebar]]></code>
       <code><![CDATA[$subject]]></code>
-      <code><![CDATA[$userAgent]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$metaSidebar]]></code>
@@ -872,9 +867,6 @@
     <MixedOperand>
       <code><![CDATA[$fileId]]></code>
       <code><![CDATA[$fileId]]></code>
-      <code><![CDATA[$openerLink]]></code>
-      <code><![CDATA[$openerLink]]></code>
-      <code><![CDATA[$openerLink]]></code>
     </MixedOperand>
     <NullOperand>
       <code><![CDATA[escape($gf->getValue('createuser'))]]></code>
@@ -946,6 +938,18 @@
     <InvalidOperand>
       <code><![CDATA[escape($id)]]></code>
     </InvalidOperand>
+  </file>
+  <file src="pages/profile/index.php">
+    <InvalidOperand>
+      <code><![CDATA[escape($userdesc)]]></code>
+    </InvalidOperand>
+    <NullOperand>
+      <code><![CDATA[escape($useremail)]]></code>
+      <code><![CDATA[escape($username)]]></code>
+    </NullOperand>
+    <PossiblyNullOperand>
+      <code><![CDATA[escape($userdesc)]]></code>
+    </PossiblyNullOperand>
   </file>
   <file src="pages/setup/index.php">
     <ArgumentTypeCoercion>
@@ -1419,8 +1423,6 @@
       <code><![CDATA[$backups]]></code>
     </InvalidArgument>
     <MixedArgument>
-      <code><![CDATA[$config['db'][1]['host']]]></code>
-      <code><![CDATA[$config['db'][1]['login']]]></code>
       <code><![CDATA[$config['db'][1]['name']]]></code>
       <code><![CDATA[$dbCreate]]></code>
       <code><![CDATA[$login]]></code>
@@ -2451,9 +2453,6 @@
       <code><![CDATA[$countQueryParams]]></code>
       <code><![CDATA[$queryParams]]></code>
     </MixedArgumentTypeCoercion>
-    <NullOperand>
-      <code><![CDATA[escape(File::mimeType($data['file']['path']))]]></code>
-    </NullOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[$content]]></code>
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
@@ -2537,6 +2536,9 @@
     </MixedAssignment>
   </file>
   <file src="src/Security/Login.php">
+    <InvalidArgument>
+      <code><![CDATA[static::getCookieParams()]]></code>
+    </InvalidArgument>
     <MixedArrayAccess>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId]]]></code>
     </MixedArrayAccess>

@@ -391,7 +391,7 @@ class Login
     /**
      * Einstellen der Cookie Paramter bevor die session gestartet wird.
      *
-     * @return array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string}
+     * @return array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string, partitioned: bool}
      */
     public static function getCookieParams(): array
     {
@@ -410,7 +410,7 @@ class Login
             }
         }
 
-        /** @var array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string} */
+        /** @var array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string, partitioned: bool} */
         return $cookieParams;
     }
 

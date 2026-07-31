@@ -3,6 +3,7 @@
 use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
@@ -11,7 +12,11 @@ use function Redaxo\Core\View\escape;
 
 $success = '';
 
-if ('' != Request::post('btn_save', 'string')) {
+$csrfToken = CsrfToken::factory('be_style_customizer');
+
+if ('' != Request::post('btn_save', 'string') && !$csrfToken->isValid()) {
+    $error = I18n::msg('csrf_token_invalid');
+} elseif ('' != Request::post('btn_save', 'string')) {
     // set config
     $settings = Request::post('settings', [
         ['be_style_labelcolor', 'string'],
@@ -79,6 +84,7 @@ $content = $fragment->parse('core/page/section.php');
 
 echo '
     <form action="' . Url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         ' . $content . '
     </form>
 ';

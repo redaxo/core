@@ -238,7 +238,7 @@ final class MediaPool
             return false;
         }
 
-        $mimeType = File::mimeType($path);
+        $mimeType = File::mimeType($path, $filename);
 
         return in_array($mimeType, $allowedMimetypes[$extension]);
     }

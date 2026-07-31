@@ -124,7 +124,7 @@ $adminchecked = '';
 
 $passwordPolicy = BackendPasswordPolicy::factory();
 
-if ($save && ($fUNCADD || $fUNCUPDATE || $fUNCAPPLY)) {
+if ($fUNCUPDATE || $fUNCAPPLY || ($fUNCADD && $save)) {
     if (!CsrfToken::factory('user_edit')->isValid()) {
         $warnings[] = I18n::msg('csrf_token_invalid');
     }

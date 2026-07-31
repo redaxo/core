@@ -5,6 +5,7 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Log\LogEntry;
 use Redaxo\Core\Log\LogFile;
+use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Formatter;
@@ -19,7 +20,11 @@ $success = '';
 $message = '';
 $logFile = Path::log('cronjob.log');
 
-if ('cronjob_delLog' == $func) {
+$csrfToken = CsrfToken::factory('cronjob_log');
+
+if ('cronjob_delLog' == $func && !$csrfToken->isValid()) {
+    $error = I18n::msg('csrf_token_invalid');
+} elseif ('cronjob_delLog' == $func) {
     if (LogFile::delete($logFile)) {
         $success = I18n::msg('syslog_deleted');
     } else {
@@ -96,6 +101,7 @@ $content = $fragment->parse('core/page/section.php');
 
 $content = '
     <form action="' . Url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         <input type="hidden" name="func" value="cronjob_delLog" />
         ' . $content . '
     </form>';

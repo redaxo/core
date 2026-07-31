@@ -38,16 +38,16 @@ jobs:
                     body: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             -   name: Checkout
-                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 if: env.writable == 1 && github.event_name != 'repository_dispatch'
                 with:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.BOT_TOKEN }}
             -   name: Checkout fork
-                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 if: env.writable == 0
             -   name: Checkout on chat command
-                uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
                 if: github.event_name == 'repository_dispatch'
                 with:
                     token: ${{ secrets.BOT_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
             -   name: Setup PHP
-                uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+                uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
                 with:
                     php-version: '8.5'
                     extensions: pdo_mysql
@@ -79,7 +79,7 @@ jobs:
                 run: php project/bin/console assets:compile-styles --ansi -v
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
+                uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
                 if: env.writable == 1
                 with:
                     commit_message: 'chore: apply assets:compile-styles'
