@@ -77,7 +77,14 @@ rex_extension::register('STRUCTURE_CONTENT_BEFORE_SLICES', static function (rex_
         $workingVersionEmpty = false;
     }
 
+    $csrfToken = rex_csrf_token::factory('structure_version');
+
     $func = rex_request('rex_version_func', 'string');
+    if ('' !== $func && !$csrfToken->isValid()) {
+        $return .= rex_view::error(rex_i18n::msg('csrf_token_invalid'));
+        $func = '';
+    }
+
     switch ($func) {
         case 'copy_work_to_live':
             if ($workingVersionEmpty) {
@@ -151,18 +158,18 @@ rex_extension::register('STRUCTURE_CONTENT_BEFORE_SLICES', static function (rex_
 
     if (!$user->hasPerm('version[live_version]')) {
         if ($revision > 0) {
-            $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work']) . '">' . rex_i18n::msg('version_copy_from_liveversion') . '</a></li>';
+            $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work'] + $csrfToken->getUrlParams()) . '">' . rex_i18n::msg('version_copy_from_liveversion') . '</a></li>';
             $toolbar .= '<li><a href="' . rex_getUrl($articleId, $clangId, ['rex_version' => rex_article_revision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . rex_i18n::msg('version_preview') . '</a></li>';
         }
     } else {
         if ($revision > 0) {
             if (!$workingVersionEmpty) {
-                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'clear_work']) . '" data-confirm="' . rex_i18n::msg('version_confirm_clear_workingversion') . '">' . rex_i18n::msg('version_clear_workingversion') . '</a></li>';
-                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_work_to_live']) . '">' . rex_i18n::msg('version_working_to_live') . '</a></li>';
+                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'clear_work'] + $csrfToken->getUrlParams()) . '" data-confirm="' . rex_i18n::msg('version_confirm_clear_workingversion') . '">' . rex_i18n::msg('version_clear_workingversion') . '</a></li>';
+                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_work_to_live'] + $csrfToken->getUrlParams()) . '">' . rex_i18n::msg('version_working_to_live') . '</a></li>';
             }
             $toolbar .= '<li><a href="' . rex_getUrl($articleId, $clangId, ['rex_version' => rex_article_revision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . rex_i18n::msg('version_preview') . '</a></li>';
         } else {
-            $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work']) . '" data-confirm="' . rex_i18n::msg('version_confirm_copy_live_to_workingversion') . '">' . rex_i18n::msg('version_copy_live_to_workingversion') . '</a></li>';
+            $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work'] + $csrfToken->getUrlParams()) . '" data-confirm="' . rex_i18n::msg('version_confirm_copy_live_to_workingversion') . '">' . rex_i18n::msg('version_copy_live_to_workingversion') . '</a></li>';
         }
     }
 
