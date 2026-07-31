@@ -113,6 +113,12 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
 
     switch (rex_request('rex_history_function', 'string')) {
         case 'snap':
+            if (!rex_csrf_token::factory('structure_history')->isValid()) {
+                rex_response::setStatus(rex_response::HTTP_FORBIDDEN);
+                rex_response::sendContent(rex_i18n::msg('csrf_token_invalid'), 'text/plain');
+                exit;
+            }
+
             $articleId = rex_request('history_article_id', 'int');
             $clangId = rex_request('history_clang_id', 'int');
             $historyDate = rex_request('history_date', 'string');
@@ -174,6 +180,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
                     var history_clang_id = ' . rex_clang::getCurrentId() . ';
                     var history_ctype_id = ' . rex_request('ctype', 'int', 0) . ';
                     var history_article_link = "' . rex_escape($articleLink, 'js') . '";
+                    var history_csrf_token = "' . rex_escape(rex_csrf_token::factory('structure_history')->getValue(), 'js') . '";
                     </script>';
         }
     },
