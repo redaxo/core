@@ -110,6 +110,8 @@ jobs:
                     php project/bin/console addon:install debug --ansi -v
 
             -   name: Start php server
+                env:
+                    REX_INSTANCE_COLOR: '#3bb594'
                 run: |
                     cat <<EOF > project/public/router.php
                     <?php

@@ -344,10 +344,6 @@ async function main() {
             ]);
             await createScreenshots(page, 'packages_test_reinstalled.png');
 
-            // test customizer
-            await goToUrlOrThrow(page, START_URL + '?page=system/be_style/customizer', { waitUntil: 'load' });
-            await createScreenshots(page, 'system_customizer.png');
-
             // logout
             await page.click('#rex-js-nav-top .rex-logout');
             await page.waitForSelector('.rex-background--ready');
