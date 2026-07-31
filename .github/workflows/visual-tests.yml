@@ -110,9 +110,8 @@ jobs:
                     php project/bin/console addon:install debug --ansi -v
 
             -   name: Start php server
-                env:
-                    REX_INSTANCE_COLOR: '#3bb594'
                 run: |
+                    echo "REX_INSTANCE_COLOR='#3bb594'" > project/.env.local
                     cat <<EOF > project/public/router.php
                     <?php
                     if (preg_match('@redaxo/(?:bin|data|cache|src)@', \$_SERVER['REQUEST_URI'])) http_response_code(403);
