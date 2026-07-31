@@ -79,6 +79,13 @@ All core classes use the `rex_` prefix (e.g., `rex_sql`, `rex_addon`, `rex_file`
 - Don't write bare `@name` tokens in commit messages (e.g. annotations like `@internal`/`@deprecated`, or anything that looks like a username): GitHub autolinks them into user mentions and pings a random account. Wrap them in backticks (`` `@internal` ``) — GitHub renders code spans in commit messages and doesn't link mentions inside them
 - Don't put issue references (`Fixes #123`, `Closes #123`) in commit messages — they belong in the PR description instead
 
+### Comments
+The measure for a code comment is whether it helps someone looking at this code in a year — not whether it explains the change being made right now.
+
+- Don't comment the diff ("this used to be X") — that belongs in the commit message or PR description.
+- Leave out what the code already says, e.g. restating a method or variable name.
+- Keep what stays compact — one precise sentence beats three explanatory ones.
+
 ### Baselines
 The static analysis baselines exist to grandfather pre-existing issues. **New code must not add to the baselines** — fix the issue instead. Only regenerate baselines (`composer baseline`) when intentionally accepting new findings, and call that out in the PR.
 
