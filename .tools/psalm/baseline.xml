@@ -1365,9 +1365,6 @@
     <MixedOperand>
       <code><![CDATA[$fileId]]></code>
       <code><![CDATA[$fileId]]></code>
-      <code><![CDATA[$openerLink]]></code>
-      <code><![CDATA[$openerLink]]></code>
-      <code><![CDATA[$openerLink]]></code>
     </MixedOperand>
     <NullOperand>
       <code><![CDATA[rex_escape($gf->getValue('createuser'))]]></code>
