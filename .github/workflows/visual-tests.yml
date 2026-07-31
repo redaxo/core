@@ -101,6 +101,7 @@ jobs:
 
             -   name: Import mock data
                 run: |
+                    echo "REX_INSTANCE_COLOR='#3bb594'" > project/.env.local
                     mkdir -p $GITHUB_WORKSPACE/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/project/var/data/core/backup/
                     cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/project/public/media/
                     cp -f .tools/visual-tests/fixtures/README.md $GITHUB_WORKSPACE/addons/test/README.de.md
@@ -111,7 +112,6 @@ jobs:
 
             -   name: Start php server
                 run: |
-                    echo "REX_INSTANCE_COLOR='#3bb594'" > project/.env.local
                     cat <<EOF > project/public/router.php
                     <?php
                     if (preg_match('@redaxo/(?:bin|data|cache|src)@', \$_SERVER['REQUEST_URI'])) http_response_code(403);
