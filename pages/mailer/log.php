@@ -4,6 +4,7 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Log\LogFile;
 use Redaxo\Core\Mailer\Mailer;
+use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\View\Fragment;
@@ -16,7 +17,11 @@ $error = '';
 $success = '';
 $logFile = Mailer::logFile();
 
-if ('mailer_delLog' == $func) {
+$csrfToken = CsrfToken::factory('phpmailer-delete-log');
+
+if ('mailer_delLog' == $func && !$csrfToken->isValid()) {
+    $error = I18n::msg('csrf_token_invalid');
+} elseif ('mailer_delLog' == $func) {
     if (LogFile::delete($logFile)) {
         $success = I18n::msg('syslog_deleted');
     } else {
@@ -80,6 +85,7 @@ $fragment->setVar('buttons', $buttons, false);
 $content = $fragment->parse('core/page/section.php');
 $content = '
     <form action="' . Url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         <input type="hidden" name="func" value="mailer_delLog" />
         ' . $content . '
     </form>';

@@ -34,7 +34,6 @@ if ('' !== $types) {
 }
 
 // ----- opener_input_field setzen
-$openerLink = Request::request('opener_link', 'string');
 $openerInputField = Request::request('opener_input_field', 'string', '');
 
 if ('' != $openerInputField) {
@@ -114,4 +113,4 @@ if (!Request::isXmlHttpRequest()) {
 }
 
 // -------------- Include Page
-Controller::includeCurrentPageSubPath(compact('openerInputField', 'openerLink', 'argUrl', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));
+Controller::includeCurrentPageSubPath(compact('openerInputField', 'argUrl', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));

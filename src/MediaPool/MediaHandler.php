@@ -76,7 +76,7 @@ final class MediaHandler
         }
 
         if (!MediaPool::isAllowedMimeType($data['file']['path'], $data['file']['name'])) {
-            $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape(File::extension($data['file']['name'])) . '</code> (<code>' . escape(File::mimeType($data['file']['path'])) . '</code>)';
+            $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape(File::extension($data['file']['name'])) . '</code> (<code>' . escape(File::mimeType($data['file']['path'], $data['file']['name']) ?? 'unknown mime type') . '</code>)';
             throw new ApiFunctionException($warning);
         }
 
@@ -89,7 +89,7 @@ final class MediaHandler
         $srcFile = $data['file']['path'];
         $dstFile = Path::media($data['file']['name_new']);
 
-        $data['file']['type'] = File::mimeType($srcFile);
+        $data['file']['type'] = File::mimeType($srcFile, $data['file']['name']);
 
         // Bevor die Datei engueltig in den Medienpool uebernommen wird, koennen
         // Addons ueber einen Extension-Point ein Veto einlegen.
@@ -220,7 +220,7 @@ final class MediaHandler
                 throw new ApiFunctionException(I18n::msg('pool_file_not_found'));
             }
 
-            $filetype = File::mimeType($file['path']);
+            $filetype = File::mimeType($file['path'], $file['name']);
 
             $srcFile = $file['path'];
             $dstFile = Path::media($filename);

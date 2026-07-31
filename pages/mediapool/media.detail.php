@@ -36,9 +36,6 @@ if (!isset($success)) {
 if (!isset($error)) {
     $error = '';
 }
-if (!isset($openerLink)) {
-    $openerLink = '';
-}
 if (!isset($fileId)) {
     $fileId = 0;
 }
@@ -193,14 +190,13 @@ if ('' != $success) {
     $success = '';
 }
 
+$openerLink = '';
 if ('' != $openerInputField) {
     $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $encodedFname . '\', \'' . escape($gf->getValue('title'), 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
     if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
         $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $encodedFname . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
     }
-}
 
-if ('' != $openerLink) {
     $openerLink = ' | ' . $openerLink;
 }
 

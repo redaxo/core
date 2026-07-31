@@ -128,18 +128,10 @@ if (Core::isSetup()) {
         $login->checkLogin();
         CsrfToken::removeAll();
 
-        $userAgent = Request::server('HTTP_USER_AGENT');
-        $advertisedChrome = preg_match('/(Chrome|CriOS)\//i', $userAgent);
-        $nonChrome = preg_match('/(Aviator|ChromePlus|coc_|Dragon|Edge|Flock|Iron|Kinza|Maxthon|MxNitro|Nichrome|OPR|Perk|Rockmelt|Seznam|Sleipnir|Spark|UBrowser|Vivaldi|WebExplorer|YaBrowser)/i', $userAgent);
-        if ($advertisedChrome && !$nonChrome) {
-            // Browser is likely Google Chrome which currently seems to be super slow when clearing 'cache' from site data
-            // https://bugs.chromium.org/p/chromium/issues/detail?id=762417
-            Response::setHeader('Clear-Site-Data', '"storage", "executionContexts"');
-        } else {
-            Response::setHeader('Clear-Site-Data', '"cache", "storage", "executionContexts"');
-        }
+        // "cache" is deliberately omitted, see the comment on the login page below.
+        Response::setHeader('Clear-Site-Data', '"storage", "executionContexts"');
 
-        // Currently browsers like Safari do not support the header Clear-Site-Data.
+        // Not all browsers support the header Clear-Site-Data.
         // we dont kill/regenerate the session so e.g. the frontend will not get logged out
         Request::clearSession();
 
@@ -180,9 +172,15 @@ if (Core::isSetup()) {
             // clear in-browser data of a previous session with the same browser for security reasons.
             // a possible attacker should not be able to access cached data of a previous valid session on the same computer.
             // clearing "executionContext" or "cookies" would result in a endless loop.
-            Response::setHeader('Clear-Site-Data', '"cache", "storage"');
+            //
+            // "cache" is deliberately omitted: browsers hold back the response until the entire HTTP cache
+            // has been walked to filter it by origin, which takes seconds on a well-filled profile and
+            // therefore delays every backend request made with an expired session.
+            // It also buys very little, because backend pages are sent with "no-cache, max-age=0, private"
+            // anyway, while the clearing would additionally wipe the cache of the website on the same origin.
+            Response::setHeader('Clear-Site-Data', '"storage"');
 
-            // Currently browsers like Safari do not support the header Clear-Site-Data.
+            // Not all browsers support the header Clear-Site-Data.
             // we dont kill/regenerate the session so e.g. the frontend will not get logged out
             Request::clearSession();
         }
@@ -304,6 +302,12 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
 
     switch (Request::request('rex_history_function', 'string')) {
         case 'snap':
+            if (!CsrfToken::factory('structure_history')->isValid()) {
+                Response::setStatus(Response::HTTP_FORBIDDEN);
+                Response::sendContent(I18n::msg('csrf_token_invalid'), 'text/plain');
+                exit;
+            }
+
             $articleId = Request::request('history_article_id', 'int');
             $clangId = Request::request('history_clang_id', 'int');
             $historyDate = Request::request('history_date', 'string');
@@ -369,6 +373,7 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
                     var history_clang_id = ' . Language::getCurrentId() . ';
                     var history_ctype_id = ' . Request::request('ctype', 'int', 0) . ';
                     var history_article_link = "' . escape($articleLink, 'js') . '";
+                    var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";
                 </script>';
         }
     });
@@ -423,7 +428,14 @@ if (Core::getConfig('article_work_version', false)) {
             $workingVersionEmpty = false;
         }
 
+        $csrfToken = CsrfToken::factory('structure_version');
+
         $func = Request::request('rex_version_func', 'string');
+        if ('' !== $func && !$csrfToken->isValid()) {
+            $return .= Message::error(I18n::msg('csrf_token_invalid'));
+            $func = '';
+        }
+
         switch ($func) {
             case 'copy_work_to_live':
                 if ($workingVersionEmpty) {
@@ -509,18 +521,18 @@ if (Core::getConfig('article_work_version', false)) {
 
         if (!$user->hasPerm('version[live_version]')) {
             if ($revision > 0) {
-                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work']) . '">' . I18n::msg('version_copy_from_liveversion') . '</a></li>';
+                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('version_copy_from_liveversion') . '</a></li>';
                 $toolbar .= '<li><a href="' . Url::article($articleId, $clangId, ['rex_version' => ArticleRevision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . I18n::msg('version_preview') . '</a></li>';
             }
         } else {
             if ($revision > 0) {
                 if (!$workingVersionEmpty) {
-                    $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'clear_work']) . '" data-confirm="' . I18n::msg('version_confirm_clear_workingversion') . '">' . I18n::msg('version_clear_workingversion') . '</a></li>';
-                    $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_work_to_live']) . '">' . I18n::msg('version_working_to_live') . '</a></li>';
+                    $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'clear_work'] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('version_confirm_clear_workingversion') . '">' . I18n::msg('version_clear_workingversion') . '</a></li>';
+                    $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_work_to_live'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('version_working_to_live') . '</a></li>';
                 }
                 $toolbar .= '<li><a href="' . Url::article($articleId, $clangId, ['rex_version' => ArticleRevision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . I18n::msg('version_preview') . '</a></li>';
             } else {
-                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work']) . '" data-confirm="' . I18n::msg('version_confirm_copy_live_to_workingversion') . '">' . I18n::msg('version_copy_live_to_workingversion') . '</a></li>';
+                $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work'] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('version_confirm_copy_live_to_workingversion') . '">' . I18n::msg('version_copy_live_to_workingversion') . '</a></li>';
             }
         }
 

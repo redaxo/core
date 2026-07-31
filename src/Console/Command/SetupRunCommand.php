@@ -83,7 +83,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
          *     servername: string|null,
          *     error_email: string|null,
          *     timezone: string|null,
-         *     db: array{1: array{
+         *     db: array{1?: array{
          *         host: string|null,
          *         login: string|null,
          *         password: string|null,
@@ -118,7 +118,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         ksort($langs);
 
         $config['lang'] = $this->getOptionOrAsk(
-            new ChoiceQuestion('Please select a language', $langs, $config['lang'] ?? null),
+            new ChoiceQuestion('Please select a language', $langs, $config['lang']),
             'lang',
             null,
             'Language "%s" selected.',
@@ -202,14 +202,14 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
             $config['db'][1]['host'] = $this->getOptionOrAsk(
                 'MySQL Host',
                 'db-host',
-                $config['db'][1]['host'],
+                $previousHost,
                 'Using MySQL Host "%s"',
                 $requiredValue,
             );
             $config['db'][1]['login'] = $this->getOptionOrAsk(
                 'Login',
                 'db-login',
-                $config['db'][1]['login'],
+                $previousLogin,
                 'Using database login "%s"',
                 $requiredValue,
             );

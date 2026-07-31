@@ -18,7 +18,7 @@ final class FileTest extends TestCase
     {
         parent::setUp();
 
-        Dir::create($this->getPath());
+        Dir::create(self::getPath());
     }
 
     #[Override]
@@ -26,10 +26,10 @@ final class FileTest extends TestCase
     {
         parent::tearDown();
 
-        Dir::delete($this->getPath());
+        Dir::delete(self::getPath());
     }
 
-    private function getPath(string $file = ''): string
+    private static function getPath(string $file = ''): string
     {
         return Path::addonData('test', 'FileTest/' . $file);
     }
@@ -38,13 +38,13 @@ final class FileTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         File::require($file);
     }
 
     public function testGetDefault(): void
     {
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         self::assertNull(File::get($file), 'get() returns null for non-existing files');
         $myDefault = 'myDefault';
         self::assertEquals($myDefault, File::get($file, $myDefault), 'get() returns given default value for non-existing files');
@@ -52,7 +52,7 @@ final class FileTest extends TestCase
 
     public function testGetConfigDefault(): void
     {
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         self::assertEquals([], File::getConfig($file), 'getConfig() returns empty array for non-existing files');
         $myDefault = ['myDefault'];
         self::assertEquals($myDefault, File::getConfig($file, $myDefault), 'getConfig() returns given default value for non-existing files');
@@ -60,7 +60,7 @@ final class FileTest extends TestCase
 
     public function testGetCacheDefault(): void
     {
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         self::assertEquals([], File::getCache($file), 'getCache() returns empty array for non-existing files');
         $myDefault = ['myDefault'];
         self::assertEquals($myDefault, File::getCache($file, $myDefault), 'getCache() returns given default value for non-existing files');
@@ -68,7 +68,7 @@ final class FileTest extends TestCase
 
     public function testPutGet(): void
     {
-        $file = $this->getPath('putget.txt');
+        $file = self::getPath('putget.txt');
         $content = 'test';
         self::assertTrue(File::put($file, $content), 'put() returns true on success');
         self::assertEquals($content, File::get($file), 'get() returns content of file');
@@ -76,7 +76,7 @@ final class FileTest extends TestCase
 
     public function testPutGetConfig(): void
     {
-        $file = $this->getPath('putgetcache.txt');
+        $file = self::getPath('putgetcache.txt');
         $content = ['test', 'key' => 'value'];
         self::assertTrue(File::putConfig($file, $content), 'putConfig() returns true on success');
         self::assertEquals($content, File::getConfig($file), 'getConfig() returns content of file');
@@ -84,7 +84,7 @@ final class FileTest extends TestCase
 
     public function testPutGetCache(): void
     {
-        $file = $this->getPath('putgetcache.txt');
+        $file = self::getPath('putgetcache.txt');
         $content = ['test', 'key' => 'value'];
         self::assertTrue(File::putCache($file, $content), 'putCache() returns true on success');
         self::assertEquals($content, File::getCache($file), 'getCache() returns content of file');
@@ -92,7 +92,7 @@ final class FileTest extends TestCase
 
     public function testPutInNewDir(): void
     {
-        $file = $this->getPath('subdir/test.txt');
+        $file = self::getPath('subdir/test.txt');
         $content = 'test';
         self::assertTrue(File::put($file, $content), 'put() returns true on success');
         self::assertEquals($content, File::get($file), 'get() returns content of file');
@@ -100,8 +100,8 @@ final class FileTest extends TestCase
 
     public function testCopyToFile(): void
     {
-        $orig = $this->getPath('orig.txt');
-        $copy = $this->getPath('sub/copy.txt');
+        $orig = self::getPath('orig.txt');
+        $copy = self::getPath('sub/copy.txt');
         $content = 'test';
         File::put($orig, $content);
         self::assertTrue(File::copy($orig, $copy), 'copy() returns true on success');
@@ -111,9 +111,9 @@ final class FileTest extends TestCase
 
     public function testCopyToDir(): void
     {
-        $orig = $this->getPath('file.txt');
-        $copyDir = $this->getPath('copy');
-        $copyFile = $this->getPath('copy/file.txt');
+        $orig = self::getPath('file.txt');
+        $copyDir = self::getPath('copy');
+        $copyFile = self::getPath('copy/file.txt');
         $content = 'test';
         File::put($orig, $content);
         Dir::create($copyDir);
@@ -123,7 +123,7 @@ final class FileTest extends TestCase
 
     public function testDelete(): void
     {
-        $file = $this->getPath('delete.txt');
+        $file = self::getPath('delete.txt');
         File::put($file, '');
         self::assertFileExists($file, 'file exists after put()');
         self::assertTrue(File::delete($file), 'delete() returns true on success');
@@ -148,27 +148,38 @@ final class FileTest extends TestCase
         self::assertEquals($expectedExtension, File::extension($file), 'extension() returns file extension');
     }
 
-    /** @return list<array{string, string}> */
-    public static function dataTestMimeType(): array
+    /** @return iterable<int, array{0: string, 1: string, 2?: string}> */
+    public static function dataTestMimeType(): iterable
     {
-        return [
-            ['image/png', Path::coreAssets('icons/apple-touch-icon.png')],
-            ['text/xml', Path::coreAssets('icons/browserconfig.xml')],
-            ['text/css', Path::coreAssets('css/styles.css')],
-            ['application/javascript', Path::coreAssets('js/redaxo.js')],
-            ['image/svg+xml', Path::coreAssets('images/redaxo-logo.svg')],
-        ];
+        yield ['image/png', Path::coreAssets('icons/apple-touch-icon.png')];
+        yield ['text/xml', Path::coreAssets('icons/browserconfig.xml')];
+        yield ['text/css', Path::coreAssets('css/styles.css')];
+        yield ['application/javascript', Path::coreAssets('js/redaxo.js')];
+        yield ['image/svg+xml', Path::coreAssets('images/redaxo-logo.svg')];
+
+        // simulates an uploaded file: extensionless tmp path, original name given separately
+        // (created on demand in testMimeType(), since data providers run before setUp()/tearDown())
+        $uploadTmpFile = self::getPath('upload_tmp_file');
+
+        yield ['text/plain', $uploadTmpFile];
+        yield ['text/vtt', $uploadTmpFile, 'test.vtt'];
+        yield ['text/markdown', $uploadTmpFile, 'test.md'];
+        yield ['text/plain', $uploadTmpFile, 'test.txt'];
     }
 
     #[DataProvider('dataTestMimeType')]
-    public function testMimeType(string $expectedMimeType, string $file): void
+    public function testMimeType(string $expectedMimeType, string $file, ?string $filename = null): void
     {
-        self::assertEquals($expectedMimeType, File::mimeType($file));
+        if (self::getPath('upload_tmp_file') === $file) {
+            File::put($file, 'Hallo Welt');
+        }
+
+        self::assertEquals($expectedMimeType, File::mimeType($file, $filename));
     }
 
     public function testGetOutput(): void
     {
-        $file = $this->getPath('test.php');
+        $file = self::getPath('test.php');
         File::put($file, 'a<?php echo "b";');
         self::assertEquals('ab', File::getOutput($file), 'getOutput() returns the executed content');
     }

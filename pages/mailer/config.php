@@ -7,6 +7,7 @@ use Redaxo\Core\Form\Select\Select;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Mailer\Mailer;
+use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Validator\Validator;
 use Redaxo\Core\View\Fragment;
@@ -16,7 +17,12 @@ use function Redaxo\Core\View\escape;
 
 $message = '';
 
-if ('' != Request::post('btn_save', 'string') || '' != Request::post('btn_check', 'string')) {
+$csrfToken = CsrfToken::factory('phpmailer-config');
+$submitted = '' != Request::post('btn_save', 'string') || '' != Request::post('btn_check', 'string');
+
+if ($submitted && !$csrfToken->isValid()) {
+    echo Message::error(I18n::msg('csrf_token_invalid'));
+} elseif ($submitted) {
     $settings = Request::post('settings', [
         ['phpmailer_fromname', 'string'],
         ['phpmailer_from', 'string'],
@@ -407,6 +413,7 @@ $fragment->setVar('buttons', $buttons, false);
 $content = $fragment->parse('core/page/section.php');
 echo '
     <form action="' . Url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         ' . $content . '
     </form>';
 ?>

@@ -72,13 +72,23 @@ All core classes live in the `Redaxo\Core\` namespace, mapped to `src/`. Tests l
 
 - 4 spaces indentation, LF line endings, UTF-8
 - Soft line limit ~120 chars (applies to comments too — don't wrap at 80)
+- In multi-line phpdoc descriptions (e.g. for `@param`), indent continuation lines by 4 spaces — don't align them with the start of the description text
 - Code style enforced by rector + php-cs-fixer (custom REDAXO config) — run `composer cs` after edits
 - PHPStan level 6 + Psalm level 1, both with baselines in `.tools/phpstan/` and `.tools/psalm/`
 - PHPUnit strict mode: warnings, notices, deprecations all fail the build
+- In tests, prefer data providers over repeating similar test methods; name providers with a `provide` prefix and place each one directly after its test method
 - In YAML files, prefer single quotes when quoting is needed
 - Comments and commit messages in English; commits use conventional commits (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`, `style:`, `ci:`). The same rules (English + conventional commit prefix) apply to PR titles, since they become the commit message on squash merge
 - Don't write bare `@name` tokens in commit messages (e.g. annotations like `@internal`/`@deprecated`, or anything that looks like a username): GitHub autolinks them into user mentions and pings a random account. Wrap them in backticks (`` `@internal` ``) — GitHub renders code spans in commit messages and doesn't link mentions inside them
 - **Properties**: prefer modern public properties (with `readonly`, asymmetric visibility, property hooks as appropriate) over getter/setter methods
+- Don't put issue references (`Fixes #123`, `Closes #123`) in commit messages — they belong in the PR description instead
+
+### Comments
+The measure for a code comment is whether it helps someone looking at this code in a year — not whether it explains the change being made right now.
+
+- Don't comment the diff ("this used to be X") — that belongs in the commit message or PR description.
+- Leave out what the code already says, e.g. restating a method or variable name.
+- Keep what stays compact — one precise sentence beats three explanatory ones.
 
 ### Baselines
 The static analysis baselines exist to grandfather pre-existing issues. **New code must not add to the baselines** — fix the issue instead. Only regenerate baselines (`composer baseline`) when intentionally accepting new findings, and call that out in the PR.

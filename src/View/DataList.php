@@ -86,6 +86,8 @@ class DataList implements UrlProviderInterface
 
     // --------- List Attributes
     private readonly string $name;
+    private string $executedQuery;
+    private bool $dataLoaded = false;
     /** @var array<string, string|int> */
     private array $params = [];
     private int $rows = 0;
@@ -142,12 +144,12 @@ class DataList implements UrlProviderInterface
      * @param array<string, 'asc'|'desc'> $defaultSort
      */
     protected function __construct(
-        string $query,
+        private readonly string $query,
         ?int $rowsPerPage = 30,
         ?string $listName = null,
         private readonly bool $debug = false,
         private readonly int $db = 1,
-        array $defaultSort = [],
+        private readonly array $defaultSort = [],
     ) {
         // --------- Validation
         if (!$listName) {
@@ -177,9 +179,14 @@ class DataList implements UrlProviderInterface
         }
 
         // --------- Load Data
-        $this->sql->setQuery($this->prepareQuery($query, $defaultSort));
-        if (self::DISABLE_PAGINATION === $rowsPerPage) {
-            $this->rows = $this->sql->getRows();
+        if (Request::request('list', 'string') == $this->getName() && '' !== Request::request('sort', 'string', '')) {
+            // The requested sort column can not be validated yet since the sortable columns are registered
+            // after construction (getSortColumn() checks against them). Fetch only the field names here,
+            // the data is loaded in get() after the sortable columns are known.
+            $this->executedQuery = 'SELECT * FROM (' . $query . ') t LIMIT 0';
+            $this->sql->setQuery($this->executedQuery);
+        } else {
+            $this->loadData();
         }
 
         foreach ($this->sql->getFieldnames() as $columnName) {
@@ -801,9 +808,33 @@ class DataList implements UrlProviderInterface
         return 'SELECT COUNT(*) AS `rows` FROM (' . $query . ') t';
     }
 
+    /**
+     * Executes the query unless it already ran and the effective query is still the same
+     * (it changes when columns are marked as sortable after construction).
+     */
+    private function loadData(): void
+    {
+        $query = $this->prepareQuery($this->query, $this->defaultSort);
+        if ($this->dataLoaded && $query === $this->executedQuery) {
+            return;
+        }
+
+        $this->dataLoaded = true;
+        $this->executedQuery = $query;
+        $this->sql->setQuery($query);
+
+        if (null === $this->pager) {
+            $this->rows = $this->sql->getRows();
+        }
+    }
+
     /** Gibt die Anzahl der Zeilen zurück, welche vom ursprüngliche SQL Statement betroffen werden. */
     public function getRows(): int
     {
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+
         return $this->rows;
     }
 
@@ -831,7 +862,7 @@ class DataList implements UrlProviderInterface
     {
         if (Request::request('list', 'string') == $this->getName()) {
             $sortColumn = Request::request('sort', 'string', $default);
-            if ($this->hasColumnOption($sortColumn, REX_LIST_OPT_SORT)) {
+            if (null !== $sortColumn && $this->hasColumnOption($sortColumn, REX_LIST_OPT_SORT)) {
                 return $sortColumn;
             }
         }
@@ -1008,6 +1039,12 @@ class DataList implements UrlProviderInterface
 
     public function getValue(string $column): string|int|float|bool|null
     {
+        // only initial loading here, no unconditional loadData(): the query (and with it the
+        // result pointer) must not change anymore while the rows are iterated in get()
+        if (!$this->dataLoaded) {
+            $this->loadData();
+        }
+
         return $this->customColumns[$column] ?? $this->sql->getValue($column);
     }
 
@@ -1020,6 +1057,10 @@ class DataList implements UrlProviderInterface
     public function get(): string
     {
         Extension::dispatch(new ExtensionPoint('REX_LIST_GET', $this, [], true));
+
+        // By now the sortable columns are registered (including via the extension point above),
+        // so the deferred data query can run with the validated ORDER BY
+        $this->loadData();
 
         $s = "\n";
 

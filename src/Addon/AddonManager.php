@@ -441,7 +441,7 @@ class AddonManager
     private static function isDevInstall(): bool
     {
         foreach (InstalledVersions::getAllRawData() as $data) {
-            if ('redaxo/core' === ($data['root']['name'] ?? null) || isset($data['versions']['redaxo/core'])) {
+            if ('redaxo/core' === ($data['root']['name'] ?? null) || isset($data['versions']['redaxo/core'])) { // @phpstan-ignore nullCoalesce.unnecessary
                 return (bool) ($data['root']['dev'] ?? false);
             }
         }

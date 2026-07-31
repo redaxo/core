@@ -14,6 +14,7 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
@@ -175,7 +176,7 @@ final class ArticleContentEditor extends ArticleContentBase
             // delete
             $item = [];
             $item['label'] = I18n::msg('delete');
-            $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1]) . $fragment;
+            $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1] + CsrfToken::factory('structure_content_slice')->getUrlParams()) . $fragment;
             $item['attributes']['class'][] = 'btn-delete';
             $item['attributes']['title'] = I18n::msg('delete');
             $item['attributes']['data-confirm'] = I18n::msg('confirm_delete_block');
@@ -420,6 +421,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $panel = '
                 <fieldset>
                     <legend>' . I18n::msg('add_block') . '</legend>
+                    ' . CsrfToken::factory('structure_content_slice')->getHiddenField() . '
                     <input type="hidden" name="function" value="add" />
                     <input type="hidden" name="module" value="' . escape($moduleKey) . '" />
                     <input type="hidden" name="save" value="1" />
@@ -481,6 +483,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $panel = '
                 <fieldset>
                     <legend>' . I18n::msg('edit_block') . '</legend>
+                    ' . CsrfToken::factory('structure_content_slice')->getHiddenField() . '
                     <input type="hidden" name="module" value="' . escape($moduleKey) . '" />
                     <input type="hidden" name="save" value="1" />
                     <input type="hidden" name="update" value="0" />
