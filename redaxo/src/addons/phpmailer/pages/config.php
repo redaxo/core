@@ -10,7 +10,12 @@ $addon = rex_addon::get('phpmailer');
 
 $message = '';
 
-if ('' != rex_post('btn_save', 'string') || '' != rex_post('btn_check', 'string')) {
+$csrfToken = rex_csrf_token::factory('phpmailer-config');
+$submitted = '' != rex_post('btn_save', 'string') || '' != rex_post('btn_check', 'string');
+
+if ($submitted && !$csrfToken->isValid()) {
+    echo rex_view::error(rex_i18n::msg('csrf_token_invalid'));
+} elseif ($submitted) {
     $settings = rex_post('settings', [
         ['fromname', 'string'],
         ['from', 'string'],
@@ -402,6 +407,7 @@ $fragment->setVar('buttons', $buttons, false);
 $content = $fragment->parse('core/page/section.php');
 echo '
     <form action="' . rex_url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         ' . $content . '
     </form>';
 ?>
