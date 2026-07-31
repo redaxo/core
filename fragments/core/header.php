@@ -7,6 +7,8 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 
+use function Redaxo\Core\View\escape;
+
 /**
  * @var Fragment $this
  * @psalm-scope-this Fragment
@@ -15,10 +17,12 @@ use Redaxo\Core\View\Fragment;
 $isPopup = Controller::requireCurrentPageObject()->isPopup();
 $isLogin = ('login' === Controller::getCurrentPage());
 $isSetup = ('setup' === Controller::getCurrentPage());
+
+$instanceColor = Core::getInstanceColor();
 ?>
 
         <div id="rex-js-nav-top" class="rex-nav-top<?php if (!$isPopup && !$isSetup): ?> rex-nav-top-is-fixed<?php endif ?>">
-            <nav class="navbar navbar-default">
+            <nav class="navbar navbar-default"<?= null !== $instanceColor ? ' style="border-bottom: 5px solid ' . escape($instanceColor) . '"' : '' ?>>
                 <div class="container-fluid">
 
                     <?php if (!$isLogin && !$isPopup): ?>
@@ -42,6 +46,9 @@ $isSetup = ('setup' === Controller::getCurrentPage());
                             <a class="rex-marker-devmode" href="<?= Url::backendPage('system/settings') ?>" title="<?= I18n::msg('dev_mode_marker') ?>">
                                 <i class="rex-icon rex-icon-heartbeat rex-pulse"></i>
                             </a>
+                        <?php endif ?>
+                        <?php if (!$isPopup && Core::getUser()): ?>
+                            <h1 class="rex-nav-top-title"><a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-nav-top-title-name"><?= escape(Core::getServerName()) ?></span><i class="rex-icon rex-icon-external-link"></i></a></h1>
                         <?php endif ?>
                     </div>
 

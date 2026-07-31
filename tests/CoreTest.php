@@ -154,6 +154,31 @@ final class CoreTest extends TestCase
         }
     }
 
+    public function testGetInstanceColor(): void
+    {
+        $origServer = $_SERVER['REX_INSTANCE_COLOR'] ?? null;
+        $origEnv = $_ENV['REX_INSTANCE_COLOR'] ?? null;
+
+        try {
+            $_SERVER['REX_INSTANCE_COLOR'] = '#3bb594';
+            self::assertSame('#3bb594', Core::getInstanceColor());
+
+            $_SERVER['REX_INSTANCE_COLOR'] = '';
+            self::assertNull(Core::getInstanceColor());
+
+            unset($_SERVER['REX_INSTANCE_COLOR'], $_ENV['REX_INSTANCE_COLOR']);
+            self::assertNull(Core::getInstanceColor());
+        } finally {
+            self::restoreEnv('REX_INSTANCE_COLOR', $origServer);
+
+            if (null === $origEnv) {
+                unset($_ENV['REX_INSTANCE_COLOR']);
+            } else {
+                $_ENV['REX_INSTANCE_COLOR'] = $origEnv;
+            }
+        }
+    }
+
     /** @param non-empty-string $name */
     private static function restoreEnv(string $name, ?string $value): void
     {

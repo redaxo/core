@@ -816,28 +816,6 @@ perm_general_phpmailer[] = PHPMailer-Einstellungen
 phpmailer_archive_maintenance = Archiv-Wartung
 phpmailer_archive_purge_info = Das Archiv kann über den Cronjob "E-Mail-Archiv bereinigen" regelmäßig bereinigt werden, um ältere E-Mails automatisch zu entfernen.
 
-# be_style
-be_style = Backend style
-be_style_help = Hilfe
-be_style_icons = Icons
-be_style_themes = Themes
-customizer = Customizer
-customizer_features = Features
-customizer_labeling = Ergänzungen
-customizer_labelcolor = Erkennungsfarbe
-customizer_labelcolor_notice = Beliebige valide CSS-Farbangabe (<code>#03f0ab</code>, <code>rgba(255, 100, 0, 0.5)</code> etc.)
-customizer_showlink = Link zur Webseite anzeigen ?
-
-customizer_config_updated = Eingaben wurden gespeichert
-customizer_config_update_failed = Eingaben wurden nicht gespeichert
-
-customizer_update = Einstellungen speichern
-
-customizer_projectname = Projektname
-customizer_textarea = breite Textarea unter Template und Module
-customizer_liquid = Liquid Layout
-customizer_nav_flyout = Navigation mit Flyout
-
 # mediapool
 pool_name = Medienpool
 pool_kats = Kategorien

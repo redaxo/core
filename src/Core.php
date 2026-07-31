@@ -316,6 +316,17 @@ final class Core
         return $id;
     }
 
+    /**
+     * Returns the color used to visually mark this installation in the backend (top navbar border and mask icon),
+     * defined by the env var `REX_INSTANCE_COLOR` (usually in the `.env` file).
+     */
+    public static function getInstanceColor(): ?string
+    {
+        $color = $_SERVER['REX_INSTANCE_COLOR'] ?? $_ENV['REX_INSTANCE_COLOR'] ?? null;
+
+        return is_string($color) && '' !== $color ? $color : null;
+    }
+
     private static function getBoolEnv(string $name): bool
     {
         $value = $_SERVER[$name] ?? $_ENV[$name] ?? null;
