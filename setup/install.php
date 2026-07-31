@@ -311,7 +311,6 @@ $defaultConfig = [
     'article_history' => false,
     'article_work_version' => false,
     'be_style_compile' => false,
-    'be_style_labelcolor' => '#3bb594',
     'phpmailer_from' => '',
     'phpmailer_test_address' => '',
     'phpmailer_fromname' => 'Mailer',
@@ -343,5 +342,3 @@ foreach ($defaultConfig as $key => $value) {
         Core::setConfig($key, $value);
     }
 }
-
-Core::removeConfig('be_style_showlink');

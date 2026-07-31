@@ -18,11 +18,11 @@ $isPopup = Controller::requireCurrentPageObject()->isPopup();
 $isLogin = ('login' === Controller::getCurrentPage());
 $isSetup = ('setup' === Controller::getCurrentPage());
 
-$labelColor = Core::getUser() ? (string) Core::getConfig('be_style_labelcolor', '') : '';
+$instanceColor = Core::getInstanceColor();
 ?>
 
         <div id="rex-js-nav-top" class="rex-nav-top<?php if (!$isPopup && !$isSetup): ?> rex-nav-top-is-fixed<?php endif ?>">
-            <nav class="navbar navbar-default"<?= '' !== $labelColor ? ' style="border-bottom: 5px solid ' . escape($labelColor) . '"' : '' ?>>
+            <nav class="navbar navbar-default"<?= null !== $instanceColor ? ' style="border-bottom: 5px solid ' . escape($instanceColor) . '"' : '' ?>>
                 <div class="container-fluid">
 
                     <?php if (!$isLogin && !$isPopup): ?>
