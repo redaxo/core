@@ -319,8 +319,6 @@ final class Core
     /**
      * Returns the color used to visually mark this installation in the backend (top navbar border and mask icon),
      * defined by the env var `REX_INSTANCE_COLOR` (usually in the `.env` file).
-     *
-     * Useful to distinguish different installations, like production and staging systems.
      */
     public static function getInstanceColor(): ?string
     {
