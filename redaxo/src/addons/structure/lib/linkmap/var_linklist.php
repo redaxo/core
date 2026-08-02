@@ -61,7 +61,7 @@ class rex_var_linklist extends rex_var
                 continue;
             }
             if ($article = rex_article::get((int) $link)) {
-                $options .= '<option value="' . $link . '">' . rex_escape(trim(sprintf('%s [%s]', $article->getName(), $article->getId()))) . '</option>';
+                $options .= '<option value="' . $article->getId() . '">' . rex_escape(trim(sprintf('%s [%s]', $article->getName(), $article->getId()))) . '</option>';
             }
         }
 
@@ -80,7 +80,7 @@ class rex_var_linklist extends rex_var
                 <select class="form-control" name="REX_LINKLIST_SELECT[' . $id . ']" id="REX_LINKLIST_SELECT_' . $id . '" size="10">
                     ' . $options . '
                 </select>
-                <input type="hidden" name="' . $name . '" id="REX_LINKLIST_' . $id . '" value="' . $value . '" />';
+                <input type="hidden" name="' . $name . '" id="REX_LINKLIST_' . $id . '" value="' . rex_escape((string) $value) . '" />';
         $e['moveButtons'] = '
                     <a href="#" class="btn btn-popup" onclick="moveREXLinklist(' . $quotedId . ',\'top\');return false;" title="' . rex_i18n::msg('var_linklist_move_top') . '"><i class="rex-icon rex-icon-top"></i></a>
                     <a href="#" class="btn btn-popup" onclick="moveREXLinklist(' . $quotedId . ',\'up\');return false;" title="' . rex_i18n::msg('var_linklist_move_up') . '"><i class="rex-icon rex-icon-up"></i></a>
