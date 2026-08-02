@@ -2888,21 +2888,6 @@
       <code><![CDATA[$period]]></code>
     </MixedOperand>
   </file>
-  <file src="redaxo/src/addons/structure/plugins/history/lib/history_login.php">
-    <MixedArgument>
-      <code><![CDATA[$key1]]></code>
-      <code><![CDATA[$key2]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[[':login' => $historyLogin]]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$historyLogin]]></code>
-      <code><![CDATA[$historyValidtime]]></code>
-      <code><![CDATA[$login]]></code>
-      <code><![CDATA[$validtime]]></code>
-    </MixedOperand>
-  </file>
   <file src="redaxo/src/addons/structure/plugins/version/lib/revision.php">
     <NoValue>
       <code><![CDATA[$fromRevisionId]]></code>
