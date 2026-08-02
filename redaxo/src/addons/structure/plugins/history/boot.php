@@ -27,8 +27,12 @@ if ('' != $historyDate) {
             if ($login->checkTempSession($historyLogin, $historySession, $historyValidtime)) {
                 $user = $login->getUser();
                 rex::setProperty('user', $user);
-                rex_extension::register('OUTPUT_FILTER', static function (rex_extension_point $ep) use ($login) {
+
+                // A shutdown function (not an OUTPUT_FILTER) so cleanup runs even when the request aborts
+                // before output — e.g. a bogus rex-api-call — which would otherwise leave a usable session.
+                register_shutdown_function(static function () use ($login) {
                     $login->deleteSession();
+                    rex_user_session::getInstance()->clearCurrentSession();
                 });
             }
         }
