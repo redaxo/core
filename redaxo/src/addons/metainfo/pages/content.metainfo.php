@@ -113,13 +113,23 @@ if (1 == $article->getRows()) {
     $fragment->setVar('elements', $formElements, false);
     $form = $fragment->parse('core/form/form.php') . $form;
 
+    $csrfToken = rex_metainfo_handler::getCsrfToken();
+
+    $message = '';
+    if (rex_post('savemeta', 'boolean')) {
+        $message = $csrfToken->isValid()
+            ? rex_view::success(rex_i18n::msg('minfo_metadata_saved'))
+            : rex_view::error(rex_i18n::msg('csrf_token_invalid'));
+    }
+
     $content[] = '
               <div id="rex-page-sidebar-metainfo" data-pjax-container="#rex-page-sidebar-metainfo">
                 <form class="metainfo-sidebar" action="' . $context->getUrl() . '" method="post" enctype="multipart/form-data">
-                    ' . (rex_post('savemeta', 'boolean') ? rex_view::success(rex_i18n::msg('minfo_metadata_saved')) : '') . '
+                    ' . $message . '
                     <fieldset>
                         <input type="hidden" name="save" value="1" />
                         <input type="hidden" name="ctype" value="' . $ctype . '" />
+                        ' . $csrfToken->getHiddenField() . '
                         ' . $form . '
                         <button class="btn btn-primary pull-left" type="submit" name="savemeta"' . rex::getAccesskey(rex_i18n::msg('update_metadata'), 'save') . ' value="1">' . rex_i18n::msg('update_metadata') . '</button>
                     </fieldset>

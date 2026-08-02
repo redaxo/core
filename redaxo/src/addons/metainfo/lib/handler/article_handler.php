@@ -18,6 +18,10 @@ class rex_metainfo_article_handler extends rex_metainfo_handler
             return $params;
         }
 
+        if (!self::getCsrfToken()->isValid()) {
+            return $params;
+        }
+
         $article = rex_sql::factory();
         // $article->setDebug();
         $article->setTable(rex::getTablePrefix() . 'article');
