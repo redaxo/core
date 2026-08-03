@@ -412,13 +412,13 @@ class rex_article_slice
 
     /**
      * @param int $index
-     * @return int|null
+     * @return string|null
      */
     public function getLink($index)
     {
         $link = $this->links[$index - 1];
 
-        return null === $link ? null : (int) $link;
+        return $link ?? null;
     }
 
     /**
@@ -428,8 +428,9 @@ class rex_article_slice
     public function getLinkUrl($index)
     {
         $link = $this->getLink($index);
+        [$articleId, $hash] = array_pad(explode('#', (string) $link, 2), 2, null);
 
-        return null === $link ? null : rex_getUrl($link);
+        return null === $link ? null : ($hash ? rex_getUrl($articleId) . '#' . $hash : rex_getUrl($articleId));
     }
 
     /**
