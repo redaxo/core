@@ -10,7 +10,6 @@ move_slice_up = Move up
 move_slice_down = Move down
 block_updated = Block updated!
 block_added = Block added!
-no_rights_to_this_function = You do not have permissions to complete this action!
 module_not_found = Error! Module not found.
 confirm_delete_block = Delete block?
 block_deleted = Block deleted!

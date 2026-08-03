@@ -10,7 +10,6 @@ move_slice_up = Вверх
 move_slice_down = Вниз
 block_updated = Блок обновлен!
 block_added = Блок добавлен!
-no_rights_to_this_function = У вас нет прав на выполнение этого действия!
 module_not_found = Ошибка! Модуль не найден.
 confirm_delete_block = Удалить блок?
 block_deleted = Блок удален!

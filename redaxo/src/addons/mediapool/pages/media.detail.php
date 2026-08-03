@@ -42,7 +42,7 @@ if (rex_post('btn_delete', 'string')) {
                     $error = $e->getMessage();
                 }
             } else {
-                $error = rex_i18n::msg('no_permission');
+                $error = rex_i18n::msg('no_rights_to_this_function');
             }
         } else {
             $error = rex_i18n::msg('pool_file_not_found');
@@ -61,7 +61,7 @@ if (rex_post('btn_update', 'string')) {
             $error = rex_i18n::msg('pool_file_not_found');
             $fileId = 0;
         } elseif (!$perm->hasCategoryPerm($gf->getValue('category_id')) || !$perm->hasCategoryPerm($rexFileCategory)) {
-            $error = rex_i18n::msg('no_permission');
+            $error = rex_i18n::msg('no_rights_to_this_function');
         } else {
             $filename = (string) $gf->getValue('filename');
             $data = [];
