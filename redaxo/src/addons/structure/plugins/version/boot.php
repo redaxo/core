@@ -15,7 +15,9 @@ rex_extension::register('ART_INIT', static function (rex_extension_point $ep) {
         return;
     }
 
-    if (!rex_backend_login::hasSession()) {
+    // createUser() instead of hasSession(): it validates that the session is still valid and that the user
+    // still exists and is active
+    if (!rex_backend_login::createUser()) {
         $fragment = new rex_fragment([
             'content' => '<p>No permission for the working version. You need to be logged into the REDAXO backend at the same time.</p>',
         ]);
@@ -24,13 +26,51 @@ rex_extension::register('ART_INIT', static function (rex_extension_point $ep) {
         exit;
     }
 
-    /** @var rex_article_content_base $article */
+    // Plain rex_article_content_base instances are used by rex_content_service::generateArticleContent() to
+    // write the article cache. Switching those to the working version would persist unpublished content into
+    // the cache file, which is served to everybody afterwards.
     $article = $ep->getParam('article');
-    $article->setSliceRevision($version);
-    if ($article instanceof rex_article_content) {
-        $article->getContentAsQuery();
+    if (!$article instanceof rex_article_content) {
+        return;
     }
+
+    // the preview is limited to the requested article, articles embedded via REX_ARTICLE[] keep the live version
+    $articleId = rex_type::nullOrInt($ep->getParam('article_id'));
+    if (null !== $articleId && $articleId !== rex_article::getCurrentId()) {
+        return;
+    }
+
+    $article->setSliceRevision($version);
+    $article->getContentAsQuery();
     $article->setEval(true);
+});
+
+// The article id is not known in ART_INIT yet (that extension point is fired in the constructor, before
+// setArticleId()), so the article specific permissions can only be checked here, where the slices of the
+// working version are about to be fetched.
+rex_extension::register('ART_SLICES_QUERY', static function (rex_extension_point $ep) {
+    if (rex_article_revision::WORK != rex_request('rex_version', 'int')) {
+        return null;
+    }
+
+    $article = $ep->getParam('article');
+    if (!$article instanceof rex_article_content || $article->getArticleId() !== rex_article::getCurrentId()) {
+        return null;
+    }
+
+    $user = rex_backend_login::createUser();
+    $previewArticle = rex_article::get($article->getArticleId(), $article->getClangId());
+
+    if (
+        !$user
+        || !$previewArticle instanceof rex_article
+        || !$user->getComplexPerm('clang')->hasPerm($article->getClangId())
+        || !$user->getComplexPerm('structure')->hasCategoryPerm($previewArticle->getCategoryId())
+    ) {
+        throw new rex_http_exception(new rex_exception('no permission for the working version of this article'), rex_response::HTTP_FORBIDDEN);
+    }
+
+    return null;
 });
 
 rex_extension::register('STRUCTURE_CONTENT_HEADER', static function (rex_extension_point $ep) {
