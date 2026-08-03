@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 2.20.4 – 03.08.2026
+---------------------------
+
+### Security
+
+* History: Der temporäre Frontend-Login konnte ohne vorherige Authentifizierung gefälscht werden, wodurch sich für jeden bekannten Login-Namen – auch für Administratoren – eine Backend-Session erlangen ließ ([GHSA-px8f-whj8-hrpq](https://github.com/advisories/GHSA-px8f-whj8-hrpq)) (gemeldet von @V-C-Williams) (@gharlan)
+* Content: Bei schreibenden Slice-Operationen (löschen, bearbeiten, verschieben, Status ändern) wurde nicht geprüft, ob der Slice zu dem Artikel gehört, für den die Kategorie-Berechtigung geprüft wurde; auf der Content-Seite fehlte zusätzlich die Prüfung der Sprach-Berechtigung ([GHSA-5m63-c3qx-wq8v](https://github.com/advisories/GHSA-5m63-c3qx-wq8v)) (gemeldet von @V-C-Williams) (@gharlan)
+* Version: Die Frontend-Vorschau der Arbeitsversion prüfte nur, ob eine Backend-Session existiert, aber weder Kategorie- noch Sprach-Berechtigung; außerdem wurden auch per `REX_ARTICLE[]` eingebundene Artikel in der Arbeitsversion ausgegeben ([GHSA-v4m9-jvvr-83cx](https://github.com/advisories/GHSA-v4m9-jvvr-83cx)) (@gharlan)
+* History: Das Auflisten und Wiederherstellen von Versionen sowie die Frontend-Vorschau prüften nicht die Berechtigung für den betroffenen Artikel und dessen Sprache ([GHSA-v4m9-jvvr-83cx](https://github.com/advisories/GHSA-v4m9-jvvr-83cx)) (@gharlan)
+* Link- und Linklist-Widget: Werte werden escaped ausgegeben, vorher war Stored XSS möglich ([GHSA-5wmj-5x79-rr87](https://github.com/advisories/GHSA-5wmj-5x79-rr87)) (gemeldet von @V-C-Williams) (@gharlan)
+
+
 Version 2.20.3 – 31.07.2026
 ---------------------------
 

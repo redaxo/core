@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.12.4 – 03.08.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfungen beim Speichern von Metafeldern ergänzt: Artikel-Metafelder in der Seitenleiste des Content-Bereichs sowie Kategorie- und Sprach-Metafelder (@gharlan)
+
+
 Version 2.12.3 – 31.07.2026
 ---------------------------
 

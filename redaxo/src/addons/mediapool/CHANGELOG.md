@@ -1,6 +1,20 @@
 Changelog
 =========
 
+Version 2.18.4 – 03.08.2026
+---------------------------
+
+### Security
+
+* Beim Verschieben mehrerer Medien wurde nur die Berechtigung für die Ziel-Kategorie geprüft, nicht für die Quell-Kategorie der Dateien; zudem waren in der Liste auch Medien auswählbar, für deren Kategorie keine Berechtigung besteht ([GHSA-j9mx-x52f-48cw](https://github.com/advisories/GHSA-j9mx-x52f-48cw)) (gemeldet von @V-C-Williams) (@gharlan)
+* SVG-Uploads wurden erst in den Medienordner verschoben und dann bereinigt, wodurch der unbereinigte Inhalt kurzzeitig – und bei nicht abgeschlossener Bereinigung dauerhaft – öffentlich erreichbar war (Stored XSS) ([GHSA-2p3g-jr7p-qwwx](https://github.com/advisories/GHSA-2p3g-jr7p-qwwx)) (gemeldet von @alhamrizvi-cloud) (@gharlan)
+* Media- und Medialist-Widget: Werte werden escaped ausgegeben, vorher war Stored XSS möglich ([GHSA-5wmj-5x79-rr87](https://github.com/advisories/GHSA-5wmj-5x79-rr87)) (gemeldet von @V-C-Williams) (@gharlan)
+
+### Bugfixes
+
+* SVGs, die nicht geparst werden können, werden beim Upload mit einer Fehlermeldung abgelehnt statt als leere Datei gespeichert (@gharlan)
+
+
 Version 2.18.3 – 31.07.2026
 ---------------------------
 
