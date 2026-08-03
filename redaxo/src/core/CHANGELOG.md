@@ -8,7 +8,7 @@ Version 5.21.4 – 03.08.2026
 
 Dieses Release behebt Sicherheitslücken in den Addons `mediapool`, `metainfo` und `structure`. Ein Update wird allen Installationen empfohlen, Details stehen in den Changelogs der jeweiligen Addons.
 
-**Besonders dringend ist das Update für Installationen mit aktivem Plugin `structure/history`:** Dort war ohne Anmeldung eine Backend-Session für beliebige Accounts – auch für Administratoren – erlangbar ([GHSA-px8f-whj8-hrpq](https://github.com/advisories/GHSA-px8f-whj8-hrpq)). Ist ein sofortiges Update nicht möglich, sollte das Plugin deaktiviert werden.
+**Besonders dringend ist das Update für Installationen mit aktivem Plugin `structure/history`:** Dort war ohne Anmeldung eine Backend-Session für beliebige Accounts – auch für Administratoren – erlangbar ([GHSA-px8f-whj8-hrpq](https://github.com/redaxo/core/security/advisories/GHSA-px8f-whj8-hrpq)). Ist ein sofortiges Update nicht möglich, sollte das Plugin deaktiviert werden.
 
 
 Version 5.21.3 – 31.07.2026
