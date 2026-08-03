@@ -1268,9 +1268,6 @@
       <code><![CDATA[rex_escape($allowedExtensions)]]></code>
       <code><![CDATA[rex_escape(rex_mediapool::getBlockedExtensions())]]></code>
     </MixedArgumentTypeCoercion>
-    <PossiblyFalseArgument>
-      <code><![CDATA[$content]]></code>
-    </PossiblyFalseArgument>
     <PossiblyInvalidOperand>
       <code><![CDATA[$uses]]></code>
     </PossiblyInvalidOperand>
