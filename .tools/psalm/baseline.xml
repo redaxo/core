@@ -1382,7 +1382,6 @@
   <file src="redaxo/src/addons/mediapool/pages/media.list.php">
     <MixedArgument>
       <code><![CDATA[$error]]></code>
-      <code><![CDATA[$fileName]]></code>
       <code><![CDATA[$filename]]></code>
       <code><![CDATA[$filename]]></code>
       <code><![CDATA[$filename]]></code>
@@ -1391,7 +1390,6 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$error]]></code>
       <code><![CDATA[$success]]></code>
-      <code><![CDATA[['filename' => $fileName]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$fileName]]></code>
