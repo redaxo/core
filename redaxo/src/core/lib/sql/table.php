@@ -141,10 +141,8 @@ class rex_sql_table
             $this->indexesExisting[$indexName] = $indexName;
         }
 
-        // Constraint names are only unique per schema, so the join must be qualified by schema and table.
-        // Otherwise same-named constraints in other databases on the same server are joined in as well.
-        // ORDER BY keeps the result deterministic: INFORMATION_SCHEMA gives no ordering guarantee, which
-        // otherwise leaves both the order of the foreign keys and the column order within a composite key to chance.
+        // KEY_COLUMN_USAGE spans all schemas and also lists unique/primary keys, so the join must be qualified.
+        // INFORMATION_SCHEMA gives no ordering guarantee, and the column order of a composite key ends up in the DDL.
         /** @var list<array{CONSTRAINT_NAME: string, COLUMN_NAME: string, REFERENCED_TABLE_NAME: string, REFERENCED_COLUMN_NAME: string, UPDATE_RULE: rex_sql_foreign_key::*, DELETE_RULE: rex_sql_foreign_key::*}> $foreignKeyParts */
         $foreignKeyParts = $this->sql->getArray('
             SELECT c.CONSTRAINT_NAME, c.REFERENCED_TABLE_NAME, c.UPDATE_RULE, c.DELETE_RULE, k.COLUMN_NAME, k.REFERENCED_COLUMN_NAME
@@ -153,6 +151,7 @@ class rex_sql_table
                 ON c.CONSTRAINT_SCHEMA = k.CONSTRAINT_SCHEMA
                 AND c.CONSTRAINT_NAME = k.CONSTRAINT_NAME
                 AND c.TABLE_NAME = k.TABLE_NAME
+                AND k.POSITION_IN_UNIQUE_CONSTRAINT IS NOT NULL
             WHERE c.CONSTRAINT_SCHEMA = DATABASE() AND c.TABLE_NAME = ?
             ORDER BY c.CONSTRAINT_NAME, k.ORDINAL_POSITION', [$name]);
         $foreignKeys = [];

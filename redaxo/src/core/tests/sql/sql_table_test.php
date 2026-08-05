@@ -516,6 +516,12 @@ final class rex_sql_table_test extends TestCase
         $table = rex_sql_table::get(self::TABLE);
 
         self::assertEquals($fk, $table->getForeignKey('test1_fk_config'));
+
+        // assertEquals compares arrays order-insensitively, so the column order needs its own assertion.
+        self::assertSame(
+            ['config_namespace' => 'namespace', 'config_key' => 'key'],
+            $table->getForeignKey('test1_fk_config')?->getColumns(),
+        );
     }
 
     public function testEnsureForeignKey(): void
