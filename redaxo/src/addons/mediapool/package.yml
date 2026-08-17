@@ -29,7 +29,7 @@ allowed_mime_types:
     jpeg: [image/jpeg, image/pjpeg]
     png: [image/png]
     webp: [image/webp]
-    eps: [application/postscript]
+    eps: [application/postscript, image/x-eps]
     tif: [image/tiff]
     tiff: [image/tiff]
     svg: [image/svg+xml]
