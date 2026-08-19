@@ -83,7 +83,7 @@ final class rex_mediapool
                 $aid = (int) $artArr['article_id'];
                 $clang = (int) $artArr['clang_id'];
                 $ooa = rex_article::get($aid, $clang);
-                $name = ($ooa) ? $ooa->getName() : '';
+                $name = ($ooa) ? rex_escape($ooa->getName()) : '';
                 $warning[0] .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'clang' => $clang]) . '\')">' . $name . '</a></li>';
             }
             $warning[0] .= '</ul>';
@@ -114,13 +114,13 @@ final class rex_mediapool
             return false;
         }
 
+        // A blocked extension must not appear as a dot-separated segment anywhere in the filename,
+        // to prevent double/multi extension vulnerabilities: some webspaces execute a file named
+        // e.g. `foo.php.txt` or `foo.php.any.jpg` as php. Matching whole segments (instead of a
+        // substring) avoids false positives like `foo.json` (contains `.js`) or `js_datei.txt`.
         $blockedExtensions = self::getBlockedExtensions();
-        foreach ($blockedExtensions as $blockedExtension) {
-            // $blockedExtensions extensions are not allowed within filenames, to prevent double extension vulnerabilities:
-            // -> some webspaces execute files named file.php.txt as php
-            if (str_ends_with($filename, '.' . $blockedExtension) // Prüfe ob der String mit der verbotenen Endung endet
-                || str_ends_with($filename, '.' . $blockedExtension . '.' . $fileExt) // prüfe ob es keine doppelte Endung der Form *.php.ext gibt
-            ) {
+        foreach (explode('.', mb_strtolower($filename)) as $segment) {
+            if (in_array($segment, $blockedExtensions, true)) {
                 return false;
             }
         }
@@ -150,7 +150,7 @@ final class rex_mediapool
             return false;
         }
 
-        $mimeType = rex_file::mimeType($path);
+        $mimeType = rex_file::mimeType($path, $filename);
 
         return in_array($mimeType, $allowedMimetypes[$extension]);
     }

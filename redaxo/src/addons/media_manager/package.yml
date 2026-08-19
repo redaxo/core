@@ -1,5 +1,5 @@
 package: media_manager
-version: '2.18.0-beta1'
+version: '2.18.3'
 author: 'Markus Staab, Jan Kristinus'
 supportpage: https://github.com/redaxo/core
 

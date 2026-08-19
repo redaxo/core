@@ -9,18 +9,23 @@ class rex_api_category_edit extends rex_api_function
 {
     public function execute()
     {
-        if (!rex::requireUser()->hasPerm('editCategory[]')) {
+        $user = rex::requireUser();
+        if (!$user->hasPerm('editCategory[]')) {
             throw new rex_api_exception('User has no permission to edit categories!');
         }
 
         $catId = rex_request('category-id', 'int');
         $clangId = rex_request('clang', 'int');
 
-        $user = rex::requireUser();
+        if (!rex_category::get($catId, $clangId)) {
+            throw new rex_api_exception('Unable to find category with id "' . $catId . '" and clang "' . $clangId . '"!');
+        }
 
-        // check permissions
-        if (!$user->getComplexPerm('structure')->hasCategoryPerm($catId)) {
-            throw new rex_api_exception('user has no permission for this category!');
+        if (
+            !$user->getComplexPerm('clang')->hasPerm($clangId)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($catId)
+        ) {
+            throw new rex_api_exception(rex_i18n::msg('no_rights_to_this_function'));
         }
 
         // prepare and validate parameters

@@ -8,6 +8,16 @@
 abstract class rex_metainfo_handler
 {
     /**
+     * Csrf token for forms which are provided by metainfo itself.
+     *
+     * Metafields which are rendered into a form of another package are covered by the csrf token of that form.
+     */
+    public static function getCsrfToken(): rex_csrf_token
+    {
+        return rex_csrf_token::factory('metainfo');
+    }
+
+    /**
      * Erstellt den nötigen HTML Code um ein Formular zu erweitern.
      *
      * @param rex_sql $sqlFields rex_sql-objekt, dass die zu verarbeitenden Felder enthält

@@ -34,13 +34,13 @@ if ('' == $addon->getConfig('from') || '' == $addon->getConfig('test_address')) 
 
     $mail->Body .= "\nMailer: " . $addon->getConfig('mailer') . $devider . $securityMode;
     $mail->Body .= "\n" . $addon->i18n('checkmail_domain_note') . "\n" . $devider;
-    $mail->Debugoutput = static function ($str) use (&$mailerDebug) {
-        $mailerDebug .= date('Y-m-d H:i:s', time()) . ' ' . nl2br($str);
+    $mail->Debugoutput = static function (string $str) use (&$mailerDebug) {
+        $mailerDebug .= date('Y-m-d H:i:s', time()) . ' ' . nl2br(rex_escape($str));
     };
 
     if (!$mail->send()) {
         $alert = '<h2>' . $addon->i18n('checkmail_error_headline') . '</h2><hr>';
-        $alert .= $addon->i18n('checkmail_error') . ': ' . $mail->ErrorInfo;
+        $alert .= $addon->i18n('checkmail_error') . ': ' . rex_escape($mail->ErrorInfo);
         $content .= rex_view::error($alert);
     } else {
         $success = '<h2>' . $addon->i18n('checkmail_send') . '</h2> ' . rex_escape($addon->getConfig('test_address')) . '<br>' . $addon->i18n('checkmail_info');

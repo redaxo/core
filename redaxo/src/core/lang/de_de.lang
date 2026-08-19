@@ -26,6 +26,7 @@ description = Beschreibung
 email = E-Mail
 function = Funktion
 no_editing_rights = Keine Editiererlaubnis
+no_rights_to_this_function = Sie haben keine Rechte für diese Funktion!
 check_rights_in_directory = Bitte überprüfen Sie die Rechte im Ordner
 error_undefined = Ein undefinierter Fehler ist aufgetreten
 csrf_token_invalid = Bitte das Formular erneut absenden, bzw. die Aktion erneut ausführen (Fehler: CSRF-Token ungültig).

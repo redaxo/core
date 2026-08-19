@@ -29,7 +29,27 @@ if ($hasCategoryPerm && 'updatecat_selectedmedia' == $mediaMethod) {
     } else {
         $selectedmedia = rex_post('selectedmedia', 'array');
         if (isset($selectedmedia[0]) && '' != $selectedmedia[0]) {
+            $error = [];
+            $success = [];
+
+            $countMoved = 0;
             foreach ($selectedmedia as $fileName) {
+                $fileName = (string) $fileName;
+                $media = rex_media::get($fileName);
+
+                if (!$media) {
+                    $error[] = rex_i18n::msg('pool_file_not_found', $fileName);
+
+                    continue;
+                }
+
+                // the target category is already covered by $hasCategoryPerm
+                if (!$perm->hasCategoryPerm($media->getCategoryId())) {
+                    $error[] = rex_i18n::msg('no_rights_to_this_function');
+
+                    continue;
+                }
+
                 $db = rex_sql::factory();
                 // $db->setDebug();
                 $db->setTable(rex::getTablePrefix() . 'media');
@@ -38,7 +58,7 @@ if ($hasCategoryPerm && 'updatecat_selectedmedia' == $mediaMethod) {
                 $db->addGlobalUpdateFields();
                 try {
                     $db->update();
-                    $success = rex_i18n::msg('pool_selectedmedia_moved');
+                    ++$countMoved;
                     rex_media_cache::delete($fileName);
 
                     rex_extension::registerPoint(new rex_extension_point('MEDIA_MOVED', null, [
@@ -46,8 +66,12 @@ if ($hasCategoryPerm && 'updatecat_selectedmedia' == $mediaMethod) {
                         'category_id' => $rexFileCategory,
                     ]));
                 } catch (rex_sql_exception) {
-                    $error = rex_i18n::msg('pool_selectedmedia_error');
+                    $error[] = rex_i18n::msg('pool_selectedmedia_error');
                 }
+            }
+
+            if ($countMoved) {
+                $success[] = rex_i18n::msg('pool_selectedmedia_moved');
             }
         } else {
             $error = rex_i18n::msg('pool_selectedmedia_error');
@@ -76,7 +100,7 @@ if ($hasCategoryPerm && 'delete_selectedmedia' == $mediaMethod) {
                             $error[] = $e->getMessage();
                         }
                     } else {
-                        $error[] = rex_i18n::msg('no_permission');
+                        $error[] = rex_i18n::msg('no_rights_to_this_function');
                     }
                 } else {
                     $error[] = rex_i18n::msg('pool_file_not_found', $filename);
@@ -311,7 +335,8 @@ foreach ($items as $media) {
     $ilink = rex_url::currentBackendPage(array_merge(['file_id' => $media->getId(), 'rex_file_category' => $rexFileCategory], $argUrl));
 
     $addTd = '<td></td>';
-    if ($hasCategoryPerm) {
+    // the search may list media from categories the user has no permission for
+    if ($hasCategoryPerm && $perm->hasCategoryPerm($media->getCategoryId())) {
         $addTd = '<td><input type="checkbox" name="selectedmedia[]" value="' . $media->getFileName() . '" /></td>';
     }
 

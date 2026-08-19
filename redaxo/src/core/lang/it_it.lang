@@ -23,6 +23,7 @@ description = Descrizione
 email = Email
 function = Funzione
 no_editing_rights = Non hai il permesso di modifica
+no_rights_to_this_function = Non ha i diritti per questa funzione!
 check_rights_in_directory  =  Controlla i permessi nel folder
 error_undefined = È stato riscontrato un errore indefinito
 

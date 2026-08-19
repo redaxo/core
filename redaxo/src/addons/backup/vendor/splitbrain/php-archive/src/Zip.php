@@ -9,6 +9,11 @@ namespace splitbrain\PHPArchive;
  *
  * for specs see http://www.pkware.com/appnote
  *
+ * File names are expected to be UTF-8 encoded. Names outside the ASCII range are stored as UTF-8
+ * and flagged accordingly, names read from an archive are always returned as UTF-8: they are
+ * taken as they are when the archive flags them or provides them in an extra field, and are
+ * converted from CP437 otherwise, which is the encoding the format prescribes for unflagged names.
+ *
  * @author  Andreas Gohr <andi@splitbrain.org>
  * @package splitbrain\PHPArchive
  * @license MIT
@@ -16,6 +21,15 @@ namespace splitbrain\PHPArchive;
 class Zip extends Archive
 {
     const LOCAL_FILE_HEADER_CRC_OFFSET = 14;
+
+    /**
+     * Bit 11 of the general purpose flag, marks file names and comments as UTF-8 encoded
+     */
+    const FLAG_UTF8 = 0x0800;
+
+    const SIG_LOCAL_FILE_HEADER    = "\x50\x4b\x03\x04";
+    const SIG_CENTRAL_FILE_HEADER  = "\x50\x4b\x01\x02";
+    const SIG_END_OF_CENTRAL_DIR   = "\x50\x4b\x05\x06";
 
     protected $file = '';
     protected $fh;
@@ -89,6 +103,7 @@ class Zip extends Archive
      *
      * @see contents()
      * @throws ArchiveIOException
+     * @throws ArchiveCorruptedException
      * @return FileInfo[]
      */
     public function yieldContents()
@@ -129,6 +144,7 @@ class Zip extends Archive
      * @param string     $exclude a regular expression of files to exclude
      * @param string     $include a regular expression of files to include
      * @throws ArchiveIOException
+     * @throws ArchiveCorruptedException
      * @return FileInfo[]
      */
     public function extract($outdir, $strip = '', $exclude = '', $include = '')
@@ -250,7 +266,10 @@ class Zip extends Archive
             }
 
             @touch($output, $fileinfo->getMtime());
-            //FIXME what about permissions?
+            if ($header['mode']) {
+                // only archives that stored a mode get one applied
+                @chmod($output, $header['mode'] & 07777);
+            }
             if(is_callable($this->callback)) {
                 call_user_func($this->callback, $fileinfo);
             }
@@ -312,13 +331,19 @@ class Zip extends Archive
             throw new ArchiveIOException('Archive has been closed, files can no longer be added');
         }
 
+        if (is_dir($file)) {
+            // a directory has no content to read, storing its name is all it takes
+            $this->addData($fileinfo, '');
+            return;
+        }
+
         $fp = @fopen($file, 'rb');
         if ($fp === false) {
             throw new ArchiveIOException('Could not open file for reading: '.$file);
         }
 
         $offset = $this->dataOffset();
-        $name   = $fileinfo->getPath();
+        $name   = $this->makeEntryName($fileinfo);
         $time   = $fileinfo->getMtime();
 
         // write local file header (temporary CRC and size)
@@ -388,7 +413,8 @@ class Zip extends Archive
             $size,
             $csize,
             $name,
-            (bool) $this->complevel
+            (bool) $this->complevel,
+            $this->makeExternalAttributes($fileinfo)
         );
 
         if(is_callable($this->callback)) {
@@ -413,16 +439,21 @@ class Zip extends Archive
             throw new ArchiveIOException('Archive has been closed, files can no longer be added');
         }
 
+        if ($fileinfo->getIsdir()) {
+            $data = ''; // a directory is stored as an entry without content
+        }
+
         // prepare info and compress data
         $size     = strlen($data);
         $crc      = crc32($data);
-        if ($this->complevel) {
+        $comp     = !$fileinfo->getIsdir() && $this->complevel;
+        if ($comp) {
             $data = gzcompress($data, $this->complevel);
             $data = substr($data, 2, -4); // strip compression headers
         }
         $csize  = strlen($data);
         $offset = $this->dataOffset();
-        $name   = $fileinfo->getPath();
+        $name   = $this->makeEntryName($fileinfo);
         $time   = $fileinfo->getMtime();
 
         // write local file header
@@ -432,7 +463,7 @@ class Zip extends Archive
             $size,
             $csize,
             $name,
-            (bool) $this->complevel
+            (bool) $comp
         ));
 
         // we store no encryption header
@@ -450,7 +481,8 @@ class Zip extends Archive
             $size,
             $csize,
             $name,
-            (bool) $this->complevel
+            (bool) $comp,
+            $this->makeExternalAttributes($fileinfo)
         );
 
         if(is_callable($this->callback)) {
@@ -478,7 +510,7 @@ class Zip extends Archive
             $this->writebytes($ctrldir);
 
             // write end of central directory record
-            $this->writebytes("\x50\x4b\x05\x06"); // end of central dir signature
+            $this->writebytes(self::SIG_END_OF_CENTRAL_DIR);
             $this->writebytes(pack('v', 0)); // number of this disk
             $this->writebytes(pack('v', 0)); // number of the disk with the start of the central directory
             $this->writebytes(pack('v',
@@ -538,6 +570,7 @@ class Zip extends Archive
      * This key-value list contains general information about the ZIP file
      *
      * @return array
+     * @throws ArchiveCorruptedException when the file is not a valid ZIP archive
      */
     protected function readCentralDir()
     {
@@ -550,21 +583,31 @@ class Zip extends Archive
 
         @fseek($this->fh, $size - $maximum_size);
         $pos   = ftell($this->fh);
-        $bytes = 0x00000000;
+        $bytes = '';
 
         while ($pos < $size) {
-            $byte  = @fread($this->fh, 1);
-            $bytes = (($bytes << 8) & 0xFFFFFFFF) | ord($byte);
-            if ($bytes == 0x504b0506) {
+            $bytes = substr($bytes . (string)@fread($this->fh, 1), -4);
+            if ($bytes === self::SIG_END_OF_CENTRAL_DIR) {
                 break;
             }
             $pos++;
+        }
+
+        if ($bytes !== self::SIG_END_OF_CENTRAL_DIR) {
+            throw new ArchiveCorruptedException(
+                'End of central directory signature not found - not a valid ZIP file'
+            );
         }
 
         $data = unpack(
             'vdisk/vdisk_start/vdisk_entries/ventries/Vsize/Voffset/vcomment_size',
             fread($this->fh, 18)
         );
+        if ($data === false) {
+            throw new ArchiveCorruptedException(
+                'Could not read end of central directory record'
+            );
+        }
 
         if ($data['comment_size'] != 0) {
             $centd['comment'] = fread($this->fh, $data['comment_size']);
@@ -618,12 +661,49 @@ class Zip extends Archive
         $header['mtime']           = $this->makeUnixTime($header['mdate'], $header['mtime']);
         $header['stored_filename'] = $header['filename'];
         $header['status']          = 'ok';
-        if (substr($header['filename'], -1) == '/') {
-            $header['external'] = 0x41FF0010;
-        }
-        $header['folder'] = ($header['external'] == 0x41FF0010 || $header['external'] == 16) ? 1 : 0;
+        $header['folder']          = $this->isFolder($header) ? 1 : 0;
+        $header['mode']            = $this->headerMode($header);
 
         return $header;
+    }
+
+    /**
+     * Checks if the given header describes a directory
+     *
+     * Directories are stored with a trailing slash in their name. Some archivers rely on the
+     * MS-DOS directory attribute or on the file type of the Unix mode instead.
+     *
+     * @param array $header a central file header
+     * @return bool
+     */
+    protected function isFolder($header)
+    {
+        if (substr($header['filename'], -1) === '/') {
+            return true;
+        }
+        if ($header['external'] & 0x10) {
+            return true;
+        }
+
+        return ($this->headerMode($header) & 0170000) === 0040000;
+    }
+
+    /**
+     * Returns the file mode stored in the given header
+     *
+     * Only archives created on Unix keep a mode in the upper half of the external file
+     * attributes, other systems store data there that is of no use here.
+     *
+     * @param array $header a central file header
+     * @return int the mode including its file type bits, zero when the header holds none
+     */
+    protected function headerMode($header)
+    {
+        if (($header['version'] >> 8) !== 3) {
+            return 0; // not created on Unix
+        }
+
+        return ($header['external'] >> 16) & 0177777;
     }
 
     /**
@@ -649,7 +729,7 @@ class Zip extends Archive
             $header['extradata'] = array_merge($header['extradata'],  $this->parseExtra($header['extra']));
         } else {
             $header['extra'] = '';
-            $header['extradata'] = array();
+            // $header['extradata'] is kept as what the central directory provided
         }
 
         $header['compression'] = $data['compression'];
@@ -667,7 +747,6 @@ class Zip extends Archive
 
         $header['stored_filename'] = $header['filename'];
         $header['status']          = "ok";
-        $header['folder']          = ($header['external'] == 0x41FF0010 || $header['external'] == 16) ? 1 : 0;
         return $header;
     }
 
@@ -691,7 +770,7 @@ class Zip extends Archive
 
         // handle known ones
         if(isset($extra[0x6375])) {
-            $extra['utf8comment'] = substr($extra[0x7075], 5); // strip version and crc
+            $extra['utf8comment'] = substr($extra[0x6375], 5); // strip version and crc
         }
         if(isset($extra[0x7075])) {
             $extra['utf8path'] = substr($extra[0x7075], 5); // strip version and crc
@@ -712,22 +791,37 @@ class Zip extends Archive
         $fileinfo->setSize($header['size']);
         $fileinfo->setCompressedSize($header['compressed_size']);
         $fileinfo->setMtime($header['mtime']);
-        $fileinfo->setComment($header['comment']);
-        $fileinfo->setIsdir($header['external'] == 0x41FF0010 || $header['external'] == 16);
-
-        if(isset($header['extradata']['utf8path'])) {
-            $fileinfo->setPath($header['extradata']['utf8path']);
-        } else {
-            $fileinfo->setPath($this->cpToUtf8($header['filename']));
+        $fileinfo->setIsdir((bool) $header['folder']);
+        if ($header['mode']) {
+            $fileinfo->setMode($header['mode'] & 07777);
         }
-
-        if(isset($header['extradata']['utf8comment'])) {
-            $fileinfo->setComment($header['extradata']['utf8comment']);
-        } else {
-            $fileinfo->setComment($this->cpToUtf8($header['comment']));
-        }
+        $fileinfo->setPath($this->utf8Name($header, 'filename', 'utf8path'));
+        $fileinfo->setComment($this->utf8Name($header, 'comment', 'utf8comment'));
 
         return $fileinfo;
+    }
+
+    /**
+     * Returns the UTF-8 version of a name stored in the given header
+     *
+     * An extra field holding the UTF-8 name is used when it is available. Otherwise the name is
+     * taken as it is when the header flags it as UTF-8 and converted from CP437 when it does not.
+     *
+     * @param array $header the header the name is stored in
+     * @param string $field the header field holding the name
+     * @param string $extrafield the extra data field holding the UTF-8 version of the name
+     * @return string
+     */
+    protected function utf8Name($header, $field, $extrafield)
+    {
+        if (isset($header['extradata'][$extrafield])) {
+            return $header['extradata'][$extrafield];
+        }
+        if (isset($header['flag']) && ($header['flag'] & self::FLAG_UTF8)) {
+            return $header[$field];
+        }
+
+        return $this->cpToUtf8($header[$field]);
     }
 
     /**
@@ -754,29 +848,59 @@ class Zip extends Archive
     }
 
     /**
-     * Convert the given UTF-8 encoded string to CP437
+     * Returns the name to store the given file under
      *
-     * Same caveats as for cpToUtf8() apply
+     * Directories are stored with a trailing slash. Readers that look at neither the attributes
+     * nor the mode of an entry rely on it to recognize a directory.
      *
-     * @param $string
+     * @param FileInfo $fileinfo
      * @return string
      */
-    protected function utf8ToCp($string)
+    protected function makeEntryName(FileInfo $fileinfo)
     {
-        // try iconv first
-        if (function_exists('iconv')) {
-            $conv = @iconv('UTF-8', 'CP437//IGNORE', $string);
-            if($conv) return $conv; // it worked
+        return $fileinfo->getPath() . ($fileinfo->getIsdir() ? '/' : '');
+    }
+
+    /**
+     * Returns the external file attributes for the given file
+     *
+     * The upper half holds the Unix mode, the lower one the MS-DOS attributes, of which only the
+     * directory bit is used here. A mode that comes without file type bits is completed with them,
+     * otherwise readers can not tell what kind of entry they are looking at.
+     *
+     * @param FileInfo $fileinfo
+     * @return int
+     */
+    protected function makeExternalAttributes(FileInfo $fileinfo)
+    {
+        $mode = $fileinfo->getMode();
+        if (!($mode & 0170000)) {
+            $mode |= $fileinfo->getIsdir() ? 0040000 : 0100000;
         }
 
-        // still here? iconv failed to convert the string. Try another method
-        // see http://php.net/manual/en/function.iconv.php#108643
+        return ($mode << 16) | ($fileinfo->getIsdir() ? 0x10 : 0);
+    }
 
-        if (function_exists('mb_convert_encoding')) {
-            return mb_convert_encoding($string, 'CP850', 'UTF-8');
-        } else {
-            return $string;
+    /**
+     * Returns the general purpose flag for an entry with the given file name
+     *
+     * File names outside the 7bit ASCII range are stored as UTF-8, which has to be flagged for
+     * readers to decode them correctly. A name that is no valid UTF-8 is stored as it is, there
+     * is no way to tell readers what encoding it uses.
+     *
+     * @param string $name file name
+     * @return int
+     */
+    protected function makeGeneralPurposeFlag($name)
+    {
+        if (!preg_match('/[\x80-\xFF]/', $name)) {
+            return 0;
         }
+        if (preg_match('//u', $name) !== 1) {
+            return 0;
+        }
+
+        return self::FLAG_UTF8;
     }
 
 
@@ -811,7 +935,7 @@ class Zip extends Archive
      */
     protected function writebytesAt($data, $offset) {
         if (!$this->file) {
-            $this->memory .= substr_replace($this->memory, $data, $offset);
+            $this->memory = substr_replace($this->memory, $data, $offset, strlen($data));
             $written = strlen($data);
         } else {
             @fseek($this->fh, $offset);
@@ -902,20 +1026,19 @@ class Zip extends Archive
      * @param int $clen length of the compressed data
      * @param string $name file name
      * @param boolean|null $comp if compression is used, if null it's determined from $len != $clen
+     * @param int $external external file attributes as returned by makeExternalAttributes()
      * @return string
      */
-    protected function makeCentralFileRecord($offset, $ts, $crc, $len, $clen, $name, $comp = null)
+    protected function makeCentralFileRecord($offset, $ts, $crc, $len, $clen, $name, $comp = null, $external = 0)
     {
         if(is_null($comp)) $comp = $len != $clen;
         $comp = $comp ? 8 : 0;
         $dtime = dechex($this->makeDosTime($ts));
 
-        list($name, $extra) = $this->encodeFilename($name);
-
-        $header = "\x50\x4b\x01\x02"; // central file header signature
-        $header .= pack('v', 14); // version made by - VFAT
+        $header = self::SIG_CENTRAL_FILE_HEADER;
+        $header .= pack('CC', 20, 3); // version made by - 2.0, Unix
         $header .= pack('v', 20); // version needed to extract - 2.0
-        $header .= pack('v', 0); // general purpose flag - no flags set
+        $header .= pack('v', $this->makeGeneralPurposeFlag($name)); // general purpose flag
         $header .= pack('v', $comp); // compression method - deflate|none
         $header .= pack(
             'H*',
@@ -928,14 +1051,13 @@ class Zip extends Archive
         $header .= pack('V', $clen); // compressed size
         $header .= pack('V', $len); // uncompressed size
         $header .= pack('v', strlen($name)); // file name length
-        $header .= pack('v', strlen($extra)); // extra field length
+        $header .= pack('v', 0); // extra field length
         $header .= pack('v', 0); // file comment length
         $header .= pack('v', 0); // disk number start
         $header .= pack('v', 0); // internal file attributes
-        $header .= pack('V', 0); // external file attributes  @todo was 0x32!?
+        $header .= pack('V', $external); // external file attributes - mode and MS-DOS attributes
         $header .= pack('V', $offset); // relative offset of local header
         $header .= $name; // file name
-        $header .= $extra; // extra (utf-8 filename)
 
         return $header;
     }
@@ -957,11 +1079,9 @@ class Zip extends Archive
         $comp = $comp ? 8 : 0;
         $dtime = dechex($this->makeDosTime($ts));
 
-        list($name, $extra) = $this->encodeFilename($name);
-
-        $header = "\x50\x4b\x03\x04"; //  local file header signature
+        $header = self::SIG_LOCAL_FILE_HEADER;
         $header .= pack('v', 20); // version needed to extract - 2.0
-        $header .= pack('v', 0); // general purpose flag - no flags set
+        $header .= pack('v', $this->makeGeneralPurposeFlag($name)); // general purpose flag
         $header .= pack('v', $comp); // compression method - deflate|none
         $header .= pack(
             'H*',
@@ -974,9 +1094,8 @@ class Zip extends Archive
         $header .= pack('V', $clen); // compressed size
         $header .= pack('V', $len); // uncompressed size
         $header .= pack('v', strlen($name)); // file name length
-        $header .= pack('v', strlen($extra)); // extra field length
+        $header .= pack('v', 0); // extra field length
         $header .= $name; // file name
-        $header .= $extra; // extra (utf-8 filename)
         return $header;
     }
 
@@ -996,31 +1115,4 @@ class Zip extends Archive
         return $header;
     }
 
-    /**
-     * Returns an allowed filename and an extra field header
-     *
-     * When encoding stuff outside the 7bit ASCII range it needs to be placed in a separate
-     * extra field
-     *
-     * @param $original
-     * @return array($filename, $extra)
-     */
-    protected function encodeFilename($original)
-    {
-        $cp437 = $this->utf8ToCp($original);
-        if ($cp437 === $original) {
-            return array($original, '');
-        }
-
-        $extra = pack(
-            'vvCV',
-            0x7075, // tag
-            strlen($original) + 5, // length of file + version + crc
-            1, // version
-            crc32($original) // crc
-        );
-        $extra .= $original;
-
-        return array($cp437, $extra);
-    }
 }

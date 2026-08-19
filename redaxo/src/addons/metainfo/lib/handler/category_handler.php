@@ -28,7 +28,8 @@ class rex_metainfo_category_handler extends rex_metainfo_handler
     /** @return array */
     public function handleSave(array $params, rex_sql $sqlFields)
     {
-        if ('post' != rex_request_method()) {
+        // Only save when the category itself is saved, as only that request is protected by a csrf token.
+        if (!$params['save'] || 'post' != rex_request_method()) {
             return $params;
         }
 
@@ -84,6 +85,8 @@ class rex_metainfo_category_handler extends rex_metainfo_handler
     public function extendForm(rex_extension_point $ep)
     {
         $params = $ep->getParams();
+        $params['save'] = in_array($ep->getName(), ['CAT_ADDED', 'CAT_UPDATED'], true);
+
         if (isset($params['category'])) {
             $params['activeItem'] = $params['category'];
 

@@ -855,8 +855,6 @@
       <code><![CDATA[$imgBlur]]></code>
       <code><![CDATA[$imgBlur]]></code>
       <code><![CDATA[$imgBlur]]></code>
-      <code><![CDATA[$imgBlur]]></code>
-      <code><![CDATA[$imgCanvas]]></code>
       <code><![CDATA[$imgCanvas]]></code>
       <code><![CDATA[$imgCanvas]]></code>
       <code><![CDATA[$imgCanvas]]></code>
@@ -1258,13 +1256,6 @@
     <MixedArgument>
       <code><![CDATA[$args['types']]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$blockedExtension]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$blockedExtension]]></code>
-      <code><![CDATA[$blockedExtension]]></code>
-    </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[rex_addon::get('mediapool')->getProperty('allowed_mime_types', [])]]></code>
       <code><![CDATA[rex_addon::get('mediapool')->getProperty('blocked_extensions')]]></code>
@@ -1277,12 +1268,6 @@
       <code><![CDATA[rex_escape($allowedExtensions)]]></code>
       <code><![CDATA[rex_escape(rex_mediapool::getBlockedExtensions())]]></code>
     </MixedArgumentTypeCoercion>
-    <NullOperand>
-      <code><![CDATA[rex_escape(rex_file::mimeType($data['file']['path']))]]></code>
-    </NullOperand>
-    <PossiblyFalseArgument>
-      <code><![CDATA[$content]]></code>
-    </PossiblyFalseArgument>
     <PossiblyInvalidOperand>
       <code><![CDATA[$uses]]></code>
     </PossiblyInvalidOperand>
@@ -1321,7 +1306,6 @@
     </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedOperand>
   </file>
   <file src="redaxo/src/addons/mediapool/lib/var_medialist.php">
@@ -1339,7 +1323,6 @@
     </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedOperand>
   </file>
   <file src="redaxo/src/addons/mediapool/pages/index.php">
@@ -1377,9 +1360,6 @@
     <MixedOperand>
       <code><![CDATA[$fileId]]></code>
       <code><![CDATA[$fileId]]></code>
-      <code><![CDATA[$openerLink]]></code>
-      <code><![CDATA[$openerLink]]></code>
-      <code><![CDATA[$openerLink]]></code>
     </MixedOperand>
     <NullOperand>
       <code><![CDATA[rex_escape($gf->getValue('createuser'))]]></code>
@@ -1397,7 +1377,6 @@
   <file src="redaxo/src/addons/mediapool/pages/media.list.php">
     <MixedArgument>
       <code><![CDATA[$error]]></code>
-      <code><![CDATA[$fileName]]></code>
       <code><![CDATA[$filename]]></code>
       <code><![CDATA[$filename]]></code>
       <code><![CDATA[$filename]]></code>
@@ -1406,7 +1385,6 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$error]]></code>
       <code><![CDATA[$success]]></code>
-      <code><![CDATA[['filename' => $fileName]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$fileName]]></code>
@@ -1932,7 +1910,6 @@
   <file src="redaxo/src/addons/phpmailer/pages/checkmail.php">
     <MixedArgument>
       <code><![CDATA[$addon->getConfig('test_address')]]></code>
-      <code><![CDATA[$str]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$securityMode]]></code>
@@ -2013,31 +1990,6 @@
       <code><![CDATA[getId]]></code>
     </MixedMethodCall>
   </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_article2category.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_article2startarticle.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_article_move.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_category2article.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
-  <file src="redaxo/src/addons/structure/lib/api_functions/api_category_move.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getCategoryId]]></code>
-    </PossiblyNullReference>
-  </file>
   <file src="redaxo/src/addons/structure/lib/article.php">
     <MixedReturnStatement>
       <code><![CDATA[rex_addon::get('structure')->getProperty('article_id', 1)]]></code>
@@ -2099,7 +2051,6 @@
     </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedOperand>
     <PossiblyNullReference>
       <code><![CDATA[getId]]></code>
@@ -2118,7 +2069,6 @@
     </MixedMethodCall>
     <MixedOperand>
       <code><![CDATA[$name]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedOperand>
     <PossiblyNullReference>
       <code><![CDATA[getId]]></code>
@@ -2938,21 +2888,6 @@
       <code><![CDATA[$period]]></code>
     </MixedOperand>
   </file>
-  <file src="redaxo/src/addons/structure/plugins/history/lib/history_login.php">
-    <MixedArgument>
-      <code><![CDATA[$key1]]></code>
-      <code><![CDATA[$key2]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[[':login' => $historyLogin]]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$historyLogin]]></code>
-      <code><![CDATA[$historyValidtime]]></code>
-      <code><![CDATA[$login]]></code>
-      <code><![CDATA[$validtime]]></code>
-    </MixedOperand>
-  </file>
   <file src="redaxo/src/addons/structure/plugins/version/lib/revision.php">
     <NoValue>
       <code><![CDATA[$fromRevisionId]]></code>
@@ -3079,13 +3014,6 @@
     </PossiblyNullReference>
   </file>
   <file src="redaxo/src/core/backend.php">
-    <MixedArgument>
-      <code><![CDATA[$userAgent]]></code>
-      <code><![CDATA[$userAgent]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$userAgent]]></code>
-    </MixedAssignment>
     <PossiblyFalseArgument>
       <code><![CDATA[$CONTENT]]></code>
     </PossiblyFalseArgument>
@@ -4004,8 +3932,6 @@
       <code><![CDATA[$backups]]></code>
     </InvalidArgument>
     <MixedArgument>
-      <code><![CDATA[$config['db'][1]['host']]]></code>
-      <code><![CDATA[$config['db'][1]['login']]]></code>
       <code><![CDATA[$config['db'][1]['name']]]></code>
       <code><![CDATA[$dbCreate]]></code>
       <code><![CDATA[$login]]></code>
@@ -4411,9 +4337,6 @@
     <PossiblyNullOperand>
       <code><![CDATA[$sortType]]></code>
     </PossiblyNullOperand>
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->columnLayouts]]></code>
-    </PropertyTypeCoercion>
   </file>
   <file src="redaxo/src/core/lib/login/api_has_user_session.php">
     <MixedArgument>

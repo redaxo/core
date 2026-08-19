@@ -469,7 +469,7 @@
          * @returns {*}
          */
         snapVersion: function (date) {
-            var url = 'index.php?rex_history_function=snap&history_article_id=' + this.articleId + '&history_clang_id=' + this.clangId + '&history_date=' + date;
+            var url = 'index.php?rex_history_function=snap&history_article_id=' + this.articleId + '&history_clang_id=' + this.clangId + '&history_date=' + date + '&_csrf_token=' + encodeURIComponent(history_csrf_token);
             debug.info('snap version: ' + url);
             return $.ajax({
                 url: url,

@@ -26,7 +26,8 @@ class rex_metainfo_clang_handler extends rex_metainfo_handler
     /** @return array */
     public function handleSave(array $params, rex_sql $sqlFields)
     {
-        if ('post' != rex_request_method() || !isset($params['id'])) {
+        // Only save when the clang itself is saved, as only that request is protected by a csrf token.
+        if (!$params['save'] || 'post' != rex_request_method() || !isset($params['id'])) {
             return $params;
         }
 
@@ -62,6 +63,8 @@ class rex_metainfo_clang_handler extends rex_metainfo_handler
     public function extendForm(rex_extension_point $ep)
     {
         $params = $ep->getParams();
+        $params['save'] = in_array($ep->getName(), ['CLANG_ADDED', 'CLANG_UPDATED'], true);
+
         if (isset($params['sql'])) {
             $params['activeItem'] = $params['sql'];
         }

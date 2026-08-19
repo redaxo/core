@@ -3,6 +3,10 @@
 /**
  * Class to represent sql tables.
  *
+ * To persist changes, choose the right method:
+ * - {@see ensure()} when the object describes the complete table (create-or-migrate, enforces column order).
+ * - {@see alter()} for incremental changes to an existing table (e.g. just a few `ensureColumn()` calls).
+ *
  * @author gharlan
  *
  * @package redaxo\core\sql
@@ -137,12 +141,19 @@ class rex_sql_table
             $this->indexesExisting[$indexName] = $indexName;
         }
 
+        // KEY_COLUMN_USAGE spans all schemas and also lists unique/primary keys, so the join must be qualified.
+        // INFORMATION_SCHEMA gives no ordering guarantee, and the column order of a composite key ends up in the DDL.
         /** @var list<array{CONSTRAINT_NAME: string, COLUMN_NAME: string, REFERENCED_TABLE_NAME: string, REFERENCED_COLUMN_NAME: string, UPDATE_RULE: rex_sql_foreign_key::*, DELETE_RULE: rex_sql_foreign_key::*}> $foreignKeyParts */
         $foreignKeyParts = $this->sql->getArray('
             SELECT c.CONSTRAINT_NAME, c.REFERENCED_TABLE_NAME, c.UPDATE_RULE, c.DELETE_RULE, k.COLUMN_NAME, k.REFERENCED_COLUMN_NAME
             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS c
-            INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON c.CONSTRAINT_NAME = k.CONSTRAINT_NAME
-            WHERE c.CONSTRAINT_SCHEMA = DATABASE() AND c.TABLE_NAME = ?', [$name]);
+            INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k
+                ON c.CONSTRAINT_SCHEMA = k.CONSTRAINT_SCHEMA
+                AND c.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+                AND c.TABLE_NAME = k.TABLE_NAME
+                AND k.POSITION_IN_UNIQUE_CONSTRAINT IS NOT NULL
+            WHERE c.CONSTRAINT_SCHEMA = DATABASE() AND c.TABLE_NAME = ?
+            ORDER BY c.CONSTRAINT_NAME, k.ORDINAL_POSITION', [$name]);
         $foreignKeys = [];
         foreach ($foreignKeyParts as $part) {
             $foreignKeys[$part['CONSTRAINT_NAME']][] = $part;
@@ -622,6 +633,18 @@ class rex_sql_table
 
     /**
      * Ensures that the table exists with the given definition.
+     *
+     * Use this only when the object describes the **complete** desired table: a non-existing table is created,
+     * an existing one is migrated to match. This also enforces the column order based on the order in which the
+     * columns were added/ensured, so existing columns may be reordered to fit.
+     *
+     * Note: columns are never dropped implicitly just because they are missing from the definition — a column is
+     * only dropped when you explicitly call {@see removeColumn()}. Same for indexes and foreign keys.
+     *
+     * Do **not** use this when you only added/changed individual columns of an existing table (e.g. a few
+     * `ensureColumn()` calls) without describing the full table — that would reorder the existing columns.
+     * Use {@see alter()} for such incremental changes instead.
+     *
      * @return void
      */
     public function ensure()
@@ -733,7 +756,15 @@ class rex_sql_table
     }
 
     /**
-     * Alters the table.
+     * Applies the pending changes to an existing table.
+     *
+     * Use this for **incremental** modifications of an existing table (add/change/drop individual columns,
+     * indexes or foreign keys, rename the table). Only the changes you explicitly made are applied; untouched
+     * columns keep their current position. Newly added columns without an explicit position are appended at the end.
+     *
+     * Unlike {@see ensure()}, this does **not** enforce the full column order, which is exactly what you want when
+     * you did not describe the complete table. The table must already exist (otherwise a `rex_exception` is thrown);
+     * to create-or-migrate from a full definition use {@see ensure()}.
      *
      * @throws rex_exception
      * @return void

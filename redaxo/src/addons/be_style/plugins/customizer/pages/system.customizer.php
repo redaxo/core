@@ -3,7 +3,11 @@
 $success = '';
 $error = '';
 
-if ('' != rex_post('btn_save', 'string')) {
+$csrfToken = rex_csrf_token::factory('be_style_customizer');
+
+if ('' != rex_post('btn_save', 'string') && !$csrfToken->isValid()) {
+    $error = rex_i18n::msg('csrf_token_invalid');
+} elseif ('' != rex_post('btn_save', 'string')) {
     // set config
 
     $newConfig = rex_post('settings', 'array');
@@ -255,6 +259,7 @@ $content = $fragment->parse('core/page/section.php');
 
 echo '
     <form action="' . rex_url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         ' . $content . '
     </form>
 ';

@@ -2,9 +2,17 @@
 
 declare(strict_types=1);
 
-// total 6 errors
-
 $ignoreErrors = [];
+$ignoreErrors[] = [
+    'rawMessage' => 'Static property rex_install_packages::$addPackages (array<string, array{name: string, author: string, shortdescription: string, description: string, website: string, counter: int, created: string, updated: string, ...}>|null) does not accept array<string, array{name: string, author: string, shortdescription: string, description: string, website: string, counter: int, created: string, updated: string, ...}>.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/packages.php',
+];
+$ignoreErrors[] = [
+    'rawMessage' => 'Static property rex_install_packages::$updatePackages (array<string, array{name: string, author: string, shortdescription: string, description: string, website: string, counter: int, created: string, updated: string, ...}>|null) does not accept array<string, array{name: string, author: string, shortdescription: string, description: string, website: string, counter: int, created: string, updated: string, ...}>.',
+    'count' => 1,
+    'path' => __DIR__ . '/../../../redaxo/src/addons/install/lib/packages.php',
+];
 $ignoreErrors[] = [
     'rawMessage' => 'Static property rex_media::$instances (array<class-string, array<string, static(rex_media)|null>>) does not accept array<class-string, array<string, rex_media|null>>.',
     'count' => 1,

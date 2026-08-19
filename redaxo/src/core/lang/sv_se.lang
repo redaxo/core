@@ -26,6 +26,7 @@ description = Beskrivning
 email = E-post
 function = Funktion
 no_editing_rights = Du har inte rätt att ändra
+no_rights_to_this_function = Du har inga rättigheter till den här funktionen!
 check_rights_in_directory = Vänligen kolla rättigheterna i mappen
 error_undefined = Okänt fel
 csrf_token_invalid = Vänligen skicka formuläret igen, eller kör åtgärden igen (fel: CSRF-token är ogiltig).

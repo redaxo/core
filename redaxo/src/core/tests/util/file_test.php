@@ -10,17 +10,17 @@ final class rex_file_test extends TestCase
     {
         parent::setUp();
 
-        rex_dir::create($this->getPath());
+        rex_dir::create(self::getPath());
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
 
-        rex_dir::delete($this->getPath());
+        rex_dir::delete(self::getPath());
     }
 
-    private function getPath(string $file = ''): string
+    private static function getPath(string $file = ''): string
     {
         return rex_path::addonData('tests', 'rex_file_test/' . $file);
     }
@@ -29,13 +29,13 @@ final class rex_file_test extends TestCase
     {
         $this->expectException(rex_exception::class);
 
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         rex_file::require($file);
     }
 
     public function testGetDefault(): void
     {
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         self::assertNull(rex_file::get($file), 'get() returns null for non-existing files');
         $myDefault = 'myDefault';
         self::assertEquals($myDefault, rex_file::get($file, $myDefault), 'get() returns given default value for non-existing files');
@@ -43,7 +43,7 @@ final class rex_file_test extends TestCase
 
     public function testGetConfigDefault(): void
     {
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         self::assertEquals([], rex_file::getConfig($file), 'getConfig() returns empty array for non-existing files');
         $myDefault = ['myDefault'];
         self::assertEquals($myDefault, rex_file::getConfig($file, $myDefault), 'getConfig() returns given default value for non-existing files');
@@ -51,7 +51,7 @@ final class rex_file_test extends TestCase
 
     public function testGetCacheDefault(): void
     {
-        $file = $this->getPath('non_existing.txt');
+        $file = self::getPath('non_existing.txt');
         self::assertEquals([], rex_file::getCache($file), 'getCache() returns empty array for non-existing files');
         $myDefault = ['myDefault'];
         self::assertEquals($myDefault, rex_file::getCache($file, $myDefault), 'getCache() returns given default value for non-existing files');
@@ -59,7 +59,7 @@ final class rex_file_test extends TestCase
 
     public function testPutGet(): void
     {
-        $file = $this->getPath('putget.txt');
+        $file = self::getPath('putget.txt');
         $content = 'test';
         self::assertTrue(rex_file::put($file, $content), 'put() returns true on success');
         self::assertEquals($content, rex_file::get($file), 'get() returns content of file');
@@ -67,7 +67,7 @@ final class rex_file_test extends TestCase
 
     public function testPutGetConfig(): void
     {
-        $file = $this->getPath('putgetcache.txt');
+        $file = self::getPath('putgetcache.txt');
         $content = ['test', 'key' => 'value'];
         self::assertTrue(rex_file::putConfig($file, $content), 'putConfig() returns true on success');
         self::assertEquals($content, rex_file::getConfig($file), 'getConfig() returns content of file');
@@ -75,7 +75,7 @@ final class rex_file_test extends TestCase
 
     public function testPutGetCache(): void
     {
-        $file = $this->getPath('putgetcache.txt');
+        $file = self::getPath('putgetcache.txt');
         $content = ['test', 'key' => 'value'];
         self::assertTrue(rex_file::putCache($file, $content), 'putCache() returns true on success');
         self::assertEquals($content, rex_file::getCache($file), 'getCache() returns content of file');
@@ -83,7 +83,7 @@ final class rex_file_test extends TestCase
 
     public function testPutInNewDir(): void
     {
-        $file = $this->getPath('subdir/test.txt');
+        $file = self::getPath('subdir/test.txt');
         $content = 'test';
         self::assertTrue(rex_file::put($file, $content), 'put() returns true on success');
         self::assertEquals($content, rex_file::get($file), 'get() returns content of file');
@@ -91,8 +91,8 @@ final class rex_file_test extends TestCase
 
     public function testCopyToFile(): void
     {
-        $orig = $this->getPath('orig.txt');
-        $copy = $this->getPath('sub/copy.txt');
+        $orig = self::getPath('orig.txt');
+        $copy = self::getPath('sub/copy.txt');
         $content = 'test';
         rex_file::put($orig, $content);
         self::assertTrue(rex_file::copy($orig, $copy), 'copy() returns true on success');
@@ -102,9 +102,9 @@ final class rex_file_test extends TestCase
 
     public function testCopyToDir(): void
     {
-        $orig = $this->getPath('file.txt');
-        $copyDir = $this->getPath('copy');
-        $copyFile = $this->getPath('copy/file.txt');
+        $orig = self::getPath('file.txt');
+        $copyDir = self::getPath('copy');
+        $copyFile = self::getPath('copy/file.txt');
         $content = 'test';
         rex_file::put($orig, $content);
         rex_dir::create($copyDir);
@@ -114,7 +114,7 @@ final class rex_file_test extends TestCase
 
     public function testDelete(): void
     {
-        $file = $this->getPath('delete.txt');
+        $file = self::getPath('delete.txt');
         rex_file::put($file, '');
         self::assertFileExists($file, 'file exists after put()');
         self::assertTrue(rex_file::delete($file), 'delete() returns true on success');
@@ -139,27 +139,38 @@ final class rex_file_test extends TestCase
         self::assertEquals($expectedExtension, rex_file::extension($file), 'extension() returns file extension');
     }
 
-    /** @return list<array{string, string}> */
-    public static function dataTestMimeType(): array
+    /** @return iterable<int, array{0: string, 1: string, 2?: string}> */
+    public static function dataTestMimeType(): iterable
     {
-        return [
-            ['image/png', rex_path::pluginAssets('be_style', 'redaxo', 'icons/apple-touch-icon.png')],
-            ['text/xml', rex_path::pluginAssets('be_style', 'redaxo', 'icons/browserconfig.xml')],
-            ['text/css', rex_path::pluginAssets('be_style', 'redaxo', 'css/styles.css')],
-            ['application/javascript', rex_path::pluginAssets('be_style', 'redaxo', 'javascripts/redaxo.js')],
-            ['image/svg+xml', rex_path::addonAssets('be_style', 'images/redaxo-logo.svg')],
-        ];
+        yield ['image/png', rex_path::pluginAssets('be_style', 'redaxo', 'icons/apple-touch-icon.png')];
+        yield ['text/xml', rex_path::pluginAssets('be_style', 'redaxo', 'icons/browserconfig.xml')];
+        yield ['text/css', rex_path::pluginAssets('be_style', 'redaxo', 'css/styles.css')];
+        yield ['application/javascript', rex_path::pluginAssets('be_style', 'redaxo', 'javascripts/redaxo.js')];
+        yield ['image/svg+xml', rex_path::addonAssets('be_style', 'images/redaxo-logo.svg')];
+
+        // simulates an uploaded file: extensionless tmp path, original name given separately
+        // (created on demand in testMimeType(), since data providers run before setUp()/tearDown())
+        $uploadTmpFile = self::getPath('upload_tmp_file');
+
+        yield ['text/plain', $uploadTmpFile];
+        yield ['text/vtt', $uploadTmpFile, 'test.vtt'];
+        yield ['text/markdown', $uploadTmpFile, 'test.md'];
+        yield ['text/plain', $uploadTmpFile, 'test.txt'];
     }
 
     #[DataProvider('dataTestMimeType')]
-    public function testMimeType(string $expectedMimeType, string $file): void
+    public function testMimeType(string $expectedMimeType, string $file, ?string $filename = null): void
     {
-        self::assertEquals($expectedMimeType, rex_file::mimeType($file));
+        if (self::getPath('upload_tmp_file') === $file) {
+            rex_file::put($file, 'Hallo Welt');
+        }
+
+        self::assertEquals($expectedMimeType, rex_file::mimeType($file, $filename));
     }
 
     public function testGetOutput(): void
     {
-        $file = $this->getPath('test.php');
+        $file = self::getPath('test.php');
         rex_file::put($file, 'a<?php echo "b";');
         self::assertEquals('ab', rex_file::getOutput($file), 'getOutput() returns the executed content');
     }

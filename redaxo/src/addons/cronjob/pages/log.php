@@ -12,7 +12,11 @@ $success = '';
 $message = '';
 $logFile = rex_path::log('cronjob.log');
 
-if ('cronjob_delLog' == $func) {
+$csrfToken = rex_csrf_token::factory('cronjob_log');
+
+if ('cronjob_delLog' == $func && !$csrfToken->isValid()) {
+    $error = rex_i18n::msg('csrf_token_invalid');
+} elseif ('cronjob_delLog' == $func) {
     if (rex_log_file::delete($logFile)) {
         $success = rex_i18n::msg('syslog_deleted');
     } else {
@@ -89,6 +93,7 @@ $content = $fragment->parse('core/page/section.php');
 
 $content = '
     <form action="' . rex_url::currentBackendPage() . '" method="post">
+        ' . $csrfToken->getHiddenField() . '
         <input type="hidden" name="func" value="cronjob_delLog" />
         ' . $content . '
     </form>';

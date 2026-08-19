@@ -108,7 +108,7 @@ class rex_dir
             return true;
         }
 
-        if (!self::deleteIterator(rex_finder::factory($dir)->recursive()->childFirst()->ignoreSystemStuff(false))) {
+        if (!self::deleteIterator(rex_finder::factory($dir)->recursive()->childFirst()->ignoreSystemStuff(false)->ignoreUnreadableDirs())) {
             return false;
         }
 
@@ -126,7 +126,7 @@ class rex_dir
      */
     public static function deleteFiles($dir, $recursive = true)
     {
-        $iterator = rex_finder::factory($dir)->recursive($recursive)->filesOnly()->ignoreSystemStuff(false);
+        $iterator = rex_finder::factory($dir)->recursive($recursive)->filesOnly()->ignoreSystemStuff(false)->ignoreUnreadableDirs();
         return self::deleteIterator($iterator);
     }
 

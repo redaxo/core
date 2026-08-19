@@ -1,5 +1,5 @@
 package: users
-version: '2.12.0-beta1'
+version: '2.12.1'
 author: Jan Kristinus, Gregor Harlan
 supportpage: https://github.com/redaxo/core
 

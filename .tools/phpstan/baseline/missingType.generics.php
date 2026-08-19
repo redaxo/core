@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 19 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_api_install_core_update::messageFromPackage() has parameter $manager with generic class rex_package_manager but does not specify its types: T',

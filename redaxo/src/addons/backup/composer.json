@@ -2,7 +2,7 @@
     "type": "project",
 
     "require": {
-        "splitbrain/php-archive": "^1.4.1"
+        "splitbrain/php-archive": "^1.5.0"
     },
 
     "config": {

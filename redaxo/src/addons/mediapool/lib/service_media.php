@@ -49,7 +49,7 @@ final class rex_media_service
         }
 
         if (!rex_mediapool::isAllowedMimeType($data['file']['path'], $data['file']['name'])) {
-            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape(rex_file::extension($data['file']['name'])) . '</code> (<code>' . rex_escape(rex_file::mimeType($data['file']['path'])) . '</code>)';
+            $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape(rex_file::extension($data['file']['name'])) . '</code> (<code>' . rex_escape(rex_file::mimeType($data['file']['path'], $data['file']['name']) ?? 'unknown mime type') . '</code>)';
             throw new rex_api_exception($warning);
         }
 
@@ -62,7 +62,7 @@ final class rex_media_service
         $srcFile = $data['file']['path'];
         $dstFile = rex_path::media($data['file']['name_new']);
 
-        $data['file']['type'] = rex_file::mimeType($srcFile);
+        $data['file']['type'] = rex_file::mimeType($srcFile, $data['file']['name']);
 
         // Bevor die Datei engueltig in den Medienpool uebernommen wird, koennen
         // Addons ueber einen Extension-Point ein Veto einlegen.
@@ -85,9 +85,7 @@ final class rex_media_service
             throw new rex_api_exception($errorMessage);
         }
 
-        if (!rex_file::move($srcFile, $dstFile)) {
-            throw new rex_api_exception(rex_i18n::msg('pool_file_movefailed'));
-        }
+        self::moveMedia($srcFile, $dstFile, $data['file']['type']);
 
         @chmod($dstFile, rex::getFilePerm());
 
@@ -95,8 +93,6 @@ final class rex_media_service
         if ('' == $data['file']['type'] && isset($size['mime'])) {
             $data['file']['type'] = $size['mime'];
         }
-
-        self::sanitizeMedia($dstFile, $data['file']['type']);
 
         $saveObject = rex_sql::factory();
         $saveObject->setTable(rex::getTablePrefix() . 'media');
@@ -189,7 +185,7 @@ final class rex_media_service
                 throw new rex_api_exception(rex_i18n::msg('pool_file_not_found'));
             }
 
-            $filetype = rex_file::mimeType($file['path']);
+            $filetype = rex_file::mimeType($file['path'], $file['name']);
 
             $srcFile = $file['path'];
             $dstFile = rex_path::media($filename);
@@ -205,13 +201,9 @@ final class rex_media_service
                     $warning = rex_i18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . rex_escape($extensionNew) . '</code> (<code>' . rex_escape($filetype ?? 'unknown mime type') . '</code>)';
                     throw new rex_api_exception($warning);
                 }
-                if (!rex_file::move($srcFile, $dstFile)) {
-                    throw new rex_api_exception(rex_i18n::msg('pool_file_movefailed'));
-                }
+                self::moveMedia($srcFile, $dstFile, $filetype);
 
                 @chmod($dstFile, rex::getFilePerm());
-
-                self::sanitizeMedia($dstFile, $filetype);
 
                 $saveObject->setValue('filetype', $filetype);
                 $saveObject->setValue('filesize', filesize($dstFile));
@@ -314,7 +306,7 @@ final class rex_media_service
                     if (!is_string($value) || '' == $value) {
                         break;
                     }
-                    foreach (str_getcsv(trim($value), ' ') as $i => $part) {
+                    foreach (str_getcsv(trim($value), ' ', '"', '') as $i => $part) {
                         if (!$part) {
                             continue;
                         }
@@ -392,20 +384,64 @@ final class rex_media_service
         return $items;
     }
 
-    private static function sanitizeMedia(string $path, ?string $type): void
+    /**
+     * Sanitizes the file if necessary and moves it into the media folder.
+     *
+     * The file must never be moved before it has been sanitized, otherwise the unsanitized content would be publicly
+     * available for a short time (or permanently, if sanitizing fails).
+     *
+     * @throws rex_api_exception
+     */
+    private static function moveMedia(string $srcFile, string $dstFile, ?string $type): void
+    {
+        $sanitizedFile = self::sanitizeMedia($srcFile, $type, rex_path::basename($dstFile));
+
+        if (!rex_file::move($sanitizedFile ?? $srcFile, $dstFile)) {
+            if (null !== $sanitizedFile) {
+                rex_file::delete($sanitizedFile);
+            }
+
+            throw new rex_api_exception(rex_i18n::msg('pool_file_movefailed'));
+        }
+
+        // the source file is left behind when the sanitized copy has been moved instead
+        if (null !== $sanitizedFile && $srcFile !== $dstFile) {
+            rex_file::delete($srcFile);
+        }
+    }
+
+    /**
+     * Sanitizes the file into a temporary file, the source file is left untouched.
+     *
+     * @param string $filename Name of the target file, used to detect the file extension
+     *
+     * @throws rex_api_exception
+     *
+     * @return string|null Path of the sanitized temp file or `null` if the file does not need sanitization
+     */
+    private static function sanitizeMedia(string $path, ?string $type, string $filename): ?string
     {
         if (!rex_addon::require('mediapool')->getProperty('sanitize_svgs', true)) {
-            return;
+            return null;
         }
 
-        if ('image/svg+xml' !== $type && 'svg' !== strtolower(rex_file::extension($path))) {
-            return;
+        if ('image/svg+xml' !== $type && 'svg' !== strtolower(rex_file::extension($filename))) {
+            return null;
         }
 
-        $content = rex_type::notNull(rex_file::get($path));
+        $content = (new Sanitizer())->sanitize(rex_type::notNull(rex_file::get($path)));
 
-        $content = (new Sanitizer())->sanitize($content);
+        if (false === $content) {
+            throw new rex_api_exception(rex_i18n::msg('pool_file_upload_error'));
+        }
 
-        rex_file::put($path, $content);
+        // the temp file is placed inside the project to keep the final move to the media folder atomic
+        $sanitizedFile = rex_path::addonCache('mediapool', 'sanitize/' . bin2hex(random_bytes(16)) . '.svg');
+
+        if (!rex_file::put($sanitizedFile, $content)) {
+            throw new rex_api_exception(rex_i18n::msg('pool_file_movefailed'));
+        }
+
+        return $sanitizedFile;
     }
 }

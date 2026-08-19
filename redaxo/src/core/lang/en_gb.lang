@@ -26,6 +26,7 @@ description = Description
 email = Email
 function = Function
 no_editing_rights = permission denied
+no_rights_to_this_function = You do not have permissions to complete this action!
 check_rights_in_directory = Please review permissions in directory
 error_undefined = An undefined error occurred
 csrf_token_invalid = Please send the form again, redo the action respectively (error: invalid CSRF token).

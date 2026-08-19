@@ -1,6 +1,38 @@
 Changelog
 =========
 
+Version 2.12.4 – 03.08.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfungen beim Speichern von Metafeldern ergänzt: Artikel-Metafelder in der Seitenleiste des Content-Bereichs sowie Kategorie- und Sprach-Metafelder (@gharlan)
+
+
+Version 2.12.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfung beim Löschen von Feldern ergänzt (@gharlan)
+
+
+Version 2.12.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* Stored XSS via `isMediaInUse` (@gharlan)
+
+
+Version 2.12.1 – 01.06.2026
+---------------------------
+
+### Bugfixes
+
+* Status-Toggle in Metainfo-Sidebar funktionierte nicht bei Usern mit mehreren Mountpoints (@isospin)
+
+
 Version 2.11.3 – 17.07.2025
 ---------------------------
 

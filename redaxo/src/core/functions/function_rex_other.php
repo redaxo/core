@@ -16,7 +16,8 @@ function rex_delete_cache()
         ->recursive()
         ->childFirst()
         ->ignoreFiles(['.htaccess', '.redaxo'], false)
-        ->ignoreSystemStuff(false);
+        ->ignoreSystemStuff(false)
+        ->ignoreUnreadableDirs();
     rex_dir::deleteIterator($finder);
 
     rex_autoload::removeCache();

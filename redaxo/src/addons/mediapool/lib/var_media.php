@@ -90,7 +90,7 @@ class rex_var_media extends rex_var
 
         $e = [];
         $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '">';
-        $e['field'] = '<input class="form-control" type="text" name="' . $name . '" value="' . $value . '" id="REX_MEDIA_' . $id . '" readonly />';
+        $e['field'] = '<input class="form-control" type="text" name="' . $name . '" value="' . rex_escape((string) $value) . '" id="REX_MEDIA_' . $id . '" readonly />';
         $e['functionButtons'] = '
                 <a href="#" class="btn btn-popup" onclick="' . $openFunc . 'return false;" title="' . rex_i18n::msg('var_media_open') . '"' . $disabled . '><i class="rex-icon rex-icon-open-mediapool"></i></a>
                 <a href="#" class="btn btn-popup" onclick="' . $addFunc . 'return false;" title="' . rex_i18n::msg('var_media_new') . '"' . $disabled . '><i class="rex-icon rex-icon-add-media"></i></a>

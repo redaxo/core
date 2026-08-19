@@ -2,7 +2,7 @@
     "type": "project",
 
     "require": {
-        "composer/ca-bundle": "^1.5.11",
+        "composer/ca-bundle": "^1.5.13",
         "enshrined/svg-sanitize": "^0.22",
         "erusev/parsedown": "^1.8.0",
         "erusev/parsedown-extra": "^0.9.0",
@@ -10,12 +10,12 @@
         "lbuchs/webauthn": "^2.2.0",
         "psr/log": "^3.0.2",
         "ramsey/http-range": "^2.0.0",
-        "symfony/console": "^7.4.8",
-        "symfony/http-foundation": "^7.4.8",
-        "symfony/var-dumper": "^7.4.8",
-        "symfony/yaml": "^7.4.8",
-        "voku/anti-xss": "^4.1.42",
-        "voku/portable-utf8": "dev-master as 6.0.14-dev"
+        "symfony/console": "^7.4.15",
+        "symfony/http-foundation": "^7.4.15",
+        "symfony/var-dumper": "^7.4.15",
+        "symfony/yaml": "^7.4.15",
+        "voku/anti-xss": "^4.1.44",
+        "voku/portable-utf8": "^6.1.1"
     },
 
     "replace": {

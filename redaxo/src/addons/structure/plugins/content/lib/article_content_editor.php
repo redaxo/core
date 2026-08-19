@@ -171,7 +171,7 @@ class rex_article_content_editor extends rex_article_content
             // delete
             $item = [];
             $item['label'] = rex_i18n::msg('delete');
-            $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1]) . $fragment;
+            $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1] + rex_csrf_token::factory('structure_content_slice')->getUrlParams()) . $fragment;
             $item['attributes']['class'][] = 'btn-delete';
             $item['attributes']['title'] = rex_i18n::msg('delete');
             $item['attributes']['data-confirm'] = rex_i18n::msg('confirm_delete_block');
@@ -453,6 +453,7 @@ class rex_article_content_editor extends rex_article_content
         $panel = '
                 <fieldset>
                     <legend>' . rex_i18n::msg('add_block') . '</legend>
+                    ' . rex_csrf_token::factory('structure_content_slice')->getHiddenField() . '
                     <input type="hidden" name="function" value="add" />
                     <input type="hidden" name="module_id" value="' . $moduleId . '" />
                     <input type="hidden" name="save" value="1" />
@@ -521,6 +522,7 @@ class rex_article_content_editor extends rex_article_content
         $panel = '
                 <fieldset>
                     <legend>' . rex_i18n::msg('edit_block') . '</legend>
+                    ' . rex_csrf_token::factory('structure_content_slice')->getHiddenField() . '
                     <input type="hidden" name="module_id" value="' . $moduleId . '" />
                     <input type="hidden" name="save" value="1" />
                     <input type="hidden" name="update" value="0" />

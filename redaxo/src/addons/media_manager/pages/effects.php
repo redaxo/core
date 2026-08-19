@@ -18,6 +18,13 @@ $typeName = (string) $sql->getValue('name');
 $info = '';
 $warning = '';
 
+$csrfToken = rex_csrf_token::factory('media_manager_effect');
+
+if ('delete' == $func && !$csrfToken->isValid()) {
+    $warning = rex_i18n::msg('csrf_token_invalid');
+    $func = '';
+}
+
 // -------------- delete effect
 if ('delete' == $func && $effectId > 0) {
     $sql = rex_sql::factory();
@@ -85,7 +92,7 @@ if ('' == $func) {
     $list->setColumnLabel('effect', rex_i18n::msg('media_manager_type_name'));
     $list->setColumnFormat('effect', 'custom', static function ($params) use ($effects) {
         $shortName = $params['value'];
-        return isset($effects[$shortName]) ? $effects[$shortName]->getName() : $shortName;
+        return isset($effects[$shortName]) ? $effects[$shortName]->getName() : rex_escape((string) $shortName);
     });
 
     $list->setColumnLabel('priority', rex_i18n::msg('media_manager_type_priority'));
@@ -104,7 +111,7 @@ if ('' == $func) {
 
     $delete = 'deleteCol';
     $list->addColumn($delete, '<i class="rex-icon rex-icon-delete"></i> ' . rex_i18n::msg('media_manager_effect_delete'), -1, ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams($delete, ['type_id' => $typeId, 'effect_id' => '###id###', 'func' => 'delete']);
+    $list->setColumnParams($delete, ['type_id' => $typeId, 'effect_id' => '###id###', 'func' => 'delete'] + $csrfToken->getUrlParams());
     $list->addLinkAttribute($delete, 'data-confirm', rex_i18n::msg('delete') . ' ?');
 
     $content = $list->get();

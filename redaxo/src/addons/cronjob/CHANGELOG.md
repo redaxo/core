@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.12.1 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfung beim Löschen des Logs ergänzt (@gharlan)
+
+
 Version 2.11.1 – 04.03.2025
 ---------------------------
 

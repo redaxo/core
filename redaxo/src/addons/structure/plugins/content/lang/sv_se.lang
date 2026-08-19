@@ -10,7 +10,6 @@ move_slice_up = Flytta uppåt
 move_slice_down = Flytta neråt
 block_updated = Avsnittet aktualiserades
 block_added = Avsnittet tillfogades
-no_rights_to_this_function = Du har inga rättigheter till den här funktionen!
 module_not_found = Modul kunde inte hittas
 confirm_delete_block = Radera avsnittet?
 block_deleted = Avsnittet raderades!

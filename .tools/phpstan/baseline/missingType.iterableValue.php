@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 257 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_cronjob_form_interval_element::getIntervalElements() return type has no value type specified in iterable type array.',
@@ -876,11 +874,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/../../../redaxo/src/core/lib/fragment.php',
 ];
 $ignoreErrors[] = [
-    'rawMessage' => 'Method rex_list::addColumn() has parameter $columnLayout with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/core/lib/list.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Method rex_list::addTableColumnGroup() has parameter $columns with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/lib/list.php',
@@ -917,11 +910,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_list::setColumnFormat() has parameter $params with no value type specified in iterable type array.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/core/lib/list.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_list::setColumnLayout() has parameter $columnLayout with no value type specified in iterable type array.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/core/lib/list.php',
 ];

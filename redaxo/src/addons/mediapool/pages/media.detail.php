@@ -13,9 +13,6 @@ if (!isset($success)) {
 if (!isset($error)) {
     $error = '';
 }
-if (!isset($openerLink)) {
-    $openerLink = '';
-}
 if (!isset($fileId)) {
     $fileId = 0;
 }
@@ -45,7 +42,7 @@ if (rex_post('btn_delete', 'string')) {
                     $error = $e->getMessage();
                 }
             } else {
-                $error = rex_i18n::msg('no_permission');
+                $error = rex_i18n::msg('no_rights_to_this_function');
             }
         } else {
             $error = rex_i18n::msg('pool_file_not_found');
@@ -64,7 +61,7 @@ if (rex_post('btn_update', 'string')) {
             $error = rex_i18n::msg('pool_file_not_found');
             $fileId = 0;
         } elseif (!$perm->hasCategoryPerm($gf->getValue('category_id')) || !$perm->hasCategoryPerm($rexFileCategory)) {
-            $error = rex_i18n::msg('no_permission');
+            $error = rex_i18n::msg('no_rights_to_this_function');
         } else {
             $filename = (string) $gf->getValue('filename');
             $data = [];
@@ -174,14 +171,13 @@ if ('' != $success) {
     $success = '';
 }
 
+$openerLink = '';
 if ('' != $openerInputField) {
     $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $encodedFname . '\', \'' . rex_escape($gf->getValue('title'), 'js') . '\'); return false;">' . rex_i18n::msg('pool_file_get') . '</a>';
     if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
         $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $encodedFname . '\'); return false;">' . rex_i18n::msg('pool_file_get') . '</a>';
     }
-}
 
-if ('' != $openerLink) {
     $openerLink = ' | ' . $openerLink;
 }
 

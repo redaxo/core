@@ -1,7 +1,38 @@
 Changelog
 =========
 
-Version 2.20.0 – XX.XX.2026
+Version 2.20.4 – 03.08.2026
+---------------------------
+
+### Security
+
+* History: Der temporäre Frontend-Login konnte ohne vorherige Authentifizierung gefälscht werden, wodurch sich für jeden bekannten Login-Namen – auch für Administratoren – eine Backend-Session erlangen ließ ([GHSA-px8f-whj8-hrpq](https://github.com/redaxo/core/security/advisories/GHSA-px8f-whj8-hrpq)) (gemeldet von @V-C-Williams) (@gharlan)
+* Content: Bei schreibenden Slice-Operationen (löschen, bearbeiten, verschieben, Status ändern) wurde nicht geprüft, ob der Slice zu dem Artikel gehört, für den die Kategorie-Berechtigung geprüft wurde; auf der Content-Seite fehlte zusätzlich die Prüfung der Sprach-Berechtigung ([GHSA-5m63-c3qx-wq8v](https://github.com/redaxo/core/security/advisories/GHSA-5m63-c3qx-wq8v)) (gemeldet von @V-C-Williams) (@gharlan)
+* Version: Die Frontend-Vorschau der Arbeitsversion prüfte nur, ob eine Backend-Session existiert, aber weder Kategorie- noch Sprach-Berechtigung; außerdem wurden auch per `REX_ARTICLE[]` eingebundene Artikel in der Arbeitsversion ausgegeben ([GHSA-v4m9-jvvr-83cx](https://github.com/redaxo/core/security/advisories/GHSA-v4m9-jvvr-83cx)) (@gharlan)
+* History: Das Auflisten und Wiederherstellen von Versionen sowie die Frontend-Vorschau prüften nicht die Berechtigung für den betroffenen Artikel und dessen Sprache ([GHSA-v4m9-jvvr-83cx](https://github.com/redaxo/core/security/advisories/GHSA-v4m9-jvvr-83cx)) (@gharlan)
+* Link- und Linklist-Widget: Werte werden escaped ausgegeben, vorher war Stored XSS möglich ([GHSA-5wmj-5x79-rr87](https://github.com/redaxo/core/security/advisories/GHSA-5wmj-5x79-rr87)) (gemeldet von @V-C-Williams) (@gharlan)
+
+
+Version 2.20.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Fehlende CSRF-Prüfungen ergänzt:
+  - Content: Slices anlegen, bearbeiten und löschen (@gharlan)
+  - History: Version wiederherstellen und komplette Historie löschen (gemeldet von @VietTinNguyen) (@gharlan)
+  - Version: Arbeitsversion übernehmen, aus Live-Version erzeugen und leeren (@gharlan)
+
+
+Version 2.20.1 – 01.06.2026
+---------------------------
+
+### Security
+
+* In den API-Functions wurden die Kategorie- und Sprach-Berechtigungen des Users nicht überall korrekt berücksichtigt (@gharlan)
+
+
+Version 2.20.0 – 09.04.2026
 ---------------------------
 
 ### Neu
@@ -10,6 +41,10 @@ Version 2.20.0 – XX.XX.2026
 * Linkmap: Visuelles Feedback bei Linkübernahme in Linklist (@Hasan-Alherek)
 * EP `SLICE_BE_PREVIEW`: Slice-Revision wird mit als Param übergeben (@ynamite)
 * Markup für die Slice-Ausgabe im Backend in Fragmente ausgelagert (@marcohanke)
+
+### Bugfixes
+
+* Block hinzufügen: `$this->getCurrentSlice()` liefert korrektes (weitgehend leeres) Slice-Objekt (@gharlan)
 
 
 Version 2.19.0 – 05.09.2025

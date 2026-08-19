@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// total 121 errors
-
 $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_command_cronjob_run::executeSingleJob() has parameter $id with no type specified.',
@@ -479,46 +477,6 @@ $ignoreErrors[] = [
     'rawMessage' => 'Method rex_event_select::__construct() has parameter $options with no type specified.',
     'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/content/lib/event_select.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::checkTempSession() has parameter $historyLogin with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::checkTempSession() has parameter $historySession with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::checkTempSession() has parameter $historyValidtime with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::createSessionKey() has parameter $login with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::createSessionKey() has parameter $session with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::createSessionKey() has parameter $validtime with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::verifySessionKey() has parameter $key1 with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Method rex_history_login::verifySessionKey() has parameter $key2 with no type specified.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../redaxo/src/addons/structure/plugins/history/lib/history_login.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_form_container_element::addField() has parameter $value with no type specified.',

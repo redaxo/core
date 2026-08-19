@@ -31,8 +31,12 @@ if ('' != $historyDate) {
             if ($login->checkTempSession($historyLogin, $historySession, $historyValidtime)) {
                 $user = $login->getUser();
                 rex::setProperty('user', $user);
-                rex_extension::register('OUTPUT_FILTER', static function (rex_extension_point $ep) use ($login) {
+
+                // A shutdown function (not an OUTPUT_FILTER) so cleanup runs even when the request aborts
+                // before output — e.g. a bogus rex-api-call — which would otherwise leave a usable session.
+                register_shutdown_function(static function () use ($login) {
                     $login->deleteSession();
+                    rex_user_session::getInstance()->clearCurrentSession();
                 });
             }
         }
@@ -56,11 +60,23 @@ if ('' != $historyDate) {
         $article->setEval(true);
     });
 
-    rex_extension::register('ART_SLICES_QUERY', static function (rex_extension_point $ep) {
+    // The article id is not known in ART_INIT yet (that extension point is fired in the constructor, before
+    // setArticleId()), so the article specific permissions can only be checked here, where the slices of the
+    // history are about to be fetched.
+    rex_extension::register('ART_SLICES_QUERY', static function (rex_extension_point $ep) use ($user) {
         $historyDate = rex_request('rex_history_date', 'string');
         $article = $ep->getParam('article');
 
         if ($article instanceof rex_article_content && $article->getArticleId() == rex_article::getCurrentId()) {
+            $historyArticle = rex_article::get($article->getArticleId(), $article->getClangId());
+            if (
+                !$historyArticle instanceof rex_article
+                || !$user->getComplexPerm('clang')->hasPerm($article->getClangId())
+                || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->getCategoryId())
+            ) {
+                throw new rex_http_exception(new rex_exception('no permission for the history of this article'), rex_response::HTTP_FORBIDDEN);
+            }
+
             $articleLimit = '';
             if (0 != $article->getArticleId()) {
                 $articleLimit = ' AND ' . rex::getTablePrefix() . 'article_slice.article_id=' . $article->getArticleId();
@@ -115,13 +131,37 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
     rex_view::addCssFile($plugin->getAssetsUrl('history.css'));
     rex_view::addJsFile($plugin->getAssetsUrl('history.js'), [rex_view::JS_IMMUTABLE => true]);
 
-    switch (rex_request('rex_history_function', 'string')) {
+    $historyFunction = rex_request('rex_history_function', 'string');
+    $articleId = rex_request('history_article_id', 'int');
+    $clangId = rex_request('history_clang_id', 'int');
+
+    if (in_array($historyFunction, ['snap', 'layer'], true)) {
+        $historyArticle = rex_article::get($articleId, $clangId);
+        $user = rex::requireUser();
+
+        if (
+            !$historyArticle instanceof rex_article
+            || !$user->getComplexPerm('clang')->hasPerm($clangId)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->getCategoryId())
+        ) {
+            rex_response::setStatus(rex_response::HTTP_FORBIDDEN);
+            rex_response::sendContent(rex_i18n::msg('no_rights_to_this_function'), 'text/plain');
+            exit;
+        }
+    }
+
+    switch ($historyFunction) {
         case 'snap':
+            if (!rex_csrf_token::factory('structure_history')->isValid()) {
+                rex_response::setStatus(rex_response::HTTP_FORBIDDEN);
+                rex_response::sendContent(rex_i18n::msg('csrf_token_invalid'), 'text/plain');
+                exit;
+            }
+
             if (!rex::requireUser()->hasPerm('history[article_rollback]')) {
                 throw new rex_http_exception(new rex_exception('no permission for article rollback'), rex_response::HTTP_FORBIDDEN);
             }
-            $articleId = rex_request('history_article_id', 'int');
-            $clangId = rex_request('history_clang_id', 'int');
+
             $historyDate = rex_request('history_date', 'string');
             rex_article_slice_history::restoreSnapshot($historyDate, $articleId, $clangId);
 
@@ -139,8 +179,6 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
 
             // no break
         case 'layer':
-            $articleId = rex_request('history_article_id', 'int');
-            $clangId = rex_request('history_clang_id', 'int');
             $versions = rex_article_slice_history::getSnapshots($articleId, $clangId);
 
             $select1 = [];
@@ -189,7 +227,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
                 $userLogin = $user->getLogin();
                 $historyValidTime = new DateTime();
                 $historyValidTime = $historyValidTime->modify('+10 Minutes')->format('YmdHis'); // 10 minutes valid key
-                $userHistorySession = rex_history_login::createSessionKey($userLogin, $user->getValue('session_id'), $historyValidTime);
+                $userHistorySession = rex_history_login::createSessionKey($userLogin, $historyValidTime);
                 $articleLink = rex_getUrl(rex_article::getCurrentId(), rex_clang::getCurrentId(), ['rex_history_login' => $userLogin, 'rex_history_session' => $userHistorySession, 'rex_history_validtime' => $historyValidTime], '&');
             }
 
@@ -198,6 +236,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
                     var history_clang_id = ' . rex_clang::getCurrentId() . ';
                     var history_ctype_id = ' . rex_request('ctype', 'int', 0) . ';
                     var history_article_link = "' . rex_escape($articleLink, 'js') . '";
+                    var history_csrf_token = "' . rex_escape(rex_csrf_token::factory('structure_history')->getValue(), 'js') . '";
                     </script>';
         }
     },

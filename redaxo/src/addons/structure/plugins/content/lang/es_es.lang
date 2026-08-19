@@ -10,7 +10,6 @@ move_slice_up = Subir
 move_slice_down = Mover hacia abajo
 block_updated = Bloque ha sido actualizado!
 block_added = Bloque se ha añadido
-no_rights_to_this_function = No tiene derechos para esta función!
 module_not_found = El módulo no encontrado
 confirm_delete_block = Eliminar bloque?
 block_deleted = Block ha sido suprimido!

@@ -1,7 +1,53 @@
 Changelog
 =========
 
-Version 2.18.0 – XX.XX.2026
+Version 2.18.4 – 03.08.2026
+---------------------------
+
+### Security
+
+* Beim Verschieben mehrerer Medien wurde nur die Berechtigung für die Ziel-Kategorie geprüft, nicht für die Quell-Kategorie der Dateien; zudem waren in der Liste auch Medien auswählbar, für deren Kategorie keine Berechtigung besteht ([GHSA-j9mx-x52f-48cw](https://github.com/redaxo/core/security/advisories/GHSA-j9mx-x52f-48cw)) (gemeldet von @V-C-Williams) (@gharlan)
+* SVG-Uploads wurden erst in den Medienordner verschoben und dann bereinigt, wodurch der unbereinigte Inhalt kurzzeitig – und bei nicht abgeschlossener Bereinigung dauerhaft – öffentlich erreichbar war (Stored XSS) ([GHSA-2p3g-jr7p-qwwx](https://github.com/redaxo/core/security/advisories/GHSA-2p3g-jr7p-qwwx)) (gemeldet von @alhamrizvi-cloud) (@gharlan)
+* Media- und Medialist-Widget: Werte werden escaped ausgegeben, vorher war Stored XSS möglich ([GHSA-5wmj-5x79-rr87](https://github.com/redaxo/core/security/advisories/GHSA-5wmj-5x79-rr87)) (gemeldet von @V-C-Williams) (@gharlan)
+
+### Bugfixes
+
+* SVGs, die nicht geparst werden können, werden beim Upload mit einer Fehlermeldung abgelehnt statt als leere Datei gespeichert (@gharlan)
+
+
+Version 2.18.3 – 31.07.2026
+---------------------------
+
+### Security
+
+* Reflected XSS über den Request-Parameter `opener_link` behoben; der Parameter wurde ersatzlos entfernt (gemeldet von @V-C-Williams) (@gharlan)
+
+### Bugfixes
+
+* Mime-Type-Erkennung beim Upload nutzt den Original-Dateinamen, wodurch z.B. `vtt`-Dateien nicht mehr fälschlich abgelehnt werden (@gharlan)
+
+
+Version 2.18.2 – 29.06.2026
+---------------------------
+
+### Security
+
+* Stored XSS via Artikelname in `mediaIsInUse` und Dateinamen in Sync-Page (gemeldet von @de3erve-hunter) (@gharlan)
+
+
+Version 2.18.1 – 01.06.2026
+---------------------------
+
+### Security
+
+* Geblockte Extensions werden wieder an beliebiger Position im Dateinamen geblockt (z.B. in `foo.php.any.jpg`) (gemeldet von @riodrwn) (@gharlan)
+
+### Bugfixes
+
+* Deprecated-Message in Mediapool-Suche aufgelöst (@gharlan)
+
+
+Version 2.18.0 – 09.04.2026
 ---------------------------
 
 ### Neu
