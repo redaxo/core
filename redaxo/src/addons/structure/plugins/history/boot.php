@@ -135,7 +135,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
     $articleId = rex_request('history_article_id', 'int');
     $clangId = rex_request('history_clang_id', 'int');
 
-    if (in_array($historyFunction, ['snap', 'layer'], true)) {
+    if (in_array($historyFunction, ['snap', 'snap_draft', 'layer'], true)) {
         $historyArticle = rex_article::get($articleId, $clangId);
         $user = rex::requireUser();
 
@@ -167,12 +167,16 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
 
             // no break
         case 'snap_draft':
-            if ('snap_draft' === rex_request('rex_history_function', 'string')) {
+            if ('snap_draft' === $historyFunction) {
+                if (!rex_csrf_token::factory('structure_history')->isValid()) {
+                    rex_response::setStatus(rex_response::HTTP_FORBIDDEN);
+                    rex_response::sendContent(rex_i18n::msg('csrf_token_invalid'), 'text/plain');
+                    exit;
+                }
+
                 if (!rex::requireUser()->hasPerm('history[article_draft_rollback]')) {
                     throw new rex_http_exception(new rex_exception('no permission for draft rollback'), rex_response::HTTP_FORBIDDEN);
                 }
-                $articleId = rex_request('history_article_id', 'int');
-                $clangId = rex_request('history_clang_id', 'int');
                 $historyDate = rex_request('history_date', 'string');
                 rex_article_slice_history::restoreDraftSnapshot($historyDate, $articleId, $clangId);
             }
@@ -237,6 +241,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
                     var history_ctype_id = ' . rex_request('ctype', 'int', 0) . ';
                     var history_article_link = "' . rex_escape($articleLink, 'js') . '";
                     var history_csrf_token = "' . rex_escape(rex_csrf_token::factory('structure_history')->getValue(), 'js') . '";
+                    var version_csrf_token = "' . rex_escape(rex_csrf_token::factory('structure_version')->getValue(), 'js') . '";
                     </script>';
         }
     },

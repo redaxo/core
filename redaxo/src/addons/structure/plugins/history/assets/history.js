@@ -329,7 +329,7 @@
             }
             if (!historyDate) { // "Current live version" is selected: copy live → draft via version addon
                 that.remove();
-                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&clang=' + that.clangId + '&ctype=' + that.ctypeId + '&rex_version_func=copy_live_to_work';
+                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&clang=' + that.clangId + '&ctype=' + that.ctypeId + '&rex_version_func=copy_live_to_work' + '&_csrf_token=' + encodeURIComponent(version_csrf_token);
                 debug.log('copy live to draft: ' + url);
                 $.pjax({url: url, container: '#rex-js-page-main-content', fragment: '#rex-js-page-main-content'});
                 return;
@@ -488,7 +488,7 @@
          * @returns {*}
          */
         snapDraftVersion: function (date) {
-            var url = 'index.php?rex_history_function=snap_draft&history_article_id=' + this.articleId + '&history_clang_id=' + this.clangId + '&history_date=' + date;
+            var url = 'index.php?rex_history_function=snap_draft&history_article_id=' + this.articleId + '&history_clang_id=' + this.clangId + '&history_date=' + date + '&_csrf_token=' + encodeURIComponent(history_csrf_token);
             debug.info('snap draft version: ' + url);
             return $.ajax({
                 url: url,
