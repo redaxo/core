@@ -194,6 +194,21 @@ class Zip extends Archive
                 continue;
             }
 
+            // entry data always lies before the central directory in a valid archive
+            if (ftell($this->fh) + $header['compressed_size'] > $cdir['offset']) {
+                throw new ArchiveCorruptedException(
+                    'Compressed data of '.$header['stored_filename'].' does not fit into the archive'
+                );
+            }
+
+            // only stored (0) and deflated (8) data can be extracted
+            if ($header['compression'] != 0 && $header['compression'] != 8) {
+                throw new ArchiveCorruptedException(
+                    'Compression method '.$header['compression'].' of '.
+                    $header['stored_filename'].' is not supported'
+                );
+            }
+
             // compressed files are written to temporary .gz file first
             if ($header['compression'] == 0) {
                 $extractto = $output;
@@ -224,10 +239,16 @@ class Zip extends Archive
             // read the file and store it on disk
             $size = $header['compressed_size'];
             while ($size != 0) {
-                $read_size   = ($size < 2048 ? $size : 2048);
-                $buffer      = fread($this->fh, $read_size);
-                $binary_data = pack('a'.$read_size, $buffer);
-                fwrite($fp, $binary_data, $read_size);
+                $read_size = ($size < 2048 ? $size : 2048);
+                $buffer    = fread($this->fh, $read_size);
+                if ($buffer === false || strlen($buffer) !== $read_size) {
+                    fclose($fp);
+                    @unlink($extractto);
+                    throw new ArchiveCorruptedException(
+                        'Could not read the expected data for '.$header['stored_filename']
+                    );
+                }
+                fwrite($fp, $buffer, $read_size);
                 $size -= $read_size;
             }
 
@@ -254,11 +275,20 @@ class Zip extends Archive
 
                 $size = $header['size'];
                 while ($size != 0) {
-                    $read_size   = ($size < 2048 ? $size : 2048);
-                    $buffer      = gzread($gzp, $read_size);
-                    $binary_data = pack('a'.$read_size, $buffer);
-                    @fwrite($fp, $binary_data, $read_size);
-                    $size -= $read_size;
+                    $read_size = ($size < 2048 ? $size : 2048);
+                    $buffer    = gzread($gzp, $read_size);
+                    $got       = ($buffer === false) ? 0 : strlen($buffer);
+                    if ($got === 0) {
+                        fclose($fp);
+                        gzclose($gzp);
+                        @unlink($extractto);
+                        @unlink($output);
+                        throw new ArchiveCorruptedException(
+                            $header['stored_filename'].' is smaller than its declared uncompressed size'
+                        );
+                    }
+                    @fwrite($fp, $buffer, $got);
+                    $size -= $got;
                 }
                 fclose($fp);
                 gzclose($gzp);
@@ -565,6 +595,23 @@ class Zip extends Archive
     }
 
     /**
+     * Read a fixed number of bytes from the archive
+     *
+     * @param int $bytes the number of bytes to read
+     * @param string $what the structure being read, used in the error message
+     * @return string
+     * @throws ArchiveCorruptedException when fewer bytes are available
+     */
+    protected function readRecord($bytes, $what)
+    {
+        $data = (string)fread($this->fh, $bytes);
+        if (strlen($data) !== $bytes) {
+            throw new ArchiveCorruptedException('Could not read '.$what);
+        }
+        return $data;
+    }
+
+    /**
      * Read the central directory
      *
      * This key-value list contains general information about the ZIP file
@@ -601,13 +648,8 @@ class Zip extends Archive
 
         $data = unpack(
             'vdisk/vdisk_start/vdisk_entries/ventries/Vsize/Voffset/vcomment_size',
-            fread($this->fh, 18)
+            $this->readRecord(18, 'end of central directory record')
         );
-        if ($data === false) {
-            throw new ArchiveCorruptedException(
-                'Could not read end of central directory record'
-            );
-        }
 
         if ($data['comment_size'] != 0) {
             $centd['comment'] = fread($this->fh, $data['comment_size']);
@@ -629,13 +671,13 @@ class Zip extends Archive
      * Assumes the current file pointer is pointing at the right position
      *
      * @return array
+     * @throws ArchiveCorruptedException when the header is incomplete
      */
     protected function readCentralFileHeader()
     {
-        $binary_data = fread($this->fh, 46);
-        $header      = unpack(
+        $header = unpack(
             'vchkid/vid/vversion/vversion_extracted/vflag/vcompression/vmtime/vmdate/Vcrc/Vcompressed_size/Vsize/vfilename_len/vextra_len/vcomment_len/vdisk/vinternal/Vexternal/Voffset',
-            $binary_data
+            $this->readRecord(46, 'the central file header')
         );
 
         if ($header['filename_len'] != 0) {
@@ -714,13 +756,13 @@ class Zip extends Archive
      *
      * @param array $header the central file header read previously (see above)
      * @return array
+     * @throws ArchiveCorruptedException when the header is incomplete
      */
     protected function readFileHeader($header)
     {
-        $binary_data = fread($this->fh, 30);
-        $data        = unpack(
+        $data = unpack(
             'vchk/vid/vversion/vflag/vcompression/vmtime/vmdate/Vcrc/Vcompressed_size/Vsize/vfilename_len/vextra_len',
-            $binary_data
+            $this->readRecord(30, 'the local file header')
         );
 
         $header['filename'] = fread($this->fh, $data['filename_len']);
