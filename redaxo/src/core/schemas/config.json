@@ -295,6 +295,10 @@
             "description": "Use Last-Modified header (not recommended)",
             "$ref": "#/definitions/bool-or-environment"
         },
+        "use_directory_protection_check": {
+            "description": "Whether the check for publicly accessible directories should be used",
+            "type": "boolean"
+        },
         "start_page": {
             "description": "Default start page for backend",
             "type": "string"

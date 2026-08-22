@@ -152,6 +152,7 @@ class rex
      *     ($key is 'debug' ? array{enabled: bool, throw_always_exception: bool|int} :
      *     ($key is 'lang_fallback' ? string[] :
      *     ($key is 'use_accesskeys' ? bool :
+     *     ($key is 'use_directory_protection_check' ? bool :
      *     ($key is 'accesskeys' ? array<string, string> :
      *     ($key is 'editor' ? string|null :
      *     ($key is 'editor_basepath' ? string|null :
@@ -175,7 +176,7 @@ class rex
      *     ($key is 'system_addons' ? non-empty-string[] :
      *     ($key is 'setup_addons' ? non-empty-string[] :
      *     mixed|null
-     *     )))))))))))))))))))))))))))
+     *     ))))))))))))))))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty($key, $default = null)
