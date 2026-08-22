@@ -449,7 +449,7 @@ jQuery(function($){
         });
     $("[autofocus]").trigger("focus");
 
-    if ($('#rex-page-setup, #rex-page-login').length == 0 && getCookie('rex_htaccess_check') != '1')
+    if (false !== rex.directory_protection_check && $('#rex-page-setup, #rex-page-login').length == 0 && getCookie('rex_directory_protection_check') != '1')
     {
         // urls which are not expected to be accessible
         var urls = [
@@ -459,11 +459,11 @@ jQuery(function($){
             'cache/.redaxo'
         ];
 
-        // Only one folder is checked per day. All these folders are protected by identical .htaccess
-        // files, so a broken setup (e.g. nginx or "AllowOverride None") shows up on any of them.
-        // Checking a single folder keeps the number of denied requests low enough to not trip
-        // tools like fail2ban, which ban a client after a few denied requests.
-        var previousInsecureUrl = getCookie('rex_htaccess_check');
+        // Only one directory is checked per day. All of them are protected the same way, so a
+        // setup where that protection is missing (e.g. nginx or "AllowOverride None") shows up on
+        // any of them. Checking a single directory keeps the number of denied requests low enough
+        // to not trip tools like fail2ban, which ban a client after a few denied requests.
+        var previousInsecureUrl = getCookie('rex_directory_protection_check');
         var url = previousInsecureUrl !== '' ? previousInsecureUrl : urls[Math.floor(Math.random() * urls.length)];
 
         var setCheckCookie = function (value) {
@@ -471,7 +471,7 @@ jQuery(function($){
             time.setTime(time.getTime() + 1000 * 60 * 60 * 24);
 
             setCookie(
-                'rex_htaccess_check',
+                'rex_directory_protection_check',
                 value,
                 time.toGMTString(),
                 rex.cookie_params.path,
@@ -489,9 +489,9 @@ jQuery(function($){
             url: url + '?redaxo-security-self-test',
             cache: false,
             success: function (data) {
-                $('#rex-js-page-main').prepend('<div class="alert alert-danger" style="margin-top: 20px;">The folder <code>redaxo/' + url + '</code> is insecure. Make sure this folder is not publicly accessible.</div>');
+                $('#rex-js-page-main').prepend('<div class="alert alert-danger" style="margin-top: 20px;">The directory <code>redaxo/' + url + '</code> is insecure. Make sure this directory is not publicly accessible.</div>');
 
-                // keep checking this folder, so the warning stays visible. its request succeeds
+                // keep checking this directory, so the warning stays visible. its request succeeds
                 // anyway, so it does not produce denied requests.
                 setCheckCookie(url);
             }

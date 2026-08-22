@@ -63,6 +63,9 @@ hsts_max_age: 31536000 # 1 year
 use_gzip: false
 use_etag: true
 use_last_modified: false
+# the backend checks once a day whether directories like redaxo/data are publicly accessible.
+# disable it if the requests to those directories trigger tools like fail2ban.
+use_directory_protection_check: true
 start_page: structure
 timezone: Europe/Berlin
 socket_proxy: null

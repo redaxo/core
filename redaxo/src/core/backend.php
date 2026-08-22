@@ -202,6 +202,7 @@ rex_view::addJsFile(rex_url::coreAssets('clipboard-copy-element.js'), [rex_view:
 
 rex_view::setJsProperty('backend', true);
 rex_view::setJsProperty('accesskeys', rex::getProperty('use_accesskeys'));
+rex_view::setJsProperty('directory_protection_check', rex::getProperty('use_directory_protection_check'));
 
 if (rex::getUser()) {
     rex_view::addJsFile(rex_url::coreAssets('session-timeout.js'), [rex_view::JS_IMMUTABLE => true]);
