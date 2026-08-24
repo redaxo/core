@@ -44,7 +44,7 @@ final readonly class LinkVar
         }
 
         $e = [];
-        $e['field'] = '<input class="form-control" type="text" name="REX_LINK_NAME[' . $id . ']" value="' . escape($artName) . '" id="REX_LINK_' . $id . '_NAME" readonly="readonly" /><input type="hidden" name="' . $name . '" id="REX_LINK_' . $id . '" value="' . ($value ?? '') . '" />';
+        $e['field'] = '<input class="form-control" type="text" name="REX_LINK_NAME[' . $id . ']" value="' . escape($artName) . '" id="REX_LINK_' . $id . '_NAME" readonly="readonly" /><input type="hidden" name="' . $name . '" id="REX_LINK_' . $id . '" value="' . escape((string) $value) . '" />';
         $e['functionButtons'] = '
                         <a href="#" class="btn btn-popup' . $class . '" onclick="' . $openFunc . 'return false;" title="' . I18n::msg('var_link_open') . '"><i class="rex-icon rex-icon-open-linkmap"></i></a>
                         <a href="#" class="btn btn-popup' . $class . '" onclick="' . $deleteFunc . 'return false;" title="' . I18n::msg('var_link_delete') . '"><i class="rex-icon rex-icon-delete-link"></i></a>';

@@ -30,6 +30,15 @@ final class Table
 
     public const string FIRST = 'FIRST '; // The space is intended: column names cannot end with space
 
+    /** @var array<string, array{int, int}> Default display width of integer types, signed and unsigned */
+    private const array INT_DISPLAY_WIDTHS = [
+        'tinyint' => [4, 3],
+        'smallint' => [6, 5],
+        'mediumint' => [9, 8],
+        'int' => [11, 10],
+        'bigint' => [20, 20],
+    ];
+
     private readonly int $db;
     private readonly Sql $sql;
     private bool $new;
@@ -90,13 +99,14 @@ final class Table
         foreach ($columns as $column) {
             $type = $column['type'];
 
-            // Since MySQL 8.0.17 the display width for integer columns is deprecated.
-            // To be compatible with our code for MySQL 5 and MariaDB we simulate the max display width.
+            // Since MySQL 8.0.17 the display width for integer columns is deprecated and it is not
+            // reported anymore. To be compatible with our code for MySQL 5 and MariaDB we simulate
+            // the max display width. `tinyint(1)` and zerofill columns still report their width.
             // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-attributes.html
-            if ('int' === $type) {
-                $type = 'int(11)';
-            } elseif ('int unsigned' === $type) {
-                $type = 'int(10) unsigned';
+            if (preg_match('/^(tinyint|smallint|mediumint|int|bigint)( unsigned)?$/', $type, $match)) {
+                $unsigned = $match[2] ?? '';
+                [$signedWidth, $unsignedWidth] = self::INT_DISPLAY_WIDTHS[$match[1]];
+                $type = $match[1] . '(' . ('' === $unsigned ? $signedWidth : $unsignedWidth) . ')' . $unsigned;
             }
 
             $default = $column['default'];
@@ -108,8 +118,8 @@ final class Table
                 $column['name'],
                 $type,
                 'YES' === $column['null'],
-                $default,
-                $column['extra'] ?: null,
+                Column::normalizeDefault($type, $default),
+                Column::normalizeExtra($column['extra'] ?: null),
                 $column['comment'] ?: null,
             );
 
@@ -149,12 +159,19 @@ final class Table
             $this->indexesExisting[$indexName] = $indexName;
         }
 
+        // KEY_COLUMN_USAGE spans all schemas and also lists unique/primary keys, so the join must be qualified.
+        // INFORMATION_SCHEMA gives no ordering guarantee, and the column order of a composite key ends up in the DDL.
         /** @var list<array{CONSTRAINT_NAME: string, COLUMN_NAME: string, REFERENCED_TABLE_NAME: string, REFERENCED_COLUMN_NAME: string, UPDATE_RULE: ForeignKey::*, DELETE_RULE: ForeignKey::*}> $foreignKeyParts */
         $foreignKeyParts = $this->sql->getArray('
             SELECT c.CONSTRAINT_NAME, c.REFERENCED_TABLE_NAME, c.UPDATE_RULE, c.DELETE_RULE, k.COLUMN_NAME, k.REFERENCED_COLUMN_NAME
             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS c
-            INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k ON c.CONSTRAINT_NAME = k.CONSTRAINT_NAME
-            WHERE c.CONSTRAINT_SCHEMA = DATABASE() AND c.TABLE_NAME = ?', [$name]);
+            INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE k
+                ON c.CONSTRAINT_SCHEMA = k.CONSTRAINT_SCHEMA
+                AND c.CONSTRAINT_NAME = k.CONSTRAINT_NAME
+                AND c.TABLE_NAME = k.TABLE_NAME
+                AND k.POSITION_IN_UNIQUE_CONSTRAINT IS NOT NULL
+            WHERE c.CONSTRAINT_SCHEMA = DATABASE() AND c.TABLE_NAME = ?
+            ORDER BY c.CONSTRAINT_NAME, k.ORDINAL_POSITION', [$name]);
         $foreignKeys = [];
         foreach ($foreignKeyParts as $part) {
             $foreignKeys[$part['CONSTRAINT_NAME']][] = $part;
@@ -800,10 +817,7 @@ final class Table
         $default = $column->getDefault();
         if (null === $default) {
             $default = '';
-        } elseif (
-            in_array(strtolower($column->getType()), ['timestamp', 'datetime'], true)
-            && in_array(strtolower($default), ['current_timestamp', 'current_timestamp()'], true)
-        ) {
+        } elseif ($column->hasCurrentTimestampDefault()) {
             $default = 'DEFAULT ' . $default;
         } else {
             $default = 'DEFAULT ' . $this->sql->escape($default);

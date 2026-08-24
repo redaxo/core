@@ -107,7 +107,6 @@ return RectorConfig::configure()
         CodeQuality\Class_\InlineConstructorDefaultToPropertyRector::class,
         CodeQuality\Class_\ConvertStaticToSelfRector::class,
         CodeQuality\Foreach_\SimplifyForeachToCoalescingRector::class,
-        CodeQuality\FuncCall\SimplifyRegexPatternRector::class,
         CodeQuality\FuncCall\SingleInArrayToCompareRector::class,
         CodeQuality\Identical\SimplifyBoolIdenticalTrueRector::class,
         CodeQuality\Identical\SimplifyConditionsRector::class,

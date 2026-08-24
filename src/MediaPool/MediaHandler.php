@@ -115,9 +115,7 @@ final class MediaHandler
         // preserve the perms of an existing file, otherwise use the umask-derived default
         $perm = is_file($dstFile) ? fileperms($dstFile) : false;
 
-        if (!File::move($srcFile, $dstFile)) {
-            throw new ApiFunctionException(I18n::msg('pool_file_movefailed'));
-        }
+        self::moveMedia($srcFile, $dstFile, $data['file']['type']);
 
         // the uploaded temp file may carry restrictive perms (e.g. 0600), restore the preserved or umask-derived perms
         @chmod($dstFile, $perm ?: 0o666 & ~umask());
@@ -126,8 +124,6 @@ final class MediaHandler
         if ('' == $data['file']['type'] && isset($size['mime'])) {
             $data['file']['type'] = $size['mime'];
         }
-
-        self::sanitizeMedia($dstFile, $data['file']['type']);
 
         $saveObject = Sql::factory();
         $saveObject->setTable(Core::getTablePrefix() . 'media');
@@ -236,17 +232,14 @@ final class MediaHandler
                     $warning = I18n::msg('pool_file_mediatype_not_allowed') . ' <code>' . escape($extensionNew) . '</code> (<code>' . escape($filetype ?? 'unknown mime type') . '</code>)';
                     throw new ApiFunctionException($warning);
                 }
+
                 // preserve the perms of an existing file, otherwise use the umask-derived default
                 $perm = is_file($dstFile) ? fileperms($dstFile) : false;
 
-                if (!File::move($srcFile, $dstFile)) {
-                    throw new ApiFunctionException(I18n::msg('pool_file_movefailed'));
-                }
+                self::moveMedia($srcFile, $dstFile, $filetype);
 
                 // the uploaded temp file may carry restrictive perms (e.g. 0600), restore the preserved or umask-derived perms
                 @chmod($dstFile, $perm ?: 0o666 & ~umask());
-
-                self::sanitizeMedia($dstFile, $filetype);
 
                 $saveObject->setValue('filetype', $filetype);
                 $saveObject->setValue('filesize', filesize($dstFile));
@@ -425,20 +418,64 @@ final class MediaHandler
         return $items;
     }
 
-    private static function sanitizeMedia(string $path, ?string $type): void
+    /**
+     * Sanitizes the file if necessary and moves it into the media folder.
+     *
+     * The file must never be moved before it has been sanitized, otherwise the unsanitized content would be publicly
+     * available for a short time (or permanently, if sanitizing fails).
+     *
+     * @throws ApiFunctionException
+     */
+    private static function moveMedia(string $srcFile, string $dstFile, ?string $type): void
+    {
+        $sanitizedFile = self::sanitizeMedia($srcFile, $type, Path::basename($dstFile));
+
+        if (!File::move($sanitizedFile ?? $srcFile, $dstFile)) {
+            if (null !== $sanitizedFile) {
+                File::delete($sanitizedFile);
+            }
+
+            throw new ApiFunctionException(I18n::msg('pool_file_movefailed'));
+        }
+
+        // the source file is left behind when the sanitized copy has been moved instead
+        if (null !== $sanitizedFile && $srcFile !== $dstFile) {
+            File::delete($srcFile);
+        }
+    }
+
+    /**
+     * Sanitizes the file into a temporary file, the source file is left untouched.
+     *
+     * @param string $filename Name of the target file, used to detect the file extension
+     *
+     * @throws ApiFunctionException
+     *
+     * @return string|null Path of the sanitized temp file or `null` if the file does not need sanitization
+     */
+    private static function sanitizeMedia(string $path, ?string $type, string $filename): ?string
     {
         if (!MediaPool::$sanitizeSvgs) {
-            return;
+            return null;
         }
 
-        if ('image/svg+xml' !== $type && 'svg' !== strtolower(File::extension($path))) {
-            return;
+        if ('image/svg+xml' !== $type && 'svg' !== strtolower(File::extension($filename))) {
+            return null;
         }
 
-        $content = Type::notNull(File::get($path));
+        $content = new Sanitizer()->sanitize(Type::notNull(File::get($path)));
 
-        $content = new Sanitizer()->sanitize($content);
+        if (false === $content) {
+            throw new ApiFunctionException(I18n::msg('pool_file_upload_error'));
+        }
 
-        File::put($path, $content);
+        // the temp file is placed inside the project to keep the final move to the media folder atomic
+        $sanitizedFile = Path::coreCache('mediapool/sanitize/' . bin2hex(random_bytes(16)) . '.svg');
+
+        if (!File::put($sanitizedFile, $content)) {
+            throw new ApiFunctionException(I18n::msg('pool_file_movefailed'));
+        }
+
+        return $sanitizedFile;
     }
 }

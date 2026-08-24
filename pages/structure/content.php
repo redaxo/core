@@ -112,7 +112,10 @@ echo Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_HEADER', '', [
 $user = Core::requireUser();
 
 // ----------------- HAT USER DIE RECHTE AN DIESEM ARTICLE ODER NICHT
-if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
+if (
+    !$user->getComplexPerm('clang')->hasPerm($clang)
+    || !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)
+) {
     // ----- hat keine rechte an diesem artikel
     echo Message::warning(I18n::msg('no_rights_to_edit'));
 } else {
@@ -131,7 +134,9 @@ if (!$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)) {
         $moduleKey = null;
         if ('edit' == $function || 'delete' == $function) {
             // edit/ delete
-            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=? AND clang_id=?', [$sliceId, $clang]);
+            // article_id must match: the permission check above is based on the requested article, so slices of
+            // other articles (possibly in categories the user has no permission for) must not be addressable here
+            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=? AND article_id=? AND clang_id=?', [$sliceId, $articleId, $clang]);
             if (1 == $CM->getRows()) {
                 $moduleKey = (string) $CM->getValue('module');
             }

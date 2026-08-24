@@ -34,7 +34,7 @@ final readonly class MediaListVar
         $medialistarray = null === $value ? [] : explode(',', $value);
         foreach ($medialistarray as $file) {
             if ('' != $file) {
-                $options .= '<option value="' . $file . '">' . $file . '</option>';
+                $options .= '<option value="' . escape($file) . '">' . escape($file) . '</option>';
             }
         }
 
@@ -54,7 +54,7 @@ final readonly class MediaListVar
 
         $e = [];
         $e['before'] = '<div class="rex-js-widget' . $wdgtClass . '">';
-        $e['field'] = '<select class="form-control" name="REX_MEDIALIST_SELECT[' . $id . ']" id="REX_MEDIALIST_SELECT_' . $id . '" size="10">' . $options . '</select><input type="hidden" name="' . $name . '" id="REX_MEDIALIST_' . $id . '" value="' . ($value ?? '') . '" />';
+        $e['field'] = '<select class="form-control" name="REX_MEDIALIST_SELECT[' . $id . ']" id="REX_MEDIALIST_SELECT_' . $id . '" size="10">' . $options . '</select><input type="hidden" name="' . $name . '" id="REX_MEDIALIST_' . $id . '" value="' . escape((string) $value) . '" />';
         $e['moveButtons'] = '
                 <a href="#" class="btn btn-popup" onclick="moveREXMedialist(' . $quotedId . ',\'top\');return false;" title="' . I18n::msg('var_medialist_move_top') . '"><i class="rex-icon rex-icon-top"></i></a>
                 <a href="#" class="btn btn-popup" onclick="moveREXMedialist(' . $quotedId . ',\'up\');return false;" title="' . I18n::msg('var_medialist_move_up') . '"><i class="rex-icon rex-icon-up"></i></a>

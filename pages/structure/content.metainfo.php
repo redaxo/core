@@ -11,6 +11,7 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\MetaInfo\Handler\AbstractHandler as MetaInfoHandler;
 use Redaxo\Core\MetaInfo\Handler\ArticleHandler as MetaInfoArticleHandler;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
@@ -120,13 +121,23 @@ if (1 == $article->getRows()) {
         . '</div>';
     $form = $articleName . $form;
 
+    $csrfToken = MetaInfoHandler::getCsrfToken();
+
+    $message = '';
+    if (Request::post('savemeta', 'boolean')) {
+        $message = $csrfToken->isValid()
+            ? Message::success(I18n::msg('minfo_metadata_saved'))
+            : Message::error(I18n::msg('csrf_token_invalid'));
+    }
+
     $content[] = '
               <div id="rex-page-sidebar-metainfo" data-pjax-container="#rex-page-sidebar-metainfo">
                 <form class="metainfo-sidebar" action="' . $context->getUrl() . '" method="post" enctype="multipart/form-data">
-                    ' . (Request::post('savemeta', 'boolean') ? Message::success(I18n::msg('minfo_metadata_saved')) : '') . '
+                    ' . $message . '
                     <fieldset>
                         <input type="hidden" name="save" value="1" />
                         <input type="hidden" name="ctype" value="' . $ctype . '" />
+                        ' . $csrfToken->getHiddenField() . '
                         ' . $form . '
                         <button class="btn btn-primary pull-left" type="submit" name="savemeta"' . Core::getAccesskey(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
                     </fieldset>

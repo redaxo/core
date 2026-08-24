@@ -40,16 +40,19 @@ final class LanguageHandler extends AbstractHandler
     {
         $params = $ep->getParams();
 
+        // Only save when the clang itself is saved, as only that request is protected by a csrf token.
+        $save = in_array($ep->name, ['CLANG_ADDED', 'CLANG_UPDATED'], true);
+
         /** @var object|null $subject */
         $subject = $params['sql'] ?? null;
         $context = new MetaContext(MetaEntity::Clang, $subject);
 
-        if ('post' == Request::requestMethod() && isset($params['id'])) {
+        if ($save && 'post' == Request::requestMethod() && isset($params['id'])) {
             $this->save((int) $params['id'], $context);
         }
 
         // On CLANG_ADDED and CLANG_UPDATED only save, render no form.
-        if (in_array($ep->name, ['CLANG_UPDATED', 'CLANG_ADDED'], true)) {
+        if ($save) {
             return $ep->subject;
         }
 

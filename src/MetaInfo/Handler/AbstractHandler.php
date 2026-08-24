@@ -7,6 +7,7 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\MetaInfo\Field\Fieldset;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaSchema;
+use Redaxo\Core\Security\CsrfToken;
 
 /**
  * Renders and saves the meta fields of an entity, driven by its {@see MetaSchema}.
@@ -15,6 +16,16 @@ use Redaxo\Core\MetaInfo\MetaSchema;
  */
 abstract class AbstractHandler
 {
+    /**
+     * Csrf token for forms which are provided by metainfo itself.
+     *
+     * Meta fields which are rendered into a form of another addon are covered by the csrf token of that form.
+     */
+    public static function getCsrfToken(): CsrfToken
+    {
+        return CsrfToken::factory('metainfo');
+    }
+
     /**
      * Renders all fields visible in the given context.
      *

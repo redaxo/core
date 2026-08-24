@@ -9,6 +9,7 @@ use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Translation\I18n;
 
@@ -42,6 +43,14 @@ final class ArticleSliceStatusChange extends ApiFunction
 
         $sliceId = Request::request('slice_id', 'int');
         $status = Request::request('status', 'int');
+
+        // the slice must belong to the article whose category permission was checked above, otherwise slices of
+        // categories the user has no permission for could be addressed
+        $slice = Sql::factory();
+        $slice->setQuery('SELECT id FROM ' . Core::getTable('article_slice') . ' WHERE id = ? AND article_id = ? AND clang_id = ?', [$sliceId, $articleId, $clang]);
+        if (1 !== $slice->getRows()) {
+            throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
+        }
 
         ContentHandler::sliceStatus($sliceId, $status);
 

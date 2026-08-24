@@ -48,6 +48,9 @@ final class CategoryHandler extends AbstractHandler
     {
         $params = $ep->getParams();
 
+        // Only save when the category itself is saved, as only that request is protected by a csrf token.
+        $save = in_array($ep->name, ['CAT_ADDED', 'CAT_UPDATED'], true);
+
         /** @var object|null $subject */
         $subject = $params['category'] ?? null;
         // The surrounding category (the edited category, or the parent when adding); null = root.
@@ -55,12 +58,12 @@ final class CategoryHandler extends AbstractHandler
 
         $context = new MetaContext(MetaEntity::Category, $subject, $category);
 
-        if ('post' == Request::requestMethod() && isset($params['id'])) {
+        if ($save && 'post' == Request::requestMethod() && isset($params['id'])) {
             $this->save((int) $params['id'], (int) $params['clang'], $context);
         }
 
         // On CAT_ADDED and CAT_UPDATED only save, render no form.
-        if (in_array($ep->name, ['CAT_UPDATED', 'CAT_ADDED'], true)) {
+        if ($save) {
             return $ep->subject;
         }
 

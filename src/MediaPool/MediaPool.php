@@ -45,7 +45,7 @@ final class MediaPool
     public static array $allowedMimeTypes = [
         // images
         'avif' => ['image/avif'],
-        'eps' => ['application/postscript'],
+        'eps' => ['application/postscript', 'image/x-eps'],
         'gif' => ['image/gif'],
         'jpeg' => ['image/jpeg', 'image/pjpeg'],
         'jpg' => ['image/jpeg', 'image/pjpeg'],

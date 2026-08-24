@@ -2,12 +2,12 @@
 
 namespace Redaxo\Core\Content;
 
+use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\Login;
+use Redaxo\Core\Security\UserSession;
 use SensitiveParameter;
-
-use const PASSWORD_DEFAULT;
 
 /**
  * @internal
@@ -16,13 +16,34 @@ use const PASSWORD_DEFAULT;
  */
 final class HistoryLogin extends BackendLogin
 {
-    public function checkTempSession(string $historyLogin, #[SensitiveParameter] string $historySession, string $historyValidtime): bool
+    public function checkTempSession(string $historyLogin, string $historySession, string $historyValidtime): bool
     {
         $userSql = Sql::factory($this->DB);
         $userSql->setQuery($this->loginQuery, [':login' => $historyLogin]);
 
-        if (1 == $userSql->getRows()) {
-            if (self::verifySessionKey($historyLogin . ((string) $userSql->getValue('session_id')) . $historyValidtime, $historySession)) {
+        if (1 != $userSql->getRows()) {
+            return false;
+        }
+
+        // Only non-expired sessions count (same rule as clearExpiredSessions, which runs on login only,
+        // so expired rows can linger). Otherwise a known but expired session id could still forge a token.
+        $sessionSql = Sql::factory($this->DB);
+        $sessionSql->setQuery(
+            'SELECT session_id FROM ' . Core::getTable('user_session') . '
+                WHERE user_id = ? AND UNIX_TIMESTAMP(last_activity) >= IF(cookie_key IS NULL, ?, ?)',
+            [
+                (int) $userSql->getValue($this->idColumn),
+                time() - (int) Core::getProperty('session_duration'),
+                strtotime('-' . UserSession::STAY_LOGGED_IN_DURATION . ' months'),
+            ],
+        );
+
+        // The session id is the shared secret — only its HMAC is in the URL. A matching row also proves
+        // the session is still alive: logout removes it and thereby invalidates the token.
+        foreach ($sessionSql as $session) {
+            $expected = self::hashSessionKey($historyLogin, $historyValidtime, (string) $session->getValue('session_id'));
+
+            if (hash_equals($expected, $historySession)) {
                 $this->user = $userSql;
                 $this->setSessionVar(Login::SESSION_LAST_ACTIVITY, time());
                 $this->setSessionVar(Login::SESSION_USER_ID, $this->user->getValue($this->idColumn));
@@ -34,13 +55,13 @@ final class HistoryLogin extends BackendLogin
         return false;
     }
 
-    public static function createSessionKey(#[SensitiveParameter] string $login, #[SensitiveParameter] string $session, string $validtime): string
+    public static function createSessionKey(string $login, string $validtime): string
     {
-        return password_hash($login . $session . $validtime, PASSWORD_DEFAULT);
+        return self::hashSessionKey($login, $validtime, (string) session_id());
     }
 
-    private static function verifySessionKey(#[SensitiveParameter] string $key1, #[SensitiveParameter] string $key2): bool
+    private static function hashSessionKey(string $login, string $validtime, #[SensitiveParameter] string $sessionId): string
     {
-        return password_verify($key1, $key2);
+        return hash_hmac('sha256', $login . '|' . $validtime, $sessionId);
     }
 }

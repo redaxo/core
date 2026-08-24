@@ -32,7 +32,7 @@ final class ArticleHandler extends AbstractHandler
         $context = new MetaContext(MetaEntity::Article, $params['article'], $category);
 
         // Only save when the meta form was actually submitted (e.g. not when navigating via be_search).
-        if (Request::post('savemeta', 'boolean')) {
+        if (Request::post('savemeta', 'boolean') && self::getCsrfToken()->isValid()) {
             $context = $this->save($params, $context);
         }
 

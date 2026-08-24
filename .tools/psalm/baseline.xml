@@ -887,14 +887,12 @@
     </InvalidScalarArgument>
     <MixedArgument>
       <code><![CDATA[$error]]></code>
-      <code><![CDATA[$fileName]]></code>
       <code><![CDATA[$filename]]></code>
       <code><![CDATA[$success]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$error]]></code>
       <code><![CDATA[$success]]></code>
-      <code><![CDATA[['filename' => $fileName]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$fileName]]></code>
@@ -2448,7 +2446,6 @@
       <code><![CDATA[$queryParams]]></code>
     </MixedArgumentTypeCoercion>
     <PossiblyFalseArgument>
-      <code><![CDATA[$content]]></code>
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
       <code><![CDATA[ini_get('upload_max_filesize')]]></code>
     </PossiblyFalseArgument>

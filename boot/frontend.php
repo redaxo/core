@@ -20,6 +20,7 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Mailer\Mailer;
 use Redaxo\Core\Security\BackendLogin;
+use Redaxo\Core\Security\UserSession;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
@@ -71,8 +72,12 @@ if (Core::getConfig('article_history', false)) {
                 if ($login->checkTempSession($historyLogin, $historySession, $historyValidtime)) {
                     $user = $login->getUser();
                     Core::setProperty('user', $user);
-                    Extension::register('OUTPUT_FILTER', static function (ExtensionPoint $ep) use ($login) {
+
+                    // A shutdown function (not an OUTPUT_FILTER) so cleanup runs even when the request aborts
+                    // before output — e.g. a bogus rex-api-call — which would otherwise leave a usable session.
+                    register_shutdown_function(static function () use ($login) {
                         $login->deleteSession();
+                        UserSession::getInstance()->clearCurrentSession();
                     });
                 }
             }
@@ -93,11 +98,23 @@ if (Core::getConfig('article_history', false)) {
             Type::instanceOf($ep->subject, ArticleContent::class)->eval = true;
         });
 
-        Extension::register('ART_SLICES_QUERY', static function (ExtensionPoint $ep) {
+        // The article id is not known in ART_INIT yet (that extension point is fired in the constructor, before
+        // the article id is set), so the article specific permissions can only be checked here, where the slices
+        // of the history are about to be fetched.
+        Extension::register('ART_SLICES_QUERY', static function (ExtensionPoint $ep) use ($user) {
             $historyDate = Request::request('rex_history_date', 'string');
             $article = $ep->getParam('article');
 
             if ($article instanceof ArticleContent && $article->articleId == Article::getCurrentId()) {
+                $historyArticle = Article::get($article->articleId, $article->clangId);
+                if (
+                    !$historyArticle instanceof Article
+                    || !$user->getComplexPerm('clang')->hasPerm($article->clangId)
+                    || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
+                ) {
+                    throw new HttpException('No permission for the history of this article.', Response::HTTP_FORBIDDEN);
+                }
+
                 $articleLimit = '';
                 if (0 != $article->articleId) {
                     $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . $article->articleId;
@@ -134,7 +151,9 @@ if (Core::getConfig('article_work_version', false)) {
             return;
         }
 
-        if (!BackendLogin::hasSession()) {
+        // createUser() instead of hasSession(): it validates that the session is still valid and that the user
+        // still exists and is active
+        if (!BackendLogin::createUser()) {
             $fragment = new Fragment([
                 'content' => '<p>No permission for the working version. You need to be logged into the REDAXO backend at the same time.</p>',
             ]);
@@ -147,6 +166,34 @@ if (Core::getConfig('article_work_version', false)) {
         $article = Type::instanceOf($ep->subject, ArticleContent::class);
         $article->sliceRevision = $version;
         $article->eval = true;
+    });
+
+    // The article id is not known in ART_INIT yet (that extension point is fired in the constructor, before
+    // the article id is set), so the article specific permissions can only be checked here, where the slices
+    // of the working version are about to be fetched.
+    Extension::register('ART_SLICES_QUERY', static function (ExtensionPoint $ep) {
+        if (ArticleRevision::WORK != Request::request('rex_version', 'int')) {
+            return null;
+        }
+
+        $article = $ep->getParam('article');
+        if (!$article instanceof ArticleContent || $article->articleId !== Article::getCurrentId()) {
+            return null;
+        }
+
+        $user = BackendLogin::createUser();
+        $previewArticle = Article::get($article->articleId, $article->clangId);
+
+        if (
+            !$user
+            || !$previewArticle instanceof Article
+            || !$user->getComplexPerm('clang')->hasPerm($article->clangId)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($previewArticle->categoryId)
+        ) {
+            throw new HttpException('No permission for the working version of this article.', Response::HTTP_FORBIDDEN);
+        }
+
+        return null;
     });
 }
 

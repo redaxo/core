@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Tests\Database;
 
 use Override;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Database\Column;
@@ -526,6 +527,12 @@ final class TableTest extends TestCase
         $table = Table::get(self::TABLE);
 
         self::assertEquals($fk, $table->getForeignKey('test1_fk_config'));
+
+        // assertEquals compares arrays order-insensitively, so the column order needs its own assertion.
+        self::assertSame(
+            ['config_namespace' => 'namespace', 'config_key' => 'key'],
+            $table->getForeignKey('test1_fk_config')?->getColumns(),
+        );
     }
 
     public function testEnsureForeignKey(): void
@@ -684,6 +691,80 @@ final class TableTest extends TestCase
                 ->ensureColumn(new Column('title', 'varchar(255)'))
                 ->ensure();
         }
+    }
+
+    #[DataProvider('provideIntegerTypes')]
+    public function testEnsureIntegerColumn(string $type): void
+    {
+        $column = new Column('foo', $type, true);
+
+        Table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn($column)
+            ->ensure();
+
+        Table::clearInstance(self::TABLE);
+
+        self::assertEquals($column, Table::get(self::TABLE)->getColumn('foo'));
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function provideIntegerTypes(): iterable
+    {
+        $types = [
+            'tinyint(4)', 'tinyint(3) unsigned', 'tinyint(1)',
+            'smallint(6)', 'smallint(5) unsigned',
+            'mediumint(9)', 'mediumint(8) unsigned',
+            'int(11)', 'int(10) unsigned',
+            'bigint(20)', 'bigint(20) unsigned',
+        ];
+
+        foreach ($types as $type) {
+            yield $type => [$type];
+        }
+    }
+
+    #[DataProvider('provideCurrentTimestampColumns')]
+    public function testEnsureCurrentTimestampColumn(Column $column, string $expectedDefault, ?string $expectedExtra): void
+    {
+        Table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn($column)
+            ->ensure();
+
+        Table::clearInstance(self::TABLE);
+
+        $readColumn = Table::get(self::TABLE)->getColumn('foo');
+        self::assertInstanceOf(Column::class, $readColumn);
+
+        self::assertSame($expectedDefault, $readColumn->getDefault());
+        self::assertSame($expectedExtra, $readColumn->getExtra());
+        self::assertTrue($column->equals($readColumn));
+    }
+
+    /** @return iterable<string, array{Column, string, string|null}> */
+    public static function provideCurrentTimestampColumns(): iterable
+    {
+        yield 'datetime' => [
+            new Column('foo', 'datetime', false, 'CURRENT_TIMESTAMP'),
+            'CURRENT_TIMESTAMP', null,
+        ];
+        yield 'datetime, function spelling' => [
+            new Column('foo', 'datetime', false, 'current_timestamp()'),
+            'CURRENT_TIMESTAMP', null,
+        ];
+        yield 'datetime with precision' => [
+            new Column('foo', 'datetime(3)', false, 'current_timestamp(3)'),
+            'CURRENT_TIMESTAMP(3)', null,
+        ];
+        yield 'timestamp, on update' => [
+            new Column('foo', 'timestamp', false, 'CURRENT_TIMESTAMP', 'on update CURRENT_TIMESTAMP'),
+            'CURRENT_TIMESTAMP', 'on update CURRENT_TIMESTAMP',
+        ];
+        yield 'timestamp, on update function spelling' => [
+            new Column('foo', 'timestamp', false, 'current_timestamp()', 'on update current_timestamp()'),
+            'CURRENT_TIMESTAMP', 'on update CURRENT_TIMESTAMP',
+        ];
     }
 
     public function testEnsureWithEnsureGlobalColumns(): void

@@ -287,7 +287,26 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
     Asset::addCssFile(Url::coreAssets('css/history.css'));
     Asset::addJsFile(Url::coreAssets('js/history.js'), [Asset::JS_IMMUTABLE => true]);
 
-    switch (Request::request('rex_history_function', 'string')) {
+    $historyFunction = Request::request('rex_history_function', 'string');
+    $articleId = Request::request('history_article_id', 'int');
+    $clangId = Request::request('history_clang_id', 'int');
+
+    if (in_array($historyFunction, ['snap', 'layer'], true)) {
+        $historyArticle = Article::get($articleId, $clangId);
+        $user = Core::requireUser();
+
+        if (
+            !$historyArticle instanceof Article
+            || !$user->getComplexPerm('clang')->hasPerm($clangId)
+            || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
+        ) {
+            Response::setStatus(Response::HTTP_FORBIDDEN);
+            Response::sendContent(I18n::msg('no_rights_to_this_function'), 'text/plain');
+            exit;
+        }
+    }
+
+    switch ($historyFunction) {
         case 'snap':
             if (!CsrfToken::factory('structure_history')->isValid()) {
                 Response::setStatus(Response::HTTP_FORBIDDEN);
@@ -295,15 +314,11 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
                 exit;
             }
 
-            $articleId = Request::request('history_article_id', 'int');
-            $clangId = Request::request('history_clang_id', 'int');
             $historyDate = Request::request('history_date', 'string');
             ArticleSliceHistory::restoreSnapshot($historyDate, $articleId, $clangId);
 
             // no break
         case 'layer':
-            $articleId = Request::request('history_article_id', 'int');
-            $clangId = Request::request('history_clang_id', 'int');
             $versions = ArticleSliceHistory::getSnapshots($articleId, $clangId);
 
             $select1 = [];
@@ -347,7 +362,7 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
                 $userLogin = $user->login;
                 $historyValidTime = new DateTime();
                 $historyValidTime = $historyValidTime->modify('+10 Minutes')->format('YmdHis'); // 10 minutes valid key
-                $userHistorySession = HistoryLogin::createSessionKey($userLogin, (string) $user->getValue('session_id'), $historyValidTime);
+                $userHistorySession = HistoryLogin::createSessionKey($userLogin, $historyValidTime);
                 $articleLink = Url::article(Article::getCurrentId(), Language::getCurrentId(), [
                     'rex_history_login' => $userLogin,
                     'rex_history_session' => $userHistorySession,
