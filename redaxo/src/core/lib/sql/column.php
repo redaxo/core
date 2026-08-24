@@ -183,13 +183,21 @@ class rex_sql_column
     }
 
     /**
-     * Normalizes the spelling of an extra clause (like `on update current_timestamp()`) to the form used by MySQL.
+     * Normalizes an extra clause (like `on update current_timestamp()`) to the form used by MySQL.
      *
      * @internal
      */
     public static function normalizeExtra(?string $extra): ?string
     {
-        return null === $extra ? null : self::normalizeCurrentTimestamp($extra);
+        if (null === $extra) {
+            return null;
+        }
+
+        // Since MySQL 8.0.13 an expression default value is reported as `DEFAULT_GENERATED`, which is
+        // not part of a column definition and would break the generated SQL.
+        $extra = preg_replace('/^DEFAULT_GENERATED\s*/i', '', $extra) ?? $extra;
+
+        return '' === $extra ? null : self::normalizeCurrentTimestamp($extra);
     }
 
     private static function isCurrentTimestamp(string $type, string $default): bool
