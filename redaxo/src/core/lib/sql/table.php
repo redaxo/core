@@ -96,8 +96,9 @@ class rex_sql_table
             // the max display width. `tinyint(1)` and zerofill columns still report their width.
             // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-attributes.html
             if (preg_match('/^(tinyint|smallint|mediumint|int|bigint)( unsigned)?$/', $type, $match)) {
-                [$signed, $unsigned] = self::INT_DISPLAY_WIDTHS[$match[1]];
-                $type = $match[1] . '(' . (isset($match[2]) ? $unsigned : $signed) . ')' . ($match[2] ?? '');
+                $unsigned = $match[2] ?? '';
+                [$signedWidth, $unsignedWidth] = self::INT_DISPLAY_WIDTHS[$match[1]];
+                $type = $match[1] . '(' . ('' === $unsigned ? $signedWidth : $unsignedWidth) . ')' . $unsigned;
             }
 
             $default = $column['default'];
