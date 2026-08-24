@@ -321,14 +321,6 @@
                 "pattern": "^[a-z]$"
             }
         },
-        "editor": {
-            "description": "Editor integration (for opening files from backend links into your editor)",
-            "enum": [null, "atom", "emacs", "idea", "macvim", "phpstorm", "sublime", "textmate", "vscode", "xdebug"]
-        },
-        "editor_basepath": {
-            "description": "Base path for editor integration",
-            "type": ["null", "string"]
-        },
         "theme": {
             "description": "Backend theme for all users",
             "enum": [null, "light", "dark"]

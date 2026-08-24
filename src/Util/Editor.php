@@ -3,7 +3,7 @@
 namespace Redaxo\Core\Util;
 
 use Redaxo\Core\Base\FactoryTrait;
-use Redaxo\Core\Core;
+use Redaxo\Core\Env;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Path;
@@ -102,7 +102,7 @@ class Editor
     }
 
     /**
-     * Returns the editor name, e.g. „atom“.
+     * Returns the editor name, e.g. „atom“, from the `editor` cookie or the env var `REX_EDITOR`.
      *
      * @return self::EDITOR_*
      */
@@ -110,7 +110,7 @@ class Editor
     {
         $supportedEditors = $this->getSupportedEditors();
 
-        $editor = array_key_exists('editor', $_COOKIE) ? $_COOKIE['editor'] : Core::getProperty('editor');
+        $editor = array_key_exists('editor', $_COOKIE) ? $_COOKIE['editor'] : Env::get('REX_EDITOR');
 
         if (null !== $editor && array_key_exists($editor, $supportedEditors)) {
             return $editor;
@@ -119,9 +119,10 @@ class Editor
         return null;
     }
 
+    /** Returns the local base path from the `editor_basepath` cookie or the env var `REX_EDITOR_BASEPATH`. */
     public function getBasepath(): ?string
     {
-        $path = array_key_exists('editor_basepath', $_COOKIE) ? $_COOKIE['editor_basepath'] : Core::getProperty('editor_basepath');
+        $path = array_key_exists('editor_basepath', $_COOKIE) ? $_COOKIE['editor_basepath'] : Env::get('REX_EDITOR_BASEPATH');
 
         return $path ? rtrim($path, '\\/') . DIRECTORY_SEPARATOR : null;
     }

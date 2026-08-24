@@ -4,6 +4,7 @@ use Redaxo\Core\Cache;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Env;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
@@ -108,7 +109,6 @@ if ($func && !$csrfToken->isValid()) {
     $editor = Request::post('editor', [
         ['name', 'string', null],
         ['basepath', 'string', null],
-        ['update_cookie', 'bool', false],
         ['delete_cookie', 'bool', false],
     ]);
 
@@ -124,24 +124,13 @@ if ($func && !$csrfToken->isValid()) {
         unset($_COOKIE['editor_basepath']);
 
         $success = I18n::msg('system_editor_success_cookie_deleted');
-    } elseif ($editor['update_cookie']) {
+    } else {
         Response::sendCookie('editor', $editor['name'], $cookieOptions);
         Response::sendCookie('editor_basepath', $editor['basepath'], $cookieOptions);
         $_COOKIE['editor'] = $editor['name'];
         $_COOKIE['editor_basepath'] = $editor['basepath'];
 
         $success = I18n::msg('system_editor_success_cookie');
-    } else {
-        $configFile = Path::coreData('config.yml');
-        $config = File::getConfig($configFile);
-
-        $config['editor'] = $editor['name'];
-        $config['editor_basepath'] = $editor['basepath'];
-        Core::setProperty('editor', $config['editor']);
-        Core::setProperty('editor_basepath', $config['editor_basepath']);
-
-        File::putConfig($configFile, $config);
-        $success = I18n::msg('system_editor_success_configyml');
     }
 }
 
@@ -386,6 +375,8 @@ $content = '<p>' . I18n::msg('system_editor_note') . '</p>';
 $viaCookie = array_key_exists('editor', $_COOKIE);
 if ($viaCookie) {
     $content .= Message::info(I18n::msg('system_editor_note_cookie'));
+} elseif (Env::get('REX_EDITOR')) {
+    $content .= Message::info(I18n::msg('system_editor_note_env'));
 }
 
 $formElements = [];
@@ -415,17 +406,9 @@ $fragment->setVar('elements', $formElements, false);
 $content .= $fragment->parse('core/form/form.php');
 
 $formElements = [];
-$class = 'rex-form-aligned';
-
-if (!$viaCookie) {
-    $n = [];
-    $n['field'] = '<button class="btn btn-save ' . $class . '" type="submit" name="editor[update_cookie]" value="0">' . I18n::msg('system_editor_update_configyml') . '</button>';
-    $formElements[] = $n;
-    $class = '';
-}
 
 $n = [];
-$n['field'] = '<button class="btn btn-save ' . $class . '" type="submit" name="editor[update_cookie]" value="1">' . I18n::msg('system_editor_update_cookie') . '</button>';
+$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit">' . I18n::msg('system_editor_update_cookie') . '</button>';
 $formElements[] = $n;
 
 if ($viaCookie) {

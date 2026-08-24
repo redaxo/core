@@ -144,8 +144,6 @@ final class Core
      *      ($key is 'lang_fallback' ? string[] :
      *      ($key is 'use_accesskeys' ? bool :
      *      ($key is 'accesskeys' ? array<string, string> :
-     *      ($key is 'editor' ? string|null :
-     *      ($key is 'editor_basepath' ? string|null :
      *      ($key is 'timer' ? Timer :
      *      ($key is 'timezone' ? string :
      *      ($key is 'table_prefix' ? non-empty-string :
@@ -162,7 +160,7 @@ final class Core
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      )))))))))))))))))))))
+     *      )))))))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
