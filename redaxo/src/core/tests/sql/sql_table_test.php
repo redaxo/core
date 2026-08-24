@@ -1,5 +1,6 @@
 <?php
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 
@@ -680,6 +681,80 @@ final class rex_sql_table_test extends TestCase
                 ->ensureColumn(new rex_sql_column('title', 'varchar(255)'))
                 ->ensure();
         }
+    }
+
+    #[DataProvider('provideIntegerTypes')]
+    public function testEnsureIntegerColumn(string $type): void
+    {
+        $column = new rex_sql_column('foo', $type, true);
+
+        rex_sql_table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn($column)
+            ->ensure();
+
+        rex_sql_table::clearInstance(self::TABLE);
+
+        self::assertEquals($column, rex_sql_table::get(self::TABLE)->getColumn('foo'));
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function provideIntegerTypes(): iterable
+    {
+        $types = [
+            'tinyint(4)', 'tinyint(3) unsigned', 'tinyint(1)',
+            'smallint(6)', 'smallint(5) unsigned',
+            'mediumint(9)', 'mediumint(8) unsigned',
+            'int(11)', 'int(10) unsigned',
+            'bigint(20)', 'bigint(20) unsigned',
+        ];
+
+        foreach ($types as $type) {
+            yield $type => [$type];
+        }
+    }
+
+    #[DataProvider('provideCurrentTimestampColumns')]
+    public function testEnsureCurrentTimestampColumn(rex_sql_column $column, string $expectedDefault, ?string $expectedExtra): void
+    {
+        rex_sql_table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn($column)
+            ->ensure();
+
+        rex_sql_table::clearInstance(self::TABLE);
+
+        $readColumn = rex_sql_table::get(self::TABLE)->getColumn('foo');
+        self::assertInstanceOf(rex_sql_column::class, $readColumn);
+
+        self::assertSame($expectedDefault, $readColumn->getDefault());
+        self::assertSame($expectedExtra, $readColumn->getExtra());
+        self::assertTrue($column->equals($readColumn));
+    }
+
+    /** @return iterable<string, array{rex_sql_column, string, string|null}> */
+    public static function provideCurrentTimestampColumns(): iterable
+    {
+        yield 'datetime' => [
+            new rex_sql_column('foo', 'datetime', false, 'CURRENT_TIMESTAMP'),
+            'CURRENT_TIMESTAMP', null,
+        ];
+        yield 'datetime, function spelling' => [
+            new rex_sql_column('foo', 'datetime', false, 'current_timestamp()'),
+            'CURRENT_TIMESTAMP', null,
+        ];
+        yield 'datetime with precision' => [
+            new rex_sql_column('foo', 'datetime(3)', false, 'current_timestamp(3)'),
+            'CURRENT_TIMESTAMP(3)', null,
+        ];
+        yield 'timestamp, on update' => [
+            new rex_sql_column('foo', 'timestamp', false, 'CURRENT_TIMESTAMP', 'on update CURRENT_TIMESTAMP'),
+            'CURRENT_TIMESTAMP', 'on update CURRENT_TIMESTAMP',
+        ];
+        yield 'timestamp, on update function spelling' => [
+            new rex_sql_column('foo', 'timestamp', false, 'current_timestamp()', 'on update current_timestamp()'),
+            'CURRENT_TIMESTAMP', 'on update CURRENT_TIMESTAMP',
+        ];
     }
 
     public function testEnsureWithEnsureGlobalColumns(): void

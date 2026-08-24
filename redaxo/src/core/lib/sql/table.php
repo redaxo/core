@@ -19,6 +19,15 @@ class rex_sql_table
 
     public const FIRST = 'FIRST '; // The space is intended: column names cannot end with space
 
+    /** @var array<string, array{int, int}> Default display width of integer types, signed and unsigned */
+    private const INT_DISPLAY_WIDTHS = [
+        'tinyint' => [4, 3],
+        'smallint' => [6, 5],
+        'mediumint' => [9, 8],
+        'int' => [11, 10],
+        'bigint' => [20, 20],
+    ];
+
     private int $db;
     private rex_sql $sql;
     private bool $new;
@@ -82,13 +91,13 @@ class rex_sql_table
         foreach ($columns as $column) {
             $type = $column['type'];
 
-            // Since MySQL 8.0.17 the display width for integer columns is deprecated.
-            // To be compatible with our code for MySQL 5 and MariaDB we simulate the max display width.
+            // Since MySQL 8.0.17 the display width for integer columns is deprecated and it is not
+            // reported anymore. To be compatible with our code for MySQL 5 and MariaDB we simulate
+            // the max display width. `tinyint(1)` and zerofill columns still report their width.
             // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-attributes.html
-            if ('int' === $type) {
-                $type = 'int(11)';
-            } elseif ('int unsigned' === $type) {
-                $type = 'int(10) unsigned';
+            if (preg_match('/^(tinyint|smallint|mediumint|int|bigint)( unsigned)?$/', $type, $match)) {
+                [$signed, $unsigned] = self::INT_DISPLAY_WIDTHS[$match[1]];
+                $type = $match[1] . '(' . (isset($match[2]) ? $unsigned : $signed) . ')' . ($match[2] ?? '');
             }
 
             $default = $column['default'];
@@ -100,8 +109,8 @@ class rex_sql_table
                 $column['name'],
                 $type,
                 'YES' === $column['null'],
-                $default,
-                $column['extra'] ?: null,
+                rex_sql_column::normalizeDefault($type, $default),
+                rex_sql_column::normalizeExtra($column['extra'] ?: null),
                 $column['comment'] ?: null,
             );
 
@@ -932,10 +941,7 @@ class rex_sql_table
         $default = $column->getDefault();
         if (null === $default) {
             $default = '';
-        } elseif (
-            in_array(strtolower($column->getType()), ['timestamp', 'datetime'], true)
-            && in_array(strtolower($default), ['current_timestamp', 'current_timestamp()'], true)
-        ) {
+        } elseif ($column->hasCurrentTimestampDefault()) {
             $default = 'DEFAULT ' . $default;
         } else {
             $default = 'DEFAULT ' . $this->sql->escape($default);
