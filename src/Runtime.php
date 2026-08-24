@@ -37,7 +37,7 @@ class Runtime extends SymfonyRuntime
         // must be the live mode instead, so boot dotenv ourselves with that default before the parent runs.
         if (
             !($options['disable_dotenv'] ?? false) && isset($options['project_dir'])
-            && !isset($_SERVER[$envKey]) && !isset($_ENV[$envKey])
+            && null === Env::get($envKey)
             && class_exists(Dotenv::class)
         ) {
             new Dotenv($envKey, $debugKey)

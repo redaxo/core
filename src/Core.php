@@ -27,7 +27,6 @@ use function is_array;
 use function is_string;
 use function sprintf;
 
-use const FILTER_VALIDATE_BOOL;
 use const PHP_SESSION_ACTIVE;
 
 /**
@@ -234,9 +233,9 @@ final class Core
      */
     public static function getMode(): Mode
     {
-        $mode = $_SERVER['REX_MODE'] ?? $_ENV['REX_MODE'] ?? null;
+        $mode = Env::get('REX_MODE');
 
-        if (!is_string($mode) || '' === $mode) {
+        if (null === $mode) {
             return Mode::Live;
         }
 
@@ -296,7 +295,7 @@ final class Core
      */
     public static function isSafeModeForced(): bool
     {
-        return self::getBoolEnv('REX_SAFE_MODE');
+        return Env::getBool('REX_SAFE_MODE');
     }
 
     /**
@@ -307,13 +306,7 @@ final class Core
      */
     public static function getInstanceId(): string
     {
-        $id = $_SERVER['REX_INSTANCE_ID'] ?? $_ENV['REX_INSTANCE_ID'] ?? null;
-
-        if (!is_string($id) || '' === $id) {
-            throw new LogicException('The env var "REX_INSTANCE_ID" is missing, it must be defined in the ".env" file.');
-        }
-
-        return $id;
+        return Env::require('REX_INSTANCE_ID');
     }
 
     /**
@@ -322,16 +315,7 @@ final class Core
      */
     public static function getInstanceColor(): ?string
     {
-        $color = $_SERVER['REX_INSTANCE_COLOR'] ?? $_ENV['REX_INSTANCE_COLOR'] ?? null;
-
-        return is_string($color) && '' !== $color ? $color : null;
-    }
-
-    private static function getBoolEnv(string $name): bool
-    {
-        $value = $_SERVER[$name] ?? $_ENV[$name] ?? null;
-
-        return null !== $value && filter_var($value, FILTER_VALIDATE_BOOL);
+        return Env::get('REX_INSTANCE_COLOR');
     }
 
     /**
@@ -596,12 +580,6 @@ final class Core
             return array_map(static fn (mixed $value) => self::convertEnvVariables($value), $value);
         }
 
-        $value = $_SERVER[$var] ?? $_ENV[$var] ?? null;
-
-        if (null === $value) {
-            throw new InvalidArgumentException('Environment variable "' . $var . '" is not set.');
-        }
-
-        return $value;
+        return Env::get($var) ?? throw new InvalidArgumentException('Environment variable "' . $var . '" is not set.');
     }
 }
