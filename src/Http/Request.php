@@ -166,18 +166,6 @@ final class Request
     }
 
     /**
-     * Returns the variable $varname of $_ENV and casts the value.
-     *
-     * @param string $varname Variable name
-     * @param TCastType $type Cast type
-     * @param mixed $default Default value
-     */
-    public static function env(string $varname, string|array|Closure|null $type = null, mixed $default = ''): mixed
-    {
-        return self::arrayKeyCast($_ENV, $varname, $type, $default);
-    }
-
-    /**
      * Searches the value $needle in array $haystack and returns the casted value.
      *
      * @param array<mixed> $haystack Array

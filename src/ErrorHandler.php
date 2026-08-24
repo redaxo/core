@@ -25,7 +25,6 @@ use function defined;
 use function in_array;
 use function ini_get;
 use function is_array;
-use function is_string;
 use function Redaxo\Core\View\escape;
 use function sprintf;
 
@@ -364,9 +363,9 @@ final class ErrorHandler
      */
     public static function getThrowErrorLevels(): int
     {
-        $levels = $_SERVER['REX_ERROR_THROW'] ?? $_ENV['REX_ERROR_THROW'] ?? null;
+        $levels = Env::get('REX_ERROR_THROW');
 
-        if (!is_string($levels) || '' === $levels) {
+        if (null === $levels) {
             return Core::isDevMode() ? E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE : 0;
         }
 
