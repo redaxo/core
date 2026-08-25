@@ -1,0 +1,84 @@
+<?php
+
+namespace Redaxo\Core\Tests\Database;
+
+use Override;
+use PHPUnit\Framework\TestCase;
+use Redaxo\Core\Database\Column;
+use Redaxo\Core\Database\Index;
+use Redaxo\Core\Database\SchemaDumper;
+use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Database\Table;
+
+/** @internal */
+final class SchemaDumperTest extends TestCase
+{
+    public const string TABLE = 'rex_schema_dumper_test';
+
+    #[Override]
+    protected function tearDown(): void
+    {
+        Sql::factory()->setQuery('DROP TABLE IF EXISTS `' . self::TABLE . '`');
+
+        Table::clearInstancePool();
+    }
+
+    public function testDumpTable(): void
+    {
+        Table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn(Column::int('parent_id', unsigned: true, nullable: true))
+            ->ensureColumn(Column::smallint('offset', default: -1))
+            ->ensureColumn(Column::bool('active', default: true))
+            ->ensureColumn(Column::varchar('title', 191, nullable: true, default: 'untitled'))
+            ->ensureColumn(Column::text('description', nullable: true))
+            ->ensureColumn(Column::decimal('price', 10, 2, unsigned: true))
+            ->ensureColumn(Column::date('published'))
+            ->ensureColumn(new Column('changed', 'datetime(3)', default: 'CURRENT_TIMESTAMP(3)', extra: 'on update CURRENT_TIMESTAMP(3)'))
+            ->ensureColumn(new Column('flags', 'set(\'a\',\'b\')', nullable: true))
+            ->ensureGlobalColumns()
+            ->ensureIndex(new Index('i_title', ['title']))
+            ->ensure();
+
+        $expected = <<<'CODE'
+            \Redaxo\Core\Database\Table::get(\Redaxo\Core\Core::getTable('schema_dumper_test'))
+                ->ensurePrimaryIdColumn()
+                ->ensureColumn(\Redaxo\Core\Database\Column::int('parent_id', unsigned: true, nullable: true))
+                ->ensureColumn(\Redaxo\Core\Database\Column::smallint('offset', default: -1))
+                ->ensureColumn(\Redaxo\Core\Database\Column::bool('active', default: true))
+                ->ensureColumn(\Redaxo\Core\Database\Column::varchar('title', 191, nullable: true, default: 'untitled'))
+                ->ensureColumn(\Redaxo\Core\Database\Column::text('description', nullable: true))
+                ->ensureColumn(\Redaxo\Core\Database\Column::decimal('price', 10, 2, unsigned: true))
+                ->ensureColumn(\Redaxo\Core\Database\Column::date('published'))
+                ->ensureColumn(new \Redaxo\Core\Database\Column('changed', 'datetime(3)', default: 'CURRENT_TIMESTAMP(3)', extra: 'on update CURRENT_TIMESTAMP(3)'))
+                ->ensureColumn(new \Redaxo\Core\Database\Column('flags', 'set(\'a\',\'b\')', nullable: true))
+                ->ensureGlobalColumns()
+                ->ensureIndex(new \Redaxo\Core\Database\Index('i_title', ['title']))
+                ->ensure();
+
+            CODE;
+
+        self::assertSame($expected, new SchemaDumper()->dumpTable(Table::get(self::TABLE)));
+    }
+
+    /** The generated code must describe the table so exactly that running it produces no further changes. */
+    public function testDumpedCodeIsIdempotent(): void
+    {
+        Table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn(Column::bigint('counter', unsigned: true, comment: 'a comment'))
+            ->ensureColumn(Column::bool('active'))
+            ->ensureColumn(new Column('changed', 'datetime', default: 'CURRENT_TIMESTAMP', extra: 'on update CURRENT_TIMESTAMP'))
+            ->ensureColumn(new Column('flags', 'set(\'a\',\'b\')', nullable: true))
+            ->ensureGlobalColumns()
+            ->ensure();
+
+        $dumper = new SchemaDumper();
+        $code = $dumper->dumpTable(Table::get(self::TABLE));
+
+        Table::clearInstancePool();
+        eval($code);
+
+        self::assertSame($code, $dumper->dumpTable(Table::get(self::TABLE)));
+    }
+}

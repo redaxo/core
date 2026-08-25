@@ -30,15 +30,6 @@ final class Table
 
     public const string FIRST = 'FIRST '; // The space is intended: column names cannot end with space
 
-    /** @var array<string, array{int, int}> Default display width of integer types, signed and unsigned */
-    private const array INT_DISPLAY_WIDTHS = [
-        'tinyint' => [4, 3],
-        'smallint' => [6, 5],
-        'mediumint' => [9, 8],
-        'int' => [11, 10],
-        'bigint' => [20, 20],
-    ];
-
     private readonly int $db;
     private readonly Sql $sql;
     private bool $new;
@@ -104,9 +95,7 @@ final class Table
             // the max display width. `tinyint(1)` and zerofill columns still report their width.
             // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-attributes.html
             if (preg_match('/^(tinyint|smallint|mediumint|int|bigint)( unsigned)?$/', $type, $match)) {
-                $unsigned = $match[2] ?? '';
-                [$signedWidth, $unsignedWidth] = self::INT_DISPLAY_WIDTHS[$match[1]];
-                $type = $match[1] . '(' . ('' === $unsigned ? $signedWidth : $unsignedWidth) . ')' . $unsigned;
+                $type = Column::intType($match[1], isset($match[2]));
             }
 
             $default = $column['default'];
@@ -283,7 +272,7 @@ final class Table
     public function ensurePrimaryIdColumn(): self
     {
         return $this
-            ->ensureColumn(new Column('id', 'int(10) unsigned', false, null, 'auto_increment'))
+            ->ensureColumn(Column::int('id', unsigned: true, autoIncrement: true))
             ->setPrimaryKey('id')
         ;
     }
@@ -292,10 +281,10 @@ final class Table
     public function ensureGlobalColumns(?string $afterColumn = null): self
     {
         return $this
-            ->ensureColumn(new Column('createdate', 'datetime'), $afterColumn)
-            ->ensureColumn(new Column('createuser', 'varchar(255)'), 'createdate')
-            ->ensureColumn(new Column('updatedate', 'datetime'), 'createuser')
-            ->ensureColumn(new Column('updateuser', 'varchar(255)'), 'updatedate')
+            ->ensureColumn(Column::datetime('createdate'), $afterColumn)
+            ->ensureColumn(Column::varchar('createuser', 255), 'createdate')
+            ->ensureColumn(Column::datetime('updatedate'), 'createuser')
+            ->ensureColumn(Column::varchar('updateuser', 255), 'updatedate')
         ;
     }
 

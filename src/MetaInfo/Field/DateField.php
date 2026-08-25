@@ -16,7 +16,7 @@ class DateField extends AbstractInputField
 {
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'date', nullable: true);
+        return Column::date($this->columnName($entity), nullable: true);
     }
 
     public function parseRequest(MetaContext $context): int|string|null

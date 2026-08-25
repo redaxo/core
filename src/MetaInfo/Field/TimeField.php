@@ -18,7 +18,7 @@ class TimeField extends AbstractInputField
 {
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'time', nullable: true);
+        return Column::time($this->columnName($entity), nullable: true);
     }
 
     public function parseRequest(MetaContext $context): int|string|null

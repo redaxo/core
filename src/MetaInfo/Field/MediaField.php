@@ -41,8 +41,8 @@ class MediaField extends MetaField
     {
         // A single filename fits a varchar; multiple filenames are pipe-delimited and need a text column.
         return $this->multiple
-            ? new Column($this->columnName($entity), 'text', nullable: true)
-            : new Column($this->columnName($entity), 'varchar(255)', nullable: true);
+            ? Column::text($this->columnName($entity), nullable: true)
+            : Column::varchar($this->columnName($entity), 255, nullable: true);
     }
 
     /** @return string|list<string> the filename, or the list of filenames for `multiple` */
