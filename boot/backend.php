@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\Style;
 use Redaxo\Core\Content\Article;
@@ -541,15 +542,6 @@ if (Core::getConfig('article_work_version', false)) {
     });
 }
 
-// add theme-information to js-variable rex as rex.theme
-// (1) System-Settings (2) no systemforced mode: user-mode (3) fallback: "auto"
-$user = Core::getUser();
-$theme = (string) Core::getProperty('theme');
-if ('' === $theme && $user) {
-    $theme = $user->theme;
-}
-Asset::setJsProperty('theme', $theme ?: 'auto');
-
 Permission::register('users[]');
 
 Permission::register('addArticle[]', null, Permission::OPTIONS);
@@ -590,6 +582,8 @@ Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
 
 // ----- INCLUDE ADDONS
 include_once Path::core('boot/addons.php');
+
+Asset::setJsProperty('theme', Appearance::getTheme() ?? 'auto');
 
 if (Core::getUser() && Core::getConfig('be_style_compile')) {
     Style::compile();

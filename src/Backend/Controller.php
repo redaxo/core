@@ -28,6 +28,9 @@ use const EXTR_SKIP;
 
 final class Controller
 {
+    /** Page shown when neither the request nor the user defines a start page. */
+    public static string $startPage = 'structure';
+
     private static ?string $page = null;
 
     /** @var list<string> */
@@ -388,7 +391,7 @@ final class Controller
             $page = $page ? self::getPageObject($page) : null;
             if (!$page) {
                 // --- fallback zur system startpage -> rechte checken
-                $page = self::getPageObject(Core::getProperty('start_page'));
+                $page = self::getPageObject(self::$startPage);
                 if (!$page) {
                     // --- fallback zur profile page
                     $page = Type::notNull(self::getPageObject('profile'));

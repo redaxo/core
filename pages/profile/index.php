@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -76,7 +77,7 @@ $selBeTheme->setStyle('class="form-control"');
 $selBeTheme->setName('usertheme');
 $selBeTheme->setId('rex-id-usertheme');
 $selBeTheme->setAttribute('class', 'form-control selectpicker');
-$selBeTheme->setDisabled(null !== Core::getProperty('theme'));
+$selBeTheme->setDisabled(null !== Appearance::$forcedTheme);
 $selBeTheme->setSelected($usertheme);
 $selBeTheme->addOption(I18n::msg('theme_auto'), '');
 $selBeTheme->addOption(I18n::msg('theme_light'), 'light');

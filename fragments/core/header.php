@@ -1,4 +1,5 @@
 <?php
+use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\File;
@@ -18,7 +19,7 @@ $isPopup = Controller::requireCurrentPageObject()->isPopup();
 $isLogin = ('login' === Controller::getCurrentPage());
 $isSetup = ('setup' === Controller::getCurrentPage());
 
-$instanceColor = Core::getInstanceColor();
+$instanceColor = Appearance::getInstanceColor();
 ?>
 
         <div id="rex-js-nav-top" class="rex-nav-top<?php if (!$isPopup && !$isSetup): ?> rex-nav-top-is-fixed<?php endif ?>">
