@@ -1,6 +1,5 @@
 <?php
 
-use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Core;
@@ -8,10 +7,7 @@ use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Util\Timer;
 
-/**
- * @psalm-scope-this AbstractProject
- * @var AbstractProject $this
- */
+$project = Core::getProject();
 
 Addon::initialize(!Core::isSetup());
 
@@ -27,7 +23,7 @@ foreach ($packageOrder as $packageId) {
     Addon::require($packageId)->enlist();
 }
 
-$this->enlist();
+$project->enlist();
 
 // now we actually include the addons logic
 Timer::measure('packages_boot', static function () use ($packageOrder) {
@@ -38,9 +34,9 @@ Timer::measure('packages_boot', static function () use ($packageOrder) {
     }
 });
 
-Extension::registerByAttribute($this);
+Extension::registerByAttribute($project);
 
 // ----- all addons configs included
 Extension::dispatch(new ExtensionPoint('PACKAGES_INCLUDED'));
 
-$this->boot();
+$project->boot();
