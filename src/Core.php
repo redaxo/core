@@ -22,7 +22,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Yaml\Tag\TaggedValue;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-use function in_array;
 use function is_array;
 use function is_string;
 use function sprintf;
@@ -44,6 +43,8 @@ final class Core
      * @var array<string, mixed>
      */
     private static array $properties = [];
+
+    private static ?AbstractProject $project = null;
 
     private static ?HttpClientInterface $httpClient = null;
 
@@ -141,7 +142,6 @@ final class Core
      *
      * @return (
      *      $key is 'login' ? BackendLogin|null :
-     *      ($key is 'lang_fallback' ? string[] :
      *      ($key is 'use_accesskeys' ? bool :
      *      ($key is 'accesskeys' ? array<string, string> :
      *      ($key is 'timer' ? Timer :
@@ -151,16 +151,13 @@ final class Core
      *      ($key is 'server' ? string :
      *      ($key is 'servername' ? string :
      *      ($key is 'error_email' ? string :
-     *      ($key is 'lang' ? non-empty-string :
-     *      ($key is 'theme' ? string :
-     *      ($key is 'start_page' ? non-empty-string :
      *      ($key is 'password_policy' ? array<string, scalar> :
      *      ($key is 'backend_login_policy' ? array<string, bool|int> :
      *      ($key is 'db' ? array<int, string[]> :
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      )))))))))))))))))))
+     *      )))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -308,15 +305,6 @@ final class Core
     }
 
     /**
-     * Returns the color used to visually mark this installation in the backend (top navbar border and mask icon),
-     * defined by the env var `REX_INSTANCE_COLOR` (usually in the `.env` file).
-     */
-    public static function getInstanceColor(): ?string
-    {
-        return Env::get('REX_INSTANCE_COLOR');
-    }
-
-    /**
      * Returns the table prefix.
      *
      * @return non-empty-string
@@ -382,6 +370,18 @@ final class Core
         $login = self::$properties['login'] ?? null;
 
         return $login ? $login->getImpersonator() : null;
+    }
+
+    /** @internal */
+    public static function setProject(AbstractProject $project): void
+    {
+        self::$project = $project;
+    }
+
+    /** Returns the project this instance runs. */
+    public static function getProject(): AbstractProject
+    {
+        return self::$project ?? throw new LogicException('The project is not available before it has booted the core.');
     }
 
     /** Returns the console application. */
@@ -489,35 +489,6 @@ final class Core
         }
 
         return ' title="' . $title . '"';
-    }
-
-    /**
-     * Returns the current backend theme.
-     *
-     * @return 'dark'|'light'|null
-     */
-    public static function getTheme(): ?string
-    {
-        $themes = ['light', 'dark'];
-
-        // global theme from config.yml
-        $globalTheme = (string) self::getProperty('theme');
-        if (in_array($globalTheme, $themes, true)) {
-            return $globalTheme;
-        }
-
-        $user = self::getUser();
-        if (!$user) {
-            return null;
-        }
-
-        // user selected theme
-        $userTheme = $user->theme;
-        if (in_array($userTheme, $themes, true)) {
-            return $userTheme;
-        }
-
-        return null;
     }
 
     /** @internal */

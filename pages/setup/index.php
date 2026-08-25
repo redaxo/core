@@ -17,7 +17,6 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Message;
 
 $step = Request::request('step', 'int', 1);
-$lang = Request::request('lang', 'string');
 $func = Request::request('func', 'string');
 
 $context = Setup::getContext();
@@ -109,7 +108,6 @@ $configFile = Path::coreData('config.yml');
 /**
  * @var array{
  *     setup: bool,
- *     lang: string|null,
  *     server: string|null,
  *     servername: string|null,
  *     error_email: string|null,
@@ -139,7 +137,6 @@ if ($step > 3) {
     if ('-1' != Request::post('serveraddress', 'string', '-1')) {
         $config['server'] = Request::post('serveraddress', 'string');
         $config['servername'] = Request::post('servername', 'string');
-        $config['lang'] = $lang;
         $config['error_email'] = Request::post('error_email', 'string');
         $config['timezone'] = Request::post('timezone', 'string');
         $config['db'][1]['host'] = trim(Request::post('mysql_host', 'string'));
@@ -188,7 +185,7 @@ if ($step > 3) {
         $errorArray[] = Message::error(I18n::msg('setup_313'));
     }
 
-    $check = ['server', 'servername', 'error_email', 'lang'];
+    $check = ['server', 'servername', 'error_email'];
     foreach ($check as $key) {
         if (!isset($config[$key]) || !$config[$key]) {
             $errorArray[] = Message::error(I18n::msg($key . '_required'));
@@ -283,6 +280,9 @@ if ($step > 4 && $createdb > -1) {
 
     if (0 == count($errors)) {
         LanguageHandler::generateCache();
+
+        // the locale chosen in step 1 becomes the default language of the installation
+        Core::setConfig('lang', I18n::getLocale());
     } else {
         $step = 4;
         $context->setParam('step', $step);

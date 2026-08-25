@@ -1,5 +1,6 @@
 <?php
 
+use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\MainPage;
 use Redaxo\Core\Backend\Navigation;
@@ -61,12 +62,8 @@ if (Core::getImpersonator()) {
 }
 
 $bodyAttr['class'][] = 'rex-has-theme';
-if (Core::getProperty('theme')) {
-    // global theme from config.yml
-    $bodyAttr['class'][] = 'rex-theme-' . escape((string) Core::getProperty('theme'));
-} elseif ($user && $user->theme) {
-    // user selected theme
-    $bodyAttr['class'][] = 'rex-theme-' . escape($user->theme);
+if ($theme = Appearance::getTheme()) {
+    $bodyAttr['class'][] = 'rex-theme-' . $theme;
 }
 
 // ----- EXTENSION POINT

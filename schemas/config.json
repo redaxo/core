@@ -198,17 +198,6 @@
                 }
             }
         },
-        "lang": {
-            "description": "Default language",
-            "$ref": "#/definitions/lang"
-        },
-        "lang_fallback": {
-            "description": "Fallback languages for missing translations",
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/lang"
-            }
-        },
         "use_https": {
             "description": "Force https",
             "$ref": "#/definitions/bool-or-environment"
@@ -220,14 +209,6 @@
         "hsts_max_age": {
             "description": "Max age for HSTS header (seconds)",
             "type": "integer"
-        },
-        "use_etag": {
-            "description": "Use Etag header",
-            "$ref": "#/definitions/bool-or-environment"
-        },
-        "start_page": {
-            "description": "Default start page for backend",
-            "type": "string"
         },
         "timezone": {
             "description": "Timezone (e.g. Europe/Berlin)",
@@ -321,23 +302,9 @@
                 "pattern": "^[a-z]$"
             }
         },
-        "theme": {
-            "description": "Backend theme for all users",
-            "enum": [null, "light", "dark"]
-        }
     },
     "additionalProperties": false,
     "definitions": {
-        "lang": {
-            "anyOf": [
-                {
-                    "enum": ["de_de", "en_gb"]
-                },
-                {
-                    "type": "string"
-                }
-            ]
-        },
         "bool-or-environment": {
             "oneOf": [
                 {

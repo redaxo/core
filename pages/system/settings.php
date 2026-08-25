@@ -19,6 +19,7 @@ use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
+use Redaxo\Core\Util\Type;
 use Redaxo\Core\Util\Version;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
@@ -62,7 +63,7 @@ if ($func && !$csrfToken->isValid()) {
 
     $settings = Request::post('settings', 'array', []);
 
-    foreach (['server', 'servername', 'error_email', 'lang'] as $key) {
+    foreach (['server', 'servername', 'error_email'] as $key) {
         if (!isset($settings[$key]) || !$settings[$key]) {
             $error[] = I18n::msg($key . '_required');
             continue;
@@ -77,6 +78,14 @@ if ($func && !$csrfToken->isValid()) {
 
     foreach ($settings as $key => $value) {
         switch ($key) {
+            case 'lang':
+                // the select offers only existing locales, anything else is a manipulated request
+                if (!in_array($value, I18n::getLocales(), true)) {
+                    throw new InvalidArgumentException('Invalid language "' . Type::string($value) . '".');
+                }
+                Core::setConfig('lang', $value);
+                break;
+
             case 'start_article_id':
             case 'notfound_article_id':
                 $value = (int) $value;
@@ -140,7 +149,7 @@ $selLang->setName('settings[lang]');
 $selLang->setId('rex-id-lang');
 $selLang->setAttribute('class', 'form-control selectpicker');
 $selLang->setSize(1);
-$selLang->setSelected(Core::getProperty('lang'));
+$selLang->setSelected(I18n::$defaultLocale);
 $locales = I18n::getLocales();
 asort($locales);
 foreach ($locales as $locale) {

@@ -5,6 +5,7 @@ use Clockwork\Request\Timeline\Timeline;
 use Clockwork\Request\UserData;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Console\ExtensionPoint\ConsoleShutdown;
 use Redaxo\Core\Content\Article;
@@ -44,7 +45,7 @@ if (Core::isBackend() && 'debug' === Request::get('page') && Core::getUser()?->a
 
     // prepend backend folder
     $apiUrl = dirname(Type::string($_SERVER['REQUEST_URI'] ?? null)) . '/' . rex_debug_clockwork::getClockworkApiUrl();
-    $appearance = Core::getTheme();
+    $appearance = Appearance::getTheme();
     if (!$appearance) {
         $appearance = 'auto';
     }

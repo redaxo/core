@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\Style;
 use Redaxo\Core\Content\Article;
@@ -100,20 +101,14 @@ $pages = [];
 // ----------------- SETUP
 if (Core::isSetup()) {
     // ----------------- SET SETUP LANG
-    $requestLang = Request::request('lang', 'string', Core::getProperty('lang'));
-    if (in_array($requestLang, I18n::getLocales())) {
-        Core::setProperty('lang', $requestLang);
-    } else {
-        Core::setProperty('lang', 'en_gb');
-    }
-
-    I18n::setLocale(Core::getProperty('lang'));
+    $requestLang = Request::request('lang', 'string', I18n::$defaultLocale);
+    I18n::setLocale(in_array($requestLang, I18n::getLocales()) ? $requestLang : 'en_gb');
 
     $pages['setup'] = Controller::getSetupPage();
     Controller::setCurrentPage('setup');
 } else {
     // ----------------- CREATE LANG OBJ
-    I18n::setLocale(Core::getProperty('lang'));
+    I18n::setLocale(I18n::$defaultLocale);
 
     // ---- prepare login
     $login = new BackendLogin();
@@ -189,7 +184,7 @@ if (Core::isSetup()) {
         // Userspezifische Sprache einstellen
         $user = Type::notNull($login->getUser());
         $lang = $user->language;
-        if ($lang && 'default' != $lang && $lang != Core::getProperty('lang')) {
+        if ($lang && 'default' != $lang && $lang != I18n::getLocale()) {
             I18n::setLocale($lang);
         }
 
@@ -547,15 +542,6 @@ if (Core::getConfig('article_work_version', false)) {
     });
 }
 
-// add theme-information to js-variable rex as rex.theme
-// (1) System-Settings (2) no systemforced mode: user-mode (3) fallback: "auto"
-$user = Core::getUser();
-$theme = (string) Core::getProperty('theme');
-if ('' === $theme && $user) {
-    $theme = $user->theme;
-}
-Asset::setJsProperty('theme', $theme ?: 'auto');
-
 Permission::register('users[]');
 
 Permission::register('addArticle[]', null, Permission::OPTIONS);
@@ -596,6 +582,8 @@ Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
 
 // ----- INCLUDE ADDONS
 include_once Path::core('boot/addons.php');
+
+Asset::setJsProperty('theme', Appearance::getTheme() ?? 'auto');
 
 if (Core::getUser() && Core::getConfig('be_style_compile')) {
     Style::compile();

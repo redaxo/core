@@ -23,6 +23,7 @@ use Redaxo\Core\MediaPool\MediaPoolPermission;
 use Redaxo\Core\Security\ComplexPermission;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Timer;
+use Redaxo\Core\Util\Type;
 use Redaxo\Core\Util\VarDumper;
 use Redaxo\Core\View\Fragment;
 use Symfony\Component\HttpFoundation\Request as BaseRequest;
@@ -92,6 +93,13 @@ $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = Core::isDevMode() ? 'dev' : 'prod';
 
 Core::loadConfigYml();
 
+Core::getProject()->configure();
+
+// in setup the locale comes from the request (there may be no database yet), in the console it is always english
+if (!Core::isSetup() && 'cli' !== PHP_SAPI) {
+    I18n::$defaultLocale = Type::string(Core::getConfig('lang', I18n::$defaultLocale));
+}
+
 date_default_timezone_set(Core::getProperty('timezone', 'Europe/Berlin'));
 
 if ('cli' !== PHP_SAPI) {
@@ -126,7 +134,7 @@ if ('cli' !== PHP_SAPI && !Core::isSetup()) {
     }
 }
 
-$nexttime = Core::isSetup() || Core::getConsole() ? 0 : (int) Core::getConfig('cronjob_nexttime', 0);
+$nexttime = Core::isSetup() || 'cli' === PHP_SAPI ? 0 : (int) Core::getConfig('cronjob_nexttime', 0);
 if (0 !== $nexttime && time() >= $nexttime) {
     $env = CronjobExecutor::getCurrentEnvironment();
     $EP = 'backend' === $env ? 'PAGE_CHECKED' : 'PACKAGES_INCLUDED';

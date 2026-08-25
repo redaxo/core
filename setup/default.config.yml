@@ -43,13 +43,9 @@ password_policy:
     # no_reuse_within: P6W
     # force_renew_after: P6W
     # block_account_after: P3M
-lang: en_gb
-lang_fallback: [en_gb, de_de]
 use_https: false
 use_hsts: false
 hsts_max_age: 31536000 # 1 year
-use_etag: true
-start_page: structure
 timezone: Europe/Berlin
 setup_addons: []
 table_prefix: rex_
@@ -82,4 +78,3 @@ accesskeys:
     delete: d
     add: a
     add_2: y
-theme: null
