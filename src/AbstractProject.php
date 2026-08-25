@@ -58,6 +58,10 @@ abstract class AbstractProject implements RunnerInterface
         public readonly Environment $environment,
     ) {}
 
+    /** Configures the project while the core boots, before any addon is loaded. */
+    public function configure(): void {}
+
+    /** Initializes the project at runtime, after the core and all addons have booted. */
     public function boot(): void {}
 
     final public function bootCore(): void
@@ -73,6 +77,8 @@ abstract class AbstractProject implements RunnerInterface
                 exit(254);
             });
         }
+
+        Core::setProject($this);
 
         $REX = [];
         $REX['REDAXO'] = Environment::Frontend !== $this->environment;

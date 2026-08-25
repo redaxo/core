@@ -44,6 +44,8 @@ final class Core
      */
     private static array $properties = [];
 
+    private static ?AbstractProject $project = null;
+
     private static ?HttpClientInterface $httpClient = null;
 
     private static bool $invalidModeReported = false;
@@ -368,6 +370,18 @@ final class Core
         $login = self::$properties['login'] ?? null;
 
         return $login ? $login->getImpersonator() : null;
+    }
+
+    /** @internal */
+    public static function setProject(AbstractProject $project): void
+    {
+        self::$project = $project;
+    }
+
+    /** Returns the project this instance runs. */
+    public static function getProject(): AbstractProject
+    {
+        return self::$project ?? throw new LogicException('The project is not available before it has booted the core.');
     }
 
     /** Returns the console application. */

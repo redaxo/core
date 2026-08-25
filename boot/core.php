@@ -93,6 +93,8 @@ $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = Core::isDevMode() ? 'dev' : 'prod';
 
 Core::loadConfigYml();
 
+Core::getProject()->configure();
+
 // in setup the locale comes from the request (there may be no database yet), in the console it is always english
 if (!Core::isSetup() && 'cli' !== PHP_SAPI) {
     I18n::$defaultLocale = Type::string(Core::getConfig('lang', I18n::$defaultLocale));
