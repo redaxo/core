@@ -198,17 +198,6 @@
                 }
             }
         },
-        "lang": {
-            "description": "Default language",
-            "$ref": "#/definitions/lang"
-        },
-        "lang_fallback": {
-            "description": "Fallback languages for missing translations",
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/lang"
-            }
-        },
         "use_https": {
             "description": "Force https",
             "$ref": "#/definitions/bool-or-environment"
@@ -328,16 +317,6 @@
     },
     "additionalProperties": false,
     "definitions": {
-        "lang": {
-            "anyOf": [
-                {
-                    "enum": ["de_de", "en_gb"]
-                },
-                {
-                    "type": "string"
-                }
-            ]
-        },
         "bool-or-environment": {
             "oneOf": [
                 {

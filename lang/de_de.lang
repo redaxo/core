@@ -154,7 +154,6 @@ system_editor_delete_cookie = Cookie löschen
 system_editor_success_cookie = Die Editor-Einstellungen wurden als Browser-Cookie gespeichert.
 system_editor_success_cookie_deleted = Die Cookies für die Editor-Einstellungen wurden gelöscht, es werden nun wieder die globalen Einstellungen verwendet.
 system_edit_config_note = Die REDAXO Hauptkonfiguration bietet die Möglichkeit interne Systemparameter zu verändern. Die Datei sollte nur von erfahrenen Nutzern bearbeitet werden.
-lang_required = Es wird eine Sprache benötigt!
 dev_mode_marker = Der Dev-Modus ist aktiv
 
 system_report = Systembericht
