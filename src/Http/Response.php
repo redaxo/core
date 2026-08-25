@@ -5,8 +5,6 @@ namespace Redaxo\Core\Http;
 use DateTimeInterface;
 use Ramsey\Http\Range\Exception\HttpRangeException;
 use Ramsey\Http\Range\UnitFactory;
-use Redaxo\Core\Core;
-use Redaxo\Core\Environment;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -36,6 +34,9 @@ final class Response
     public const string HTTP_RANGE_NOT_SATISFIABLE = '416 Range Not Satisfiable';
     public const string HTTP_INTERNAL_ERROR = '500 Internal Server Error';
     public const string HTTP_SERVICE_UNAVAILABLE = '503 Service Unavailable';
+
+    /** Whether an ETag header is sent for responses. */
+    public static bool $useEtag = true;
 
     private static string $httpStatus = self::HTTP_OK;
     private static bool $sentLastModified = false;
@@ -277,8 +278,6 @@ final class Response
             self::sendCacheControl();
         }
 
-        $environment = Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
-
         if (self::HTTP_OK == self::$httpStatus) {
             // ----- Last-Modified
             if (!self::$sentLastModified && null !== $lastModified) {
@@ -286,9 +285,7 @@ final class Response
             }
 
             // ----- ETAG
-            if (!self::$sentEtag
-                && (true === Core::getProperty('use_etag') || Core::getProperty('use_etag') === $environment)
-            ) {
+            if (!self::$sentEtag && self::$useEtag) {
                 self::sendEtag($etag ?: self::md5($content));
             }
         }

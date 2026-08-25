@@ -210,14 +210,6 @@
             "description": "Max age for HSTS header (seconds)",
             "type": "integer"
         },
-        "use_etag": {
-            "description": "Use Etag header",
-            "$ref": "#/definitions/bool-or-environment"
-        },
-        "start_page": {
-            "description": "Default start page for backend",
-            "type": "string"
-        },
         "timezone": {
             "description": "Timezone (e.g. Europe/Berlin)",
             "type": "string"
@@ -310,10 +302,6 @@
                 "pattern": "^[a-z]$"
             }
         },
-        "theme": {
-            "description": "Backend theme for all users",
-            "enum": [null, "light", "dark"]
-        }
     },
     "additionalProperties": false,
     "definitions": {

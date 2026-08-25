@@ -1,4 +1,5 @@
 <?php
+use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
@@ -92,7 +93,7 @@ use function Redaxo\Core\View\escape;
     <link rel="icon" type="image/png" sizes="32x32" href="<?= Url::coreAssets('icons/favicon-32x32.png') ?>">
     <link rel="icon" type="image/png" sizes="16x16" href="<?= Url::coreAssets('icons/favicon-16x16.png') ?>">
     <link rel="manifest" href="<?= Url::coreAssets('icons/site.webmanifest') ?>">
-    <link rel="mask-icon" href="<?= Url::coreAssets('icons/safari-pinned-tab.svg') ?>" color="<?= escape(Core::getInstanceColor() ?? '#4d99d3') ?>">
+    <link rel="mask-icon" href="<?= Url::coreAssets('icons/safari-pinned-tab.svg') ?>" color="<?= escape(Appearance::getInstanceColor() ?? '#4d99d3') ?>">
     <meta name="msapplication-TileColor" content="#2d89ef">
 
     <?= $this->pageHeader ?>
