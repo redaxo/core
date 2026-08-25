@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Translation;
 
 use Locale;
-use Redaxo\Core\Core;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -29,12 +28,23 @@ use const PREG_SET_ORDER;
  */
 final class I18n
 {
+    /** Locale used as long as no other locale is set explicitly. */
+    public static string $defaultLocale = 'en_gb';
+
+    /**
+     * Locales used to look up translations missing in the current locale.
+     *
+     * @var list<string>
+     */
+    public static array $fallbackLocales = ['en_gb', 'de_de'];
+
     /** @var list<string> */
     private static array $locales = [];
     /** @var list<string> */
     private static array $directories = [];
     /** @var array<string, bool> Holds which locales are loaded. keyed by locale */
     private static array $loaded = [];
+    /** @var non-empty-string|null */
     private static ?string $locale = null;
     /** @var array<string, array<string, non-empty-string>> */
     private static array $msg = [];
@@ -88,11 +98,7 @@ final class I18n
      */
     public static function getLocale(): string
     {
-        if (!self::$locale) {
-            self::$locale = self::validateLocale(Core::getProperty('lang'));
-        }
-
-        return self::$locale;
+        return self::$locale ??= self::validateLocale(self::$defaultLocale);
     }
 
     /**
@@ -201,7 +207,7 @@ final class I18n
             return $msg;
         }
 
-        foreach (Core::getProperty('lang_fallback', []) as $fallbackLocale) {
+        foreach (self::$fallbackLocales as $fallbackLocale) {
             if ($locale === $fallbackLocale) {
                 continue;
             }
@@ -281,7 +287,7 @@ final class I18n
             return true;
         }
 
-        foreach (Core::getProperty('lang_fallback', []) as $locale) {
+        foreach (self::$fallbackLocales as $locale) {
             if ($currentLocale === $locale) {
                 continue;
             }

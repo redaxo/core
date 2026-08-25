@@ -14,7 +14,8 @@ use Redaxo\Core\Translation\I18n;
  * @var AbstractProject $this
  */
 
-Core::setProperty('lang', 'en_gb');
+// the console is always english: some of its output is not translated at all, so a mix would be odd
+I18n::$defaultLocale = 'en_gb';
 I18n::setLocale('en_gb');
 
 $application = new Application($this);

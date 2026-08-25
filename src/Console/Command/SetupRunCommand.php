@@ -78,7 +78,6 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         /**
          * @var array{
          *     setup: bool,
-         *     lang: string|null,
          *     server: string|null,
          *     servername: string|null,
          *     error_email: string|null,
@@ -117,8 +116,8 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         }
         ksort($langs);
 
-        $config['lang'] = $this->getOptionOrAsk(
-            new ChoiceQuestion('Please select a language', $langs, $config['lang']),
+        $lang = Type::string($this->getOptionOrAsk(
+            new ChoiceQuestion('Please select a language', $langs, I18n::$defaultLocale),
             'lang',
             null,
             'Language "%s" selected.',
@@ -128,7 +127,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
                 }
                 return $value;
             },
-        );
+        ));
 
         // ---------------------------------- Step 2 . Perms, Environment
         $io->title('Step 2 of 5 / System check');
@@ -454,6 +453,9 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         }
 
         LanguageHandler::generateCache();
+
+        // the language chosen in step 1 becomes the default language of the installation
+        Core::setConfig('lang', $lang);
 
         // ---------------------------------- Step 5 . Create User
         $io->title('Step 5 of 5 / User');

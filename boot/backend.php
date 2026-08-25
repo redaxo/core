@@ -100,20 +100,14 @@ $pages = [];
 // ----------------- SETUP
 if (Core::isSetup()) {
     // ----------------- SET SETUP LANG
-    $requestLang = Request::request('lang', 'string', Core::getProperty('lang'));
-    if (in_array($requestLang, I18n::getLocales())) {
-        Core::setProperty('lang', $requestLang);
-    } else {
-        Core::setProperty('lang', 'en_gb');
-    }
-
-    I18n::setLocale(Core::getProperty('lang'));
+    $requestLang = Request::request('lang', 'string', I18n::$defaultLocale);
+    I18n::setLocale(in_array($requestLang, I18n::getLocales()) ? $requestLang : 'en_gb');
 
     $pages['setup'] = Controller::getSetupPage();
     Controller::setCurrentPage('setup');
 } else {
     // ----------------- CREATE LANG OBJ
-    I18n::setLocale(Core::getProperty('lang'));
+    I18n::setLocale(I18n::$defaultLocale);
 
     // ---- prepare login
     $login = new BackendLogin();
@@ -189,7 +183,7 @@ if (Core::isSetup()) {
         // Userspezifische Sprache einstellen
         $user = Type::notNull($login->getUser());
         $lang = $user->language;
-        if ($lang && 'default' != $lang && $lang != Core::getProperty('lang')) {
+        if ($lang && 'default' != $lang && $lang != I18n::getLocale()) {
             I18n::setLocale($lang);
         }
 

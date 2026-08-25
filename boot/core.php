@@ -23,6 +23,7 @@ use Redaxo\Core\MediaPool\MediaPoolPermission;
 use Redaxo\Core\Security\ComplexPermission;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Timer;
+use Redaxo\Core\Util\Type;
 use Redaxo\Core\Util\VarDumper;
 use Redaxo\Core\View\Fragment;
 use Symfony\Component\HttpFoundation\Request as BaseRequest;
@@ -91,6 +92,11 @@ ErrorHandler::register();
 $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = Core::isDevMode() ? 'dev' : 'prod';
 
 Core::loadConfigYml();
+
+// in setup the locale comes from the request (there may be no database yet), in the console it is always english
+if (!Core::isSetup() && 'cli' !== PHP_SAPI) {
+    I18n::$defaultLocale = Type::string(Core::getConfig('lang', I18n::$defaultLocale));
+}
 
 date_default_timezone_set(Core::getProperty('timezone', 'Europe/Berlin'));
 
