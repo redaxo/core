@@ -126,7 +126,7 @@ if ('cli' !== PHP_SAPI && !Core::isSetup()) {
     }
 }
 
-$nexttime = Core::isSetup() || Core::getConsole() ? 0 : (int) Core::getConfig('cronjob_nexttime', 0);
+$nexttime = Core::isSetup() || 'cli' === PHP_SAPI ? 0 : (int) Core::getConfig('cronjob_nexttime', 0);
 if (0 !== $nexttime && time() >= $nexttime) {
     $env = CronjobExecutor::getCurrentEnvironment();
     $EP = 'backend' === $env ? 'PAGE_CHECKED' : 'PACKAGES_INCLUDED';
