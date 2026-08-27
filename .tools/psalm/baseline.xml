@@ -961,9 +961,6 @@
     </MixedOperand>
   </file>
   <file src="pages/setup/step3.php">
-    <MixedArgument>
-      <code><![CDATA[true === $config['use_https'] ? 'true' : $config['use_https']]]></code>
-    </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$errorArray]]></code>
     </MixedArgumentTypeCoercion>
