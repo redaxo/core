@@ -14,8 +14,7 @@ final class ColumnTest extends TestCase
     public function testNormalizeType(string $expected, string $type): void
     {
         self::assertSame($expected, Column::normalizeType($type));
-        self::assertSame($expected, new Column('a', $type)->getType());
-        self::assertSame($expected, new Column('a', 'text')->setType($type)->getType());
+        self::assertSame($expected, new Column('a', $type)->type);
     }
 
     /** @return iterable<string, array{string, string}> */
@@ -67,16 +66,16 @@ final class ColumnTest extends TestCase
     public function testFactory(array $expected, Column $column): void
     {
         self::assertSame($expected, [
-            $column->getType(),
-            $column->isNullable(),
-            $column->getDefault(),
-            $column->getExtra(),
-            $column->getComment(),
+            $column->type,
+            $column->nullable,
+            $column->default,
+            $column->extra,
+            $column->comment,
         ]);
 
         // A factory must produce the same spelling that reading the column back from the database yields.
-        self::assertSame($column->getDefault(), Column::normalizeDefault($column->getType(), $column->getDefault()));
-        self::assertSame($column->getExtra(), Column::normalizeExtra($column->getExtra()));
+        self::assertSame($column->default, Column::normalizeDefault($column->type, $column->default));
+        self::assertSame($column->extra, Column::normalizeExtra($column->extra));
     }
 
     /** @return iterable<string, array{array{string, bool, string|null, string|null, string|null}, Column}> */
