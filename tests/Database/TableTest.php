@@ -277,13 +277,8 @@ final class TableTest extends TestCase
 
         self::assertEquals($status, $table->getColumn('status'));
 
-        $sql = Sql::factory();
-        if (Sql::MYSQL === $sql->getDbType() && 8 <= (int) $sql->getDbVersion()) {
-            // In MySQL 8 the display width of integers is simulated by Table class to the max width.
-            self::assertEquals('int(11)', $table->getColumn('amount')?->getType());
-        } else {
-            self::assertEquals('int', $table->getColumn('amount')?->getType());
-        }
+        // The display width is normalized away, so the type does not depend on the database engine.
+        self::assertEquals('int', $table->getColumn('amount')?->getType());
     }
 
     public function testEnsurePrimaryIdColumn(): void
