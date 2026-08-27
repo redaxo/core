@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\Style;
@@ -225,7 +226,7 @@ Asset::addJsFile(Url::coreAssets('clipboard-copy-element.js'), [Asset::JS_IMMUTA
 Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE]);
 
 Asset::setJsProperty('backend', true);
-Asset::setJsProperty('accesskeys', Core::getProperty('use_accesskeys'));
+Asset::setJsProperty('accesskeys', Accesskey::$enabled);
 Asset::setJsProperty('cookie_params', Login::getCookieParams());
 
 if (Core::getUser()) {

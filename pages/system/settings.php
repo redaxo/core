@@ -1,5 +1,6 @@
 <?php
 
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Cache;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Core;
@@ -358,7 +359,7 @@ $content .= $fragment->parse('core/form/form.php');
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="sendit"' . Core::getAccesskey(I18n::msg('system_update'), 'save') . '>' . I18n::msg('system_update') . '</button>';
+$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="sendit"' . Accesskey::attributes(I18n::msg('system_update'), 'save') . '>' . I18n::msg('system_update') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();

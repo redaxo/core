@@ -263,18 +263,6 @@
                 }
             },
             "additionalProperties": false
-        },
-        "use_accesskeys": {
-            "description": "Whether the accesskeys should be used",
-            "type": "boolean"
-        },
-        "accesskeys": {
-            "description": "Access keys",
-            "type": "object",
-            "additionalProperties": {
-                "type": "string",
-                "pattern": "^[a-z]$"
-            }
         }
     },
     "additionalProperties": false

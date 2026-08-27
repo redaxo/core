@@ -1,6 +1,6 @@
 <?php
 
-use Redaxo\Core\Core;
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
@@ -108,7 +108,7 @@ if ($PERMALL) {
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Core::getAccesskey(I18n::msg('pool_kat_create'), 'add') . ' title="' . I18n::msg('pool_kat_create') . '"><i class="rex-icon rex-icon-add-media-category"></i></a></th>
+                    <th class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'add') . ' title="' . I18n::msg('pool_kat_create') . '"><i class="rex-icon rex-icon-add-media-category"></i></a></th>
                     <th class="rex-table-id">' . I18n::msg('id') . '</th>
                     <th>' . I18n::msg('pool_kat_name') . '</th>
                     <th class="rex-table-action" colspan="2">' . I18n::msg('pool_kat_function') . '</th>
@@ -123,7 +123,7 @@ if ($PERMALL) {
                 <td class="rex-table-id" data-title="' . I18n::msg('id') . '">-</td>
                 <td data-title="' . I18n::msg('pool_kat_name') . '"><input class="form-control" type="text" name="catname" value="" autofocus /></td>
                 <td class="rex-table-action" colspan="2">
-                    <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_create') . '"' . Core::getAccesskey(I18n::msg('pool_kat_create'), 'save') . '>' . I18n::msg('pool_kat_create') . '</button>
+                    <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_create') . '"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'save') . '>' . I18n::msg('pool_kat_create') . '</button>
                 </td>
             </tr>
         ';
@@ -141,7 +141,7 @@ if ($PERMALL) {
                     <td data-title="' . I18n::msg('pool_kat_name') . '"><input class="form-control" type="text" name="cat_name" value="' . escape($iname) . '" autofocus /></td>
                     <td class="rex-table-action" colspan="2">
                         <input type="hidden" name="edit_id" value="' . $editId . '" />
-                        <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Core::getAccesskey(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>
+                        <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Accesskey::attributes(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>
                     </td>
                 </tr>
             ';

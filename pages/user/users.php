@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
@@ -341,11 +342,11 @@ if ('' != $fUNCADD || $user) {
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="FUNC_UPDATE" value="1" ' . Core::getAccesskey(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('user_save') . '</button>';
+        $n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="FUNC_UPDATE" value="1" ' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('user_save') . '</button>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-apply" type="submit" name="FUNC_APPLY" value="1" ' . Core::getAccesskey(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('user_apply') . '</button>';
+        $n['field'] = '<button class="btn btn-apply" type="submit" name="FUNC_APPLY" value="1" ' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('user_apply') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -419,7 +420,7 @@ if ('' != $fUNCADD || $user) {
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save" type="submit" name="function" value="1" ' . Core::getAccesskey(I18n::msg('add_user'), 'save') . '>' . I18n::msg('add_user') . '</button>';
+        $n['field'] = '<button class="btn btn-save" type="submit" name="function" value="1" ' . Accesskey::attributes(I18n::msg('add_user'), 'save') . '>' . I18n::msg('add_user') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -614,7 +615,7 @@ if ($SHOW) {
     $list->addTableAttribute('class', 'table-striped table-hover');
 
     $tdIcon = '<i class="rex-icon rex-icon-user" title="' . I18n::msg('user_status_active') . '"></i>';
-    $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['FUNC_ADD' => '1']) . '"' . Core::getAccesskey(I18n::msg('create_user'), 'add') . ' title="' . I18n::msg('create_user') . '"><i class="rex-icon rex-icon-add-user"></i></a>';
+    $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['FUNC_ADD' => '1']) . '"' . Accesskey::attributes(I18n::msg('create_user'), 'add') . ' title="' . I18n::msg('create_user') . '"><i class="rex-icon rex-icon-add-user"></i></a>';
     $list->addColumn($thIcon, $tdIcon, 0, ['<th class="rex-table-icon">###VALUE###</th>', '<td class="rex-table-icon">###VALUE###</td>']);
     $list->setColumnParams($thIcon, ['user_id' => '###id###']);
     $list->setColumnFormat($thIcon, 'custom', static function () use ($currentUser, $list, $thIcon, $tdIcon) {
