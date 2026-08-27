@@ -95,7 +95,7 @@ final class ArticleSliceHistory
 
             $ignoreFields = ['id', 'slice_id', 'history_date', 'history_type', 'history_user'];
             foreach ($articleSlicesTable->getColumns() as $column) {
-                $columnName = $column->getName();
+                $columnName = $column->name;
                 if (!in_array($columnName, $ignoreFields)) {
                     $sql->setValue($columnName, $slice[$columnName]);
                 }
@@ -125,7 +125,7 @@ final class ArticleSliceHistory
         $historyTable = Table::get(self::getTable());
 
         foreach ($slicesTable->getColumns() as $column) {
-            if ('id' != strtolower($column->getName())) {
+            if ('id' != strtolower($column->name)) {
                 $historyTable->ensureColumn($column);
             }
         }

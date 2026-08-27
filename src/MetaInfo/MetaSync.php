@@ -54,7 +54,7 @@ final class MetaSync
                         continue;
                     }
 
-                    $name = $column->getName();
+                    $name = $column->name;
                     $existing = $table->getColumn($name);
                     if (null === $existing) {
                         $added[] = $tableName . '.' . $name;

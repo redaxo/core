@@ -2922,13 +2922,6 @@
       <code><![CDATA[strtotime('yesterday')]]></code>
     </PossiblyFalseArgument>
   </file>
-  <file src="tests/Database/TableTest.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getDefault]]></code>
-      <code><![CDATA[setExtra]]></code>
-      <code><![CDATA[setType]]></code>
-    </PossiblyNullReference>
-  </file>
   <file src="tests/ExtensionPoint/ExtensionTest.php">
     <MixedAssignment>
       <code><![CDATA[$myparamActual]]></code>

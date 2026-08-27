@@ -564,6 +564,23 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getMenuMovedownAction', 'menuMovedownAction'),
         new MethodCallToPropertyFetch(Content\ExtensionPoint\SliceMenu::class, 'getAdditionalActions', 'additionalActions'),
 
+        new MethodCallToPropertyFetch(Database\Column::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Database\Column::class, 'getType', 'type'),
+        new MethodCallToPropertyFetch(Database\Column::class, 'isNullable', 'nullable'),
+        new MethodCallToPropertyFetch(Database\Column::class, 'getDefault', 'default'),
+        new MethodCallToPropertyFetch(Database\Column::class, 'getExtra', 'extra'),
+        new MethodCallToPropertyFetch(Database\Column::class, 'getComment', 'comment'),
+
+        new MethodCallToPropertyFetch(Database\Index::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Database\Index::class, 'getColumns', 'columns'),
+        new MethodCallToPropertyFetch(Database\Index::class, 'getType', 'type'),
+
+        new MethodCallToPropertyFetch(Database\ForeignKey::class, 'getName', 'name'),
+        new MethodCallToPropertyFetch(Database\ForeignKey::class, 'getTable', 'table'),
+        new MethodCallToPropertyFetch(Database\ForeignKey::class, 'getColumns', 'columns'),
+        new MethodCallToPropertyFetch(Database\ForeignKey::class, 'getOnUpdate', 'onUpdate'),
+        new MethodCallToPropertyFetch(Database\ForeignKey::class, 'getOnDelete', 'onDelete'),
+
         new MethodCallToPropertyFetch(Database\Exception\SqlException::class, 'getSql', 'sql'),
         new MethodCallToPropertyFetch(Http\Exception\HttpException::class, 'getHttpCode', 'httpCode'),
 

@@ -66,6 +66,15 @@ final class Table
     /** @var array<string, string> mapping from current (new) name to existing (old) name in database */
     private array $foreignKeysExisting = [];
 
+    /** @var array<string, true> names of the columns, indexes and foreign keys changed since the last write */
+    private array $modifiedColumns = [];
+
+    /** @var array<string, true> */
+    private array $modifiedIndexes = [];
+
+    /** @var array<string, true> */
+    private array $modifiedForeignKeys = [];
+
     /** @param positive-int $db */
     private function __construct(string $name, int $db = 1)
     {
@@ -227,7 +236,7 @@ final class Table
     /** @param string|null $afterColumn Column name or `Table::FIRST` */
     public function addColumn(Column $column, ?string $afterColumn = null): self
     {
-        $name = $column->getName();
+        $name = $column->name;
 
         if ($this->hasColumn($name)) {
             throw new RuntimeException(sprintf('Column "%s" already exists.', $name));
@@ -243,7 +252,7 @@ final class Table
     /** @param string|null $afterColumn Column name or `Table::FIRST` */
     public function ensureColumn(Column $column, ?string $afterColumn = null): self
     {
-        $name = $column->getName();
+        $name = $column->name;
         $existing = $this->getColumn($name);
 
         if (!$existing) {
@@ -256,7 +265,8 @@ final class Table
             return $this;
         }
 
-        $this->columns[$name] = $column->setModified(true);
+        $this->columns[$name] = $column;
+        $this->modifiedColumns[$name] = true;
 
         return $this;
     }
@@ -295,10 +305,9 @@ final class Table
             return $this;
         }
 
-        $column->setName($newName);
-
-        unset($this->columns[$oldName]);
-        $this->columns[$newName] = $column;
+        unset($this->columns[$oldName], $this->modifiedColumns[$oldName]);
+        $this->columns[$newName] = $column->withName($newName);
+        $this->modifiedColumns[$newName] = true;
 
         if (isset($this->columnsExisting[$oldName])) {
             $this->columnsExisting[$newName] = $this->columnsExisting[$oldName];
@@ -366,7 +375,7 @@ final class Table
 
     public function addIndex(Index $index): self
     {
-        $name = $index->getName();
+        $name = $index->name;
 
         if ($this->hasIndex($name)) {
             throw new RuntimeException(sprintf('Index "%s" already exists.', $name));
@@ -379,7 +388,7 @@ final class Table
 
     public function ensureIndex(Index $index): self
     {
-        $name = $index->getName();
+        $name = $index->name;
         $existing = $this->getIndex($name);
 
         if (!$existing) {
@@ -390,7 +399,8 @@ final class Table
             return $this;
         }
 
-        $this->indexes[$name] = $index->setModified(true);
+        $this->indexes[$name] = $index;
+        $this->modifiedIndexes[$name] = true;
 
         return $this;
     }
@@ -410,10 +420,9 @@ final class Table
             return $this;
         }
 
-        $index->setName($newName);
-
-        unset($this->indexes[$oldName]);
-        $this->indexes[$newName] = $index;
+        unset($this->indexes[$oldName], $this->modifiedIndexes[$oldName]);
+        $this->indexes[$newName] = $index->withName($newName);
+        $this->modifiedIndexes[$newName] = true;
 
         if (isset($this->indexesExisting[$oldName])) {
             $this->indexesExisting[$newName] = $this->indexesExisting[$oldName];
@@ -452,7 +461,7 @@ final class Table
 
     public function addForeignKey(ForeignKey $foreignKey): self
     {
-        $name = $foreignKey->getName();
+        $name = $foreignKey->name;
 
         if ($this->hasForeignKey($name)) {
             throw new RuntimeException(sprintf('Foreign key "%s" already exists.', $name));
@@ -465,7 +474,7 @@ final class Table
 
     public function ensureForeignKey(ForeignKey $foreignKey): self
     {
-        $name = $foreignKey->getName();
+        $name = $foreignKey->name;
         $existing = $this->getForeignKey($name);
 
         if (!$existing) {
@@ -476,7 +485,8 @@ final class Table
             return $this;
         }
 
-        $this->foreignKeys[$name] = $foreignKey->setModified(true);
+        $this->foreignKeys[$name] = $foreignKey;
+        $this->modifiedForeignKeys[$name] = true;
 
         return $this;
     }
@@ -496,10 +506,9 @@ final class Table
             return $this;
         }
 
-        $foreignKey->setName($newName);
-
-        unset($this->foreignKeys[$oldName]);
-        $this->foreignKeys[$newName] = $foreignKey;
+        unset($this->foreignKeys[$oldName], $this->modifiedForeignKeys[$oldName]);
+        $this->foreignKeys[$newName] = $foreignKey->withName($newName);
+        $this->modifiedForeignKeys[$newName] = true;
 
         if (isset($this->foreignKeysExisting[$oldName])) {
             $this->foreignKeysExisting[$newName] = $this->foreignKeysExisting[$oldName];
@@ -653,13 +662,13 @@ final class Table
         }
 
         foreach ($this->indexesExisting as $newName => $oldName) {
-            if (!isset($this->indexes[$newName]) || $this->indexes[$newName]->isModified()) {
+            if (!isset($this->indexes[$newName]) || isset($this->modifiedIndexes[$newName])) {
                 $parts[] = 'DROP INDEX ' . $this->sql->escapeIdentifier($oldName);
             }
         }
 
         foreach ($this->foreignKeysExisting as $newName => $oldName) {
-            if (!isset($this->foreignKeys[$newName]) || $this->foreignKeys[$newName]->isModified()) {
+            if (!isset($this->foreignKeys[$newName]) || isset($this->modifiedForeignKeys[$newName])) {
                 $dropForeignKeys[] = 'DROP FOREIGN KEY ' . $this->sql->escapeIdentifier($oldName);
             }
         }
@@ -673,7 +682,7 @@ final class Table
             $oldName = $new ? null : $columnsExisting[$name];
             unset($columns[$name], $columnsExisting[$name]);
 
-            if (!$new && !$column->isModified() && null === $after) {
+            if (!$new && !isset($this->modifiedColumns[$column->name]) && null === $after) {
                 return;
             }
 
@@ -729,11 +738,11 @@ final class Table
         $fulltextIndexes = [];
         $fulltextAdded = false;
         foreach ($this->indexes as $index) {
-            if (!$index->isModified() && isset($this->indexesExisting[$index->getName()])) {
+            if (!isset($this->modifiedIndexes[$index->name]) && isset($this->indexesExisting[$index->name])) {
                 continue;
             }
 
-            if (Index::FULLTEXT === $index->getType()) {
+            if (Index::FULLTEXT === $index->type) {
                 if ($fulltextAdded) {
                     $fulltextIndexes[] = 'ADD ' . $this->getIndexDefinition($index);
 
@@ -747,7 +756,7 @@ final class Table
         }
 
         foreach ($this->foreignKeys as $foreignKey) {
-            if ($foreignKey->isModified() || !isset($this->foreignKeysExisting[$foreignKey->getName()])) {
+            if (isset($this->modifiedForeignKeys[$foreignKey->name]) || !isset($this->foreignKeysExisting[$foreignKey->name])) {
                 $parts[] = 'ADD ' . $this->getForeignKeyDefinition($foreignKey);
             }
         }
@@ -795,7 +804,7 @@ final class Table
 
     private function getColumnDefinition(Column $column): string
     {
-        $default = $column->getDefault();
+        $default = $column->default;
         if (null === $default) {
             $default = '';
         } elseif ($column->hasCurrentTimestampDefault()) {
@@ -804,18 +813,18 @@ final class Table
             $default = 'DEFAULT ' . $this->sql->escape($default);
         }
 
-        $comment = $column->getComment() ?? '';
+        $comment = $column->comment ?? '';
         if ('' !== $comment) {
             $comment = 'COMMENT ' . $this->sql->escape($comment);
         }
 
         return sprintf(
             '%s %s %s %s %s %s',
-            $this->sql->escapeIdentifier($column->getName()),
-            $column->getType(),
+            $this->sql->escapeIdentifier($column->name),
+            $column->type,
             $default,
-            $column->isNullable() ? '' : 'NOT NULL',
-            $column->getExtra() ?? '',
+            $column->nullable ? '' : 'NOT NULL',
+            $column->extra ?? '',
             $comment,
         );
     }
@@ -824,9 +833,9 @@ final class Table
     {
         return sprintf(
             '%s %s %s',
-            $index->getType(),
-            $this->sql->escapeIdentifier($index->getName()),
-            $this->getKeyColumnsDefintion($index->getColumns()),
+            $index->type,
+            $this->sql->escapeIdentifier($index->name),
+            $this->getKeyColumnsDefintion($index->columns),
         );
     }
 
@@ -834,12 +843,12 @@ final class Table
     {
         return sprintf(
             'CONSTRAINT %s FOREIGN KEY %s REFERENCES %s %s ON UPDATE %s ON DELETE %s',
-            $this->sql->escapeIdentifier($foreignKey->getName()),
-            $this->getKeyColumnsDefintion(array_keys($foreignKey->getColumns())),
-            $this->sql->escapeIdentifier($foreignKey->getTable()),
-            $this->getKeyColumnsDefintion($foreignKey->getColumns()),
-            $foreignKey->getOnUpdate(),
-            $foreignKey->getOnDelete(),
+            $this->sql->escapeIdentifier($foreignKey->name),
+            $this->getKeyColumnsDefintion(array_keys($foreignKey->columns)),
+            $this->sql->escapeIdentifier($foreignKey->table),
+            $this->getKeyColumnsDefintion($foreignKey->columns),
+            $foreignKey->onUpdate,
+            $foreignKey->onDelete,
         );
     }
 
@@ -905,9 +914,8 @@ final class Table
         $this->columns = [];
         $this->columnsExisting = [];
         foreach ($columns as $column) {
-            $column->setModified(false);
-            $this->columns[$column->getName()] = $column;
-            $this->columnsExisting[$column->getName()] = $column->getName();
+            $this->columns[$column->name] = $column;
+            $this->columnsExisting[$column->name] = $column->name;
         }
 
         $this->implicitOrder = [];
@@ -919,18 +927,20 @@ final class Table
         $this->indexes = [];
         $this->indexesExisting = [];
         foreach ($indexes as $index) {
-            $index->setModified(false);
-            $this->indexes[$index->getName()] = $index;
-            $this->indexesExisting[$index->getName()] = $index->getName();
+            $this->indexes[$index->name] = $index;
+            $this->indexesExisting[$index->name] = $index->name;
         }
 
         $foreignKeys = $this->foreignKeys;
         $this->foreignKeys = [];
         $this->foreignKeysExisting = [];
         foreach ($foreignKeys as $foreignKey) {
-            $foreignKey->setModified(false);
-            $this->foreignKeys[$foreignKey->getName()] = $foreignKey;
-            $this->foreignKeysExisting[$foreignKey->getName()] = $foreignKey->getName();
+            $this->foreignKeys[$foreignKey->name] = $foreignKey;
+            $this->foreignKeysExisting[$foreignKey->name] = $foreignKey->name;
         }
+
+        $this->modifiedColumns = [];
+        $this->modifiedIndexes = [];
+        $this->modifiedForeignKeys = [];
     }
 }

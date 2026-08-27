@@ -12,7 +12,7 @@ use function strtolower;
 /**
  * Class to represent sql columns.
  */
-final class Column
+final readonly class Column
 {
     private const array INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
 
@@ -25,16 +25,18 @@ final class Column
         'real' => 'double',
     ];
 
-    private bool $modified = false;
+    public string $type;
 
     public function __construct(
-        private string $name,
-        private string $type { set => self::normalizeType($value); },
-        private bool $nullable = false,
-        private ?string $default = null,
-        private ?string $extra = null,
-        private ?string $comment = null,
-    ) {}
+        public string $name,
+        string $type,
+        public bool $nullable = false,
+        public ?string $default = null,
+        public ?string $extra = null,
+        public ?string $comment = null,
+    ) {
+        $this->type = self::normalizeType($type);
+    }
 
     public static function tinyint(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null, bool $autoIncrement = false, ?string $comment = null): self
     {
@@ -151,89 +153,9 @@ final class Column
         }
     }
 
-    public function setModified(bool $modified): self
+    public function withName(string $name): self
     {
-        $this->modified = $modified;
-
-        return $this;
-    }
-
-    public function isModified(): bool
-    {
-        return $this->modified;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this->setModified(true);
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this->setModified(true);
-    }
-
-    /** @return string The normalized column type, e.g. `int unsigned` or `varchar(255)` */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    public function setNullable(bool $nullable): self
-    {
-        $this->nullable = $nullable;
-
-        return $this->setModified(true);
-    }
-
-    public function isNullable(): bool
-    {
-        return $this->nullable;
-    }
-
-    public function setDefault(?string $default): self
-    {
-        $this->default = $default;
-
-        return $this->setModified(true);
-    }
-
-    public function getDefault(): ?string
-    {
-        return $this->default;
-    }
-
-    public function setExtra(?string $extra): self
-    {
-        $this->extra = $extra;
-
-        return $this->setModified(true);
-    }
-
-    public function getExtra(): ?string
-    {
-        return $this->extra;
-    }
-
-    public function setComment(?string $comment): self
-    {
-        $this->comment = $comment;
-
-        return $this->setModified(true);
-    }
-
-    public function getComment(): ?string
-    {
-        return $this->comment;
+        return new self($name, $this->type, $this->nullable, $this->default, $this->extra, $this->comment);
     }
 
     public function equals(self $column): bool
