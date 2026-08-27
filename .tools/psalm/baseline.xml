@@ -43,9 +43,6 @@
     </PossiblyNullArgument>
   </file>
   <file src="boot/core.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[Core::getProperty('timezone', 'Europe/Berlin')]]></code>
-    </ArgumentTypeCoercion>
     <MixedArgument>
       <code><![CDATA[$articleId]]></code>
       <code><![CDATA[$clangId]]></code>
@@ -949,11 +946,6 @@
       <code><![CDATA[escape($userdesc)]]></code>
     </PossiblyNullOperand>
   </file>
-  <file src="pages/setup/index.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$config['timezone']]]></code>
-    </ArgumentTypeCoercion>
-  </file>
   <file src="pages/setup/step1.php">
     <MixedOperand>
       <code><![CDATA[$cancelSetupBtn]]></code>
@@ -970,7 +962,6 @@
   </file>
   <file src="pages/setup/step3.php">
     <MixedArgument>
-      <code><![CDATA[$config['timezone']]]></code>
       <code><![CDATA[true === $config['use_https'] ? 'true' : $config['use_https']]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
@@ -1422,7 +1413,6 @@
       <code><![CDATA[$password]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[['login' => $login]]]></code>
@@ -1434,7 +1424,6 @@
       <code><![CDATA[$config['error_email']]]></code>
       <code><![CDATA[$config['server']]]></code>
       <code><![CDATA[$config['servername']]]></code>
-      <code><![CDATA[$config['timezone']]]></code>
       <code><![CDATA[$createdb]]></code>
       <code><![CDATA[$dbCreate]]></code>
       <code><![CDATA[$login]]></code>
@@ -1442,7 +1431,6 @@
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$createdb]]></code>
-      <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>

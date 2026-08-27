@@ -177,7 +177,7 @@ foreach ($tables as $table) {
         continue;
     }
     // skip rex_tmp_ tables
-    if (str_starts_with($table, Core::getTablePrefix() . Core::getTempPrefix())) {
+    if (str_starts_with($table, Core::TABLE_PREFIX . Core::TEMP_PREFIX)) {
         continue;
     }
 

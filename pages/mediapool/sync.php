@@ -27,7 +27,7 @@ $csrf = CsrfToken::factory('mediapool');
 // ---- Dateien aus dem Ordner lesen
 $folderFiles = [];
 $path = Path::media();
-$iterator = Finder::factory($path)->filesOnly()->ignoreFiles(['.*', Core::getTempPrefix() . '*'])->sort();
+$iterator = Finder::factory($path)->filesOnly()->ignoreFiles(['.*', Core::TEMP_PREFIX . '*'])->sort();
 foreach ($iterator as $file) {
     $folderFiles[] = Str::normalizeEncoding($file->getFilename());
 }

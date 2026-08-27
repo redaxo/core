@@ -174,11 +174,6 @@ final class CoreTest extends TestCase
         self::assertEquals(Core::getTable('mytable'), 'rex_mytable', 'tablename gets properly prefixed');
     }
 
-    public function testGetTempPrefix(): void
-    {
-        self::assertEquals(Core::getTempPrefix(), 'tmp_', 'temp prefix defaults to tmp_');
-    }
-
     public function testGetServer(): void
     {
         $origServer = Core::getProperty('server');

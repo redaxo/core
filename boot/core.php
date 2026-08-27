@@ -71,6 +71,10 @@ if (ini_get('html_errors')) {
 // must be called after autoloader to support symfony/polyfill-mbstring
 mb_internal_encoding('UTF-8');
 
+// A configured `date.timezone` is overridden deliberately: the timezone belongs to the project, so that it shows
+// the same times on every server. Projects with another timezone call `date_default_timezone_set` themselves.
+date_default_timezone_set('Europe/Berlin');
+
 Path::init($REX['PATH_PROVIDER']);
 Url::init($REX['URL_PROVIDER']);
 
@@ -99,8 +103,6 @@ Core::getProject()->configure();
 if (!Core::isSetup() && 'cli' !== PHP_SAPI) {
     I18n::$defaultLocale = Type::string(Core::getConfig('lang', I18n::$defaultLocale));
 }
-
-date_default_timezone_set(Core::getProperty('timezone', 'Europe/Berlin'));
 
 if ('cli' !== PHP_SAPI) {
     Core::setProperty('request', BaseRequest::createFromGlobals());

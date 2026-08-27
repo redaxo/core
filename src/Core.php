@@ -35,6 +35,12 @@ final class Core
 {
     public const string CONFIG_NAMESPACE = 'core';
 
+    /** Prefix of all database tables. */
+    public const string TABLE_PREFIX = 'rex_';
+
+    /** Prefix marking temporary database tables and files. */
+    public const string TEMP_PREFIX = 'tmp_';
+
     private const CACHE_ENV_KEY = "\0rex_env_var\0";
 
     /**
@@ -145,9 +151,6 @@ final class Core
      *      ($key is 'use_accesskeys' ? bool :
      *      ($key is 'accesskeys' ? array<string, string> :
      *      ($key is 'timer' ? Timer :
-     *      ($key is 'timezone' ? string :
-     *      ($key is 'table_prefix' ? non-empty-string :
-     *      ($key is 'temp_prefix' ? non-empty-string :
      *      ($key is 'server' ? string :
      *      ($key is 'servername' ? string :
      *      ($key is 'error_email' ? string :
@@ -157,7 +160,7 @@ final class Core
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      )))))))))))))))
+     *      ))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -307,14 +310,13 @@ final class Core
     /**
      * Returns the table prefix.
      *
-     * @return non-empty-string
+     * Prefer the literal table name in queries, so that IDEs and analysers can resolve them.
      *
-     * @phpstandba-inference-placeholder 'rex_'
-     * @psalm-taint-escape sql
+     * @return non-empty-string
      */
     public static function getTablePrefix(): string
     {
-        return self::getProperty('table_prefix');
+        return self::TABLE_PREFIX;
     }
 
     /**
@@ -327,19 +329,6 @@ final class Core
     public static function getTable(string $table): string
     {
         return self::getTablePrefix() . $table;
-    }
-
-    /**
-     * Returns the temp prefix.
-     *
-     * @return non-empty-string
-     *
-     * @phpstandba-inference-placeholder 'tmp_'
-     * @psalm-taint-escape sql
-     */
-    public static function getTempPrefix(): string
-    {
-        return self::getProperty('temp_prefix');
     }
 
     /** Returns the current user. */

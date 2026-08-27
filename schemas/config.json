@@ -210,10 +210,6 @@
             "description": "Max age for HSTS header (seconds)",
             "type": "integer"
         },
-        "timezone": {
-            "description": "Timezone (e.g. Europe/Berlin)",
-            "type": "string"
-        },
         "setup_addons": {
             "description": "Addons loaded in setup and in safe mode",
             "type": "array",
@@ -221,16 +217,6 @@
                 "type": "string",
                 "pattern": "^[^/]+$"
             }
-        },
-        "table_prefix": {
-            "description": "Table prefix for the database",
-            "type": "string",
-            "default": "rex_"
-        },
-        "temp_prefix": {
-            "description": "Temp prefix for the database and other purposes",
-            "type": "string",
-            "default": "tmp_"
         },
         "db": {
             "description": "Database connections",

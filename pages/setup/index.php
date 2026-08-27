@@ -111,7 +111,6 @@ $configFile = Path::coreData('config.yml');
  *     server: string|null,
  *     servername: string|null,
  *     error_email: string|null,
- *     timezone: string,
  *     db: array{1: array{
  *         host: string|null,
  *         login: string|null,
@@ -138,7 +137,6 @@ if ($step > 3) {
         $config['server'] = Request::post('serveraddress', 'string');
         $config['servername'] = Request::post('servername', 'string');
         $config['error_email'] = Request::post('error_email', 'string');
-        $config['timezone'] = Request::post('timezone', 'string');
         $config['db'][1]['host'] = trim(Request::post('mysql_host', 'string'));
         $config['db'][1]['login'] = trim(Request::post('redaxo_db_user_login', 'string'));
 
@@ -179,11 +177,6 @@ if ($step > 3) {
     }
 
     $redaxoDbCreate = Request::post('redaxo_db_create', 'boolean');
-
-    // check if timezone is valid
-    if (!@date_default_timezone_set($config['timezone'])) {
-        $errorArray[] = Message::error(I18n::msg('setup_313'));
-    }
 
     $check = ['server', 'servername', 'error_email'];
     foreach ($check as $key) {
