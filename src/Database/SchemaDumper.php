@@ -5,6 +5,8 @@ namespace Redaxo\Core\Database;
 use Redaxo\Core\Core;
 
 use function count;
+use function in_array;
+use function is_string;
 use function strlen;
 
 /**
@@ -21,7 +23,7 @@ final readonly class SchemaDumper
 
         $setPrimaryKey = true;
         $primaryKeyIsId = ['id'] === $table->getPrimaryKey();
-        $idColumn = new Column('id', 'int(10) unsigned', false, null, 'auto_increment');
+        $idColumn = Column::int('id', unsigned: true, autoIncrement: true);
 
         foreach ($table->getColumns() as $column) {
             if ($primaryKeyIsId && $column->equals($idColumn)) {
@@ -34,16 +36,12 @@ final readonly class SchemaDumper
             $code .= "\n    ->ensureColumn(" . $this->getColumn($column) . ')';
         }
 
-        $code = str_replace(
-            '
-    ->ensureColumn(new \\' . Column::class . "('createdate', 'datetime'))
-    ->ensureColumn(new \\" . Column::class . "('createuser', 'varchar(255)'))
-    ->ensureColumn(new \\" . Column::class . "('updatedate', 'datetime'))
-    ->ensureColumn(new \\" . Column::class . "('updateuser', 'varchar(255)'))",
-            '
-    ->ensureGlobalColumns()',
-            $code,
-        );
+        $globalColumns = '';
+        foreach ($this->getGlobalColumns() as $globalColumn) {
+            $globalColumns .= "\n    ->ensureColumn(" . $this->getColumn($globalColumn) . ')';
+        }
+
+        $code = str_replace($globalColumns, "\n    ->ensureGlobalColumns()", $code);
 
         if ($setPrimaryKey && $primaryKey = $table->getPrimaryKey()) {
             $code .= "\n    ->setPrimaryKey(" . $this->getPrimaryKey($primaryKey) . ')';
@@ -62,34 +60,166 @@ final readonly class SchemaDumper
         return $code;
     }
 
+    /**
+     * The columns added by `Table::ensureGlobalColumns()`, to detect them in the generated code.
+     *
+     * @return list<Column>
+     */
+    private function getGlobalColumns(): array
+    {
+        return [
+            Column::datetime('createdate'),
+            Column::varchar('createuser', 255),
+            Column::datetime('updatedate'),
+            Column::varchar('updateuser', 255),
+        ];
+    }
+
     private function getColumn(Column $column): string
     {
-        $parameters = [];
-        $nonDefault = false;
+        return $this->getColumnByFactory($column) ?? $this->getColumnByConstructor($column);
+    }
+
+    /**
+     * Dumps a column as a call to one of the factory methods of `Column`.
+     *
+     * Returns null for columns that no factory method can express, e.g. exotic types, non-default
+     * integer display widths or an unknown extra clause.
+     */
+    private function getColumnByFactory(Column $column): ?string
+    {
+        $type = $column->getType();
+        $extra = $column->getExtra();
+        $default = $column->getDefault();
+
+        // Arguments before and after the common `$nullable` and `$default` parameters.
+        $leading = [];
+        $trailing = [];
+
+        if ('tinyint(1)' === $type) {
+            // Assume a boolean: any other use of `tinyint(1)` results in the same column anyway.
+            if (null !== $extra || !in_array($default, [null, '0', '1'], true)) {
+                return null;
+            }
+
+            $method = 'bool';
+            $default = null === $default ? null : ('1' === $default ? 'true' : 'false');
+        } elseif (preg_match('/^(tinyint|smallint|mediumint|int|bigint)\(\d+\)( unsigned)?$/', $type, $match)) {
+            $unsigned = isset($match[2]);
+
+            if (Column::intType($match[1], $unsigned) !== $type) {
+                return null;
+            }
+
+            if (null !== $default && !preg_match('/^-?\d+$/', $default)) {
+                return null;
+            }
+
+            if (null !== $extra) {
+                if (0 !== strcasecmp('auto_increment', $extra)) {
+                    return null;
+                }
+
+                $trailing['autoIncrement'] = 'true';
+            }
+
+            $method = $match[1];
+
+            if ($unsigned) {
+                $leading['unsigned'] = 'true';
+            }
+        } elseif (preg_match('/^varchar\((\d+)\)$/', $type, $match)) {
+            if (null !== $extra) {
+                return null;
+            }
+
+            $method = 'varchar';
+            $leading[] = $match[1];
+            $default = null === $default ? null : $this->scalar($default);
+        } elseif (preg_match('/^decimal\((\d+),(\d+)\)( unsigned)?$/', $type, $match)) {
+            if (null !== $extra) {
+                return null;
+            }
+
+            $method = 'decimal';
+            $leading[] = $match[1];
+            $leading[] = $match[2];
+
+            if (isset($match[3])) {
+                $leading['unsigned'] = 'true';
+            }
+
+            $default = null === $default ? null : $this->scalar($default);
+        } elseif (preg_match('/^(datetime|time)(?:\((\d+)\))?$/', $type, $match)) {
+            // An expression default or an `on update` clause has no factory method on purpose.
+            if (null !== $extra || $column->hasCurrentTimestampDefault()) {
+                return null;
+            }
+
+            $method = $match[1];
+
+            if (isset($match[2])) {
+                $leading['precision'] = $match[2];
+            }
+
+            $default = null === $default ? null : $this->scalar($default);
+        } elseif (in_array($type, ['text', 'mediumtext', 'longtext', 'date'], true)) {
+            if (null !== $extra) {
+                return null;
+            }
+
+            $method = $type;
+            $default = null === $default ? null : $this->scalar($default);
+        } else {
+            return null;
+        }
+
+        $arguments = [$this->scalar($column->getName())];
+
+        foreach ($leading as $name => $value) {
+            $arguments[] = is_string($name) ? $name . ': ' . $value : $value;
+        }
+
+        if ($column->isNullable()) {
+            $arguments[] = 'nullable: true';
+        }
+
+        if (null !== $default) {
+            $arguments[] = 'default: ' . $default;
+        }
+
+        foreach ($trailing as $name => $value) {
+            $arguments[] = $name . ': ' . $value;
+        }
 
         if (null !== $column->getComment()) {
-            $parameters[] = $this->scalar($column->getComment());
-            $nonDefault = true;
+            $arguments[] = 'comment: ' . $this->scalar($column->getComment());
         }
 
-        if ($nonDefault || null !== $column->getExtra()) {
-            $parameters[] = $this->scalar($column->getExtra());
-            $nonDefault = true;
+        return '\\' . Column::class . '::' . $method . '(' . implode(', ', $arguments) . ')';
+    }
+
+    private function getColumnByConstructor(Column $column): string
+    {
+        $arguments = [$this->scalar($column->getName()), $this->scalar($column->getType())];
+
+        if ($column->isNullable()) {
+            $arguments[] = 'nullable: true';
         }
 
-        if ($nonDefault || null !== $column->getDefault()) {
-            $parameters[] = $this->scalar($column->getDefault());
-            $nonDefault = true;
+        if (null !== $column->getDefault()) {
+            $arguments[] = 'default: ' . $this->scalar($column->getDefault());
         }
 
-        if ($nonDefault || $column->isNullable()) {
-            $parameters[] = $this->scalar($column->isNullable());
+        if (null !== $column->getExtra()) {
+            $arguments[] = 'extra: ' . $this->scalar($column->getExtra());
         }
 
-        $parameters[] = $this->scalar($column->getType());
-        $parameters[] = $this->scalar($column->getName());
+        if (null !== $column->getComment()) {
+            $arguments[] = 'comment: ' . $this->scalar($column->getComment());
+        }
 
-        return 'new \\' . Column::class . '(' . implode(', ', array_reverse($parameters)) . ')';
+        return 'new \\' . Column::class . '(' . implode(', ', $arguments) . ')';
     }
 
     private function getIndex(Index $index): string

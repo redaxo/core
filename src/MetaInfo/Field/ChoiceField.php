@@ -74,8 +74,8 @@ class ChoiceField extends AbstractInputField
         // Multiple values are comma-separated and can outgrow a varchar; a single value never does.
         // `text` can not carry a default, so the default only applies to the single-value case.
         return $this->multiple
-            ? new Column($this->columnName($entity), 'text', nullable: true)
-            : new Column($this->columnName($entity), 'varchar(255)', nullable: true, default: $this->default);
+            ? Column::text($this->columnName($entity), nullable: true)
+            : Column::varchar($this->columnName($entity), 255, nullable: true, default: $this->default);
     }
 
     public function parseRequest(MetaContext $context): int|string|null

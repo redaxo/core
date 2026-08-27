@@ -40,8 +40,8 @@ class ArticleField extends MetaField
     {
         // A single article is just an id; multiple ids stay short enough for a varchar.
         return $this->multiple
-            ? new Column($this->columnName($entity), 'varchar(255)', nullable: true)
-            : new Column($this->columnName($entity), 'int(11)', nullable: true);
+            ? Column::varchar($this->columnName($entity), 255, nullable: true)
+            : Column::int($this->columnName($entity), nullable: true);
     }
 
     public function parseRequest(MetaContext $context): int|string|null

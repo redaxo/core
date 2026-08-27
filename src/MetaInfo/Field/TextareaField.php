@@ -27,7 +27,7 @@ class TextareaField extends AbstractInputField
     public function column(MetaEntity $entity): ?Column
     {
         // `text` columns can not carry a default value in MySQL.
-        return new Column($this->columnName($entity), 'text', nullable: true);
+        return Column::text($this->columnName($entity), nullable: true);
     }
 
     public function renderInput(MetaContext $context): string

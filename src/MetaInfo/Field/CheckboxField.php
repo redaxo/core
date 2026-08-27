@@ -15,7 +15,7 @@ class CheckboxField extends AbstractInputField
 {
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'tinyint(1)', nullable: false, default: '0');
+        return Column::bool($this->columnName($entity), default: false);
     }
 
     public function parseRequest(MetaContext $context): int|string|null

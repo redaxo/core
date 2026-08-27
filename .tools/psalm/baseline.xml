@@ -1873,12 +1873,6 @@
       <code><![CDATA[$previous->errorInfo[1] ?? null]]></code>
     </MixedReturnStatement>
   </file>
-  <file src="src/Database/SchemaDumper.php">
-    <RedundantCondition>
-      <code><![CDATA[$nonDefault]]></code>
-      <code><![CDATA[$nonDefault]]></code>
-    </RedundantCondition>
-  </file>
   <file src="src/Database/Sql.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$value]]></code>

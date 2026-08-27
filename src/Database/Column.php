@@ -2,11 +2,29 @@
 
 namespace Redaxo\Core\Database;
 
+use Redaxo\Core\Exception\InvalidArgumentException;
+
+use function min;
+use function sprintf;
+
 /**
  * Class to represent sql columns.
  */
 final class Column
 {
+    /**
+     * Default display width of the integer types, signed and unsigned.
+     *
+     * @var array<string, array{int, int}>
+     */
+    private const array INT_DISPLAY_WIDTHS = [
+        'tinyint' => [4, 3],
+        'smallint' => [6, 5],
+        'mediumint' => [9, 8],
+        'int' => [11, 10],
+        'bigint' => [20, 20],
+    ];
+
     private bool $modified = false;
 
     public function __construct(
@@ -17,6 +35,133 @@ final class Column
         private ?string $extra = null,
         private ?string $comment = null,
     ) {}
+
+    public static function tinyint(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null, bool $autoIncrement = false, ?string $comment = null): self
+    {
+        return self::integer('tinyint', $name, $unsigned, $nullable, $default, $autoIncrement, $comment);
+    }
+
+    public static function smallint(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null, bool $autoIncrement = false, ?string $comment = null): self
+    {
+        return self::integer('smallint', $name, $unsigned, $nullable, $default, $autoIncrement, $comment);
+    }
+
+    public static function mediumint(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null, bool $autoIncrement = false, ?string $comment = null): self
+    {
+        return self::integer('mediumint', $name, $unsigned, $nullable, $default, $autoIncrement, $comment);
+    }
+
+    public static function int(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null, bool $autoIncrement = false, ?string $comment = null): self
+    {
+        return self::integer('int', $name, $unsigned, $nullable, $default, $autoIncrement, $comment);
+    }
+
+    public static function bigint(string $name, bool $unsigned = false, bool $nullable = false, ?int $default = null, bool $autoIncrement = false, ?string $comment = null): self
+    {
+        return self::integer('bigint', $name, $unsigned, $nullable, $default, $autoIncrement, $comment);
+    }
+
+    /** A `tinyint(1)` column, which is how MySQL and MariaDB store booleans. */
+    public static function bool(string $name, bool $nullable = false, ?bool $default = null, ?string $comment = null): self
+    {
+        return new self($name, 'tinyint(1)', $nullable, null === $default ? null : ($default ? '1' : '0'), null, $comment);
+    }
+
+    /** @param int<1, 65535> $length Maximum number of characters */
+    public static function varchar(string $name, int $length, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        self::assertRange('length of a varchar column', $length, 1, 65535);
+
+        return new self($name, 'varchar(' . $length . ')', $nullable, $default, null, $comment);
+    }
+
+    public static function text(string $name, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        return new self($name, 'text', $nullable, $default, null, $comment);
+    }
+
+    public static function mediumtext(string $name, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        return new self($name, 'mediumtext', $nullable, $default, null, $comment);
+    }
+
+    public static function longtext(string $name, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        return new self($name, 'longtext', $nullable, $default, null, $comment);
+    }
+
+    /**
+     * @param int<1, 65> $precision Total number of digits
+     * @param int<0, 30> $scale Number of digits after the decimal point, at most $precision
+     */
+    public static function decimal(string $name, int $precision, int $scale, bool $unsigned = false, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        self::assertRange('precision of a decimal column', $precision, 1, 65);
+        self::assertRange('scale of a decimal column', $scale, 0, min(30, $precision));
+
+        $type = 'decimal(' . $precision . ',' . $scale . ')' . ($unsigned ? ' unsigned' : '');
+
+        return new self($name, $type, $nullable, $default, null, $comment);
+    }
+
+    /** @param int<0, 6>|null $precision Fractional seconds precision, whole seconds when omitted */
+    public static function datetime(string $name, ?int $precision = null, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        return new self($name, 'datetime' . self::fractionalSeconds($precision), $nullable, $default, null, $comment);
+    }
+
+    public static function date(string $name, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        return new self($name, 'date', $nullable, $default, null, $comment);
+    }
+
+    /** @param int<0, 6>|null $precision Fractional seconds precision, whole seconds when omitted */
+    public static function time(string $name, ?int $precision = null, bool $nullable = false, ?string $default = null, ?string $comment = null): self
+    {
+        return new self($name, 'time' . self::fractionalSeconds($precision), $nullable, $default, null, $comment);
+    }
+
+    /**
+     * Builds the type for an integer column, including its display width.
+     *
+     * @internal
+     */
+    public static function intType(string $type, bool $unsigned): string
+    {
+        [$signedWidth, $unsignedWidth] = self::INT_DISPLAY_WIDTHS[$type];
+
+        return $type . '(' . ($unsigned ? $unsignedWidth : $signedWidth) . ')' . ($unsigned ? ' unsigned' : '');
+    }
+
+    private static function integer(string $type, string $name, bool $unsigned, bool $nullable, ?int $default, bool $autoIncrement, ?string $comment): self
+    {
+        return new self(
+            $name,
+            self::intType($type, $unsigned),
+            $nullable,
+            null === $default ? null : (string) $default,
+            $autoIncrement ? 'auto_increment' : null,
+            $comment,
+        );
+    }
+
+    private static function fractionalSeconds(?int $precision): string
+    {
+        if (null === $precision) {
+            return '';
+        }
+
+        self::assertRange('fractional seconds precision', $precision, 0, 6);
+
+        return '(' . $precision . ')';
+    }
+
+    private static function assertRange(string $subject, int $value, int $min, int $max): void
+    {
+        if ($value < $min || $value > $max) {
+            throw new InvalidArgumentException(sprintf('The %s must be between %d and %d, got %d.', $subject, $min, $max, $value));
+        }
+    }
 
     public function setModified(bool $modified): self
     {

@@ -15,6 +15,7 @@ class TextField extends AbstractInputField
     public function __construct(
         string $name,
         string $label,
+        /** @var int<1, 65535> */
         public readonly int $maxLength = 255,
         ?string $note = null,
         bool $required = false,
@@ -26,7 +27,7 @@ class TextField extends AbstractInputField
 
     public function column(MetaEntity $entity): ?Column
     {
-        return new Column($this->columnName($entity), 'varchar(' . $this->maxLength . ')', nullable: true, default: $this->default);
+        return Column::varchar($this->columnName($entity), $this->maxLength, nullable: true, default: $this->default);
     }
 
     public function renderInput(MetaContext $context): string
