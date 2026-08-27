@@ -11,6 +11,7 @@ use Redaxo\Core\Util\Type;
 
 use function array_slice;
 use function count;
+use function implode;
 use function in_array;
 use function is_array;
 use function sprintf;
@@ -279,6 +280,33 @@ final class Table
         ;
     }
 
+    /**
+     * Ensures a column referencing the `id` column of another table, together with the foreign key.
+     *
+     * The column gets the same type as {@see ensurePrimaryIdColumn()} creates, which foreign keys
+     * require: the referencing and referenced column must match exactly.
+     *
+     * `on update` defaults to `RESTRICT` because an auto increment id never changes, so a cascade
+     * would only silently rewrite rows in the case that something went wrong.
+     *
+     * @param ForeignKey::RESTRICT|ForeignKey::NO_ACTION|ForeignKey::CASCADE|ForeignKey::SET_NULL $onUpdate
+     * @param ForeignKey::RESTRICT|ForeignKey::NO_ACTION|ForeignKey::CASCADE|ForeignKey::SET_NULL $onDelete
+     * @param string|null $afterColumn Column name or `Table::FIRST`
+     */
+    public function ensureForeignIdColumn(
+        string $column,
+        string $foreignTable,
+        bool $nullable = false,
+        string $onUpdate = ForeignKey::RESTRICT,
+        string $onDelete = ForeignKey::RESTRICT,
+        ?string $afterColumn = null,
+    ): self {
+        return $this
+            ->ensureColumn(Column::int($column, unsigned: true, nullable: $nullable), $afterColumn)
+            ->ensureForeignKeyTo($foreignTable, [$column => 'id'], $onUpdate, $onDelete)
+        ;
+    }
+
     /** @param string|null $afterColumn Column name or `Table::FIRST` */
     public function ensureGlobalColumns(?string $afterColumn = null): self
     {
@@ -489,6 +517,39 @@ final class Table
         $this->modifiedForeignKeys[$name] = true;
 
         return $this;
+    }
+
+    /**
+     * Ensures a foreign key whose name follows the naming convention of this table.
+     *
+     * Unlike index names, foreign key names must be unique within the whole database, which is why
+     * they are prefixed with the table name.
+     *
+     * @param array<string, string> $columns Mapping of local column to column in foreign table
+     * @param ForeignKey::RESTRICT|ForeignKey::NO_ACTION|ForeignKey::CASCADE|ForeignKey::SET_NULL $onUpdate
+     * @param ForeignKey::RESTRICT|ForeignKey::NO_ACTION|ForeignKey::CASCADE|ForeignKey::SET_NULL $onDelete
+     */
+    public function ensureForeignKeyTo(
+        string $foreignTable,
+        array $columns,
+        string $onUpdate = ForeignKey::RESTRICT,
+        string $onDelete = ForeignKey::RESTRICT,
+    ): self {
+        $name = $this->getForeignKeyName(array_keys($columns));
+
+        return $this->ensureForeignKey(new ForeignKey($name, $foreignTable, $columns, $onUpdate, $onDelete));
+    }
+
+    /**
+     * The conventional foreign key name for the given local columns.
+     *
+     * @param list<string> $columns
+     *
+     * @internal
+     */
+    public function getForeignKeyName(array $columns): string
+    {
+        return $this->name . '_' . implode('_', $columns);
     }
 
     public function renameForeignKey(string $oldName, string $newName): self
