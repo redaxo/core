@@ -38,6 +38,15 @@ final class Response
     /** Whether an ETag header is sent for responses. */
     public static bool $useEtag = true;
 
+    /** Whether requests over http are redirected to https. */
+    public static bool $forceHttps = false;
+
+    /** Whether a `Strict-Transport-Security` header is sent (never in the dev mode, and only over https). */
+    public static bool $useHsts = false;
+
+    /** Max age of the `Strict-Transport-Security` header in seconds. */
+    public static int $hstsMaxAge = 31536000;
+
     private static string $httpStatus = self::HTTP_OK;
     private static bool $sentLastModified = false;
     private static bool $sentEtag = false;

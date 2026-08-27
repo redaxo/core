@@ -198,18 +198,6 @@
                 }
             }
         },
-        "use_https": {
-            "description": "Force https",
-            "$ref": "#/definitions/bool-or-environment"
-        },
-        "use_hsts": {
-            "description": "Set HSTS header (HTTP Strict Transport Security)",
-            "type": "boolean"
-        },
-        "hsts_max_age": {
-            "description": "Max age for HSTS header (seconds)",
-            "type": "integer"
-        },
         "setup_addons": {
             "description": "Addons loaded in setup and in safe mode",
             "type": "array",
@@ -287,19 +275,7 @@
                 "type": "string",
                 "pattern": "^[a-z]$"
             }
-        },
-    },
-    "additionalProperties": false,
-    "definitions": {
-        "bool-or-environment": {
-            "oneOf": [
-                {
-                    "type": "boolean"
-                },
-                {
-                    "enum": ["frontend", "backend"]
-                }
-            ]
         }
-    }
+    },
+    "additionalProperties": false
 }

@@ -58,19 +58,6 @@ $sslKey = (string) ($dbConfig['ssl_key'] ?? '');
 $sslCert = (string) ($dbConfig['ssl_cert'] ?? '');
 $sslVerifyServerCert = (bool) ($dbConfig['ssl_verify_server_cert'] ?? true);
 
-$httpsRedirectSel = new Select();
-$httpsRedirectSel->setId('rex-form-https');
-$httpsRedirectSel->setStyle('class="form-control selectpicker"');
-$httpsRedirectSel->setName('use_https');
-$httpsRedirectSel->setSize(1);
-$httpsRedirectSel->addArrayOptions(['false' => I18n::msg('https_disable'), 'backend' => I18n::msg('https_only_backend'), 'frontend' => I18n::msg('https_only_frontend'), 'true' => I18n::msg('https_activate')]);
-$httpsRedirectSel->setSelected(true === $config['use_https'] ? 'true' : $config['use_https']);
-
-// If the setup is called over http disable https options to prevent user from being locked out
-if (!Request::isHttps()) {
-    $httpsRedirectSel->setAttribute('disabled', 'disabled');
-}
-
 $content .= '<legend>' . I18n::msg('setup_302') . '</legend>';
 
 $formElements = [];
@@ -204,29 +191,6 @@ $formElements[] = $n;
 $fragment = new Fragment();
 $fragment->setVar('elements', $formElements, false);
 $content .= $fragment->parse('core/form/checkbox.php');
-
-$content .= '</fieldset><fieldset><legend>' . I18n::msg('setup_security') . '</legend>';
-
-$formElements = [];
-
-if (!Request::isHttps()) {
-    $n = [];
-    $n['field'] = '<label class="form-control-static"><i class="fa fa-warning"></i> ' . I18n::msg('https_only_over_https') . '</label>';
-    $formElements[] = $n;
-}
-
-$n = [];
-$n['label'] = '<label>' . I18n::msg('https_activate_redirect_for') . '</label>';
-$n['field'] = $httpsRedirectSel->get();
-$formElements[] = $n;
-
-$n = [];
-$n['field'] = '<p>' . I18n::rawMsg('hsts_more_information') . '</p>';
-$formElements[] = $n;
-
-$fragment = new Fragment();
-$fragment->setVar('elements', $formElements, false);
-$content .= $fragment->parse('core/form/form.php');
 
 $content .= '</fieldset>';
 
