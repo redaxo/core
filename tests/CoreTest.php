@@ -176,7 +176,7 @@ final class CoreTest extends TestCase
 
     public function testGetTempPrefix(): void
     {
-        self::assertEquals(Core::getTempPrefix(), 'tmp_', 'temp prefix defaults to tmp_');
+        self::assertEquals(Core::TEMP_PREFIX, 'tmp_', 'temp prefix is tmp_');
     }
 
     public function testGetServer(): void

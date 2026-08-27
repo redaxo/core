@@ -438,7 +438,7 @@ final class Backup
                 continue;
             }
 
-            if (str_starts_with($file, Core::getTempPrefix())) {
+            if (str_starts_with($file, Core::TEMP_PREFIX)) {
                 continue;
             }
 
@@ -460,7 +460,7 @@ final class Backup
     {
         $tables = [];
         foreach (Sql::factory()->getTables(Core::getTablePrefix()) as $table) {
-            if (!str_starts_with($table, Core::getTablePrefix() . Core::getTempPrefix())) { // Tabellen die mit rex_tmp_ beginnne, werden nicht exportiert!
+            if (!str_starts_with($table, Core::TABLE_PREFIX . Core::TEMP_PREFIX)) { // Tabellen die mit rex_tmp_ beginnne, werden nicht exportiert!
                 $tables[] = $table;
             }
         }

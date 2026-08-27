@@ -30,15 +30,6 @@ if (count($errorArray) > 0) {
 $content .= '
             <fieldset>';
 
-$timezoneSel = new Select();
-$timezoneSel->setId('rex-form-timezone');
-$timezoneSel->setStyle('class="form-control selectpicker"');
-$timezoneSel->setAttribute('data-live-search', 'true');
-$timezoneSel->setName('timezone');
-$timezoneSel->setSize(1);
-$timezoneSel->addOptions(DateTimeZone::listIdentifiers(), true);
-$timezoneSel->setSelected($config['timezone']);
-
 $dbCreateChecked = Request::post('redaxo_db_create', 'boolean') ? ' checked="checked"' : '';
 
 /** @var array<string, string|bool|null> $dbConfig */
@@ -97,11 +88,6 @@ $formElements[] = $n;
 $n = [];
 $n['label'] = '<label for="rex-form-error-email" class="required">' . I18n::msg('error_email') . '</label>';
 $n['field'] = '<input class="form-control" type="email" id="rex-form-error-email" name="error_email" value="' . escape($config['error_email']) . '" required />';
-$formElements[] = $n;
-
-$n = [];
-$n['label'] = '<label for="rex-form-timezone" class="required">' . I18n::msg('setup_312') . '</label>';
-$n['field'] = $timezoneSel->get();
 $formElements[] = $n;
 
 $fragment = new Fragment();

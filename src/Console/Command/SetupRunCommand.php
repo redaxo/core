@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use DateTimeZone;
 use PDOException;
 use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Core;
@@ -54,9 +53,6 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
         #[Option('Website URL e.g. "https://example.org/"')] ?string $server = null,
         #[Option('Website name')] ?string $servername = null,
         #[Option('Error mail address e.g. "info@example.org"')] ?string $errorEmail = null,
-        #[Option('Timezone e.g. "Europe/Berlin"', suggestedValues: static function () {
-            return DateTimeZone::listIdentifiers();
-        })] ?string $timezone = null,
         #[Option('Database hostname e.g. "localhost" or "127.0.0.1"')] ?string $dbHost = null,
         #[Option('Database username e.g. "root"')] ?string $dbLogin = null,
         #[Option('Database user password')] ?string $dbPassword = null,
@@ -81,7 +77,6 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
          *     server: string|null,
          *     servername: string|null,
          *     error_email: string|null,
-         *     timezone: string|null,
          *     db: array{1?: array{
          *         host: string|null,
          *         login: string|null,
@@ -165,30 +160,6 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
             $config['error_email'],
             'Using "%s" in case of errors',
             $requiredValue,
-        );
-
-        $timezones = Type::array(DateTimeZone::listIdentifiers());
-
-        $q = new Question('Choose timezone', $config['timezone']);
-        $q->setAutocompleterValues($timezones);
-        $q->setValidator(static function ($value) {
-            if (!@date_default_timezone_set($value)) {
-                throw new InvalidArgumentException('Time zone invalid');
-            }
-            return $value;
-        });
-
-        $config['timezone'] = $this->getOptionOrAsk(
-            $q,
-            'timezone',
-            $config['timezone'],
-            'Timezone "%s" selected',
-            static function ($value) use ($timezones) {
-                if (!in_array($value, $timezones, true)) {
-                    throw new InvalidArgumentException('Unknown timezone "' . $value . '" specified');
-                }
-                return $value;
-            },
         );
 
         $io->section('Database information');
