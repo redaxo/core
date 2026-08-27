@@ -271,17 +271,9 @@ sql_unable_to_create_database = Die angegebene Datenbank konnte nicht angelegt w
 sql_unable_to_find_database = Die angegebene Datenbank konnte nicht gefunden werden!
 sql_unable_to_open_database = Die angegebene Datenbank konnte nicht geöffnet werden!
 
-setup_security = Sicherheit
 
-https_only_over_https = Diese Option ist nur bei einem Aufruf über HTTPS verfügbar
-https_activate_redirect_for = Automatische HTTPS-Umleitung
-https_disable = deaktivieren
-https_only_frontend = nur für Frontend aktivieren
-https_only_backend = nur für Backend aktivieren
-https_activate = für Frontend und Backend aktivieren
 
 setup_password_hint = Zur Vergabe eines neuen Passwortes dieses eintragen. Sonst unverändert lassen.
-hsts_more_information = HSTS sollte in den Hosting-Einstellungen der Domain/s (empfohlen) aktiviert werden, kann aber auch in der config.yml von REDAXO nachträglich aktiviert werden. Weitere Informationen in der <a href="https://redaxo.org/doku/" target="_blank" rel="noopener noreferrer">REDAXO-Doku</a>.
 
 # src\core\pages\addon.php
 addon = AddOn

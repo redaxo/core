@@ -127,12 +127,14 @@ if (!Core::isSetup()) {
 
 // ----------------- HTTPS REDIRECT
 if ('cli' !== PHP_SAPI && !Core::isSetup()) {
-    if ((true === Core::getProperty('use_https') || Core::getEnvironment()->value === Core::getProperty('use_https')) && !Request::isHttps()) {
+    if (Response::$forceHttps && !Request::isHttps()) {
         Response::enforceHttps();
     }
 
-    if (true === Core::getProperty('use_hsts') && Request::isHttps()) {
-        Response::setHeader('Strict-Transport-Security', 'max-age=' . (int) Core::getProperty('hsts_max_age', 31536000)); // default 1 year
+    // Skipped in the dev mode: browsers honour the header for its whole max age, which makes an accidental
+    // header on a non-public instance a lasting nuisance.
+    if (Response::$useHsts && !Core::isDevMode() && Request::isHttps()) {
+        Response::setHeader('Strict-Transport-Security', 'max-age=' . Response::$hstsMaxAge);
     }
 }
 
