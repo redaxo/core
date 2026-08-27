@@ -88,15 +88,7 @@ final class Table
         }
 
         foreach ($columns as $column) {
-            $type = $column['type'];
-
-            // Since MySQL 8.0.17 the display width for integer columns is deprecated and it is not
-            // reported anymore. To be compatible with our code for MySQL 5 and MariaDB we simulate
-            // the max display width. `tinyint(1)` and zerofill columns still report their width.
-            // https://dev.mysql.com/doc/refman/8.0/en/numeric-type-attributes.html
-            if (preg_match('/^(tinyint|smallint|mediumint|int|bigint)( unsigned)?$/', $type, $match)) {
-                $type = Column::intType($match[1], isset($match[2]));
-            }
+            $type = Column::normalizeType($column['type']);
 
             $default = $column['default'];
             if ("''" === $default && in_array($type, ['tinytext', 'text', 'mediumtext', 'longtext', 'tinyblob', 'blob', 'mediumblob', 'longblob'], true)) {

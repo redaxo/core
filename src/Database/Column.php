@@ -4,32 +4,32 @@ namespace Redaxo\Core\Database;
 
 use Redaxo\Core\Exception\InvalidArgumentException;
 
+use function in_array;
 use function min;
 use function sprintf;
+use function strtolower;
 
 /**
  * Class to represent sql columns.
  */
 final class Column
 {
-    /**
-     * Default display width of the integer types, signed and unsigned.
-     *
-     * @var array<string, array{int, int}>
-     */
-    private const array INT_DISPLAY_WIDTHS = [
-        'tinyint' => [4, 3],
-        'smallint' => [6, 5],
-        'mediumint' => [9, 8],
-        'int' => [11, 10],
-        'bigint' => [20, 20],
+    private const array INTEGER_TYPES = ['tinyint', 'smallint', 'mediumint', 'int', 'bigint'];
+
+    /** Type names accepted as a synonym by the server, which reports the canonical name instead. */
+    private const array TYPE_ALIASES = [
+        'integer' => 'int',
+        'dec' => 'decimal',
+        'numeric' => 'decimal',
+        'fixed' => 'decimal',
+        'real' => 'double',
     ];
 
     private bool $modified = false;
 
     public function __construct(
         private string $name,
-        private string $type,
+        private string $type { set => self::normalizeType($value); },
         private bool $nullable = false,
         private ?string $default = null,
         private ?string $extra = null,
@@ -121,23 +121,11 @@ final class Column
         return new self($name, 'time' . self::fractionalSeconds($precision), $nullable, $default, null, $comment);
     }
 
-    /**
-     * Builds the type for an integer column, including its display width.
-     *
-     * @internal
-     */
-    public static function intType(string $type, bool $unsigned): string
-    {
-        [$signedWidth, $unsignedWidth] = self::INT_DISPLAY_WIDTHS[$type];
-
-        return $type . '(' . ($unsigned ? $unsignedWidth : $signedWidth) . ')' . ($unsigned ? ' unsigned' : '');
-    }
-
     private static function integer(string $type, string $name, bool $unsigned, bool $nullable, ?int $default, bool $autoIncrement, ?string $comment): self
     {
         return new self(
             $name,
-            self::intType($type, $unsigned),
+            $type . ($unsigned ? ' unsigned' : ''),
             $nullable,
             null === $default ? null : (string) $default,
             $autoIncrement ? 'auto_increment' : null,
@@ -194,7 +182,7 @@ final class Column
         return $this->setModified(true);
     }
 
-    /** @return string The column type, including its size, e.g. int(10) or varchar(255) */
+    /** @return string The normalized column type, e.g. `int unsigned` or `varchar(255)` */
     public function getType(): string
     {
         return $this->type;
@@ -260,6 +248,51 @@ final class Column
     }
 
     /**
+     * Normalizes a column type to the spelling that column comparison is based on.
+     *
+     * The display width of integer types is dropped, because it carries no meaning and MySQL stopped
+     * reporting it in 8.0.17 while MariaDB still does. `tinyint(1)` keeps it, as both engines report it
+     * and it is the idiomatic boolean type, and so do columns with `zerofill`, where the width decides
+     * how far a value is padded.
+     *
+     * @internal
+     */
+    public static function normalizeType(string $type): string
+    {
+        if (!preg_match('/^\s*(\w+)\s*(?:\(([^)]*)\))?\s*(.*?)\s*$/', $type, $match)) {
+            return $type;
+        }
+
+        $name = strtolower($match[1]);
+        $parameters = $match[2] ?? '';
+        $attributes = strtolower(preg_replace('/\s+/', ' ', $match[3]) ?? $match[3]);
+
+        if (in_array($name, ['bool', 'boolean'], true)) {
+            $name = 'tinyint';
+            $parameters = '1';
+        }
+
+        $name = self::TYPE_ALIASES[$name] ?? $name;
+
+        // Only numeric parameters may be reformatted, the values of `enum` and `set` must stay untouched.
+        if (preg_match('/^[\d\s,]*$/', $parameters)) {
+            $parameters = preg_replace('/\s+/', '', $parameters) ?? $parameters;
+        }
+
+        if (
+            in_array($name, self::INTEGER_TYPES, true)
+            && !str_contains($attributes, 'zerofill')
+            && !('tinyint' === $name && '1' === $parameters && '' === $attributes)
+        ) {
+            $parameters = '';
+        }
+
+        return $name
+            . ('' === $parameters ? '' : '(' . $parameters . ')')
+            . ('' === $attributes ? '' : ' ' . $attributes);
+    }
+
+    /**
      * Whether the default value is the current timestamp function instead of a literal value.
      *
      * @internal
@@ -297,6 +330,10 @@ final class Column
         // Since MySQL 8.0.13 an expression default value is reported as `DEFAULT_GENERATED`, which is
         // not part of a column definition and would break the generated SQL.
         $extra = preg_replace('/^DEFAULT_GENERATED\s*/i', '', $extra) ?? $extra;
+
+        if (0 === strcasecmp('auto_increment', $extra)) {
+            return 'auto_increment';
+        }
 
         return '' === $extra ? null : self::normalizeCurrentTimestamp($extra);
     }
