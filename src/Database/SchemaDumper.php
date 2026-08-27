@@ -104,12 +104,8 @@ final readonly class SchemaDumper
 
             $method = 'bool';
             $default = null === $default ? null : ('1' === $default ? 'true' : 'false');
-        } elseif (preg_match('/^(tinyint|smallint|mediumint|int|bigint)\(\d+\)( unsigned)?$/', $type, $match)) {
+        } elseif (preg_match('/^(tinyint|smallint|mediumint|int|bigint)( unsigned)?$/', $type, $match)) {
             $unsigned = isset($match[2]);
-
-            if (Column::intType($match[1], $unsigned) !== $type) {
-                return null;
-            }
 
             if (null !== $default && !preg_match('/^-?\d+$/', $default)) {
                 return null;

@@ -10,6 +10,58 @@ use Redaxo\Core\Exception\InvalidArgumentException;
 /** @internal */
 final class ColumnTest extends TestCase
 {
+    #[DataProvider('provideTypes')]
+    public function testNormalizeType(string $expected, string $type): void
+    {
+        self::assertSame($expected, Column::normalizeType($type));
+        self::assertSame($expected, new Column('a', $type)->getType());
+        self::assertSame($expected, new Column('a', 'text')->setType($type)->getType());
+    }
+
+    /** @return iterable<string, array{string, string}> */
+    public static function provideTypes(): iterable
+    {
+        yield 'plain' => ['int', 'int'];
+        yield 'display width' => ['int', 'int(11)'];
+        yield 'non default display width' => ['int', 'int(5)'];
+        yield 'unsigned' => ['int unsigned', 'int(10) unsigned'];
+        yield 'bigint' => ['bigint unsigned', 'bigint(20) unsigned'];
+        yield 'tinyint' => ['tinyint', 'tinyint(4)'];
+
+        // The boolean type keeps its display width, both engines report it and clients rely on it.
+        yield 'boolean' => ['tinyint(1)', 'tinyint(1)'];
+        yield 'boolean unsigned' => ['tinyint unsigned', 'tinyint(1) unsigned'];
+
+        // With zerofill the display width decides how far a value is padded.
+        yield 'zerofill' => ['int(4) unsigned zerofill', 'int(4) unsigned zerofill'];
+
+        yield 'uppercase' => ['int unsigned', 'INT(10) UNSIGNED'];
+        yield 'surrounding whitespace' => ['varchar(255)', '  varchar(255)  '];
+        yield 'repeated whitespace' => ['int unsigned', 'int(10)   unsigned'];
+
+        yield 'alias integer' => ['int', 'integer'];
+        yield 'alias bool' => ['tinyint(1)', 'bool'];
+        yield 'alias boolean' => ['tinyint(1)', 'BOOLEAN'];
+        yield 'alias numeric' => ['decimal(10,2)', 'numeric(10,2)'];
+        yield 'alias dec' => ['decimal(10,2) unsigned', 'dec(10, 2) UNSIGNED'];
+        yield 'alias real' => ['double', 'real'];
+
+        yield 'decimal whitespace' => ['decimal(10,2)', 'decimal(10, 2)'];
+        yield 'datetime precision' => ['datetime(3)', 'datetime(3)'];
+        yield 'text' => ['mediumtext', 'MEDIUMTEXT'];
+
+        // Only the type name is case insensitive, the values of `enum` and `set` are not.
+        yield 'enum' => ["enum('A','b')", "enum('A','b')"];
+        yield 'set' => ["set('A','b')", "SET('A','b')"];
+    }
+
+    public function testEqualsIgnoresTypeSpelling(): void
+    {
+        self::assertTrue(new Column('a', 'int(10) unsigned')->equals(new Column('a', 'int unsigned')));
+        self::assertTrue(new Column('a', 'tinyint(1)')->equals(new Column('a', 'bool')));
+        self::assertFalse(new Column('a', 'int')->equals(new Column('a', 'int unsigned')));
+    }
+
     /** @param array{string, bool, string|null, string|null, string|null} $expected */
     #[DataProvider('provideFactories')]
     public function testFactory(array $expected, Column $column): void
@@ -30,14 +82,14 @@ final class ColumnTest extends TestCase
     /** @return iterable<string, array{array{string, bool, string|null, string|null, string|null}, Column}> */
     public static function provideFactories(): iterable
     {
-        yield 'int' => [['int(11)', false, null, null, null], Column::int('a')];
-        yield 'int unsigned' => [['int(10) unsigned', false, null, null, null], Column::int('a', unsigned: true)];
-        yield 'int auto increment' => [['int(10) unsigned', false, null, 'auto_increment', null], Column::int('a', unsigned: true, autoIncrement: true)];
-        yield 'int with default' => [['int(11)', true, '-5', null, 'c'], Column::int('a', nullable: true, default: -5, comment: 'c')];
-        yield 'tinyint' => [['tinyint(4)', false, '0', null, null], Column::tinyint('a', default: 0)];
-        yield 'smallint unsigned' => [['smallint(5) unsigned', false, null, null, null], Column::smallint('a', unsigned: true)];
-        yield 'mediumint' => [['mediumint(9)', false, null, null, null], Column::mediumint('a')];
-        yield 'bigint unsigned' => [['bigint(20) unsigned', false, null, null, null], Column::bigint('a', unsigned: true)];
+        yield 'int' => [['int', false, null, null, null], Column::int('a')];
+        yield 'int unsigned' => [['int unsigned', false, null, null, null], Column::int('a', unsigned: true)];
+        yield 'int auto increment' => [['int unsigned', false, null, 'auto_increment', null], Column::int('a', unsigned: true, autoIncrement: true)];
+        yield 'int with default' => [['int', true, '-5', null, 'c'], Column::int('a', nullable: true, default: -5, comment: 'c')];
+        yield 'tinyint' => [['tinyint', false, '0', null, null], Column::tinyint('a', default: 0)];
+        yield 'smallint unsigned' => [['smallint unsigned', false, null, null, null], Column::smallint('a', unsigned: true)];
+        yield 'mediumint' => [['mediumint', false, null, null, null], Column::mediumint('a')];
+        yield 'bigint unsigned' => [['bigint unsigned', false, null, null, null], Column::bigint('a', unsigned: true)];
 
         yield 'bool' => [['tinyint(1)', false, null, null, null], Column::bool('a')];
         yield 'bool true' => [['tinyint(1)', false, '1', null, null], Column::bool('a', default: true)];
@@ -115,6 +167,7 @@ final class ColumnTest extends TestCase
     {
         yield 'null' => [null, null];
         yield 'auto increment' => ['auto_increment', 'auto_increment'];
+        yield 'auto increment uppercase' => ['auto_increment', 'AUTO_INCREMENT'];
         yield 'mysql spelling' => ['on update CURRENT_TIMESTAMP', 'on update CURRENT_TIMESTAMP'];
         yield 'mariadb spelling' => ['on update CURRENT_TIMESTAMP', 'on update current_timestamp()'];
         yield 'with precision' => ['on update CURRENT_TIMESTAMP(3)', 'on update current_timestamp(3)'];

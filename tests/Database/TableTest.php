@@ -79,7 +79,7 @@ final class TableTest extends TestCase
 
         self::assertInstanceOf(Column::class, $id);
         self::assertSame('id', $id->getName());
-        self::assertSame('int(11)', $id->getType());
+        self::assertSame('int', $id->getType());
         self::assertFalse($id->isNullable());
         self::assertNull($id->getDefault());
         self::assertSame('auto_increment', $id->getExtra());
@@ -277,13 +277,8 @@ final class TableTest extends TestCase
 
         self::assertEquals($status, $table->getColumn('status'));
 
-        $sql = Sql::factory();
-        if (Sql::MYSQL === $sql->getDbType() && 8 <= (int) $sql->getDbVersion()) {
-            // In MySQL 8 the display width of integers is simulated by Table class to the max width.
-            self::assertEquals('int(11)', $table->getColumn('amount')?->getType());
-        } else {
-            self::assertEquals('int(5)', $table->getColumn('amount')?->getType());
-        }
+        // The display width is normalized away, so the type does not depend on the database engine.
+        self::assertEquals('int', $table->getColumn('amount')?->getType());
     }
 
     public function testEnsurePrimaryIdColumn(): void
@@ -295,7 +290,7 @@ final class TableTest extends TestCase
 
         $id = $table->getColumn('id');
         self::assertInstanceOf(Column::class, $id);
-        self::assertSame('int(10) unsigned', $id->getType());
+        self::assertSame('int unsigned', $id->getType());
         self::assertFalse($id->isNullable());
         self::assertNull($id->getDefault());
         self::assertSame('auto_increment', $id->getExtra());
@@ -609,7 +604,7 @@ final class TableTest extends TestCase
     {
         $table = $this->createTable();
 
-        $table->getColumn('id')->setType('int(10) unsigned');
+        $table->getColumn('id')->setType('int unsigned');
         $table
             ->setName(self::TABLE2)
             ->removeColumn('title')
@@ -625,7 +620,7 @@ final class TableTest extends TestCase
         self::assertFalse($table->hasIndex('i_title'));
         self::assertTrue($table->hasColumn('name'));
         self::assertTrue($table->hasIndex('i_name'));
-        self::assertSame('int(10) unsigned', $table->getColumn('id')?->getType());
+        self::assertSame('int unsigned', $table->getColumn('id')?->getType());
         self::assertEquals(['id', 'name'], $table->getPrimaryKey());
         self::assertEquals(['name'], $table->getIndex('i_name')?->getColumns());
     }
@@ -712,11 +707,12 @@ final class TableTest extends TestCase
     public static function provideIntegerTypes(): iterable
     {
         $types = [
-            'tinyint(4)', 'tinyint(3) unsigned', 'tinyint(1)',
-            'smallint(6)', 'smallint(5) unsigned',
-            'mediumint(9)', 'mediumint(8) unsigned',
-            'int(11)', 'int(10) unsigned',
-            'bigint(20)', 'bigint(20) unsigned',
+            'tinyint(4)', 'tinyint(3) unsigned', 'tinyint(1)', 'tinyint', 'tinyint unsigned',
+            'smallint(6)', 'smallint(5) unsigned', 'smallint', 'smallint unsigned',
+            'mediumint(9)', 'mediumint(8) unsigned', 'mediumint', 'mediumint unsigned',
+            'int(11)', 'int(10) unsigned', 'int', 'int unsigned', 'int(5)',
+            'bigint(20)', 'bigint(20) unsigned', 'bigint', 'bigint unsigned',
+            'int(4) unsigned zerofill',
         ];
 
         foreach ($types as $type) {
