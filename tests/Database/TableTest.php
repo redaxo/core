@@ -78,21 +78,21 @@ final class TableTest extends TestCase
         $id = $table->getColumn('id');
 
         self::assertInstanceOf(Column::class, $id);
-        self::assertSame('id', $id->getName());
-        self::assertSame('int', $id->getType());
-        self::assertFalse($id->isNullable());
-        self::assertNull($id->getDefault());
-        self::assertSame('auto_increment', $id->getExtra());
-        self::assertSame('initial comment for id col', $id->getComment());
+        self::assertSame('id', $id->name);
+        self::assertSame('int', $id->type);
+        self::assertFalse($id->nullable);
+        self::assertNull($id->default);
+        self::assertSame('auto_increment', $id->extra);
+        self::assertSame('initial comment for id col', $id->comment);
 
         $title = $table->getColumn('title');
 
         self::assertInstanceOf(Column::class, $title);
-        self::assertSame('title', $title->getName());
-        self::assertSame('varchar(255)', $title->getType());
-        self::assertTrue($title->isNullable());
-        self::assertSame('Default title', $title->getDefault());
-        self::assertNull($title->getExtra());
+        self::assertSame('title', $title->name);
+        self::assertSame('varchar(255)', $title->type);
+        self::assertTrue($title->nullable);
+        self::assertSame('Default title', $title->default);
+        self::assertNull($title->extra);
 
         self::assertCount(1, $table->getIndexes());
         self::assertTrue($table->hasIndex('i_title'));
@@ -101,9 +101,9 @@ final class TableTest extends TestCase
         $index = $table->getIndex('i_title');
 
         self::assertInstanceOf(Index::class, $index);
-        self::assertSame('i_title', $index->getName());
-        self::assertSame(Index::INDEX, $index->getType());
-        self::assertSame(['title'], $index->getColumns());
+        self::assertSame('i_title', $index->name);
+        self::assertSame(Index::INDEX, $index->type);
+        self::assertSame(['title'], $index->columns);
 
         self::assertTrue($this->createTable2()->exists());
 
@@ -117,11 +117,11 @@ final class TableTest extends TestCase
         $fk = $table2->getForeignKey('test2_fk_test1');
 
         self::assertInstanceOf(ForeignKey::class, $fk);
-        self::assertSame('test2_fk_test1', $fk->getName());
-        self::assertSame(self::TABLE, $fk->getTable());
-        self::assertSame(ForeignKey::RESTRICT, $fk->getOnUpdate());
-        self::assertSame(ForeignKey::RESTRICT, $fk->getOnDelete());
-        self::assertSame(['test1_id' => 'id'], $fk->getColumns());
+        self::assertSame('test2_fk_test1', $fk->name);
+        self::assertSame(self::TABLE, $fk->table);
+        self::assertSame(ForeignKey::RESTRICT, $fk->onUpdate);
+        self::assertSame(ForeignKey::RESTRICT, $fk->onDelete);
+        self::assertSame(['test1_id' => 'id'], $fk->columns);
     }
 
     public function testDrop(): void
@@ -192,7 +192,7 @@ final class TableTest extends TestCase
         $table = Table::get(self::TABLE);
 
         self::assertEquals($title, $table->getColumn('title'));
-        self::assertSame('new title comment', $table->getColumn('title')?->getComment());
+        self::assertSame('new title comment', $table->getColumn('title')?->comment);
     }
 
     public function testChangeColumnComment(): void
@@ -210,7 +210,7 @@ final class TableTest extends TestCase
         $table = Table::get(self::TABLE);
 
         self::assertEquals($id, $table->getColumn('id'));
-        self::assertSame('changed id comment', $table->getColumn('id')?->getComment());
+        self::assertSame('changed id comment', $table->getColumn('id')?->comment);
     }
 
     public function testRemoveColumnComment(): void
@@ -230,7 +230,7 @@ final class TableTest extends TestCase
         $idNew = $table->getColumn('id');
         self::assertInstanceOf(Column::class, $idNew);
         self::assertEquals($id, $idNew);
-        self::assertNull($idNew->getComment());
+        self::assertNull($idNew->comment);
     }
 
     public function testEnsureColumn(): void
@@ -278,7 +278,7 @@ final class TableTest extends TestCase
         self::assertEquals($status, $table->getColumn('status'));
 
         // The display width is normalized away, so the type does not depend on the database engine.
-        self::assertEquals('int', $table->getColumn('amount')?->getType());
+        self::assertEquals('int', $table->getColumn('amount')?->type);
     }
 
     public function testEnsurePrimaryIdColumn(): void
@@ -290,10 +290,10 @@ final class TableTest extends TestCase
 
         $id = $table->getColumn('id');
         self::assertInstanceOf(Column::class, $id);
-        self::assertSame('int unsigned', $id->getType());
-        self::assertFalse($id->isNullable());
-        self::assertNull($id->getDefault());
-        self::assertSame('auto_increment', $id->getExtra());
+        self::assertSame('int unsigned', $id->type);
+        self::assertFalse($id->nullable);
+        self::assertNull($id->default);
+        self::assertSame('auto_increment', $id->extra);
         self::assertSame(['id'], $table->getPrimaryKey());
     }
 
@@ -305,13 +305,13 @@ final class TableTest extends TestCase
             ->alter();
 
         self::assertTrue($table->hasColumn('createdate'));
-        self::assertSame('datetime', $table->getColumn('createdate')?->getType());
+        self::assertSame('datetime', $table->getColumn('createdate')?->type);
         self::assertTrue($table->hasColumn('createuser'));
-        self::assertSame('varchar(255)', $table->getColumn('createuser')?->getType());
+        self::assertSame('varchar(255)', $table->getColumn('createuser')?->type);
         self::assertTrue($table->hasColumn('updatedate'));
-        self::assertSame('datetime', $table->getColumn('updatedate')?->getType());
+        self::assertSame('datetime', $table->getColumn('updatedate')?->type);
         self::assertTrue($table->hasColumn('updateuser'));
-        self::assertSame('varchar(255)', $table->getColumn('updateuser')?->getType());
+        self::assertSame('varchar(255)', $table->getColumn('updateuser')?->type);
     }
 
     public function testRenameColumn(): void
@@ -332,7 +332,7 @@ final class TableTest extends TestCase
 
         self::assertFalse($table->hasColumn('title'));
         self::assertTrue($table->hasColumn('name'));
-        self::assertSame('varchar(255)', $table->getColumn('name')?->getType());
+        self::assertSame('varchar(255)', $table->getColumn('name')?->type);
 
         $table
             ->renameColumn('id', 'pid')
@@ -394,8 +394,8 @@ final class TableTest extends TestCase
 
         self::assertSame($primaryKey, $table->getPrimaryKey());
 
-        $table->getColumn('id')->setExtra(null);
         $table
+            ->ensureColumn(Column::int('id'))
             ->setPrimaryKey(null)
             ->alter();
 
@@ -482,7 +482,7 @@ final class TableTest extends TestCase
 
         self::assertFalse($table->hasIndex('i_title'));
         self::assertTrue($table->hasIndex('index_title'));
-        self::assertSame(['title'], $table->getIndex('index_title')?->getColumns());
+        self::assertSame(['title'], $table->getIndex('index_title')?->columns);
     }
 
     public function testRemoveIndex(): void
@@ -526,7 +526,7 @@ final class TableTest extends TestCase
         // assertEquals compares arrays order-insensitively, so the column order needs its own assertion.
         self::assertSame(
             ['config_namespace' => 'namespace', 'config_key' => 'key'],
-            $table->getForeignKey('test1_fk_config')?->getColumns(),
+            $table->getForeignKey('test1_fk_config')?->columns,
         );
     }
 
@@ -580,7 +580,7 @@ final class TableTest extends TestCase
 
         self::assertFalse($table2->hasForeignKey('test2_fk_test1'));
         self::assertTrue($table2->hasForeignKey('fk_test2_test1'));
-        self::assertSame(['test1_id' => 'id'], $table2->getForeignKey('fk_test2_test1')?->getColumns());
+        self::assertSame(['test1_id' => 'id'], $table2->getForeignKey('fk_test2_test1')?->columns);
     }
 
     public function testRemoveForeignKey(): void
@@ -604,8 +604,8 @@ final class TableTest extends TestCase
     {
         $table = $this->createTable();
 
-        $table->getColumn('id')->setType('int unsigned');
         $table
+            ->ensureColumn(Column::int('id', unsigned: true, autoIncrement: true))
             ->setName(self::TABLE2)
             ->removeColumn('title')
             ->addColumn(new Column('name', 'varchar(20)'))
@@ -620,9 +620,9 @@ final class TableTest extends TestCase
         self::assertFalse($table->hasIndex('i_title'));
         self::assertTrue($table->hasColumn('name'));
         self::assertTrue($table->hasIndex('i_name'));
-        self::assertSame('int unsigned', $table->getColumn('id')?->getType());
+        self::assertSame('int unsigned', $table->getColumn('id')?->type);
         self::assertEquals(['id', 'name'], $table->getPrimaryKey());
-        self::assertEquals(['name'], $table->getIndex('i_name')?->getColumns());
+        self::assertEquals(['name'], $table->getIndex('i_name')?->columns);
     }
 
     public function testEnsure(): void
@@ -662,7 +662,7 @@ final class TableTest extends TestCase
 
         self::assertSame($expectedOrder, array_keys($table->getColumns()));
         self::assertTrue($table->hasIndex('i_status_timestamp'));
-        self::assertSame(Index::UNIQUE, $table->getIndex('i_status_timestamp')?->getType());
+        self::assertSame(Index::UNIQUE, $table->getIndex('i_status_timestamp')?->type);
         self::assertTrue($table->hasIndex('i_description'));
 
         Table::clearInstance(self::TABLE);
@@ -670,10 +670,10 @@ final class TableTest extends TestCase
 
         self::assertSame(['title', 'id'], $table->getPrimaryKey());
         self::assertTrue($table->hasColumn('description'));
-        self::assertNull($table->getColumn('title')->getDefault());
+        self::assertNull($table->getColumn('title')?->default);
         self::assertSame($expectedOrder, array_keys($table->getColumns()));
         self::assertTrue($table->hasIndex('i_status_timestamp'));
-        self::assertSame(Index::UNIQUE, $table->getIndex('i_status_timestamp')?->getType());
+        self::assertSame(Index::UNIQUE, $table->getIndex('i_status_timestamp')?->type);
         self::assertTrue($table->hasIndex('i_description'));
     }
 
@@ -733,8 +733,8 @@ final class TableTest extends TestCase
         $readColumn = Table::get(self::TABLE)->getColumn('foo');
         self::assertInstanceOf(Column::class, $readColumn);
 
-        self::assertSame($expectedDefault, $readColumn->getDefault());
-        self::assertSame($expectedExtra, $readColumn->getExtra());
+        self::assertSame($expectedDefault, $readColumn->default);
+        self::assertSame($expectedExtra, $readColumn->extra);
         self::assertTrue($column->equals($readColumn));
     }
 

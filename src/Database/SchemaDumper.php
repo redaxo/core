@@ -88,9 +88,9 @@ final readonly class SchemaDumper
      */
     private function getColumnByFactory(Column $column): ?string
     {
-        $type = $column->getType();
-        $extra = $column->getExtra();
-        $default = $column->getDefault();
+        $type = $column->type;
+        $extra = $column->extra;
+        $default = $column->default;
 
         // Arguments before and after the common `$nullable` and `$default` parameters.
         $leading = [];
@@ -170,13 +170,13 @@ final readonly class SchemaDumper
             return null;
         }
 
-        $arguments = [$this->scalar($column->getName())];
+        $arguments = [$this->scalar($column->name)];
 
         foreach ($leading as $name => $value) {
             $arguments[] = is_string($name) ? $name . ': ' . $value : $value;
         }
 
-        if ($column->isNullable()) {
+        if ($column->nullable) {
             $arguments[] = 'nullable: true';
         }
 
@@ -188,8 +188,8 @@ final readonly class SchemaDumper
             $arguments[] = $name . ': ' . $value;
         }
 
-        if (null !== $column->getComment()) {
-            $arguments[] = 'comment: ' . $this->scalar($column->getComment());
+        if (null !== $column->comment) {
+            $arguments[] = 'comment: ' . $this->scalar($column->comment);
         }
 
         return '\\' . Column::class . '::' . $method . '(' . implode(', ', $arguments) . ')';
@@ -197,22 +197,22 @@ final readonly class SchemaDumper
 
     private function getColumnByConstructor(Column $column): string
     {
-        $arguments = [$this->scalar($column->getName()), $this->scalar($column->getType())];
+        $arguments = [$this->scalar($column->name), $this->scalar($column->type)];
 
-        if ($column->isNullable()) {
+        if ($column->nullable) {
             $arguments[] = 'nullable: true';
         }
 
-        if (null !== $column->getDefault()) {
-            $arguments[] = 'default: ' . $this->scalar($column->getDefault());
+        if (null !== $column->default) {
+            $arguments[] = 'default: ' . $this->scalar($column->default);
         }
 
-        if (null !== $column->getExtra()) {
-            $arguments[] = 'extra: ' . $this->scalar($column->getExtra());
+        if (null !== $column->extra) {
+            $arguments[] = 'extra: ' . $this->scalar($column->extra);
         }
 
-        if (null !== $column->getComment()) {
-            $arguments[] = 'comment: ' . $this->scalar($column->getComment());
+        if (null !== $column->comment) {
+            $arguments[] = 'comment: ' . $this->scalar($column->comment);
         }
 
         return 'new \\' . Column::class . '(' . implode(', ', $arguments) . ')';
@@ -221,11 +221,11 @@ final readonly class SchemaDumper
     private function getIndex(Index $index): string
     {
         $parameters = [
-            $this->scalar($index->getName()),
-            $this->simpleArray($index->getColumns()),
+            $this->scalar($index->name),
+            $this->simpleArray($index->columns),
         ];
 
-        if (Index::INDEX !== $type = $index->getType()) {
+        if (Index::INDEX !== $type = $index->type) {
             $parameters[] = match ($type) {
                 Index::UNIQUE => '\\' . Index::class . '::UNIQUE',
                 Index::FULLTEXT => '\\' . Index::class . '::FULLTEXT',
@@ -238,9 +238,9 @@ final readonly class SchemaDumper
     private function getForeignKey(ForeignKey $foreignKey): string
     {
         $parameters = [
-            $this->scalar($foreignKey->getName()),
-            $this->tableName($foreignKey->getTable()),
-            $this->map($foreignKey->getColumns()),
+            $this->scalar($foreignKey->name),
+            $this->tableName($foreignKey->table),
+            $this->map($foreignKey->columns),
         ];
 
         $options = [
@@ -250,14 +250,14 @@ final readonly class SchemaDumper
             ForeignKey::SET_NULL => '\\' . ForeignKey::class . '::SET_NULL',
         ];
 
-        $nonDefaultOnDelete = ForeignKey::RESTRICT !== $foreignKey->getOnDelete();
+        $nonDefaultOnDelete = ForeignKey::RESTRICT !== $foreignKey->onDelete;
 
-        if ($nonDefaultOnDelete || ForeignKey::RESTRICT !== $foreignKey->getOnUpdate()) {
-            $parameters[] = $options[$foreignKey->getOnUpdate()];
+        if ($nonDefaultOnDelete || ForeignKey::RESTRICT !== $foreignKey->onUpdate) {
+            $parameters[] = $options[$foreignKey->onUpdate];
         }
 
         if ($nonDefaultOnDelete) {
-            $parameters[] = $options[$foreignKey->getOnDelete()];
+            $parameters[] = $options[$foreignKey->onDelete];
         }
 
         return 'new \\' . ForeignKey::class . '(' . implode(', ', $parameters) . ')';
