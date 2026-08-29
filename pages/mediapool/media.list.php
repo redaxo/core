@@ -218,7 +218,7 @@ $panel .= '
         <table class="table table-striped table-hover">
             <thead>
             <tr>
-                <th class="rex-table-icon"><a class="rex-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . ' title="' . I18n::msg('pool_file_insert') . '"><i class="rex-icon rex-icon-add-media"></i></a></th>
+                <th class="rex-table-icon"><a class="rex-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media"></i></a></th>
                 <th class="rex-table-thumbnail">' . I18n::msg('pool_file_thumbnail') . '</th>
                 <th>' . I18n::msg('pool_file_info') . ' / ' . I18n::msg('pool_file_description') . '</th>
                 <th>' . I18n::msg('pool_last_update') . '</th>

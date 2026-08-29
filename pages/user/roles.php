@@ -48,7 +48,7 @@ if ('' == $func) {
     $list->addTableAttribute('class', 'table-striped table-hover');
 
     $tdIcon = '<i class="rex-icon rex-icon-userrole"></i>';
-    $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['func' => 'add', 'default_value' => 1]) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . ' title="' . I18n::msg('create_user_role') . '"><i class="rex-icon rex-icon-add-userrole"></i></a>';
+    $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['func' => 'add', 'default_value' => 1]) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . '><i class="rex-icon rex-icon-add-userrole"></i></a>';
     $list->addColumn($thIcon, $tdIcon, 0, ['<th class="rex-table-icon">###VALUE###</th>', '<td class="rex-table-icon">###VALUE###</td>']);
     $list->setColumnParams($thIcon, ['func' => 'edit', 'id' => '###id###']);
 

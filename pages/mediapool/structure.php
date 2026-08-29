@@ -108,7 +108,7 @@ if ($PERMALL) {
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'add') . ' title="' . I18n::msg('pool_kat_create') . '"><i class="rex-icon rex-icon-add-media-category"></i></a></th>
+                    <th class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'add') . '><i class="rex-icon rex-icon-add-media-category"></i></a></th>
                     <th class="rex-table-id">' . I18n::msg('id') . '</th>
                     <th>' . I18n::msg('pool_kat_name') . '</th>
                     <th class="rex-table-action" colspan="2">' . I18n::msg('pool_kat_function') . '</th>
