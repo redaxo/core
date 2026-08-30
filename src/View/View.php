@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\View;
 
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\Navigation;
 use Redaxo\Core\Backend\Page;
@@ -272,7 +273,7 @@ final class View
 
         $addSubmit = '';
         if ($closeForm && '' != $openerInputField) {
-            $addSubmit = '<button class="btn btn-save" type="submit" name="saveandexit" value="' . I18n::msg('pool_file_upload_get') . '"' . Core::getAccesskey(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('pool_file_upload_get') . '</button>';
+            $addSubmit = '<button class="btn btn-save" type="submit" name="saveandexit" value="' . I18n::msg('pool_file_upload_get') . '"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('pool_file_upload_get') . '</button>';
         }
 
         $panel = '';
@@ -315,7 +316,7 @@ final class View
         $formElements = [];
 
         $e = [];
-        $e['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="save" value="' . $buttonTitle . '"' . Core::getAccesskey($buttonTitle, 'save') . '>' . $buttonTitle . '</button>';
+        $e['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="save" value="' . $buttonTitle . '"' . Accesskey::attributes($buttonTitle, 'save') . '>' . $buttonTitle . '</button>';
         $formElements[] = $e;
 
         $e = [];

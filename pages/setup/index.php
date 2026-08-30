@@ -145,7 +145,6 @@ if ($step > 3) {
             $config['db'][1]['password'] = $passwd;
         }
         $config['db'][1]['name'] = trim(Request::post('dbname', 'string'));
-        $config['use_https'] = Request::post('use_https', 'string');
 
         if (Request::post('db_ssl_toggle', 'boolean')) {
             $sslCaMode = Request::post('db_ssl_ca_mode', 'string');
@@ -167,12 +166,6 @@ if ($step > 3) {
             $config['db'][1]['ssl_ca'] = null;
             $config['db'][1]['ssl_key'] = null;
             $config['db'][1]['ssl_cert'] = null;
-        }
-
-        if ('true' === $config['use_https']) {
-            $config['use_https'] = true;
-        } elseif ('false' === $config['use_https']) {
-            $config['use_https'] = false;
         }
     }
 

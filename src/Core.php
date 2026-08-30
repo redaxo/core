@@ -148,8 +148,6 @@ final class Core
      *
      * @return (
      *      $key is 'login' ? BackendLogin|null :
-     *      ($key is 'use_accesskeys' ? bool :
-     *      ($key is 'accesskeys' ? array<string, string> :
      *      ($key is 'timer' ? Timer :
      *      ($key is 'server' ? string :
      *      ($key is 'servername' ? string :
@@ -160,7 +158,7 @@ final class Core
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      ))))))))))))
+     *      ))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -459,25 +457,6 @@ final class Core
             return Formatter::version($version, $format);
         }
         return $version;
-    }
-
-    /**
-     * Returns the title tag and if the property "use_accesskeys" is true, the accesskey tag.
-     *
-     * @param string $title Title
-     * @param string $key Key for the accesskey
-     * @return non-empty-string
-     */
-    public static function getAccesskey(string $title, string $key): string
-    {
-        if (self::getProperty('use_accesskeys')) {
-            $accesskeys = (array) self::getProperty('accesskeys', []);
-            if (isset($accesskeys[$key])) {
-                return ' accesskey="' . $accesskeys[$key] . '" title="' . $title . ' [' . $accesskeys[$key] . ']"';
-            }
-        }
-
-        return ' title="' . $title . '"';
     }
 
     /** @internal */
