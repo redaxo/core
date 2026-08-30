@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Database;
 
+use DateTimeImmutable;
 use Iterator;
 use JsonException;
 use Override;
@@ -21,6 +22,7 @@ use Throwable;
 
 use function array_key_exists;
 use function assert;
+use function date_default_timezone_get;
 use function defined;
 use function gettype;
 use function in_array;
@@ -146,8 +148,7 @@ class Sql implements Iterator
                 );
                 self::$pdo[$db] = $conn;
 
-                // ggf. Strict Mode abschalten
-                self::factory($db)->setQuery('SET SESSION SQL_MODE="ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"');
+                self::initSession($db);
             }
         } catch (PDOException $e) {
             if ('cli' === PHP_SAPI) {
@@ -155,6 +156,59 @@ class Sql implements Iterator
             }
             throw new CouldNotConnectException('Could not connect to database (DB: ' . $db . ').', $e, $this);
         }
+    }
+
+    /**
+     * Sets the session variables that every connection needs.
+     *
+     * Without an explicit time zone the session follows the database server while php follows its own
+     * configuration, so `NOW()` and `timestamp` columns disagree with the times php writes. A named zone
+     * is preferred as it survives a daylight saving change, but it needs the `mysql.time_zone%` tables,
+     * which are usually empty. `CONVERT_TZ()` reports whether the zone is known without requiring access
+     * to the `mysql` database, so the choice fits into this one statement.
+     *
+     * @param positive-int $db
+     */
+    private static function initSession(int $db): void
+    {
+        $timeZone = date_default_timezone_get();
+        $parameters = [$timeZone];
+
+        // Assigning the current value is a no-op, for the zones without any usable offset.
+        $fallback = '@@session.time_zone';
+
+        if (null !== $offset = self::getTimeZoneOffset()) {
+            $fallback = '?';
+            $parameters[] = $offset;
+        }
+
+        $parameters[] = $timeZone;
+
+        self::factory($db)->setQuery(
+            'SET SESSION SQL_MODE = "ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"'
+            // The source zone is given as an offset, so that the probe only tells whether the target zone is known.
+            . ', time_zone = IF(CONVERT_TZ("2000-01-01 00:00:00", "+00:00", ?) IS NULL, ' . $fallback . ', ?)',
+            $parameters,
+        );
+    }
+
+    /**
+     * The current utc offset of php's time zone, or null when the database cannot express it.
+     *
+     * Being a snapshot, it goes stale for a process that runs across a daylight saving change.
+     */
+    private static function getTimeZoneOffset(): ?string
+    {
+        $now = new DateTimeImmutable();
+        $offset = $now->getOffset();
+
+        // MariaDB accepts `-12:59` to `+13:00` only, leaving out real zones like `Pacific/Kiritimati`
+        // (+14:00). Setting one anyway would break the connection.
+        if ($offset < -(12 * 3600 + 59 * 60) || $offset > 13 * 3600) {
+            return null;
+        }
+
+        return $now->format('P');
     }
 
     /**

@@ -88,6 +88,23 @@ final class SqlTest extends TestCase
         self::assertTrue(true !== Sql::checkDbConnection($dbConfig->host, $dbConfig->login, $dbConfig->password, 'fu-database'));
     }
 
+    public function testSessionTimeZoneFollowsPhp(): void
+    {
+        $timeZone = Sql::factory()->getArray('SELECT @@session.time_zone AS tz')[0]['tz'];
+
+        // The named zone is used when the database knows it, otherwise the current offset.
+        self::assertContains($timeZone, [date_default_timezone_get(), date('P')]);
+    }
+
+    /** Without a matching session time zone the database clock is off by the difference to the server timezone. */
+    public function testCurrentTimeMatchesPhp(): void
+    {
+        $now = Sql::factory()->getArray('SELECT NOW() AS now')[0]['now'];
+
+        self::assertIsString($now);
+        self::assertLessThanOrEqual(5, abs(Type::int(strtotime($now)) - time()));
+    }
+
     #[DataProvider('provideDbType')]
     public function testDbType(string $expected, string $version): void
     {
