@@ -161,26 +161,20 @@ class Sql implements Iterator
     /**
      * Sets the session variables that every connection needs.
      *
-     * The time zone has to be set, because otherwise the session follows the database server while php
-     * follows its own configuration, so `NOW()`, `CURRENT_TIMESTAMP` and `timestamp` columns would
-     * disagree with the times php writes.
-     *
-     * A named time zone is preferred, as it keeps working across a daylight saving change, but it
-     * requires the `mysql.time_zone%` tables, which are empty unless an administrator imported them.
-     * `CONVERT_TZ()` reports whether the zone is known, which needs no access to the `mysql` database,
-     * so the choice happens in the same statement and costs no additional round trip.
+     * Without an explicit time zone the session follows the database server while php follows its own
+     * configuration, so `NOW()` and `timestamp` columns disagree with the times php writes. A named zone
+     * is preferred as it survives a daylight saving change, but it needs the `mysql.time_zone%` tables,
+     * which are usually empty. `CONVERT_TZ()` reports whether the zone is known without requiring access
+     * to the `mysql` database, so the choice fits into this one statement.
      *
      * @param positive-int $db
-     *
-     * @throws SqlException
      */
     private static function initSession(int $db): void
     {
         $timeZone = date_default_timezone_get();
         $parameters = [$timeZone];
 
-        // Falling back to the unchanged session value covers the zones that cannot be expressed as an
-        // offset either, see below.
+        // Assigning the current value is a no-op, for the zones without any usable offset.
         $fallback = '@@session.time_zone';
 
         if (null !== $offset = self::getTimeZoneOffset()) {
@@ -201,17 +195,15 @@ class Sql implements Iterator
     /**
      * The current utc offset of php's time zone, or null when the database cannot express it.
      *
-     * The offset is the one in effect when the connection is made, so a process running across a
-     * daylight saving change keeps the old offset until it reconnects. That is why a named time zone
-     * is preferred whenever the database knows it.
+     * Being a snapshot, it goes stale for a process that runs across a daylight saving change.
      */
     private static function getTimeZoneOffset(): ?string
     {
         $now = new DateTimeImmutable();
         $offset = $now->getOffset();
 
-        // MariaDB accepts offsets from `-12:59` to `+13:00` only, which leaves out a few real zones such
-        // as `Pacific/Kiritimati` (+14:00). Setting it anyway would break the connection.
+        // MariaDB accepts `-12:59` to `+13:00` only, leaving out real zones like `Pacific/Kiritimati`
+        // (+14:00). Setting one anyway would break the connection.
         if ($offset < -(12 * 3600 + 59 * 60) || $offset > 13 * 3600) {
             return null;
         }
