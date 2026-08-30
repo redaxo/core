@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Content\ApiFunction\ArticleAdd;
 use Redaxo\Core\Content\ApiFunction\ArticleDelete;
 use Redaxo\Core\Content\ApiFunction\ArticleEdit;
@@ -86,7 +87,7 @@ if ($category) {
 
 $addCategory = '';
 if ($user->hasPerm('addCategory[]') && $structureContext->hasCategoryPermission()) {
-    $addCategory = '<a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_cat', 'catstart' => $structureContext->catStart]) . '"' . Core::getAccesskey(I18n::msg('add_category'), 'add') . '><i class="rex-icon rex-icon-add-category"></i></a>';
+    $addCategory = '<a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_cat', 'catstart' => $structureContext->catStart]) . '"' . Accesskey::attributes(I18n::msg('add_category'), 'add') . '><i class="rex-icon rex-icon-add-category"></i></a>';
 }
 
 $dataColspan = 5;
@@ -168,7 +169,7 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
     ]));
     $addButtons = CategoryAdd::getHiddenFields() . '
         <input type="hidden" name="parent-category-id" value="' . $structureContext->categoryId . '" />
-        <button class="btn btn-save" type="submit" name="category-add-button"' . Core::getAccesskey(I18n::msg('add_category'), 'save') . '>' . I18n::msg('add_category') . '</button>';
+        <button class="btn btn-save" type="submit" name="category-add-button"' . Accesskey::attributes(I18n::msg('add_category'), 'save') . '>' . I18n::msg('add_category') . '</button>';
 
     $class = 'mark';
 
@@ -238,7 +239,7 @@ if ($KAT->getRows() > 0) {
 
                 $addButtons = CategoryEdit::getHiddenFields() . '
                 <input type="hidden" name="category-id" value="' . $structureContext->editId . '" />
-                <button class="btn btn-save" type="submit" name="category-edit-button"' . Core::getAccesskey(I18n::msg('save_category'), 'save') . '>' . I18n::msg('save_category') . '</button>';
+                <button class="btn btn-save" type="submit" name="category-edit-button"' . Accesskey::attributes(I18n::msg('save_category'), 'save') . '>' . I18n::msg('save_category') . '</button>';
 
                 $class = 'mark';
                 if ('' != $metaButtons) {
@@ -353,7 +354,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     // --------------------- ARTIKEL LIST
     $artAddLink = '';
     if ($user->hasPerm('addArticle[]') && $structureContext->hasCategoryPermission()) {
-        $artAddLink = '<a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_art', 'artstart' => $structureContext->artStart]) . '"' . Core::getAccesskey(I18n::msg('article_add'), 'add_2') . '><i class="rex-icon rex-icon-add-article"></i></a>';
+        $artAddLink = '<a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_art', 'artstart' => $structureContext->artStart]) . '"' . Accesskey::attributes(I18n::msg('article_add'), 'add_2') . '><i class="rex-icon rex-icon-add-article"></i></a>';
     }
 
     $articleOrderBy = Extension::dispatch(new ExtensionPoint('PAGE_STRUCTURE_ARTICLE_ORDER_BY', 'priority, name', [
@@ -442,7 +443,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
                     ' . $tmplTd . '
                     <td class="rex-table-date" data-title="' . I18n::msg('header_date') . '">' . Formatter::intlDate(time()) . '</td>
                     <td class="rex-table-priority" data-title="' . I18n::msg('header_priority') . '"><input class="form-control" type="number" name="article-position" value="' . ($artPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" /></td>
-                    <td class="rex-table-action" colspan="' . $colspan . '">' . ArticleAdd::getHiddenFields() . '<button class="btn btn-save" type="submit" name="artadd_function"' . Core::getAccesskey(I18n::msg('article_add'), 'save') . '>' . I18n::msg('article_add') . '</button></td>
+                    <td class="rex-table-action" colspan="' . $colspan . '">' . ArticleAdd::getHiddenFields() . '<button class="btn btn-save" type="submit" name="artadd_function"' . Accesskey::attributes(I18n::msg('article_add'), 'save') . '>' . I18n::msg('article_add') . '</button></td>
                 </tr>
                             ';
     } elseif (0 === $sql->getRows()) {
@@ -487,7 +488,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
                             ' . $tmplTd . '
                             <td class="rex-table-date" data-title="' . I18n::msg('header_date') . '">' . Formatter::intlDate($sql->getDateTimeValue('createdate')) . '</td>
                             <td class="rex-table-priority" data-title="' . I18n::msg('header_priority') . '"><input class="form-control" type="number" name="article-position" value="' . escape($sql->getValue('priority')) . '" required min="1" inputmode="numeric" /></td>
-                            <td class="rex-table-action" colspan="' . $colspan . '">' . ArticleEdit::getHiddenFields() . '<button class="btn btn-save" type="submit" name="artedit_function"' . Core::getAccesskey(I18n::msg('article_save'), 'save') . '>' . I18n::msg('article_save') . '</button></td>
+                            <td class="rex-table-action" colspan="' . $colspan . '">' . ArticleEdit::getHiddenFields() . '<button class="btn btn-save" type="submit" name="artedit_function"' . Accesskey::attributes(I18n::msg('article_save'), 'save') . '>' . I18n::msg('article_save') . '</button></td>
                         </tr>';
         } elseif ($structureContext->hasCategoryPermission()) {
             // --------------------- ARTIKEL NORMAL VIEW | EDIT AND ENTER

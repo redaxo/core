@@ -65,10 +65,3 @@ db:
         ssl_cert: null
         ssl_ca: null
         ssl_verify_server_cert: true
-use_accesskeys: true
-accesskeys:
-    save: s
-    apply: x
-    delete: d
-    add: a
-    add_2: y

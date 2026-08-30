@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
@@ -271,7 +272,7 @@ $content .= '</fieldset>';
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="upd_profile_button" ' . Core::getAccesskey(I18n::msg('profile_save'), 'save') . '>' . I18n::msg('profile_save') . '</button>';
+$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="upd_profile_button" ' . Accesskey::attributes(I18n::msg('profile_save'), 'save') . '>' . I18n::msg('profile_save') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -348,7 +349,7 @@ $content .= '</fieldset>';
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="upd_psw_button" ' . Core::getAccesskey(I18n::msg('profile_save_psw'), 'save') . '>' . I18n::msg('profile_save_psw') . '</button>';
+$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="upd_psw_button" ' . Accesskey::attributes(I18n::msg('profile_save_psw'), 'save') . '>' . I18n::msg('profile_save_psw') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -369,7 +370,7 @@ $content .= '</fieldset>';
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="add_passkey" ' . Core::getAccesskey(I18n::msg('passkey_add'), 'save') . '>' . I18n::msg('passkey_add') . '</button>';
+$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="add_passkey" ' . Accesskey::attributes(I18n::msg('passkey_add'), 'save') . '>' . I18n::msg('passkey_add') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();

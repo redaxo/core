@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Content;
 
 use Override;
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\ApiFunction\ArticleSliceMove;
 use Redaxo\Core\Content\ApiFunction\ArticleSliceStatusChange;
@@ -411,7 +412,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Core::getAccesskey(I18n::msg('add_block'), 'save') . '>' . I18n::msg('add_block') . '</button>';
+        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('add_block'), 'save') . '>' . I18n::msg('add_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -466,11 +467,11 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Core::getAccesskey(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('save_block') . '</button>';
+        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('save_block') . '</button>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-apply" type="submit" name="btn_update" value="1"' . Core::getAccesskey(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
+        $n['field'] = '<button class="btn btn-apply" type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();

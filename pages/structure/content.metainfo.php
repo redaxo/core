@@ -1,5 +1,6 @@
 <?php
 
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\ApiFunction\ArticleStatusChange;
 use Redaxo\Core\Content\Article;
@@ -139,7 +140,7 @@ if (1 == $article->getRows()) {
                         <input type="hidden" name="ctype" value="' . $ctype . '" />
                         ' . $csrfToken->getHiddenField() . '
                         ' . $form . '
-                        <button class="btn btn-primary pull-left" type="submit" name="savemeta"' . Core::getAccesskey(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
+                        <button class="btn btn-primary pull-left" type="submit" name="savemeta"' . Accesskey::attributes(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
                     </fieldset>
                 </form>
               </div>
