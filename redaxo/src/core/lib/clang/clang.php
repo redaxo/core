@@ -243,10 +243,14 @@ class rex_clang
         }
 
         $file = rex_path::coreCache('clang.cache');
-        if (!is_file($file)) {
-            rex_clang_service::generateCache();
+        $cache = rex_file::getCache($file);
+
+        // deliberately no is_file() check: a parallel cache clear could delete the file between check and read
+        if (!$cache) {
+            $cache = rex_clang_service::generateCache();
         }
-        foreach (rex_file::getCache($file) as $id => $data) {
+
+        foreach ($cache as $id => $data) {
             $clang = new self();
             $clang->id = (int) $id;
             $clang->priority = (int) $data['priority'];

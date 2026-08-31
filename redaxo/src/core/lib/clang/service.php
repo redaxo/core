@@ -127,7 +127,7 @@ class rex_clang_service
      * Schreibt Spracheigenschaften in die Datei include/clang.php.
      *
      * @throws rex_exception
-     * @return void
+     * @return array<int, array<string, scalar|null>>
      */
     public static function generateCache()
     {
@@ -146,5 +146,7 @@ class rex_clang_service
         if (!rex_file::putCache($file, $clangs)) {
             throw new rex_exception('Clang cache file could not be generated');
         }
+
+        return $clangs;
     }
 }
