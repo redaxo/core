@@ -57,22 +57,17 @@ jobs:
                 with:
                     node-version: 23
                     cache: npm
-                    cache-dependency-path: .github/workflows/visual-tests.yml
+                    cache-dependency-path: package.json
 
             -   name: Install npm packages
-                run: |
-                    npm install playwright pixelmatch pngjs fs mkdirp
-                    npm pkg set type=module
+                run: npm install
 
-            -   name: Get installed Playwright version (used in cache key)
-                id: playwright-version
-                run: echo "PLAYWRIGHT_VERSION=$(node -e "process.stdout.write(require('playwright/package.json').version)")" >> $GITHUB_ENV
             -   name: Cache Playwright browser binaries
                 uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
                 id: playwright-cache
                 with:
                     path: ~/.cache/ms-playwright
-                    key: playwright-${{ env.PLAYWRIGHT_VERSION }}
+                    key: playwright-${{ hashFiles('package.json') }}
             -   name: Install Playwright browsers binaries if cache missed
                 run: npx playwright install chromium --with-deps
                 if: steps.playwright-cache.outputs.cache-hit != 'true'
