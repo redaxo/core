@@ -1,11 +1,12 @@
 /**
  * REDAXO Visual Regression testing
  *
- * 1. Start a local php-server with `php -S localhost:80` from within the project root
- * 2. Make sure a database server is running
- * 3. Make sure a admin-user with login `myusername` and password `mypassword` exists
- * 4. Make sure the REDAXO instance running at START_URL is accessible and login screen appears on the url
- * 5. Start the visual recording with `node .tools/visual-tests/visual-record.js`
+ * 1. Install the npm dependencies with `npm install`
+ * 2. Start a local php-server with `php -S localhost:80` from within the project root
+ * 3. Make sure a database server is running
+ * 4. Make sure a admin-user with login `myusername` and password `mypassword` exists
+ * 5. Make sure the REDAXO instance running at START_URL is accessible and login screen appears on the url
+ * 6. Start the visual recording with `node .tools/visual-tests/visual-record.js`
  */
 
 import playwright from 'playwright';
