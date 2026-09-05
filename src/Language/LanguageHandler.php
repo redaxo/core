@@ -152,8 +152,12 @@ final class LanguageHandler
         ]));
     }
 
-    /** Schreibt Spracheigenschaften in die Datei include/clang.php. */
-    public static function generateCache(): void
+    /**
+     * Schreibt Spracheigenschaften in die Datei include/clang.php.
+     *
+     * @return array<int, array<string, scalar|null>>
+     */
+    public static function generateCache(): array
     {
         $lg = Sql::factory();
         $lg->setQuery('select * from ' . Core::getTablePrefix() . 'clang order by priority');
@@ -170,5 +174,7 @@ final class LanguageHandler
         if (!File::putCache($file, $clangs)) {
             throw new RuntimeException('Language cache file could not be generated');
         }
+
+        return $clangs;
     }
 }
