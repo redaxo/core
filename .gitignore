@@ -4,6 +4,7 @@
 /assets/
 /media/
 /node_modules/
+/package-lock.json
 /redaxo/cache/
 /redaxo/data/
 /releases/
