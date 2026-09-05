@@ -28,7 +28,7 @@
     },
     "replace": {
         "composer/ca-bundle": "1.5.14",
-        "enshrined/svg-sanitize": "0.22.0",
+        "enshrined/svg-sanitize": "1.0.0",
         "erusev/parsedown": "1.8.0",
         "erusev/parsedown-extra": "0.9.0",
         "filp/whoops": "2.18.4",
