@@ -100,13 +100,13 @@ class rex
                 if (!isset($value['throw_always_exception']) || !$value['throw_always_exception']) {
                     $value['throw_always_exception'] = false;
                 } elseif (is_array($value['throw_always_exception'])) {
-                    $value['throw_always_exception'] = array_reduce($value['throw_always_exception'], static function ($result, $item) {
+                    $value['throw_always_exception'] = array_reduce($value['throw_always_exception'], static function (int $result, $item): int {
                         if (is_string($item)) {
                             // $item is string, e.g. "E_WARNING"
                             $item = constant($item);
                         }
 
-                        return $result | $item;
+                        return $result | rex_type::int($item);
                     }, 0);
                 }
                 break;

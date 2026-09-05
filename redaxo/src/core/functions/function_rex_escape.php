@@ -39,12 +39,12 @@ function rex_escape($value, $strategy = 'html')
         }
 
         if ($value instanceof stdClass) {
-            $clone = clone $value;
-            foreach (get_object_vars($value) as $k => $v) { // @phpstan-ignore impure.functionCall
-                $clone->$k = rex_escape($v, $strategy);
+            $vars = get_object_vars($value); // @phpstan-ignore impure.functionCall
+            foreach ($vars as $k => $v) {
+                $vars[$k] = rex_escape($v, $strategy);
             }
 
-            return $clone;
+            return (object) $vars;
         }
 
         if ($value instanceof Stringable) {
