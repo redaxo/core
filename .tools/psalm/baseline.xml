@@ -4755,15 +4755,11 @@
       <code><![CDATA[$item]]></code>
       <code><![CDATA[$login]]></code>
       <code><![CDATA[$request]]></code>
-      <code><![CDATA[$value['throw_always_exception']]]></code>
       <code><![CDATA[self::$properties[$key]]]></code>
     </MixedAssignment>
     <MixedMethodCall>
       <code><![CDATA[getImpersonator]]></code>
     </MixedMethodCall>
-    <MixedOperand>
-      <code><![CDATA[$result]]></code>
-    </MixedOperand>
     <MixedReturnStatement>
       <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>
       <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>

@@ -9,7 +9,6 @@ return ['includes' => [
     __DIR__ . '/booleanAnd.rightAlwaysFalse.php',
     __DIR__ . '/function.alreadyNarrowedType.php',
     __DIR__ . '/if.alwaysTrue.php',
-    __DIR__ . '/impure.propertyAssign.php',
     __DIR__ . '/method.childReturnType.php',
     __DIR__ . '/missingType.generics.php',
     __DIR__ . '/missingType.iterableValue.php',

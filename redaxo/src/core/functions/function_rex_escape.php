@@ -41,7 +41,8 @@ function rex_escape($value, $strategy = 'html')
         if ($value instanceof stdClass) {
             $clone = clone $value;
             foreach (get_object_vars($value) as $k => $v) { // @phpstan-ignore impure.functionCall
-                $clone->$k = rex_escape($v, $strategy);
+                // assignment on the local clone, so the function stays pure
+                $clone->$k = rex_escape($v, $strategy); // @phpstan-ignore impure.propertyAssign, impure.propertyAssign
             }
 
             return $clone;
