@@ -13,8 +13,8 @@ use Redaxo\Core\Http\Exception\HttpException;
 use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Security\CsrfToken;
-use Redaxo\Core\Security\Login;
 use Redaxo\Core\Translation\I18n;
 
 use function is_string;
@@ -180,7 +180,7 @@ abstract class ApiFunction
             $urlResult = Request::get(self::REQ_RESULT_PARAM, 'string');
             if ($urlResult) {
                 // take over result from url and session and do not execute the apiFunc
-                Login::startSession();
+                Session::start();
                 $result = Request::session(self::REQ_RESULT_PARAM, 'array[string]', [])[$urlResult] ?? null;
                 if (!is_string($result)) {
                     throw new NotFoundHttpException(new ApiFunctionException('The result of the api function is not available in the session.'));
@@ -201,7 +201,7 @@ abstract class ApiFunction
                     $apiFunc->result = $result;
                     if ($result->requiresReboot) {
                         // add api call result to session
-                        Login::startSession();
+                        Session::start();
                         $results = Request::session(self::REQ_RESULT_PARAM, 'array', []);
                         $result = $result->toJson();
                         $key = sha1($result);

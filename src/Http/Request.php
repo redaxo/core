@@ -87,11 +87,13 @@ final class Request
     public static function session(string $varname, string|array|Closure|null $type = null, mixed $default = ''): mixed
     {
         if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
+            throw new LogicException('Session not started, call Session::start() before.');
         }
 
-        if (isset($_SESSION[self::getSessionNamespace()][$varname])) {
-            return Type::cast($_SESSION[self::getSessionNamespace()][$varname], $type);
+        $session = Session::get();
+
+        if ($session->has($varname)) {
+            return Type::cast($session->get($varname), $type);
         }
 
         if ('' === $default) {
@@ -109,10 +111,10 @@ final class Request
     public static function setSession(string $varname, mixed $value): void
     {
         if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
+            throw new LogicException('Session not started, call Session::start() before.');
         }
 
-        $_SESSION[self::getSessionNamespace()][$varname] = $value;
+        Session::get()->set($varname, $value);
     }
 
     /**
@@ -123,20 +125,20 @@ final class Request
     public static function unsetSession(string $varname): void
     {
         if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
+            throw new LogicException('Session not started, call Session::start() before.');
         }
 
-        unset($_SESSION[self::getSessionNamespace()][$varname]);
+        Session::get()->remove($varname);
     }
 
     /** clear redaxo session contents within the current namespace (the session itself stays alive). */
     public static function clearSession(): void
     {
         if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
+            throw new LogicException('Session not started, call Session::start() before.');
         }
 
-        unset($_SESSION[self::getSessionNamespace()]);
+        Session::get()->clear();
     }
 
     /**
@@ -248,19 +250,5 @@ final class Request
     public static function isHttps(): bool
     {
         return Core::getRequest()->isSecure();
-    }
-
-    /**
-     * Returns the session namespace for the current http request.
-     *
-     * @return non-empty-string
-     */
-    public static function getSessionNamespace(): string
-    {
-        // separate backend from frontend namespace,
-        // so we can e.g. clear the backend session without
-        // logging out the users from the frontend
-        $suffix = Core::isBackend() ? '_backend' : '';
-        return Core::getInstanceId() . $suffix;
     }
 }

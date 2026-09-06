@@ -1,0 +1,160 @@
+<?php
+
+namespace Redaxo\Core\Http;
+
+use Redaxo\Core\Core;
+use Redaxo\Core\Util\Timer;
+use SessionHandlerInterface;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\HttpFoundation\Session\Session as HttpFoundationSession;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
+
+use function assert;
+
+/**
+ * The http session.
+ *
+ * Start it with `Session::start()`, afterwards it is available as `Core::getRequest()->getSession()`.
+ * A session is never started implicitly, so that a request which does not need one stays cacheable.
+ */
+final class Session
+{
+    /** Name of the session bag holding the backend attributes. */
+    private const string BAG_BACKEND = 'backend';
+
+    /** Name of the session bag holding the frontend attributes. */
+    private const string BAG_FRONTEND = 'frontend';
+
+    /**
+     * Options for the session in the backend.
+     *
+     * The keys are the `session.*` ini settings without their prefix, see https://php.net/session.configuration.
+     *
+     * @var array<string, scalar>
+     */
+    public static array $backendOptions = [
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Lax',
+    ];
+
+    /**
+     * Options for the session in the frontend.
+     *
+     * @var array<string, scalar>
+     */
+    public static array $frontendOptions = [
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Lax',
+    ];
+
+    /** Handler storing the backend session, `null` for the one configured in the php settings. */
+    public static ?SessionHandlerInterface $backendHandler = null;
+
+    /** Handler storing the frontend session, `null` for the one configured in the php settings. */
+    public static ?SessionHandlerInterface $frontendHandler = null;
+
+    private static ?SessionInterface $session = null;
+
+    private function __construct() {}
+
+    /** Starts the session, if it is not started yet. */
+    public static function start(): SessionInterface
+    {
+        $session = self::get();
+
+        if (!$session->isStarted()) {
+            Timer::measure(__METHOD__, static fn () => $session->start());
+        }
+
+        return $session;
+    }
+
+    /**
+     * Returns the session without starting it.
+     *
+     * @internal
+     */
+    public static function get(): SessionInterface
+    {
+        return self::$session ??= self::create();
+    }
+
+    /**
+     * Namespace the attributes of the current environment are stored under in `$_SESSION`.
+     *
+     * @return non-empty-string
+     */
+    public static function getNamespace(): string
+    {
+        return Core::getInstanceId() . (Core::isBackend() ? '_backend' : '');
+    }
+
+    /** Returns the attributes of the current environment. */
+    public static function getAttributes(): AttributeBagInterface
+    {
+        return self::getBag(Core::isBackend() ? self::BAG_BACKEND : self::BAG_FRONTEND);
+    }
+
+    /**
+     * Returns the attributes of the backend session, also in the frontend, where a logged in backend user is
+     * detected this way.
+     */
+    public static function getBackendAttributes(): AttributeBagInterface
+    {
+        return self::getBag(self::BAG_BACKEND);
+    }
+
+    /**
+     * Returns the cookie parameters of the session, see https://php.net/session_get_cookie_params.
+     *
+     * @return array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string}
+     */
+    public static function getCookieParams(): array
+    {
+        // creating the session applies the options to the php settings, which the cookie params are read from
+        self::get();
+
+        $params = session_get_cookie_params();
+
+        return [
+            'lifetime' => $params['lifetime'] ?? 0,
+            'path' => $params['path'] ?? '/',
+            'domain' => $params['domain'] ?? '',
+            'secure' => $params['secure'] ?? false,
+            'httponly' => $params['httponly'] ?? false,
+            'samesite' => $params['samesite'] ?? '',
+        ];
+    }
+
+    private static function create(): SessionInterface
+    {
+        $backend = Core::isBackend();
+
+        $storage = new NativeSessionStorage(
+            $backend ? self::$backendOptions : self::$frontendOptions,
+            $backend ? self::$backendHandler : self::$frontendHandler,
+        );
+
+        // both environments keep their attributes apart, so that e.g. the backend session can be cleared without
+        // logging out the users in the frontend
+        $backendBag = new AttributeBag(Core::getInstanceId() . '_backend');
+        $backendBag->setName(self::BAG_BACKEND);
+        $frontendBag = new AttributeBag(Core::getInstanceId());
+        $frontendBag->setName(self::BAG_FRONTEND);
+
+        $session = new HttpFoundationSession($storage, $backend ? $backendBag : $frontendBag);
+        $session->registerBag($backend ? $frontendBag : $backendBag);
+
+        return $session;
+    }
+
+    private static function getBag(string $name): AttributeBagInterface
+    {
+        $bag = self::start()->getBag($name);
+        assert($bag instanceof AttributeBagInterface);
+
+        return $bag;
+    }
+}

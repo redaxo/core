@@ -10,9 +10,11 @@ use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 use SensitiveParameter;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 use function assert;
 
@@ -267,9 +269,7 @@ class BackendLogin extends Login
 
     public static function deleteSession(): void
     {
-        self::startSession();
-
-        unset($_SESSION[static::getSessionNamespace()][self::SYSTEM_ID]);
+        self::getSessionAttributes()->remove(self::SYSTEM_ID);
         self::deleteStayLoggedInCookie();
 
         CsrfToken::removeAll();
@@ -277,12 +277,13 @@ class BackendLogin extends Login
 
     private static function setStayLoggedInCookie(string $cookiekey): void
     {
-        $sessionConfig = Core::getProperty('session', [])['backend']['cookie'] ?? [];
+        // the cookie replaces the session cookie, so it follows its settings
+        $cookieParams = Session::getCookieParams();
 
         Response::sendCookie(self::getStayLoggedInCookieName(), $cookiekey, [
-            'expires' => strtotime(UserSession::STAY_LOGGED_IN_DURATION . ' months'),
-            'secure' => $sessionConfig['secure'] ?? false,
-            'samesite' => $sessionConfig['samesite'] ?? 'lax',
+            'expires' => new DateTimeImmutable('+' . UserSession::STAY_LOGGED_IN_DURATION . ' months'),
+            'secure' => $cookieParams['secure'] ?? false,
+            'samesite' => $cookieParams['samesite'] ?? 'lax',
         ]);
     }
 
@@ -308,9 +309,9 @@ class BackendLogin extends Login
             return false;
         }
 
-        self::startSession();
+        $data = Type::array(self::getSessionAttributes()->get(self::SYSTEM_ID, []));
 
-        return ($_SESSION[static::getSessionNamespace()][self::SYSTEM_ID][Login::SESSION_USER_ID] ?? 0) > 0;
+        return ($data[Login::SESSION_USER_ID] ?? 0) > 0;
     }
 
     /**
@@ -364,10 +365,10 @@ class BackendLogin extends Login
         return parent::passwordNeedsRehash($hash);
     }
 
-    /** returns the backends session namespace. */
-    protected static function getSessionNamespace(): string
+    /** The backend login uses the backend attributes also in the frontend, to detect a logged in backend user. */
+    protected static function getSessionAttributes(): AttributeBagInterface
     {
-        return Core::getInstanceId() . '_backend';
+        return Session::getBackendAttributes();
     }
 
     public static function getLoginPolicy(): LoginPolicy

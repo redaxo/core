@@ -4,6 +4,7 @@ namespace Redaxo\Core\Security;
 
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Http\Session;
 
 use function sprintf;
 
@@ -81,7 +82,7 @@ final readonly class CsrfToken
 
     public static function removeAll(): void
     {
-        Login::startSession();
+        Session::start();
 
         Request::unsetSession(self::getBaseSessionKey());
         Request::unsetSession(self::getBaseSessionKey() . '_https');
@@ -90,7 +91,7 @@ final readonly class CsrfToken
     /** @return array<string, string> */
     private static function getTokens(): array
     {
-        Login::startSession();
+        Session::start();
 
         /** @var array<string, string> */
         return Request::session(self::getSessionKey(), 'array[string]');
