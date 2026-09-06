@@ -181,7 +181,6 @@ abstract class ApiFunction
             $urlResult = Request::get(self::REQ_RESULT_PARAM, 'string');
             if ($urlResult) {
                 // take over result from url and session and do not execute the apiFunc
-                Session::start();
                 $result = Type::array(Session::start()->get(self::REQ_RESULT_PARAM, []))[$urlResult] ?? null;
                 if (!is_string($result)) {
                     throw new NotFoundHttpException(new ApiFunctionException('The result of the api function is not available in the session.'));
@@ -202,12 +201,12 @@ abstract class ApiFunction
                     $apiFunc->result = $result;
                     if ($result->requiresReboot) {
                         // add api call result to session
-                        Session::start();
-                        $results = Type::array(Session::start()->get(self::REQ_RESULT_PARAM, []));
+                        $session = Session::start();
+                        $results = Type::array($session->get(self::REQ_RESULT_PARAM, []));
                         $result = $result->toJson();
                         $key = sha1($result);
                         $results[$key] = $result;
-                        Session::start()->set(self::REQ_RESULT_PARAM, $results);
+                        $session->set(self::REQ_RESULT_PARAM, $results);
 
                         // and redirect to SELF for reboot with session key as parameter
                         Response::sendRedirect(Context::fromGet()->getUrl([

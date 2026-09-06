@@ -193,10 +193,12 @@ if (Core::isSetup()) {
 
         // Safe Mode
         if (!Core::isHardenedMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
+            $session = Session::start();
+
             if ($safeMode) {
-                Session::start()->set('safemode', true);
+                $session->set('safemode', true);
             } else {
-                Session::start()->remove('safemode');
+                $session->remove('safemode');
             }
         }
     }

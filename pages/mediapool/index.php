@@ -65,8 +65,10 @@ if ('' != $fileName) {
     }
 }
 
+$session = Session::start();
+
 if (-1 == $rexFileCategory) {
-    $rexFileCategory = (int) Session::start()->get('media[rex_file_category]', 0);
+    $rexFileCategory = (int) $session->get('media[rex_file_category]', 0);
 }
 
 $gc = Sql::factory();
@@ -78,7 +80,7 @@ if (1 != $gc->getRows()) {
     $rexFileCategoryName = $gc->getValue('name');
 }
 
-Session::start()->set('media[rex_file_category]', $rexFileCategory);
+$session->set('media[rex_file_category]', $rexFileCategory);
 
 // -------------- PERMS
 $PERMALL = Core::requireUser()->getComplexPerm('media')->hasCategoryPerm(0);

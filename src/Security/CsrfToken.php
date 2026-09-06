@@ -83,17 +83,15 @@ final readonly class CsrfToken
 
     public static function removeAll(): void
     {
-        Session::start();
+        $session = Session::start();
 
-        Session::start()->remove(self::getBaseSessionKey());
-        Session::start()->remove(self::getBaseSessionKey() . '_https');
+        $session->remove(self::getBaseSessionKey());
+        $session->remove(self::getBaseSessionKey() . '_https');
     }
 
     /** @return array<string, string> */
     private static function getTokens(): array
     {
-        Session::start();
-
         /** @var array<string, string> */
         return Type::array(Session::start()->get(self::getSessionKey(), []));
     }
