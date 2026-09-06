@@ -4,13 +4,16 @@ $top-navbar-height: 70px;
 $top-popup-navbar-height: 50px;
 $helper-factor-spacing: 40px;
 
-@import "../vendor/bootstrap/assets/stylesheets/bootstrap";
+@import "bootstrap-sass/assets/stylesheets/bootstrap";
 
-@import "../vendor/font-awesome/scss/fontawesome";
-@import "../vendor/font-awesome/scss/brands";
-@import "../vendor/font-awesome/scss/regular";
-@import "../vendor/font-awesome/scss/solid";
-@import "../vendor/font-awesome/scss/v4-shims";
+// all fonts live under assets/fonts/, one subdirectory per library (Font Awesome defaults to ../webfonts)
+$fa-font-path: "../fonts/font-awesome";
+
+@import "@fortawesome/fontawesome-free/scss/fontawesome";
+@import "@fortawesome/fontawesome-free/scss/brands";
+@import "@fortawesome/fontawesome-free/scss/regular";
+@import "@fortawesome/fontawesome-free/scss/solid";
+@import "@fortawesome/fontawesome-free/scss/v4-shims";
 
 @import "mixins/buttons";
 @import "mixins/form";

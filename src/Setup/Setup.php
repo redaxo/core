@@ -69,12 +69,6 @@ final class Setup
         if (!is_dir(Path::coreAssets())) {
             throw new RuntimeException('Unable to copy assets to "' . Path::coreAssets() . '". Is the folder writable for the webserver?');
         }
-
-        $files = require Path::core('assets_src/vendor_files.php');
-        foreach ($files as $source => $destination) {
-            // ignore errors, because this file is included very early in setup, before the regular file permissions check
-            File::copy(Path::core('assets_src/' . $source), Path::coreAssets($destination));
-        }
     }
 
     /**

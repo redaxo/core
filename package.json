@@ -1,10 +1,25 @@
 {
     "private": true,
     "type": "module",
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "6.7.2",
+        "bootstrap-sass": "3.4.1",
+        "bootstrap-select": "1.13.18",
+        "jquery": "3.7.1",
+        "jquery-pjax": "2.0.1",
+        "nouislider": "15.8.1"
+    },
     "devDependencies": {
+        "esbuild": "0.28.1",
         "mkdirp": "3.0.1",
         "pixelmatch": "7.2.0",
         "playwright": "1.63.0",
-        "pngjs": "7.0.0"
+        "pngjs": "7.0.0",
+        "sass": "1.83.4"
+    },
+    "scripts": {
+        "build": "npm run build:css && npm run build:js",
+        "build:css": "sass --quiet-deps --silence-deprecation=import,global-builtin,color-functions,mixed-decls,abs-percent --load-path=node_modules --style=compressed --no-source-map assets/scss/master.scss:assets/css/styles.css assets/scss/redaxo.scss:assets/css/redaxo.css",
+        "build:js": "node .tools/build/copy-vendor-assets.mjs"
     }
 }
