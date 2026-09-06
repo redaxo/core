@@ -199,6 +199,7 @@ final class CronjobManager
     /** @param array{id: int, interval: string, name: string, parameters: ?string, type: class-string<AbstractType>} $job */
     private function tryExecuteJob(array $job, bool $log = true, bool $resetExecutionStart = false): bool
     {
+        /** @var array<string, mixed> $params */
         $params = $job['parameters'] ? json_decode($job['parameters'], true) : [];
         if (!is_array($params)) {
             $params = [];
@@ -257,6 +258,7 @@ final class CronjobManager
         return true;
     }
 
+    /** @param array<string, 'all'|list<int>> $interval */
     public static function calculateNextTime(array $interval): ?int
     {
         if (empty($interval['minutes']) || empty($interval['hours']) || empty($interval['days']) || empty($interval['weekdays']) || empty($interval['months'])) {

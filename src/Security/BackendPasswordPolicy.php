@@ -4,8 +4,6 @@ namespace Redaxo\Core\Security;
 
 use DateInterval;
 use DateTimeImmutable;
-use Redaxo\Core\Base\FactoryTrait;
-use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 use SensitiveParameter;
@@ -14,61 +12,21 @@ use function count;
 
 class BackendPasswordPolicy extends PasswordPolicy
 {
-    use FactoryTrait;
-
     /**
-     * Forbid to reuse the last X previous passwords.
-     *
-     * @internal
+     * @param array<string, array{min?: int, max?: int}> $rules Rules for the password itself, see `PasswordPolicy`
+     * @param int|null $noReuseOfLast Forbid to reuse the last X previous passwords
+     * @param DateInterval|null $noReuseWithin Forbid to reuse the previous passwords used in the given interval
+     * @param DateInterval|null $forceRenewAfter Force to renew the password after the given interval
+     * @param DateInterval|null $blockAccountAfter Block account if the password wasn't changed in the given interval
      */
-    public readonly ?int $noReuseOfLast;
-
-    /**
-     * Forbid to reuse the previous passwords used in the given interval.
-     *
-     * @internal
-     */
-    public readonly ?DateInterval $noReuseWithin;
-
-    /**
-     * Force to renew the password after the given interval.
-     *
-     * @internal
-     */
-    public readonly ?DateInterval $forceRenewAfter;
-
-    /**
-     * Block account if the password wasn't changed in the given interval.
-     *
-     * @internal
-     */
-    public readonly ?DateInterval $blockAccountAfter;
-
-    final private function __construct()
-    {
-        /** @var array{no_reuse_of_last?: int, no_reuse_within?: string, force_renew_after?: string, block_account_after?: string} $options */
-        $options = Core::getProperty('password_policy', []);
-
-        $this->noReuseOfLast = $options['no_reuse_of_last'] ?? null;
-        unset($options['no_reuse_of_last']);
-
-        $this->noReuseWithin = isset($options['no_reuse_within']) ? new DateInterval($options['no_reuse_within']) : null;
-        unset($options['no_reuse_within']);
-
-        $this->forceRenewAfter = isset($options['force_renew_after']) ? new DateInterval($options['force_renew_after']) : null;
-        unset($options['force_renew_after']);
-
-        $this->blockAccountAfter = isset($options['block_account_after']) ? new DateInterval($options['block_account_after']) : null;
-        unset($options['block_account_after']);
-
-        parent::__construct($options);
-    }
-
-    public static function factory(): static
-    {
-        $class = static::getFactoryClass();
-
-        return new $class();
+    public function __construct(
+        array $rules = ['length' => ['min' => 8, 'max' => 4096]],
+        public readonly ?int $noReuseOfLast = null,
+        public readonly ?DateInterval $noReuseWithin = null,
+        public readonly ?DateInterval $forceRenewAfter = null,
+        public readonly ?DateInterval $blockAccountAfter = null,
+    ) {
+        parent::__construct($rules);
     }
 
     public function check(#[SensitiveParameter] string $password, ?int $id = null): true|string

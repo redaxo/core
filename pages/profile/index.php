@@ -13,7 +13,6 @@ use Redaxo\Core\Form\Select\Select;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Security\BackendLogin;
-use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Security\WebAuthn;
@@ -46,7 +45,7 @@ $useremail = Request::request('useremail', 'string', $user->email);
 $usertheme = Request::request('usertheme', 'string', $user->theme) ?: null;
 $userlogin = $user->login;
 $csrfToken = CsrfToken::factory('profile');
-$passwordPolicy = BackendPasswordPolicy::factory();
+$passwordPolicy = BackendLogin::getPasswordPolicy();
 $webauthn = new WebAuthn();
 
 // --------------------------------- Title

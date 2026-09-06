@@ -45,7 +45,10 @@ final class CronjobExecutor
         $this->cronjob = $cronjob;
     }
 
-    /** @param AbstractType|class-string<AbstractType> $cronjob */
+    /**
+     * @param AbstractType|class-string<AbstractType> $cronjob
+     * @param array<string, mixed> $params
+     */
     public function tryExecute(AbstractType|string $cronjob, string $name = '', array $params = [], bool $log = true, ?int $id = null): bool
     {
         if (!$cronjob instanceof AbstractType) {

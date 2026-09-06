@@ -924,12 +924,11 @@
     <MixedArgument>
       <code><![CDATA[$js]]></code>
     </MixedArgument>
-    <MixedOperand>
-      <code><![CDATA[$data['filename']]]></code>
-      <code><![CDATA[$data['filename']]]></code>
-    </MixedOperand>
   </file>
   <file src="pages/profile/auth_methods.php">
+    <ArgumentTypeCoercion>
+      <code><![CDATA[$params]]></code>
+    </ArgumentTypeCoercion>
     <InvalidOperand>
       <code><![CDATA[escape($id)]]></code>
     </InvalidOperand>
@@ -1394,6 +1393,11 @@
       <code><![CDATA[$config['db'][1] ?? []]]></code>
     </MixedOperand>
   </file>
+  <file src="src/Console/Command/SetupCheckCommand.php">
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$config]]></code>
+    </MixedArgumentTypeCoercion>
+  </file>
   <file src="src/Console/Command/SetupRunCommand.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$login]]></code>
@@ -1497,33 +1501,8 @@
       <code><![CDATA[$toSql->getValue('path')]]></code>
     </InvalidOperand>
     <MixedArgument>
-      <code><![CDATA[$data['category_id']]]></code>
-      <code><![CDATA[$data['category_id']]]></code>
-      <code><![CDATA[$data['category_id']]]></code>
-      <code><![CDATA[$data['category_id']]]></code>
-      <code><![CDATA[$data['category_id']]]></code>
-      <code><![CDATA[$data['name']]]></code>
-      <code><![CDATA[$data['name']]]></code>
-      <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$data['priority']]]></code>
       <code><![CDATA[$id]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$data['path']]]></code>
-      <code><![CDATA[$data['priority']]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$data['category_id']]]></code>
-    </MixedOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$data['priority']]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$fromSql->getValue('name')]]></code>
       <code><![CDATA[$toSql->getValue('id')]]></code>
@@ -1581,21 +1560,8 @@
       <code><![CDATA[$tcat->getValue('path')]]></code>
     </InvalidOperand>
     <MixedArgument>
-      <code><![CDATA[$data['catname']]]></code>
-      <code><![CDATA[$data['catname']]]></code>
-      <code><![CDATA[$data['catname']]]></code>
-      <code><![CDATA[$data['catpriority']]]></code>
-      <code><![CDATA[$data['catpriority']]]></code>
-      <code><![CDATA[$data['catpriority']]]></code>
-      <code><![CDATA[$data['catpriority']]]></code>
-      <code><![CDATA[$data['catpriority']]]></code>
-      <code><![CDATA[$data['name']]]></code>
-      <code><![CDATA[$data['status']]]></code>
       <code><![CDATA[$id]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$data['name']]]></code>
-    </MixedAssignment>
     <PossiblyNullOperand>
       <code><![CDATA[$fcat->getValue('path')]]></code>
       <code><![CDATA[$tcat->getValue('path')]]></code>
@@ -1618,16 +1584,6 @@
       <code><![CDATA[$CM->getValue('priority')]]></code>
       <code><![CDATA[$CM->getValue('priority')]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$value]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$key]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$data['revision']]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
     <PossiblyNullArgument>
       <code><![CDATA[$article]]></code>
       <code><![CDATA[$articleId]]></code>
@@ -1647,12 +1603,6 @@
     </PossiblyNullOperand>
   </file>
   <file src="src/Content/Linkmap/ArticleListRenderer.php">
-    <MixedArgument>
-      <code><![CDATA[$article]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$article]]></code>
-    </MixedAssignment>
     <PossiblyNullReference>
       <code><![CDATA[getArticles]]></code>
     </PossiblyNullReference>
@@ -1677,6 +1627,9 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedArgument>
+    <MixedArgumentTypeCoercion>
+      <code><![CDATA[$config[$db]]]></code>
+    </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$login]]></code>
       <code><![CDATA[$request]]></code>
@@ -1696,15 +1649,9 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Cronjob/CronjobExecutor.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$key]]></code>
-    </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
-    <PossiblyInvalidArgument>
-      <code><![CDATA[str_replace($type . '_', '', $key)]]></code>
-    </PossiblyInvalidArgument>
   </file>
   <file src="src/Cronjob/CronjobManager.php">
     <ArgumentTypeCoercion>
@@ -1728,9 +1675,6 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[json_decode($interval, true)]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$params]]></code>
-    </MixedAssignment>
     <MoreSpecificReturnType>
       <code><![CDATA[string]]></code>
     </MoreSpecificReturnType>
@@ -1761,15 +1705,8 @@
     </PossiblyNullReference>
   </file>
   <file src="src/Cronjob/Form/IntervalField.php">
-    <MixedArgument>
-      <code><![CDATA[$value[$key]]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$value[$key]]]></code>
-    </MixedArrayAccess>
     <MixedAssignment>
       <code><![CDATA[$this->intervalElements]]></code>
-      <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <PossiblyFalseArgument>
@@ -1837,19 +1774,6 @@
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$post]]></code>
-    </MixedAssignment>
-  </file>
-  <file src="src/Database/Configuration.php">
-    <MixedAssignment>
-      <code><![CDATA[$this->host]]></code>
-      <code><![CDATA[$this->login]]></code>
-      <code><![CDATA[$this->name]]></code>
-      <code><![CDATA[$this->password]]></code>
-      <code><![CDATA[$this->persistent]]></code>
-      <code><![CDATA[$this->sslCa]]></code>
-      <code><![CDATA[$this->sslCert]]></code>
-      <code><![CDATA[$this->sslKey]]></code>
-      <code><![CDATA[$this->sslVerifyServerCert]]></code>
     </MixedAssignment>
   </file>
   <file src="src/Database/Exception/SqlException.php">
@@ -2029,11 +1953,6 @@
     <MoreSpecificReturnType>
       <code><![CDATA[non-empty-string|null]]></code>
     </MoreSpecificReturnType>
-  </file>
-  <file src="src/Filesystem/Url.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$params]]></code>
-    </MixedArgumentTypeCoercion>
   </file>
   <file src="src/Form/AbstractForm.php">
     <InvalidArrayOffset>
@@ -2373,8 +2292,6 @@
       <code><![CDATA[$address]]></code>
       <code><![CDATA[$bcc]]></code>
       <code><![CDATA[$exceptions]]></code>
-      <code><![CDATA[$this->xHeader[$kind]]]></code>
-      <code><![CDATA[$this->xHeader['to']]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[array_column($this->getReplyToAddresses(), 0)]]></code>
@@ -2406,10 +2323,6 @@
       <code><![CDATA[$this->graphClientSecret]]></code>
       <code><![CDATA[$this->graphTenantId]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$this->xHeader[$kind]]]></code>
-      <code><![CDATA[$this->xHeader['to']]]></code>
-    </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[json_encode($mailData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)]]></code>
     </PossiblyFalseArgument>
@@ -2480,7 +2393,6 @@
     </MixedArrayAccess>
     <MixedAssignment>
       <code><![CDATA[$sessionConfig]]></code>
-      <code><![CDATA[$this->sessionDuration]]></code>
     </MixedAssignment>
     <PossiblyInvalidArrayOffset>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()]]]></code>
@@ -2517,7 +2429,6 @@
     </MixedArrayAssignment>
     <MixedAssignment>
       <code><![CDATA[$rexSessId]]></code>
-      <code><![CDATA[$this->sessionMaxOverallDuration]]></code>
     </MixedAssignment>
     <MixedReturnStatement>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId][$varname] ?? $default]]></code>
@@ -2785,46 +2696,25 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$this->getValue($column)]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgument>
-      <code><![CDATA[$column]]></code>
-      <code><![CDATA[$column['class'] ?? null]]></code>
-      <code><![CDATA[$column['span'] ?? null]]></code>
-      <code><![CDATA[$column['width'] ?? null]]></code>
-      <code><![CDATA[$format[0]]]></code>
-      <code><![CDATA[$tableColumn]]></code>
-      <code><![CDATA[$v]]></code>
-    </MixedArgument>
     <MixedArgumentTypeCoercion>
-      <code><![CDATA[$flatParams]]></code>
-      <code><![CDATA[$flatParams]]></code>
       <code><![CDATA[$params]]></code>
-      <code><![CDATA[$tableColumnGroup]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedArrayAssignment>
-      <code><![CDATA[$groupColumns[]]]></code>
-    </MixedArrayAssignment>
     <MixedAssignment>
-      <code><![CDATA[$column]]></code>
       <code><![CDATA[$columnSortType]]></code>
-      <code><![CDATA[$format[2]]]></code>
-      <code><![CDATA[$groupColumns]]></code>
-      <code><![CDATA[$params[$this->pager->getCursorName()]]]></code>
-      <code><![CDATA[$tableColumn]]></code>
-      <code><![CDATA[$tableColumns]]></code>
-      <code><![CDATA[$v]]></code>
-      <code><![CDATA[$value]]></code>
     </MixedAssignment>
     <MixedReturnStatement>
       <code><![CDATA[json_decode($this->getValue($column), true)]]></code>
     </MixedReturnStatement>
     <PossiblyNullArgument>
-      <code><![CDATA[$column['width'] ?? null]]></code>
       <code><![CDATA[$sortColumn]]></code>
       <code><![CDATA[$this->getValue($column)]]></code>
     </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$sortType]]></code>
     </PossiblyNullOperand>
+    <PropertyTypeCoercion>
+      <code><![CDATA[$this->tableColumnGroups]]></code>
+    </PropertyTypeCoercion>
   </file>
   <file src="src/View/Fragment.php">
     <MixedArgument>
@@ -2935,9 +2825,6 @@
       <code><![CDATA[$rule]]></code>
       <code><![CDATA[$rule]]></code>
     </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$options]]></code>
-    </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$rule]]></code>
       <code><![CDATA[$rule]]></code>

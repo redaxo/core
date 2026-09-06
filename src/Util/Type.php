@@ -265,7 +265,7 @@ final class Type
 
     /**
      * @return array<mixed>
-     * @psalm-assert array $value
+     * @psalm-assert array<mixed> $value
      * @psalm-pure
      */
     public static function array(mixed $value): array

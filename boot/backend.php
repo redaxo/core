@@ -223,7 +223,7 @@ Asset::addJsFile(Url::coreAssets('jquery-ui.custom.min.js'), [Asset::JS_IMMUTABL
 Asset::addJsFile(Url::coreAssets('jquery-pjax.min.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('standard.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('clipboard-copy-element.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE]);
+Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => true]);
 
 Asset::setJsProperty('backend', true);
 Asset::setJsProperty('accesskeys', Accesskey::$enabled);
@@ -236,12 +236,13 @@ if (Core::getUser()) {
     Asset::setJsProperty('session_keep_alive_url', Url::backendController(['page' => 'credits', 'rex-api-call' => 'user_session_status']));
     Asset::setJsProperty('session_logout_url', Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams()));
     Asset::setJsProperty('session_login_url', Url::backendController());
-    Asset::setJsProperty('session_keep_alive', Core::getProperty('session_keep_alive', 0));
-    Asset::setJsProperty('session_duration', Core::getProperty('session_duration', 0));
-    Asset::setJsProperty('session_max_overall_duration', Core::getProperty('session_max_overall_duration', 0));
+    $sessionPolicy = BackendLogin::getSessionPolicy();
+    Asset::setJsProperty('session_keep_alive', $sessionPolicy->keepAlive);
+    Asset::setJsProperty('session_duration', $sessionPolicy->duration);
+    Asset::setJsProperty('session_max_overall_duration', $sessionPolicy->maxOverallDuration);
     Asset::setJsProperty('session_start', $login->getSessionVar(Login::SESSION_START_TIME));
     Asset::setJsProperty('session_stay_logged_in', $login->getSessionVar(BackendLogin::SESSION_STAY_LOGGED_IN, false));
-    Asset::setJsProperty('session_warning_time', Core::getProperty('session_warning_time', 300));
+    Asset::setJsProperty('session_warning_time', $sessionPolicy->warningTime);
     Asset::setJsProperty('session_server_time', time());
 
     Asset::setJsProperty('i18n', [

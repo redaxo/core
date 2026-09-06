@@ -10,6 +10,7 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\Util\Str;
 
 use function array_key_exists;
 use function in_array;
@@ -17,6 +18,8 @@ use function sprintf;
 
 /**
  * Basisklasse für die Strukturkomponenten.
+ *
+ * @psalm-import-type TUrlParams from Str
  */
 abstract class StructureElement
 {
@@ -172,7 +175,11 @@ abstract class StructureElement
             || array_key_exists($this->metaInfoPrefix . $key, $this->additionalData);
     }
 
-    /** Returns a url for linking to this article. */
+    /**
+     * Returns a url for linking to this article.
+     *
+     * @param TUrlParams $params
+     */
     public function getUrl(array $params = []): string
     {
         return Url::article($this->id, $this->clangId, $params);

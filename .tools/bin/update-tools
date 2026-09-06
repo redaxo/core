@@ -21,3 +21,11 @@ composer bump --ansi \
     phpunit/phpunit
 
 composer outdated --ansi
+
+printf "\nUpdate npm packages\n"
+
+for package in mkdirp pixelmatch playwright pngjs; do
+    npm pkg set "devDependencies.$package=$(npm view "$package" version)"
+done
+
+npm pkg get devDependencies

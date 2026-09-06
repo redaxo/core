@@ -26,7 +26,7 @@ final class CategoryHandler
      * Erstellt eine neue Kategorie.
      *
      * @param int $categoryId KategorieId in der die neue Kategorie erstellt werden soll
-     * @param array $data Array mit den Daten der Kategorie
+     * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Array mit den Daten der Kategorie
      *
      * @throws ApiFunctionException
      *
@@ -144,7 +144,7 @@ final class CategoryHandler
     /**
      * Bearbeitet einer Kategorie.
      *
-     * @param array $data Array mit den Daten der Kategorie
+     * @param array{catname?: string, catpriority?: int} $data Array mit den Daten der Kategorie
      *
      * @throws ApiFunctionException
      *
@@ -523,6 +523,7 @@ final class CategoryHandler
     /**
      * Checks whether the required array key $keyName isset.
      *
+     * @param array<string, mixed> $array
      * @throws ApiFunctionException
      */
     private static function reqKey(array $array, string $keyName): void

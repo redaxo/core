@@ -35,6 +35,7 @@ abstract class ArticleListRenderer
         return self::renderList($articles, $categoryId);
     }
 
+    /** @param list<Article> $articles */
     public function renderList(array $articles, int $categoryId): string
     {
         $list = '';

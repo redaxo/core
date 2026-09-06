@@ -17,8 +17,8 @@ use const E_USER_WARNING;
 /**
  * Methods declared here are available to be called from within a fragment-file, even if not public:.
  *
- * @phpstan-method void   subfragment(string $filename, array $params = [])
- * @phpstan-method string getSubfragment(string $filename, array $params = [])
+ * @phpstan-method void   subfragment(string $filename, array<string, mixed> $params = [])
+ * @phpstan-method string getSubfragment(string $filename, array<string, mixed> $params = [])
  * @phpstan-method string i18n(string $key, ...$replacements)
  * @phpstan-method mixed  escape($value, $strategy = 'html')
  */

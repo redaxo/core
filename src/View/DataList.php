@@ -113,7 +113,7 @@ class DataList implements UrlProviderInterface
     private array $columnOptions = [];
     /** @var array<string, array{string, string}> */
     private array $columnLayouts = [];
-    /** @var array<string, array> */
+    /** @var array<string, array<string, string|int>> */
     private array $columnParams = [];
     /** @var list<string> */
     private array $columnDisabled = [];
@@ -126,7 +126,7 @@ class DataList implements UrlProviderInterface
     private string $caption = '';
     /** @var array<string, string|int> */
     private array $tableAttributes = [];
-    /** @var array<int, array> */
+    /** @var list<array{columns: list<array<string, string|int>>, span?: int}> */
     private array $tableColumnGroups = [];
 
     // --------- Link Attributes
@@ -468,7 +468,7 @@ class DataList implements UrlProviderInterface
      *
      * @param string $formatType Formatierungstyp
      * @param mixed $format Zu verwendentes Format
-     * @param array $params Custom params für callback func bei format_type 'custom'
+     * @param array<mixed> $params Custom params für callback func bei format_type 'custom'
      */
     public function setColumnFormat(string $columnName, string $formatType, mixed $format = null, array $params = []): void
     {
@@ -538,14 +538,18 @@ class DataList implements UrlProviderInterface
     /**
      * Verlinkt eine Spalte mit den übergebenen Parametern.
      *
-     * @param array $params Array von Parametern
+     * @param array<string, string|int> $params Array von Parametern
      */
     public function setColumnParams(string $columnName, array $params = []): void
     {
         $this->columnParams[$columnName] = $params;
     }
 
-    /** Gibt die Parameter für eine Spalte zurück. */
+    /**
+     * Gibt die Parameter für eine Spalte zurück.
+     *
+     * @return array<string, string|int>
+     */
     public function getColumnParams(string $columnName): array
     {
         if (isset($this->columnParams[$columnName]) && is_array($this->columnParams[$columnName])) {
@@ -626,7 +630,7 @@ class DataList implements UrlProviderInterface
      *     ['class' => 'classname-c']
      * ]);
      *
-     * @param array $columns Array von Spalten
+     * @param list<int|'*'|array{width: int|'*', span?: int, class?: string}> $columns Array von Spalten
      * @param int|null $columnGroupSpan Span der Columngroup
      */
     public function addTableColumnGroup(array $columns, ?int $columnGroupSpan = null): void
@@ -639,14 +643,14 @@ class DataList implements UrlProviderInterface
 
         foreach ($columns as $column) {
             if (is_array($column)) {
-                $this->addTableColumn($column['width'] ?? null, $column['span'] ?? null, $column['class'] ?? null);
+                $this->addTableColumn($column['width'], $column['span'] ?? null, $column['class'] ?? null);
             } else {
                 $this->addTableColumn($column);
             }
         }
     }
 
-    /** @return array<int, array> */
+    /** @return array<int, array{columns: list<array<string, string|int>>, span?: int}> */
     public function getTableColumnGroups(): array
     {
         return $this->tableColumnGroups;
@@ -658,7 +662,7 @@ class DataList implements UrlProviderInterface
      * @param int|'*' $width Breite der Spalte
      * @param int|null $span Span der Spalte
      */
-    public function addTableColumn(int|string $width, ?int $span = null, ?int $class = null): void
+    public function addTableColumn(int|string $width, ?int $span = null, ?string $class = null): void
     {
         $tableColumn = [];
         if (is_numeric($width)) {
@@ -729,6 +733,8 @@ class DataList implements UrlProviderInterface
      * Innerhalb dieser Url werden variablen ersetzt
      *
      * @see #replaceVariable, #replaceVariables
+     *
+     * @param array<string, string|int|list<string>> $params
      */
     public function getParsedUrl(array $params = []): string
     {
@@ -962,6 +968,7 @@ class DataList implements UrlProviderInterface
         return $value;
     }
 
+    /** @param array{string, mixed, array<mixed>}|null $format */
     public function isCustomFormat(?array $format): bool
     {
         return is_array($format) && isset($format[0]) && 'custom' == $format[0];
@@ -970,7 +977,7 @@ class DataList implements UrlProviderInterface
     /**
      * Formatiert einen übergebenen String anhand der rexFormatter Klasse.
      *
-     * @param array|null $format mit den Formatierungsinformationen
+     * @param array{string, mixed, array<mixed>}|null $format mit den Formatierungsinformationen
      * @param bool $escape Flag, Ob escapen von $value erlaubt ist
      */
     public function formatValue(string|int|float|bool|null $value, ?array $format, bool $escape, ?string $field = null): string
@@ -1028,6 +1035,7 @@ class DataList implements UrlProviderInterface
         return $s;
     }
 
+    /** @param array<string, string|int|list<string>> $params */
     public function getColumnLink(string $columnName, string|int|float|bool|null $columnValue, array $params = []): string
     {
         $attributes = $this->getLinkAttributes($columnName, []);
@@ -1048,6 +1056,7 @@ class DataList implements UrlProviderInterface
         return $this->customColumns[$column] ?? $this->sql->getValue($column);
     }
 
+    /** @return array<mixed> */
     public function getArrayValue(string $column): array
     {
         return json_decode($this->getValue($column), true);

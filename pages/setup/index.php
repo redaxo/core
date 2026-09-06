@@ -9,7 +9,7 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\LanguageHandler;
-use Redaxo\Core\Security\BackendPasswordPolicy;
+use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\Login;
 use Redaxo\Core\Setup\Importer;
 use Redaxo\Core\Setup\Setup;
@@ -304,7 +304,7 @@ if (6 === $step) {
             $errors[] = Message::error(I18n::msg('setup_502'));
         }
 
-        $passwordPolicy = BackendPasswordPolicy::factory();
+        $passwordPolicy = BackendLogin::getPasswordPolicy();
         if (true !== $msg = $passwordPolicy->check($redaxoUserPass)) {
             $errors[] = Message::error($msg);
         }

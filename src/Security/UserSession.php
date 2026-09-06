@@ -117,7 +117,7 @@ final class UserSession
         Sql::factory()
             ->setTable(Core::getTable('user_session'))
             ->setWhere('UNIX_TIMESTAMP(last_activity) < IF(cookie_key IS NULL, ?, ?)', [
-                time() - (int) Core::getProperty('session_duration'),
+                time() - BackendLogin::getSessionPolicy()->duration,
                 strtotime('-' . self::STAY_LOGGED_IN_DURATION . ' months'),
             ])
             ->delete();
