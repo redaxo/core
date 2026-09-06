@@ -2393,7 +2393,6 @@
     </MixedArrayAccess>
     <MixedAssignment>
       <code><![CDATA[$sessionConfig]]></code>
-      <code><![CDATA[$this->sessionDuration]]></code>
     </MixedAssignment>
     <PossiblyInvalidArrayOffset>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()]]]></code>
@@ -2430,7 +2429,6 @@
     </MixedArrayAssignment>
     <MixedAssignment>
       <code><![CDATA[$rexSessId]]></code>
-      <code><![CDATA[$this->sessionMaxOverallDuration]]></code>
     </MixedAssignment>
     <MixedReturnStatement>
       <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId][$varname] ?? $default]]></code>
