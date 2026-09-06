@@ -8,7 +8,6 @@ use Redaxo\Core\Environment;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Security\BackendLogin;
-use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Security\User;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -49,7 +48,7 @@ final class UserSetPasswordCommand extends AbstractCommand
         $user = User::fromSql($user);
         $id = $user->id;
 
-        $passwordPolicy = BackendPasswordPolicy::factory();
+        $passwordPolicy = BackendLogin::getPasswordPolicy();
 
         if ($password && true !== $msg = $passwordPolicy->check($password, $id)) {
             throw new InvalidArgumentException($msg);

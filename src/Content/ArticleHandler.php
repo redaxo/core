@@ -22,7 +22,7 @@ final class ArticleHandler
     /**
      * Erstellt einen neuen Artikel.
      *
-     * @param array $data Array mit den Daten des Artikels
+     * @param array{category_id: int, priority: int, name: string, template?: string} $data Array mit den Daten des Artikels
      *
      * @throws ApiFunctionException
      *
@@ -115,7 +115,7 @@ final class ArticleHandler
     /**
      * Bearbeitet einen Artikel.
      *
-     * @param array $data Array mit den Daten des Artikels
+     * @param array{name: string, priority?: int, template?: string|null} $data Array mit den Daten des Artikels
      *
      * @throws ApiFunctionException
      *
@@ -152,8 +152,8 @@ final class ArticleHandler
         }
 
         // complete remaining optional aprams
-        $data['path'] ??= $thisArt->getValue('path');
-        $data['priority'] ??= $thisArt->getValue('priority');
+        $data['path'] = $thisArt->getValue('path');
+        $data['priority'] ??= (int) $thisArt->getValue('priority');
 
         $EA = Sql::factory();
         $EA->setTable(Core::getTablePrefix() . 'article');
@@ -627,7 +627,7 @@ final class ArticleHandler
     /**
      * Kopiert die Metadaten eines Artikels in einen anderen Artikel.
      *
-     * @param array $params Array von Spaltennamen, welche kopiert werden sollen
+     * @param list<string> $params Array von Spaltennamen, welche kopiert werden sollen
      */
     public static function copyMeta(int $fromId, int $toId, int $fromClang = 1, int $toClang = 1, array $params = []): bool
     {
@@ -824,6 +824,8 @@ final class ArticleHandler
 
     /**
      * Checks whether the required array key $keyName isset.
+     *
+     * @param array<string, mixed> $array
      *
      * @throws ApiFunctionException
      */

@@ -154,18 +154,21 @@ final class Language
         }
 
         $file = Path::coreCache('clang.cache');
-        if (!is_file($file)) {
-            LanguageHandler::generateCache();
+        $cache = File::getCache($file);
+
+        // deliberately no is_file() check: a parallel cache clear could delete the file between check and read
+        if (!$cache) {
+            $cache = LanguageHandler::generateCache();
         }
 
         /**
          * @var int $id
-         * @var array<string, string|int|null> $cache
+         * @var array<string, string|int|null> $data
          */
-        foreach (File::getCache($file) as $id => $cache) {
-            $getAndUnset = static function (string $key) use (&$cache): mixed {
-                $value = $cache[$key];
-                unset($cache[$key]);
+        foreach ($cache as $id => $data) {
+            $getAndUnset = static function (string $key) use (&$data): mixed {
+                $value = $data[$key];
+                unset($data[$key]);
                 return $value;
             };
 
@@ -176,7 +179,7 @@ final class Language
                 $getAndUnset('name'),
                 $getAndUnset('priority'),
                 $getAndUnset('status'),
-                $cache,
+                $data,
             );
 
             self::$clangs[$id] = $clang;

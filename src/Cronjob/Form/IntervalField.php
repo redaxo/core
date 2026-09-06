@@ -30,6 +30,7 @@ final class IntervalField extends BaseField
         'months' => 'all',
     ];
 
+    /** @var array<string, 'all'|list<int>> */
     private array $intervalElements = [];
 
     public function setValue($value)
@@ -44,8 +45,8 @@ final class IntervalField extends BaseField
         $this->value = json_encode($value);
     }
 
-    /** @return array */
-    public function getIntervalElements()
+    /** @return array<string, 'all'|list<int>> */
+    public function getIntervalElements(): array
     {
         return $this->intervalElements;
     }

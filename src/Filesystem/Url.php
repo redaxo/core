@@ -104,7 +104,11 @@ final class Url
         return self::backendPage(Controller::getCurrentPage(), $params);
     }
 
-    /** Returns the url to the article. */
+    /**
+     * Returns the url to the article.
+     *
+     * @param TUrlParams $params
+     */
     public static function article(?int $id = null, ?int $clang = null, array $params = []): string
     {
         $clang = (int) $clang;

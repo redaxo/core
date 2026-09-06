@@ -25,7 +25,10 @@ final class ContentHandler
 {
     private function __construct() {}
 
-    /** @throws ApiFunctionException */
+    /**
+     * @param array{priority?: int, revision?: int, ...<string, scalar|null>} $data
+     * @throws ApiFunctionException
+     */
     public static function addSlice(int $articleId, int $clangId, int $ctypeId, string $moduleKey, array $data = []): string
     {
         $data['revision'] ??= 0;

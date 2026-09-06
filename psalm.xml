@@ -23,7 +23,6 @@
         <directory name="src"/>
         <directory name="tests"/>
         <file name=".php-cs-fixer.dist.php"/>
-        <file name="assets_src/vendor_files.php"/>
         <file name="project/bin/console"/>
         <file name="rector.php"/>
         <ignoreFiles>

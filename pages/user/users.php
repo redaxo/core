@@ -13,7 +13,7 @@ use Redaxo\Core\Form\Select\Select;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Security\ApiFunction\UserImpersonate;
-use Redaxo\Core\Security\BackendPasswordPolicy;
+use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
 use Redaxo\Core\Security\User;
@@ -123,7 +123,7 @@ $fUNCADD = Request::request('FUNC_ADD', 'string');
 $save = Request::request('save', 'int');
 $adminchecked = '';
 
-$passwordPolicy = BackendPasswordPolicy::factory();
+$passwordPolicy = BackendLogin::getPasswordPolicy();
 
 if ($fUNCUPDATE || $fUNCAPPLY || ($fUNCADD && $save)) {
     if (!CsrfToken::factory('user_edit')->isValid()) {

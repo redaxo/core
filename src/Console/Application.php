@@ -110,13 +110,6 @@ final class Application extends SymfonyApplication
             return;
         }
 
-        if ('ydeploy:migrate' === $command->getName()) {
-            // boot only the ydeploy package, which provides the migrate command
-            $command->addon->boot();
-
-            return;
-        }
-
         if (!Core::isSetup()) {
             // boot all known packages in the defined order
             // which reflects dependencies before consumers
