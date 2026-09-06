@@ -10,6 +10,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Migration\Migrator;
 use Redaxo\Core\Translation\I18n;
 
 use function Redaxo\Core\View\escape;
@@ -73,6 +74,7 @@ final class Importer
 
         if ('' == $errMsg) {
             self::prepareAddons();
+            self::baselineMigrations();
         }
 
         return $errMsg;
@@ -91,7 +93,21 @@ final class Importer
 
         self::prepareAddons();
 
+        if ('' == $errMsg) {
+            self::baselineMigrations();
+        }
+
         return $errMsg;
+    }
+
+    /**
+     * Records all existing migrations as executed without running them: a fresh installation is built from the
+     * current code. Addons are baselined individually when they are installed.
+     */
+    private static function baselineMigrations(): void
+    {
+        Migrator::baseline(Migrator::CORE);
+        Migrator::baseline(Migrator::PROJECT);
     }
 
     public static function verifyDbSchema(): string

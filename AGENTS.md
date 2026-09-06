@@ -43,7 +43,9 @@ vendor/bin/phpunit tests/Database/SqlTest.php
 ```bash
 php project/bin/console                      # List all CLI commands (Symfony Console)
 php project/bin/console setup:run            # Run setup
-php project/bin/console migrate              # Sync DB schema with core + addons after a code update
+php project/bin/console migrate              # Bring the DB in line with the code after a code update
+php project/bin/console migrate:status       # List pending migrations (exits non-zero if there are any)
+php project/bin/console migrate:make <desc>  # Create a migration file (--package=core|project|<addon>)
 docker-compose up -d                        # Start (port 80)
 REDAXO_PORT=8080 docker-compose up -d       # Start on custom port
 ```
@@ -60,6 +62,8 @@ The **`project/` skeleton** is the `redaxo/project` package — published standa
 ### Key concepts
 - **`Core` static class** (`src/Core.php`) — central application registry for paths, config, request, current user.
 - **Addon system** — `Addon` / `AddonManager` (`src/Addon/`). Each addon is a subclass of `Addon`, registered via composer.json `extra.redaxo.addon-class`. Metadata comes from composer.json; integration happens through overridable hooks — `boot()` (runtime init), `install()`/`uninstall()` (schema/data setup — must be idempotent, runs on every `console migrate`), `getPages()` (backend pages) — plus the `$load` and `$defaultConfig` properties.
+- **Schema & migrations** — two complementary mechanisms, both driven by `console migrate`. *Convergent:* core, every installed addon and the project describe the target state of the tables they own in their `install()` hook (via `Table`/`Column`), which is re-applied on every run and must be idempotent. *Versioned:* steps that should run exactly once — an expensive data backfill, DDL for tables no package owns — live as `Migration` files in a `migrations/` directory of the core, an addon or the project, found by `glob` and tracked in the ledger table `rex_migration` (mechanism in `src/Migration/`). Both cover installed addons that are currently *deactivated*, so their schema does not fall behind. A fresh install/setup *baselines* migrations (records them without running), so everything a fresh instance needs must be in `install()`, not in a migration.  
+  Which of the two fits is a case-by-case call. `install()` is often the better place even for renames and cleanups: it is idempotent, works from any starting state, and you control the order within the hook, so rescue-before-destroy can be written as one guarded block (`if ($table->hasColumn(…)) { …; $table->removeColumn(…); }`). A migration buys you the ledger — use it when repeating the check on every deploy is what you want to avoid.
 - **Extension points** — REDAXO's hook/event system: register listeners with `Extension::register('NAME', ...)`, fire points with `Extension::dispatch(new ExtensionPoint(...))`. Classes live under `Redaxo\Core\ExtensionPoint`. This is the primary integration mechanism for addons.
 - **Fragments** (`fragments/`) — template snippets rendered via `Fragment` (`src/View/Fragment.php`).
 - **Boot flow** — `AbstractProject` (Symfony `RuntimeInterface`) drives boot via `boot/core.php` → `boot/addons.php` → environment entry (`boot/backend.php`, `boot/frontend.php`, `boot/console.php`). The entry points live in the project (`project/public/index.php`, `project/public/redaxo/index.php`, `project/bin/console`). The project hooks into boot twice: `configure()` during the core boot (static configuration, before any addon is loaded) and `boot()` after the core and all addons have booted (runtime initialization).

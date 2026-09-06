@@ -3,9 +3,12 @@
 namespace Redaxo\Core;
 
 use Override;
+use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\Database\Table;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\DefaultPathProvider;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Migration\Migration;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use ReflectionObject;
@@ -63,6 +66,18 @@ abstract class AbstractProject implements RunnerInterface
 
     /** Initializes the project at runtime, after the core and all addons have booted. */
     public function boot(): void {}
+
+    /**
+     * Hook to set up the schema and data the project itself owns, the counterpart of {@see Addon::install()}.
+     *
+     * Runs on every `migrate` after the core and all installed addons, so it must be idempotent. Describe the
+     * target state of the project's own tables here, e.g. via {@see Table}. Whatever a fresh instance needs
+     * belongs here: a fresh setup records all migrations as executed without running them.
+     *
+     * A {@see Migration} is the alternative for steps that should run exactly once, e.g. an expensive data
+     * backfill.
+     */
+    public function install(): void {}
 
     final public function bootCore(): void
     {
