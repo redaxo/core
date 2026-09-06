@@ -111,6 +111,14 @@
                 }
             }
         },
+        "setup_addons": {
+            "description": "Addons loaded in setup and in safe mode",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "^[^/]+$"
+            }
+        },
         "db": {
             "description": "Database connections",
             "patternProperties": {

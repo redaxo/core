@@ -34,10 +34,12 @@ use Rector\Renaming\ValueObject\RenameProperty;
 use Rector\Renaming\ValueObject\RenameStaticMethod;
 use Rector\Transform\Rector\ConstFetch\ConstFetchToClassConstFetchRector;
 use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
+use Rector\Transform\Rector\MethodCall\MethodCallToStaticCallRector;
 use Rector\Transform\Rector\New_\NewToStaticCallRector;
 use Rector\Transform\Rector\StaticCall\StaticCallToNewRector;
 use Rector\Transform\ValueObject\ConstFetchToClassConstFetch;
 use Rector\Transform\ValueObject\FuncCallToStaticCall;
+use Rector\Transform\ValueObject\MethodCallToStaticCall;
 use Rector\Transform\ValueObject\NewToStaticCall;
 use Rector\Transform\ValueObject\StaticCallToNew;
 use Rector\TypeDeclaration\Rector as TypeDeclaration;
@@ -415,6 +417,11 @@ return RectorConfig::configure()
         new RenameStaticMethod(Core::class, 'getVersionHash', Util\Version::class, 'gitHash'),
         new RenameStaticMethod(Core::class, 'isDebugMode', Core::class, 'isDevMode'),
         new RenameStaticMethod(Core::class, 'isLiveMode', Core::class, 'isHardenedMode'),
+        new RenameStaticMethod(Core::class, 'getAccesskey', Backend\Accesskey::class, 'attributes'),
+        new RenameStaticMethod(Core::class, 'getTheme', Backend\Appearance::class, 'getTheme'),
+        new RenameStaticMethod(Core::class, 'getInstanceColor', Backend\Appearance::class, 'getInstanceColor'),
+
+        new RenameStaticMethod(Security\BackendPasswordPolicy::class, 'factory', Security\BackendLogin::class, 'getPasswordPolicy'),
 
         new RenameStaticMethod(ExtensionPoint\Extension::class, 'registerPoint', ExtensionPoint\Extension::class, 'dispatch'),
         new RenameStaticMethod(ExtensionPoint\Extension::class, 'isRegistered', ExtensionPoint\Extension::class, 'hasExtensions'),
@@ -443,6 +450,9 @@ return RectorConfig::configure()
     ])
     ->withConfiguredRule(StaticCallToNewRector::class, [
         new StaticCallToNew(Exception\RuntimeException::class, 'create'), // 2 step modification, see NewToStaticCallRector
+    ])
+    ->withConfiguredRule(MethodCallToStaticCallRector::class, [
+        new MethodCallToStaticCall(Security\BackendLogin::class, 'getLoginPolicy', Security\BackendLogin::class, 'getLoginPolicy'),
     ])
     ->withConfiguredRule(FuncCallToStaticCallRector::class, [
         new FuncCallToStaticCall('rex_mediapool_filename', MediaPool\MediaPool::class, 'filename'),
@@ -614,6 +624,11 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getForceRenewAfter', 'forceRenewAfter'),
         new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getBlockAccountAfter', 'blockAccountAfter'),
+
+        new MethodCallToPropertyFetch(Security\LoginPolicy::class, 'getMaxTriesUntilDelay', 'maxTriesUntilDelay'),
+        new MethodCallToPropertyFetch(Security\LoginPolicy::class, 'getMaxTriesUntilBlock', 'maxTriesUntilBlock'),
+        new MethodCallToPropertyFetch(Security\LoginPolicy::class, 'getReloginDelay', 'reloginDelay'),
+        new MethodCallToPropertyFetch(Security\LoginPolicy::class, 'isStayLoggedInEnabled', 'stayLoggedInEnabled'),
 
         new MethodCallToPropertyFetch(Security\CsrfToken::class, 'getId', 'id'),
 
