@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\Database\ForeignKey;
 use Redaxo\Core\Database\Index;
+use Redaxo\Core\Database\SchemaDumper;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
 use Redaxo\Core\Exception\LogicException;
@@ -499,6 +500,83 @@ final class TableTest extends TestCase
         $table = Table::get(self::TABLE);
 
         self::assertFalse($table->hasColumn('i_title'));
+    }
+
+    public function testEnsureForeignIdColumn(): void
+    {
+        Table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensure();
+
+        Table::get(self::TABLE2)
+            ->ensurePrimaryIdColumn()
+            ->ensureForeignIdColumn('test1_id', self::TABLE, onDelete: ForeignKey::CASCADE)
+            ->ensureForeignIdColumn('optional_id', self::TABLE, nullable: true, onDelete: ForeignKey::SET_NULL)
+            ->ensure();
+
+        Table::clearInstancePool();
+        $table = Table::get(self::TABLE2);
+
+        $column = $table->getColumn('test1_id');
+        $optional = $table->getColumn('optional_id');
+
+        self::assertInstanceOf(Column::class, $column);
+        self::assertInstanceOf(Column::class, $optional);
+
+        // The type must match the referenced column exactly, otherwise the foreign key cannot be created.
+        self::assertSame('int unsigned', $column->type);
+        self::assertSame('int unsigned', $optional->type);
+        self::assertFalse($column->nullable);
+        self::assertTrue($optional->nullable);
+
+        $name = $table->getForeignKeyName(['test1_id']);
+        self::assertSame(self::TABLE2 . '_test1_id', $name);
+
+        $foreignKey = $table->getForeignKey($name);
+        self::assertInstanceOf(ForeignKey::class, $foreignKey);
+        self::assertSame(self::TABLE, $foreignKey->table);
+        self::assertSame(['test1_id' => 'id'], $foreignKey->columns);
+        self::assertSame(ForeignKey::RESTRICT, $foreignKey->onUpdate);
+        self::assertSame(ForeignKey::CASCADE, $foreignKey->onDelete);
+
+        self::assertSame(ForeignKey::SET_NULL, $table->getForeignKey($table->getForeignKeyName(['optional_id']))?->onDelete);
+
+        // Running the same definition again must not change anything.
+        $before = new SchemaDumper()->dumpTable($table);
+
+        $table
+            ->ensurePrimaryIdColumn()
+            ->ensureForeignIdColumn('test1_id', self::TABLE, onDelete: ForeignKey::CASCADE)
+            ->ensureForeignIdColumn('optional_id', self::TABLE, nullable: true, onDelete: ForeignKey::SET_NULL)
+            ->ensure();
+
+        Table::clearInstancePool();
+
+        self::assertSame($before, new SchemaDumper()->dumpTable(Table::get(self::TABLE2)));
+    }
+
+    public function testEnsureForeignKeyTo(): void
+    {
+        Table::get(self::TABLE)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn(Column::varchar('code', 10))
+            ->ensureIndex(new Index('code', ['code'], Index::UNIQUE))
+            ->ensure();
+
+        Table::get(self::TABLE2)
+            ->ensurePrimaryIdColumn()
+            ->ensureColumn(Column::varchar('test1_code', 10))
+            ->ensureForeignKeyTo(self::TABLE, ['test1_code' => 'code'], ForeignKey::CASCADE)
+            ->ensure();
+
+        Table::clearInstancePool();
+        $table = Table::get(self::TABLE2);
+
+        $foreignKey = $table->getForeignKey(self::TABLE2 . '_test1_code');
+        self::assertInstanceOf(ForeignKey::class, $foreignKey);
+        self::assertSame(['test1_code' => 'code'], $foreignKey->columns);
+        self::assertSame(ForeignKey::CASCADE, $foreignKey->onUpdate);
+        self::assertSame(ForeignKey::RESTRICT, $foreignKey->onDelete);
     }
 
     public function testAddForeignKey(): void

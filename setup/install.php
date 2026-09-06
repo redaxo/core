@@ -278,11 +278,10 @@ Table::get(Core::getTable('user'))
 
 Table::get(Core::getTable('user_passkey'))
     ->ensureColumn(Column::varchar('id', 255))
-    ->ensureColumn(Column::int('user_id', unsigned: true))
+    ->ensureForeignIdColumn('user_id', Core::getTable('user'), onUpdate: ForeignKey::CASCADE, onDelete: ForeignKey::CASCADE)
     ->ensureColumn(Column::text('public_key'))
     ->ensureColumn(Column::datetime('createdate'))
     ->setPrimaryKey('id')
-    ->ensureForeignKey(new ForeignKey(Core::getTable('user_passkey') . '_user_id', Core::getTable('user'), ['user_id' => 'id'], ForeignKey::CASCADE, ForeignKey::CASCADE))
     ->ensure();
 
 Table::get(Core::getTable('user_role'))
@@ -295,7 +294,7 @@ Table::get(Core::getTable('user_role'))
 
 Table::get(Core::getTable('user_session'))
     ->ensureColumn(Column::varchar('session_id', 255))
-    ->ensureColumn(Column::int('user_id', unsigned: true))
+    ->ensureForeignIdColumn('user_id', Core::getTable('user'), onUpdate: ForeignKey::CASCADE, onDelete: ForeignKey::CASCADE)
     ->ensureColumn(Column::varchar('cookie_key', 255, nullable: true))
     ->ensureColumn(Column::varchar('passkey_id', 255, nullable: true))
     ->ensureColumn(Column::varchar('ip', 39)) // max for ipv6
@@ -304,8 +303,7 @@ Table::get(Core::getTable('user_session'))
     ->ensureColumn(Column::datetime('last_activity'))
     ->setPrimaryKey('session_id')
     ->ensureIndex(new Index('cookie_key', ['cookie_key'], Index::UNIQUE))
-    ->ensureForeignKey(new ForeignKey(Core::getTable('user_session') . '_user_id', Core::getTable('user'), ['user_id' => 'id'], ForeignKey::CASCADE, ForeignKey::CASCADE))
-    ->ensureForeignKey(new ForeignKey(Core::getTable('user_session') . '_passkey_id', Core::getTable('user_passkey'), ['passkey_id' => 'id'], ForeignKey::CASCADE, ForeignKey::CASCADE))
+    ->ensureForeignKeyTo(Core::getTable('user_passkey'), ['passkey_id' => 'id'], ForeignKey::CASCADE, ForeignKey::CASCADE)
     ->ensure();
 
 $defaultConfig = [

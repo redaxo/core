@@ -4,6 +4,7 @@ namespace Redaxo\Core\Database;
 
 use Redaxo\Core\Core;
 
+use function array_keys;
 use function count;
 use function in_array;
 use function is_string;
@@ -25,10 +26,19 @@ final readonly class SchemaDumper
         $primaryKeyIsId = ['id'] === $table->getPrimaryKey();
         $idColumn = Column::int('id', unsigned: true, autoIncrement: true);
 
+        $foreignKeys = $table->getForeignKeys();
+
         foreach ($table->getColumns() as $column) {
             if ($primaryKeyIsId && $column->equals($idColumn)) {
                 $code .= "\n    ->ensurePrimaryIdColumn()";
                 $setPrimaryKey = false;
+
+                continue;
+            }
+
+            if ($foreignIdColumn = $this->getForeignIdColumn($table, $column, $foreignKeys)) {
+                $code .= "\n    ->" . $foreignIdColumn;
+                unset($foreignKeys[$table->getForeignKeyName([$column->name])]);
 
                 continue;
             }
@@ -48,11 +58,15 @@ final readonly class SchemaDumper
         }
 
         foreach ($table->getIndexes() as $index) {
+            if ($this->isForeignKeyIndex($index, $table->getForeignKeys())) {
+                continue;
+            }
+
             $code .= "\n    ->ensureIndex(" . $this->getIndex($index) . ')';
         }
 
-        foreach ($table->getForeignKeys() as $foreignKey) {
-            $code .= "\n    ->ensureForeignKey(" . $this->getForeignKey($foreignKey) . ')';
+        foreach ($foreignKeys as $foreignKey) {
+            $code .= "\n    ->" . $this->getForeignKey($table, $foreignKey);
         }
 
         $code .= "\n    ->ensure();\n";
@@ -218,6 +232,23 @@ final readonly class SchemaDumper
         return 'new \\' . Column::class . '(' . implode(', ', $arguments) . ')';
     }
 
+    /**
+     * Whether the index is the one InnoDB creates implicitly to back a foreign key.
+     *
+     * Such an index does not belong into a schema definition: it is not written there either, and
+     * InnoDB recreates it as needed.
+     *
+     * @param array<string, ForeignKey> $foreignKeys
+     */
+    private function isForeignKeyIndex(Index $index, array $foreignKeys): bool
+    {
+        $foreignKey = $foreignKeys[$index->name] ?? null;
+
+        return Index::INDEX === $index->type
+            && null !== $foreignKey
+            && array_keys($foreignKey->columns) === $index->columns;
+    }
+
     private function getIndex(Index $index): string
     {
         $parameters = [
@@ -235,14 +266,66 @@ final readonly class SchemaDumper
         return 'new \\' . Index::class . '(' . implode(', ', $parameters) . ')';
     }
 
-    private function getForeignKey(ForeignKey $foreignKey): string
+    /**
+     * Dumps a column as a call to `Table::ensureForeignIdColumn()`, or null if it is not such a column.
+     *
+     * @param array<string, ForeignKey> $foreignKeys
+     */
+    private function getForeignIdColumn(Table $table, Column $column, array $foreignKeys): ?string
     {
+        $foreignKey = $foreignKeys[$table->getForeignKeyName([$column->name])] ?? null;
+
+        if (
+            null === $foreignKey
+            || [$column->name => 'id'] !== $foreignKey->columns
+            || !$column->equals(Column::int($column->name, unsigned: true, nullable: $column->nullable))
+        ) {
+            return null;
+        }
+
+        $arguments = [$this->scalar($column->name), $this->tableName($foreignKey->table)];
+
+        if ($column->nullable) {
+            $arguments[] = 'nullable: true';
+        }
+
+        foreach ($this->getReferentialActions($foreignKey) as $name => $action) {
+            $arguments[] = $name . ': ' . $action;
+        }
+
+        return 'ensureForeignIdColumn(' . implode(', ', $arguments) . ')';
+    }
+
+    private function getForeignKey(Table $table, ForeignKey $foreignKey): string
+    {
+        $actions = [];
+        foreach ($this->getReferentialActions($foreignKey) as $name => $action) {
+            $actions[] = $name . ': ' . $action;
+        }
+
+        if ($foreignKey->name === $table->getForeignKeyName(array_keys($foreignKey->columns))) {
+            $parameters = [$this->tableName($foreignKey->table), $this->map($foreignKey->columns), ...$actions];
+
+            return 'ensureForeignKeyTo(' . implode(', ', $parameters) . ')';
+        }
+
         $parameters = [
             $this->scalar($foreignKey->name),
             $this->tableName($foreignKey->table),
             $this->map($foreignKey->columns),
+            ...$actions,
         ];
 
+        return 'ensureForeignKey(new \\' . ForeignKey::class . '(' . implode(', ', $parameters) . '))';
+    }
+
+    /**
+     * The `on update` and `on delete` actions of a foreign key, omitting trailing default values.
+     *
+     * @return array<string, string>
+     */
+    private function getReferentialActions(ForeignKey $foreignKey): array
+    {
         $options = [
             ForeignKey::RESTRICT => '\\' . ForeignKey::class . '::RESTRICT',
             ForeignKey::NO_ACTION => '\\' . ForeignKey::class . '::NO_ACTION',
@@ -250,17 +333,17 @@ final readonly class SchemaDumper
             ForeignKey::SET_NULL => '\\' . ForeignKey::class . '::SET_NULL',
         ];
 
-        $nonDefaultOnDelete = ForeignKey::RESTRICT !== $foreignKey->onDelete;
+        $actions = [];
 
-        if ($nonDefaultOnDelete || ForeignKey::RESTRICT !== $foreignKey->onUpdate) {
-            $parameters[] = $options[$foreignKey->onUpdate];
+        if (ForeignKey::RESTRICT !== $foreignKey->onUpdate) {
+            $actions['onUpdate'] = $options[$foreignKey->onUpdate];
         }
 
-        if ($nonDefaultOnDelete) {
-            $parameters[] = $options[$foreignKey->onDelete];
+        if (ForeignKey::RESTRICT !== $foreignKey->onDelete) {
+            $actions['onDelete'] = $options[$foreignKey->onDelete];
         }
 
-        return 'new \\' . ForeignKey::class . '(' . implode(', ', $parameters) . ')';
+        return $actions;
     }
 
     /** @param list<string> $primaryKey */
