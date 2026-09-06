@@ -438,7 +438,6 @@ return RectorConfig::configure()
         new RenameStaticMethod(View\View::class, 'warning', View\Message::class, 'warning'),
     ])
     ->withConfiguredRule(NewToStaticCallRector::class, [
-        new NewToStaticCall(Security\BackendPasswordPolicy::class, Security\BackendPasswordPolicy::class, 'factory'),
         new NewToStaticCall(Log\LogFile::class, Log\LogFile::class, 'factory'),
         new NewToStaticCall('rex_exception', Exception\RuntimeException::class, 'create'), // 2 step modification, see StaticCallToNewRector
     ])

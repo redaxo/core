@@ -11,7 +11,6 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Language\LanguageHandler;
 use Redaxo\Core\Security\BackendLogin;
-use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Setup\Importer;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
@@ -471,7 +470,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
                 },
             );
 
-            $passwordPolicy = BackendPasswordPolicy::factory();
+            $passwordPolicy = BackendLogin::getPasswordPolicy();
             $pwValidator = static function ($password) use ($passwordPolicy) {
                 if (true !== $msg = $passwordPolicy->check($password)) {
                     throw new InvalidArgumentException($msg);

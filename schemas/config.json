@@ -56,25 +56,6 @@
             "description": "Seconds before a dialog window appears and asks for action",
             "type": "integer"
         },
-        "backend_login_policy": {
-            "description": "backend login policy",
-            "type": "object",
-            "properties": {
-                "login_tries_until_blocked": {
-                    "type": "integer"
-                },
-                "login_tries_until_delay": {
-                    "type": "integer"
-                },
-                "relogin_delay": {
-                    "type": "integer"
-                },
-                "enable_stay_logged_in": {
-                    "type": "boolean"
-                }
-            },
-            "additionalProperties": false
-        },
         "session": {
             "description": "Session configuration",
             "type": "object",
@@ -128,82 +109,6 @@
                     },
                     "additionalProperties": false
                 }
-            }
-        },
-        "password_policy": {
-            "description": "Password policy for backend login",
-            "type": "object",
-            "properties": {
-                "length": {
-                    "description": "Password length",
-                    "$ref": "#/properties/password_policy/definitions/min_max"
-                },
-                "letter": {
-                    "description": "Required number of letters",
-                    "$ref": "#/properties/password_policy/definitions/min_max"
-                },
-                "uppercase": {
-                    "description": "Required number of uppercase letters",
-                    "$ref": "#/properties/password_policy/definitions/min_max"
-                },
-                "lowercase": {
-                    "description": "Required number of lowercase letters",
-                    "$ref": "#/properties/password_policy/definitions/min_max"
-                },
-                "digit": {
-                    "description": "Required number of digits",
-                    "$ref": "#/properties/password_policy/definitions/min_max"
-                },
-                "symbol": {
-                    "description": "Required number of symbols",
-                    "$ref": "#/properties/password_policy/definitions/min_max"
-                },
-                "no_reuse_of_last": {
-                    "description": "Forbid to reuse the last X previous passwords",
-                    "type": "integer"
-                },
-                "no_reuse_within": {
-                    "description": "Forbid to reuse the previous passwords used in the given interval (e.g. P2Y)",
-                    "$ref": "#/properties/password_policy/definitions/interval"
-                },
-                "force_renew_after": {
-                    "description": "Force to renew the password after the given interval (e.g. P6W)",
-                    "$ref": "#/properties/password_policy/definitions/interval"
-                },
-                "block_account_after": {
-                    "description": "Block account if the password wasn't changed in the given interval (e.g. P6M)",
-                    "$ref": "#/properties/password_policy/definitions/interval"
-                }
-            },
-            "additionalProperties": false,
-            "definitions": {
-                "min_max": {
-                    "type": "object",
-                    "properties": {
-                        "min": {
-                            "type": "integer",
-                            "minimum": 0
-                        },
-                        "max": {
-                            "type": "integer",
-                            "minimum": 0
-                        }
-                    },
-                    "additionalProperties": false,
-                    "minProperties": 1
-                },
-                "interval": {
-                    "type": "string",
-                    "pattern": "^P(\\d+Y)?(\\d+M)?(\\d+W)?(\\d+D)?(T(\\d+H)?(\\d+M)?(\\d+S)?)?$"
-                }
-            }
-        },
-        "setup_addons": {
-            "description": "Addons loaded in setup and in safe mode",
-            "type": "array",
-            "items": {
-                "type": "string",
-                "pattern": "^[^/]+$"
             }
         },
         "db": {
