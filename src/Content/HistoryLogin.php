@@ -33,7 +33,7 @@ final class HistoryLogin extends BackendLogin
                 WHERE user_id = ? AND UNIX_TIMESTAMP(last_activity) >= IF(cookie_key IS NULL, ?, ?)',
             [
                 (int) $userSql->getValue($this->idColumn),
-                time() - (int) Core::getProperty('session_duration'),
+                time() - BackendLogin::getSessionPolicy()->duration,
                 strtotime('-' . UserSession::STAY_LOGGED_IN_DURATION . ' months'),
             ],
         );

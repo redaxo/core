@@ -37,6 +37,9 @@ class BackendLogin extends Login
     /** Policy for the passwords of backend users. */
     public static ?BackendPasswordPolicy $passwordPolicy = null;
 
+    /** Policy for the lifetime of a backend session. */
+    public static ?SessionPolicy $sessionPolicy = null;
+
     private static ?string $legacySha1Hash = null;
 
     private readonly string $tableName;
@@ -49,7 +52,9 @@ class BackendLogin extends Login
 
         $tableName = Core::getTablePrefix() . 'user';
         $this->systemId = self::SYSTEM_ID;
-        $this->sessionDuration = Core::getProperty('session_duration');
+        $sessionPolicy = self::getSessionPolicy();
+        $this->sessionDuration = $sessionPolicy->duration;
+        $this->sessionMaxOverallDuration = $sessionPolicy->maxOverallDuration;
         $qry = 'SELECT * FROM ' . $tableName;
         $this->userQuery = $qry . ' WHERE id = :id AND status = 1';
         $this->impersonateQuery = $qry . ' WHERE id = :id';
@@ -373,6 +378,11 @@ class BackendLogin extends Login
     public static function getPasswordPolicy(): BackendPasswordPolicy
     {
         return self::$passwordPolicy ??= new BackendPasswordPolicy();
+    }
+
+    public static function getSessionPolicy(): SessionPolicy
+    {
+        return self::$sessionPolicy ??= new SessionPolicy();
     }
 
     /**
