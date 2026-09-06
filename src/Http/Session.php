@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
 use function assert;
 
+use const PHP_SAPI;
+
 /**
  * The http session.
  *
@@ -31,12 +33,14 @@ final class Session
      * Options for the session in the backend.
      *
      * The keys are the `session.*` ini settings without their prefix, see https://php.net/session.configuration.
+     * `cookie_secure` additionally understands `auto`, which sets the flag for requests over https.
      *
      * @var array<string, scalar>
      */
     public static array $backendOptions = [
         'cookie_httponly' => true,
         'cookie_samesite' => 'Lax',
+        'cookie_secure' => 'auto',
     ];
 
     /**
@@ -47,6 +51,7 @@ final class Session
     public static array $frontendOptions = [
         'cookie_httponly' => true,
         'cookie_samesite' => 'Lax',
+        'cookie_secure' => 'auto',
     ];
 
     /** Handler storing the backend session, `null` for the one configured in the php settings. */
@@ -132,10 +137,13 @@ final class Session
     {
         $backend = Core::isBackend();
 
-        $storage = new NativeSessionStorage(
-            $backend ? self::$backendOptions : self::$frontendOptions,
-            $backend ? self::$backendHandler : self::$frontendHandler,
-        );
+        $options = $backend ? self::$backendOptions : self::$frontendOptions;
+
+        if ('auto' === ($options['cookie_secure'] ?? null)) {
+            $options['cookie_secure'] = 'cli' !== PHP_SAPI && Request::isHttps();
+        }
+
+        $storage = new NativeSessionStorage($options, $backend ? self::$backendHandler : self::$frontendHandler);
 
         // both environments keep their attributes apart, so that e.g. the backend session can be cleared without
         // logging out the users in the frontend
