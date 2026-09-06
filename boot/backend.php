@@ -21,7 +21,6 @@ use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
-use Redaxo\Core\Http\Session;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\MetaInfo\Handler\CategoryHandler as MetaInfoCategoryHandler;
 use Redaxo\Core\MetaInfo\Handler\LanguageHandler as MetaInfoLanguageHandler;
@@ -228,7 +227,6 @@ Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => tru
 
 Asset::setJsProperty('backend', true);
 Asset::setJsProperty('accesskeys', Accesskey::$enabled);
-Asset::setJsProperty('cookie_params', Session::getCookieParams());
 
 if (Core::getUser()) {
     Asset::addJsFile(Url::coreAssets('session-timeout.js'), [Asset::JS_IMMUTABLE => true]);
