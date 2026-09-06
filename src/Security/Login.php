@@ -42,7 +42,8 @@ class Login
     /** A Session will be closed when not activly used for this timespan (seconds). */
     protected int $sessionDuration = 0;
     /** A session cannot stay longer then this value, no matter its actively used once in a while (seconds). */
-    protected int $sessionMaxOverallDuration;
+    /** Overridden by `BackendLogin` from its session policy, other logins set their own value. */
+    protected int $sessionMaxOverallDuration = 2_419_200; // 4 weeks
 
     protected string $loginQuery;
     protected string $userQuery;
@@ -66,8 +67,6 @@ class Login
 
     public function __construct()
     {
-        $this->sessionMaxOverallDuration = Core::getProperty('session_max_overall_duration', 2_419_200); // 4 weeks
-
         self::startSession();
     }
 

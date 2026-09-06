@@ -40,22 +40,6 @@
             "type": ["null", "string"],
             "format": "email"
         },
-        "session_duration": {
-            "description": "A Session will be closed when not activly used for this timespan (seconds)",
-            "type": "integer"
-        },
-        "session_keep_alive": {
-            "description": "A open browser window will auto extended the session for this timespan (seconds)",
-            "type": "integer"
-        },
-        "session_max_overall_duration": {
-            "description": "A session cannot stay longer then this value, no matter its actively used once in a while (seconds)",
-            "type": "integer"
-        },
-        "session_warning_time": {
-            "description": "Seconds before a dialog window appears and asks for action",
-            "type": "integer"
-        },
         "session": {
             "description": "Session configuration",
             "type": "object",
