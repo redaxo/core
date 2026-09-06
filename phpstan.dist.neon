@@ -13,7 +13,6 @@ parameters:
         - .php-cs-fixer.dist.php
         - .tools/fixtures
         - addons
-        - assets_src/vendor_files.php
         - boot
         - fragments
         - pages

@@ -313,7 +313,6 @@ $defaultConfig = [
     'notfound_article_id' => 1,
     'article_history' => false,
     'article_work_version' => false,
-    'be_style_compile' => false,
     'phpmailer_from' => '',
     'phpmailer_test_address' => '',
     'phpmailer_fromname' => 'Mailer',

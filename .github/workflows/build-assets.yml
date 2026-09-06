@@ -1,4 +1,4 @@
-name: Compile Styles
+name: Build Assets
 
 on:
     push:
@@ -6,11 +6,10 @@ on:
     pull_request:
         types: [opened, synchronize, reopened, ready_for_review]
     repository_dispatch:
-        types: [compile-styles-command] # triggered by /compile-styles PR comment
+        types: [build-assets-command] # triggered by /build-assets PR comment
 
 env:
     writable: ${{ (github.event_name == 'repository_dispatch' || github.ref == 'refs/heads/temp' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]') && 1 || 0 }}
-    COMPOSER_ROOT_VERSION: 6.x-dev
 
 permissions:
     contents: read
@@ -20,8 +19,8 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
-    compile:
-        name: assets:compile-styles
+    build:
+        name: build assets
         runs-on: ubuntu-latest
         timeout-minutes: 30
         permissions:
@@ -54,42 +53,30 @@ jobs:
                     repository: ${{ github.event.client_payload.pull_request.head.repo.full_name }}
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
-            -   name: Setup PHP
-                uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+            -   name: Setup nodejs
+                uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
                 with:
-                    php-version: '8.5'
-                    extensions: pdo_mysql
-                    coverage: none # disable xdebug, pcov
-                    tools: cs2pr
+                    node-version: 23
+                    cache: npm
+                    cache-dependency-path: package.json
 
-            -   name: Composer install
-                uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
-                with:
-                    composer-options: --ansi --prefer-dist
-
-            -   name: Setup REDAXO
+            -   name: Build assets
                 run: |
-                    sudo /etc/init.d/mysql start
-                    mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo6;'
-                    php project/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
-                    php project/bin/console config:set --type boolean debug.enabled true -v
-                    php project/bin/console config:set --type boolean debug.throw_always_exception true -v
-
-            -   name: Compile styles
-                run: php project/bin/console assets:compile-styles --ansi -v
+                    npm install
+                    npm run build
 
             -   name: Commit changed files
                 uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
                 if: env.writable == 1
                 with:
-                    commit_message: 'chore: apply assets:compile-styles'
+                    commit_message: 'chore: rebuild assets'
                     commit_user_name: rex-bot
                     commit_user_email: rex-bot@users.noreply.github.com
-                    file_pattern: "*.css"
+                    file_pattern: assets
                     branch: ${{ github.head_ref }} # repo dispatch needs the target branch
 
             -   name: Check diff
                 if: env.writable == 0
                 run: |
-                    # check if compiling the scss lead to uncommitted changes
-                    git diff HEAD --exit-code --output=/dev/null || (echo "::error::It seems you missed to commit the compiled css files, run 'project/bin/console assets:compile-styles' and push the changes." && exit 1)
+                    # check if building the assets lead to uncommitted changes
+                    git diff HEAD --exit-code --output=/dev/null || (echo "::error::It seems you missed to commit the built assets, run 'npm install && npm run build' and push the changes." && exit 1)

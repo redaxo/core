@@ -14,8 +14,10 @@
 /.phpstorm.meta.php -export-ignore
 /addons/ export-ignore
 /project/ export-ignore
+/assets/scss/ export-ignore
 /tests/ export-ignore
 /docker-compose.yml export-ignore
+/package.json export-ignore
 /phpstan.dist.neon export-ignore
 /phpunit.dist.xml export-ignore
 /psalm.xml export-ignore
