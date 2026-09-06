@@ -12,8 +12,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
 use function assert;
+use function session_status;
 
 use const PHP_SAPI;
+use const PHP_SESSION_ACTIVE;
 
 /**
  * The http session.
@@ -74,6 +76,32 @@ final class Session
         }
 
         return $session;
+    }
+
+    /**
+     * Writes the session and releases its lock, so that parallel requests are not blocked while a long response
+     * is sent. Changes made afterwards are not persisted.
+     */
+    public static function close(): void
+    {
+        if (self::$session?->isStarted()) {
+            self::$session->save();
+        }
+    }
+
+    /**
+     * Discards the changes made in this request and releases the lock, see https://php.net/session_abort.
+     *
+     * http-foundation has no equivalent, so the session is closed on the php level and the session object is
+     * dropped, to not leave it claiming that it is started.
+     */
+    public static function abort(): void
+    {
+        if (PHP_SESSION_ACTIVE === session_status()) {
+            session_abort();
+        }
+
+        self::$session = null;
     }
 
     /**
