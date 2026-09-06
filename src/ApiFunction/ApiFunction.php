@@ -16,6 +16,7 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Http\Session;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Type;
 
 use function is_string;
 use function Redaxo\Core\View\escape;
@@ -181,7 +182,7 @@ abstract class ApiFunction
             if ($urlResult) {
                 // take over result from url and session and do not execute the apiFunc
                 Session::start();
-                $result = Request::session(self::REQ_RESULT_PARAM, 'array[string]', [])[$urlResult] ?? null;
+                $result = Type::array(Session::start()->get(self::REQ_RESULT_PARAM, []))[$urlResult] ?? null;
                 if (!is_string($result)) {
                     throw new NotFoundHttpException(new ApiFunctionException('The result of the api function is not available in the session.'));
                 }
@@ -202,11 +203,11 @@ abstract class ApiFunction
                     if ($result->requiresReboot) {
                         // add api call result to session
                         Session::start();
-                        $results = Request::session(self::REQ_RESULT_PARAM, 'array', []);
+                        $results = Type::array(Session::start()->get(self::REQ_RESULT_PARAM, []));
                         $result = $result->toJson();
                         $key = sha1($result);
                         $results[$key] = $result;
-                        Request::setSession(self::REQ_RESULT_PARAM, $results);
+                        Session::start()->set(self::REQ_RESULT_PARAM, $results);
 
                         // and redirect to SELF for reboot with session key as parameter
                         Response::sendRedirect(Context::fromGet()->getUrl([

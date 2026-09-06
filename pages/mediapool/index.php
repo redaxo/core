@@ -5,6 +5,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\View\Message;
@@ -65,7 +66,7 @@ if ('' != $fileName) {
 }
 
 if (-1 == $rexFileCategory) {
-    $rexFileCategory = Request::session('media[rex_file_category]', 'int');
+    $rexFileCategory = (int) Session::start()->get('media[rex_file_category]', 0);
 }
 
 $gc = Sql::factory();
@@ -77,7 +78,7 @@ if (1 != $gc->getRows()) {
     $rexFileCategoryName = $gc->getValue('name');
 }
 
-Request::setSession('media[rex_file_category]', $rexFileCategory);
+Session::start()->set('media[rex_file_category]', $rexFileCategory);
 
 // -------------- PERMS
 $PERMALL = Core::requireUser()->getComplexPerm('media')->hasCategoryPerm(0);

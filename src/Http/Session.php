@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Session as HttpFoundationSession;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 
 use function assert;
 use function session_status;
@@ -171,7 +170,7 @@ final class Session
             $options['cookie_secure'] = 'cli' !== PHP_SAPI && Request::isHttps();
         }
 
-        $storage = new NativeSessionStorage($options, $backend ? self::$backendHandler : self::$frontendHandler);
+        $storage = new SessionStorage($options, $backend ? self::$backendHandler : self::$frontendHandler);
 
         // both environments keep their attributes apart, so that e.g. the backend session can be cleared without
         // logging out the users in the frontend

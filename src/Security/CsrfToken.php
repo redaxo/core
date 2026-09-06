@@ -5,6 +5,7 @@ namespace Redaxo\Core\Security;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Session;
+use Redaxo\Core\Util\Type;
 
 use function sprintf;
 
@@ -34,7 +35,7 @@ final readonly class CsrfToken
 
         $token = self::generateToken();
         $tokens[$this->id] = $token;
-        Request::setSession(self::getSessionKey(), $tokens);
+        Session::start()->set(self::getSessionKey(), $tokens);
 
         return $token;
     }
@@ -77,15 +78,15 @@ final readonly class CsrfToken
 
         unset($tokens[$this->id]);
 
-        Request::setSession(self::getSessionKey(), $tokens);
+        Session::start()->set(self::getSessionKey(), $tokens);
     }
 
     public static function removeAll(): void
     {
         Session::start();
 
-        Request::unsetSession(self::getBaseSessionKey());
-        Request::unsetSession(self::getBaseSessionKey() . '_https');
+        Session::start()->remove(self::getBaseSessionKey());
+        Session::start()->remove(self::getBaseSessionKey() . '_https');
     }
 
     /** @return array<string, string> */
@@ -94,7 +95,7 @@ final readonly class CsrfToken
         Session::start();
 
         /** @var array<string, string> */
-        return Request::session(self::getSessionKey(), 'array[string]');
+        return Type::array(Session::start()->get(self::getSessionKey(), []));
     }
 
     private static function getSessionKey(): string

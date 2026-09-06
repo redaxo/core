@@ -9,7 +9,7 @@ use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
-use Redaxo\Core\Http\Request;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MetaInfo\Field\MediaField;
 use Redaxo\Core\MetaInfo\MetaContext;
@@ -142,7 +142,7 @@ final class MediaHandler extends AbstractHandler
             }
         }
 
-        $catId = Request::session('media[rex_file_category]', 'int');
+        $catId = (int) Session::start()->get('media[rex_file_category]', 0);
         $context = new MetaContext(MetaEntity::Media, $media, mediaCategory: $catId > 0 ? MediaCategory::get($catId) : null);
 
         if ($save && isset($params['id'])) {

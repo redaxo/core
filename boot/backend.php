@@ -20,6 +20,7 @@ use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\MetaInfo\Handler\CategoryHandler as MetaInfoCategoryHandler;
 use Redaxo\Core\MetaInfo\Handler\LanguageHandler as MetaInfoLanguageHandler;
@@ -129,7 +130,7 @@ if (Core::isSetup()) {
 
         // Not all browsers support the header Clear-Site-Data.
         // we dont kill/regenerate the session so e.g. the frontend will not get logged out
-        Request::clearSession();
+        Session::start()->clear();
 
         // is necessary for login after logout
         // and without the redirect, the csrf token would be invalid
@@ -178,7 +179,7 @@ if (Core::isSetup()) {
 
             // Not all browsers support the header Clear-Site-Data.
             // we dont kill/regenerate the session so e.g. the frontend will not get logged out
-            Request::clearSession();
+            Session::start()->clear();
         }
     } else {
         // Userspezifische Sprache einstellen
@@ -193,9 +194,9 @@ if (Core::isSetup()) {
         // Safe Mode
         if (!Core::isHardenedMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
             if ($safeMode) {
-                Request::setSession('safemode', true);
+                Session::start()->set('safemode', true);
             } else {
-                Request::unsetSession('safemode');
+                Session::start()->remove('safemode');
             }
         }
     }
