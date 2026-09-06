@@ -6,7 +6,6 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Environment;
 use Redaxo\Core\Security\BackendLogin;
-use Redaxo\Core\Security\BackendPasswordPolicy;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Attribute\Option;
@@ -40,7 +39,7 @@ final class UserCreateCommand extends AbstractCommand
             throw new InvalidArgumentException(sprintf('User "%s" already exists.', $login));
         }
 
-        $passwordPolicy = BackendPasswordPolicy::factory();
+        $passwordPolicy = BackendLogin::getPasswordPolicy();
 
         if ($password && true !== $msg = $passwordPolicy->check($password)) {
             throw new InvalidArgumentException($msg);

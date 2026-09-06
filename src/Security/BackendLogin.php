@@ -31,12 +31,17 @@ class BackendLogin extends Login
 
     private const string SESSION_PASSWORD_CHANGE_REQUIRED = 'password_change_required';
 
+    /** Policy for the login itself, e.g. how many tries are allowed. */
+    public static ?LoginPolicy $loginPolicy = null;
+
+    /** Policy for the passwords of backend users. */
+    public static ?BackendPasswordPolicy $passwordPolicy = null;
+
     private static ?string $legacySha1Hash = null;
 
     private readonly string $tableName;
     private ?string $passkey = null;
     private bool $stayLoggedIn = false;
-    private readonly BackendPasswordPolicy $passwordPolicy;
 
     public function __construct()
     {
@@ -48,22 +53,21 @@ class BackendLogin extends Login
         $qry = 'SELECT * FROM ' . $tableName;
         $this->userQuery = $qry . ' WHERE id = :id AND status = 1';
         $this->impersonateQuery = $qry . ' WHERE id = :id';
-        $this->passwordPolicy = BackendPasswordPolicy::factory();
 
-        $loginPolicy = $this->getLoginPolicy();
+        $loginPolicy = self::getLoginPolicy();
 
         // XXX because with concat the time into the sql query, users of this class should use checkLogin() immediately after creating the object.
         $qry .= ' WHERE
             status = 1
             AND login = :login
-            AND login_tries < ' . $loginPolicy->getMaxTriesUntilBlock() . '
+            AND login_tries < ' . $loginPolicy->maxTriesUntilBlock . '
             AND (
-                login_tries < ' . $loginPolicy->getMaxTriesUntilDelay() . '
+                login_tries < ' . $loginPolicy->maxTriesUntilDelay . '
                 OR
-                login_tries >= ' . $loginPolicy->getMaxTriesUntilDelay() . ' AND lasttrydate < "' . Sql::datetime(time() - $loginPolicy->getReloginDelay()) . '"
+                login_tries >= ' . $loginPolicy->maxTriesUntilDelay . ' AND lasttrydate < "' . Sql::datetime(time() - $loginPolicy->reloginDelay) . '"
             )';
 
-        if ($blockAccountAfter = $this->passwordPolicy->blockAccountAfter) {
+        if ($blockAccountAfter = self::getPasswordPolicy()->blockAccountAfter) {
             $datetime = new DateTimeImmutable()->sub($blockAccountAfter);
             $qry .= ' AND password_changed > "' . $datetime->format(Sql::FORMAT_DATETIME) . '"';
         }
@@ -80,7 +84,7 @@ class BackendLogin extends Login
 
     public function setStayLoggedIn(bool $stayLoggedIn = false): void
     {
-        if (!$this->getLoginPolicy()->isStayLoggedInEnabled()) {
+        if (!self::getLoginPolicy()->stayLoggedInEnabled) {
             $stayLoggedIn = false;
         }
 
@@ -176,7 +180,7 @@ class BackendLogin extends Login
             if ($loggedInViaCookie || $this->userLogin) {
                 if ($this->user->getValue('password_change_required')) {
                     $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
-                } elseif ($forceRenewAfter = $this->passwordPolicy->forceRenewAfter) {
+                } elseif ($forceRenewAfter = self::getPasswordPolicy()->forceRenewAfter) {
                     $datetime = new DateTimeImmutable()->sub($forceRenewAfter);
                     if (strtotime($this->user->getValue('password_changed')) < $datetime->getTimestamp()) {
                         $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
@@ -189,12 +193,12 @@ class BackendLogin extends Login
             if ('' != $this->userLogin) {
                 $sql->setQuery('SELECT login_tries FROM ' . $this->tableName . ' WHERE login=? LIMIT 1', [$this->userLogin]);
                 if ($sql->getRows() > 0) {
-                    $loginPolify = $this->getLoginPolicy();
+                    $loginPolicy = self::getLoginPolicy();
 
                     $loginTries = $sql->getValue('login_tries');
                     $this->increaseLoginTries();
-                    if ($loginTries >= $loginPolify->getMaxTriesUntilDelay() - 1) {
-                        $time = $loginPolify->getReloginDelay();
+                    if ($loginTries >= $loginPolicy->maxTriesUntilDelay - 1) {
+                        $time = $loginPolicy->reloginDelay;
                         $hours = floor($time / 3600);
                         $mins = floor(($time - ($hours * 3600)) / 60);
                         $secs = $time % 60;
@@ -361,11 +365,14 @@ class BackendLogin extends Login
         return Core::getInstanceId() . '_backend';
     }
 
-    public function getLoginPolicy(): LoginPolicy
+    public static function getLoginPolicy(): LoginPolicy
     {
-        $loginPolicy = (array) Core::getProperty('backend_login_policy', []);
+        return self::$loginPolicy ??= new LoginPolicy();
+    }
 
-        return new LoginPolicy($loginPolicy);
+    public static function getPasswordPolicy(): BackendPasswordPolicy
+    {
+        return self::$passwordPolicy ??= new BackendPasswordPolicy();
     }
 
     /**

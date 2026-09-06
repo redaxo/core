@@ -1,9 +1,9 @@
 <?php
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\WebAuthn;
 use Redaxo\Core\Translation\I18n;
@@ -94,7 +94,7 @@ $fragment->setVar('elements', $formElements, false);
 $content .= $fragment->parse('core/form/form.php');
 
 $formElements = [];
-if (Core::getProperty('login')->getLoginPolicy()->isStayLoggedInEnabled()) {
+if (BackendLogin::getLoginPolicy()->stayLoggedInEnabled) {
     $n = [];
     $n['label'] = '<label for="rex-id-login-stay-logged-in">' . I18n::msg('stay_logged_in') . '</label>';
     $n['field'] = '<input type="checkbox" name="rex_user_stay_logged_in" id="rex-id-login-stay-logged-in" value="1" />';

@@ -6,7 +6,6 @@ use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Security\BackendLogin;
-use Redaxo\Core\Security\BackendPasswordPolicy;
 use Redaxo\Core\Security\Login;
 
 /** @internal */
@@ -23,7 +22,7 @@ final class BackendLoginTest extends TestCase
         $adduser->setValue('login', self::LOGIN);
         $adduser->setValue('password', $psw = Login::passwordHash(self::PASSWORD));
         $adduser->setDateTimeValue('password_changed', time());
-        $adduser->setArrayValue('previous_passwords', BackendPasswordPolicy::factory()->updatePreviousPasswords(null, $psw));
+        $adduser->setArrayValue('previous_passwords', BackendLogin::getPasswordPolicy()->updatePreviousPasswords(null, $psw));
         $adduser->setValue('status', '1');
         $adduser->setValue('login_tries', '0');
         $adduser->addGlobalCreateFields();
@@ -67,7 +66,7 @@ final class BackendLoginTest extends TestCase
     public function testSuccessfullReLoginAfterLoginTriesSeconds(): void
     {
         $login = new BackendLogin();
-        $tries = $login->getLoginPolicy()->getMaxTriesUntilDelay();
+        $tries = BackendLogin::getLoginPolicy()->maxTriesUntilDelay;
 
         for ($i = 0; $i < $tries; ++$i) {
             $login->setLogin(self::LOGIN, 'somethingwhichisnotcorrect');
@@ -85,7 +84,7 @@ final class BackendLoginTest extends TestCase
         $login->setLogin(self::LOGIN, self::PASSWORD);
         self::assertFalse($login->checkLogin(), 'even seconds later account is locked');
 
-        sleep($login->getLoginPolicy()->getReloginDelay() + 1);
+        sleep(BackendLogin::getLoginPolicy()->reloginDelay + 1);
 
         $login = new BackendLogin();
         $login->setLogin(self::LOGIN, self::PASSWORD);
