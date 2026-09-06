@@ -10,7 +10,11 @@ $plugin = rex_plugin::get('structure', 'history');
 
 $historyDate = rex_request('rex_history_date', 'string');
 
+rex_perm::register('history[read]', null, rex_perm::OPTIONS);
 rex_perm::register('history[article_rollback]', null, rex_perm::OPTIONS);
+if (rex_plugin::get('structure', 'version')->isAvailable()) {
+    rex_perm::register('history[article_draft_rollback]', null, rex_perm::OPTIONS);
+}
 
 if ('' != $historyDate) {
     $historySession = rex_request('rex_history_session', 'string');
@@ -44,7 +48,7 @@ if ('' != $historyDate) {
         throw new rex_http_exception(new rex_exception('no permission'), rex_response::HTTP_UNAUTHORIZED);
     }
 
-    if (!$user->hasPerm('history[article_rollback]')) {
+    if (!$user->hasPerm('history[read]')) {
         throw new rex_http_exception(new rex_exception('no permission for the slice version'), rex_response::HTTP_FORBIDDEN);
     }
 
@@ -121,7 +125,7 @@ rex_extension::register(
     },
 );
 
-if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
+if (rex::isBackend() && rex::getUser()?->hasPerm('history[read]')) {
     rex_view::addCssFile($plugin->getAssetsUrl('noUiSlider/nouislider.css'));
     rex_view::addJsFile($plugin->getAssetsUrl('noUiSlider/nouislider.js'), [rex_view::JS_IMMUTABLE => true]);
     rex_view::addCssFile($plugin->getAssetsUrl('history.css'));
@@ -131,7 +135,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
     $articleId = rex_request('history_article_id', 'int');
     $clangId = rex_request('history_clang_id', 'int');
 
-    if (in_array($historyFunction, ['snap', 'layer'], true)) {
+    if (in_array($historyFunction, ['snap', 'snap_draft', 'layer'], true)) {
         $historyArticle = rex_article::get($articleId, $clangId);
         $user = rex::requireUser();
 
@@ -154,21 +158,43 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
                 exit;
             }
 
+            if (!rex::requireUser()->hasPerm('history[article_rollback]')) {
+                throw new rex_http_exception(new rex_exception('no permission for article rollback'), rex_response::HTTP_FORBIDDEN);
+            }
+
             $historyDate = rex_request('history_date', 'string');
             rex_article_slice_history::restoreSnapshot($historyDate, $articleId, $clangId);
+
+            // no break
+        case 'snap_draft':
+            if ('snap_draft' === $historyFunction) {
+                if (!rex_csrf_token::factory('structure_history')->isValid()) {
+                    rex_response::setStatus(rex_response::HTTP_FORBIDDEN);
+                    rex_response::sendContent(rex_i18n::msg('csrf_token_invalid'), 'text/plain');
+                    exit;
+                }
+
+                if (!rex::requireUser()->hasPerm('history[article_draft_rollback]')) {
+                    throw new rex_http_exception(new rex_exception('no permission for draft rollback'), rex_response::HTTP_FORBIDDEN);
+                }
+                $historyDate = rex_request('history_date', 'string');
+                rex_article_slice_history::restoreDraftSnapshot($historyDate, $articleId, $clangId);
+            }
 
             // no break
         case 'layer':
             $versions = rex_article_slice_history::getSnapshots($articleId, $clangId);
 
             $select1 = [];
-            $select1[] = '<option value="0" selected="selected" data-revision="0">' . $plugin->i18n('current_version') . '</option>';
-            if (rex_plugin::get('structure', 'version')->isAvailable()) {
+            $versionAvailable = rex_plugin::get('structure', 'version')->isAvailable();
+            $currentVersionLabel = $versionAvailable ? $plugin->i18n('current_live_version') : $plugin->i18n('current_version');
+            $select1[] = '<option value="0" selected="selected" data-revision="0">' . $currentVersionLabel . '</option>';
+            if ($versionAvailable) {
                 $select1[] = '<option value="1" data-revision="1">' . rex_i18n::msg('version_workingversion') . '</option>';
             }
 
             $select2 = [];
-            $select2[] = '<option value="" selected="selected">' . $plugin->i18n('current_version') . '</option>';
+            $select2[] = '<option value="" selected="selected">' . $currentVersionLabel . '</option>';
             foreach ($versions as $version) {
                 $historyInfo = $version['history_date'];
                 if ('' != $version['history_user']) {
@@ -189,6 +215,9 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
             $fragment->setVar('content1iframe', $content1iframe, false);
             $fragment->setVar('content2select', $content2select, false);
             $fragment->setVar('content2iframe', $content2iframe, false);
+            $fragment->setVar('allow_rollback', rex::requireUser()->hasPerm('history[article_rollback]'));
+            $fragment->setVar('allow_draft_rollback', $versionAvailable && rex::requireUser()->hasPerm('history[article_draft_rollback]'));
+            $fragment->setVar('version_available', $versionAvailable);
 
             echo $fragment->parse('history/layer.php');
             exit;
@@ -212,6 +241,7 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
                     var history_ctype_id = ' . rex_request('ctype', 'int', 0) . ';
                     var history_article_link = "' . rex_escape($articleLink, 'js') . '";
                     var history_csrf_token = "' . rex_escape(rex_csrf_token::factory('structure_history')->getValue(), 'js') . '";
+                    var version_csrf_token = "' . rex_escape(rex_csrf_token::factory('structure_version')->getValue(), 'js') . '";
                     </script>';
         }
     },

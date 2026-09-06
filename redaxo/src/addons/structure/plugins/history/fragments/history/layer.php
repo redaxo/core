@@ -48,7 +48,12 @@
             <div class="history-layer-panel-4">
                 <div class="row">
                     <div class="col-lg-6 col-lg-push-6 text-center">
-                        <button class="btn btn-apply" data-history-layer="snap"><?= rex_i18n::msg('structure_history_snapshot_reactivate') ?></button>
+                        <?php if ($this->getVar('allow_draft_rollback')): ?>
+                        <button class="btn btn-apply" data-history-layer="snap_draft" data-draft-warning="<?= rex_escape(rex_i18n::msg('structure_history_draft_warning')) ?>"><?= rex_i18n::msg('structure_history_snapshot_draft_reactivate') ?></button>
+                        <?php endif ?>
+                        <?php if ($this->getVar('allow_rollback')): ?>
+                        <button class="btn btn-apply" data-history-layer="snap"><?= rex_i18n::msg($this->getVar('version_available') ? 'structure_history_snapshot_live_reactivate' : 'structure_history_snapshot_reactivate') ?></button>
+                        <?php endif ?>
                         <button class="btn btn-abort" data-history-layer="cancel"><?= rex_i18n::msg('structure_history_close') ?></button>
                     </div>
                 </div>
