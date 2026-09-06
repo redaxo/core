@@ -167,6 +167,17 @@ async function processScreenshot(page, screenshotName) {
         });
     });
 
+    // images with `loading="lazy"` do not delay the load event, and `fullPage` screenshots don't scroll them into
+    // view either. Load them eagerly and wait until every image is decoded, otherwise slow ones (media manager
+    // thumbnails) randomly end up missing in the screenshot.
+    await page.evaluate(() => {
+        for (const img of document.images) {
+            img.loading = 'eager';
+        }
+    });
+    await page.waitForFunction(() => [...document.images].every((img) => img.complete), null, { timeout: 30000 });
+    await page.evaluate(() => Promise.all([...document.images].map((img) => img.decode().catch(() => {}))));
+
     await page.screenshot({ path: WORKING_DIR + screenshotName, fullPage: true, animations: 'disabled' });
 
     // make sure we only create changes in .tools/visual-tests/screenshots/ on substential screenshot changes.
