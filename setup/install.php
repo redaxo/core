@@ -31,6 +31,13 @@ Table::get(Core::getTable('config'))
     ->setPrimaryKey(['namespace', 'key'])
     ->ensure();
 
+Table::get(Core::getTable('migration'))
+    ->ensureColumn(Column::varchar('package', 191))
+    ->ensureColumn(Column::varchar('id', 191))
+    ->ensureColumn(Column::datetime('executed'))
+    ->setPrimaryKey(['package', 'id'])
+    ->ensure();
+
 Table::get(Core::getTable('article'))
     ->ensureColumn(Column::int('pid', unsigned: true, autoIncrement: true))
     ->ensureColumn(Column::int('id', unsigned: true))
@@ -205,9 +212,6 @@ Table::get(Core::getTable('article_slice_history'))
     ->ensureIndex(new Index('snapshot', ['article_id', 'clang_id', 'revision', 'history_date']))
     ->ensure();
 
-$sql = Sql::factory();
-$sql->setQuery('UPDATE ' . Core::getTablePrefix() . 'article_slice set revision=0 where revision<1 or revision IS NULL');
-
 Table::get(Core::getTable('cronjob'))
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::varchar('name', 255, nullable: true))
@@ -309,7 +313,6 @@ $defaultConfig = [
     'notfound_article_id' => 1,
     'article_history' => false,
     'article_work_version' => false,
-    'be_style_compile' => false,
     'phpmailer_from' => '',
     'phpmailer_test_address' => '',
     'phpmailer_fromname' => 'Mailer',

@@ -4,7 +4,6 @@ use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
-use Redaxo\Core\Backend\Style;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleRevision;
 use Redaxo\Core\Content\ArticleSliceHistory;
@@ -585,10 +584,6 @@ Extension::register('STRUCTURE_CONTENT_SIDEBAR', function ($ep) {
 include_once Path::core('boot/addons.php');
 
 Asset::setJsProperty('theme', Appearance::getTheme() ?? 'auto');
-
-if (Core::getUser() && Core::getConfig('be_style_compile')) {
-    Style::compile();
-}
 
 // ----- Prepare AddOn Pages
 if (Core::getUser()) {

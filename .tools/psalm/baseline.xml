@@ -1124,7 +1124,6 @@
   </file>
   <file src="pages/system/settings.php">
     <MixedArgument>
-      <code><![CDATA[$destination]]></code>
       <code><![CDATA[Core::getConfig('notfound_article_id', 1)]]></code>
       <code><![CDATA[Core::getConfig('phpmailer_errormail', 1)]]></code>
       <code><![CDATA[Core::getConfig('start_article_id', 1)]]></code>
@@ -1135,13 +1134,7 @@
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$config[$key]]]></code>
-      <code><![CDATA[$destination]]></code>
-      <code><![CDATA[$files]]></code>
-      <code><![CDATA[$source]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$source]]></code>
-    </MixedOperand>
     <NullOperand>
       <code><![CDATA[escape($editor->getBasepath())]]></code>
     </NullOperand>
@@ -2197,16 +2190,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$type]]></code>
     </ArgumentTypeCoercion>
-    <MixedArrayAccess>
-      <code><![CDATA[$_SESSION[self::getSessionNamespace()][$varname]]]></code>
-      <code><![CDATA[$_SESSION[self::getSessionNamespace()][$varname]]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$_SESSION[self::getSessionNamespace()][$varname]]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$_SESSION[self::getSessionNamespace()][$varname]]]></code>
-    </MixedAssignment>
   </file>
   <file src="src/Http/Response.php">
     <InvalidOperand>
@@ -2368,13 +2351,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$password]]></code>
     </ArgumentTypeCoercion>
-    <InvalidArgument>
-      <code><![CDATA[[
-            'expires' => strtotime(UserSession::STAY_LOGGED_IN_DURATION . ' months'),
-            'secure' => $sessionConfig['secure'] ?? false,
-            'samesite' => $sessionConfig['samesite'] ?? 'lax',
-        ]]]></code>
-    </InvalidArgument>
     <InvalidOperand>
       <code><![CDATA[$hours]]></code>
       <code><![CDATA[$hours * 3600]]></code>
@@ -2385,18 +2361,6 @@
     <InvalidScalarArgument>
       <code><![CDATA[$this->user->getValue('password_changed')]]></code>
     </InvalidScalarArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()][self::SYSTEM_ID]]]></code>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()][self::SYSTEM_ID]]]></code>
-      <code><![CDATA[$sessionConfig['samesite']]]></code>
-      <code><![CDATA[$sessionConfig['secure']]]></code>
-    </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$sessionConfig]]></code>
-    </MixedAssignment>
-    <PossiblyInvalidArrayOffset>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()]]]></code>
-    </PossiblyInvalidArrayOffset>
     <PossiblyNullReference>
       <code><![CDATA[getValue]]></code>
     </PossiblyNullReference>
@@ -2416,26 +2380,6 @@
     </MixedAssignment>
   </file>
   <file src="src/Security/Login.php">
-    <InvalidArgument>
-      <code><![CDATA[static::getCookieParams()]]></code>
-    </InvalidArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId]]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId]]]></code>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId]]]></code>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId][$varname]]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$rexSessId]]></code>
-    </MixedAssignment>
-    <MixedReturnStatement>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()][$this->systemId][$varname] ?? $default]]></code>
-    </MixedReturnStatement>
-    <PossiblyInvalidArrayOffset>
-      <code><![CDATA[$_SESSION[static::getSessionNamespace()]]]></code>
-    </PossiblyInvalidArrayOffset>
     <PossiblyNullArgument>
       <code><![CDATA[$this->userPassword]]></code>
     </PossiblyNullArgument>
@@ -2502,21 +2446,12 @@
   <file src="src/Setup/Setup.php">
     <MixedArgument>
       <code><![CDATA[$config['db'][1]]]></code>
-      <code><![CDATA[$destination]]></code>
       <code><![CDATA[$func($path)]]></code>
       <code><![CDATA[$path]]></code>
     </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$config['db'][1]]]></code>
     </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$destination]]></code>
-      <code><![CDATA[$files]]></code>
-      <code><![CDATA[$source]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$source]]></code>
-    </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[fileperms($path)]]></code>
     </PossiblyFalseArgument>
@@ -2620,11 +2555,6 @@
     <PropertyTypeCoercion>
       <code><![CDATA[$this->headers]]></code>
     </PropertyTypeCoercion>
-  </file>
-  <file src="src/Util/ScssCompiler.php">
-    <MixedOperand>
-      <code><![CDATA[$path]]></code>
-    </MixedOperand>
   </file>
   <file src="src/Util/SortableIterator.php">
     <PossiblyNullArgument>
