@@ -61,7 +61,8 @@ fi
 
 git commit --no-edit -m "Merge branch '5.x' into 6.x"
 
-project/bin/console assets:compile-styles
+npm install
+npm run build
 composer cs-fixer
 composer sa
 

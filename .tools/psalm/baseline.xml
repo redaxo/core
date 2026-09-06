@@ -1124,7 +1124,6 @@
   </file>
   <file src="pages/system/settings.php">
     <MixedArgument>
-      <code><![CDATA[$destination]]></code>
       <code><![CDATA[Core::getConfig('notfound_article_id', 1)]]></code>
       <code><![CDATA[Core::getConfig('phpmailer_errormail', 1)]]></code>
       <code><![CDATA[Core::getConfig('start_article_id', 1)]]></code>
@@ -1135,13 +1134,7 @@
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$config[$key]]]></code>
-      <code><![CDATA[$destination]]></code>
-      <code><![CDATA[$files]]></code>
-      <code><![CDATA[$source]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$source]]></code>
-    </MixedOperand>
     <NullOperand>
       <code><![CDATA[escape($editor->getBasepath())]]></code>
     </NullOperand>
@@ -2453,21 +2446,12 @@
   <file src="src/Setup/Setup.php">
     <MixedArgument>
       <code><![CDATA[$config['db'][1]]]></code>
-      <code><![CDATA[$destination]]></code>
       <code><![CDATA[$func($path)]]></code>
       <code><![CDATA[$path]]></code>
     </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$config['db'][1]]]></code>
     </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$destination]]></code>
-      <code><![CDATA[$files]]></code>
-      <code><![CDATA[$source]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$source]]></code>
-    </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[fileperms($path)]]></code>
     </PossiblyFalseArgument>
@@ -2571,11 +2555,6 @@
     <PropertyTypeCoercion>
       <code><![CDATA[$this->headers]]></code>
     </PropertyTypeCoercion>
-  </file>
-  <file src="src/Util/ScssCompiler.php">
-    <MixedOperand>
-      <code><![CDATA[$path]]></code>
-    </MixedOperand>
   </file>
   <file src="src/Util/SortableIterator.php">
     <PossiblyNullArgument>

@@ -15,6 +15,7 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Log\Logger;
+use Redaxo\Core\Migration\Migrator;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\Util\Type;
@@ -101,6 +102,9 @@ class AddonManager
             // everything succeeded — commit (fresh installs are activated right away)
             if (!$reinstall) {
                 $this->addon->setState(AddonState::Activated);
+
+                // install() created the current schema, so its migrations must not run again
+                Migrator::baseline($this->addon->name);
             }
             static::saveConfig();
             self::generateAddonOrder();
@@ -151,6 +155,9 @@ class AddonManager
             $this->addon->clearCache();
 
             Config::removeNamespace($this->addon->name);
+
+            // the addon dropped its own tables, so its migration history is gone too
+            Migrator::forget($this->addon->name);
 
             // everything succeeded — commit the new state
             $this->addon->setState(AddonState::Uninstalled);
@@ -236,6 +243,7 @@ class AddonManager
         Dir::delete(Path::addonAssets($addon));
         Dir::delete(Path::addonCache($addon));
         Config::removeNamespace($addon);
+        Migrator::forget($addon);
     }
 
     /** Checks whether the required addons are available. */
@@ -316,6 +324,25 @@ class AddonManager
         // missing after `composer install --no-dev`). Filter them out so boot does not require a missing
         // addon, while leaving the stored order untouched so it returns unchanged once available again.
         return array_values(array_filter(self::loadAddonsData()['order'], Addon::exists(...)));
+    }
+
+    /**
+     * Returns the names of all installed addons: the activated ones first in boot order, followed by the
+     * installed but deactivated ones (in name order).
+     *
+     * In contrast to {@see getAddonOrder()} this also covers deactivated addons, so that their schema does not
+     * fall behind.
+     *
+     * @return list<non-empty-string>
+     */
+    public static function getInstalledAddonOrder(): array
+    {
+        $order = array_values(array_filter(self::getAddonOrder(), static fn (string $addon): bool => Addon::require($addon)->isInstalled()));
+
+        $deactivated = array_keys(array_diff_key(Addon::getInstalledAddons(), array_flip($order)));
+        sort($deactivated);
+
+        return [...$order, ...$deactivated];
     }
 
     /** Generates the addon order. */

@@ -22,7 +22,6 @@ $finder = Finder::create()
     ->append([
         __FILE__,
         __DIR__ . '/project/bin/console',
-        __DIR__ . '/assets_src/vendor_files.php',
         __DIR__ . '/rector.php',
     ])
 ;

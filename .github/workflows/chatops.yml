@@ -24,6 +24,6 @@ jobs:
                     issue-type: pull-request
                     commands: |
                         baseline
+                        build-assets
                         code-style
-                        compile-styles
                         visual-tests
