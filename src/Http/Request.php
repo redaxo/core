@@ -4,7 +4,6 @@ namespace Redaxo\Core\Http;
 
 use Closure;
 use Redaxo\Core\Core;
-use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Util\Type;
 
 use function array_key_exists;
@@ -12,7 +11,6 @@ use function is_array;
 use function is_scalar;
 
 use const PHP_SAPI;
-use const PHP_SESSION_ACTIVE;
 
 /**
  * Class for getting the superglobals.
@@ -75,68 +73,6 @@ final class Request
     public static function server(string $varname, string|array|Closure|null $type = null, mixed $default = ''): mixed
     {
         return self::arrayKeyCast($_SERVER, $varname, $type, $default);
-    }
-
-    /**
-     * Returns the variable $varname of $_SESSION and casts the value.
-     *
-     * @param string $varname Variable name
-     * @param TCastType $type Cast type
-     * @param mixed $default Default value
-     */
-    public static function session(string $varname, string|array|Closure|null $type = null, mixed $default = ''): mixed
-    {
-        if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
-        }
-
-        if (isset($_SESSION[self::getSessionNamespace()][$varname])) {
-            return Type::cast($_SESSION[self::getSessionNamespace()][$varname], $type);
-        }
-
-        if ('' === $default) {
-            return Type::cast($default, $type);
-        }
-        return $default;
-    }
-
-    /**
-     * Sets a session variable.
-     *
-     * @param string $varname Variable name
-     * @param mixed $value Value
-     */
-    public static function setSession(string $varname, mixed $value): void
-    {
-        if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
-        }
-
-        $_SESSION[self::getSessionNamespace()][$varname] = $value;
-    }
-
-    /**
-     * Deletes a session variable.
-     *
-     * @param string $varname Variable name
-     */
-    public static function unsetSession(string $varname): void
-    {
-        if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
-        }
-
-        unset($_SESSION[self::getSessionNamespace()][$varname]);
-    }
-
-    /** clear redaxo session contents within the current namespace (the session itself stays alive). */
-    public static function clearSession(): void
-    {
-        if (PHP_SESSION_ACTIVE != session_status()) {
-            throw new LogicException('Session not started, call Login::startSession() before.');
-        }
-
-        unset($_SESSION[self::getSessionNamespace()]);
     }
 
     /**
@@ -248,19 +184,5 @@ final class Request
     public static function isHttps(): bool
     {
         return Core::getRequest()->isSecure();
-    }
-
-    /**
-     * Returns the session namespace for the current http request.
-     *
-     * @return non-empty-string
-     */
-    public static function getSessionNamespace(): string
-    {
-        // separate backend from frontend namespace,
-        // so we can e.g. clear the backend session without
-        // logging out the users from the frontend
-        $suffix = Core::isBackend() ? '_backend' : '';
-        return Core::getInstanceId() . $suffix;
     }
 }

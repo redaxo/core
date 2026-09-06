@@ -2,28 +2,6 @@ setup: true
 server: https://www.redaxo.org/
 servername: REDAXO
 error_email: null
-# using separate cookie domains for frontend and backend is more secure,
-# but be warned that some features like detecting a backend user in the frontend
-# will no longer work.
-session:
-    backend:
-        # save_path:
-        cookie:
-            lifetime: null
-            path: null
-            domain: null
-            secure: null
-            httponly: true
-            samesite: 'Lax'
-    frontend:
-        # save_path:
-        cookie:
-            lifetime: null
-            path: null
-            domain: null
-            secure: null
-            httponly: true
-            samesite: 'Lax'
 setup_addons: []
 db:
     1:

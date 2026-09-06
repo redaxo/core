@@ -10,6 +10,7 @@ use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Setup\Setup;
@@ -277,7 +278,7 @@ final class Core
             return false;
         }
 
-        return PHP_SESSION_ACTIVE == session_status() && Http\Request::session('safemode', 'boolean', false);
+        return PHP_SESSION_ACTIVE == session_status() && true === Session::start()->get('safemode');
     }
 
     /**

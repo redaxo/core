@@ -7,7 +7,7 @@ use lbuchs\WebAuthn\WebAuthn as BaseWebAuthn;
 use lbuchs\WebAuthn\WebAuthnException;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Http\Request;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Util\Type;
 use stdClass;
 
@@ -26,7 +26,7 @@ final class WebAuthn
         $webauthn = $this->createWebauthnBase();
         $args = $webauthn->getCreateArgs((string) $user->id, $user->login, $user->name ?? $user->login, requireResidentKey: true, requireUserVerification: true);
 
-        Request::setSession(self::SESSION_CHALLENGE_CREATE, $webauthn->getChallenge());
+        Session::start()->set(self::SESSION_CHALLENGE_CREATE, $webauthn->getChallenge());
 
         return json_encode($args);
     }
@@ -40,7 +40,7 @@ final class WebAuthn
         $attestationObject = base64_decode(Type::string($data->attestationObject));
 
         /** @var ByteBuffer $challenge */
-        $challenge = Request::session(self::SESSION_CHALLENGE_CREATE);
+        $challenge = Session::start()->get(self::SESSION_CHALLENGE_CREATE);
 
         $data = $this->createWebauthnBase()->processCreate($clientDataJSON, $attestationObject, $challenge, requireUserVerification: true);
 
@@ -55,7 +55,7 @@ final class WebAuthn
         $webauthn = $this->createWebauthnBase();
         $args = $webauthn->getGetArgs($id ? [ByteBuffer::fromBase64Url($id)] : [], requireUserVerification: true);
 
-        Request::setSession(self::SESSION_CHALLENGE_GET, $webauthn->getChallenge());
+        Session::start()->set(self::SESSION_CHALLENGE_GET, $webauthn->getChallenge());
 
         return json_encode($args);
     }
@@ -85,7 +85,7 @@ final class WebAuthn
         $signature = base64_decode(Type::string($data->signature));
 
         /** @var ByteBuffer $challenge */
-        $challenge = Request::session(self::SESSION_CHALLENGE_GET);
+        $challenge = Session::start()->get(self::SESSION_CHALLENGE_GET);
 
         try {
             $this->createWebauthnBase()->processGet($clientDataJSON, $authenticatorData, $signature, Type::string($sql->getValue('public_key')), $challenge, requireUserVerification: true);

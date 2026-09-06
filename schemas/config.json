@@ -40,61 +40,6 @@
             "type": ["null", "string"],
             "format": "email"
         },
-        "session": {
-            "description": "Session configuration",
-            "type": "object",
-            "properties": {
-                "backend": {
-                    "$ref": "#/properties/session/definitions/options"
-                },
-                "frontend": {
-                    "$ref": "#/properties/session/definitions/options"
-                }
-            },
-            "additionalProperties": false,
-            "definitions": {
-                "options": {
-                    "type": "object",
-                    "properties": {
-                        "save_path": {
-                            "description": "Directory path used to save session data (session.save_path)",
-                            "type": ["null", "string"]
-                        },
-                        "cookie": {
-                            "type": "object",
-                            "properties": {
-                                "lifetime": {
-                                    "description": "Lifetime of the cookie (seconds)",
-                                    "type": ["null", "integer"]
-                                },
-                                "path": {
-                                    "description": "Path on the domain where the cookie will work",
-                                    "type": ["null", "string"]
-                                },
-                                "domain": {
-                                    "description": "Cookie domain",
-                                    "type": ["null", "string"]
-                                },
-                                "secure": {
-                                    "description": "If true cookie will only be sent over secure connections",
-                                    "type": ["null", "boolean"]
-                                },
-                                "httponly": {
-                                    "description": "If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie",
-                                    "type": ["null", "boolean"]
-                                },
-                                "samesite": {
-                                    "description": "If set to TRUE then PHP will attempt to send the httponly flag when setting the session cookie",
-                                    "enum": [null, "Lax", "Strict"]
-                                }
-                            },
-                            "additionalProperties": false
-                        }
-                    },
-                    "additionalProperties": false
-                }
-            }
-        },
         "setup_addons": {
             "description": "Addons loaded in setup and in safe mode",
             "type": "array",

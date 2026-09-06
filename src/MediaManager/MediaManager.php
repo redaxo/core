@@ -14,6 +14,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\MediaManager\Attribute\AsMediaType;
 use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
 use Redaxo\Core\MediaPool\Media;
@@ -28,14 +29,11 @@ use function hash;
 use function is_dir;
 use function is_file;
 use function rtrim;
-use function session_abort;
-use function session_status;
 use function substr;
 
 use const DIRECTORY_SEPARATOR;
 use const GLOB_NOSORT;
 use const GLOB_ONLYDIR;
-use const PHP_SESSION_ACTIVE;
 
 /**
  * Front controller for delivering media files transformed by a {@see MediaType}.
@@ -210,9 +208,7 @@ final class MediaManager
         Response::cleanOutputBuffers();
 
         // prevent session locking through other addons
-        if (PHP_SESSION_ACTIVE === session_status()) {
-            session_abort();
-        }
+        Session::abort();
 
         /** @var array{mediaType: string, download: bool, downloadFilename: string, cacheControl: string|null, headers: array<string, string>}|null $meta */
         $meta = is_file($cacheFile) ? File::getCache($metaFile, null) : null;

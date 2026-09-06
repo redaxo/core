@@ -17,6 +17,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Language\LanguagePermission;
 use Redaxo\Core\MediaPool\MediaPoolPermission;
@@ -105,7 +106,10 @@ if (!Core::isSetup() && 'cli' !== PHP_SAPI) {
 }
 
 if ('cli' !== PHP_SAPI) {
-    Core::setProperty('request', BaseRequest::createFromGlobals());
+    $request = BaseRequest::createFromGlobals();
+    // the session is only created when it is actually used, see Session::start()
+    $request->setSessionFactory(Session::get(...));
+    Core::setProperty('request', $request);
 }
 
 VarDumper::register();
