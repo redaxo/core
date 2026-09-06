@@ -52,6 +52,7 @@ final class StrTest extends TestCase
         ];
     }
 
+    /** @param array<int|string, string|int> $expectedArray */
     #[DataProvider('splitProvider')]
     public function testSplit(string $string, array $expectedArray): void
     {

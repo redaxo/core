@@ -10,6 +10,7 @@ use ReflectionMethod;
 /** @internal */
 final class PasswordPolicyTest extends TestCase
 {
+    /** @param array<string, array{min?: int, max?: int}> $options */
     #[DataProvider('provideCheck')]
     public function testCheck(array $options, bool $expected, string $password): void
     {

@@ -15,6 +15,10 @@ final readonly class Configuration
     public string|bool|null $sslCa;
     public bool $sslVerifyServerCert;
 
+    /**
+     * @param array<string, string|bool> $dbConfig
+     * @psalm-suppress PossiblyInvalidPropertyAssignmentValue
+     */
     public function __construct(array $dbConfig)
     {
         $this->host = $dbConfig['host'];

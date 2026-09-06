@@ -39,7 +39,11 @@ class Mailer extends PHPMailer
 
     private bool $archive;
 
-    /** used to store information if detour mode is enabled. */
+    /**
+     * used to store information if detour mode is enabled.
+     *
+     * @var array<string, string>
+     */
     private array $xHeader = [];
 
     public function __construct($exceptions = false)

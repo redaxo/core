@@ -15,7 +15,7 @@ final class Asset
 
     /** @var array<string, list<string>> */
     private static array $cssFiles = [];
-    /** @var list<array{string, array}> */
+    /** @var list<array{string, array<self::JS_*, bool>}> */
     private static array $jsFiles = [];
     /** @var array<string, mixed> */
     private static array $jsProperties = [];
@@ -47,7 +47,7 @@ final class Asset
     /**
      * Adds a JS file.
      *
-     * @param array<self::JS_*, bool>|array<self::JS_*> $options
+     * @param array<self::JS_*, bool> $options
      */
     public static function addJsFile(string $file, array $options = []): void
     {
@@ -78,7 +78,7 @@ final class Asset
     /**
      * Returns all JS files besides their options.
      *
-     * @return list<array{string, array}>
+     * @return list<array{string, array<self::JS_*, bool>}>
      */
     public static function getJsFilesWithOptions(): array
     {
