@@ -128,7 +128,7 @@ if ('addclang' == $func) {
                 <tr class="mark">
                     <td class="rex-table-icon"><i class="rex-icon rex-icon-language"></i></td>
                     <td class="rex-table-id" data-title="' . I18n::msg('id') . '">–</td>
-                    <td data-title="' . I18n::msg('clang_code') . '"><input class="form-control" type="text" id="rex-form-clang-code" name="clang_code" value="' . escape($clangCode) . '" required maxlength="255" autocapitalize="off" autocorrect="off" autofocus /></td>
+                    <td data-title="' . I18n::msg('clang_code') . '"><input class="form-control" type="text" id="rex-form-clang-code" name="clang_code" value="' . escape($clangCode) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus /></td>
                     <td data-title="' . I18n::msg('clang_name') . '"><input class="form-control" type="text" id="rex-form-clang-name" name="clang_name" value="' . escape($clangName) . '" required maxlength="255" /></td>
                     <td class="rex-table-priority" data-title="' . I18n::msg('clang_priority') . '"><input class="form-control" type="number" id="rex-form-clang-prio" name="clang_prio" value="' . ($clangPrio ?: Language::count() + 1) . '" required min="1" inputmode="numeric" /></td>
                     <td class="rex-table-action">' . $metaButtons . '</td>
@@ -161,7 +161,7 @@ foreach ($sql as $row) {
                     <tr class="mark">
                         <td class="rex-table-icon"><i class="rex-icon rex-icon-language"></i></td>
                         ' . $addTd . '
-                        <td data-title="' . I18n::msg('clang_code') . '"><input class="form-control" type="text" id="rex-form-clang-code" name="clang_code" value="' . escape($sql->getValue('code')) . '" required maxlength="255" autocapitalize="off" autocorrect="off" autofocus /></td>
+                        <td data-title="' . I18n::msg('clang_code') . '"><input class="form-control" type="text" id="rex-form-clang-code" name="clang_code" value="' . escape($sql->getValue('code')) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus /></td>
                         <td data-title="' . I18n::msg('clang_name') . '"><input class="form-control" type="text" id="rex-form-clang-name" name="clang_name" value="' . escape($sql->getValue('name')) . '" required maxlength="255" /></td>
                         <td class="rex-table-priority" data-title="' . I18n::msg('clang_priority') . '"><input class="form-control" type="number" id="rex-form-clang-prio" name="clang_prio" value="' . escape($sql->getValue('priority')) . '" required min="1" inputmode="numeric" /></td>
                         <td class="rex-table-action">' . $metaButtons . '</td>

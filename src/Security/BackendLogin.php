@@ -76,6 +76,8 @@ class BackendLogin extends Login
 
         if ($blockAccountAfter = self::getPasswordPolicy()->blockAccountAfter) {
             $datetime = new DateTimeImmutable()->sub($blockAccountAfter);
+            // A password_changed of NULL fails this comparison, so an account whose password change was
+            // never recorded stays blocked.
             $qry .= ' AND password_changed > "' . $datetime->format(Sql::FORMAT_DATETIME) . '"';
         }
 
@@ -157,8 +159,8 @@ class BackendLogin extends Login
                     $add .= 'password = ?, ';
                     $params[] = $password = self::passwordHash($this->userPassword);
                 }
-                array_push($params, Sql::datetime(), Sql::datetime(), session_id(), $this->getSessionVar(self::SESSION_USER_ID));
-                $sql->setQuery('UPDATE ' . $this->tableName . ' SET ' . $add . 'login_tries=0, lasttrydate=?, lastlogin=?, session_id=? WHERE id=? LIMIT 1', $params);
+                array_push($params, Sql::datetime(), Sql::datetime(), $this->getSessionVar(self::SESSION_USER_ID));
+                $sql->setQuery('UPDATE ' . $this->tableName . ' SET ' . $add . 'login_tries=0, lasttrydate=?, lastlogin=? WHERE id=? LIMIT 1', $params);
 
                 $this->setSessionVar(self::SESSION_PASSWORD, $password);
 
@@ -189,7 +191,8 @@ class BackendLogin extends Login
                     $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
                 } elseif ($forceRenewAfter = self::getPasswordPolicy()->forceRenewAfter) {
                     $datetime = new DateTimeImmutable()->sub($forceRenewAfter);
-                    if (strtotime($this->user->getValue('password_changed')) < $datetime->getTimestamp()) {
+                    $passwordChanged = $this->user->getValue('password_changed');
+                    if (null === $passwordChanged || strtotime((string) $passwordChanged) < $datetime->getTimestamp()) {
                         $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
                     }
                 }
@@ -232,7 +235,6 @@ class BackendLogin extends Login
         }
 
         if ($this->isLoggedOut() && '' != $userId) {
-            $sql->setQuery('UPDATE ' . $this->tableName . ' SET session_id="" WHERE id=? LIMIT 1', [$userId]);
             self::deleteStayLoggedInCookie();
             UserSession::getInstance()->clearCurrentSession();
         }
@@ -243,7 +245,12 @@ class BackendLogin extends Login
     public function increaseLoginTries(): void
     {
         $sql = Sql::factory();
-        $sql->setQuery('UPDATE ' . $this->tableName . ' SET login_tries=login_tries+1,session_id="",lasttrydate=? WHERE login=? LIMIT 1', [Sql::datetime(), $this->userLogin]);
+        // Capped at the threshold that blocks the account: every try beyond it carries no information,
+        // and an uncapped counter eventually runs out of the column's range.
+        $sql->setQuery(
+            'UPDATE ' . $this->tableName . ' SET login_tries=LEAST(login_tries+1, ?), lasttrydate=? WHERE login=? LIMIT 1',
+            [self::getLoginPolicy()->maxTriesUntilBlock, Sql::datetime(), $this->userLogin],
+        );
     }
 
     public function requiresPasswordChange(): bool

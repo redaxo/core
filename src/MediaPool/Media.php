@@ -26,7 +26,7 @@ final class Media
         public readonly int $categoryId,
         public readonly string $fileName,
         public readonly string $originalFileName,
-        public readonly string $type,
+        public readonly ?string $type,
         public readonly int $size,
         public readonly ?int $width,
         public readonly ?int $height,
