@@ -2358,9 +2358,6 @@
       <code><![CDATA[$time - ($hours * 3600)]]></code>
       <code><![CDATA[($time - ($hours * 3600)) / 60]]></code>
     </InvalidOperand>
-    <InvalidScalarArgument>
-      <code><![CDATA[$this->user->getValue('password_changed')]]></code>
-    </InvalidScalarArgument>
     <PossiblyNullReference>
       <code><![CDATA[getValue]]></code>
     </PossiblyNullReference>
