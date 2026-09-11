@@ -3,7 +3,6 @@
 namespace Redaxo\Core\MetaInfo\Handler;
 
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\MetaInfo\Field\Fieldset;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaSchema;
@@ -95,11 +94,4 @@ abstract class AbstractHandler
 
         return $saved;
     }
-
-    /**
-     * Retrieves the subject from the current context and renders (and saves) the meta form.
-     *
-     * @param ExtensionPoint<string> $ep
-     */
-    abstract public function extendForm(ExtensionPoint $ep): string;
 }

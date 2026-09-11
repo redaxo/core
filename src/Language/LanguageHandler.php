@@ -9,9 +9,11 @@ use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
-use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Language\ExtensionPoint\LanguageAdded;
+use Redaxo\Core\Language\ExtensionPoint\LanguageDeleted;
+use Redaxo\Core\Language\ExtensionPoint\LanguageUpdated;
 use Redaxo\Core\Translation\I18n;
 
 final class LanguageHandler
@@ -72,12 +74,7 @@ final class LanguageHandler
         Cache::delete();
 
         // ----- EXTENSION POINT
-        $clang = Language::require($id);
-        Extension::dispatch(new ExtensionPoint('CLANG_ADDED', '', [
-            'id' => $clang->id,
-            'name' => $clang->name,
-            'clang' => $clang,
-        ]));
+        Extension::dispatch(new LanguageAdded(Language::require($id)));
     }
 
     /** Ändert eine Clang. */
@@ -106,12 +103,7 @@ final class LanguageHandler
         Cache::delete();
 
         // ----- EXTENSION POINT
-        $clang = Language::require($id);
-        Extension::dispatch(new ExtensionPoint('CLANG_UPDATED', '', [
-            'id' => $clang->id,
-            'name' => $clang->name,
-            'clang' => $clang,
-        ]));
+        Extension::dispatch(new LanguageUpdated(Language::require($id)));
 
         return true;
     }
@@ -145,11 +137,7 @@ final class LanguageHandler
         Cache::delete();
 
         // ----- EXTENSION POINT
-        Extension::dispatch(new ExtensionPoint('CLANG_DELETED', '', [
-            'id' => $clang->id,
-            'name' => $clang->name,
-            'clang' => $clang,
-        ]));
+        Extension::dispatch(new LanguageDeleted($clang));
     }
 
     /**
