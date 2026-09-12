@@ -95,21 +95,21 @@ languages_edit = Sprachen bearbeiten
 id_exists = ID existiert schon.
 enter_code = Bitte geben Sie einen Code ein.
 enter_name = Bitte einen Namen eingeben.
-clang_add = Sprache hinzufügen
-clang_edit = Sprache bearbeiten
-clang_update = Sprache übernehmen
-clang_created = Sprache wurde angelegt.
-clang_edited = Sprache wurde editiert
-clang_deleted = Sprache wurde gelöscht
-clang_code = Code
-clang_name = Name
-clang_priority = Prio
-clang_online = online
-clang_offline = offline
-clang_delete = Sprache löschen
-clang_select = Sprache wählen
-clang_caption = Liste der verfügbaren Sprachen
-clang_function = Funktionen
+language_add = Sprache hinzufügen
+language_edit = Sprache bearbeiten
+language_update = Sprache übernehmen
+language_created = Sprache wurde angelegt.
+language_edited = Sprache wurde editiert
+language_deleted = Sprache wurde gelöscht
+language_code = Code
+language_name = Name
+language_priority = Prio
+language_online = online
+language_offline = offline
+language_delete = Sprache löschen
+language_select = Sprache wählen
+language_caption = Liste der verfügbaren Sprachen
+language_function = Funktionen
 version = Version
 mode = Modus
 charset = Zeichensatz
@@ -421,11 +421,10 @@ form_deleted = Eingaben wurden gelöscht!
 form_delete_error = Fehler beim Löschen!
 form_resetted = Eingaben wurden verworfen!
 
-# clang
-all_clangs = Alle Sprachen
-clangs = Sprachen
-clang_error_startidcanotbedeleted = Startsprache (clang) mit der ID "{0}" kann nicht gelöscht werden
-clang_error_idcanotbedeleted = Sprache (clang) mit der ID "{0}" existiert nicht
+# language
+all_languages = Alle Sprachen
+language_error_startidcanotbedeleted = Startsprache mit der ID "{0}" kann nicht gelöscht werden
+language_error_idcanotbedeleted = Sprache mit der ID "{0}" existiert nicht
 
 # footer
 footer_joinforum = Besuche das Forum
@@ -921,7 +920,7 @@ minfo_metadata_saved = Die Metadaten wurden gespeichert.
 minfo_media_in_use_art = Artikel (Metadaten)
 minfo_media_in_use_cat = Kategorien (Metadaten)
 minfo_media_in_use_med = Medien (Metadaten)
-minfo_media_in_use_clang = Sprachen (Metadaten)
+minfo_media_in_use_language = Sprachen (Metadaten)
 
 # bc: labels aus dem core
 online_from = Online vom
@@ -987,7 +986,7 @@ cant_delete_notfoundarticle = Der "Nicht-gefunden" Artikel kann nicht gelöscht 
 structure_copy = Kopie
 category_has_child_elements = Kategorie enthält Kindelemente
 category_without_child_elements = Kategorie ohne Kindelemente
-structure_delete_all_clangs = In allen Sprachen löschen?
+structure_delete_all_languages = In allen Sprachen löschen?
 
 all_categories = Alle Kategorien
 categories = Kategorien

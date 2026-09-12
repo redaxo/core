@@ -98,7 +98,7 @@ final class ArticleHandler
             // ----- EXTENSION POINT
             $message = Extension::dispatch(new ExtensionPoint('ART_ADDED', $message, [
                 'id' => $id,
-                'clang' => $key,
+                'language' => $key,
                 'status' => 0,
                 'name' => $data['name'],
                 'parent_id' => $data['category_id'],
@@ -172,7 +172,7 @@ final class ArticleHandler
         if ($oldPrio != $data['priority']) {
             Sql::factory()
                 ->setTable(Core::getTable('article'))
-                ->setWhere('id = :id AND language_id != :clang', ['id' => $articleId, 'clang' => $languageId])
+                ->setWhere('id = :id AND language_id != :language', ['id' => $articleId, 'language' => $languageId])
                 ->setValue('priority', $data['priority'])
                 ->addGlobalUpdateFields(self::getUser())
                 ->update();
@@ -191,7 +191,7 @@ final class ArticleHandler
             'article_old' => clone $thisArt,
             'status' => $thisArt->getValue('status'),
             'name' => $data['name'],
-            'clang' => $languageId,
+            'language' => $languageId,
             'parent_id' => $data['category_id'],
             'priority' => $data['priority'],
             'path' => $data['path'],
@@ -225,7 +225,7 @@ final class ArticleHandler
                 // ----- EXTENSION POINT
                 $message = Extension::dispatch(new ExtensionPoint('ART_DELETED', $message, [
                     'id' => $articleId,
-                    'clang' => $languageId,
+                    'language' => $languageId,
                     'parent_id' => $parentId,
                     'name' => $Art->getValue('name'),
                     'status' => $Art->getValue('status'),
@@ -347,7 +347,7 @@ final class ArticleHandler
             // ----- EXTENSION POINT
             Extension::dispatch(new ExtensionPoint('ART_STATUS', null, [
                 'id' => $articleId,
-                'clang' => $languageId,
+                'language' => $languageId,
                 'status' => $newstatus,
             ]));
         } else {
@@ -459,7 +459,7 @@ final class ArticleHandler
         foreach (Language::getAllIds() as $languageId) {
             Extension::dispatch(new ExtensionPoint('ART_TO_CAT', '', [
                 'id' => $artId,
-                'clang' => $languageId,
+                'language' => $languageId,
             ]));
         }
 
@@ -511,7 +511,7 @@ final class ArticleHandler
         foreach (Language::getAllIds() as $languageId) {
             Extension::dispatch(new ExtensionPoint('CAT_TO_ART', '', [
                 'id' => $artId,
-                'clang' => $languageId,
+                'language' => $languageId,
             ]));
         }
 
@@ -617,7 +617,7 @@ final class ArticleHandler
             Extension::dispatch(new ExtensionPoint('ART_TO_STARTARTICLE', '', [
                 'id' => $neuId,
                 'id_old' => $altId,
-                'clang' => $languageId,
+                'language' => $languageId,
             ]));
         }
 
@@ -729,7 +729,7 @@ final class ArticleHandler
                     Extension::dispatch(new ExtensionPoint('ART_COPIED', null, [
                         'id_source' => $id,
                         'id' => $newId,
-                        'clang' => $languageId,
+                        'language' => $languageId,
                         'category_id' => $toCatId,
                     ]));
                 } else {
@@ -801,7 +801,7 @@ final class ArticleHandler
 
                     Extension::dispatch(new ExtensionPoint('ART_MOVED', null, [
                         'id' => $id,
-                        'clang' => $languageId,
+                        'language' => $languageId,
                         'category_id' => $parentId,
                     ]));
                 } else {

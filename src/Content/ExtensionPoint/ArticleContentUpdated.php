@@ -22,7 +22,7 @@ final class ArticleContentUpdated extends ExtensionPoint
     ) {
         // for BC 'simple' attach params
         $params['article_id'] = $article->id;
-        $params['clang'] = $article->languageId;
+        $params['language'] = $article->languageId;
 
         parent::__construct(self::NAME, $subject, $params, $readonly);
     }

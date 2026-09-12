@@ -160,7 +160,7 @@ final class User
      *      $key is 'media' ? MediaPoolPermission :
      *      ($key is 'structure' ? StructurePermission :
      *      ($key is 'modules' ? ModulePermission :
-     *      ($key is 'clang' ? LanguagePermission :
+     *      ($key is 'language' ? LanguagePermission :
      *      ComplexPermission|null
      *      ))))
      *  )

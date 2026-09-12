@@ -94,7 +94,7 @@ class ArticleContentBase
             $output,
             [
                 'article_id' => $this->articleId,
-                'clang' => $this->languageId,
+                'language' => $this->languageId,
                 'slice_data' => $artDataSql,
             ],
         ));
@@ -306,7 +306,7 @@ class ArticleContentBase
                     $sliceContent,
                     [
                         'article_id' => $this->articleId,
-                        'clang' => $this->languageId,
+                        'language' => $this->languageId,
                         'ctype' => $sliceCtypeId,
                         'module_key' => $sliceModuleKey,
                         'slice_id' => $sliceId,

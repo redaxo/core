@@ -116,12 +116,12 @@ final class View
 
         $items = [];
         foreach (Language::getAll() as $id => $language) {
-            if (Core::requireUser()->getComplexPerm('clang')->hasPerm($id)) {
-                $icon = $id === $context->getParam('clang') ? '<i class="rex-icon rex-icon-language-active"></i> ' : '<i class="rex-icon rex-icon-language"></i> ';
+            if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
+                $icon = $id === $context->getParam('language') ? '<i class="rex-icon rex-icon-language-active"></i> ' : '<i class="rex-icon rex-icon-language"></i> ';
                 $item = [];
-                $item['href'] = $context->getUrl(['clang' => $id]);
+                $item['href'] = $context->getUrl(['language' => $id]);
                 $item['title'] = $icon . I18n::translate($language->name);
-                if ($id === $context->getParam('clang')) {
+                if ($id === $context->getParam('language')) {
                     $item['active'] = true;
                 }
                 $items[] = $item;
@@ -146,14 +146,14 @@ final class View
 
         $items = [];
         foreach (Language::getAll() as $id => $language) {
-            if (Core::requireUser()->getComplexPerm('clang')->hasPerm($id)) {
+            if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
                 $icon = $language->isOnline() ? '<i class="rex-icon rex-icon-online"></i> ' : '<i class="rex-icon rex-icon-offline"></i> ';
                 $item = [];
                 $item['label'] = $icon . I18n::translate($language->name);
-                $item['url'] = $context->getUrl(['clang' => $id]);
+                $item['url'] = $context->getUrl(['language' => $id]);
                 $item['attributes']['class'][] = 'btn-language';
                 $item['attributes']['title'] = I18n::translate($language->name);
-                if ($id === $context->getParam('clang')) {
+                if ($id === $context->getParam('language')) {
                     $item['attributes']['class'][] = 'active';
                 }
                 $items[] = $item;
@@ -177,11 +177,11 @@ final class View
         $buttonLabel = '';
         $items = [];
         foreach (Language::getAll() as $id => $language) {
-            if ($user->getComplexPerm('clang')->hasPerm($id)) {
+            if ($user->getComplexPerm('language')->hasPerm($id)) {
                 $item = [];
                 $item['title'] = I18n::translate($language->name);
-                $item['href'] = $context->getUrl(['clang' => $id]);
-                if ($id === $context->getParam('clang')) {
+                $item['href'] = $context->getUrl(['language' => $id]);
+                if ($id === $context->getParam('language')) {
                     $item['active'] = true;
                     $buttonLabel = I18n::translate($language->name);
                 }
@@ -193,7 +193,7 @@ final class View
         $fragment->setVar('class', 'rex-language');
         $fragment->setVar('button_prefix', I18n::msg('language'));
         $fragment->setVar('button_label', $buttonLabel);
-        $fragment->setVar('header', I18n::msg('clang_select'));
+        $fragment->setVar('header', I18n::msg('language_select'));
         $fragment->setVar('items', $items, false);
 
         if ($user->admin) {
@@ -221,14 +221,14 @@ final class View
                     $n = [];
                     $n['title'] = str_replace(' ', '&nbsp;', escape($parent->name));
                     if ($parent instanceof Category) {
-                        $n['href'] = Url::backendPage('structure', ['category_id' => $id, 'clang' => $languageId]);
+                        $n['href'] = Url::backendPage('structure', ['category_id' => $id, 'language' => $languageId]);
                     }
                     $navigation[] = $n;
                 }
             }
         }
 
-        $title = '<a class="rex-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'clang' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
+        $title = '<a class="rex-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
 
         $fragment = new Fragment();
         $fragment->setVar('id', 'rex-js-structure-breadcrumb', false);

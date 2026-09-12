@@ -77,7 +77,7 @@ final class ContentHandler
         // ----- EXTENSION POINT
         $message = Extension::dispatch(new ExtensionPoint('SLICE_ADDED', $message, [
             'article_id' => $articleId,
-            'clang' => $languageId,
+            'language' => $languageId,
             'function' => '',
             'slice_id' => $sliceId,
             'page' => Controller::getCurrentPage(),
@@ -231,22 +231,22 @@ final class ContentHandler
      * @param int|null $revision If null, slices of all revisions are copied
      * @param bool $overwrite If true, existing content in target language will be deleted before copying
      */
-    public static function copyContent(int $fromId, int $toId, int $fromClang = 1, int $toClang = 1, ?int $revision = null, bool $overwrite = false): bool
+    public static function copyContent(int $fromId, int $toId, int $fromLanguageId = 1, int $toLanguageId = 1, ?int $revision = null, bool $overwrite = false): bool
     {
-        if ($fromId == $toId && $fromClang == $toClang) {
+        if ($fromId == $toId && $fromLanguageId == $toLanguageId) {
             return false;
         }
 
         $gc = Sql::factory();
         if (null === $revision) {
-            $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=?', [$fromId, $fromClang]);
+            $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=?', [$fromId, $fromLanguageId]);
         } else {
-            $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=?', [$fromId, $fromClang, $revision]);
+            $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=?', [$fromId, $fromLanguageId, $revision]);
         }
 
         Extension::dispatch(new ExtensionPoint('ART_SLICES_COPY', '', [
             'article_id' => $toId,
-            'language_id' => $toClang,
+            'language_id' => $toLanguageId,
             'slice_revision' => $revision,
             'overwrite' => $overwrite,
         ]));
@@ -255,9 +255,9 @@ final class ContentHandler
         if ($overwrite) {
             $sql = Sql::factory();
             if (null === $revision) {
-                $sql->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'article_slice WHERE article_id=? AND language_id=?', [$toId, $toClang]);
+                $sql->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'article_slice WHERE article_id=? AND language_id=?', [$toId, $toLanguageId]);
             } else {
-                $sql->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'article_slice WHERE article_id=? AND language_id=? AND revision=?', [$toId, $toClang, $revision]);
+                $sql->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'article_slice WHERE article_id=? AND language_id=? AND revision=?', [$toId, $toLanguageId, $revision]);
             }
         }
 
@@ -270,8 +270,8 @@ final class ContentHandler
         $cols->setQuery('SHOW COLUMNS FROM ' . Core::getTablePrefix() . 'article_slice');
 
         $maxPriorityRaw = Sql::factory()->getArray(
-            'SELECT `ctype_id`, `revision`, MAX(`priority`) as max FROM ' . Core::getTable('article_slice') . ' WHERE `article_id` = :to_id AND `language_id` = :to_clang GROUP BY `ctype_id`, `revision`',
-            ['to_id' => $toId, 'to_clang' => $toClang],
+            'SELECT `ctype_id`, `revision`, MAX(`priority`) as max FROM ' . Core::getTable('article_slice') . ' WHERE `article_id` = :to_id AND `language_id` = :to_language GROUP BY `ctype_id`, `revision`',
+            ['to_id' => $toId, 'to_language' => $toLanguageId],
         );
         $maxPriority = [];
         foreach ($maxPriorityRaw as $row) {
@@ -284,7 +284,7 @@ final class ContentHandler
             foreach ($cols as $col) {
                 $colname = $col->getValue('Field');
                 if ('language_id' == $colname) {
-                    $value = $toClang;
+                    $value = $toLanguageId;
                 } elseif ('article_id' == $colname) {
                     $value = $toId;
                 } elseif ('priority' == $colname) {
@@ -316,15 +316,15 @@ final class ContentHandler
                 Util::organizePriorities(
                     Core::getTable('article_slice'),
                     'priority',
-                    'article_id=' . $toId . ' AND language_id=' . $toClang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . $revision,
+                    'article_id=' . $toId . ' AND language_id=' . $toLanguageId . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . $revision,
                     'priority, updatedate',
                 );
             }
         }
 
-        ArticleCache::deleteContent($toId, $toClang);
+        ArticleCache::deleteContent($toId, $toLanguageId);
 
-        $article = Article::require($toId, $toClang);
+        $article = Article::require($toId, $toLanguageId);
         Extension::dispatch(new ArticleContentUpdated($article, 'content_copied'));
 
         return true;
@@ -355,7 +355,7 @@ final class ContentHandler
             // ----- EXTENSION POINT
             $articleContent = Extension::dispatch(new ExtensionPoint('GENERATE_FILTER', $articleContent, [
                 'id' => $articleId,
-                'clang' => $languageId,
+                'language' => $languageId,
                 'article' => $CONT,
             ]));
 

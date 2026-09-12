@@ -35,7 +35,7 @@ use function Redaxo\Core\View\escape;
 $structureContext = new StructureContext(
     categoryId: Request::request('category_id', 'int'),
     articleId: Request::request('article_id', 'int'),
-    languageId: Request::request('clang', 'int'),
+    languageId: Request::request('language', 'int'),
     ctypeId: Request::request('ctype', 'int'),
     artStart: Request::request('artstart', 'int'),
     catStart: Request::request('catstart', 'int'),
@@ -95,7 +95,7 @@ $dataColspan = 5;
 // --------------------- Extension Point
 echo Extension::dispatch(new ExtensionPoint('PAGE_STRUCTURE_HEADER', '', [
     'category_id' => $structureContext->categoryId,
-    'clang' => $structureContext->languageId,
+    'language' => $structureContext->languageId,
 ]));
 
 // --------------------- COUNT CATEGORY ROWS
@@ -165,7 +165,7 @@ $echo .= '
 if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]') && $structureContext->hasCategoryPermission()) {
     $metaButtons = Extension::dispatch(new ExtensionPoint('CAT_FORM_BUTTONS', '', [
         'id' => $structureContext->categoryId,
-        'clang' => $structureContext->languageId,
+        'language' => $structureContext->languageId,
     ]));
     $addButtons = CategoryAdd::getHiddenFields() . '
         <input type="hidden" name="parent-category-id" value="' . $structureContext->categoryId . '" />
@@ -185,7 +185,7 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
     // ----- EXTENSION POINT
     $echo .= Extension::dispatch(new ExtensionPoint('CAT_FORM_ADD', '', [
         'id' => $structureContext->categoryId,
-        'clang' => $structureContext->languageId,
+        'language' => $structureContext->languageId,
         'data_colspan' => ($dataColspan + 1),
     ]));
 }
@@ -234,7 +234,7 @@ if ($KAT->getRows() > 0) {
                 // ----- EXTENSION POINT
                 $metaButtons = Extension::dispatch(new ExtensionPoint('CAT_FORM_BUTTONS', '', [
                     'id' => $structureContext->editId,
-                    'clang' => $structureContext->languageId,
+                    'language' => $structureContext->languageId,
                 ]));
 
                 $addButtons = CategoryEdit::getHiddenFields() . '
@@ -258,7 +258,7 @@ if ($KAT->getRows() > 0) {
                 // ----- EXTENSION POINT
                 $echo .= Extension::dispatch(new ExtensionPoint('CAT_FORM_EDIT', '', [
                     'id' => $structureContext->editId,
-                    'clang' => $structureContext->languageId,
+                    'language' => $structureContext->languageId,
                     'category' => $KAT,
                     'catname' => $KAT->getValue('catname'),
                     'catpriority' => $KAT->getValue('catpriority'),
@@ -279,7 +279,7 @@ if ($KAT->getRows() > 0) {
                 }
                 if ($canDelete) {
                     $echo .= '
-                        <td class="rex-table-action"><a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart] + CategoryDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_clangs') . '"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a></td>';
+                        <td class="rex-table-action"><a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart] + CategoryDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a></td>';
                 }
                 $echo .= '
                         <td class="rex-table-action ' . $tdLayoutClass . '">' . $katStatus . '</td>
@@ -360,7 +360,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     $articleOrderBy = Extension::dispatch(new ExtensionPoint('PAGE_STRUCTURE_ARTICLE_ORDER_BY', 'priority, name', [
         'category_id' => $structureContext->categoryId,
         'article_id' => $structureContext->articleId,
-        'clang' => $structureContext->languageId,
+        'language' => $structureContext->languageId,
     ]));
 
     // ---------- COUNT DATA
@@ -512,7 +512,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
                 $addExtra .= '<td class="rex-table-action"><span class="' . $articleClass . ' text-muted"><i class="rex-icon ' . $articleIcon . '"></i> ' . $articleStatus . '</span></td>';
             } else {
                 if ($canDelete) {
-                    $addExtra .= '<td class="rex-table-action"><a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart] + ArticleDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_clangs') . '"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a></td>';
+                    $addExtra .= '<td class="rex-table-action"><a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart] + ArticleDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a></td>';
                 }
 
                 $tdLayoutClass = '';

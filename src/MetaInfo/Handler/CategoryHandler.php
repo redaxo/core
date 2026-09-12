@@ -30,7 +30,7 @@ final class CategoryHandler extends AbstractHandler
 
         /** @var object|null $subject */
         $subject = $params['category'] ?? null;
-        $category = isset($params['id']) ? Category::get((int) $params['id'], (int) $params['clang']) : null;
+        $category = isset($params['id']) ? Category::get((int) $params['id'], (int) $params['language']) : null;
 
         if ($this->hasFields(new MetaContext(MetaEntity::Category, $subject, $category))) {
             return $ep->subject . '<a class="btn btn-default collapsed" data-toggle="collapse" href="#' . self::CONTAINER . '"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>';
@@ -54,12 +54,12 @@ final class CategoryHandler extends AbstractHandler
         /** @var object|null $subject */
         $subject = $params['category'] ?? null;
         // The surrounding category (the edited category, or the parent when adding); null = root.
-        $category = isset($params['id']) ? Category::get((int) $params['id'], (int) $params['clang']) : null;
+        $category = isset($params['id']) ? Category::get((int) $params['id'], (int) $params['language']) : null;
 
         $context = new MetaContext(MetaEntity::Category, $subject, $category);
 
         if ($save && 'post' == Request::requestMethod() && isset($params['id'])) {
-            $this->save((int) $params['id'], (int) $params['clang'], $context);
+            $this->save((int) $params['id'], (int) $params['language'], $context);
         }
 
         // On CAT_ADDED and CAT_UPDATED only save, render no form.
@@ -82,7 +82,7 @@ final class CategoryHandler extends AbstractHandler
     {
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'article');
-        $sql->setWhere('id=:id AND language_id=:clang', ['id' => $id, 'clang' => $languageId]);
+        $sql->setWhere('id=:id AND language_id=:language', ['id' => $id, 'language' => $languageId]);
 
         $this->saveRequestValues($sql, $context);
 

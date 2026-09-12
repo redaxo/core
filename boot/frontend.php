@@ -109,7 +109,7 @@ if (Core::getConfig('article_history', false)) {
                 $historyArticle = Article::get($article->articleId, $article->languageId);
                 if (
                     !$historyArticle instanceof Article
-                    || !$user->getComplexPerm('clang')->hasPerm($article->languageId)
+                    || !$user->getComplexPerm('language')->hasPerm($article->languageId)
                     || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
                 ) {
                     throw new HttpException('No permission for the history of this article.', Response::HTTP_FORBIDDEN);
@@ -187,7 +187,7 @@ if (Core::getConfig('article_work_version', false)) {
         if (
             !$user
             || !$previewArticle instanceof Article
-            || !$user->getComplexPerm('clang')->hasPerm($article->languageId)
+            || !$user->getComplexPerm('language')->hasPerm($article->languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($previewArticle->categoryId)
         ) {
             throw new HttpException('No permission for the working version of this article.', Response::HTTP_FORBIDDEN);
@@ -197,7 +197,7 @@ if (Core::getConfig('article_work_version', false)) {
     });
 }
 
-$languageId = Request::get('clang', 'int');
+$languageId = Request::get('language', 'int');
 if ($languageId && !Language::exists($languageId)) {
     Response::sendRedirect(Url::article(Article::getNotfoundArticleId(), Language::getStartId()));
 }
@@ -221,7 +221,7 @@ try {
 // e.g. to render the history or working version live from the database instead of the cache.
 Extension::dispatch(new ExtensionPoint('ART_INIT', $article, [
     'article_id' => Article::getCurrentId(),
-    'clang' => Language::getCurrentId(),
+    'language' => Language::getCurrentId(),
 ], readonly: true));
 
 try {
