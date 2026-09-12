@@ -5,9 +5,11 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
-use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Language\ExtensionPoint\LanguageFormAdd;
+use Redaxo\Core\Language\ExtensionPoint\LanguageFormButtons;
+use Redaxo\Core\Language\ExtensionPoint\LanguageFormEdit;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Language\LanguageHandler;
 use Redaxo\Core\Security\CsrfToken;
@@ -121,7 +123,7 @@ $content .= '
 // Add form
 if ('addclang' == $func) {
     // ----- EXTENSION POINT
-    $metaButtons = Extension::dispatch(new ExtensionPoint('CLANG_FORM_BUTTONS', ''));
+    $metaButtons = Extension::dispatch(new LanguageFormButtons());
 
     // ggf wiederanzeige des add forms, falls ungueltige id uebermittelt
     $content .= '
@@ -137,7 +139,7 @@ if ('addclang' == $func) {
             ';
 
     // ----- EXTENSION POINT
-    $content .= Extension::dispatch(new ExtensionPoint('CLANG_FORM_ADD', ''));
+    $content .= Extension::dispatch(new LanguageFormAdd());
 }
 
 $sql = Sql::factory()->setQuery('SELECT * FROM ' . Core::getTable('clang') . ' ORDER BY priority');
@@ -155,7 +157,7 @@ foreach ($sql as $row) {
     // Edit form
     if ('editclang' == $func && $clangId == $langId) {
         // ----- EXTENSION POINT
-        $metaButtons = Extension::dispatch(new ExtensionPoint('CLANG_FORM_BUTTONS', '', ['id' => $clangId, 'sql' => $sql]));
+        $metaButtons = Extension::dispatch(new LanguageFormButtons(Language::require($langId)));
 
         $content .= '
                     <tr class="mark">
@@ -169,7 +171,7 @@ foreach ($sql as $row) {
                     </tr>';
 
         // ----- EXTENSION POINT
-        $content .= Extension::dispatch(new ExtensionPoint('CLANG_FORM_EDIT', '', ['id' => $clangId, 'sql' => $sql]));
+        $content .= Extension::dispatch(new LanguageFormEdit(Language::require($langId)));
     } else {
         $editLink = Url::currentBackendPage(['func' => 'editclang', 'clang_id' => $langId]) . '#clang';
 

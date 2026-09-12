@@ -6,12 +6,14 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
-use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Language\ExtensionPoint\LanguageAdded;
+use Redaxo\Core\Language\ExtensionPoint\LanguageFormAdd;
+use Redaxo\Core\Language\ExtensionPoint\LanguageFormButtons;
+use Redaxo\Core\Language\ExtensionPoint\LanguageFormEdit;
+use Redaxo\Core\Language\ExtensionPoint\LanguageUpdated;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
-
-use function in_array;
 
 /**
  * @internal
@@ -20,9 +22,8 @@ final class LanguageHandler extends AbstractHandler
 {
     public const CONTAINER = 'rex-clang-metainfo';
 
-    /** @param ExtensionPoint<string> $ep */
-    #[AsExtension('CLANG_FORM_BUTTONS')]
-    public function renderToggleButton(ExtensionPoint $ep): string
+    #[AsExtension]
+    public function renderToggleButton(LanguageFormButtons $ep): string
     {
         if ($this->hasFields(new MetaContext(MetaEntity::Clang))) {
             return $ep->subject . '<a class="btn btn-default collapsed" data-toggle="collapse" href="#' . self::CONTAINER . '"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>';
@@ -31,30 +32,10 @@ final class LanguageHandler extends AbstractHandler
         return $ep->subject;
     }
 
-    /** @param ExtensionPoint<string> $ep */
-    #[AsExtension('CLANG_FORM_ADD')]
-    #[AsExtension('CLANG_FORM_EDIT')]
-    #[AsExtension('CLANG_ADDED', ExtensionLevel::Early)]
-    #[AsExtension('CLANG_UPDATED', ExtensionLevel::Early)]
-    public function extendForm(ExtensionPoint $ep): string
+    #[AsExtension]
+    public function extendForm(LanguageFormAdd|LanguageFormEdit $ep): string
     {
-        $params = $ep->getParams();
-
-        // Only save when the clang itself is saved, as only that request is protected by a csrf token.
-        $save = in_array($ep->name, ['CLANG_ADDED', 'CLANG_UPDATED'], true);
-
-        /** @var object|null $subject */
-        $subject = $params['sql'] ?? null;
-        $context = new MetaContext(MetaEntity::Clang, $subject);
-
-        if ($save && 'post' == Request::requestMethod() && isset($params['id'])) {
-            $this->save((int) $params['id'], $context);
-        }
-
-        // On CLANG_ADDED and CLANG_UPDATED only save, render no form.
-        if ($save) {
-            return $ep->subject;
-        }
+        $context = new MetaContext(MetaEntity::Clang, $ep instanceof LanguageFormEdit ? $ep->language : null);
 
         return $ep->subject . '
             <tr id="' . self::CONTAINER . '" class="collapse mark">
@@ -67,13 +48,19 @@ final class LanguageHandler extends AbstractHandler
             </tr>';
     }
 
-    private function save(int $id, MetaContext $context): void
+    /** The fields are saved along with the language itself, as only that request is protected by a csrf token. */
+    #[AsExtension(level: ExtensionLevel::Early)]
+    public function saveFields(LanguageAdded|LanguageUpdated $ep): void
     {
+        if ('post' !== Request::requestMethod()) {
+            return;
+        }
+
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'clang');
-        $sql->setWhere('id=:id', ['id' => $id]);
+        $sql->setWhere('id=:id', ['id' => $ep->language->id]);
 
-        $this->saveRequestValues($sql, $context);
+        $this->saveRequestValues($sql, new MetaContext(MetaEntity::Clang));
 
         if ($sql->hasValues()) {
             $sql->update();

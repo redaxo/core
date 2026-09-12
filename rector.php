@@ -716,6 +716,12 @@ return RectorConfig::configure()
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_UPDATED', 'SLICE_UPDATED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_DELETED', 'SLICE_DELETED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_MENU', '\\' . Content\ExtensionPoint\SliceMenu::class . '::NAME'),
+        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_ADDED', '\\' . Language\ExtensionPoint\LanguageAdded::class . '::class'),
+        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_UPDATED', '\\' . Language\ExtensionPoint\LanguageUpdated::class . '::class'),
+        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_DELETED', '\\' . Language\ExtensionPoint\LanguageDeleted::class . '::class'),
+        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_FORM_BUTTONS', '\\' . Language\ExtensionPoint\LanguageFormButtons::class . '::class'),
+        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_FORM_ADD', '\\' . Language\ExtensionPoint\LanguageFormAdd::class . '::class'),
+        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_FORM_EDIT', '\\' . Language\ExtensionPoint\LanguageFormEdit::class . '::class'),
 
         new ReplaceArgumentDefaultValue(Form\Select\CategorySelect::class, '__construct', 1, false, null),
 
