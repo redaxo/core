@@ -10,9 +10,11 @@ use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 use SensitiveParameter;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 use function assert;
 
@@ -74,6 +76,8 @@ class BackendLogin extends Login
 
         if ($blockAccountAfter = self::getPasswordPolicy()->blockAccountAfter) {
             $datetime = new DateTimeImmutable()->sub($blockAccountAfter);
+            // A password_changed of NULL fails this comparison, so an account whose password change was
+            // never recorded stays blocked.
             $qry .= ' AND password_changed > "' . $datetime->format(Sql::FORMAT_DATETIME) . '"';
         }
 
@@ -155,8 +159,8 @@ class BackendLogin extends Login
                     $add .= 'password = ?, ';
                     $params[] = $password = self::passwordHash($this->userPassword);
                 }
-                array_push($params, Sql::datetime(), Sql::datetime(), session_id(), $this->getSessionVar(self::SESSION_USER_ID));
-                $sql->setQuery('UPDATE ' . $this->tableName . ' SET ' . $add . 'login_tries=0, lasttrydate=?, lastlogin=?, session_id=? WHERE id=? LIMIT 1', $params);
+                array_push($params, Sql::datetime(), Sql::datetime(), $this->getSessionVar(self::SESSION_USER_ID));
+                $sql->setQuery('UPDATE ' . $this->tableName . ' SET ' . $add . 'login_tries=0, lasttrydate=?, lastlogin=? WHERE id=? LIMIT 1', $params);
 
                 $this->setSessionVar(self::SESSION_PASSWORD, $password);
 
@@ -187,7 +191,8 @@ class BackendLogin extends Login
                     $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
                 } elseif ($forceRenewAfter = self::getPasswordPolicy()->forceRenewAfter) {
                     $datetime = new DateTimeImmutable()->sub($forceRenewAfter);
-                    if (strtotime($this->user->getValue('password_changed')) < $datetime->getTimestamp()) {
+                    $passwordChanged = $this->user->getValue('password_changed');
+                    if (null === $passwordChanged || strtotime((string) $passwordChanged) < $datetime->getTimestamp()) {
                         $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, true);
                     }
                 }
@@ -230,7 +235,6 @@ class BackendLogin extends Login
         }
 
         if ($this->isLoggedOut() && '' != $userId) {
-            $sql->setQuery('UPDATE ' . $this->tableName . ' SET session_id="" WHERE id=? LIMIT 1', [$userId]);
             self::deleteStayLoggedInCookie();
             UserSession::getInstance()->clearCurrentSession();
         }
@@ -241,7 +245,12 @@ class BackendLogin extends Login
     public function increaseLoginTries(): void
     {
         $sql = Sql::factory();
-        $sql->setQuery('UPDATE ' . $this->tableName . ' SET login_tries=login_tries+1,session_id="",lasttrydate=? WHERE login=? LIMIT 1', [Sql::datetime(), $this->userLogin]);
+        // Capped at the threshold that blocks the account: every try beyond it carries no information,
+        // and an uncapped counter eventually runs out of the column's range.
+        $sql->setQuery(
+            'UPDATE ' . $this->tableName . ' SET login_tries=LEAST(login_tries+1, ?), lasttrydate=? WHERE login=? LIMIT 1',
+            [self::getLoginPolicy()->maxTriesUntilBlock, Sql::datetime(), $this->userLogin],
+        );
     }
 
     public function requiresPasswordChange(): bool
@@ -267,9 +276,7 @@ class BackendLogin extends Login
 
     public static function deleteSession(): void
     {
-        self::startSession();
-
-        unset($_SESSION[static::getSessionNamespace()][self::SYSTEM_ID]);
+        self::getSessionAttributes()->remove(self::SYSTEM_ID);
         self::deleteStayLoggedInCookie();
 
         CsrfToken::removeAll();
@@ -277,12 +284,13 @@ class BackendLogin extends Login
 
     private static function setStayLoggedInCookie(string $cookiekey): void
     {
-        $sessionConfig = Core::getProperty('session', [])['backend']['cookie'] ?? [];
+        // the cookie replaces the session cookie, so it follows its settings
+        $cookieParams = Session::getCookieParams();
 
         Response::sendCookie(self::getStayLoggedInCookieName(), $cookiekey, [
-            'expires' => strtotime(UserSession::STAY_LOGGED_IN_DURATION . ' months'),
-            'secure' => $sessionConfig['secure'] ?? false,
-            'samesite' => $sessionConfig['samesite'] ?? 'lax',
+            'expires' => new DateTimeImmutable('+' . UserSession::STAY_LOGGED_IN_DURATION . ' months'),
+            'secure' => $cookieParams['secure'] ?? false,
+            'samesite' => $cookieParams['samesite'] ?? 'lax',
         ]);
     }
 
@@ -308,9 +316,9 @@ class BackendLogin extends Login
             return false;
         }
 
-        self::startSession();
+        $data = Type::array(self::getSessionAttributes()->get(self::SYSTEM_ID, []));
 
-        return ($_SESSION[static::getSessionNamespace()][self::SYSTEM_ID][Login::SESSION_USER_ID] ?? 0) > 0;
+        return ($data[Login::SESSION_USER_ID] ?? 0) > 0;
     }
 
     /**
@@ -364,10 +372,10 @@ class BackendLogin extends Login
         return parent::passwordNeedsRehash($hash);
     }
 
-    /** returns the backends session namespace. */
-    protected static function getSessionNamespace(): string
+    /** The backend login uses the backend attributes also in the frontend, to detect a logged in backend user. */
+    protected static function getSessionAttributes(): AttributeBagInterface
     {
-        return Core::getInstanceId() . '_backend';
+        return Session::getBackendAttributes();
     }
 
     public static function getLoginPolicy(): LoginPolicy

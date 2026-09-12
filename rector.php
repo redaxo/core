@@ -418,6 +418,9 @@ return RectorConfig::configure()
         new RenameStaticMethod(Core::class, 'getInstanceColor', Backend\Appearance::class, 'getInstanceColor'),
 
         new RenameStaticMethod(Security\BackendPasswordPolicy::class, 'factory', Security\BackendLogin::class, 'getPasswordPolicy'),
+        new RenameStaticMethod(Security\Login::class, 'startSession', Http\Session::class, 'start'),
+        new RenameStaticMethod(Security\Login::class, 'getCookieParams', Http\Session::class, 'getCookieParams'),
+        new RenameStaticMethod(Http\Request::class, 'getSessionNamespace', Http\Session::class, 'getNamespace'),
 
         new RenameStaticMethod(ExtensionPoint\Extension::class, 'registerPoint', ExtensionPoint\Extension::class, 'dispatch'),
         new RenameStaticMethod(ExtensionPoint\Extension::class, 'isRegistered', ExtensionPoint\Extension::class, 'hasExtensions'),

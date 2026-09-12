@@ -2,29 +2,24 @@
 
 namespace Redaxo\Core\Security;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Environment;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
-use Redaxo\Core\Http\Request;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 use SensitiveParameter;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
 use function sprintf;
 
 use const PASSWORD_DEFAULT;
-use const PHP_SESSION_ACTIVE;
 
 class Login
 {
-    /** Session ID is saved in session under this key for session fixation prevention. */
-    final public const string SESSION_ID = 'REX_SESSID';
     /** the timestamp when the session was initially started. */
     final public const string SESSION_START_TIME = 'starttime';
     /** a timestamp of the last activity of the http session. */
@@ -67,7 +62,7 @@ class Login
 
     public function __construct()
     {
-        self::startSession();
+        Session::start();
     }
 
     /** Setzt den Login und das Password. */
@@ -292,7 +287,10 @@ class Login
      */
     public function setSessionVar(string $varname, mixed $value): void
     {
-        $_SESSION[static::getSessionNamespace()][$this->systemId][$varname] = $value;
+        $bag = static::getSessionAttributes();
+        $data = Type::array($bag->get($this->systemId, []));
+        $data[$varname] = $value;
+        $bag->set($this->systemId, $data);
     }
 
     /**
@@ -311,20 +309,10 @@ class Login
      */
     public function getSessionVar(string $varname, mixed $default = ''): mixed
     {
-        /** @var bool $sessChecked */
-        static $sessChecked = false;
-        // validate session-id - once per request - to prevent fixation
-        if (!$sessChecked) {
-            $rexSessId = !empty($_SESSION[self::SESSION_ID]) ? $_SESSION[self::SESSION_ID] : '';
+        $data = Type::array(static::getSessionAttributes()->get($this->systemId, []));
 
-            if (!empty($rexSessId) && $rexSessId !== session_id()) {
-                // clear redaxo related session properties on a possible attack
-                $_SESSION[static::getSessionNamespace()][$this->systemId] = [];
-            }
-            $sessChecked = true;
-        }
-
-        return $_SESSION[static::getSessionNamespace()][$this->systemId][$varname] ?? $default;
+        /** @psalm-suppress MixedReturnStatement */
+        return $data[$varname] ?? $default;
     }
 
     /** refresh session on permission elevation for security reasons. */
@@ -339,7 +327,7 @@ class Login
         if ('' != $previous = session_id()) {
             $regenerated = true;
 
-            session_regenerate_id(true);
+            Session::start()->migrate(true);
 
             CsrfToken::removeAll();
 
@@ -356,61 +344,6 @@ class Login
                 Extension::dispatch($extensionPoint);
             }, ExtensionLevel::Early);
         }
-
-        // session-id is shared between frontend/backend or even redaxo instances per server because it's the same http session
-        $_SESSION[self::SESSION_ID] = session_id();
-    }
-
-    /** starts a http-session if not already started. */
-    public static function startSession(): void
-    {
-        if (PHP_SESSION_ACTIVE !== session_status()) {
-            $env = Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
-            $sessionConfig = Type::array(Core::getProperty('session', []));
-
-            if (isset($sessionConfig[$env]['save_path'])) {
-                session_save_path((string) $sessionConfig[$env]['save_path']);
-            }
-
-            session_set_cookie_params(static::getCookieParams());
-
-            Timer::measure(__METHOD__, static function () {
-                error_clear_last();
-
-                if (!@session_start()) {
-                    if ($error = error_get_last()) {
-                        throw new RuntimeException('Unable to start session: ' . $error['message']);
-                    }
-                    throw new RuntimeException('Unable to start session.');
-                }
-            });
-        }
-    }
-
-    /**
-     * Einstellen der Cookie Paramter bevor die session gestartet wird.
-     *
-     * @return array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string, partitioned: bool}
-     */
-    public static function getCookieParams(): array
-    {
-        $cookieParams = session_get_cookie_params();
-
-        $key = Core::isBackend() ? Environment::Backend->value : Environment::Frontend->value;
-
-        /** @var array<string, array{cookie: array{lifetime: ?int, path: ?string, domain: ?string, secure: ?bool, httponly: ?bool, samesite: ?string}}> $sessionConfig */
-        $sessionConfig = Core::getProperty('session', []);
-
-        if ($sessionConfig) {
-            foreach ($sessionConfig[$key]['cookie'] as $name => $value) {
-                if (null !== $value) {
-                    $cookieParams[$name] = $value;
-                }
-            }
-        }
-
-        /** @var array{lifetime: int, path: string, domain: string, secure: bool, httponly: bool, samesite: string, partitioned: bool} */
-        return $cookieParams;
     }
 
     public static function passwordHash(#[SensitiveParameter] string $password): string
@@ -428,9 +361,9 @@ class Login
         return password_needs_rehash($hash, PASSWORD_DEFAULT);
     }
 
-    /** returns the current session namespace. */
-    protected static function getSessionNamespace(): string
+    /** Returns the session attributes this login stores its data in. */
+    protected static function getSessionAttributes(): AttributeBagInterface
     {
-        return Request::getSessionNamespace();
+        return Session::getAttributes();
     }
 }

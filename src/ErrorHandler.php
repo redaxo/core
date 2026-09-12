@@ -12,7 +12,6 @@ use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Log\Logger;
 use Redaxo\Core\Security\BackendLogin;
-use Redaxo\Core\Security\Login;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
@@ -142,7 +141,6 @@ final class ErrorHandler
 
         $handler->setEditor([Editor::factory(), 'getUrl']);
 
-        $handler->hideSuperglobalKey('_SESSION', Login::SESSION_ID);
         $handler->hideSuperglobalKey('_COOKIE', session_name());
         $handler->hideSuperglobalKey('_COOKIE', BackendLogin::getStayLoggedInCookieName());
 

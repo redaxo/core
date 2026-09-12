@@ -20,6 +20,7 @@ use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Http\Session;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\MetaInfo\Handler\CategoryHandler as MetaInfoCategoryHandler;
 use Redaxo\Core\MetaInfo\Handler\LanguageHandler as MetaInfoLanguageHandler;
@@ -129,7 +130,7 @@ if (Core::isSetup()) {
 
         // Not all browsers support the header Clear-Site-Data.
         // we dont kill/regenerate the session so e.g. the frontend will not get logged out
-        Request::clearSession();
+        Session::start()->clear();
 
         // is necessary for login after logout
         // and without the redirect, the csrf token would be invalid
@@ -178,7 +179,7 @@ if (Core::isSetup()) {
 
             // Not all browsers support the header Clear-Site-Data.
             // we dont kill/regenerate the session so e.g. the frontend will not get logged out
-            Request::clearSession();
+            Session::start()->clear();
         }
     } else {
         // Userspezifische Sprache einstellen
@@ -192,10 +193,12 @@ if (Core::isSetup()) {
 
         // Safe Mode
         if (!Core::isHardenedMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
+            $session = Session::start();
+
             if ($safeMode) {
-                Request::setSession('safemode', true);
+                $session->set('safemode', true);
             } else {
-                Request::unsetSession('safemode');
+                $session->remove('safemode');
             }
         }
     }
@@ -226,7 +229,6 @@ Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => tru
 
 Asset::setJsProperty('backend', true);
 Asset::setJsProperty('accesskeys', Accesskey::$enabled);
-Asset::setJsProperty('cookie_params', Login::getCookieParams());
 
 if (Core::getUser()) {
     Asset::addJsFile(Url::coreAssets('session-timeout.js'), [Asset::JS_IMMUTABLE => true]);

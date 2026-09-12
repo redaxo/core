@@ -160,7 +160,7 @@ final class Response
         }
 
         // prevent session locking while sending huge files
-        session_write_close();
+        Session::close();
 
         if (!$filename) {
             $filename = Path::basename($file);
@@ -266,7 +266,7 @@ final class Response
         // ----- EXTENSION POINT - (read only)
         if ($hasShutdownExtension) {
             // unlock session
-            session_write_close();
+            Session::close();
 
             Extension::dispatch(new ExtensionPoint('RESPONSE_SHUTDOWN', $content, [], true));
         }
