@@ -26,21 +26,21 @@ final class CategoryStatusChange extends ApiFunction
         }
 
         $categoryId = Request::request('category-id', 'int');
-        $clang = Request::request('clang', 'int');
+        $languageId = Request::request('clang', 'int');
         $status = Request::request('cat_status', 'int', null);
 
-        if (null === Category::get($categoryId, $clang)) {
-            throw new ApiFunctionException('Unable to find category with id "' . $categoryId . '" and clang "' . $clang . '"!');
+        if (null === Category::get($categoryId, $languageId)) {
+            throw new ApiFunctionException('Unable to find category with id "' . $categoryId . '" and language "' . $languageId . '"!');
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($clang)
+            !$user->getComplexPerm('clang')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 
-        CategoryHandler::categoryStatus($categoryId, $clang, $status);
+        CategoryHandler::categoryStatus($categoryId, $languageId, $status);
 
         return new Result(true, I18n::msg('category_status_updated'));
     }

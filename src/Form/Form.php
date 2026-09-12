@@ -352,7 +352,7 @@ class Form extends AbstractForm
                 $sql->update();
             } else {
                 if (count($this->languageSupport)) {
-                    foreach (Language::getAllIds() as $clangId) {
+                    foreach (Language::getAllIds() as $languageId) {
                         $sql->setTable($this->tableName);
                         $this->setGlobalSqlFields($sql);
                         if (!isset($id)) {
@@ -360,7 +360,7 @@ class Form extends AbstractForm
                         } else {
                             $sql->setValue($this->languageSupport['id'], $id);
                         }
-                        $sql->setValue($this->languageSupport['clang'], $clangId);
+                        $sql->setValue($this->languageSupport['clang'], $languageId);
                         $sql->setValues($values);
                         $sql->insert();
                     }

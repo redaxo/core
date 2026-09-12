@@ -47,7 +47,7 @@ final class MediaHandler extends AbstractHandler
             [MetaEntity::Article, 'articles'],
             [MetaEntity::Category, 'categories'],
             [MetaEntity::Media, 'media'],
-            [MetaEntity::Clang, 'clangs'],
+            [MetaEntity::Language, 'clangs'],
         ];
         foreach ($map as [$entity, $key]) {
             foreach (MetaSchema::getFields($entity) as $field) {
@@ -59,11 +59,11 @@ final class MediaHandler extends AbstractHandler
 
         $articles = '';
         if (!empty($where['articles'])) {
-            $items = $sql->getArray('SELECT id, clang_id, parent_id, name, catname, startarticle FROM ' . Core::getTablePrefix() . 'article WHERE ' . implode(' OR ', $where['articles']));
+            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM ' . Core::getTablePrefix() . 'article WHERE ' . implode(' OR ', $where['articles']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
-                $clang = (int) $artArr['clang_id'];
-                $articles .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $clang]) . '\')">' . escape((string) $artArr['name']) . '</a></li>';
+                $languageId = (int) $artArr['language_id'];
+                $articles .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $languageId]) . '\')">' . escape((string) $artArr['name']) . '</a></li>';
             }
             if ('' != $articles) {
                 $warning[] = I18n::msg('minfo_media_in_use_art') . '<br /><ul>' . $articles . '</ul>';
@@ -72,12 +72,12 @@ final class MediaHandler extends AbstractHandler
 
         $categories = '';
         if (!empty($where['categories'])) {
-            $items = $sql->getArray('SELECT id, clang_id, parent_id, name, catname, startarticle FROM ' . Core::getTablePrefix() . 'article WHERE ' . implode(' OR ', $where['categories']));
+            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM ' . Core::getTablePrefix() . 'article WHERE ' . implode(' OR ', $where['categories']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
-                $clang = (int) $artArr['clang_id'];
+                $languageId = (int) $artArr['language_id'];
                 $parentId = (int) $artArr['parent_id'];
-                $categories .= '<li><a href="javascript:openPage(\'' . Url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'clang' => $clang]) . '\')">' . escape((string) $artArr['catname']) . '</a></li>';
+                $categories .= '<li><a href="javascript:openPage(\'' . Url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'clang' => $languageId]) . '\')">' . escape((string) $artArr['catname']) . '</a></li>';
             }
             if ('' != $categories) {
                 $warning[] = I18n::msg('minfo_media_in_use_cat') . '<br /><ul>' . $categories . '</ul>';
@@ -100,11 +100,11 @@ final class MediaHandler extends AbstractHandler
 
         $clangs = '';
         if (!empty($where['clangs'])) {
-            $items = $sql->getArray('SELECT id, name FROM ' . Core::getTablePrefix() . 'clang WHERE ' . implode(' OR ', $where['clangs']));
+            $items = $sql->getArray('SELECT id, name FROM ' . Core::getTablePrefix() . 'language WHERE ' . implode(' OR ', $where['clangs']));
             foreach ($items as $clangArr) {
                 $name = escape((string) $clangArr['name']);
                 if (Core::getUser()?->admin) {
-                    $clangs .= '<li><a href="javascript:openPage(\'' . Url::backendPage('system/lang', ['clang_id' => $clangArr['id'], 'func' => 'editclang']) . '\')">' . $name . '</a></li>';
+                    $clangs .= '<li><a href="javascript:openPage(\'' . Url::backendPage('system/lang', ['language_id' => (int) $clangArr['id'], 'func' => 'editclang']) . '\')">' . $name . '</a></li>';
                 } else {
                     $clangs .= '<li>' . $name . '</li>';
                 }

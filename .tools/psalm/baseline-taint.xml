@@ -4,7 +4,7 @@
     <TaintedHtml>
       <code><![CDATA['<script nonce="' . Response::getNonce() . '">
                     var history_article_id = ' . Article::getCurrentId() . ';
-                    var history_clang_id = ' . Language::getCurrentId() . ';
+                    var history_language_id = ' . Language::getCurrentId() . ';
                     var history_ctype_id = ' . Request::request('ctype', 'int', 0) . ';
                     var history_article_link = "' . escape($articleLink, 'js') . '";
                     var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";
@@ -13,7 +13,7 @@
     <TaintedTextWithQuotes>
       <code><![CDATA['<script nonce="' . Response::getNonce() . '">
                     var history_article_id = ' . Article::getCurrentId() . ';
-                    var history_clang_id = ' . Language::getCurrentId() . ';
+                    var history_language_id = ' . Language::getCurrentId() . ';
                     var history_ctype_id = ' . Request::request('ctype', 'int', 0) . ';
                     var history_article_link = "' . escape($articleLink, 'js') . '";
                     var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";

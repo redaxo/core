@@ -8,7 +8,7 @@ use Redaxo\Core\Database\Index;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
 
-Table::get(Core::getTable('clang'))
+Table::get(Core::getTable('language'))
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::varchar('code', 35)) // maximum length of a well-formed BCP 47 language tag
     ->ensureColumn(Column::varchar('name', 255))
@@ -17,8 +17,8 @@ Table::get(Core::getTable('clang'))
     ->ensure();
 
 $sql = Sql::factory();
-if (!$sql->setQuery('SELECT 1 FROM ' . Core::getTable('clang') . ' LIMIT 1')->getRows()) {
-    $sql->setTable(Core::getTable('clang'));
+if (!$sql->setQuery('SELECT 1 FROM ' . Core::getTable('language') . ' LIMIT 1')->getRows()) {
+    $sql->setTable(Core::getTable('language'));
     $sql->setValues(['id' => 1, 'code' => 'de', 'name' => 'deutsch', 'priority' => 1, 'status' => 1]);
     $sql->insert();
 }
@@ -50,11 +50,11 @@ Table::get(Core::getTable('article'))
     ->ensureColumn(Column::varchar('path', 255))
     ->ensureColumn(Column::bool('status'))
     ->ensureColumn(Column::varchar('template', 191, nullable: true))
-    ->ensureColumn(Column::int('clang_id', unsigned: true))
+    ->ensureColumn(Column::int('language_id', unsigned: true))
     ->ensureGlobalColumns()
     ->setPrimaryKey('pid')
-    ->ensureIndex(new Index('find_articles', ['id', 'clang_id'], Index::UNIQUE))
-    ->ensureIndex(new Index('clang_id', ['clang_id']))
+    ->ensureIndex(new Index('find_articles', ['id', 'language_id'], Index::UNIQUE))
+    ->ensureIndex(new Index('language_id', ['language_id']))
     ->ensureIndex(new Index('parent_id', ['parent_id']))
     ->removeIndex('id')
     ->ensure();
@@ -62,7 +62,7 @@ Table::get(Core::getTable('article'))
 Table::get(Core::getTable('article_slice'))
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::int('article_id', unsigned: true))
-    ->ensureColumn(Column::int('clang_id', unsigned: true))
+    ->ensureColumn(Column::int('language_id', unsigned: true))
     ->ensureColumn(Column::smallint('ctype_id', unsigned: true))
     ->ensureColumn(Column::varchar('module', 191))
     ->ensureColumn(Column::tinyint('revision', unsigned: true))
@@ -130,7 +130,7 @@ Table::get(Core::getTable('article_slice'))
     ->ensureColumn(Column::text('linklist10', nullable: true))
     ->ensureGlobalColumns()
     ->ensureIndex(new Index('slice_priority', ['article_id', 'priority', 'module']))
-    ->ensureIndex(new Index('find_slices', ['clang_id', 'article_id']))
+    ->ensureIndex(new Index('find_slices', ['language_id', 'article_id']))
     ->removeIndex('clang_id')
     ->removeIndex('article_id')
     ->ensure();
@@ -141,7 +141,7 @@ Table::get(Core::getTable('article_slice_history'))
     ->ensureColumn(Column::varchar('history_type', 50))
     ->ensureColumn(Column::datetime('history_date'))
     ->ensureColumn(Column::varchar('history_user', 255))
-    ->ensureColumn(Column::int('clang_id', unsigned: true))
+    ->ensureColumn(Column::int('language_id', unsigned: true))
     ->ensureColumn(Column::smallint('ctype_id', unsigned: true))
     ->ensureColumn(Column::smallint('priority', unsigned: true))
     ->ensureColumn(Column::bool('status', default: true))
@@ -209,7 +209,7 @@ Table::get(Core::getTable('article_slice_history'))
     ->ensureColumn(Column::varchar('module', 191))
     ->ensureGlobalColumns()
     ->ensureColumn(Column::tinyint('revision', unsigned: true))
-    ->ensureIndex(new Index('snapshot', ['article_id', 'clang_id', 'revision', 'history_date']))
+    ->ensureIndex(new Index('snapshot', ['article_id', 'language_id', 'revision', 'history_date']))
     ->ensure();
 
 Table::get(Core::getTable('cronjob'))

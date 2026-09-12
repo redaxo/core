@@ -43,11 +43,11 @@ final class ArticleHandler extends AbstractHandler
     private function save(array $params, MetaContext $context): MetaContext
     {
         $id = $params['id'];
-        $clang = $params['clang'];
+        $languageId = $params['clang'];
 
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'article');
-        $sql->setWhere('id=:id AND clang_id=:clang', ['id' => $id, 'clang' => $clang]);
+        $sql->setWhere('id=:id AND language_id=:clang', ['id' => $id, 'clang' => $languageId]);
         $sql->setValue('name', Request::post('meta_article_name', 'string'));
 
         $saved = $this->saveRequestValues($sql, $context);
@@ -57,7 +57,7 @@ final class ArticleHandler extends AbstractHandler
             $sql->update();
         }
 
-        ArticleCache::deleteMeta($id, $clang);
+        ArticleCache::deleteMeta($id, $languageId);
 
         Extension::dispatch(new ExtensionPoint('ART_META_UPDATED', '', $params));
 

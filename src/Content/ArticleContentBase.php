@@ -26,7 +26,7 @@ class ArticleContentBase
 {
     final public readonly Article $article;
     final public readonly int $articleId;
-    final public readonly int $clangId;
+    final public readonly int $languageId;
 
     final public string $error = '';
     final public string $success = '';
@@ -54,15 +54,15 @@ class ArticleContentBase
     /** @throws ArticleNotFoundException */
     public function __construct(
         int $articleId,
-        ?int $clangId = null,
+        ?int $languageId = null,
     ) {
         $this->articleId = $articleId;
-        $this->clangId = null !== $clangId && Language::exists($clangId) ? $clangId : Language::getCurrentId();
+        $this->languageId = null !== $languageId && Language::exists($languageId) ? $languageId : Language::getCurrentId();
 
-        $article = Article::get($this->articleId, $this->clangId);
+        $article = Article::get($this->articleId, $this->languageId);
 
         if (!$article instanceof Article) {
-            throw new ArticleNotFoundException(sprintf('Article with id "%d" and clang "%d" does not exist.', $this->articleId, $this->clangId));
+            throw new ArticleNotFoundException(sprintf('Article with id "%d" and language "%d" does not exist.', $this->articleId, $this->languageId));
         }
 
         $this->article = $article;
@@ -94,7 +94,7 @@ class ArticleContentBase
             $output,
             [
                 'article_id' => $this->articleId,
-                'clang' => $this->clangId,
+                'clang' => $this->languageId,
                 'slice_data' => $artDataSql,
             ],
         ));
@@ -216,7 +216,7 @@ class ArticleContentBase
         $result = preg_replace_callback(
             '@redaxo://(\d+)(?:-(\d+))?/?@i',
             function (array $matches) {
-                return Url::article((int) $matches[1], (int) ($matches[2] ?? $this->clangId));
+                return Url::article((int) $matches[1], (int) ($matches[2] ?? $this->languageId));
             },
             $content,
         );
@@ -242,8 +242,8 @@ class ArticleContentBase
             FROM {$prefix}article_slice
             LEFT JOIN {$prefix}article ON {$prefix}article_slice.article_id = {$prefix}article.id
             WHERE
-                {$prefix}article_slice.clang_id = {$this->clangId} AND
-                {$prefix}article.clang_id = {$this->clangId} AND
+                {$prefix}article_slice.language_id = {$this->languageId} AND
+                {$prefix}article.language_id = {$this->languageId} AND
                 {$prefix}article_slice.revision = {$this->sliceRevision}
                 {$articleLimit}
                 {$sliceLimit}
@@ -306,7 +306,7 @@ class ArticleContentBase
                     $sliceContent,
                     [
                         'article_id' => $this->articleId,
-                        'clang' => $this->clangId,
+                        'clang' => $this->languageId,
                         'ctype' => $sliceCtypeId,
                         'module_key' => $sliceModuleKey,
                         'slice_id' => $sliceId,

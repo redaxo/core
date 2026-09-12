@@ -16,7 +16,7 @@ enum MetaEntity
     case Article;
     case Category;
     case Media;
-    case Clang;
+    case Language;
 
     /** Column-name prefix, including the trailing underscore. */
     public function prefix(): string
@@ -25,7 +25,7 @@ enum MetaEntity
             self::Article => 'art_',
             self::Category => 'cat_',
             self::Media => 'med_',
-            self::Clang => 'clang_',
+            self::Language => 'lang_',
         };
     }
 
@@ -34,7 +34,7 @@ enum MetaEntity
         return match ($this) {
             self::Article, self::Category => Core::getTable('article'),
             self::Media => Core::getTable('media'),
-            self::Clang => Core::getTable('clang'),
+            self::Language => Core::getTable('language'),
         };
     }
 }

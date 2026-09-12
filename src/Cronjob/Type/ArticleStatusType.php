@@ -44,7 +44,7 @@ final class ArticleStatusType extends AbstractType
         $time = time();
         $sql->setQuery(
             '
-            SELECT  id, clang_id, status
+            SELECT  id, language_id, status
             FROM    ' . Core::getTablePrefix() . 'article
             WHERE
                 (     ' . $sql->escapeIdentifier($from['field']) . ' > 0
@@ -68,7 +68,7 @@ final class ArticleStatusType extends AbstractType
                 $status = $to['after'];
             }
 
-            ArticleHandler::articleStatus((int) $sql->getValue('id'), (int) $sql->getValue('clang_id'), $status);
+            ArticleHandler::articleStatus((int) $sql->getValue('id'), (int) $sql->getValue('language_id'), $status);
             $sql->next();
         }
         $this->message = 'Updated articles: ' . $rows;

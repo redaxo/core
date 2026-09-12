@@ -15,12 +15,12 @@ final readonly class StructureContext
 {
     public int $categoryId;
     public int $articleId;
-    public int $clangId;
+    public int $languageId;
 
     public function __construct(
         int $categoryId,
         int $articleId,
-        int $clangId,
+        int $languageId,
         public int $ctypeId = 0,
         public int $artStart = 0,
         public int $catStart = 0,
@@ -43,18 +43,18 @@ final readonly class StructureContext
         }
         $this->articleId = $articleId;
 
-        if (Language::count() > 1 && !Core::requireUser()->getComplexPerm('clang')->hasPerm($clangId)) {
-            $clangId = 0;
+        if (Language::count() > 1 && !Core::requireUser()->getComplexPerm('clang')->hasPerm($languageId)) {
+            $languageId = 0;
             foreach (Language::getAllIds() as $key) {
                 if (Core::requireUser()->getComplexPerm('clang')->hasPerm($key)) {
-                    $clangId = $key;
+                    $languageId = $key;
                     break;
                 }
             }
-        } elseif (!$clangId) {
-            $clangId = Language::getStartId();
+        } elseif (!$languageId) {
+            $languageId = Language::getStartId();
         }
-        $this->clangId = $clangId;
+        $this->languageId = $languageId;
     }
 
     /** @return list<int> */
@@ -74,7 +74,7 @@ final readonly class StructureContext
             'page' => 'structure',
             'category_id' => $this->categoryId,
             'article_id' => $this->articleId,
-            'clang' => $this->clangId,
+            'clang' => $this->languageId,
         ]);
     }
 }

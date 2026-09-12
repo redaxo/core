@@ -17,7 +17,7 @@ class CategorySelect extends Select
 
     public function __construct(
         private readonly bool $ignoreOfflines = false,
-        private readonly ?int $clang = null,
+        private readonly ?int $languageId = null,
         private readonly bool $checkPerms = true,
         private readonly bool $addHomepage = true,
     ) {
@@ -43,12 +43,12 @@ class CategorySelect extends Select
         if (null !== $this->rootId) {
             if (is_array($this->rootId)) {
                 foreach ($this->rootId as $rootId) {
-                    if ($rootCat = Category::get($rootId, $this->clang)) {
+                    if ($rootCat = Category::get($rootId, $this->languageId)) {
                         $this->addCatOption($rootCat, 0);
                     }
                 }
             } else {
-                if ($rootCat = Category::get($this->rootId, $this->clang)) {
+                if ($rootCat = Category::get($this->rootId, $this->languageId)) {
                     $this->addCatOption($rootCat, 0);
                 }
             }
@@ -56,7 +56,7 @@ class CategorySelect extends Select
             $perm = Core::requireUser()->getComplexPerm('structure');
 
             if (!$this->checkPerms || $perm->hasCategoryPerm(0)) {
-                if ($rootCats = Category::getRootCategories($this->ignoreOfflines, $this->clang)) {
+                if ($rootCats = Category::getRootCategories($this->ignoreOfflines, $this->languageId)) {
                     foreach ($rootCats as $rootCat) {
                         $this->addCatOption($rootCat);
                     }

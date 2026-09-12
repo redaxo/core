@@ -106,10 +106,10 @@ if (Core::getConfig('article_history', false)) {
             $article = $ep->getParam('article');
 
             if ($article instanceof ArticleContent && $article->articleId == Article::getCurrentId()) {
-                $historyArticle = Article::get($article->articleId, $article->clangId);
+                $historyArticle = Article::get($article->articleId, $article->languageId);
                 if (
                     !$historyArticle instanceof Article
-                    || !$user->getComplexPerm('clang')->hasPerm($article->clangId)
+                    || !$user->getComplexPerm('clang')->hasPerm($article->languageId)
                     || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
                 ) {
                     throw new HttpException('No permission for the history of this article.', Response::HTTP_FORBIDDEN);
@@ -131,8 +131,8 @@ if (Core::getConfig('article_history', false)) {
                         ' . ArticleSliceHistory::getTable() . ' as ' . Core::getTablePrefix() . 'article_slice
                     LEFT JOIN ' . Core::getTablePrefix() . 'article ON ' . Core::getTablePrefix() . 'article_slice.article_id=' . Core::getTablePrefix() . 'article.id
                     WHERE
-                        ' . Core::getTablePrefix() . "article_slice.clang_id='" . $article->clangId . "' AND
-                        " . Core::getTablePrefix() . "article.clang_id='" . $article->clangId . "' AND
+                        ' . Core::getTablePrefix() . "article_slice.language_id='" . $article->languageId . "' AND
+                        " . Core::getTablePrefix() . "article.language_id='" . $article->languageId . "' AND
                         " . Core::getTablePrefix() . 'article_slice.revision=0
                         ' . $articleLimit . '
                         ' . $sliceDate . '
@@ -182,12 +182,12 @@ if (Core::getConfig('article_work_version', false)) {
         }
 
         $user = BackendLogin::createUser();
-        $previewArticle = Article::get($article->articleId, $article->clangId);
+        $previewArticle = Article::get($article->articleId, $article->languageId);
 
         if (
             !$user
             || !$previewArticle instanceof Article
-            || !$user->getComplexPerm('clang')->hasPerm($article->clangId)
+            || !$user->getComplexPerm('clang')->hasPerm($article->languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($previewArticle->categoryId)
         ) {
             throw new HttpException('No permission for the working version of this article.', Response::HTTP_FORBIDDEN);
@@ -197,8 +197,8 @@ if (Core::getConfig('article_work_version', false)) {
     });
 }
 
-$clangId = Request::get('clang', 'int');
-if ($clangId && !Language::exists($clangId)) {
+$languageId = Request::get('clang', 'int');
+if ($languageId && !Language::exists($languageId)) {
     Response::sendRedirect(Url::article(Article::getNotfoundArticleId(), Language::getStartId()));
 }
 

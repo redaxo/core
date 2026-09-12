@@ -26,24 +26,24 @@ final class ContentCopy extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $clangA = Request::request('clang_a', 'int');
-        $clangB = Request::request('clang_b', 'int');
+        $fromLanguageId = Request::request('clang_a', 'int');
+        $toLanguageId = Request::request('clang_b', 'int');
         $overwrite = Request::request('overwrite', 'bool', false);
 
-        $article = Article::get($articleId, $clangA);
+        $article = Article::get($articleId, $fromLanguageId);
         if (!$article instanceof Article) {
-            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clangA . '"!');
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and language "' . $fromLanguageId . '"!');
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($clangA)
-            || !$user->getComplexPerm('clang')->hasPerm($clangB)
+            !$user->getComplexPerm('clang')->hasPerm($fromLanguageId)
+            || !$user->getComplexPerm('clang')->hasPerm($toLanguageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 
-        if (ContentHandler::copyContent($articleId, $articleId, $clangA, $clangB, null, $overwrite)) {
+        if (ContentHandler::copyContent($articleId, $articleId, $fromLanguageId, $toLanguageId, null, $overwrite)) {
             return new Result(true, I18n::msg('content_contentcopy'));
         }
 

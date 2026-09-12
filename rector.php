@@ -377,6 +377,14 @@ return RectorConfig::configure()
         new ArgumentAdder(Form\AbstractForm::class, 'addMedialistField', 2, 'arguments', ['multiple' => true]),
     ])
     ->withConfiguredRule(RenameMethodRector::class, [
+        new MethodCallRename(Language\LanguageHandler::class, 'addCLang', 'add'),
+        new MethodCallRename(Language\LanguageHandler::class, 'editCLang', 'edit'),
+        new MethodCallRename(Language\LanguageHandler::class, 'deleteCLang', 'delete'),
+        new MethodCallRename(Language\LanguagePermission::class, 'getClangs', 'getLanguageIds'),
+        new MethodCallRename(View\View::class, 'clangSwitch', 'languageSwitch'),
+        new MethodCallRename(View\View::class, 'clangSwitchAsButtons', 'languageSwitchAsButtons'),
+        new MethodCallRename(View\View::class, 'clangSwitchAsDropdown', 'languageSwitchAsDropdown'),
+
         new MethodCallRename(Addon\Addon::class, 'getRegisteredPackages', 'getRegisteredAddons'),
         new MethodCallRename(Addon\Addon::class, 'getInstalledPackages', 'getInstalledAddons'),
         new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getActivatedAddons'),
@@ -509,11 +517,11 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\Article::class, 'hasTemplate', 'templateKey'), // changed from bool to ?string, callers using the bool need manual adjustment
 
         new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getArticleId', 'articleId'),
-        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClang', 'clangId'),
+        new MethodCallToPropertyFetch(Content\ArticleContentBase::class, 'getClang', 'languageId'),
 
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getArticleId', 'articleId'),
-        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getClang', 'clangId'),
+        new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getClang', 'languageId'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getCtype', 'contentSectionId'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getModuleId', 'moduleId'),
         new MethodCallToPropertyFetch(Content\ArticleSlice::class, 'getRevision', 'revision'),
@@ -528,7 +536,7 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getCategoryId', 'categoryId'),
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getArticleId', 'articleId'),
-        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getClangId', 'clangId'),
+        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getClangId', 'languageId'),
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getCtypeId', 'ctypeId'),
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getArtStart', 'artStart'),
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getCatStart', 'catStart'),
@@ -538,7 +546,7 @@ return RectorConfig::configure()
 
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getParentId', 'parentId'),
-        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClang', 'clangId'),
+        new MethodCallToPropertyFetch(Content\StructureElement::class, 'getClang', 'languageId'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getName', 'name'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPriority', 'priority'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getPath', 'path'), // changed from string to array, callers using the string need manual adjustment
@@ -683,7 +691,7 @@ return RectorConfig::configure()
     ])
     ->withConfiguredRule(RenamePropertyRector::class, [
         new RenameProperty(Content\ArticleContentBase::class, 'article_id', 'articleId'),
-        new RenameProperty(Content\ArticleContentBase::class, 'clang', 'clangId'),
+        new RenameProperty(Content\ArticleContentBase::class, 'clang', 'languageId'),
         new RenameProperty(Content\ArticleContentBase::class, 'slice_id', 'sliceId'),
         new RenameProperty(Content\ArticleContentBase::class, 'getSlice', 'singleSliceId'),
         new RenameProperty(Content\ArticleContentBase::class, 'ctype', 'contentSectionId'),

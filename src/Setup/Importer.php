@@ -127,7 +127,7 @@ final class Importer
     private static function getRequiredTables(): array
     {
         return [
-            Core::getTablePrefix() . 'clang',
+            Core::getTablePrefix() . 'language',
             Core::getTablePrefix() . 'user_session',
             Core::getTablePrefix() . 'user_passkey',
             Core::getTablePrefix() . 'user',

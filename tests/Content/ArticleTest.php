@@ -192,7 +192,7 @@ final class ArticleTest extends TestCase
 
         $reflectionClass->getProperty('id')->setValue($category, $id);
         $reflectionClass->getProperty('parentId')->setValue($category, $parent?->id);
-        $reflectionClass->getProperty('clangId')->setValue($category, 1);
+        $reflectionClass->getProperty('languageId')->setValue($category, 1);
         $reflectionClass->getProperty('status')->setValue($category, $status);
         $reflectionClass->getProperty('path')->setValue($category, []);
         $reflectionClass->getProperty('additionalData')->setValue($category, $params);
@@ -213,7 +213,7 @@ final class ArticleTest extends TestCase
         $article = $reflectionClass->newInstanceWithoutConstructor();
 
         $reflectionClass->getProperty('id')->setValue($article, $id);
-        $reflectionClass->getProperty('clangId')->setValue($article, 1);
+        $reflectionClass->getProperty('languageId')->setValue($article, 1);
         $reflectionClass->getProperty('status')->setValue($article, $status);
         $reflectionClass->getProperty('path')->setValue($article, []);
         $reflectionClass->getProperty('categoryId')->setValue($article, $category->id);

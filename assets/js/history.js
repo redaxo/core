@@ -81,7 +81,7 @@
 
         // use variables from HTML
         this.articleId = history_article_id;
-        this.clangId = history_clang_id;
+        this.languageId = history_language_id;
         this.ctypeId = history_ctype_id;
         this.link = history_article_link;
 
@@ -95,7 +95,7 @@
 
         // init layer content
         var that = this;
-        $.when(this.load(this.articleId, this.clangId)).then(function (data) {
+        $.when(this.load(this.articleId, this.languageId)).then(function (data) {
 
             // do init stuff
             that.injectToPage(el, data);
@@ -142,11 +142,11 @@
          * load article content
          *
          * @param articleId
-         * @param clangId
+         * @param languageId
          * @returns {*}
          */
-        load: function (articleId, clangId) {
-            var url = 'index.php?rex_history_function=layer&history_article_id=' + articleId + '&history_clang_id=' + clangId;
+        load: function (articleId, languageId) {
+            var url = 'index.php?rex_history_function=layer&history_article_id=' + articleId + '&history_language_id=' + languageId;
             debug.info('load: ' + url);
             return $.ajax({
                 url: url,
@@ -310,7 +310,7 @@
                 that.remove();
 
                 // reload redaxo page
-                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&clang_id=' + that.clangId + '&ctype=' + that.ctypeId;
+                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&clang=' + that.languageId + '&ctype=' + that.ctypeId;
                 $.pjax({url: url, container: '#rex-js-page-main-content', fragment: '#rex-js-page-main-content'})
             }));
         },
@@ -440,7 +440,7 @@
          * @returns {*}
          */
         snapVersion: function (date) {
-            var url = 'index.php?rex_history_function=snap&history_article_id=' + this.articleId + '&history_clang_id=' + this.clangId + '&history_date=' + date + '&_csrf_token=' + encodeURIComponent(history_csrf_token);
+            var url = 'index.php?rex_history_function=snap&history_article_id=' + this.articleId + '&history_language_id=' + this.languageId + '&history_date=' + date + '&_csrf_token=' + encodeURIComponent(history_csrf_token);
             debug.info('snap version: ' + url);
             return $.ajax({
                 url: url,

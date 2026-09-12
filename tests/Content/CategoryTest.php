@@ -170,7 +170,7 @@ final class CategoryTest extends TestCase
 
         $reflectionClass->getProperty('id')->setValue($category, $id);
         $reflectionClass->getProperty('parentId')->setValue($category, $parentId);
-        $reflectionClass->getProperty('clangId')->setValue($category, 1);
+        $reflectionClass->getProperty('languageId')->setValue($category, 1);
         $reflectionClass->getProperty('status')->setValue($category, $status);
         $reflectionClass->getProperty('path')->setValue($category, []);
         $reflectionClass->getProperty('additionalData')->setValue($category, $params);

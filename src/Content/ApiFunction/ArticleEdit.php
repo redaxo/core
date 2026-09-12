@@ -26,15 +26,15 @@ final class ArticleEdit extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $clang = Request::request('clang', 'int');
+        $languageId = Request::request('clang', 'int');
 
-        $article = Article::get($articleId, $clang);
+        $article = Article::get($articleId, $languageId);
         if (!$article instanceof Article) {
-            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and language "' . $languageId . '"!');
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($clang)
+            !$user->getComplexPerm('clang')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
@@ -44,6 +44,6 @@ final class ArticleEdit extends ApiFunction
         $data['priority'] = Request::post('article-position', 'int');
         $data['name'] = Request::post('article-name', 'string');
         $data['template'] = Request::post('template', 'string');
-        return new Result(true, ArticleHandler::editArticle($articleId, $clang, $data));
+        return new Result(true, ArticleHandler::editArticle($articleId, $languageId, $data));
     }
 }

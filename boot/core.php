@@ -121,11 +121,11 @@ ComplexPermission::register('structure', StructurePermission::class);
 ComplexPermission::register('modules', ModulePermission::class);
 ComplexPermission::register('media', MediaPoolPermission::class);
 
-// ----- SET CLANG
+// ----- SET CURRENT LANGUAGE
 if (!Core::isSetup()) {
-    $clangId = Request::request('clang', 'int', Language::getStartId());
-    if (Core::isBackend() || Language::exists($clangId)) {
-        Language::setCurrentId($clangId);
+    $languageId = Request::request('clang', 'int', Language::getStartId());
+    if (Core::isBackend() || Language::exists($languageId)) {
+        Language::setCurrentId($languageId);
     }
 }
 
@@ -177,11 +177,11 @@ if (!Core::isSetup()) {
                 };
 
                 $articleId = $ep->getParam('article_id');
-                $clangId = $ep->getParam('clang_id');
+                $languageId = $ep->getParam('language_id');
                 $sliceRevision = $ep->getParam('slice_revision');
 
                 if (0 == $sliceRevision) {
-                    ArticleSliceHistory::makeSnapshot($articleId, $clangId, $type);
+                    ArticleSliceHistory::makeSnapshot($articleId, $languageId, $type);
                 }
             },
         );

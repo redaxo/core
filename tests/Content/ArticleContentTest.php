@@ -30,7 +30,7 @@ final class ArticleContentTest extends TestCase
             'path' => '|',
             'status' => 1,
             'template_id' => 1,
-            'clang_id' => 1,
+            'language_id' => 1,
             'createdate' => '2020-01-01 12:30:00',
             'createuser' => 'tests',
             'updatedate' => '2020-01-02 13:40:00',

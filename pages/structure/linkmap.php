@@ -21,8 +21,8 @@ $openerInputField = Request::request('opener_input_field', 'string');
 $openerInputFieldName = Request::request('opener_input_field_name', 'string');
 $categoryId = Request::request('category_id', 'int');
 $categoryId = Category::get($categoryId) ? $categoryId : 0;
-$clang = Request::request('clang', 'int');
-$clang = Language::exists($clang) ? $clang : Language::getStartId();
+$languageId = Request::request('clang', 'int');
+$languageId = Language::exists($languageId) ? $languageId : Language::getStartId();
 
 $pattern = '/[^a-z0-9_-]/i';
 if (preg_match($pattern, $openerInputField, $match)) {
@@ -37,7 +37,7 @@ $context = new Context([
     'opener_input_field' => $openerInputField,
     'opener_input_field_name' => $openerInputFieldName,
     'category_id' => $categoryId,
-    'clang' => $clang,
+    'clang' => $languageId,
 ]);
 
 // ------- Build JS Functions

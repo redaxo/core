@@ -28,19 +28,19 @@ final class ArticleSliceMove extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $clang = Request::request('clang', 'int');
+        $languageId = Request::request('clang', 'int');
         $sliceId = Request::request('slice_id', 'int');
         $direction = Request::request('direction', 'string');
 
-        $article = Article::get($articleId, $clang);
+        $article = Article::get($articleId, $languageId);
         if (!$article instanceof Article) {
-            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and language "' . $languageId . '"!');
         }
 
         // article_id must match: the permission check below is based on the requested article, so slices of
         // other articles (possibly in categories the user has no permission for) must not be addressable here
         $CM = Sql::factory();
-        $CM->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where id=? and article_id=? and clang_id=?', [$sliceId, $articleId, $clang]);
+        $CM->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where id=? and article_id=? and language_id=?', [$sliceId, $articleId, $languageId]);
         if (1 != $CM->getRows()) {
             throw new ApiFunctionException(I18n::msg('module_not_found'));
         }
@@ -51,14 +51,14 @@ final class ArticleSliceMove extends ApiFunction
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($clang)
+            !$user->getComplexPerm('clang')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
             || !$user->getComplexPerm('modules')->hasPerm($moduleKey)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 
-        $message = ContentHandler::moveSlice($sliceId, $clang, $direction);
+        $message = ContentHandler::moveSlice($sliceId, $languageId, $direction);
 
         return new Result(true, $message);
     }

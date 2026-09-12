@@ -51,7 +51,7 @@ final class Article extends StructureElement
 
         parent::__construct(
             id: $id,
-            clangId: (int) $getAndUnset('clang_id'),
+            languageId: (int) $getAndUnset('language_id'),
             name: (string) $getAndUnset('name'),
             priority: (int) $getAndUnset('priority'),
             path: array_values($path),
@@ -82,9 +82,9 @@ final class Article extends StructureElement
     }
 
     /** Return the current article. */
-    public static function getCurrent(?int $clang = null): ?self
+    public static function getCurrent(?int $languageId = null): ?self
     {
-        return self::get(self::getCurrentId(), $clang);
+        return self::get(self::getCurrentId(), $languageId);
     }
 
     /** Return the site wide start article id. */
@@ -94,9 +94,9 @@ final class Article extends StructureElement
     }
 
     /** Return the site wide start article. */
-    public static function getSiteStartArticle(?int $clang = null): ?self
+    public static function getSiteStartArticle(?int $languageId = null): ?self
     {
-        return self::get(self::getSiteStartArticleId(), $clang);
+        return self::get(self::getSiteStartArticleId(), $languageId);
     }
 
     /** Return the site wide notfound article id. */
@@ -106,9 +106,9 @@ final class Article extends StructureElement
     }
 
     /** Return the site wide notfound article. */
-    public static function getNotfoundArticle(?int $clang = null): ?self
+    public static function getNotfoundArticle(?int $languageId = null): ?self
     {
-        return self::get(self::getNotfoundArticleId(), $clang);
+        return self::get(self::getNotfoundArticleId(), $languageId);
     }
 
     /**
@@ -116,15 +116,15 @@ final class Article extends StructureElement
      *
      * @return list<self>
      */
-    public static function getRootArticles(bool $ignoreOfflines = false, ?int $clang = null): array
+    public static function getRootArticles(bool $ignoreOfflines = false, ?int $languageId = null): array
     {
-        return self::getChildElements(0, 'alist', $ignoreOfflines, $clang);
+        return self::getChildElements(0, 'alist', $ignoreOfflines, $languageId);
     }
 
     /** Returns the category this article belongs to (for start-articles the category itself). */
     public function getCategory(): ?Category
     {
-        return null === $this->categoryId ? null : Category::get($this->categoryId, $this->clangId);
+        return null === $this->categoryId ? null : Category::get($this->categoryId, $this->languageId);
     }
 
     #[Override]

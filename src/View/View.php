@@ -103,24 +103,24 @@ final class View
         return $return . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
     }
 
-    /** Returns a clang switch. */
-    public static function clangSwitch(Context $context, bool $asDropDown = true): string
+    /** Returns a language switch. */
+    public static function languageSwitch(Context $context, bool $asDropDown = true): string
     {
         if (1 == Language::count()) {
             return '';
         }
 
         if ($asDropDown && Language::count() >= 4) {
-            return self::clangSwitchAsDropdown($context);
+            return self::languageSwitchAsDropdown($context);
         }
 
         $items = [];
-        foreach (Language::getAll() as $id => $clang) {
+        foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('clang')->hasPerm($id)) {
                 $icon = $id === $context->getParam('clang') ? '<i class="rex-icon rex-icon-language-active"></i> ' : '<i class="rex-icon rex-icon-language"></i> ';
                 $item = [];
                 $item['href'] = $context->getUrl(['clang' => $id]);
-                $item['title'] = $icon . I18n::translate($clang->name);
+                $item['title'] = $icon . I18n::translate($language->name);
                 if ($id === $context->getParam('clang')) {
                     $item['active'] = true;
                 }
@@ -133,26 +133,26 @@ final class View
         return $fragment->parse('core/navigations/content.php');
     }
 
-    /** Returns a clang switch. */
-    public static function clangSwitchAsButtons(Context $context, bool $asDropDown = true): string
+    /** Returns a language switch. */
+    public static function languageSwitchAsButtons(Context $context, bool $asDropDown = true): string
     {
         if (1 == Language::count()) {
             return '';
         }
 
         if ($asDropDown && Language::count() >= 4) {
-            return self::clangSwitchAsDropdown($context);
+            return self::languageSwitchAsDropdown($context);
         }
 
         $items = [];
-        foreach (Language::getAll() as $id => $clang) {
+        foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('clang')->hasPerm($id)) {
-                $icon = $clang->isOnline() ? '<i class="rex-icon rex-icon-online"></i> ' : '<i class="rex-icon rex-icon-offline"></i> ';
+                $icon = $language->isOnline() ? '<i class="rex-icon rex-icon-online"></i> ' : '<i class="rex-icon rex-icon-offline"></i> ';
                 $item = [];
-                $item['label'] = $icon . I18n::translate($clang->name);
+                $item['label'] = $icon . I18n::translate($language->name);
                 $item['url'] = $context->getUrl(['clang' => $id]);
-                $item['attributes']['class'][] = 'btn-clang';
-                $item['attributes']['title'] = I18n::translate($clang->name);
+                $item['attributes']['class'][] = 'btn-language';
+                $item['attributes']['title'] = I18n::translate($language->name);
                 if ($id === $context->getParam('clang')) {
                     $item['attributes']['class'][] = 'active';
                 }
@@ -165,8 +165,8 @@ final class View
         return '<div class="rex-nav-btn rex-nav-language"><div class="btn-toolbar">' . $fragment->parse('core/buttons/button_group.php') . '</div></div>';
     }
 
-    /** Returns a clang switch. */
-    public static function clangSwitchAsDropdown(Context $context): string
+    /** Returns a language switch. */
+    public static function languageSwitchAsDropdown(Context $context): string
     {
         if (1 == Language::count()) {
             return '';
@@ -176,14 +176,14 @@ final class View
 
         $buttonLabel = '';
         $items = [];
-        foreach (Language::getAll() as $id => $clang) {
+        foreach (Language::getAll() as $id => $language) {
             if ($user->getComplexPerm('clang')->hasPerm($id)) {
                 $item = [];
-                $item['title'] = I18n::translate($clang->name);
+                $item['title'] = I18n::translate($language->name);
                 $item['href'] = $context->getUrl(['clang' => $id]);
                 if ($id === $context->getParam('clang')) {
                     $item['active'] = true;
-                    $buttonLabel = I18n::translate($clang->name);
+                    $buttonLabel = I18n::translate($language->name);
                 }
                 $items[] = $item;
             }
@@ -204,12 +204,12 @@ final class View
     }
 
     /** @internal */
-    public static function structureBreadcrumb(int $categoryId, int $articleId, int $clang): string
+    public static function structureBreadcrumb(int $categoryId, int $articleId, int $languageId): string
     {
         $navigation = [];
 
         $objectId = $articleId > 0 ? $articleId : $categoryId;
-        $object = Article::get($objectId, $clang);
+        $object = Article::get($objectId, $languageId);
         if ($object) {
             $tree = $object->getParentTree();
             if (!$object->isStartArticle()) {
@@ -221,14 +221,14 @@ final class View
                     $n = [];
                     $n['title'] = str_replace(' ', '&nbsp;', escape($parent->name));
                     if ($parent instanceof Category) {
-                        $n['href'] = Url::backendPage('structure', ['category_id' => $id, 'clang' => $clang]);
+                        $n['href'] = Url::backendPage('structure', ['category_id' => $id, 'clang' => $languageId]);
                     }
                     $navigation[] = $n;
                 }
             }
         }
 
-        $title = '<a class="rex-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'clang' => $clang]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
+        $title = '<a class="rex-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'clang' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
 
         $fragment = new Fragment();
         $fragment->setVar('id', 'rex-js-structure-breadcrumb', false);

@@ -14,10 +14,10 @@ final class ArticleCache
     private function __construct() {}
 
     /**
-     * Löscht die gecachten Dateien eines Artikels. Wenn keine clang angegeben, wird
+     * Löscht die gecachten Dateien eines Artikels. Wenn keine Sprache angegeben, wird
      * der Artikel-Cache in allen Sprachen gelöscht.
      */
-    public static function delete(int $id, ?int $clangId = null): bool
+    public static function delete(int $id, ?int $languageId = null): bool
     {
         // sanity check
         if ($id < 0) {
@@ -25,12 +25,12 @@ final class ArticleCache
         }
 
         foreach (Language::getAllIds() as $otherClangId) {
-            if (null !== $clangId && $clangId != $otherClangId) {
+            if (null !== $languageId && $languageId != $otherClangId) {
                 continue;
             }
 
-            self::deleteMeta($id, $clangId);
-            self::deleteContent($id, $clangId);
+            self::deleteMeta($id, $languageId);
+            self::deleteContent($id, $languageId);
         }
         self::deleteLists($id);
 
@@ -38,10 +38,10 @@ final class ArticleCache
     }
 
     /**
-     * Löscht die gecachten Meta-Dateien eines Artikels. Wenn keine clang angegeben, wird
+     * Löscht die gecachten Meta-Dateien eines Artikels. Wenn keine Sprache angegeben, wird
      * der Artikel in allen Sprachen gelöscht.
      */
-    public static function deleteMeta(int $id, ?int $clangId = null): bool
+    public static function deleteMeta(int $id, ?int $languageId = null): bool
     {
         // sanity check
         if ($id < 0) {
@@ -51,7 +51,7 @@ final class ArticleCache
         $cachePath = Path::coreCache('structure/');
 
         foreach (Language::getAllIds() as $otherClangId) {
-            if (null !== $clangId && $clangId != $otherClangId) {
+            if (null !== $languageId && $languageId != $otherClangId) {
                 continue;
             }
 
@@ -64,10 +64,10 @@ final class ArticleCache
     }
 
     /**
-     * Löscht die gecachten Content-Dateien eines Artikels. Wenn keine clang angegeben, wird
+     * Löscht die gecachten Content-Dateien eines Artikels. Wenn keine Sprache angegeben, wird
      * der Artikel in allen Sprachen gelöscht.
      */
-    public static function deleteContent(int $id, ?int $clangId = null): bool
+    public static function deleteContent(int $id, ?int $languageId = null): bool
     {
         // sanity check
         if ($id < 0) {
@@ -77,7 +77,7 @@ final class ArticleCache
         $cachePath = Path::coreCache('structure/');
 
         foreach (Language::getAllIds() as $otherClangId) {
-            if (null !== $clangId && $clangId != $otherClangId) {
+            if (null !== $languageId && $languageId != $otherClangId) {
                 continue;
             }
 
@@ -88,7 +88,7 @@ final class ArticleCache
     }
 
     /**
-     * Löscht die gecachten List-Dateien eines Artikels. Wenn keine clang angegeben, wird
+     * Löscht die gecachten List-Dateien eines Artikels. Wenn keine Sprache angegeben, wird
      * der Artikel in allen Sprachen gelöscht.
      */
     public static function deleteLists(int $id): bool
@@ -113,7 +113,7 @@ final class ArticleCache
      *
      * @return bool|string TRUE bei Erfolg, FALSE wenn eine ungütlige article_id übergeben wird, sonst eine Fehlermeldung
      */
-    public static function generateMeta(int $articleId, ?int $clangId = null): bool|string
+    public static function generateMeta(int $articleId, ?int $languageId = null): bool|string
     {
         // sanity check
         if ($articleId <= 0) {
@@ -121,15 +121,15 @@ final class ArticleCache
         }
 
         $qry = 'SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE id=' . $articleId;
-        if (null !== $clangId) {
-            $qry .= ' AND clang_id=' . $clangId;
+        if (null !== $languageId) {
+            $qry .= ' AND language_id=' . $languageId;
         }
 
         $sql = Sql::factory();
         $sql->setQuery($qry);
         $fieldnames = $sql->getFieldnames();
         foreach ($sql as $row) {
-            $clang = $row->getValue('clang_id');
+            $rowLanguageId = $row->getValue('language_id');
 
             // --------------------------------------------------- Artikelparameter speichern
             $params = [];
@@ -140,7 +140,7 @@ final class ArticleCache
                 };
             }
 
-            $articleFile = Path::coreCache('structure/' . $articleId . '.' . $clang . '.article');
+            $articleFile = Path::coreCache('structure/' . $articleId . '.' . $rowLanguageId . '.article');
             if (!File::putCache($articleFile, $params)) {
                 return I18n::msg('article_could_not_be_generated') . ' ' . I18n::msg('check_rights_in_directory') . Path::coreCache('structure/');
             }
@@ -167,7 +167,7 @@ final class ArticleCache
 
         $GC = Sql::factory();
         // $GC->setDebug();
-        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where clang_id=:clang AND ((parent_id=:id and startarticle=0) OR (id=:id and startarticle=1)) order by priority,name', ['id' => $parentId, 'clang' => Language::getStartId()]);
+        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=:clang AND ((parent_id=:id and startarticle=0) OR (id=:id and startarticle=1)) order by priority,name', ['id' => $parentId, 'clang' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
@@ -182,7 +182,7 @@ final class ArticleCache
         // --------------------------------------- CAT LIST
 
         $GC = Sql::factory();
-        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=:id and clang_id=:clang and startarticle=1 order by catpriority,name', ['id' => $parentId, 'clang' => Language::getStartId()]);
+        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=:id and language_id=:clang and startarticle=1 order by catpriority,name', ['id' => $parentId, 'clang' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {

@@ -31,11 +31,11 @@ use Redaxo\Core\View\View;
 use function Redaxo\Core\View\escape;
 
 $articleId = Request::request('article_id', 'int');
-$clang = Request::request('clang', 'int');
+$languageId = Request::request('clang', 'int');
 $sliceId = Request::request('slice_id', 'int', '');
 
 $articleId = Article::get($articleId) ? $articleId : 0;
-$clang = Language::exists($clang) ? $clang : Language::getStartId();
+$languageId = Language::exists($languageId) ? $languageId : Language::getStartId();
 
 $articleRevision = 0;
 $sliceRevision = 0;
@@ -51,7 +51,7 @@ $article->setQuery('
         FROM ' . Core::getTablePrefix() . 'article as article
         WHERE
             article.id=?
-            AND clang_id=?', [$articleId, $clang]);
+            AND language_id=?', [$articleId, $languageId]);
 
 if (1 !== $article->getRows()) {
     echo View::title(I18n::msg('content'), '');
@@ -69,7 +69,7 @@ if ($ctype < 2 || !$template?->hasContentSection($ctype)) {
 }
 
 // ----- Artikel wurde gefunden - Kategorie holen
-$OOArt = Article::require($articleId, $clang);
+$OOArt = Article::require($articleId, $languageId);
 // Top level articles have no category, default to 0 (root) — backend pages expect an int category id.
 $categoryId = $OOArt->categoryId ?? 0;
 
@@ -83,7 +83,7 @@ $context = new Context([
     'page' => Controller::getCurrentPage(),
     'article_id' => $articleId,
     'category_id' => $categoryId,
-    'clang' => $clang,
+    'clang' => $languageId,
     'ctype' => $ctype,
 ]);
 
@@ -91,15 +91,15 @@ $context = new Context([
 echo View::title(I18n::msg('content') . ': ' . escape($OOArt->name), '');
 
 // ----- Languages
-echo View::clangSwitchAsButtons($context);
+echo View::languageSwitchAsButtons($context);
 
 // ----- category pfad und rechte
-echo View::structureBreadcrumb($categoryId, $articleId, $clang);
+echo View::structureBreadcrumb($categoryId, $articleId, $languageId);
 
 // ----- EXTENSION POINT
 echo Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_HEADER', '', [
     'article_id' => $articleId,
-    'clang' => $clang,
+    'clang' => $languageId,
     'function' => $function,
     'slice_id' => $sliceId,
     'page' => Controller::getCurrentPage(),
@@ -113,7 +113,7 @@ $user = Core::requireUser();
 
 // ----------------- HAT USER DIE RECHTE AN DIESEM ARTICLE ODER NICHT
 if (
-    !$user->getComplexPerm('clang')->hasPerm($clang)
+    !$user->getComplexPerm('clang')->hasPerm($languageId)
     || !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)
 ) {
     // ----- hat keine rechte an diesem artikel
@@ -136,7 +136,7 @@ if (
             // edit/ delete
             // article_id must match: the permission check above is based on the requested article, so slices of
             // other articles (possibly in categories the user has no permission for) must not be addressable here
-            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=? AND article_id=? AND clang_id=?', [$sliceId, $articleId, $clang]);
+            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=? AND article_id=? AND language_id=?', [$sliceId, $articleId, $languageId]);
             if (1 == $CM->getRows()) {
                 $moduleKey = (string) $CM->getValue('module');
             }
@@ -180,7 +180,7 @@ if (
                     'delete' => ArticleSliceAction::DELETE,
                     default => ArticleSliceAction::ADD,
                 };
-                $action = new ArticleSliceAction($mode, $articleId, $clang, $ctype, $sliceId, $newsql);
+                $action = new ArticleSliceAction($mode, $articleId, $languageId, $ctype, $sliceId, $newsql);
 
                 $action->setRequestValues();
 
@@ -219,7 +219,7 @@ if (
                             $prevSlice = Sql::factory();
                             // $prevSlice->setDebug();
                             if (-1 == $sliceId) {
-                                $prevSlice->setQuery('SELECT IFNULL(MAX(priority),0)+1 as priority FROM ' . $sliceTable . ' WHERE article_id=? AND clang_id=? AND ctype_id=? AND revision=?', [$articleId, $clang, $ctype, $sliceRevision]);
+                                $prevSlice->setQuery('SELECT IFNULL(MAX(priority),0)+1 as priority FROM ' . $sliceTable . ' WHERE article_id=? AND language_id=? AND ctype_id=? AND revision=?', [$articleId, $languageId, $ctype, $sliceRevision]);
                             } else {
                                 $prevSlice->setQuery('SELECT * FROM ' . $sliceTable . ' WHERE id=?', [$sliceId]);
                             }
@@ -228,7 +228,7 @@ if (
 
                             $newsql->setValue('article_id', $articleId);
                             $newsql->setValue('module', $moduleKey);
-                            $newsql->setValue('clang_id', $clang);
+                            $newsql->setValue('language_id', $languageId);
                             $newsql->setValue('ctype_id', $ctype);
                             $newsql->setValue('revision', $sliceRevision);
                             $newsql->setValue('priority', $priority);
@@ -240,7 +240,7 @@ if (
                             Extension::dispatch(new ExtensionPoint('SLICE_UPDATE', '', [
                                 'slice_id' => $sliceId,
                                 'article_id' => $articleId,
-                                'clang_id' => $clang,
+                                'language_id' => $languageId,
                                 'slice_revision' => $sliceRevision,
                             ]));
 
@@ -248,7 +248,7 @@ if (
                             $info = $actionMessage . I18n::msg('block_updated');
                             $epParams = [
                                 'article_id' => $articleId,
-                                'clang' => $clang,
+                                'clang' => $languageId,
                                 'function' => $function,
                                 'slice_id' => $sliceId,
                                 'page' => Controller::getCurrentPage(),
@@ -268,7 +268,7 @@ if (
 
                             Extension::dispatch(new ExtensionPoint('SLICE_ADD', '', [
                                 'article_id' => $articleId,
-                                'clang_id' => $clang,
+                                'language_id' => $languageId,
                                 'slice_revision' => $sliceRevision,
                             ]));
 
@@ -278,7 +278,7 @@ if (
                             Util::organizePriorities(
                                 Core::getTable('article_slice'),
                                 'priority',
-                                'article_id=' . $articleId . ' AND clang_id=' . $clang . ' AND ctype_id=' . $ctype . ' AND revision=' . (int) $sliceRevision,
+                                'article_id=' . $articleId . ' AND language_id=' . $languageId . ' AND ctype_id=' . $ctype . ' AND revision=' . (int) $sliceRevision,
                                 'priority, updatedate DESC',
                             );
 
@@ -286,7 +286,7 @@ if (
                             $function = '';
                             $epParams = [
                                 'article_id' => $articleId,
-                                'clang' => $clang,
+                                'clang' => $languageId,
                                 'function' => $function,
                                 'slice_id' => $sliceId,
                                 'page' => Controller::getCurrentPage(),
@@ -308,7 +308,7 @@ if (
                             $globalInfo = I18n::msg('block_deleted');
                             $epParams = [
                                 'article_id' => $articleId,
-                                'clang' => $clang,
+                                'clang' => $languageId,
                                 'function' => $function,
                                 'slice_id' => $sliceId,
                                 'page' => Controller::getCurrentPage(),
@@ -331,14 +331,14 @@ if (
                     // ----- artikel neu generieren
                     $EA = Sql::factory();
                     $EA->setTable(Core::getTablePrefix() . 'article');
-                    $EA->setWhere(['id' => $articleId, 'clang_id' => $clang]);
+                    $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
                     $EA->addGlobalUpdateFields();
                     $EA->update();
-                    ArticleCache::delete($articleId, $clang);
+                    ArticleCache::delete($articleId, $languageId);
 
                     Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_ARTICLE_UPDATED', '', [
                         'id' => $articleId,
-                        'clang' => $clang,
+                        'clang' => $languageId,
                     ]));
 
                     // ----- POST SAVE ACTION [ADD/EDIT/DELETE]
@@ -365,10 +365,10 @@ if (
     foreach (count($contentSections) > 1 ? $contentSections : [] as $section) {
         $hasSlice = true;
         if ($ctype != $section->id) {
-            $hasSlice = null !== ArticleSlice::getFirstSliceForCtype($section->id, $articleId, $clang);
+            $hasSlice = null !== ArticleSlice::getFirstSliceForCtype($section->id, $articleId, $languageId);
         }
         $editPage->addSubpage(new Page('ctype' . $section->id, $section->name)
-            ->setHref(['page' => 'content/edit', 'article_id' => $articleId, 'clang' => $clang, 'ctype' => $section->id])
+            ->setHref(['page' => 'content/edit', 'article_id' => $articleId, 'clang' => $languageId, 'ctype' => $section->id])
             ->setIsActive($ctype == $section->id)
             ->setItemAttr('class', $hasSlice ? '' : 'rex-empty'),
         );
@@ -408,7 +408,7 @@ if (
     $navigation = current($blocks);
     $contentNaviRight = $navigation['navigation'] ?? [];
 
-    $contentNaviRight[] = ['title' => '<a href="' . Url::article($articleId, $clang) . '" onclick="window.open(this.href); return false;">' . I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link"></i></a>'];
+    $contentNaviRight[] = ['title' => '<a href="' . Url::article($articleId, $languageId) . '" onclick="window.open(this.href); return false;">' . I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link"></i></a>'];
 
     $fragment = new Fragment();
     $fragment->setVar('id', 'rex-js-structure-content-nav', false);
@@ -440,7 +440,7 @@ if (
     // ----- EXTENSION POINT
     $contentMain .= Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_BEFORE_SLICES', '', [
         'article_id' => $articleId,
-        'clang' => $clang,
+        'clang' => $languageId,
         'function' => $function,
         'slice_id' => $sliceId,
         'page' => Controller::getCurrentPage(),
@@ -451,13 +451,13 @@ if (
     ]));
 
     // ------------------------------------------ START: MODULE EDITIEREN/ADDEN ETC.
-    $contentMain .= Controller::includeCurrentPageSubPath(compact('info', 'warning', 'article', 'articleId', 'categoryId', 'clang', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'));
+    $contentMain .= Controller::includeCurrentPageSubPath(compact('info', 'warning', 'article', 'articleId', 'categoryId', 'languageId', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'));
     // ------------------------------------------ END: AUSGABE
 
     // ----- EXTENSION POINT
     $contentMain .= Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_AFTER_SLICES', '', [
         'article_id' => $articleId,
-        'clang' => $clang,
+        'clang' => $languageId,
         'function' => $function,
         'slice_id' => $sliceId,
         'page' => Controller::getCurrentPage(),
@@ -472,7 +472,7 @@ if (
     // ----- EXTENSION POINT
     $contentSidebar = Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_SIDEBAR', '', [
         'article_id' => $articleId,
-        'clang' => $clang,
+        'clang' => $languageId,
         'function' => $function,
         'slice_id' => $sliceId,
         'page' => Controller::getCurrentPage(),

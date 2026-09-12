@@ -16,7 +16,7 @@ use function array_key_exists;
 final readonly class MetaContext
 {
     /**
-     * @param object|null $subject The value object being edited (article/category/media/clang), or `null` when
+     * @param object|null $subject The value object being edited (article/category/media/language), or `null` when
      *     adding. The concrete types share no common interface, so this is a bare `object`; narrow it with
      *     `instanceof` in {@see MetaField::isAllowed()} when needed.
      * @param Category|null $category Surrounding content category (an article's category / a category's parent);

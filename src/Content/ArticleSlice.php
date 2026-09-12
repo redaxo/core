@@ -28,7 +28,7 @@ final readonly class ArticleSlice
     private function __construct(
         public int $id,
         public int $articleId,
-        public int $clangId,
+        public int $languageId,
         public int $contentSectionId,
         public string $moduleKey,
         public int $priority,
@@ -48,7 +48,7 @@ final readonly class ArticleSlice
     /** @internal  */
     public static function forNewSlice(
         int $articleId,
-        int $clangId,
+        int $languageId,
         int $ctype,
         string $moduleKey,
         int $priority,
@@ -57,7 +57,7 @@ final readonly class ArticleSlice
         return new self(
             0,
             $articleId,
-            $clangId,
+            $languageId,
             $ctype,
             $moduleKey,
             $priority,
@@ -91,7 +91,7 @@ final readonly class ArticleSlice
         return new self(
             (int) $sql->getValue($table . '.id'),
             (int) $sql->getValue($table . '.article_id'),
-            (int) $sql->getValue($table . '.clang_id'),
+            (int) $sql->getValue($table . '.language_id'),
             (int) $sql->getValue($table . '.ctype_id'),
             (string) $sql->getValue($table . '.module'),
             (int) $sql->getValue($table . '.priority'),
@@ -125,7 +125,7 @@ final readonly class ArticleSlice
         return new self(
             $this->id,
             $this->articleId,
-            $this->clangId,
+            $this->languageId,
             $this->contentSectionId,
             $this->moduleKey,
             $this->priority,
@@ -169,13 +169,13 @@ final readonly class ArticleSlice
         return $result;
     }
 
-    public static function getArticleSliceById(int $id, ?int $clang = null, int $revision = 0): ?self
+    public static function getArticleSliceById(int $id, ?int $languageId = null, int $revision = 0): ?self
     {
-        $clang ??= Language::getCurrentId();
+        $languageId ??= Language::getCurrentId();
 
         return self::getSliceWhere(
-            'id=? AND clang_id=? and revision=?',
-            [$id, $clang, $revision],
+            'id=? AND language_id=? and revision=?',
+            [$id, $languageId, $revision],
         );
     }
 
@@ -183,12 +183,12 @@ final readonly class ArticleSlice
      * Return the first slice for an article.
      * This can then be used to iterate over all the slices in the order as they appear using the getNextSlice() function.
      */
-    public static function getFirstSliceForArticle(int $articleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): ?self
+    public static function getFirstSliceForArticle(int $articleId, ?int $languageId = null, int $revision = 0, bool $ignoreOfflines = false): ?self
     {
-        $clang ??= Language::getCurrentId();
+        $languageId ??= Language::getCurrentId();
 
         foreach (range(1, 20) as $ctype) {
-            $slice = self::getFirstSliceForCtype($ctype, $articleId, $clang, $revision, $ignoreOfflines);
+            $slice = self::getFirstSliceForCtype($ctype, $articleId, $languageId, $revision, $ignoreOfflines);
             if (null !== $slice) {
                 return $slice;
             }
@@ -198,29 +198,29 @@ final readonly class ArticleSlice
     }
 
     /** Returns the first slice of the given ctype of an article. */
-    public static function getFirstSliceForCtype(int $ctype, int $articleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): ?self
+    public static function getFirstSliceForCtype(int $ctype, int $articleId, ?int $languageId = null, int $revision = 0, bool $ignoreOfflines = false): ?self
     {
-        $clang ??= Language::getCurrentId();
+        $languageId ??= Language::getCurrentId();
 
         return self::getSliceWhere(
-            'article_id=? AND clang_id=? AND ctype_id=? AND priority=1 AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$articleId, $clang, $ctype, $revision],
+            'article_id=? AND language_id=? AND ctype_id=? AND priority=1 AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
+            [$articleId, $languageId, $ctype, $revision],
         );
     }
 
     /**
      * Return all slices for an article that have a certain
-     * clang or revision.
+     * language or revision.
      *
      * @return list<self>
      */
-    public static function getSlicesForArticle(int $articleId, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): array
+    public static function getSlicesForArticle(int $articleId, ?int $languageId = null, int $revision = 0, bool $ignoreOfflines = false): array
     {
-        $clang ??= Language::getCurrentId();
+        $languageId ??= Language::getCurrentId();
 
         return self::getSlicesWhere(
-            'article_id=? AND clang_id=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$articleId, $clang, $revision],
+            'article_id=? AND language_id=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
+            [$articleId, $languageId, $revision],
         );
     }
 
@@ -229,29 +229,29 @@ final readonly class ArticleSlice
      *
      * @return list<self>
      */
-    public static function getSlicesForArticleOfType(int $articleId, string $moduleKey, ?int $clang = null, int $revision = 0, bool $ignoreOfflines = false): array
+    public static function getSlicesForArticleOfType(int $articleId, string $moduleKey, ?int $languageId = null, int $revision = 0, bool $ignoreOfflines = false): array
     {
-        $clang ??= Language::getCurrentId();
+        $languageId ??= Language::getCurrentId();
 
         return self::getSlicesWhere(
-            'article_id=? AND clang_id=? AND module=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$articleId, $clang, $moduleKey, $revision],
+            'article_id=? AND language_id=? AND module=? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
+            [$articleId, $languageId, $moduleKey, $revision],
         );
     }
 
     public function getNextSlice(bool $ignoreOfflines = false): ?self
     {
         return self::getSliceWhere(
-            'priority ' . ($ignoreOfflines ? '>=' : '=') . ' ? AND article_id=? AND clang_id = ? AND ctype_id = ? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$this->priority + 1, $this->articleId, $this->clangId, $this->contentSectionId, $this->revision],
+            'priority ' . ($ignoreOfflines ? '>=' : '=') . ' ? AND article_id=? AND language_id = ? AND ctype_id = ? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
+            [$this->priority + 1, $this->articleId, $this->languageId, $this->contentSectionId, $this->revision],
         );
     }
 
     public function getPreviousSlice(bool $ignoreOfflines = false): ?self
     {
         return self::getSliceWhere(
-            'priority ' . ($ignoreOfflines ? '<=' : '=') . ' ? AND article_id=? AND clang_id = ? AND ctype_id = ? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
-            [$this->priority - 1, $this->articleId, $this->clangId, $this->contentSectionId, $this->revision],
+            'priority ' . ($ignoreOfflines ? '<=' : '=') . ' ? AND article_id=? AND language_id = ? AND ctype_id = ? AND revision=?' . ($ignoreOfflines ? ' AND status = 1' : ''),
+            [$this->priority - 1, $this->articleId, $this->languageId, $this->contentSectionId, $this->revision],
             self::ORDER_DESC,
         );
     }
@@ -265,7 +265,7 @@ final readonly class ArticleSlice
      */
     public function renderSlice(): string
     {
-        $art = new ArticleContent($this->articleId, $this->clangId);
+        $art = new ArticleContent($this->articleId, $this->languageId);
         $art->sliceRevision = $this->revision;
         return $art->renderSlice($this->id);
     }
@@ -433,14 +433,14 @@ final readonly class ArticleSlice
 
     /**
      * @internal
-     * @param array{id: int, articleId: int, clangId: int, contentSectionId: int, moduleKey: string, priority: int, status: int, createdate: int, updatedate: int, createuser: string, updateuser: string, revision: int, values: array<int, string|null>, media: array<int, string|null>, medialists: array<int, string|null>, links: array<int, string|null>, linklists: array<int, string|null>} $data
+     * @param array{id: int, articleId: int, languageId: int, contentSectionId: int, moduleKey: string, priority: int, status: int, createdate: int, updatedate: int, createuser: string, updateuser: string, revision: int, values: array<int, string|null>, media: array<int, string|null>, medialists: array<int, string|null>, links: array<int, string|null>, linklists: array<int, string|null>} $data
      */
     public static function __set_state(array $data): self
     {
         return new self(
             $data['id'],
             $data['articleId'],
-            $data['clangId'],
+            $data['languageId'],
             $data['contentSectionId'],
             $data['moduleKey'],
             $data['priority'],

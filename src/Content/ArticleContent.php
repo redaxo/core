@@ -34,10 +34,10 @@ final class ArticleContent extends ArticleContentBase
             try {
                 ob_implicit_flush(false);
 
-                $articleContentFile = Path::coreCache('structure/' . $this->articleId . '.' . $this->clangId . '.content');
+                $articleContentFile = Path::coreCache('structure/' . $this->articleId . '.' . $this->languageId . '.content');
 
                 if (!is_file($articleContentFile)) {
-                    ContentHandler::generateArticleContent($this->articleId, $this->clangId);
+                    ContentHandler::generateArticleContent($this->articleId, $this->languageId);
                 }
 
                 require $articleContentFile;

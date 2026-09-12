@@ -1,7 +1,7 @@
 .btn-default,
 .btn-abort,
 .btn-back,
-.btn-clang,
+.btn-language,
 .btn-move,
 .btn-popup,
 .btn-reset,
@@ -51,7 +51,7 @@
     color: #fff;
 }
 
-.btn-clang {
+.btn-language {
     $normal: (color: $color-b, background: #fff, border: $color-a-light);
     $hover: (color: $color-b, background: lighten($color-a-light, 5%), border: $color-a-light);
     $active: (color: #fff, background: $color-b, border: $color-b);
@@ -129,7 +129,7 @@
     .btn-default,
     .btn-abort,
     .btn-back,
-    .btn-clang,
+    .btn-language,
     .btn-move,
     .btn-reset,
     .btn-search {
@@ -160,7 +160,7 @@
     }
 
     // special: blue + grey with custom borders
-    .btn-clang {
+    .btn-language {
         $normal: (color: $color-text-light, background: $color-grey-5, border: darken($color-grey-5, 10%));
         $hover: (color: $color-text-light, background: lighten($color-grey-5, 4%), border: darken($color-grey-5, 6%));
         $active: (color: $color-text-light, background: $dark-brand-primary, border: darken($dark-brand-primary, 24%)); // slightly increase contrast

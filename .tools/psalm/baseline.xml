@@ -8,7 +8,7 @@
       <code><![CDATA[[
             'page' => $params['page'],
             'article_id' => $articleId,
-            'clang' => $clangId,
+            'clang' => $languageId,
             'ctype' => $params['ctype'],
         ]]]></code>
     </MixedArgumentTypeCoercion>
@@ -45,11 +45,11 @@
   <file src="boot/core.php">
     <MixedArgument>
       <code><![CDATA[$articleId]]></code>
-      <code><![CDATA[$clangId]]></code>
+      <code><![CDATA[$languageId]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$articleId]]></code>
-      <code><![CDATA[$clangId]]></code>
+      <code><![CDATA[$languageId]]></code>
       <code><![CDATA[$sliceRevision]]></code>
     </MixedAssignment>
     <MixedOperand>
@@ -1023,10 +1023,10 @@
       <code><![CDATA[$sliceRevision]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
-      <code><![CDATA[[$articleId, $clang, $ctype, $sliceRevision]]]></code>
+      <code><![CDATA[[$articleId, $languageId, $ctype, $sliceRevision]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedOperand>
-      <code><![CDATA[Controller::includeCurrentPageSubPath(compact('info', 'warning', 'article', 'articleId', 'categoryId', 'clang', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'))]]></code>
+      <code><![CDATA[Controller::includeCurrentPageSubPath(compact('info', 'warning', 'article', 'articleId', 'categoryId', 'languageId', 'sliceId', 'sliceRevision', 'function', 'ctype', 'context'))]]></code>
     </MixedOperand>
     <PossiblyInvalidArrayAccess>
       <code><![CDATA[$navigation['navigation']]]></code>
@@ -1465,10 +1465,10 @@
   </file>
   <file src="src/Content/ArticleCache.php">
     <InvalidOperand>
-      <code><![CDATA[$clang]]></code>
+      <code><![CDATA[$rowLanguageId]]></code>
     </InvalidOperand>
     <PossiblyNullOperand>
-      <code><![CDATA[$clang]]></code>
+      <code><![CDATA[$rowLanguageId]]></code>
     </PossiblyNullOperand>
   </file>
   <file src="src/Content/ArticleContentBase.php">
@@ -1545,9 +1545,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$id]]></code>
     </ArgumentTypeCoercion>
-    <InvalidArgument>
-      <code><![CDATA[['id' => $ArtSql->getValue('id'), 'startarticle' => '0', 'clang_id' => $clang]]]></code>
-    </InvalidArgument>
     <InvalidOperand>
       <code><![CDATA[$fcat->getValue('path')]]></code>
       <code><![CDATA[$tcat->getValue('path')]]></code>
@@ -1567,8 +1564,6 @@
       <code><![CDATA[$colname]]></code>
       <code><![CDATA[$colname]]></code>
       <code><![CDATA[$colname]]></code>
-      <code><![CDATA[$sql->getValue('article_id')]]></code>
-      <code><![CDATA[$sql->getValue('clang_id')]]></code>
     </ArgumentTypeCoercion>
     <InvalidArrayOffset>
       <code><![CDATA[$maxPriority[$ctypeId]]]></code>
@@ -1584,7 +1579,6 @@
       <code><![CDATA[$colname]]></code>
       <code><![CDATA[$colname]]></code>
       <code><![CDATA[$colname]]></code>
-      <code><![CDATA[$sql->getValue('article_id')]]></code>
     </PossiblyNullArgument>
     <PossiblyNullArrayOffset>
       <code><![CDATA[$ctypes]]></code>
@@ -2324,9 +2318,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/MetaInfo/Handler/MediaHandler.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[['clang_id' => $clangArr['id'], 'func' => 'editclang']]]></code>
-    </ArgumentTypeCoercion>
     <MixedArgument>
       <code><![CDATA[$params['filename']]]></code>
     </MixedArgument>
