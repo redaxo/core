@@ -27,15 +27,15 @@ final class ArticleSliceStatusChange extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $clang = Request::request('clang', 'int');
+        $languageId = Request::request('clang', 'int');
 
-        $article = Article::get($articleId, $clang);
+        $article = Article::get($articleId, $languageId);
         if (!$article instanceof Article) {
-            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and language "' . $languageId . '"!');
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($clang)
+            !$user->getComplexPerm('clang')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
@@ -47,7 +47,7 @@ final class ArticleSliceStatusChange extends ApiFunction
         // the slice must belong to the article whose category permission was checked above, otherwise slices of
         // categories the user has no permission for could be addressed
         $slice = Sql::factory();
-        $slice->setQuery('SELECT id FROM ' . Core::getTable('article_slice') . ' WHERE id = ? AND article_id = ? AND clang_id = ?', [$sliceId, $articleId, $clang]);
+        $slice->setQuery('SELECT id FROM ' . Core::getTable('article_slice') . ' WHERE id = ? AND article_id = ? AND language_id = ?', [$sliceId, $articleId, $languageId]);
         if (1 !== $slice->getRows()) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }

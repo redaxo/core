@@ -20,12 +20,12 @@ use Redaxo\Core\MetaInfo\MetaEntity;
  */
 final class LanguageHandler extends AbstractHandler
 {
-    public const CONTAINER = 'rex-clang-metainfo';
+    public const CONTAINER = 'rex-language-metainfo';
 
     #[AsExtension]
     public function renderToggleButton(LanguageFormButtons $ep): string
     {
-        if ($this->hasFields(new MetaContext(MetaEntity::Clang))) {
+        if ($this->hasFields(new MetaContext(MetaEntity::Language))) {
             return $ep->subject . '<a class="btn btn-default collapsed" data-toggle="collapse" href="#' . self::CONTAINER . '"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>';
         }
 
@@ -35,7 +35,7 @@ final class LanguageHandler extends AbstractHandler
     #[AsExtension]
     public function extendForm(LanguageFormAdd|LanguageFormEdit $ep): string
     {
-        $context = new MetaContext(MetaEntity::Clang, $ep instanceof LanguageFormEdit ? $ep->language : null);
+        $context = new MetaContext(MetaEntity::Language, $ep instanceof LanguageFormEdit ? $ep->language : null);
 
         return $ep->subject . '
             <tr id="' . self::CONTAINER . '" class="collapse mark">
@@ -57,10 +57,10 @@ final class LanguageHandler extends AbstractHandler
         }
 
         $sql = Sql::factory();
-        $sql->setTable(Core::getTablePrefix() . 'clang');
+        $sql->setTable(Core::getTablePrefix() . 'language');
         $sql->setWhere('id=:id', ['id' => $ep->language->id]);
 
-        $this->saveRequestValues($sql, new MetaContext(MetaEntity::Clang));
+        $this->saveRequestValues($sql, new MetaContext(MetaEntity::Language));
 
         if ($sql->hasValues()) {
             $sql->update();

@@ -109,36 +109,31 @@ final class Url
      *
      * @param TUrlParams $params
      */
-    public static function article(?int $id = null, ?int $clang = null, array $params = []): string
+    public static function article(?int $id = null, ?int $languageId = null, array $params = []): string
     {
-        $clang = (int) $clang;
+        $languageId = (int) $languageId;
 
         // ----- get id
         if (!$id) {
             $id = Article::getCurrentId();
         }
 
-        // ----- get clang
-        // Wenn eine rexExtension vorhanden ist, immer die clang mitgeben!
+        // Wenn eine rexExtension vorhanden ist, immer die Sprache mitgeben!
         // Die rexExtension muss selbst entscheiden was sie damit macht
-        if (!Language::exists($clang) && (Language::count() > 1 || Extension::hasExtensions('URL_REWRITE'))) {
-            $clang = Language::getCurrentId();
+        if (!Language::exists($languageId) && (Language::count() > 1 || Extension::hasExtensions('URL_REWRITE'))) {
+            $languageId = Language::getCurrentId();
         }
 
         // ----- EXTENSION POINT
-        $url = Extension::dispatch(new ExtensionPoint('URL_REWRITE', '', ['id' => $id, 'clang' => $clang, 'params' => $params]));
+        $url = Extension::dispatch(new ExtensionPoint('URL_REWRITE', '', ['id' => $id, 'clang' => $languageId, 'params' => $params]));
 
         if ('' == $url) {
-            if (Language::count() > 1) {
-                $clang = '&clang=' . $clang;
-            } else {
-                $clang = '';
-            }
+            $languageParam = Language::count() > 1 ? '&clang=' . $languageId : '';
 
             $params = Str::buildQuery($params);
             $params = $params ? '&' . $params : '';
 
-            $url = self::frontendController() . '?article_id=' . $id . $clang . $params;
+            $url = self::frontendController() . '?article_id=' . $id . $languageParam . $params;
         }
 
         return $url;

@@ -20,7 +20,7 @@ final class ArticleRevision
      * @param self::LIVE|self::WORK $fromRevisionId
      * @param self::LIVE|self::WORK $toRevisionId
      */
-    public static function copyContent(int $articleId, int $clang, int $fromRevisionId, int $toRevisionId): bool
+    public static function copyContent(int $articleId, int $languageId, int $fromRevisionId, int $toRevisionId): bool
     {
         if ($fromRevisionId == $toRevisionId) {
             return false;
@@ -29,10 +29,10 @@ final class ArticleRevision
         // clear the revision to which we will later copy all slices
         $dc = Sql::factory();
         // $dc->setDebug();
-        $dc->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where article_id=? and clang_id=? and revision=?', [$articleId, $clang, $toRevisionId]);
+        $dc->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=?', [$articleId, $languageId, $toRevisionId]);
 
         $gc = Sql::factory();
-        $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and clang_id=? and revision=? ORDER by ctype_id, priority', [$articleId, $clang, $fromRevisionId]);
+        $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=? ORDER by ctype_id, priority', [$articleId, $languageId, $fromRevisionId]);
 
         $cols = Sql::factory();
         $cols->setQuery('SHOW COLUMNS FROM ' . Core::getTablePrefix() . 'article_slice');
@@ -58,7 +58,7 @@ final class ArticleRevision
     }
 
     /** @param self::WORK $fromRevisionId */
-    public static function clearContent(int $articleId, int $clang, int $fromRevisionId): true
+    public static function clearContent(int $articleId, int $languageId, int $fromRevisionId): true
     {
         if (self::WORK != $fromRevisionId) {
             throw new InvalidArgumentException(sprintf('Revision "%s" can not be cleared, only the working version (%d).', $fromRevisionId, self::WORK));
@@ -66,7 +66,7 @@ final class ArticleRevision
 
         $dc = Sql::factory();
         // $dc->setDebug();
-        $dc->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where article_id=? and clang_id=? and revision=?', [$articleId, $clang, $fromRevisionId]);
+        $dc->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=?', [$articleId, $languageId, $fromRevisionId]);
 
         return true;
     }

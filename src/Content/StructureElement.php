@@ -31,7 +31,7 @@ abstract class StructureElement
 
     protected function __construct(
         public readonly int $id,
-        public readonly int $clangId,
+        public readonly int $languageId,
         public readonly string $name,
         public readonly int $priority,
         /** @var list<int> */
@@ -50,29 +50,29 @@ abstract class StructureElement
      * The instance will be cached in an instance-pool and therefore re-used by a later call.
      *
      * @param int $id the article id
-     * @param int|null $clang the clang id
+     * @param int|null $languageId the language id
      *
      * @return static|null A StructureElement instance typed to the late-static binding type of the caller
      */
-    public static function get(int $id, ?int $clang = null): ?static
+    public static function get(int $id, ?int $languageId = null): ?static
     {
         if ($id <= 0) {
             return null;
         }
 
-        if (!$clang) {
-            $clang = Language::getCurrentId();
+        if (!$languageId) {
+            $languageId = Language::getCurrentId();
         }
 
-        return static::getInstance([$id, $clang], static function () use ($id, $clang): ?static {
-            $articlePath = Path::coreCache('structure/' . $id . '.' . $clang . '.article');
+        return static::getInstance([$id, $languageId], static function () use ($id, $languageId): ?static {
+            $articlePath = Path::coreCache('structure/' . $id . '.' . $languageId . '.article');
 
             // load metadata from cache
             $metadata = File::getCache($articlePath);
 
             // generate cache if not exists
             if (!$metadata) {
-                ArticleCache::generateMeta($id, $clang);
+                ArticleCache::generateMeta($id, $languageId);
                 $metadata = File::getCache($articlePath);
             }
 
@@ -89,12 +89,12 @@ abstract class StructureElement
     /**
      * Returns the element for the given id like {@see get()}, but throws when it does not exist.
      *
-     * @throws RuntimeException if no element exists for the given id and clang
+     * @throws RuntimeException if no element exists for the given id and language
      */
-    public static function require(int $id, ?int $clang = null): static
+    public static function require(int $id, ?int $languageId = null): static
     {
-        return static::get($id, $clang)
-            ?? throw new RuntimeException(sprintf('Required %s with id "%d" and clang "%s" does not exist.', static::class, $id, $clang ?? Language::getCurrentId()));
+        return static::get($id, $languageId)
+            ?? throw new RuntimeException(sprintf('Required %s with id "%d" and language "%s" does not exist.', static::class, $id, $languageId ?? Language::getCurrentId()));
     }
 
     /**
@@ -105,14 +105,14 @@ abstract class StructureElement
     abstract protected static function fromCache(array $data): ?static;
 
     /** @return list<static> */
-    final protected static function getChildElements(int $parentId, string $listType, bool $ignoreOfflines = false, ?int $clang = null): array
+    final protected static function getChildElements(int $parentId, string $listType, bool $ignoreOfflines = false, ?int $languageId = null): array
     {
         // for $parentId=0 root elements will be returned, so abort here for $parentId<0 only
         if (0 > $parentId) {
             return [];
         }
-        if (!$clang) {
-            $clang = Language::getCurrentId();
+        if (!$languageId) {
+            $languageId = Language::getCurrentId();
         }
 
         $class = static::class;
@@ -120,8 +120,8 @@ abstract class StructureElement
             // list key
             [$parentId, $listType],
             // callback to get an instance for a given ID, status will be checked if $ignoreOfflines==true
-            static function (int $id) use ($class, $ignoreOfflines, $clang) {
-                if ($instance = $class::get($id, $clang)) {
+            static function (int $id) use ($class, $ignoreOfflines, $languageId) {
+                if ($instance = $class::get($id, $languageId)) {
                     return !$ignoreOfflines || $instance->isOnline() ? $instance : null;
                 }
                 return null;
@@ -149,7 +149,7 @@ abstract class StructureElement
 
         return match ($key) {
             'id' => $this->id,
-            'clang_id' => $this->clangId,
+            'language_id' => $this->languageId,
             'name' => $this->name,
             'priority' => $this->priority,
             'path' => $this->path ? '|' . implode('|', $this->path) . '|' : '|',
@@ -168,7 +168,7 @@ abstract class StructureElement
         $key = strtolower($key);
 
         return in_array($key, [
-            'id', 'clang_id', 'name', 'priority', 'path', 'status',
+            'id', 'language_id', 'name', 'priority', 'path', 'status',
             'createdate', 'updatedate', 'createuser', 'updateuser',
         ], true)
             || array_key_exists($key, $this->additionalData)
@@ -182,7 +182,7 @@ abstract class StructureElement
      */
     public function getUrl(array $params = []): string
     {
-        return Url::article($this->id, $this->clangId, $params);
+        return Url::article($this->id, $this->languageId, $params);
     }
 
     /**
@@ -210,9 +210,9 @@ abstract class StructureElement
         $return = [];
 
         foreach ($this->path as $id) {
-            $cat = Category::get($id, $this->clangId);
+            $cat = Category::get($id, $this->languageId);
             if (!$cat) {
-                throw new LogicException('No category found with id=' . $id . ' and clang=' . $this->clangId . '.');
+                throw new LogicException('No category found with id=' . $id . ' and language=' . $this->languageId . '.');
             }
             $return[] = $cat;
         }

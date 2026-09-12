@@ -24,15 +24,15 @@ final class ArticleSliceHistory
     }
 
     /** Only Snapshots from LiveVersion. */
-    public static function makeSnapshot(int $articleId, int $clangId, string $historyType): void
+    public static function makeSnapshot(int $articleId, int $languageId, string $historyType): void
     {
         self::checkTables();
 
         $slices = Sql::factory()->getArray(
-            'select * from ' . Core::getTable('article_slice') . ' where article_id=? and clang_id=? and revision=?',
+            'select * from ' . Core::getTable('article_slice') . ' where article_id=? and language_id=? and revision=?',
             [
                 $articleId,
-                $clangId,
+                $languageId,
                 0,
             ],
         );
@@ -57,37 +57,37 @@ final class ArticleSliceHistory
     }
 
     /** @return list<array{history_date: string, history_type: string, history_user: string}> */
-    public static function getSnapshots(int $articleId, int $clangId): array
+    public static function getSnapshots(int $articleId, int $languageId): array
     {
         $sql = Sql::factory();
 
         /** @var list<array{history_date: string, history_type: string, history_user: string}> */
         return $sql->getArray(
-            'select distinct history_date, history_type, history_user from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and clang_id=? and revision=? order by history_date desc',
-            [$articleId, $clangId, 0],
+            'select distinct history_date, history_type, history_user from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and language_id=? and revision=? order by history_date desc',
+            [$articleId, $languageId, 0],
         );
     }
 
-    public static function restoreSnapshot(string $historyDate, int $articleId, int $clangId): bool
+    public static function restoreSnapshot(string $historyDate, int $articleId, int $languageId): bool
     {
         self::checkTables();
 
         $sql = Sql::factory();
-        $slices = $sql->getArray('select id from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and clang_id=? and revision=? and history_date=?', [$articleId, $clangId, 0, $historyDate]);
+        $slices = $sql->getArray('select id from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and language_id=? and revision=? and history_date=?', [$articleId, $languageId, 0, $historyDate]);
 
         if (0 == count($slices)) {
             return false;
         }
 
-        self::makeSnapshot($articleId, $clangId, 'version set ' . $historyDate);
+        self::makeSnapshot($articleId, $languageId, 'version set ' . $historyDate);
 
         $articleSlicesTable = Table::get(Core::getTable('article_slice'));
 
         $sql = Sql::factory();
-        $sql->setQuery('delete from ' . $sql->escapeIdentifier(Core::getTable('article_slice')) . ' where article_id=? and clang_id=? and revision=?', [$articleId, $clangId, 0]);
+        $sql->setQuery('delete from ' . $sql->escapeIdentifier(Core::getTable('article_slice')) . ' where article_id=? and language_id=? and revision=?', [$articleId, $languageId, 0]);
 
         $slices = Sql::factory();
-        $slices = $slices->getArray('select * from ' . $slices->escapeIdentifier(self::getTable()) . ' where article_id=? and clang_id=? and revision=? and history_date=?', [$articleId, $clangId, 0, $historyDate]);
+        $slices = $slices->getArray('select * from ' . $slices->escapeIdentifier(self::getTable()) . ' where article_id=? and language_id=? and revision=? and history_date=?', [$articleId, $languageId, 0, $historyDate]);
 
         foreach ($slices as $slice) {
             $sql = Sql::factory();
@@ -103,7 +103,7 @@ final class ArticleSliceHistory
 
             $sql->insert();
         }
-        ArticleCache::delete($articleId, $clangId);
+        ArticleCache::delete($articleId, $languageId);
         return true;
     }
 

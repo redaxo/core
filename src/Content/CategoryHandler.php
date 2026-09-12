@@ -66,11 +66,11 @@ final class CategoryHandler
             // TemplateId vom Startartikel der jeweiligen Sprache vererben
             $sql = Sql::factory();
             // $sql->setDebug();
-            $sql->setQuery('select clang_id,template from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1', [$categoryId]);
+            $sql->setQuery('select language_id,template from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1', [$categoryId]);
             for ($i = 0; $i < $sql->getRows(); $i++, $sql->next()) {
                 $template = (string) $sql->getValue('template');
                 if ('' !== $template) {
-                    $startpageTemplates[(int) $sql->getValue('clang_id')] = $template;
+                    $startpageTemplates[(int) $sql->getValue('language_id')] = $template;
                 }
             }
         }
@@ -98,7 +98,7 @@ final class CategoryHandler
                 $AART->setValue('id', $id);
             }
 
-            $AART->setValue('clang_id', $key);
+            $AART->setValue('language_id', $key);
             $AART->setValue('template', $templateKey);
             $AART->setValue('name', $data['name']);
             $AART->setValue('catname', $data['catname']);
@@ -150,16 +150,16 @@ final class CategoryHandler
      *
      * @return string Eine Statusmeldung
      */
-    public static function editCategory(int $categoryId, int $clang, array $data): string
+    public static function editCategory(int $categoryId, int $languageId, array $data): string
     {
         // --- Kategorie mit alten Daten selektieren
         $thisCat = Sql::factory();
-        $thisCat->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE startarticle=1 and id=? and clang_id=?', [$categoryId, $clang]);
+        $thisCat->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE startarticle=1 and id=? and language_id=?', [$categoryId, $languageId]);
 
         // --- Kategorie selbst updaten
         $EKAT = Sql::factory();
         $EKAT->setTable(Core::getTablePrefix() . 'article');
-        $EKAT->setWhere(['id' => $categoryId, 'startarticle' => 1, 'clang_id' => $clang]);
+        $EKAT->setWhere(['id' => $categoryId, 'startarticle' => 1, 'language_id' => $languageId]);
 
         if (isset($data['catname'])) {
             $EKAT->setValue('catname', $data['catname']);
@@ -177,17 +177,17 @@ final class CategoryHandler
         // --- Kategorie Kindelemente updaten
         if (isset($data['catname'])) {
             $ArtSql = Sql::factory();
-            $ArtSql->setQuery('SELECT id FROM ' . Core::getTablePrefix() . 'article WHERE parent_id=? AND startarticle=0 AND clang_id=?', [$categoryId, $clang]);
+            $ArtSql->setQuery('SELECT id FROM ' . Core::getTablePrefix() . 'article WHERE parent_id=? AND startarticle=0 AND language_id=?', [$categoryId, $languageId]);
 
             $EART = Sql::factory();
             for ($i = 0; $i < $ArtSql->getRows(); ++$i) {
                 $EART->setTable(Core::getTablePrefix() . 'article');
-                $EART->setWhere(['id' => $ArtSql->getValue('id'), 'startarticle' => '0', 'clang_id' => $clang]);
+                $EART->setWhere(['id' => (int) $ArtSql->getValue('id'), 'startarticle' => '0', 'language_id' => $languageId]);
                 $EART->setValue('catname', $data['catname']);
                 $EART->addGlobalUpdateFields($user);
 
                 $EART->update();
-                ArticleCache::delete((int) $ArtSql->getValue('id'), $clang);
+                ArticleCache::delete((int) $ArtSql->getValue('id'), $languageId);
 
                 $ArtSql->next();
             }
@@ -205,13 +205,13 @@ final class CategoryHandler
             if ($oldPrio != $data['catpriority']) {
                 Sql::factory()
                     ->setTable(Core::getTable('article'))
-                    ->setWhere('id = :id AND clang_id != :clang', ['id' => $categoryId, 'clang' => $clang])
+                    ->setWhere('id = :id AND language_id != :clang', ['id' => $categoryId, 'clang' => $languageId])
                     ->setValue('catpriority', $data['catpriority'])
                     ->addGlobalUpdateFields($user)
                     ->update();
 
-                foreach (Language::getAllIds() as $clangId) {
-                    self::newCatPrio($parentId, $clangId, $data['catpriority'], $oldPrio);
+                foreach (Language::getAllIds() as $languageId) {
+                    self::newCatPrio($parentId, $languageId, $data['catpriority'], $oldPrio);
                 }
             }
         }
@@ -230,7 +230,7 @@ final class CategoryHandler
             'article' => clone $EKAT,
 
             'parent_id' => $thisCat->getValue('parent_id'),
-            'clang' => $clang,
+            'clang' => $languageId,
             'name' => $data['catname'] ?? $thisCat->getValue('catname'),
             'priority' => $data['catpriority'] ?? $thisCat->getValue('catpriority'),
             'path' => $thisCat->getValue('path'),
@@ -251,18 +251,18 @@ final class CategoryHandler
      */
     public static function deleteCategory(int $categoryId): string
     {
-        $clang = Language::getStartId();
+        $languageId = Language::getStartId();
 
         $thisCat = Sql::factory();
-        $thisCat->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE id=? and clang_id=?', [$categoryId, $clang]);
+        $thisCat->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE id=? and language_id=?', [$categoryId, $languageId]);
 
         // Prüfen ob die Kategorie existiert
         if (1 == $thisCat->getRows()) {
             $KAT = Sql::factory();
-            $KAT->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=? and clang_id=? and startarticle=1', [$categoryId, $clang]);
+            $KAT->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=? and language_id=? and startarticle=1', [$categoryId, $languageId]);
             // Prüfen ob die Kategorie noch Unterkategorien besitzt
             if (0 == $KAT->getRows()) {
-                $KAT->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=? and clang_id=? and startarticle=0', [$categoryId, $clang]);
+                $KAT->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=? and language_id=? and startarticle=0', [$categoryId, $languageId]);
                 // Prüfen ob die Kategorie noch Artikel besitzt (ausser dem Startartikel)
                 if (0 == $KAT->getRows()) {
                     $thisCat = Sql::factory();
@@ -272,16 +272,16 @@ final class CategoryHandler
                     $message = ArticleHandler::_deleteArticle($categoryId);
 
                     foreach ($thisCat as $row) {
-                        $clang = (int) $row->getValue('clang_id');
+                        $languageId = (int) $row->getValue('language_id');
 
                         // ----- PRIOR
-                        self::newCatPrio($parentId, $clang, 0, 1);
+                        self::newCatPrio($parentId, $languageId, 0, 1);
 
                         // ----- EXTENSION POINT
                         $message = Extension::dispatch(new ExtensionPoint('CAT_DELETED', $message, [
                             'id' => $categoryId,
                             'parent_id' => $parentId,
-                            'clang' => $clang,
+                            'clang' => $languageId,
                             'name' => $row->getValue('catname'),
                             'priority' => $row->getValue('catpriority'),
                             'path' => $row->getValue('path'),
@@ -312,10 +312,10 @@ final class CategoryHandler
      *
      * @return int Der neue Status der Kategorie
      */
-    public static function categoryStatus(int $categoryId, int $clang, ?int $status = null): int
+    public static function categoryStatus(int $categoryId, int $languageId, ?int $status = null): int
     {
         $KAT = Sql::factory();
-        $KAT->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and clang_id=? and startarticle=1', [$categoryId, $clang]);
+        $KAT->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and language_id=? and startarticle=1', [$categoryId, $languageId]);
         if (1 == $KAT->getRows()) {
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
@@ -327,18 +327,18 @@ final class CategoryHandler
 
             $EKAT = Sql::factory();
             $EKAT->setTable(Core::getTablePrefix() . 'article');
-            $EKAT->setWhere(['id' => $categoryId,  'clang_id' => $clang, 'startarticle' => 1]);
+            $EKAT->setWhere(['id' => $categoryId,  'language_id' => $languageId, 'startarticle' => 1]);
             $EKAT->setValue('status', $newstatus);
             $EKAT->addGlobalUpdateFields(self::getUser());
 
             $EKAT->update();
 
-            ArticleCache::delete($categoryId, $clang);
+            ArticleCache::delete($categoryId, $languageId);
 
             // ----- EXTENSION POINT
             Extension::dispatch(new ExtensionPoint('CAT_STATUS', null, [
                 'id' => $categoryId,
-                'clang' => $clang,
+                'clang' => $languageId,
                 'status' => $newstatus,
             ]));
         } else {
@@ -395,7 +395,7 @@ final class CategoryHandler
     }
 
     /** Berechnet die Prios der Kategorien in einer Kategorie neu. */
-    public static function newCatPrio(int $parentId, int $clang, int $newPrio, int $oldPrio): void
+    public static function newCatPrio(int $parentId, int $languageId, int $newPrio, int $oldPrio): void
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -407,7 +407,7 @@ final class CategoryHandler
             Util::organizePriorities(
                 Core::getTable('article'),
                 'catpriority',
-                'clang_id=' . $clang . ' AND parent_id=' . $parentId . ' AND startarticle=1',
+                'language_id=' . $languageId . ' AND parent_id=' . $parentId . ' AND startarticle=1',
                 'catpriority,updatedate ' . $addsql,
             );
 
@@ -432,10 +432,10 @@ final class CategoryHandler
         // kategorien vorhanden ?
         // ist die zielkategorie im pfad der quellkategeorie ?
         $fcat = Sql::factory();
-        $fcat->setQuery('select * from ' . Core::getTablePrefix() . 'article where startarticle=1 and id=? and clang_id=?', [$fromCat, Language::getStartId()]);
+        $fcat->setQuery('select * from ' . Core::getTablePrefix() . 'article where startarticle=1 and id=? and language_id=?', [$fromCat, Language::getStartId()]);
 
         $tcat = Sql::factory();
-        $tcat->setQuery('select * from ' . Core::getTablePrefix() . 'article where startarticle=1 and id=? and clang_id=?', [$toCat, Language::getStartId()]);
+        $tcat->setQuery('select * from ' . Core::getTablePrefix() . 'article where startarticle=1 and id=? and language_id=?', [$toCat, Language::getStartId()]);
 
         if (1 != $fcat->getRows() || (1 != $tcat->getRows() && 0 != $toCat)) {
             // eine der kategorien existiert nicht
@@ -465,7 +465,7 @@ final class CategoryHandler
 
         $gcats = Sql::factory();
         // $gcats->setDebug();
-        $gcats->setQuery('select * from ' . Core::getTablePrefix() . 'article where path like ? and clang_id=?', [$fromPath . '%', Language::getStartId()]);
+        $gcats->setQuery('select * from ' . Core::getTablePrefix() . 'article where path like ? and language_id=?', [$fromPath . '%', Language::getStartId()]);
 
         $up = Sql::factory();
         // $up->setDebug();
@@ -486,15 +486,14 @@ final class CategoryHandler
             $gcats->next();
         }
 
-        // ----- clang holen, max catprio holen und entsprechen updaten
         $gmax = Sql::factory();
         $up = Sql::factory();
         // $up->setDebug();
-        foreach (Language::getAllIds() as $clang) {
-            $gmax->setQuery('select max(catpriority) from ' . Core::getTablePrefix() . 'article where parent_id=? and clang_id=?', [$toCat, $clang]);
+        foreach (Language::getAllIds() as $languageId) {
+            $gmax->setQuery('select max(catpriority) from ' . Core::getTablePrefix() . 'article where parent_id=? and language_id=?', [$toCat, $languageId]);
             $catpriority = (int) $gmax->getValue('max(catpriority)');
             $up->setTable(Core::getTablePrefix() . 'article');
-            $up->setWhere(['id' => $fromCat, 'clang_id' => $clang]);
+            $up->setWhere(['id' => $fromCat, 'language_id' => $languageId]);
             $up->setValue('path', $toPath);
             $up->setValue('parent_id', $toCat);
             $up->setValue('catpriority', $catpriority + 1);
@@ -506,13 +505,12 @@ final class CategoryHandler
             ArticleCache::delete($id);
         }
 
-        foreach (Language::getAllIds() as $clang) {
-            self::newCatPrio((int) $fcat->getValue('parent_id'), $clang, 0, 1);
+        foreach (Language::getAllIds() as $languageId) {
+            self::newCatPrio((int) $fcat->getValue('parent_id'), $languageId, 0, 1);
 
             Extension::dispatch(new ExtensionPoint('CAT_MOVED', null, [
                 'id' => $fromCat,
-                'clang_id' => $clang, // deprecated, use "clang" instead
-                'clang' => $clang,
+                'clang' => $languageId,
                 'category_id' => $toCat,
             ]));
         }

@@ -31,34 +31,34 @@ final class LanguageTest extends TestCase
 
     public function testHasValue(): void
     {
-        $clang = $this->createClangWithoutConstructor();
+        $language = $this->createLanguageWithoutConstructor();
 
-        self::assertTrue($clang->hasValue('foo'));
-        self::assertTrue($clang->hasValue('clang_foo'));
+        self::assertTrue($language->hasValue('foo'));
+        self::assertTrue($language->hasValue('lang_foo'));
 
-        self::assertFalse($clang->hasValue('bar'));
-        self::assertFalse($clang->hasValue('clang_bar'));
+        self::assertFalse($language->hasValue('bar'));
+        self::assertFalse($language->hasValue('lang_bar'));
     }
 
     public function testGetValue(): void
     {
         self::assertIsInt(Language::getCurrent()->getValue('id'));
 
-        $clang = $this->createClangWithoutConstructor();
+        $language = $this->createLanguageWithoutConstructor();
 
-        self::assertEquals('teststring', $clang->getValue('foo'));
-        self::assertEquals('teststring', $clang->getValue('clang_foo'));
+        self::assertEquals('teststring', $language->getValue('foo'));
+        self::assertEquals('teststring', $language->getValue('lang_foo'));
 
-        self::assertNull($clang->getValue('bar'));
-        self::assertNull($clang->getValue('clang_bar'));
+        self::assertNull($language->getValue('bar'));
+        self::assertNull($language->getValue('lang_bar'));
     }
 
-    private function createClangWithoutConstructor(): Language
+    private function createLanguageWithoutConstructor(): Language
     {
         $reflectionClass = new ReflectionClass(Language::class);
         $language = $reflectionClass->newInstanceWithoutConstructor();
 
-        $reflectionClass->getProperty('additionalData')->setValue($language, ['clang_foo' => 'teststring']);
+        $reflectionClass->getProperty('additionalData')->setValue($language, ['lang_foo' => 'teststring']);
 
         return $language;
     }

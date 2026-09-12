@@ -184,14 +184,14 @@ if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPer
 
 // --------------------------------------------------- INHALTE KOPIEREN START
 if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() > 1) {
-    $clangPerm = $user->getComplexPerm('clang')->getClangs();
+    $languagePerm = $user->getComplexPerm('clang')->getLanguageIds();
 
     $langA = new Select();
     $langA->setId('clang_a');
     $langA->setName('clang_a');
     $langA->setSize('1');
     $langA->setAttribute('class', 'form-control selectpicker');
-    foreach ($clangPerm as $key) {
+    foreach ($languagePerm as $key) {
         $val = I18n::translate(Language::require($key)->name);
         $langA->addOption($val, $key);
     }
@@ -201,7 +201,7 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
     $langB->setName('clang_b');
     $langB->setSize('1');
     $langB->setAttribute('class', 'form-control selectpicker');
-    foreach ($clangPerm as $key) {
+    foreach ($languagePerm as $key) {
         $val = I18n::translate(Language::require($key)->name);
         $langB->addOption($val, $key);
     }

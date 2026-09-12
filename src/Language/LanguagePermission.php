@@ -11,9 +11,9 @@ use function in_array;
 /** @extends ComplexPermission<int> */
 final class LanguagePermission extends ComplexPermission
 {
-    public function hasPerm(int $clangId): bool
+    public function hasPerm(int $languageId): bool
     {
-        return $this->hasAll() || in_array($clangId, $this->perms);
+        return $this->hasAll() || in_array($languageId, $this->perms);
     }
 
     public function count(): int
@@ -22,15 +22,15 @@ final class LanguagePermission extends ComplexPermission
     }
 
     /** @return list<int> */
-    public function getClangs(): array
+    public function getLanguageIds(): array
     {
         return $this->hasAll() ? Language::getAllIds() : $this->perms;
     }
 
     public static function getFieldParams(): array
     {
-        $options = array_map(static function (Language $clang) {
-            return $clang->name;
+        $options = array_map(static function (Language $language) {
+            return $language->name;
         }, Language::getAll());
 
         return [

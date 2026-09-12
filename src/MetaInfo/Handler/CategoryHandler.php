@@ -78,11 +78,11 @@ final class CategoryHandler extends AbstractHandler
             </tr>';
     }
 
-    private function save(int $id, int $clang, MetaContext $context): void
+    private function save(int $id, int $languageId, MetaContext $context): void
     {
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'article');
-        $sql->setWhere('id=:id AND clang_id=:clang', ['id' => $id, 'clang' => $clang]);
+        $sql->setWhere('id=:id AND language_id=:clang', ['id' => $id, 'clang' => $languageId]);
 
         $this->saveRequestValues($sql, $context);
 
@@ -91,6 +91,6 @@ final class CategoryHandler extends AbstractHandler
         }
 
         // Regenerate the article with the additional values.
-        ArticleCache::generateMeta($id, $clang);
+        ArticleCache::generateMeta($id, $languageId);
     }
 }

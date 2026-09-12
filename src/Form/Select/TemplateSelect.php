@@ -17,13 +17,13 @@ final class TemplateSelect extends Select
     private bool $loaded = false;
     /** @var array<string, Template>|null */
     private ?array $templates = null;
-    private readonly int $clangId;
+    private readonly int $languageId;
 
     public function __construct(
         private readonly ?int $categoryId = null,
-        ?int $clangId = null,
+        ?int $languageId = null,
     ) {
-        $this->clangId = $clangId ?? Language::getCurrentId();
+        $this->languageId = $languageId ?? Language::getCurrentId();
 
         parent::__construct();
     }
@@ -57,9 +57,9 @@ final class TemplateSelect extends Select
         // Inherit template from start article
         if ($this->categoryId > 0) {
             $sql = Sql::factory();
-            $sql->setQuery('SELECT template FROM ' . Core::getTable('article') . ' WHERE id = ? AND clang_id = ? AND startarticle = 1', [
+            $sql->setQuery('SELECT template FROM ' . Core::getTable('article') . ' WHERE id = ? AND language_id = ? AND startarticle = 1', [
                 $this->categoryId,
-                $this->clangId,
+                $this->languageId,
             ]);
             if (1 == $sql->getRows()) {
                 $selected = $sql->getValue('template');

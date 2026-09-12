@@ -26,11 +26,11 @@ assert(isset($ep) && $ep instanceof ExtensionPoint);
 $params = $ep->getParams();
 
 $articleId = (int) $params['article_id'];
-$clang = (int) $params['clang'];
+$languageId = (int) $params['clang'];
 
 $content = [];
 
-$article = Article::get($articleId, $clang);
+$article = Article::get($articleId, $languageId);
 $articleStatusTypes = ArticleHandler::statusTypes();
 $status = (int) $article->getValue('status');
 
@@ -48,7 +48,7 @@ $articleIcon = $articleStatusTypes[$status][2];
 $structureContext = new StructureContext(
     categoryId: $article->categoryId ?? 0,
     articleId: Request::request('article_id', 'int'),
-    clangId: Request::request('clang', 'int'),
+    languageId: Request::request('clang', 'int'),
 );
 
 if (0 == $article->getValue('startarticle')) {
@@ -88,7 +88,7 @@ $article->setQuery('
             FROM ' . Core::getTablePrefix() . "article as article
             WHERE
                 article.id='$articleId'
-                AND clang_id=$clang",
+                AND language_id=$languageId",
 );
 
 if (1 == $article->getRows()) {
@@ -102,14 +102,14 @@ if (1 == $article->getRows()) {
     $context = new Context([
         'page' => Controller::getCurrentPage(),
         'article_id' => $articleId,
-        'clang' => $clang,
+        'clang' => $languageId,
         'ctype' => $ctype,
     ]);
 
     $metainfoHandler = new MetaInfoArticleHandler();
     $form = $metainfoHandler->getForm([
         'id' => $articleId,
-        'clang' => $clang,
+        'clang' => $languageId,
         'article' => $article,
     ]);
 
@@ -118,7 +118,7 @@ if (1 == $article->getRows()) {
     // legacy horizontal form fragment.
     $articleName = '<div class="form-group">'
         . '<label for="rex-id-meta-article-name">' . escape(I18n::msg('header_article_name')) . '</label>'
-        . '<input class="form-control" type="text" id="rex-id-meta-article-name" name="meta_article_name" value="' . escape(Article::require($articleId, $clang)->name) . '">'
+        . '<input class="form-control" type="text" id="rex-id-meta-article-name" name="meta_article_name" value="' . escape(Article::require($articleId, $languageId)->name) . '">'
         . '</div>';
     $form = $articleName . $form;
 

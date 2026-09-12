@@ -22,7 +22,7 @@ final class ArticleSliceAction
     public function __construct(
         public readonly string $mode,
         public readonly int $articleId,
-        public readonly int $clangId,
+        public readonly int $languageId,
         public readonly int $ctypeId,
         public readonly int $sliceId,
         private readonly Sql $sql,

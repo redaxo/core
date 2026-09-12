@@ -79,7 +79,7 @@ final class ArticleHandler
             $AART->setValue('name', $data['name']);
             $AART->setValue('catname', $categoryName);
             $AART->setValue('catpriority', 0);
-            $AART->setValue('clang_id', $key);
+            $AART->setValue('language_id', $key);
             $AART->setValue('parent_id', $data['category_id']);
             $AART->setValue('priority', $data['priority']);
             $AART->setValue('path', $path);
@@ -121,19 +121,19 @@ final class ArticleHandler
      *
      * @return string Eine Statusmeldung
      */
-    public static function editArticle(int $articleId, int $clang, array $data): string
+    public static function editArticle(int $articleId, int $languageId, array $data): string
     {
         self::reqKey($data, 'name');
 
         // Artikel mit alten Daten selektieren
         $thisArt = Sql::factory();
-        $thisArt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and clang_id=?', [$articleId, $clang]);
+        $thisArt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and language_id=?', [$articleId, $languageId]);
 
         if (1 != $thisArt->getRows()) {
-            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and clang "' . $clang . '"!');
+            throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and language "' . $languageId . '"!');
         }
 
-        $ooArt = Article::require($articleId, $clang);
+        $ooArt = Article::require($articleId, $languageId);
         $data['category_id'] = $ooArt->categoryId;
 
         $templates = Template::getTemplatesForCategory($data['category_id']);
@@ -157,7 +157,7 @@ final class ArticleHandler
 
         $EA = Sql::factory();
         $EA->setTable(Core::getTablePrefix() . 'article');
-        $EA->setWhere(['id' => $articleId, 'clang_id' => $clang]);
+        $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
         $EA->setValue('name', $data['name']);
         $EA->setValue('template', $data['template']);
         $EA->setValue('priority', $data['priority']);
@@ -172,13 +172,13 @@ final class ArticleHandler
         if ($oldPrio != $data['priority']) {
             Sql::factory()
                 ->setTable(Core::getTable('article'))
-                ->setWhere('id = :id AND clang_id != :clang', ['id' => $articleId, 'clang' => $clang])
+                ->setWhere('id = :id AND language_id != :clang', ['id' => $articleId, 'clang' => $languageId])
                 ->setValue('priority', $data['priority'])
                 ->addGlobalUpdateFields(self::getUser())
                 ->update();
 
-            foreach (Language::getAllIds() as $clangId) {
-                self::newArtPrio($data['category_id'], $clangId, $data['priority'], $oldPrio);
+            foreach (Language::getAllIds() as $languageId) {
+                self::newArtPrio($data['category_id'], $languageId, $data['priority'], $oldPrio);
             }
         }
 
@@ -191,7 +191,7 @@ final class ArticleHandler
             'article_old' => clone $thisArt,
             'status' => $thisArt->getValue('status'),
             'name' => $data['name'],
-            'clang' => $clang,
+            'clang' => $languageId,
             'parent_id' => $data['category_id'],
             'priority' => $data['priority'],
             'path' => $data['path'],
@@ -218,14 +218,14 @@ final class ArticleHandler
             $message = self::_deleteArticle($articleId);
             $parentId = (int) $Art->getValue('parent_id');
 
-            foreach (Language::getAllIds() as $clang) {
+            foreach (Language::getAllIds() as $languageId) {
                 // ----- PRIOR
-                self::newArtPrio($parentId, $clang, 0, 1);
+                self::newArtPrio($parentId, $languageId, 0, 1);
 
                 // ----- EXTENSION POINT
                 $message = Extension::dispatch(new ExtensionPoint('ART_DELETED', $message, [
                     'id' => $articleId,
-                    'clang' => $clang,
+                    'clang' => $languageId,
                     'parent_id' => $parentId,
                     'name' => $Art->getValue('name'),
                     'status' => $Art->getValue('status'),
@@ -273,7 +273,7 @@ final class ArticleHandler
         }
 
         $ART = Sql::factory();
-        $ART->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and clang_id=?', [$id, Language::getStartId()]);
+        $ART->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and language_id=?', [$id, Language::getStartId()]);
 
         $message = '';
         if ($ART->getRows() > 0) {
@@ -291,7 +291,7 @@ final class ArticleHandler
             if (1 == $ART->getValue('startarticle')) {
                 $message = I18n::msg('category_deleted');
                 $SART = Sql::factory();
-                $SART->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=? and clang_id=?', [$id, Language::getStartId()]);
+                $SART->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=? and language_id=?', [$id, Language::getStartId()]);
                 for ($i = 0; $i < $SART->getRows(); ++$i) {
                     self::_deleteArticle($id);
                     $SART->next();
@@ -321,10 +321,10 @@ final class ArticleHandler
      *
      * @return int Der neue Status des Artikels
      */
-    public static function articleStatus(int $articleId, int $clang, ?int $status = null): int
+    public static function articleStatus(int $articleId, int $languageId, ?int $status = null): int
     {
         $GA = Sql::factory();
-        $GA->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and clang_id=?', [$articleId, $clang]);
+        $GA->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and language_id=?', [$articleId, $languageId]);
         if (1 == $GA->getRows()) {
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
@@ -336,18 +336,18 @@ final class ArticleHandler
 
             $EA = Sql::factory();
             $EA->setTable(Core::getTablePrefix() . 'article');
-            $EA->setWhere(['id' => $articleId, 'clang_id' => $clang]);
+            $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
             $EA->setValue('status', $newstatus);
             $EA->addGlobalUpdateFields(self::getUser());
 
             $EA->update();
 
-            ArticleCache::delete($articleId, $clang);
+            ArticleCache::delete($articleId, $languageId);
 
             // ----- EXTENSION POINT
             Extension::dispatch(new ExtensionPoint('ART_STATUS', null, [
                 'id' => $articleId,
-                'clang' => $clang,
+                'clang' => $languageId,
                 'status' => $newstatus,
             ]));
         } else {
@@ -398,7 +398,7 @@ final class ArticleHandler
     }
 
     /** Berechnet die Prios der Artikel in einer Kategorie neu. */
-    public static function newArtPrio(?int $parentId, int $clang, int $newPrio, int $oldPrio): void
+    public static function newArtPrio(?int $parentId, int $languageId, int $newPrio, int $oldPrio): void
     {
         $parentId = (int) $parentId;
 
@@ -412,7 +412,7 @@ final class ArticleHandler
             Util::organizePriorities(
                 Core::getTable('article'),
                 'priority',
-                'clang_id=' . $clang . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
+                'language_id=' . $languageId . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
                 'priority,updatedate ' . $addsql,
             );
 
@@ -433,9 +433,9 @@ final class ArticleHandler
         $parentId = 0;
 
         // LANG SCHLEIFE
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             // artikel
-            $sql->setQuery('select parent_id, name from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and clang_id=?', [$artId, $clang]);
+            $sql->setQuery('select parent_id, name from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and language_id=?', [$artId, $languageId]);
 
             if (!$parentId) {
                 $parentId = (int) $sql->getValue('parent_id');
@@ -443,23 +443,23 @@ final class ArticleHandler
 
             // artikel updaten
             $sql->setTable(Core::getTablePrefix() . 'article');
-            $sql->setWhere(['id' => $artId, 'clang_id' => $clang]);
+            $sql->setWhere(['id' => $artId, 'language_id' => $languageId]);
             $sql->setValue('startarticle', 1);
             $sql->setValue('catname', $sql->getValue('name'));
             $sql->setValue('catpriority', 99999);
             $sql->setValue('priority', 1);
             $sql->update();
 
-            CategoryHandler::newCatPrio($parentId, $clang, 1, 0);
+            CategoryHandler::newCatPrio($parentId, $languageId, 1, 0);
         }
 
         ArticleCache::deleteLists($parentId);
         ArticleCache::delete($artId);
 
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             Extension::dispatch(new ExtensionPoint('ART_TO_CAT', '', [
                 'id' => $artId,
-                'clang' => $clang,
+                'clang' => $languageId,
             ]));
         }
 
@@ -479,13 +479,13 @@ final class ArticleHandler
         }
 
         // LANG SCHLEIFE
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             // artikel
             $sql->setQuery('
-                select parent_id, (select catname FROM ' . Core::getTable('article') . ' parent WHERE parent.id = category.parent_id AND parent.clang_id = category.clang_id) as catname
+                select parent_id, (select catname FROM ' . Core::getTable('article') . ' parent WHERE parent.id = category.parent_id AND parent.language_id = category.language_id) as catname
                 from ' . Core::getTable('article') . ' category
-                where id=? and startarticle=1 and clang_id=?
-            ', [$artId, $clang]);
+                where id=? and startarticle=1 and language_id=?
+            ', [$artId, $languageId]);
 
             if (!$parentId) {
                 $parentId = (int) $sql->getValue('parent_id');
@@ -495,23 +495,23 @@ final class ArticleHandler
 
             // artikel updaten
             $sql->setTable(Core::getTablePrefix() . 'article');
-            $sql->setWhere(['id' => $artId, 'clang_id' => $clang]);
+            $sql->setWhere(['id' => $artId, 'language_id' => $languageId]);
             $sql->setValue('startarticle', 0);
             $sql->setValue('catname', $catname);
             $sql->setValue('priority', 99999);
             $sql->setValue('catpriority', 0);
             $sql->update();
 
-            self::newArtPrio($parentId, $clang, 1, 0);
+            self::newArtPrio($parentId, $languageId, 1, 0);
         }
 
         ArticleCache::deleteLists($parentId);
         ArticleCache::delete($artId);
 
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             Extension::dispatch(new ExtensionPoint('CAT_TO_ART', '', [
                 'id' => $artId,
-                'clang' => $clang,
+                'clang' => $languageId,
             ]));
         }
 
@@ -525,7 +525,7 @@ final class ArticleHandler
 
         // neuen startartikel holen und schauen ob da
         $neu = Sql::factory();
-        $neu->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and clang_id=?', [$neuId, Language::getStartId()]);
+        $neu->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and language_id=?', [$neuId, Language::getStartId()]);
         if (1 != $neu->getRows()) {
             return false;
         }
@@ -538,7 +538,7 @@ final class ArticleHandler
 
         // alten startartikel
         $alt = Sql::factory();
-        $alt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1 and clang_id=?', [$neuCatId, Language::getStartId()]);
+        $alt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1 and language_id=?', [$neuCatId, Language::getStartId()]);
         if (1 != $alt->getRows()) {
             return false;
         }
@@ -554,23 +554,23 @@ final class ArticleHandler
         }
 
         // LANG SCHLEIFE
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             // alter startartikel
-            $alt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1 and clang_id=?', [$neuCatId, $clang]);
+            $alt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1 and language_id=?', [$neuCatId, $languageId]);
 
             // neuer startartikel
-            $neu->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and clang_id=?', [$neuId, $clang]);
+            $neu->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and language_id=?', [$neuId, $languageId]);
 
             // alter startartikel updaten
             $alt2 = Sql::factory();
             $alt2->setTable(Core::getTablePrefix() . 'article');
-            $alt2->setWhere(['id' => $altId, 'clang_id' => $clang]);
+            $alt2->setWhere(['id' => $altId, 'language_id' => $languageId]);
             $alt2->setValue('parent_id', $neuId);
 
             // neuer startartikel updaten
             $neu2 = Sql::factory();
             $neu2->setTable(Core::getTablePrefix() . 'article');
-            $neu2->setWhere(['id' => $neuId, 'clang_id' => $clang]);
+            $neu2->setWhere(['id' => $neuId, 'language_id' => $languageId]);
             $neu2->setValue('parent_id', (int) $alt->getValue('parent_id'));
 
             // austauschen der definierten paramater
@@ -613,11 +613,11 @@ final class ArticleHandler
 
         ComplexPermission::replaceItem('structure', $altId, $neuId);
 
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             Extension::dispatch(new ExtensionPoint('ART_TO_STARTARTICLE', '', [
                 'id' => $neuId,
                 'id_old' => $altId,
-                'clang' => $clang,
+                'clang' => $languageId,
             ]));
         }
 
@@ -629,20 +629,20 @@ final class ArticleHandler
      *
      * @param list<string> $params Array von Spaltennamen, welche kopiert werden sollen
      */
-    public static function copyMeta(int $fromId, int $toId, int $fromClang = 1, int $toClang = 1, array $params = []): bool
+    public static function copyMeta(int $fromId, int $toId, int $fromLanguageId = 1, int $toLanguageId = 1, array $params = []): bool
     {
-        if ($fromId === $toId && $fromClang === $toClang) {
+        if ($fromId === $toId && $fromLanguageId === $toLanguageId) {
             return false;
         }
 
         $gc = Sql::factory();
-        $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article where clang_id=? and id=?', [$fromClang, $fromId]);
+        $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and id=?', [$fromLanguageId, $fromId]);
 
         if (1 == $gc->getRows()) {
             $uc = Sql::factory();
             // $uc->setDebug();
             $uc->setTable(Core::getTablePrefix() . 'article');
-            $uc->setWhere(['clang_id' => $toClang, 'id' => $toId]);
+            $uc->setWhere(['language_id' => $toLanguageId, 'id' => $toId]);
             $uc->addGlobalUpdateFields(self::getUser());
 
             foreach ($params as $value) {
@@ -651,7 +651,7 @@ final class ArticleHandler
 
             $uc->update();
 
-            ArticleCache::deleteMeta($toId, $toClang);
+            ArticleCache::deleteMeta($toId, $toLanguageId);
             return true;
         }
         return false;
@@ -668,15 +668,15 @@ final class ArticleHandler
         $user = self::getUser();
 
         // Artikel in jeder Sprache kopieren
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             // validierung der id & from_cat_id
             $fromSql = Sql::factory();
-            $fromSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where clang_id=? and id=?', [$clang, $id]);
+            $fromSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and id=?', [$languageId, $id]);
 
             if (1 == $fromSql->getRows()) {
                 // validierung der to_cat_id
                 $toSql = Sql::factory();
-                $toSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where clang_id=? and startarticle=1 and id=?', [$clang, $toCatId]);
+                $toSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
 
                 if (1 == $toSql->getRows() || 0 == $toCatId) {
                     if (1 == $toSql->getRows()) {
@@ -712,24 +712,24 @@ final class ArticleHandler
                         $artSql->setValue($fldName, $fromSql->getValue($fldName));
                     }
 
-                    $artSql->setValue('clang_id', $clang);
+                    $artSql->setValue('language_id', $languageId);
                     $artSql->insert();
 
                     $revisions = Sql::factory();
-                    $revisions->setQuery('select revision from ' . Core::getTablePrefix() . 'article_slice where priority=1 AND article_id=? AND clang_id=? GROUP BY revision', [$id, $clang]);
+                    $revisions->setQuery('select revision from ' . Core::getTablePrefix() . 'article_slice where priority=1 AND article_id=? AND language_id=? GROUP BY revision', [$id, $languageId]);
                     foreach ($revisions as $rev) {
                         // FIXME this dependency is very ugly!
                         // ArticleSlices kopieren
-                        ContentHandler::copyContent($id, $newId, $clang, $clang, (int) $rev->getValue('revision'));
+                        ContentHandler::copyContent($id, $newId, $languageId, $languageId, (int) $rev->getValue('revision'));
                     }
 
                     // Prios neu berechnen
-                    self::newArtPrio($toCatId, $clang, 1, 0);
+                    self::newArtPrio($toCatId, $languageId, 1, 0);
 
                     Extension::dispatch(new ExtensionPoint('ART_COPIED', null, [
                         'id_source' => $id,
                         'id' => $newId,
-                        'clang' => $clang,
+                        'clang' => $languageId,
                         'category_id' => $toCatId,
                     ]));
                 } else {
@@ -757,15 +757,15 @@ final class ArticleHandler
         }
 
         // Artikel in jeder Sprache verschieben
-        foreach (Language::getAllIds() as $clang) {
+        foreach (Language::getAllIds() as $languageId) {
             // validierung der id & from_cat_id
             $fromSql = Sql::factory();
-            $fromSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where clang_id=? and startarticle<>1 and id=? and parent_id=?', [$clang, $id, $fromCatId]);
+            $fromSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and startarticle<>1 and id=? and parent_id=?', [$languageId, $id, $fromCatId]);
 
             if (1 == $fromSql->getRows()) {
                 // validierung der to_cat_id
                 $toSql = Sql::factory();
-                $toSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where clang_id=? and startarticle=1 and id=?', [$clang, $toCatId]);
+                $toSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
 
                 if (1 == $toSql->getRows() || 0 == $toCatId) {
                     if (1 == $toSql->getRows()) {
@@ -792,16 +792,16 @@ final class ArticleHandler
                     $artSql->setValue('status', $fromSql->getValue('status'));
                     $artSql->addGlobalUpdateFields(self::getUser());
 
-                    $artSql->setWhere('clang_id="' . $clang . '" and startarticle<>1 and id="' . $id . '" and parent_id="' . $fromCatId . '"');
+                    $artSql->setWhere('language_id="' . $languageId . '" and startarticle<>1 and id="' . $id . '" and parent_id="' . $fromCatId . '"');
                     $artSql->update();
 
                     // Prios neu berechnen
-                    self::newArtPrio($toCatId, $clang, 1, 0);
-                    self::newArtPrio($fromCatId, $clang, 1, 0);
+                    self::newArtPrio($toCatId, $languageId, 1, 0);
+                    self::newArtPrio($fromCatId, $languageId, 1, 0);
 
                     Extension::dispatch(new ExtensionPoint('ART_MOVED', null, [
                         'id' => $id,
-                        'clang' => $clang,
+                        'clang' => $languageId,
                         'category_id' => $parentId,
                     ]));
                 } else {

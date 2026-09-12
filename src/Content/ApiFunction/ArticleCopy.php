@@ -30,7 +30,7 @@ final class ArticleCopy extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $clang = Request::request('clang', 'int', 1);
+        $languageId = Request::request('clang', 'int', 1);
         // The destination category in which the given article will be copied
         $categoryCopyIdNew = Request::request('category_copy_id_new', 'int');
 
@@ -52,7 +52,7 @@ final class ArticleCopy extends ApiFunction
 
         $context = new Context([
             'page' => Controller::getCurrentPage(),
-            'clang' => $clang,
+            'clang' => $languageId,
         ]);
 
         if (false !== ($newId = ArticleHandler::copyArticle($articleId, $categoryCopyIdNew))) {

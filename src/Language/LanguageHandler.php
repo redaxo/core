@@ -20,11 +20,11 @@ final class LanguageHandler
 {
     private function __construct() {}
 
-    /** Erstellt eine Clang. */
-    public static function addCLang(string $code, string $name, int $priority, bool $status = false): void
+    /** Creates a language and copies the articles of an existing one into it. */
+    public static function add(string $code, string $name, int $priority, bool $status = false): void
     {
         $sql = Sql::factory();
-        $sql->setTable(Core::getTablePrefix() . 'clang');
+        $sql->setTable(Core::getTablePrefix() . 'language');
         $sql->setNewId('id');
         $sql->setValue('code', $code);
         $sql->setValue('name', $name);
@@ -33,20 +33,20 @@ final class LanguageHandler
         $sql->insert();
         $id = $sql->getLastId();
 
-        Util::organizePriorities(Core::getTable('clang'), 'priority', '', 'priority, id != ' . $id);
+        Util::organizePriorities(Core::getTable('language'), 'priority', '', 'priority, id != ' . $id);
 
         $sourceId = Language::getStartId();
         if ($sourceId === $id) {
-            foreach (Language::getAllIds(true) as $clangId) {
-                if ($sourceId !== $clangId) {
-                    $sourceId = $clangId;
+            foreach (Language::getAllIds(true) as $languageId) {
+                if ($sourceId !== $languageId) {
+                    $sourceId = $languageId;
                     break;
                 }
             }
         }
 
         $firstLang = Sql::factory();
-        $firstLang->setQuery('select * from ' . Core::getTablePrefix() . 'article where clang_id=?', [$sourceId]);
+        $firstLang->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=?', [$sourceId]);
         $fields = $firstLang->getFieldnames();
 
         $newLang = Sql::factory();
@@ -58,8 +58,8 @@ final class LanguageHandler
                 if ('pid' == $value) {
                     continue;
                 } // nix passiert
-                if ('clang_id' == $value) {
-                    $newLang->setValue('clang_id', $id);
+                if ('language_id' == $value) {
+                    $newLang->setValue('language_id', $id);
                 } elseif ('status' == $value) {
                     $newLang->setValue('status', '0');
                 } // Alle neuen Artikel offline
@@ -77,8 +77,8 @@ final class LanguageHandler
         Extension::dispatch(new LanguageAdded(Language::require($id)));
     }
 
-    /** Ändert eine Clang. */
-    public static function editCLang(int $id, string $code, string $name, int $priority, ?bool $status = null): bool
+    /** Updates a language. */
+    public static function edit(int $id, string $code, string $name, int $priority, ?bool $status = null): bool
     {
         if (!Language::exists($id)) {
             throw new RuntimeException('Language with id "' . $id . '" does not exist');
@@ -87,7 +87,7 @@ final class LanguageHandler
         $oldPriority = Language::require($id)->priority;
 
         $editLang = Sql::factory();
-        $editLang->setTable(Core::getTablePrefix() . 'clang');
+        $editLang->setTable(Core::getTablePrefix() . 'language');
         $editLang->setWhere(['id' => $id]);
         $editLang->setValue('code', $code);
         $editLang->setValue('name', $name);
@@ -98,7 +98,7 @@ final class LanguageHandler
         $editLang->update();
 
         $comparator = $oldPriority < $priority ? '=' : '!=';
-        Util::organizePriorities(Core::getTable('clang'), 'priority', '', 'priority, id' . $comparator . $id);
+        Util::organizePriorities(Core::getTable('language'), 'priority', '', 'priority, id' . $comparator . $id);
 
         Cache::delete();
 
@@ -109,60 +109,60 @@ final class LanguageHandler
     }
 
     /**
-     * Löscht eine Clang.
+     * Deletes a language together with its articles and slices.
      *
      * @throws UserMessageException
      */
-    public static function deleteCLang(int $id): void
+    public static function delete(int $id): void
     {
-        $startClang = Language::getStartId();
-        if ($id == $startClang) {
-            throw new UserMessageException(I18n::msg('clang_error_startidcanotbedeleted', $startClang));
+        $startLanguageId = Language::getStartId();
+        if ($id == $startLanguageId) {
+            throw new UserMessageException(I18n::msg('clang_error_startidcanotbedeleted', $startLanguageId));
         }
 
         if (!Language::exists($id)) {
             throw new UserMessageException(I18n::msg('clang_error_idcanotbedeleted', $id));
         }
 
-        $clang = Language::require($id);
+        $language = Language::require($id);
 
         $del = Sql::factory();
-        $del->setQuery('delete from ' . Core::getTablePrefix() . 'clang where id=?', [$id]);
+        $del->setQuery('delete from ' . Core::getTablePrefix() . 'language where id=?', [$id]);
 
-        Util::organizePriorities(Core::getTable('clang'), 'priority', '', 'priority');
+        Util::organizePriorities(Core::getTable('language'), 'priority', '', 'priority');
 
-        $del->setQuery('delete from ' . Core::getTablePrefix() . 'article where clang_id=?', [$id]);
-        $del->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where clang_id=?', [$id]);
+        $del->setQuery('delete from ' . Core::getTablePrefix() . 'article where language_id=?', [$id]);
+        $del->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where language_id=?', [$id]);
 
         Cache::delete();
 
         // ----- EXTENSION POINT
-        Extension::dispatch(new LanguageDeleted($clang));
+        Extension::dispatch(new LanguageDeleted($language));
     }
 
     /**
-     * Schreibt Spracheigenschaften in die Datei include/clang.php.
+     * Writes the language properties to the cache file.
      *
      * @return array<int, array<string, scalar|null>>
      */
     public static function generateCache(): array
     {
         $lg = Sql::factory();
-        $lg->setQuery('select * from ' . Core::getTablePrefix() . 'clang order by priority');
+        $lg->setQuery('select * from ' . Core::getTablePrefix() . 'language order by priority');
 
-        $clangs = [];
+        $languages = [];
         foreach ($lg as $lang) {
             $id = (int) $lang->getValue('id');
             foreach ($lg->getFieldnames() as $field) {
-                $clangs[$id][$field] = $lang->getValue($field);
+                $languages[$id][$field] = $lang->getValue($field);
             }
         }
 
-        $file = Path::coreCache('clang.cache');
-        if (!File::putCache($file, $clangs)) {
+        $file = Path::coreCache('language.cache');
+        if (!File::putCache($file, $languages)) {
             throw new RuntimeException('Language cache file could not be generated');
         }
 
-        return $clangs;
+        return $languages;
     }
 }

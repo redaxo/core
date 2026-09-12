@@ -26,14 +26,14 @@ final class CategoryEdit extends ApiFunction
         }
 
         $catId = Request::request('category-id', 'int');
-        $clangId = Request::request('clang', 'int');
+        $languageId = Request::request('clang', 'int');
 
-        if (null === Category::get($catId, $clangId)) {
-            throw new ApiFunctionException('Unable to find category with id "' . $catId . '" and clang "' . $clangId . '"!');
+        if (null === Category::get($catId, $languageId)) {
+            throw new ApiFunctionException('Unable to find category with id "' . $catId . '" and language "' . $languageId . '"!');
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($clangId)
+            !$user->getComplexPerm('clang')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($catId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
@@ -43,6 +43,6 @@ final class CategoryEdit extends ApiFunction
         $data = [];
         $data['catpriority'] = Request::post('category-position', 'int');
         $data['catname'] = Request::post('category-name', 'string');
-        return new Result(true, CategoryHandler::editCategory($catId, $clangId, $data));
+        return new Result(true, CategoryHandler::editCategory($catId, $languageId, $data));
     }
 }

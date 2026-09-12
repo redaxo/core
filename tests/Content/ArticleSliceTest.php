@@ -68,7 +68,7 @@ final class ArticleSliceTest extends TestCase
             ->setTable(Core::getTable('article_slice'))
             ->setValues([
                 'article_id' => self::FAKE_ID,
-                'clang_id' => 1,
+                'language_id' => 1,
                 'ctype_id' => 1,
                 'module' => 'test',
                 'revision' => 0,

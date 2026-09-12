@@ -35,7 +35,7 @@ use function Redaxo\Core\View\escape;
 $structureContext = new StructureContext(
     categoryId: Request::request('category_id', 'int'),
     articleId: Request::request('article_id', 'int'),
-    clangId: Request::request('clang', 'int'),
+    languageId: Request::request('clang', 'int'),
     ctypeId: Request::request('ctype', 'int'),
     artStart: Request::request('artstart', 'int'),
     catStart: Request::request('catstart', 'int'),
@@ -46,9 +46,9 @@ $structureContext = new StructureContext(
 
 $user = Core::requireUser();
 
-if (0 === $structureContext->clangId) {
+if (0 === $structureContext->languageId) {
     if (Language::exists(0)) {
-        echo Message::error('Oooops. Your clang ids start with <code>0</code>. Looks like a broken REDAXO 4.x to 5.x upgrade. Please update all your database tables, php code (if there are any hard coded clang ids) aswell as additional configurations in add-ons, e.g. YRewrite. You may start with updating those tables: <code>rex_article</code>, <code>rex_article_slice</code>, <code>rex_clang</code>, by increasing every clang id <code>+ 1</code>.');
+        echo Message::error('Oooops. Your language ids start with <code>0</code>. Looks like a broken REDAXO 4.x to 5.x upgrade. Please update all your database tables, php code (if there are any hard coded language ids) aswell as additional configurations in add-ons, e.g. YRewrite. You may start with updating those tables: <code>rex_article</code>, <code>rex_article_slice</code>, <code>rex_language</code>, by increasing every language id <code>+ 1</code>.');
         exit;
     }
     echo Message::error('You have no permission to access this area');
@@ -64,12 +64,12 @@ echo Extension::dispatch(new ExtensionPoint('PAGE_STRUCTURE_HEADER_PRE', '', [
 echo View::title(I18n::msg('title_structure'));
 
 // --------------------------------------------- Languages
-echo View::clangSwitchAsButtons($structureContext->getContext());
+echo View::languageSwitchAsButtons($structureContext->getContext());
 
 // --------------------------------------------- Path
 $categoryId = $structureContext->categoryId;
-$clang = $structureContext->clangId;
-echo View::structureBreadcrumb($categoryId, $structureContext->articleId, $clang);
+$languageId = $structureContext->languageId;
+echo View::structureBreadcrumb($categoryId, $structureContext->articleId, $languageId);
 
 // -------------- STATUS_TYPE Map
 $catStatusTypes = CategoryHandler::statusTypes();
@@ -80,7 +80,7 @@ echo ApiFunction::getMessage();
 
 // --------------------------------------------- KATEGORIE LISTE
 $catName = I18n::msg('root_level');
-$category = Category::get($structureContext->categoryId, $structureContext->clangId);
+$category = Category::get($structureContext->categoryId, $structureContext->languageId);
 if ($category) {
     $catName = $category->name;
 }
@@ -95,7 +95,7 @@ $dataColspan = 5;
 // --------------------- Extension Point
 echo Extension::dispatch(new ExtensionPoint('PAGE_STRUCTURE_HEADER', '', [
     'category_id' => $structureContext->categoryId,
-    'clang' => $structureContext->clangId,
+    'clang' => $structureContext->languageId,
 ]));
 
 // --------------------- COUNT CATEGORY ROWS
@@ -104,9 +104,9 @@ $KAT = Sql::factory();
 // $KAT->setDebug();
 if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->categoryId) {
     $parentIds = $KAT->in($structureContext->getMountpoints());
-    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM ' . Core::getTablePrefix() . 'article WHERE id IN (' . $parentIds . ') AND startarticle=1 AND clang_id=?', [$structureContext->clangId]);
+    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM ' . Core::getTablePrefix() . 'article WHERE id IN (' . $parentIds . ') AND startarticle=1 AND language_id=?', [$structureContext->languageId]);
 } else {
-    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM ' . Core::getTablePrefix() . 'article WHERE parent_id=? AND startarticle=1 AND clang_id=?', [$structureContext->categoryId, $structureContext->clangId]);
+    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM ' . Core::getTablePrefix() . 'article WHERE parent_id=? AND startarticle=1 AND language_id=?', [$structureContext->categoryId, $structureContext->languageId]);
 }
 
 // --------------------- ADD PAGINATION
@@ -126,9 +126,9 @@ if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->c
     $KAT->setQuery('SELECT parent_id FROM ' . Core::getTable('article') . ' WHERE id IN (' . $parentIds . ') GROUP BY parent_id');
     $orderBy = $KAT->getRows() > 1 ? 'catname' : 'catpriority';
 
-    $KAT->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE id IN (' . $parentIds . ') AND startarticle=1 AND clang_id = ? ORDER BY ' . $orderBy . ' LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->clangId]);
+    $KAT->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE id IN (' . $parentIds . ') AND startarticle=1 AND language_id = ? ORDER BY ' . $orderBy . ' LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId]);
 } else {
-    $KAT->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE parent_id = ? AND startarticle=1 AND clang_id = ? ORDER BY catpriority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->categoryId, $structureContext->clangId]);
+    $KAT->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article WHERE parent_id = ? AND startarticle=1 AND language_id = ? ORDER BY catpriority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->categoryId, $structureContext->languageId]);
 }
 
 $trStatusClass = 'rex-status';
@@ -165,7 +165,7 @@ $echo .= '
 if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]') && $structureContext->hasCategoryPermission()) {
     $metaButtons = Extension::dispatch(new ExtensionPoint('CAT_FORM_BUTTONS', '', [
         'id' => $structureContext->categoryId,
-        'clang' => $structureContext->clangId,
+        'clang' => $structureContext->languageId,
     ]));
     $addButtons = CategoryAdd::getHiddenFields() . '
         <input type="hidden" name="parent-category-id" value="' . $structureContext->categoryId . '" />
@@ -185,7 +185,7 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
     // ----- EXTENSION POINT
     $echo .= Extension::dispatch(new ExtensionPoint('CAT_FORM_ADD', '', [
         'id' => $structureContext->categoryId,
-        'clang' => $structureContext->clangId,
+        'clang' => $structureContext->languageId,
         'data_colspan' => ($dataColspan + 1),
     ]));
 }
@@ -234,7 +234,7 @@ if ($KAT->getRows() > 0) {
                 // ----- EXTENSION POINT
                 $metaButtons = Extension::dispatch(new ExtensionPoint('CAT_FORM_BUTTONS', '', [
                     'id' => $structureContext->editId,
-                    'clang' => $structureContext->clangId,
+                    'clang' => $structureContext->languageId,
                 ]));
 
                 $addButtons = CategoryEdit::getHiddenFields() . '
@@ -258,7 +258,7 @@ if ($KAT->getRows() > 0) {
                 // ----- EXTENSION POINT
                 $echo .= Extension::dispatch(new ExtensionPoint('CAT_FORM_EDIT', '', [
                     'id' => $structureContext->editId,
-                    'clang' => $structureContext->clangId,
+                    'clang' => $structureContext->languageId,
                     'category' => $KAT,
                     'catname' => $KAT->getValue('catname'),
                     'catpriority' => $KAT->getValue('catpriority'),
@@ -345,7 +345,7 @@ $echo = '';
 
 // --------------------- READ TEMPLATES
 
-$templateSelect = new TemplateSelect($categoryId, $clang);
+$templateSelect = new TemplateSelect($categoryId, $languageId);
 if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId && !$user->getComplexPerm('structure')->hasMountpoints())) {
     $templateSelect->setName('template');
     $templateSelect->setSize(1);
@@ -360,7 +360,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     $articleOrderBy = Extension::dispatch(new ExtensionPoint('PAGE_STRUCTURE_ARTICLE_ORDER_BY', 'priority, name', [
         'category_id' => $structureContext->categoryId,
         'article_id' => $structureContext->articleId,
-        'clang' => $structureContext->clangId,
+        'clang' => $structureContext->languageId,
     ]));
 
     // ---------- COUNT DATA
@@ -371,10 +371,10 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         FROM ' . Core::getTablePrefix() . 'article
         WHERE
             ((parent_id = :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
-            AND clang_id = :clang_id
+            AND language_id = :language_id
     ', [
         'category_id' => $structureContext->categoryId,
-        'clang_id' => $structureContext->clangId,
+        'language_id' => $structureContext->languageId,
     ]);
 
     // --------------------- ADD PAGINATION
@@ -392,13 +392,13 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         FROM ' . Core::getTablePrefix() . 'article
         WHERE
             ((parent_id = :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
-            AND clang_id = :clang_id
+            AND language_id = :language_id
         ORDER BY
             ' . $articleOrderBy . '
         LIMIT ' . $artPager->getCursor() . ',' . $artPager->getRowsPerPage(),
         [
             'category_id' => $structureContext->categoryId,
-            'clang_id' => $structureContext->clangId,
+            'language_id' => $structureContext->languageId,
         ],
     );
 

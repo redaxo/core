@@ -5,7 +5,7 @@ use Redaxo\Core\Content\ArticleContentEditor;
 use Redaxo\Core\View\Fragment;
 
 assert(isset($articleId) && is_int($articleId));
-assert(isset($clang) && is_int($clang));
+assert(isset($languageId) && is_int($languageId));
 assert(isset($ctype) && is_int($ctype) && $ctype > 0);
 assert(isset($sliceId) && is_int($sliceId));
 assert(isset($sliceRevision) && is_int($sliceRevision));
@@ -21,7 +21,7 @@ if ($result = ApiFunction::factory()?->result) {
     }
 }
 
-$CONT = new ArticleContentEditor($articleId, $clang);
+$CONT = new ArticleContentEditor($articleId, $languageId);
 $CONT->success = $info;
 $CONT->error = $warning;
 $CONT->sliceId = $sliceId;

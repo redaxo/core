@@ -287,15 +287,15 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
 
     $historyFunction = Request::request('rex_history_function', 'string');
     $articleId = Request::request('history_article_id', 'int');
-    $clangId = Request::request('history_clang_id', 'int');
+    $languageId = Request::request('history_language_id', 'int');
 
     if (in_array($historyFunction, ['snap', 'layer'], true)) {
-        $historyArticle = Article::get($articleId, $clangId);
+        $historyArticle = Article::get($articleId, $languageId);
         $user = Core::requireUser();
 
         if (
             !$historyArticle instanceof Article
-            || !$user->getComplexPerm('clang')->hasPerm($clangId)
+            || !$user->getComplexPerm('clang')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
         ) {
             Response::setStatus(Response::HTTP_FORBIDDEN);
@@ -313,11 +313,11 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
             }
 
             $historyDate = Request::request('history_date', 'string');
-            ArticleSliceHistory::restoreSnapshot($historyDate, $articleId, $clangId);
+            ArticleSliceHistory::restoreSnapshot($historyDate, $articleId, $languageId);
 
             // no break
         case 'layer':
-            $versions = ArticleSliceHistory::getSnapshots($articleId, $clangId);
+            $versions = ArticleSliceHistory::getSnapshots($articleId, $languageId);
 
             $select1 = [];
             $select1[] = '<option value="0" selected="selected" data-revision="0">' . I18n::msg('structure_history_current_version') . '</option>';
@@ -370,7 +370,7 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
 
             echo '<script nonce="' . Response::getNonce() . '">
                     var history_article_id = ' . Article::getCurrentId() . ';
-                    var history_clang_id = ' . Language::getCurrentId() . ';
+                    var history_language_id = ' . Language::getCurrentId() . ';
                     var history_ctype_id = ' . Request::request('ctype', 'int', 0) . ';
                     var history_article_link = "' . escape($articleLink, 'js') . '";
                     var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";
@@ -414,15 +414,15 @@ if (Core::getConfig('article_work_version', false)) {
         $user = Core::requireUser();
         $params = $ep->getParams();
         $articleId = Type::int($params['article_id']);
-        $clangId = Type::int($params['clang']);
+        $languageId = Type::int($params['clang']);
         $return = Type::string($ep->subject);
 
         $workingVersionEmpty = true;
         $gw = Sql::factory();
         $gw->setQuery(
             'select * from ' . Core::getTablePrefix(
-            ) . 'article_slice where article_id=? and clang_id=? and revision=1 LIMIT 1',
-            [$articleId, $clangId],
+            ) . 'article_slice where article_id=? and language_id=? and revision=1 LIMIT 1',
+            [$articleId, $languageId],
         );
         if ($gw->getRows() > 0) {
             $workingVersionEmpty = false;
@@ -442,18 +442,18 @@ if (Core::getConfig('article_work_version', false)) {
                     $return .= Message::error(I18n::msg('version_warning_working_version_to_live'));
                 } elseif ($user->hasPerm('version[live_version]')) {
                     if (true === Core::getConfig('article_history', false)) {
-                        ArticleSliceHistory::makeSnapshot($articleId, $clangId, 'work_to_live');
+                        ArticleSliceHistory::makeSnapshot($articleId, $languageId, 'work_to_live');
                     }
 
                     ArticleRevision::copyContent(
                         $articleId,
-                        $clangId,
+                        $languageId,
                         ArticleRevision::WORK,
                         ArticleRevision::LIVE,
                     );
                     $return .= Message::success(I18n::msg('version_info_working_version_to_live'));
 
-                    $article = Type::instanceOf(Article::get($articleId, $clangId), Article::class);
+                    $article = Type::instanceOf(Article::get($articleId, $languageId), Article::class);
                     ArticleRevision::setSessionArticleRevision($articleId, ArticleRevision::LIVE);
                     $params['slice_revision'] = ArticleRevision::LIVE;
                     $return = Extension::dispatch(
@@ -464,7 +464,7 @@ if (Core::getConfig('article_work_version', false)) {
             case 'copy_live_to_work':
                 ArticleRevision::copyContent(
                     $articleId,
-                    $clangId,
+                    $languageId,
                     ArticleRevision::LIVE,
                     ArticleRevision::WORK,
                 );
@@ -473,7 +473,7 @@ if (Core::getConfig('article_work_version', false)) {
                 $params['slice_revision'] = ArticleRevision::WORK;
                 break;
             case 'clear_work':
-                ArticleRevision::clearContent($articleId, $clangId, ArticleRevision::WORK);
+                ArticleRevision::clearContent($articleId, $languageId, ArticleRevision::WORK);
                 $return .= Message::success(I18n::msg('version_info_clear_workingversion'));
                 break;
         }
@@ -489,7 +489,7 @@ if (Core::getConfig('article_work_version', false)) {
         $context = new Context([
             'page' => $params['page'],
             'article_id' => $articleId,
-            'clang' => $clangId,
+            'clang' => $languageId,
             'ctype' => $params['ctype'],
         ]);
 
@@ -522,7 +522,7 @@ if (Core::getConfig('article_work_version', false)) {
         if (!$user->hasPerm('version[live_version]')) {
             if ($revision > 0) {
                 $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('version_copy_from_liveversion') . '</a></li>';
-                $toolbar .= '<li><a href="' . Url::article($articleId, $clangId, ['rex_version' => ArticleRevision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . I18n::msg('version_preview') . '</a></li>';
+                $toolbar .= '<li><a href="' . Url::article($articleId, $languageId, ['rex_version' => ArticleRevision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . I18n::msg('version_preview') . '</a></li>';
             }
         } else {
             if ($revision > 0) {
@@ -530,7 +530,7 @@ if (Core::getConfig('article_work_version', false)) {
                     $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'clear_work'] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('version_confirm_clear_workingversion') . '">' . I18n::msg('version_clear_workingversion') . '</a></li>';
                     $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_work_to_live'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('version_working_to_live') . '</a></li>';
                 }
-                $toolbar .= '<li><a href="' . Url::article($articleId, $clangId, ['rex_version' => ArticleRevision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . I18n::msg('version_preview') . '</a></li>';
+                $toolbar .= '<li><a href="' . Url::article($articleId, $languageId, ['rex_version' => ArticleRevision::WORK]) . '" rel="noopener noreferrer" target="_blank">' . I18n::msg('version_preview') . '</a></li>';
             } else {
                 $toolbar .= '<li><a href="' . $context->getUrl(['rex_version_func' => 'copy_live_to_work'] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('version_confirm_copy_live_to_workingversion') . '">' . I18n::msg('version_copy_live_to_workingversion') . '</a></li>';
             }

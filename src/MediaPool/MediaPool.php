@@ -158,7 +158,7 @@ final class MediaPool
         $where .= implode(' OR ', $files) . ' OR ';
         $where .= implode(' OR ', $filelists) . ' OR ';
         $where .= implode(' OR ', $values);
-        $query = 'SELECT DISTINCT article_id, clang_id FROM ' . Core::getTablePrefix() . 'article_slice WHERE ' . $where;
+        $query = 'SELECT DISTINCT article_id, language_id FROM ' . Core::getTablePrefix() . 'article_slice WHERE ' . $where;
 
         $warning = [];
         $res = $sql->getArray($query);
@@ -166,10 +166,10 @@ final class MediaPool
             $warning[0] = I18n::msg('pool_file_in_use_articles') . '<ul>';
             foreach ($res as $artArr) {
                 $aid = (int) $artArr['article_id'];
-                $clang = (int) $artArr['clang_id'];
-                $article = Article::get($aid, $clang);
+                $languageId = (int) $artArr['language_id'];
+                $article = Article::get($aid, $languageId);
                 $name = $article ? escape($article->name) : '';
-                $warning[0] .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'clang' => $clang]) . '\')">' . $name . '</a></li>';
+                $warning[0] .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'clang' => $languageId]) . '\')">' . $name . '</a></li>';
             }
             $warning[0] .= '</ul>';
         }

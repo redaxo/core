@@ -41,7 +41,7 @@ final class Category extends StructureElement
 
         parent::__construct(
             id: (int) $getAndUnset('id'),
-            clangId: (int) $getAndUnset('clang_id'),
+            languageId: (int) $getAndUnset('language_id'),
             name: (string) $getAndUnset('catname'),
             priority: (int) $getAndUnset('catpriority'),
             path: array_values(array_map('intval', array_filter(explode('|', (string) $getAndUnset('path'))))),
@@ -69,9 +69,9 @@ final class Category extends StructureElement
     }
 
     /** Return the current category. */
-    public static function getCurrent(?int $clang = null): ?self
+    public static function getCurrent(?int $languageId = null): ?self
     {
-        $article = Article::getCurrent($clang);
+        $article = Article::getCurrent($languageId);
 
         return $article?->getCategory();
     }
@@ -87,9 +87,9 @@ final class Category extends StructureElement
      *
      * @return list<self>
      */
-    public static function getRootCategories(bool $ignoreOfflines = false, ?int $clang = null): array
+    public static function getRootCategories(bool $ignoreOfflines = false, ?int $languageId = null): array
     {
-        return self::getChildElements(0, 'clist', $ignoreOfflines, $clang);
+        return self::getChildElements(0, 'clist', $ignoreOfflines, $languageId);
     }
 
     /**
@@ -104,20 +104,20 @@ final class Category extends StructureElement
      */
     public function getChildren(bool $ignoreOfflines = false): array
     {
-        return self::getChildElements($this->id, 'clist', $ignoreOfflines, $this->clangId);
+        return self::getChildElements($this->id, 'clist', $ignoreOfflines, $this->languageId);
     }
 
     /** Returns the parent category. */
     #[Override]
     public function getParent(): ?self
     {
-        return null === $this->parentId ? null : self::get($this->parentId, $this->clangId);
+        return null === $this->parentId ? null : self::get($this->parentId, $this->languageId);
     }
 
     /** Returns TRUE if this category is the direct parent of the other category. */
     public function isParent(self $otherCat): bool
     {
-        return $this->id === $otherCat->parentId && $this->clangId === $otherCat->clangId;
+        return $this->id === $otherCat->parentId && $this->languageId === $otherCat->languageId;
     }
 
     /**
@@ -132,13 +132,13 @@ final class Category extends StructureElement
      */
     public function getArticles(bool $ignoreOfflines = false): array
     {
-        return Article::getChildElements($this->id, 'alist', $ignoreOfflines, $this->clangId);
+        return Article::getChildElements($this->id, 'alist', $ignoreOfflines, $this->languageId);
     }
 
     /** Return the start article for this category. */
     public function getStartArticle(): Article
     {
-        return Article::require($this->id, $this->clangId);
+        return Article::require($this->id, $this->languageId);
     }
 
     #[Override]
