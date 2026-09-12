@@ -26,7 +26,7 @@ assert(isset($ep) && $ep instanceof ExtensionPoint);
 $params = $ep->getParams();
 
 $articleId = (int) $params['article_id'];
-$languageId = (int) $params['clang'];
+$languageId = (int) $params['language'];
 
 $content = [];
 
@@ -48,7 +48,7 @@ $articleIcon = $articleStatusTypes[$status][2];
 $structureContext = new StructureContext(
     categoryId: $article->categoryId ?? 0,
     articleId: Request::request('article_id', 'int'),
-    languageId: Request::request('clang', 'int'),
+    languageId: Request::request('language', 'int'),
 );
 
 if (0 == $article->getValue('startarticle')) {
@@ -102,14 +102,14 @@ if (1 == $article->getRows()) {
     $context = new Context([
         'page' => Controller::getCurrentPage(),
         'article_id' => $articleId,
-        'clang' => $languageId,
+        'language' => $languageId,
         'ctype' => $ctype,
     ]);
 
     $metainfoHandler = new MetaInfoArticleHandler();
     $form = $metainfoHandler->getForm([
         'id' => $articleId,
-        'clang' => $languageId,
+        'language' => $languageId,
         'article' => $article,
     ]);
 
@@ -153,7 +153,7 @@ $fragment = new Fragment();
 $fragment->setVar('title', '<i class="rex-icon rex-icon-info"></i> ' . I18n::msg('metadata'), false);
 $fragment->setVar('body', implode('', $content), false);
 $fragment->setVar('article_id', $params['article_id'], false);
-$fragment->setVar('clang', $params['clang'], false);
+$fragment->setVar('language', $params['language'], false);
 $fragment->setVar('ctype', $params['ctype'], false);
 $fragment->setVar('collapse', true);
 $fragment->setVar('collapsed', false);

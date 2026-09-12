@@ -43,10 +43,10 @@ final readonly class StructureContext
         }
         $this->articleId = $articleId;
 
-        if (Language::count() > 1 && !Core::requireUser()->getComplexPerm('clang')->hasPerm($languageId)) {
+        if (Language::count() > 1 && !Core::requireUser()->getComplexPerm('language')->hasPerm($languageId)) {
             $languageId = 0;
             foreach (Language::getAllIds() as $key) {
-                if (Core::requireUser()->getComplexPerm('clang')->hasPerm($key)) {
+                if (Core::requireUser()->getComplexPerm('language')->hasPerm($key)) {
                     $languageId = $key;
                     break;
                 }
@@ -74,7 +74,7 @@ final readonly class StructureContext
             'page' => 'structure',
             'category_id' => $this->categoryId,
             'article_id' => $this->articleId,
-            'clang' => $this->languageId,
+            'language' => $this->languageId,
         ]);
     }
 }

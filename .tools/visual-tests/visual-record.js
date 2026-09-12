@@ -41,10 +41,10 @@ const MIN_DIFF_PIXELS = minDiffPixels;
 
 // all pages
 const allPages = {
-    'structure_category_edit.png': START_URL + '?page=structure&category_id=0&article_id=0&clang=1&edit_id=1&function=edit_cat&catstart=0',
-    'structure_article_edit.png': START_URL + '?page=content/edit&category_id=1&article_id=1&clang=1&mode=edit',
-    'structure_article_functions.png': START_URL + '?page=content/functions&article_id=1&category_id=1&clang=1&ctype=1',
-    'structure_slice_edit.png': START_URL + '?page=content/edit&article_id=1&slice_id=3&clang=1&ctype=1&function=edit#slice3',
+    'structure_category_edit.png': START_URL + '?page=structure&category_id=0&article_id=0&language=1&edit_id=1&function=edit_cat&catstart=0',
+    'structure_article_edit.png': START_URL + '?page=content/edit&category_id=1&article_id=1&language=1&mode=edit',
+    'structure_article_functions.png': START_URL + '?page=content/functions&article_id=1&category_id=1&language=1&ctype=1',
+    'structure_slice_edit.png': START_URL + '?page=content/edit&article_id=1&slice_id=3&language=1&ctype=1&function=edit#slice3',
 
     'mediapool_media.png': START_URL + '?page=mediapool/media',
     'mediapool_media_file.png': START_URL + '?page=mediapool/media&file_id=1&rex_file_category=0',

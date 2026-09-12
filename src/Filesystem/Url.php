@@ -125,10 +125,10 @@ final class Url
         }
 
         // ----- EXTENSION POINT
-        $url = Extension::dispatch(new ExtensionPoint('URL_REWRITE', '', ['id' => $id, 'clang' => $languageId, 'params' => $params]));
+        $url = Extension::dispatch(new ExtensionPoint('URL_REWRITE', '', ['id' => $id, 'language' => $languageId, 'params' => $params]));
 
         if ('' == $url) {
-            $languageParam = Language::count() > 1 ? '&clang=' . $languageId : '';
+            $languageParam = Language::count() > 1 ? '&language=' . $languageId : '';
 
             $params = Str::buildQuery($params);
             $params = $params ? '&' . $params : '';

@@ -212,7 +212,7 @@ final class Controller
             ->setPjax()
             ->setIcon('rex-icon rex-icon-system')
             ->addSubpage(new Page('settings', I18n::msg('main_preferences'))->setSubPath(Path::core('pages/system/settings.php')))
-            ->addSubpage(new Page('lang', I18n::msg('languages'))->setSubPath(Path::core('pages/system/clangs.php')))
+            ->addSubpage(new Page('lang', I18n::msg('languages'))->setSubPath(Path::core('pages/system/languages.php')))
             ->addSubpage($logsPage)
             ->addSubpage(
                 new Page('report', I18n::msg('system_report'))

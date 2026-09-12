@@ -95,21 +95,21 @@ languages_edit = Edit languages
 id_exists = Id already exists.
 enter_code = Enter a code.
 enter_name = Enter a name.
-clang_add = Add language
-clang_edit = Edit language
-clang_update = Update language
-clang_created = Language added.
-clang_edited = Language updated
-clang_deleted = Language deleted
-clang_code = Code
-clang_name = Name
-clang_priority = Priority
-clang_online = online
-clang_offline = offline
-clang_delete = Delete language
-clang_select = Choose language
-clang_caption = List of available languages
-clang_function = Functions
+language_add = Add language
+language_edit = Edit language
+language_update = Update language
+language_created = Language added.
+language_edited = Language updated
+language_deleted = Language deleted
+language_code = Code
+language_name = Name
+language_priority = Priority
+language_online = online
+language_offline = offline
+language_delete = Delete language
+language_select = Choose language
+language_caption = List of available languages
+language_function = Functions
 version = Version
 mode = Mode
 charset = Character set
@@ -388,11 +388,10 @@ form_deleted = Data has been deleted!
 form_delete_error = Error deleting data!
 form_resetted = Data has been reset!
 
-# clang
-all_clangs = All languages
-clangs = Languages
-clang_error_startidcanotbedeleted = Default language (clang) with Id "{0}" may not be deleted
-clang_error_idcanotbedeleted = Language Id (clang) with Id "{0}" does not exist
+# language
+all_languages = All languages
+language_error_startidcanotbedeleted = Default language with Id "{0}" may not be deleted
+language_error_idcanotbedeleted = Language with Id "{0}" does not exist
 
 # footer
 footer_joinforum = Visit the forums
@@ -887,7 +886,7 @@ minfo_metadata_saved = Metainfos have been saved.
 minfo_media_in_use_art = Article (metadata)
 minfo_media_in_use_cat = Categories (metadata)
 minfo_media_in_use_med = Languages (metadata)
-minfo_media_in_use_clang = Languages (metadata)
+minfo_media_in_use_language = Languages (metadata)
 
 # bc: labels aus dem core
 online_from = Online from
@@ -953,7 +952,7 @@ cant_delete_notfoundarticle = Not-found article can not be deleted
 structure_copy = Copy
 category_has_child_elements = Category has child elements
 category_without_child_elements = Category without child elements
-structure_delete_all_clangs = Delete in all languages?
+structure_delete_all_languages = Delete in all languages?
 
 all_categories = All categories
 categories = Categories

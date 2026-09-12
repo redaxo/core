@@ -28,7 +28,7 @@ final class ArticleSliceMove extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $languageId = Request::request('clang', 'int');
+        $languageId = Request::request('language', 'int');
         $sliceId = Request::request('slice_id', 'int');
         $direction = Request::request('direction', 'string');
 
@@ -51,7 +51,7 @@ final class ArticleSliceMove extends ApiFunction
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($languageId)
+            !$user->getComplexPerm('language')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
             || !$user->getComplexPerm('modules')->hasPerm($moduleKey)
         ) {

@@ -19,7 +19,7 @@ final readonly class LinkListVar
     {
         $category ??= Category::getCurrent()->id ?? 0; // Aktuelle Kategorie vorauswählen
 
-        $openParams = '&clang=' . Language::getCurrentId() . '&category_id=' . $category;
+        $openParams = '&language=' . Language::getCurrentId() . '&category_id=' . $category;
 
         $options = '';
         $linklistarray = null === $value ? [] : explode(',', $value);

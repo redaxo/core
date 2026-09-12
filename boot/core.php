@@ -116,14 +116,14 @@ VarDumper::register();
 
 // ----------------- REX PERMS
 
-ComplexPermission::register('clang', LanguagePermission::class);
+ComplexPermission::register('language', LanguagePermission::class);
 ComplexPermission::register('structure', StructurePermission::class);
 ComplexPermission::register('modules', ModulePermission::class);
 ComplexPermission::register('media', MediaPoolPermission::class);
 
 // ----- SET CURRENT LANGUAGE
 if (!Core::isSetup()) {
-    $languageId = Request::request('clang', 'int', Language::getStartId());
+    $languageId = Request::request('language', 'int', Language::getStartId());
     if (Core::isBackend() || Language::exists($languageId)) {
         Language::setCurrentId($languageId);
     }

@@ -183,12 +183,12 @@ if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPer
 // --------------------------------------------------- IN ARTIKEL UMWANDELN END
 
 // --------------------------------------------------- INHALTE KOPIEREN START
-if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() > 1) {
-    $languagePerm = $user->getComplexPerm('clang')->getLanguageIds();
+if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('language')->count() > 1) {
+    $languagePerm = $user->getComplexPerm('language')->getLanguageIds();
 
     $langA = new Select();
-    $langA->setId('clang_a');
-    $langA->setName('clang_a');
+    $langA->setId('language_a');
+    $langA->setName('language_a');
     $langA->setSize('1');
     $langA->setAttribute('class', 'form-control selectpicker');
     foreach ($languagePerm as $key) {
@@ -197,8 +197,8 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
     }
 
     $langB = new Select();
-    $langB->setId('clang_b');
-    $langB->setName('clang_b');
+    $langB->setId('language_b');
+    $langB->setName('language_b');
     $langB->setSize('1');
     $langB->setAttribute('class', 'form-control selectpicker');
     foreach ($languagePerm as $key) {
@@ -206,8 +206,8 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
         $langB->addOption($val, $key);
     }
 
-    $langA->setSelected(Request::request('clang_a', 'int', null));
-    $langB->setSelected(Request::request('clang_b', 'int', null));
+    $langA->setSelected(Request::request('language_a', 'int', null));
+    $langB->setSelected(Request::request('language_b', 'int', null));
 
     $panel = '<fieldset>';
 
@@ -215,7 +215,7 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
 
     $formElements = [];
     $n = [];
-    $n['label'] = '<label for="clang_a">' . I18n::msg('content_contentoflang') . '</label>';
+    $n['label'] = '<label for="language_a">' . I18n::msg('content_contentoflang') . '</label>';
     $n['field'] = $langA->get();
     $formElements[] = $n;
 
@@ -226,7 +226,7 @@ if ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() >
 
     $formElements = [];
     $n = [];
-    $n['label'] = '<label for="clang_b">' . I18n::msg('content_to') . '</label>';
+    $n['label'] = '<label for="language_b">' . I18n::msg('content_to') . '</label>';
     $n['field'] = $langB->get();
     $formElements[] = $n;
 

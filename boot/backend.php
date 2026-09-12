@@ -295,7 +295,7 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
 
         if (
             !$historyArticle instanceof Article
-            || !$user->getComplexPerm('clang')->hasPerm($languageId)
+            || !$user->getComplexPerm('language')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
         ) {
             Response::setStatus(Response::HTTP_FORBIDDEN);
@@ -414,7 +414,7 @@ if (Core::getConfig('article_work_version', false)) {
         $user = Core::requireUser();
         $params = $ep->getParams();
         $articleId = Type::int($params['article_id']);
-        $languageId = Type::int($params['clang']);
+        $languageId = Type::int($params['language']);
         $return = Type::string($ep->subject);
 
         $workingVersionEmpty = true;
@@ -489,7 +489,7 @@ if (Core::getConfig('article_work_version', false)) {
         $context = new Context([
             'page' => $params['page'],
             'article_id' => $articleId,
-            'clang' => $languageId,
+            'language' => $languageId,
             'ctype' => $params['ctype'],
         ]);
 

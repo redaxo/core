@@ -26,14 +26,14 @@ final class CategoryEdit extends ApiFunction
         }
 
         $catId = Request::request('category-id', 'int');
-        $languageId = Request::request('clang', 'int');
+        $languageId = Request::request('language', 'int');
 
         if (null === Category::get($catId, $languageId)) {
             throw new ApiFunctionException('Unable to find category with id "' . $catId . '" and language "' . $languageId . '"!');
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($languageId)
+            !$user->getComplexPerm('language')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($catId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
