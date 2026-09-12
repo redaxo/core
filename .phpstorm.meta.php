@@ -98,7 +98,7 @@ expectedArguments(\Redaxo\Core\Http\Request::env(), 1, argumentsSet('cast_type')
 override(
     \Redaxo\Core\Security\User::getComplexPerm(0),
     map([
-        'clang' => \Redaxo\Core\Language\LanguagePermission::class,
+        'language' => \Redaxo\Core\Language\LanguagePermission::class,
         'media' => \Redaxo\Core\MediaPool\MediaPoolPermission::class,
         'modules' => \Redaxo\Core\Content\ModulePermission::class,
         'structure' => \Redaxo\Core\Content\StructurePermission::class,

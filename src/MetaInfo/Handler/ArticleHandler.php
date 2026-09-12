@@ -21,13 +21,13 @@ final class ArticleHandler extends AbstractHandler
     /**
      * Renders (and on save persists) the article meta form.
      *
-     * @param array{id: int, clang: int, article: object} $params
+     * @param array{id: int, language: int, article: object} $params
      */
     public function getForm(array $params): string
     {
-        $ooArt = Article::get($params['id'], $params['clang']);
+        $ooArt = Article::get($params['id'], $params['language']);
         $categoryId = $ooArt->categoryId ?? 0;
-        $category = $categoryId > 0 ? Category::get($categoryId, $params['clang']) : null;
+        $category = $categoryId > 0 ? Category::get($categoryId, $params['language']) : null;
 
         $context = new MetaContext(MetaEntity::Article, $params['article'], $category);
 
@@ -39,15 +39,15 @@ final class ArticleHandler extends AbstractHandler
         return $this->renderFields($context);
     }
 
-    /** @param array{id: int, clang: int, article: object} $params */
+    /** @param array{id: int, language: int, article: object} $params */
     private function save(array $params, MetaContext $context): MetaContext
     {
         $id = $params['id'];
-        $languageId = $params['clang'];
+        $languageId = $params['language'];
 
         $sql = Sql::factory();
         $sql->setTable(Core::getTablePrefix() . 'article');
-        $sql->setWhere('id=:id AND language_id=:clang', ['id' => $id, 'clang' => $languageId]);
+        $sql->setWhere('id=:id AND language_id=:language', ['id' => $id, 'language' => $languageId]);
         $sql->setValue('name', Request::post('meta_article_name', 'string'));
 
         $saved = $this->saveRequestValues($sql, $context);

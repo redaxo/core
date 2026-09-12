@@ -169,7 +169,7 @@ final class MediaPool
                 $languageId = (int) $artArr['language_id'];
                 $article = Article::get($aid, $languageId);
                 $name = $article ? escape($article->name) : '';
-                $warning[0] .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'clang' => $languageId]) . '\')">' . $name . '</a></li>';
+                $warning[0] .= '<li><a href="javascript:openPage(\'' . Url::backendPage('content', ['article_id' => $aid, 'mode' => 'edit', 'language' => $languageId]) . '\')">' . $name . '</a></li>';
             }
             $warning[0] .= '</ul>';
         }

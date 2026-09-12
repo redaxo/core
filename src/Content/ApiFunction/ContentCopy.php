@@ -26,8 +26,8 @@ final class ContentCopy extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $fromLanguageId = Request::request('clang_a', 'int');
-        $toLanguageId = Request::request('clang_b', 'int');
+        $fromLanguageId = Request::request('language_a', 'int');
+        $toLanguageId = Request::request('language_b', 'int');
         $overwrite = Request::request('overwrite', 'bool', false);
 
         $article = Article::get($articleId, $fromLanguageId);
@@ -36,8 +36,8 @@ final class ContentCopy extends ApiFunction
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($fromLanguageId)
-            || !$user->getComplexPerm('clang')->hasPerm($toLanguageId)
+            !$user->getComplexPerm('language')->hasPerm($fromLanguageId)
+            || !$user->getComplexPerm('language')->hasPerm($toLanguageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));

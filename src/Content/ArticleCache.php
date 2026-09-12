@@ -167,7 +167,7 @@ final class ArticleCache
 
         $GC = Sql::factory();
         // $GC->setDebug();
-        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=:clang AND ((parent_id=:id and startarticle=0) OR (id=:id and startarticle=1)) order by priority,name', ['id' => $parentId, 'clang' => Language::getStartId()]);
+        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=:language AND ((parent_id=:id and startarticle=0) OR (id=:id and startarticle=1)) order by priority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
@@ -182,7 +182,7 @@ final class ArticleCache
         // --------------------------------------- CAT LIST
 
         $GC = Sql::factory();
-        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=:id and language_id=:clang and startarticle=1 order by catpriority,name', ['id' => $parentId, 'clang' => Language::getStartId()]);
+        $GC->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=:id and language_id=:language and startarticle=1 order by catpriority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
