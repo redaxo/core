@@ -719,6 +719,8 @@ return RectorConfig::configure()
     ->withConfiguredRule(ReplaceArgumentDefaultValueRector::class, [
         new ReplaceArgumentDefaultValue(Content\ArticleContentBase::class, 'renderContent', 0, -1, null),
 
+        new ReplaceArgumentDefaultValue(Security\User::class, 'getComplexPerm', 0, 'clang', 'language'),
+
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'PACKAGE_CACHE_DELETED', 'ADDON_CACHE_DELETED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_ADDED', 'SLICE_ADDED'),
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_UPDATED', 'SLICE_UPDATED'),

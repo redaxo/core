@@ -21,7 +21,7 @@ $openerInputField = Request::request('opener_input_field', 'string');
 $openerInputFieldName = Request::request('opener_input_field_name', 'string');
 $categoryId = Request::request('category_id', 'int');
 $categoryId = Category::get($categoryId) ? $categoryId : 0;
-$languageId = Request::request('clang', 'int');
+$languageId = Request::request('language', 'int');
 $languageId = Language::exists($languageId) ? $languageId : Language::getStartId();
 
 $pattern = '/[^a-z0-9_-]/i';
@@ -37,7 +37,7 @@ $context = new Context([
     'opener_input_field' => $openerInputField,
     'opener_input_field_name' => $openerInputFieldName,
     'category_id' => $categoryId,
-    'clang' => $languageId,
+    'language' => $languageId,
 ]);
 
 // ------- Build JS Functions

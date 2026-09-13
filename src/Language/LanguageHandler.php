@@ -117,11 +117,11 @@ final class LanguageHandler
     {
         $startLanguageId = Language::getStartId();
         if ($id == $startLanguageId) {
-            throw new UserMessageException(I18n::msg('clang_error_startidcanotbedeleted', $startLanguageId));
+            throw new UserMessageException(I18n::msg('language_error_startidcanotbedeleted', $startLanguageId));
         }
 
         if (!Language::exists($id)) {
-            throw new UserMessageException(I18n::msg('clang_error_idcanotbedeleted', $id));
+            throw new UserMessageException(I18n::msg('language_error_idcanotbedeleted', $id));
         }
 
         $language = Language::require($id);

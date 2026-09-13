@@ -31,7 +31,7 @@ final readonly class LinkVar
 
         $category ??= Category::getCurrent()->id ?? 0; // Aktuelle Kategorie vorauswählen
 
-        $openParams = '&clang=' . Language::getCurrentId() . '&category_id=' . $category;
+        $openParams = '&language=' . Language::getCurrentId() . '&category_id=' . $category;
 
         $class = ' rex-disabled';
         $openFunc = '';

@@ -34,8 +34,8 @@ final class LanguagePermission extends ComplexPermission
         }, Language::getAll());
 
         return [
-            'label' => I18n::msg('clangs'),
-            'all_label' => I18n::msg('all_clangs'),
+            'label' => I18n::msg('languages'),
+            'all_label' => I18n::msg('all_languages'),
             'options' => $options,
         ];
     }

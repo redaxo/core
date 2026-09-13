@@ -110,7 +110,7 @@ $shutdownFn = static function () {
     }
 
     if (Core::isFrontend()) {
-        $req->controller = 'article: ' . Article::getCurrentId() . '; clang: ' . Language::getCurrent()->code;
+        $req->controller = 'article: ' . Article::getCurrentId() . '; language: ' . Language::getCurrent()->code;
     } elseif (!Core::getConsole()) {
         $req->controller = 'page: ' . Controller::getCurrentPage();
     }

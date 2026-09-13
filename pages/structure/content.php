@@ -31,7 +31,7 @@ use Redaxo\Core\View\View;
 use function Redaxo\Core\View\escape;
 
 $articleId = Request::request('article_id', 'int');
-$languageId = Request::request('clang', 'int');
+$languageId = Request::request('language', 'int');
 $sliceId = Request::request('slice_id', 'int', '');
 
 $articleId = Article::get($articleId) ? $articleId : 0;
@@ -83,7 +83,7 @@ $context = new Context([
     'page' => Controller::getCurrentPage(),
     'article_id' => $articleId,
     'category_id' => $categoryId,
-    'clang' => $languageId,
+    'language' => $languageId,
     'ctype' => $ctype,
 ]);
 
@@ -99,7 +99,7 @@ echo View::structureBreadcrumb($categoryId, $articleId, $languageId);
 // ----- EXTENSION POINT
 echo Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_HEADER', '', [
     'article_id' => $articleId,
-    'clang' => $languageId,
+    'language' => $languageId,
     'function' => $function,
     'slice_id' => $sliceId,
     'page' => Controller::getCurrentPage(),
@@ -113,7 +113,7 @@ $user = Core::requireUser();
 
 // ----------------- HAT USER DIE RECHTE AN DIESEM ARTICLE ODER NICHT
 if (
-    !$user->getComplexPerm('clang')->hasPerm($languageId)
+    !$user->getComplexPerm('language')->hasPerm($languageId)
     || !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)
 ) {
     // ----- hat keine rechte an diesem artikel
@@ -248,7 +248,7 @@ if (
                             $info = $actionMessage . I18n::msg('block_updated');
                             $epParams = [
                                 'article_id' => $articleId,
-                                'clang' => $languageId,
+                                'language' => $languageId,
                                 'function' => $function,
                                 'slice_id' => $sliceId,
                                 'page' => Controller::getCurrentPage(),
@@ -286,7 +286,7 @@ if (
                             $function = '';
                             $epParams = [
                                 'article_id' => $articleId,
-                                'clang' => $languageId,
+                                'language' => $languageId,
                                 'function' => $function,
                                 'slice_id' => $sliceId,
                                 'page' => Controller::getCurrentPage(),
@@ -308,7 +308,7 @@ if (
                             $globalInfo = I18n::msg('block_deleted');
                             $epParams = [
                                 'article_id' => $articleId,
-                                'clang' => $languageId,
+                                'language' => $languageId,
                                 'function' => $function,
                                 'slice_id' => $sliceId,
                                 'page' => Controller::getCurrentPage(),
@@ -338,7 +338,7 @@ if (
 
                     Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_ARTICLE_UPDATED', '', [
                         'id' => $articleId,
-                        'clang' => $languageId,
+                        'language' => $languageId,
                     ]));
 
                     // ----- POST SAVE ACTION [ADD/EDIT/DELETE]
@@ -368,7 +368,7 @@ if (
             $hasSlice = null !== ArticleSlice::getFirstSliceForCtype($section->id, $articleId, $languageId);
         }
         $editPage->addSubpage(new Page('ctype' . $section->id, $section->name)
-            ->setHref(['page' => 'content/edit', 'article_id' => $articleId, 'clang' => $languageId, 'ctype' => $section->id])
+            ->setHref(['page' => 'content/edit', 'article_id' => $articleId, 'language' => $languageId, 'ctype' => $section->id])
             ->setIsActive($ctype == $section->id)
             ->setItemAttr('class', $hasSlice ? '' : 'rex-empty'),
         );
@@ -389,7 +389,7 @@ if (
             || $user->hasPerm('copyArticle[]')
             || $user->hasPerm('moveArticle[]')
             || $user->hasPerm('moveCategory[]')
-            || ($user->hasPerm('copyContent[]') && $user->getComplexPerm('clang')->count() > 1)
+            || ($user->hasPerm('copyContent[]') && $user->getComplexPerm('language')->count() > 1)
         ) {
             if ($subpage->getItemAttr('left')) {
                 $leftNav->addPage($subpage);
@@ -440,7 +440,7 @@ if (
     // ----- EXTENSION POINT
     $contentMain .= Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_BEFORE_SLICES', '', [
         'article_id' => $articleId,
-        'clang' => $languageId,
+        'language' => $languageId,
         'function' => $function,
         'slice_id' => $sliceId,
         'page' => Controller::getCurrentPage(),
@@ -457,7 +457,7 @@ if (
     // ----- EXTENSION POINT
     $contentMain .= Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_AFTER_SLICES', '', [
         'article_id' => $articleId,
-        'clang' => $languageId,
+        'language' => $languageId,
         'function' => $function,
         'slice_id' => $sliceId,
         'page' => Controller::getCurrentPage(),
@@ -472,7 +472,7 @@ if (
     // ----- EXTENSION POINT
     $contentSidebar = Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_SIDEBAR', '', [
         'article_id' => $articleId,
-        'clang' => $languageId,
+        'language' => $languageId,
         'function' => $function,
         'slice_id' => $sliceId,
         'page' => Controller::getCurrentPage(),

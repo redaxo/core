@@ -56,7 +56,6 @@ Table::get(Core::getTable('article'))
     ->ensureIndex(new Index('find_articles', ['id', 'language_id'], Index::UNIQUE))
     ->ensureIndex(new Index('language_id', ['language_id']))
     ->ensureIndex(new Index('parent_id', ['parent_id']))
-    ->removeIndex('id')
     ->ensure();
 
 Table::get(Core::getTable('article_slice'))
@@ -131,8 +130,6 @@ Table::get(Core::getTable('article_slice'))
     ->ensureGlobalColumns()
     ->ensureIndex(new Index('slice_priority', ['article_id', 'priority', 'module']))
     ->ensureIndex(new Index('find_slices', ['language_id', 'article_id']))
-    ->removeIndex('clang_id')
-    ->removeIndex('article_id')
     ->ensure();
 
 Table::get(Core::getTable('article_slice_history'))

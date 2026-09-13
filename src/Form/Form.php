@@ -188,13 +188,13 @@ class Form extends AbstractForm
      * Mehrsprachigkeit unterstuetzen.
      *
      * @param string $idField
-     * @param string $clangField
+     * @param string $languageField
      * @return void
      */
-    public function setLanguageSupport($idField, $clangField)
+    public function setLanguageSupport($idField, $languageField)
     {
         $this->languageSupport['id'] = $idField;
-        $this->languageSupport['clang'] = $clangField;
+        $this->languageSupport['language'] = $languageField;
     }
 
     /**
@@ -360,7 +360,7 @@ class Form extends AbstractForm
                         } else {
                             $sql->setValue($this->languageSupport['id'], $id);
                         }
-                        $sql->setValue($this->languageSupport['clang'], $languageId);
+                        $sql->setValue($this->languageSupport['language'], $languageId);
                         $sql->setValues($values);
                         $sql->insert();
                     }

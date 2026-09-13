@@ -310,7 +310,7 @@
                 that.remove();
 
                 // reload redaxo page
-                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&clang=' + that.languageId + '&ctype=' + that.ctypeId;
+                var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&language=' + that.languageId + '&ctype=' + that.ctypeId;
                 $.pjax({url: url, container: '#rex-js-page-main-content', fragment: '#rex-js-page-main-content'})
             }));
         },

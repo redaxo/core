@@ -26,7 +26,7 @@ final class ArticleStatusChange extends ApiFunction
         }
 
         $articleId = Request::request('article_id', 'int');
-        $languageId = Request::request('clang', 'int');
+        $languageId = Request::request('language', 'int');
         $status = Request::request('art_status', 'int', null);
 
         $article = Article::get($articleId, $languageId);
@@ -35,7 +35,7 @@ final class ArticleStatusChange extends ApiFunction
         }
 
         if (
-            !$user->getComplexPerm('clang')->hasPerm($languageId)
+            !$user->getComplexPerm('language')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));

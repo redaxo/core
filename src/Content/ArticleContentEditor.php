@@ -99,7 +99,7 @@ final class ArticleContentEditor extends ArticleContentBase
             // EP for changing the module preview
             $panel .= Extension::dispatch(new ExtensionPoint('SLICE_BE_PREVIEW', $content, [
                 'article_id' => $this->articleId,
-                'clang' => $this->languageId,
+                'language' => $this->languageId,
                 'ctype' => $this->contentSectionId,
                 'module_key' => $moduleKey,
                 'slice_id' => $sliceId,
@@ -147,7 +147,7 @@ final class ArticleContentEditor extends ArticleContentBase
             'page' => Controller::getCurrentPage(),
             'article_id' => $this->articleId,
             'slice_id' => $sliceId,
-            'clang' => $this->languageId,
+            'language' => $this->languageId,
             'ctype' => $this->contentSectionId,
         ]);
         $fragment = '#slice' . $sliceId;
@@ -288,7 +288,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $context = new Context([
             'page' => Controller::getCurrentPage(),
             'article_id' => $this->articleId,
-            'clang' => $this->languageId,
+            'language' => $this->languageId,
             'ctype' => $this->contentSectionId,
             'slice_id' => $sliceId,
             'function' => 'add',
@@ -324,7 +324,7 @@ final class ArticleContentEditor extends ArticleContentBase
             [
                 'page' => Controller::getCurrentPage(),
                 'article_id' => $this->articleId,
-                'clang' => $this->languageId,
+                'language' => $this->languageId,
                 'ctype' => $this->contentSectionId,
                 'slice_id' => $sliceId,
             ],
@@ -408,7 +408,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->languageId, 'ctype' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'ctype' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
@@ -443,7 +443,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
         $fragment = new Fragment();
         $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-add']], false);
-        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'clang' => $this->languageId, 'ctype' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition);
+        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'ctype' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }
@@ -463,7 +463,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->languageId]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'language' => $this->languageId]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
@@ -504,7 +504,7 @@ final class ArticleContentEditor extends ArticleContentBase
 
         $fragment = new Fragment();
         $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-edit'], 'id' => 'slice' . $sliceId], false);
-        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'clang' => $this->languageId, 'function' => 'edit']) . '#slice' . $sliceId);
+        $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'ctype' => $ctypeId, 'language' => $this->languageId, 'function' => 'edit']) . '#slice' . $sliceId);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
     }

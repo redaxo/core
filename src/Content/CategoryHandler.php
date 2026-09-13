@@ -128,7 +128,7 @@ final class CategoryHandler
                 'category' => clone $AART,
                 'id' => $id,
                 'parent_id' => $categoryId,
-                'clang' => $key,
+                'language' => $key,
                 'name' => $data['catname'],
                 'priority' => $data['catpriority'],
                 'path' => $path,
@@ -205,7 +205,7 @@ final class CategoryHandler
             if ($oldPrio != $data['catpriority']) {
                 Sql::factory()
                     ->setTable(Core::getTable('article'))
-                    ->setWhere('id = :id AND language_id != :clang', ['id' => $categoryId, 'clang' => $languageId])
+                    ->setWhere('id = :id AND language_id != :language', ['id' => $categoryId, 'language' => $languageId])
                     ->setValue('catpriority', $data['catpriority'])
                     ->addGlobalUpdateFields($user)
                     ->update();
@@ -230,7 +230,7 @@ final class CategoryHandler
             'article' => clone $EKAT,
 
             'parent_id' => $thisCat->getValue('parent_id'),
-            'clang' => $languageId,
+            'language' => $languageId,
             'name' => $data['catname'] ?? $thisCat->getValue('catname'),
             'priority' => $data['catpriority'] ?? $thisCat->getValue('catpriority'),
             'path' => $thisCat->getValue('path'),
@@ -281,7 +281,7 @@ final class CategoryHandler
                         $message = Extension::dispatch(new ExtensionPoint('CAT_DELETED', $message, [
                             'id' => $categoryId,
                             'parent_id' => $parentId,
-                            'clang' => $languageId,
+                            'language' => $languageId,
                             'name' => $row->getValue('catname'),
                             'priority' => $row->getValue('catpriority'),
                             'path' => $row->getValue('path'),
@@ -338,7 +338,7 @@ final class CategoryHandler
             // ----- EXTENSION POINT
             Extension::dispatch(new ExtensionPoint('CAT_STATUS', null, [
                 'id' => $categoryId,
-                'clang' => $languageId,
+                'language' => $languageId,
                 'status' => $newstatus,
             ]));
         } else {
@@ -510,7 +510,7 @@ final class CategoryHandler
 
             Extension::dispatch(new ExtensionPoint('CAT_MOVED', null, [
                 'id' => $fromCat,
-                'clang' => $languageId,
+                'language' => $languageId,
                 'category_id' => $toCat,
             ]));
         }
