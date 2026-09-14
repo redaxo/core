@@ -451,6 +451,28 @@ abstract class Addon
     }
 
     /**
+     * Returns the parsed composer.json of the addon.
+     *
+     * @return array<string, mixed>
+     */
+    final public function getComposerJson(): array
+    {
+        if (null !== $this->composerJson) {
+            return $this->composerJson;
+        }
+
+        $json = File::get($this->getPath('composer.json'));
+        if (!$json) {
+            return $this->composerJson = [];
+        }
+
+        /** @var array<string, mixed> $composerJson */
+        $composerJson = Type::array(json_decode($json, true, flags: JSON_THROW_ON_ERROR));
+
+        return $this->composerJson = $composerJson;
+    }
+
+    /**
      * Generates the boot order: addons marked as early first, then the ones with normal load order sorted so
      * that an addon boots after the addons it requires, then the ones marked as late.
      *
@@ -582,27 +604,5 @@ abstract class Addon
         }
 
         return hash('xxh128', implode("\n", $parts));
-    }
-
-    /**
-     * Returns the parsed composer.json of the addon.
-     *
-     * @return array<string, mixed>
-     */
-    final public function getComposerJson(): array
-    {
-        if (null !== $this->composerJson) {
-            return $this->composerJson;
-        }
-
-        $json = File::get($this->getPath('composer.json'));
-        if (!$json) {
-            return $this->composerJson = [];
-        }
-
-        /** @var array<string, mixed> $composerJson */
-        $composerJson = Type::array(json_decode($json, true, flags: JSON_THROW_ON_ERROR));
-
-        return $this->composerJson = $composerJson;
     }
 }
