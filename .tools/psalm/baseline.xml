@@ -613,29 +613,6 @@
       <code><![CDATA[$this->jsProperties]]></code>
     </MixedOperand>
   </file>
-  <file src="pages/addon/details.help.php">
-    <PossiblyFalseOperand>
-      <code><![CDATA[ob_get_clean()]]></code>
-    </PossiblyFalseOperand>
-  </file>
-  <file src="pages/addon/details.license.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[file_get_contents($package->getPath('LICENSE'))]]></code>
-    </PossiblyFalseArgument>
-  </file>
-  <file src="pages/addon/list.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[[
-        'package' => $package->name,
-        'function' => $function,
-    ] + AddonOperation::getUrlParams()]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$function]]></code>
-      <code><![CDATA[$icon]]></code>
-      <code><![CDATA[$key ?: $function]]></code>
-    </MixedOperand>
-  </file>
   <file src="pages/backup/export.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$EXPDIR]]></code>
@@ -690,12 +667,6 @@
     <PossiblyFalseOperand>
       <code><![CDATA[ini_get('max_input_time')]]></code>
     </PossiblyFalseOperand>
-  </file>
-  <file src="pages/credits.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$f]]></code>
-      <code><![CDATA[$f]]></code>
-    </PossiblyFalseArgument>
   </file>
   <file src="pages/cronjob/cronjobs.php">
     <ArgumentTypeCoercion>
