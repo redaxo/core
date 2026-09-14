@@ -2,12 +2,7 @@
 
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
-use Redaxo\Core\Filesystem\File;
-use Redaxo\Core\Filesystem\Path;
-use Redaxo\Core\Filesystem\Url;
-use Redaxo\Core\Http\Request;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Markdown;
 use Redaxo\Core\Util\Version;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\View;
@@ -17,20 +12,6 @@ use function Redaxo\Core\View\escape;
 /** Creditsseite. Auflistung der Credits an die Entwickler von REDAXO und den AddOns. */
 
 echo View::title(I18n::msg('credits'), '');
-
-if (Request::get('license')) {
-    $license = Markdown::factory()->parse(File::require(Path::base('LICENSE.md')));
-
-    $fragment = new Fragment();
-    $fragment->setVar('title', 'REDAXO ' . I18n::msg('credits_license'));
-    $fragment->setVar('body', $license, false);
-    echo '<div id="license"></div>'; // scroll anchor
-    echo $fragment->parse('core/page/section.php');
-
-    echo '<a class="btn btn-back" href="javascript:history.back();">' . I18n::msg('package_back') . '</a>';
-
-    return;
-}
 
 $content = [];
 
@@ -70,7 +51,7 @@ if (Version::isUnstable($coreVersion)) {
 }
 
 $fragment = new Fragment();
-$fragment->setVar('title', 'REDAXO <small>' . $coreVersion . ' &ndash; <a href="' . Url::backendPage('credits', ['license' => 'core']) . '">' . I18n::msg('credits_license') . '</a></small>', false);
+$fragment->setVar('title', 'REDAXO <small>' . $coreVersion . ' &ndash; ' . I18n::msg('credits_license') . ': MIT</small>', false);
 $fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');
 
@@ -84,28 +65,16 @@ $content .= '
             <th class="rex-table-icon">&nbsp;</th>
             <th>' . I18n::msg('credits_name') . '</th>
             <th class="rex-table-slim">' . I18n::msg('credits_version') . '</th>
-            <th colspan="3">' . I18n::msg('credits_information') . '</th>
+            <th>' . I18n::msg('credits_supportpage') . '</th>
+            <th>' . I18n::msg('credits_license') . '</th>
             <th>' . I18n::msg('credits_author') . '</th>
         </tr>
         </thead>
 
         <tbody>';
 
-foreach (Addon::getActivatedAddons() as $package) {
-    $helpUrl = Url::backendPage('packages', ['subpage' => 'help', 'package' => $package->name]);
-
-    $license = '';
-    if (is_readable($licenseFile = $package->getPath('LICENSE.md')) || is_readable($licenseFile = $package->getPath('LICENSE'))) {
-        $f = fopen($licenseFile, 'r');
-        $firstLine = fgets($f) ?: '';
-        fclose($f);
-
-        if (preg_match('/^The MIT License(?: \(MIT\))$/i', $firstLine)) {
-            $firstLine = 'MIT License';
-        }
-
-        $license = '<a href="' . Url::backendPage('packages', ['subpage' => 'license', 'package' => $package->name]) . '"><i class="rex-icon rex-icon-license"></i> ' . escape($firstLine) . '</a>';
-    }
+foreach (Addon::getAll() as $package) {
+    $license = escape((string) $package->getLicense());
 
     $packageVersion = escape($package->getVersion());
     if (Version::isUnstable($packageVersion)) {
@@ -115,11 +84,8 @@ foreach (Addon::getActivatedAddons() as $package) {
     $content .= '
             <tr class="rex-package-is-addon">
                 <td class="rex-table-icon"><i class="rex-icon rex-icon-package-addon"></i></td>
-                <td data-title="' . I18n::msg('credits_name') . '">' . $package->name . ' </td>
+                <td data-title="' . I18n::msg('credits_name') . '">' . escape($package->name) . ' </td>
                 <td data-title="' . I18n::msg('credits_version') . '">' . $packageVersion . '</td>
-                <td class="rex-table-slimmer" data-title="' . I18n::msg('credits_help') . '">
-                    <a href="' . $helpUrl . '" title="' . I18n::msg('credits_open_help_file') . ' ' . escape($package->name) . '"><i class="rex-icon rex-icon-help"></i> ' . I18n::msg('credits_help') . ' <span class="sr-only">' . escape($package->name) . '</span></a>
-                </td>
                 <td class="rex-table-slim" data-title="' . I18n::msg('credits_supportpage') . '">';
     if ($supportpage = $package->getSupportPage()) {
         $content .= '<a href="' . $supportpage . '" onclick="window.open(this.href); return false;"><i class="rex-icon rex-icon-external-link"></i> ' . I18n::msg('credits_supportpage') . '</a>';

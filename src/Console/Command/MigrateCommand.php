@@ -30,11 +30,7 @@ use function microtime;
 use function sprintf;
 
 /**
- * Applies the `install()` of the core, all installed addons and the project, then the pending
- * {@see Migration} files.
- *
- * Deactivated addons are covered too, so their schema does not fall behind — but a failing one is only reported,
- * not fatal: it is not booted anyway, so it must not block a deployment.
+ * Applies the `install()` of the core, all addons and the project, then the pending {@see Migration} files.
  *
  * @internal
  */
@@ -63,12 +59,11 @@ final class MigrateCommand extends AbstractCommand implements StandaloneInterfac
             File::getConfig($configPath),
         ));
 
-        // align registered addons with composer state: drop config of orphaned addons, register new ones
-        AddonManager::synchronizeWithFileSystem();
-
         if (!$this->convergeSchema($io)) {
             return Command::FAILURE;
         }
+
+        $this->reportOrphans($io);
 
         $this->syncMetaInfo($input, $io);
 
@@ -85,17 +80,14 @@ final class MigrateCommand extends AbstractCommand implements StandaloneInterfac
     {
         $io->section('Schema');
 
-        $skipped = [];
-
         if (!$this->convergePackage($io, Migrator::CORE, static function (): void {
             require Path::core('setup/install.php');
-        }, $skipped)) {
+        })) {
             return false;
         }
 
-        foreach (AddonManager::getInstalledAddonOrder() as $addonName) {
-            $addon = Addon::require($addonName);
-            $manager = AddonManager::factory($addon);
+        foreach (Addon::getBootOrder() as $addonName) {
+            $manager = AddonManager::factory(Addon::require($addonName));
 
             $converge = static function () use ($manager): void {
                 if (!$manager->install()) {
@@ -103,69 +95,58 @@ final class MigrateCommand extends AbstractCommand implements StandaloneInterfac
                 }
             };
 
-            if (!$this->convergePackage($io, $addonName, $converge, $skipped, !$addon->isActivated())) {
+            if (!$this->convergePackage($io, $addonName, $converge)) {
                 return false;
             }
         }
 
-        if (!$this->convergePackage($io, Migrator::PROJECT, static function (): void {
+        return $this->convergePackage($io, Migrator::PROJECT, static function (): void {
             Core::getProject()->install();
-        }, $skipped)) {
-            return false;
+        });
+    }
+
+    /**
+     * Addons that have data on this instance but are no longer installed via composer. Nothing is cleaned up
+     * automatically — see {@see AddonManager::getOrphans()}.
+     */
+    private function reportOrphans(SymfonyStyle $io): void
+    {
+        $orphans = AddonManager::getOrphans();
+
+        if ([] === $orphans) {
+            return;
         }
 
-        if ([] !== $skipped) {
-            $io->warning(array_merge(
-                ['Deactivated addons whose schema could not be updated. Their tables stay behind until the problem is fixed:'],
-                array_map(static fn (string $addon): string => '  ' . $addon, $skipped),
-            ));
-        }
-
-        return true;
+        $io->warning(array_merge(
+            ['These addons still have data in the database but are no longer installed via composer. Their own uninstall routine can no longer run, so their tables stay behind:'],
+            array_map(static fn (string $addon): string => '  ' . $addon, $orphans),
+        ));
     }
 
     /**
      * @param callable(): void $converge
-     * @param list<string> $skipped
-     * @param bool $tolerateFailure Report a failure instead of aborting (used for deactivated addons)
      * @return bool `false` if the package failed and the migration has to be aborted
      */
-    private function convergePackage(SymfonyStyle $io, string $package, callable $converge, array &$skipped, bool $tolerateFailure = false): bool
+    private function convergePackage(SymfonyStyle $io, string $package, callable $converge): bool
     {
         $io->write(sprintf('  %s ... ', $package));
 
         try {
             $converge();
         } catch (UserMessageException $e) {
-            return $this->handleConvergeFailure($io, $package, $this->decodeMessage($e->getMessage()), $skipped, $tolerateFailure);
-        } catch (Throwable $e) {
-            if (!$tolerateFailure) {
-                $io->writeln('<error>FAIL</error>');
-                throw $e;
-            }
+            $io->writeln('<error>FAIL</error> ' . $this->decodeMessage($e->getMessage()));
+            $io->error('Migration aborted.');
 
-            return $this->handleConvergeFailure($io, $package, $e->getMessage(), $skipped, true);
+            return false;
+        } catch (Throwable $e) {
+            $io->writeln('<error>FAIL</error>');
+
+            throw $e;
         }
 
         $io->writeln('<info>OK</info>');
 
         return true;
-    }
-
-    /** @param list<string> $skipped */
-    private function handleConvergeFailure(SymfonyStyle $io, string $package, string $message, array &$skipped, bool $tolerateFailure): bool
-    {
-        if ($tolerateFailure) {
-            $io->writeln('<comment>SKIPPED</comment> ' . $message);
-            $skipped[] = $package;
-
-            return true;
-        }
-
-        $io->writeln('<error>FAIL</error> ' . $message);
-        $io->error('Migration aborted.');
-
-        return false;
     }
 
     private function runMigrations(SymfonyStyle $io, bool $fake): void

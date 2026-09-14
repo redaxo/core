@@ -311,18 +311,11 @@ final class Controller
             ->addSubpage(new Page('upload', I18n::msg('backup_upload'))->setSubPath(Path::core('pages/backup/import.upload.php')))
             ->addSubpage(new Page('server', I18n::msg('backup_load_from_server'))->setSubPath(Path::core('pages/backup/import.server.php'))),
         );
-
-        self::$pages['packages'] = new MainPage('system', 'packages', I18n::msg('addons'))
-            ->setPath(Path::core('pages/addon/index.php'))
-            ->setRequiredPermissions('isAdmin')
-            ->setPrio(60)
-            ->setPjax()
-            ->setIcon('rex-icon rex-icon-package-addon');
     }
 
     public static function appendPackagePages(): void
     {
-        $addons = Core::isSafeMode() ? Addon::getSetupAddons() : Addon::getActivatedAddons();
+        $addons = Core::isSafeMode() ? Addon::getSetupAddons() : Addon::getAll();
         foreach ($addons as $addon) {
             foreach ($addon->getPages() as $page) {
                 self::registerAddonPage($page, $addon);
@@ -481,7 +474,7 @@ final class Controller
     private static function includePath(string $path, array $context = []): mixed
     {
         return Timer::measure('Page: ' . Path::relative($path), function () use ($path, $context) {
-            foreach (Addon::getActivatedAddons() as $addon) {
+            foreach (Addon::getAll() as $addon) {
                 if (str_starts_with($path, $addon->path . DIRECTORY_SEPARATOR)) {
                     return $addon->includeFile($path, $context);
                 }

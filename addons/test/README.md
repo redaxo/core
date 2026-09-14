@@ -1,22 +1,22 @@
 <br/>
 <div align="center">
-    <a href="https://github.com/github_username/repo_name">
+    <a href="https://github.com/redaxo/core">
         <img src="https://raw.githubusercontent.com/redaxo/core/assets/redaxo-logo.png" alt="REDAXO" width="280px" height="43px">
     </a>
 
-<h1>Project title</h1>
+<h1>REDAXO</h1>
 
 <p align="center">
-    project_description
+    A PHP content management system
     <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/redaxo/core"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/github_username/repo_name">View Demo</a>
+    <a href="https://github.com/redaxo/core">View Demo</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Report Bug</a>
+    <a href="https://github.com/redaxo/core/issues">Report Bug</a>
     ·
-    <a href="https://github.com/github_username/repo_name/issues">Request Feature</a>
+    <a href="https://github.com/redaxo/core/issues">Request Feature</a>
 </p>
 </div>
 
@@ -26,7 +26,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `project_title`, `project_description`
+This file exists to exercise the backend rendering of markdown: headings and table of contents, lists, tables, blockquotes, inline HTML and syntax-highlighted code blocks.
 
 ### Built With
 
@@ -57,7 +57,7 @@ This is an example of how to list things you need to use the software and how to
 1. Get a free API Key at [https://example.com](https://example.com)
 2. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/redaxo/core.git
    ```
 3. Install NPM packages
    ```sh
@@ -109,7 +109,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [x] Feature 3
     - [ ] Nested Feature
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/redaxo/core/issues) for a full list of proposed features (and known issues).
 
 ## Contributing
 

@@ -308,8 +308,8 @@ $field->setAttribute('class', 'form-control selectpicker');
 $field->setAttribute('name', 'settings[article_history]');
 $field->setLabel(I18n::msg('system_setting_article_history'));
 $select = $field->getSelect();
-$select->addOption(I18n::msg('package_active'), 1);
-$select->addOption(I18n::msg('package_disabled'), 0);
+$select->addOption(I18n::msg('activated'), 1);
+$select->addOption(I18n::msg('deactivated'), 0);
 $select->setSelected(Core::getConfig('article_history', false) ? 1 : 0);
 $content .= $field->get();
 
@@ -318,8 +318,8 @@ $field->setAttribute('class', 'form-control selectpicker');
 $field->setAttribute('name', 'settings[article_work_version]');
 $field->setLabel(I18n::msg('system_setting_article_work_version'));
 $select = $field->getSelect();
-$select->addOption(I18n::msg('package_active'), 1);
-$select->addOption(I18n::msg('package_disabled'), 0);
+$select->addOption(I18n::msg('activated'), 1);
+$select->addOption(I18n::msg('deactivated'), 0);
 $select->setSelected(Core::getConfig('article_work_version', false) ? 1 : 0);
 $content .= $field->get();
 

@@ -2,7 +2,7 @@
 
 namespace Redaxo\Core\Migration;
 
-use Redaxo\Core\Addon\AddonManager;
+use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
@@ -23,11 +23,9 @@ use const DIRECTORY_SEPARATOR;
 /**
  * Finds, orders and executes {@see Migration} files and keeps track of which of them already ran.
  *
- * Migrations are plain files in a `migrations/` directory of the core, of an installed addon or of the project.
- * They are deliberately found by `glob` and not via {@see ClassDiscovery}: migrations repair a system whose
- * schema has fallen behind, so finding them must not depend on autoload state, addon activation or a cache.
- *
- * Installed but deactivated addons are included, so their schema does not fall behind.
+ * Migrations are plain files in a `migrations/` directory of the core, of an addon or of the project. They are
+ * deliberately found by `glob` and not via {@see ClassDiscovery}: migrations repair a system whose schema has
+ * fallen behind, so finding them must not depend on autoload state or on a cache.
  */
 final class Migrator
 {
@@ -177,7 +175,7 @@ final class Migrator
     /** @return array<non-empty-string, non-empty-string> Map of package name to its migrations directory */
     private static function getDirectories(): array
     {
-        $packages = [self::CORE, ...AddonManager::getInstalledAddonOrder(), self::PROJECT];
+        $packages = [self::CORE, ...Addon::getBootOrder(), self::PROJECT];
 
         $directories = [];
         foreach ($packages as $package) {

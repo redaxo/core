@@ -183,14 +183,6 @@
     .table.table-condensed > tbody > tr > td:before {
         padding: $table-condensed-cell-padding;
     }
-
-    .table tr.rex-package-is-plugin > td.rex-table-icon {
-        text-align: left;
-    }
-}
-
-tr.rex-package-is-plugin > td.rex-table-icon {
-    text-align: right;
 }
 
 

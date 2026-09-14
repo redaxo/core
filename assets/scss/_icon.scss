@@ -64,10 +64,6 @@
     @extend .fa-solid;
     @extend .fa-plus;
 }
-.rex-icon-add-package {
-    @extend .fa-solid;
-    @extend .fa-plus;
-}
 .rex-icon-add-template {
     @extend .fa-solid;
     @extend .fa-plus;
@@ -257,46 +253,9 @@
     @extend .fa-regular;
     @extend .fa-circle;
 }
-.rex-icon-package {
-    @extend .fa-solid;
-    @extend .fa-bookmark;
-}
 .rex-icon-package-addon {
     @extend .fa-solid;
     @extend .fa-bookmark;
-}
-.rex-icon-package-exists {
-    @extend .fa-solid;
-    @extend .fa-eye-slash;
-}
-.rex-icon-package-is-activated {
-    @extend .fa-solid;
-    @extend .fa-check;
-    @extend .fa-fw;
-}
-.rex-icon-package-is-installed {
-    @extend .fa-solid;
-    @extend .fa-arrows-rotate;
-    @extend .fa-fw;
-}
-.rex-icon-package-not-activated {
-    @extend .fa-solid;
-    @extend .fa-xmark;
-    @extend .fa-fw;
-}
-.rex-icon-package-not-installed {
-    @extend .fa-solid;
-    @extend .fa-arrow-rotate-right;
-    @extend .fa-fw;
-}
-.rex-icon-package-plugin {
-    @extend .fa-regular;
-    @extend .fa-bookmark;
-}
-.rex-icon-package-uninstall {
-    @extend .fa-solid;
-    @extend .fa-arrow-rotate-left;
-    @extend .fa-fw;
 }
 .rex-icon-password {
     @extend .fa-solid;

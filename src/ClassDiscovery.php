@@ -310,7 +310,7 @@ final class ClassDiscovery
         $paths[] = __DIR__ . DIRECTORY_SEPARATOR;
 
         // Active addon paths
-        foreach (Addon::getActivatedAddons() as $addon) {
+        foreach (Addon::getAll() as $addon) {
             $paths[] = $addon->path . DIRECTORY_SEPARATOR;
         }
 
@@ -420,7 +420,7 @@ final class ClassDiscovery
     private function getAddonHash(): string
     {
         $parts = [];
-        foreach (Addon::getActivatedAddons() as $addon) {
+        foreach (Addon::getAll() as $addon) {
             $parts[] = $addon->name . ':' . $addon->getVersion();
         }
 

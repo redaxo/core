@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Addon;
 
+use Composer\Autoload\ClassLoader;
 use Composer\InstalledVersions;
 use OutOfBoundsException;
 use Redaxo\Core\Addon\ExtensionPoint\AddonCacheDeleted;
@@ -20,11 +21,20 @@ use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
-use function assert;
+use function array_flip;
+use function array_keys;
+use function array_merge;
+use function filemtime;
+use function filesize;
+use function function_exists;
+use function hash;
+use function implode;
+use function in_array;
 use function is_array;
-use function is_bool;
+use function is_file;
 use function is_string;
 use function sprintf;
+use function var_export;
 
 use const DIRECTORY_SEPARATOR;
 use const EXTR_SKIP;
@@ -38,6 +48,9 @@ abstract class Addon
      * @var array<non-empty-string, self>
      */
     private static array $addons = [];
+
+    /** @var list<non-empty-string> */
+    private static array $bootOrder = [];
 
     /** @var non-empty-string */
     public private(set) string $path {
@@ -63,9 +76,6 @@ abstract class Addon
      * @var array<string, mixed>
      */
     public protected(set) array $defaultConfig = [];
-
-    /** Lifecycle state of the addon. */
-    public private(set) AddonState $state = AddonState::Uninstalled;
 
     /**
      * Properties.
@@ -211,28 +221,6 @@ abstract class Addon
     final public function removeProperty(string $key): void
     {
         unset($this->properties[$key]);
-    }
-
-    /**
-     * Sets the lifecycle state of the addon.
-     *
-     * @internal
-     */
-    final public function setState(AddonState $state): void
-    {
-        $this->state = $state;
-    }
-
-    /** Returns if the addon is activated (and therefore installed). */
-    final public function isActivated(): bool
-    {
-        return AddonState::Activated === $this->state;
-    }
-
-    /** Returns if the addon is installed (activated or not). */
-    final public function isInstalled(): bool
-    {
-        return AddonState::Uninstalled !== $this->state;
     }
 
     final public function getAuthor(?string $default = null): ?string
@@ -401,33 +389,23 @@ abstract class Addon
     public function uninstall(): void {}
 
     /**
-     * Returns the registered addons.
+     * Returns all addons, i.e. all composer packages of type `redaxo-addon`.
      *
      * @return array<non-empty-string, self>
      */
-    final public static function getRegisteredAddons(): array
+    final public static function getAll(): array
     {
         return self::$addons;
     }
 
     /**
-     * Returns the installed addons.
+     * Returns the addon names in boot order.
      *
-     * @return array<non-empty-string, self>
+     * @return list<non-empty-string>
      */
-    final public static function getInstalledAddons(): array
+    final public static function getBootOrder(): array
     {
-        return self::filterPackages(self::$addons, 'isInstalled');
-    }
-
-    /**
-     * Returns the activated addons.
-     *
-     * @return array<non-empty-string, self>
-     */
-    final public static function getActivatedAddons(): array
-    {
-        return self::filterPackages(self::$addons, 'isActivated');
+        return self::$bootOrder;
     }
 
     /**
@@ -447,44 +425,28 @@ abstract class Addon
     }
 
     /** Initializes all addons. */
-    final public static function initialize(bool $dbExists = true): void
+    final public static function initialize(): void
     {
-        if ($dbExists) {
-            $config = AddonManager::getAddonConfig();
-        } else {
-            $config = [];
-            foreach (Core::getProperty('setup_addons') as $addon) {
-                $config[(string) $addon]['state'] = AddonState::Uninstalled->value;
-            }
-        }
-
-        $composerPackages = AddonManager::getComposerPackages();
-        $addonClasses = null;
+        $cache = self::loadCache();
+        $classes = $cache['classes'] ?? AddonManager::getAddonClasses();
 
         $addons = self::$addons;
         self::$addons = [];
-        foreach ($config as $addonName => $addonConfig) {
-            if (!isset($composerPackages[$addonName])) {
-                continue;
+        foreach (AddonManager::getComposerPackages() as $addonName => $package) {
+            if (!isset($classes[$addonName])) {
+                throw new RuntimeException(sprintf('Addon "%s" must declare its addon class via composer.json `extra.redaxo.addon-class`.', $addonName));
             }
 
-            if (isset($addons[$addonName])) {
-                $addon = $addons[$addonName];
-            } else {
-                $class = $addonConfig['class'] ?? null;
-                if (!is_string($class) || !is_subclass_of($class, self::class)) {
-                    // bootstrap fallback: config has no (valid) class — e.g. fresh setup, brand-new addon,
-                    // class rename after composer update without sync. Sync will refresh the config.
-                    $addonClasses ??= AddonManager::getAddonClasses();
-                    if (!isset($addonClasses[$addonName])) {
-                        throw new RuntimeException(sprintf('Addon "%s" must declare its addon class via composer.json `extra.redaxo.addon-class`.', $addonName));
-                    }
-                    $class = $addonClasses[$addonName];
-                }
-                $addon = new $class($composerPackages[$addonName], $addonName);
-            }
-            $addon->state = AddonState::from($addonConfig['state'] ?? AddonState::Uninstalled->value);
-            self::$addons[$addonName] = $addon;
+            $class = $classes[$addonName];
+            $addon = $addons[$addonName] ?? null;
+
+            self::$addons[$addonName] = $addon instanceof $class ? $addon : new $class($package, $addonName);
+        }
+
+        self::$bootOrder = $cache['order'] ?? self::generateBootOrder();
+
+        if (null === $cache) {
+            self::saveCache($classes, self::$bootOrder);
         }
     }
 
@@ -511,19 +473,136 @@ abstract class Addon
     }
 
     /**
-     * Filters addons by the given method.
+     * Generates the boot order: addons marked as early first, then the ones with normal load order sorted so
+     * that an addon boots after the addons it requires, then the ones marked as late.
      *
-     * @param array<non-empty-string, self> $addons Array of addons
-     * @param string $method A Addon method
-     * @return array<non-empty-string, Addon>
+     * @return list<non-empty-string>
      */
-    private static function filterPackages(array $addons, string $method): array
+    private static function generateBootOrder(): array
     {
-        return array_filter($addons, static function (Addon $addon) use ($method): bool {
-            $return = $addon->$method();
-            assert(is_bool($return));
+        /** @var list<non-empty-string> $early */
+        $early = [];
+        /** @var list<string> $normal */
+        $normal = [];
+        /** @var list<non-empty-string> $late */
+        $late = [];
+        /** @var array<non-empty-string, array<non-empty-string, true>> $requires */
+        $requires = [];
 
-            return $return;
-        });
+        $add = static function (string $id) use (&$add, &$normal, &$requires): void {
+            $normal[] = $id;
+            unset($requires[$id]);
+            foreach ($requires as $rp => &$ps) {
+                unset($ps[$id]);
+                if ([] === $ps) {
+                    $add($rp);
+                }
+            }
+        };
+
+        foreach (self::$addons as $id => $addon) {
+            if (LoadOrder::Early === $addon->load) {
+                $early[] = $id;
+            } elseif (LoadOrder::Late === $addon->load) {
+                $late[] = $id;
+            } else {
+                foreach (self::getRequiredAddons($addon) as $addonId) {
+                    if (!in_array($addonId, $normal) && !in_array(self::get($addonId)?->load, [LoadOrder::Early, LoadOrder::Late], true)) {
+                        $requires[$id][$addonId] = true;
+                    }
+                }
+                if (!isset($requires[$id])) {
+                    $add($id);
+                }
+            }
+        }
+
+        /** @var list<non-empty-string> */
+        return array_merge($early, $normal, array_keys($requires), $late);
+    }
+
+    /**
+     * Returns the names of the addons that the given addon requires via composer.json.
+     *
+     * @return list<non-empty-string>
+     */
+    private static function getRequiredAddons(self $addon): array
+    {
+        /** @var array<string, mixed> $require */
+        $require = Type::array($addon->getComposerJson()['require'] ?? []);
+        if (!$require) {
+            return [];
+        }
+
+        $addonsByPackage = array_flip(AddonManager::getComposerPackages());
+
+        $requiredAddons = [];
+        foreach (array_keys($require) as $packageName) {
+            if (isset($addonsByPackage[$packageName])) {
+                $requiredAddons[] = $addonsByPackage[$packageName];
+            }
+        }
+
+        return $requiredAddons;
+    }
+
+    /**
+     * Both the addon classes and the boot order derive from the composer installation, and building them means
+     * parsing composer's `installed.json` and the composer.json of every addon. So they are cached in a
+     * generated PHP file, which is rebuilt whenever composer wrote a new `installed.json`. Editing an addon's
+     * composer.json without running composer therefore requires a cache clear.
+     *
+     * @return array{classes: array<non-empty-string, class-string<self>>, order: list<non-empty-string>}|null
+     */
+    private static function loadCache(): ?array
+    {
+        $file = Path::coreCache('addons.php');
+        if (!is_file($file)) {
+            return null;
+        }
+
+        /** @var mixed $cache */
+        $cache = include $file;
+
+        if (!is_array($cache) || ($cache['key'] ?? null) !== self::getComposerStateKey()) {
+            return null;
+        }
+
+        /** @var array{classes: array<non-empty-string, class-string<self>>, order: list<non-empty-string>} */
+        return ['classes' => $cache['classes'], 'order' => $cache['order']];
+    }
+
+    /**
+     * @param array<non-empty-string, class-string<self>> $classes
+     * @param list<non-empty-string> $order
+     */
+    private static function saveCache(array $classes, array $order): void
+    {
+        $file = Path::coreCache('addons.php');
+
+        File::put($file, '<?php' . "\n\n" . 'return ' . var_export([
+            'key' => self::getComposerStateKey(),
+            'classes' => $classes,
+            'order' => $order,
+        ], true) . ';' . "\n");
+
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($file, true);
+        }
+    }
+
+    /** Identifies the current composer installation, so that the cache is rebuilt after every composer run. */
+    private static function getComposerStateKey(): string
+    {
+        $parts = [];
+
+        foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $_loader) {
+            $file = $vendorDir . '/composer/installed.json';
+            if (is_file($file)) {
+                $parts[] = $file . ':' . (int) filemtime($file) . ':' . (int) filesize($file);
+            }
+        }
+
+        return hash('xxh128', implode("\n", $parts));
     }
 }

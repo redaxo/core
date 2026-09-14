@@ -73,7 +73,7 @@ final class Importer
         }
 
         if ('' == $errMsg) {
-            self::prepareAddons();
+            $errMsg .= self::reinstallPackages();
             self::baselineMigrations();
         }
 
@@ -91,9 +91,8 @@ final class Importer
             $errMsg .= $e->getMessage();
         }
 
-        self::prepareAddons();
-
         if ('' == $errMsg) {
+            $errMsg .= self::reinstallPackages();
             self::baselineMigrations();
         }
 
@@ -165,26 +164,16 @@ final class Importer
         return $errMsg;
     }
 
-    private static function prepareAddons(): void
-    {
-        AddonManager::synchronizeWithFileSystem();
-
-        // force to save config at this point
-        // otherwise it would be saved in shutdown function and maybe would replace config changes made by db import in between
-        Config::save();
-    }
-
     private static function reinstallPackages(): string
     {
         $error = '';
         Addon::initialize();
-        AddonManager::synchronizeWithFileSystem();
 
         // enlist activated packages to ensure that all their classess are known in autoloader and can be referenced in other package's install.php
-        foreach (AddonManager::getAddonOrder() as $packageId) {
+        foreach (Addon::getBootOrder() as $packageId) {
             Addon::require($packageId)->enlist();
         }
-        foreach (AddonManager::getAddonOrder() as $packageId) {
+        foreach (Addon::getBootOrder() as $packageId) {
             $package = Addon::require($packageId);
             $manager = AddonManager::factory($package);
 

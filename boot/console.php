@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\Addon\Addon;
-use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Console\Application;
 use Redaxo\Core\Console\Command\ListCommand;
 use Redaxo\Core\Console\CommandLoader;
@@ -17,10 +16,10 @@ I18n::setLocale('en_gb');
 $application = new Application($project);
 Core::setProperty('console', $application);
 
-Addon::initialize(!Core::isSetup());
+Addon::initialize();
 
 if (!Core::isSetup()) {
-    foreach (AddonManager::getAddonOrder() as $packageId) {
+    foreach (Addon::getBootOrder() as $packageId) {
         Addon::require($packageId)->enlist();
     }
 

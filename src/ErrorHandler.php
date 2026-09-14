@@ -245,7 +245,7 @@ final class ErrorHandler
 
         $saveModeLink = '';
         if (!Core::isSetup() && Core::isBackend() && !Core::isSafeMode()) {
-            $saveModeLink = '<a class="rex-safemode" href="' . Url::backendPage('packages', ['safemode' => 1]) . '">activate safe mode</a>';
+            $saveModeLink = '<a class="rex-safemode" href="' . Url::backendController(['safemode' => 1]) . '">activate safe mode</a>';
         }
 
         try {

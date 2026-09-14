@@ -8,7 +8,6 @@ use Override;
 use ParseError;
 use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Addon\Addon;
-use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Console\Command\AbstractCommand;
 use Redaxo\Core\Console\Command\OnlySetupAddonsInterface;
 use Redaxo\Core\Console\Command\StandaloneInterface;
@@ -113,7 +112,7 @@ final class Application extends SymfonyApplication
         if (!Core::isSetup()) {
             // boot all known packages in the defined order
             // which reflects dependencies before consumers
-            foreach (AddonManager::getAddonOrder() as $packageId) {
+            foreach (Addon::getBootOrder() as $packageId) {
                 Addon::require($packageId)->boot();
             }
         }
