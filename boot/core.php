@@ -122,8 +122,10 @@ ComplexPermission::register('modules', ModulePermission::class);
 ComplexPermission::register('media', MediaPoolPermission::class);
 
 // ----- SET CURRENT LANGUAGE
-if (!Core::isSetup()) {
-    $languageId = Request::request('language', 'int', Language::getStartId());
+// Only when one is requested explicitly. Without a parameter the current language resolves lazily on first
+// access (see Language::getCurrentId()), so a run that never asks for one - the console, or a request against
+// a database whose language table is not in shape yet - does not read it at all.
+if (!Core::isSetup() && null !== ($languageId = Request::request('language', 'int', null))) {
     if (Core::isBackend() || Language::exists($languageId)) {
         Language::setCurrentId($languageId);
     }
