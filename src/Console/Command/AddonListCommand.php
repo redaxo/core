@@ -24,7 +24,7 @@ final class AddonListCommand extends AbstractCommand
         #[Option('output table as json')] bool $json = false,
     ): int {
         $rows = [];
-        foreach (Addon::getAddons() as $package) {
+        foreach (Addon::getAll() as $package) {
             if (null !== $addon && $addon !== $package->name) {
                 continue;
             }

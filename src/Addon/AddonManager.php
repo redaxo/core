@@ -41,7 +41,7 @@ class AddonManager
      * this instance (whose schema `install()` just created in the shape the current code describes) apart
      * from one that has been here before (whose pending migrations still have to run).
      */
-    private const string CONFIG_INSTALLED_PACKAGES = 'installed_packages';
+    private const string CONFIG_ADDONS_INSTALLED = 'addons_installed';
 
     protected string $message = '';
 
@@ -165,16 +165,16 @@ class AddonManager
      *
      * @return list<non-empty-string>
      */
-    private static function getInstalledPackages(): array
+    private static function getInstalledAddons(): array
     {
         /** @var list<non-empty-string> */
-        return Type::array(Core::getConfig(self::CONFIG_INSTALLED_PACKAGES, []));
+        return Type::array(Core::getConfig(self::CONFIG_ADDONS_INSTALLED, []));
     }
 
     /** Returns whether the addon's `install()` has already run on this instance. */
     private static function hasBeenInstalled(string $addon): bool
     {
-        return in_array($addon, self::getInstalledPackages(), true);
+        return in_array($addon, self::getInstalledAddons(), true);
     }
 
     /**
@@ -189,7 +189,7 @@ class AddonManager
     public static function getOrphans(): array
     {
         return array_values(array_filter(
-            self::getInstalledPackages(),
+            self::getInstalledAddons(),
             static fn (string $addon): bool => !Addon::exists($addon),
         ));
     }
@@ -197,23 +197,23 @@ class AddonManager
     /** @param non-empty-string $addon */
     private static function markInstalled(string $addon): void
     {
-        $packages = self::getInstalledPackages();
+        $addons = self::getInstalledAddons();
 
-        if (in_array($addon, $packages, true)) {
+        if (in_array($addon, $addons, true)) {
             return;
         }
 
-        $packages[] = $addon;
-        sort($packages);
+        $addons[] = $addon;
+        sort($addons);
 
-        Core::setConfig(self::CONFIG_INSTALLED_PACKAGES, $packages);
+        Core::setConfig(self::CONFIG_ADDONS_INSTALLED, $addons);
     }
 
     private static function forgetInstalled(string $addon): void
     {
-        Core::setConfig(self::CONFIG_INSTALLED_PACKAGES, array_values(array_filter(
-            self::getInstalledPackages(),
-            static fn (string $package): bool => $package !== $addon,
+        Core::setConfig(self::CONFIG_ADDONS_INSTALLED, array_values(array_filter(
+            self::getInstalledAddons(),
+            static fn (string $installed): bool => $installed !== $addon,
         )));
     }
 

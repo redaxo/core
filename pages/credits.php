@@ -73,7 +73,7 @@ $content .= '
 
         <tbody>';
 
-foreach (Addon::getAddons() as $package) {
+foreach (Addon::getAll() as $package) {
     $license = escape((string) $package->getLicense());
 
     $packageVersion = escape($package->getVersion());

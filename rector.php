@@ -381,10 +381,10 @@ return RectorConfig::configure()
         new MethodCallRename(View\View::class, 'clangSwitchAsButtons', 'languageSwitchAsButtons'),
         new MethodCallRename(View\View::class, 'clangSwitchAsDropdown', 'languageSwitchAsDropdown'),
 
-        new MethodCallRename(Addon\Addon::class, 'getRegisteredPackages', 'getAddons'),
-        new MethodCallRename(Addon\Addon::class, 'getInstalledPackages', 'getAddons'),
-        new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getAddons'),
-        new MethodCallRename(Addon\Addon::class, 'getAvailableAddons', 'getAddons'),
+        new MethodCallRename(Addon\Addon::class, 'getRegisteredPackages', 'getAll'),
+        new MethodCallRename(Addon\Addon::class, 'getInstalledPackages', 'getAll'),
+        new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getAll'),
+        new MethodCallRename(Addon\Addon::class, 'getAvailableAddons', 'getAll'),
         new MethodCallRename(Addon\Addon::class, 'getSetupPackages', 'getSetupAddons'),
 
         new MethodCallRename(ApiFunction\Result::class, 'toJSON', 'toJson'),

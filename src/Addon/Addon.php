@@ -393,7 +393,7 @@ abstract class Addon
      *
      * @return array<non-empty-string, self>
      */
-    final public static function getAddons(): array
+    final public static function getAll(): array
     {
         return self::$addons;
     }

@@ -18,7 +18,7 @@ final class AddonUninstallCommand extends AbstractCommand
     public function __invoke(
         SymfonyStyle $io,
         #[Argument('The name of the addon, e.g. "yform"', suggestedValues: static function (): array {
-            return array_keys(Addon::getAddons());
+            return array_keys(Addon::getAll());
         })] string $addon,
     ): int {
         $package = Addon::get($addon);
