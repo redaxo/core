@@ -336,6 +336,9 @@ async function main() {
             await createScreenshots(page, 'debug_clockwork.png');
             await page.unroute(debugApiPattern, abortDebugApi);
 
+            // the debug page is the bare clockwork ui, so get back to a page that has the backend chrome
+            await goToUrlOrThrow(page, START_URL + '?page=structure', { waitUntil: 'load' });
+
             // logout
             await page.click('#rex-js-nav-top .rex-logout');
             await page.waitForSelector('.rex-background--ready');
