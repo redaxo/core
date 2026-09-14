@@ -56,8 +56,7 @@ const allPages = {
     'users_roles.png': START_URL + '?page=users/roles',
     'users_role_add.png': START_URL + '?page=users/roles&func=add&default_value=1',
 
-    'packages.png': START_URL + '?page=packages',
-    'packages_help.png': START_URL + '?page=packages&subpage=help&package=test',
+    'markdown.png': START_URL + '?page=system/markdown',
 
     'system_settings.png': START_URL + '?page=system/settings',
     'system_lang.png': START_URL + '?page=system/lang',
@@ -336,14 +335,6 @@ async function main() {
             await goToUrlOrThrow(page, START_URL + '?page=debug', { waitUntil: 'load' });
             await createScreenshots(page, 'debug_clockwork.png');
             await page.unroute(debugApiPattern, abortDebugApi);
-
-            // reinstall addon
-            await goToUrlOrThrow(page, START_URL + '?page=packages', { waitUntil: 'load' });
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: 'networkidle0' }),
-                page.click('#package-test .rex-table-action > a:first-child') // install
-            ]);
-            await createScreenshots(page, 'packages_test_reinstalled.png');
 
             // logout
             await page.click('#rex-js-nav-top .rex-logout');

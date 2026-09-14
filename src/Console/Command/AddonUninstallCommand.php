@@ -18,13 +18,9 @@ final class AddonUninstallCommand extends AbstractCommand
     public function __invoke(
         SymfonyStyle $io,
         #[Argument('The name of the addon, e.g. "yform"', suggestedValues: static function (): array {
-            return array_keys(Addon::getInstalledAddons());
+            return array_keys(Addon::getAddons());
         })] string $addon,
     ): int {
-        // the package manager don't know new packages in the addon folder
-        // so we need to make them available
-        AddonManager::synchronizeWithFileSystem();
-
         $package = Addon::get($addon);
         if (!$package) {
             $io->error('Addon "' . $addon . '" doesn\'t exists!');

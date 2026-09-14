@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\Addon\Addon;
-use Redaxo\Core\Addon\AddonManager;
 use Redaxo\Core\Core;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -9,12 +8,12 @@ use Redaxo\Core\Util\Timer;
 
 $project = Core::getProject();
 
-Addon::initialize(!Core::isSetup());
+Addon::initialize();
 
 if (Core::isSetup() || Core::isSafeMode()) {
     $packageOrder = array_keys(Addon::getSetupAddons());
 } else {
-    $packageOrder = AddonManager::getAddonOrder();
+    $packageOrder = Addon::getBootOrder();
 }
 
 // in the first run, we register all folders for class- and fragment-loading,

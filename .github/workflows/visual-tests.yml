@@ -92,19 +92,13 @@ jobs:
                     php project/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
                     php project/bin/console config:set --type boolean debug.enabled true -v
                     php project/bin/console config:set --type boolean debug.throw_always_exception true -v
-                    php project/bin/console addon:install test -v
 
             -   name: Import mock data
                 run: |
                     echo "REX_INSTANCE_COLOR='#3bb594'" > project/.env.local
                     mkdir -p $GITHUB_WORKSPACE/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/project/var/data/core/backup/
                     cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/project/public/media/
-                    cp -f .tools/visual-tests/fixtures/README.md $GITHUB_WORKSPACE/addons/test/README.de.md
                     php project/bin/console setup:run -n --lang=de_de --db-password=root --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
-            -   name: Install packages
-                run: |
-                    php project/bin/console addon:install debug --ansi -v
-
             -   name: Start php server
                 run: |
                     cat <<EOF > project/public/router.php

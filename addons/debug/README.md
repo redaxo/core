@@ -19,11 +19,11 @@ A detailed description and information on optional browser extensions are availa
 
 ## Installation
 
-The addon is intended for development only. Add it as a dev dependency and install it via the REDAXO console:
+The addon is intended for development only. Add it as a dev dependency and let `migrate` set up its schema:
 
 ```bash
 composer require --dev redaxo/debug:^2.0@dev
-bin/console addon:install debug
+bin/console migrate
 ```
 
 ## Usage

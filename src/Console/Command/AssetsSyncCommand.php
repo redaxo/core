@@ -35,7 +35,7 @@ final class AssetsSyncCommand extends AbstractCommand
     {
         $created = $updated = $errored = 0;
 
-        foreach (Addon::getInstalledAddons() as $package) {
+        foreach (Addon::getAddons() as $package) {
             $assetsPublicPath = $package->getAssetsPath();
             $assetsSrcPath = $package->getPath('assets/');
 

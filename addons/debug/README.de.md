@@ -19,11 +19,11 @@ Eine ausführliche Beschreibung und die Informationen zu optionalen Browser-Erwe
 
 ## Installation
 
-Das Addon ist nur für die Entwicklung gedacht. Es wird als Dev-Dependency hinzugefügt und über die REDAXO-Console installiert:
+Das Addon ist nur für die Entwicklung gedacht. Es wird als Dev-Dependency hinzugefügt, `migrate` richtet anschließend sein Schema ein:
 
 ```bash
 composer require --dev redaxo/debug:^2.0@dev
-bin/console addon:install debug
+bin/console migrate
 ```
 
 ## Verwendung

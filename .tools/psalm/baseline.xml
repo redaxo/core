@@ -1196,12 +1196,7 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/Addon/AddonManager.php">
-    <MixedArrayOffset>
-      <code><![CDATA[$ps[$id]]]></code>
-      <code><![CDATA[$requires[$id]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
-      <code><![CDATA[$normal[]]]></code>
       <code><![CDATA[$value]]></code>
     </MixedAssignment>
   </file>

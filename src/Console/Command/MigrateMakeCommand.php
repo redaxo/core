@@ -78,7 +78,7 @@ final class MigrateMakeCommand extends AbstractCommand implements StandaloneInte
     /** @return list<non-empty-string> */
     public static function getPackages(): array
     {
-        return [Migrator::PROJECT, Migrator::CORE, ...array_keys(Addon::getInstalledAddons())];
+        return [Migrator::PROJECT, Migrator::CORE, ...array_keys(Addon::getAddons())];
     }
 
     private static function getStub(): string
