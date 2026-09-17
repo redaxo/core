@@ -17,6 +17,7 @@ use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
 use Redaxo\Core\Security\User;
+use Redaxo\Core\Security\UserRole;
 use Redaxo\Core\Security\UserSession;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
@@ -70,7 +71,7 @@ foreach ($sqlRole as $role) {
     $roles[$role->getValue('id')] = $role->getValue('name');
     $selRole->addOption($role->getValue('name'), $role->getValue('id'));
 }
-$userrole = Request::request('userrole', 'array');
+$userrole = array_values(Request::request('userrole', 'array[int]'));
 
 // backend sprache
 $selBeSprache = new Select();
@@ -156,7 +157,6 @@ if ($warnings) {
     $updateuser->setTable('rex_user');
     $updateuser->setWhere(['id' => $userId]);
     $updateuser->setValue('name', $username);
-    $updateuser->setValue('role', implode(',', $userrole));
     $updateuser->setValue('admin', $currentUser->admin && 1 == $useradmin ? 1 : 0);
     $updateuser->setValue('language', $userpermBeSprache);
     $updateuser->setValue('startpage', $userpermStartpage);
@@ -183,6 +183,8 @@ if ($warnings) {
     $updateuser->setValue('password_change_required', (int) $passwordChangeRequired);
 
     $updateuser->update();
+
+    UserRole::setForUser($userId, $userrole);
 
     $info[] = I18n::msg('user_data_updated');
 
@@ -244,7 +246,6 @@ if ($warnings) {
         $adduser->setValue('admin', $currentUser->admin && 1 == $useradmin ? 1 : 0);
         $adduser->setValue('language', $userpermBeSprache);
         $adduser->setValue('startpage', $userpermStartpage);
-        $adduser->setValue('role', implode(',', $userrole));
         $adduser->addGlobalCreateFields();
         $adduser->addGlobalUpdateFields();
         $adduser->setDateTimeValue('password_changed', time());
@@ -257,6 +258,9 @@ if ($warnings) {
         }
 
         $adduser->insert();
+
+        UserRole::setForUser($adduser->getLastId(), $userrole);
+
         $userId = 0;
         $fUNCADD = '';
         $info[] = I18n::msg('user_added');
@@ -362,12 +366,7 @@ if ('' != $fUNCADD || $user) {
                 $passwordChangeRequired = (bool) $sql->getValue('password_change_required');
                 $useradmin = $sql->getValue('admin');
                 $userstatus = $sql->getValue('rex_user.status');
-                $userrole = $sql->getValue('rex_user.role');
-                if ('' == $userrole) {
-                    $userrole = [];
-                } else {
-                    $userrole = explode(',', $userrole);
-                }
+                $userrole = UserRole::getIdsForUser($userId);
                 $userpermBeSprache = $sql->getValue('language');
                 $userpermStartpage = $sql->getValue('startpage');
                 $username = $sql->getValue('rex_user.name');
@@ -606,7 +605,12 @@ if ($SHOW) {
             IF(name <> "", name, login) as name,
             login,
             `admin`,
-            IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "' . $separator . '") FROM rex_user_role r WHERE FIND_IN_SET(r.id, u.role)), "' . $noRole . '")) as role,
+            IF(`admin`, "Admin", IFNULL((
+                SELECT GROUP_CONCAT(r.name ORDER BY r.name SEPARATOR "' . $separator . '")
+                FROM rex_user_role_assignment a
+                JOIN rex_user_role r ON r.id = a.role_id
+                WHERE a.user_id = u.id
+            ), "' . $noRole . '")) as role,
             status,
             lastlogin
         FROM rex_user u

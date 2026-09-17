@@ -169,7 +169,7 @@ $tableSelect->setName('EXPTABLES[]');
 $tableSelect->setAttribute('class', 'form-control');
 foreach ($tables as $table) {
     $tableSelect->addOption($table, $table);
-    if (in_array($table, ['rex_user', 'rex_user_passkey', 'rex_user_session'], true)) {
+    if (in_array($table, ['rex_user', 'rex_user_passkey', 'rex_user_role_assignment', 'rex_user_session'], true)) {
         continue;
     }
     // skip non rex_ tables

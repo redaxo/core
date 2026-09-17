@@ -267,7 +267,6 @@ Table::get('rex_user')
     ->ensureColumn(Column::bool('admin', default: false))
     ->ensureColumn(Column::varchar('language', 255, nullable: true))
     ->ensureColumn(Column::varchar('startpage', 255, nullable: true))
-    ->ensureColumn(Column::text('role', nullable: true))
     ->ensureColumn(Column::varchar('theme', 255, nullable: true))
     ->ensureColumn(Column::smallint('login_tries', unsigned: true, default: 0))
     ->ensureGlobalColumns()
@@ -295,6 +294,12 @@ Table::get('rex_user_role')
     ->ensureColumn(Column::text('description', nullable: true))
     ->ensureColumn(Column::text('perms'))
     ->ensureGlobalColumns()
+    ->ensure();
+
+Table::get('rex_user_role_assignment')
+    ->ensureForeignIdColumn('user_id', 'rex_user', onDelete: ForeignKey::CASCADE)
+    ->ensureForeignIdColumn('role_id', 'rex_user_role', onDelete: ForeignKey::CASCADE)
+    ->setPrimaryKey(['user_id', 'role_id'])
     ->ensure();
 
 Table::get('rex_user_session')

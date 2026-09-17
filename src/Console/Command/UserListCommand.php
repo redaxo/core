@@ -32,10 +32,15 @@ final class UserListCommand extends AbstractCommand
                 IF(name <> "", name, login) as name,
                 `login`,
                 `email`,
-                IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR ", ") FROM rex_user_role r WHERE FIND_IN_SET(r.id, role)), "")) as role,
+                IF(`admin`, "Admin", IFNULL((
+                    SELECT GROUP_CONCAT(r.name ORDER BY r.name SEPARATOR ", ")
+                    FROM rex_user_role_assignment a
+                    JOIN rex_user_role r ON r.id = a.role_id
+                    WHERE a.user_id = u.id
+                ), "")) as role,
                 `createdate`,
                 `lastlogin`
-            FROM rex_user
+            FROM rex_user u
         ';
         if ($user) {
             $sql->setQuery($query . ' WHERE login = :login', [
