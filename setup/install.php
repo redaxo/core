@@ -24,7 +24,6 @@ if (!$sql->setQuery('SELECT 1 FROM rex_language LIMIT 1')->getRows()) {
 }
 
 Table::get('rex_config')
-    ->removeColumn('id')
     ->ensureColumn(Column::varchar('namespace', 75))
     ->ensureColumn(Column::varchar('key', 255))
     ->ensureColumn(Column::text('value'))
@@ -276,8 +275,6 @@ Table::get('rex_user')
     ->ensureColumn(Column::datetime('lasttrydate', nullable: true))
     ->ensureColumn(Column::datetime('lastlogin', nullable: true))
     ->ensureIndex(new Index('login', ['login'], Index::UNIQUE))
-    ->removeColumn('cookiekey')
-    ->removeColumn('session_id')
     ->ensure();
 
 Table::get('rex_user_passkey')
