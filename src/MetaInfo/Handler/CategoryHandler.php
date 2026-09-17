@@ -9,6 +9,7 @@ use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Language\Language;
 use Redaxo\Core\MetaInfo\MetaContext;
 use Redaxo\Core\MetaInfo\MetaEntity;
 
@@ -52,13 +53,15 @@ final class CategoryHandler extends AbstractHandler
 
         /** @var object|null $subject */
         $subject = $params['category'] ?? null;
+        // The language being edited; a freshly added category has none, its values apply to all languages.
+        $languageId = isset($params['language']) ? (int) $params['language'] : null;
         // The surrounding category (the edited category, or the parent when adding); null = root.
-        $category = isset($params['id']) ? Category::get((int) $params['id'], (int) $params['language']) : null;
+        $category = isset($params['id']) ? Category::get((int) $params['id'], $languageId) : null;
 
         $context = new MetaContext(MetaEntity::Category, $subject, $category);
 
         if ($save && 'post' == Request::requestMethod() && isset($params['id'])) {
-            $this->save((int) $params['id'], (int) $params['language'], $context);
+            $this->save((int) $params['id'], null === $languageId ? Language::getAllIds() : [$languageId], $context);
         }
 
         // On CAT_ADDED and CAT_UPDATED only save, render no form.
@@ -77,19 +80,27 @@ final class CategoryHandler extends AbstractHandler
             </tr>';
     }
 
-    private function save(int $id, int $languageId, MetaContext $context): void
+    /** @param list<int> $languageIds */
+    private function save(int $id, array $languageIds, MetaContext $context): void
     {
-        $sql = Sql::factory();
-        $sql->setTable('rex_article');
-        $sql->setWhere('id=:id AND language_id=:language', ['id' => $id, 'language' => $languageId]);
-
-        $this->saveRequestValues($sql, $context);
-
-        if ($sql->hasValues()) {
-            $sql->update();
+        foreach ($languageIds as $languageId) {
+            $translation = Sql::factory();
+            $translation->setTable('rex_article_translation');
+            $translation->setWhere(['article_id' => $id, 'language_id' => $languageId]);
+            $this->saveRequestValues($translation, $context, translatable: true);
+            if ($translation->hasValues()) {
+                $translation->update();
+            }
         }
 
+        $shared = Sql::factory();
+        $shared->setTable('rex_article');
+        $shared->setWhere(['id' => $id]);
+        $this->saveRequestValues($shared, $context, translatable: false);
+        $shared->addGlobalUpdateFields();
+        $shared->update();
+
         // Regenerate the article with the additional values.
-        ArticleCache::generateMeta($id, $languageId);
+        ArticleCache::generateMeta($id);
     }
 }

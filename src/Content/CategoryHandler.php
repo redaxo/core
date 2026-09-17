@@ -26,7 +26,8 @@ final class CategoryHandler
      * Creates a new category.
      *
      * @param int|null $categoryId Id of the parent category, `null` for the root level
-     * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Category data
+     * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Category data, the names
+     *     are used for all languages
      *
      * @throws ApiFunctionException
      *
@@ -65,12 +66,11 @@ final class CategoryHandler
         if (null !== $categoryId) {
             // TemplateId vom Startartikel der jeweiligen Sprache vererben
             $sql = Sql::factory();
-            // $sql->setDebug();
-            $sql->setQuery('select language_id,template from rex_article where id=? and startarticle=1', [$categoryId]);
-            for ($i = 0; $i < $sql->getRows(); $i++, $sql->next()) {
-                $template = (string) $sql->getValue('template');
+            $sql->setQuery('SELECT language_id, template FROM rex_article_translation WHERE article_id = ?', [$categoryId]);
+            foreach ($sql as $row) {
+                $template = (string) $row->getValue('template');
                 if ('' !== $template) {
-                    $startpageTemplates[(int) $sql->getValue('language_id')] = $template;
+                    $startpageTemplates[(int) $row->getValue('language_id')] = $template;
                 }
             }
         }
@@ -80,118 +80,108 @@ final class CategoryHandler
 
         $user = self::getUser();
 
-        // Kategorie in allen Sprachen anlegen
         $AART = Sql::factory();
-        foreach (Language::getAllIds() as $key) {
+        $AART->setTable('rex_article');
+        $AART->setValue('parent_id', $categoryId);
+        $AART->setValue('catpriority', $data['catpriority']);
+        $AART->setValue('priority', 1);
+        $AART->setValue('path', $path);
+        $AART->setValue('startarticle', 1);
+        $AART->addGlobalUpdateFields($user);
+        $AART->addGlobalCreateFields($user);
+        $AART->insert();
+        $id = $AART->getLastId();
+
+        foreach (Language::getAllIds() as $languageId) {
             // Inherit the template from the start article of the respective language, otherwise use the default
-            $templateKey = $startpageTemplates[$key] ?? Template::getDefaultKey();
+            $templateKey = $startpageTemplates[$languageId] ?? Template::getDefaultKey();
 
             // Fall back to the first allowed template if the chosen one is not available in this category
             if (null === $templateKey || !isset($templates[$templateKey])) {
                 $templateKey = array_key_first($templates);
             }
 
-            $AART->setTable('rex_article');
-            if (!isset($id)) {
-                $id = $AART->setNewId('id');
-            } else {
-                $AART->setValue('id', $id);
-            }
-
-            $AART->setValue('language_id', $key);
-            $AART->setValue('template', $templateKey);
-            $AART->setValue('name', $data['name']);
-            $AART->setValue('catname', $data['catname']);
-            $AART->setValue('catpriority', $data['catpriority']);
-            $AART->setValue('parent_id', $categoryId);
-            $AART->setValue('priority', 1);
-            $AART->setValue('path', $path);
-            $AART->setValue('startarticle', 1);
-            $AART->setValue('status', $data['status']);
-            $AART->addGlobalUpdateFields($user);
-            $AART->addGlobalCreateFields($user);
-
-            $AART->insert();
-
-            // ----- PRIOR
-            if (isset($data['catpriority'])) {
-                self::newCatPrio($categoryId, $key, 0, $data['catpriority']);
-            }
-
-            $message = I18n::msg('category_added_and_startarticle_created');
-
-            ArticleCache::delete($id, $key);
-
-            // ----- EXTENSION POINT
-            // Objekte clonen, damit diese nicht von der extension veraendert werden koennen
-            $message = Extension::dispatch(new ExtensionPoint('CAT_ADDED', $message, [
-                'category' => clone $AART,
-                'id' => $id,
-                'parent_id' => $categoryId,
-                'language' => $key,
-                'name' => $data['catname'],
-                'priority' => $data['catpriority'],
-                'path' => $path,
-                'status' => $data['status'],
-                'article' => clone $AART,
-                'data' => $data,
-            ]));
+            $translation = Sql::factory();
+            $translation->setTable('rex_article_translation');
+            $translation->setValue('article_id', $id);
+            $translation->setValue('language_id', $languageId);
+            $translation->setValue('template', $templateKey);
+            $translation->setValue('name', $data['name']);
+            $translation->setValue('catname', $data['catname']);
+            $translation->setValue('status', $data['status']);
+            $translation->insert();
         }
+
+        // ----- PRIOR
+        self::newCatPrio($categoryId, 0, $data['catpriority']);
+
+        ArticleCache::delete($id);
+
+        // ----- EXTENSION POINT
+        $category = self::select($id, Language::getStartId());
+        $message = Extension::dispatch(new ExtensionPoint('CAT_ADDED', I18n::msg('category_added_and_startarticle_created'), [
+            'category' => $category,
+            'id' => $id,
+            'parent_id' => $categoryId,
+            'name' => $data['catname'],
+            'priority' => $data['catpriority'],
+            'path' => $path,
+            'status' => $data['status'],
+            'article' => $category,
+            'data' => $data,
+        ]));
 
         return $message;
     }
 
     /**
-     * Bearbeitet einer Kategorie.
+     * Edits a category: the name in the given language, the priority for all languages.
      *
-     * @param array{catname?: string, catpriority?: int} $data Array mit den Daten der Kategorie
+     * @param array{catname?: string, catpriority?: int} $data Category data
      *
      * @throws ApiFunctionException
      *
-     * @return string Eine Statusmeldung
+     * @return string A status message
      */
     public static function editCategory(int $categoryId, int $languageId, array $data): string
     {
         // --- Kategorie mit alten Daten selektieren
-        $thisCat = Sql::factory();
-        $thisCat->setQuery('SELECT * FROM rex_article WHERE startarticle=1 and id=? and language_id=?', [$categoryId, $languageId]);
-
-        // --- Kategorie selbst updaten
-        $EKAT = Sql::factory();
-        $EKAT->setTable('rex_article');
-        $EKAT->setWhere(['id' => $categoryId, 'startarticle' => 1, 'language_id' => $languageId]);
-
-        if (isset($data['catname'])) {
-            $EKAT->setValue('catname', $data['catname']);
-        }
-        if (isset($data['catpriority'])) {
-            $EKAT->setValue('catpriority', $data['catpriority']);
-        }
+        $thisCat = self::select($categoryId, $languageId);
 
         $user = self::getUser();
 
-        $EKAT->addGlobalUpdateFields($user);
+        // --- Kategorie selbst updaten
+        $EKAT = Sql::factory();
+        $EKAT->setTable('rex_article_translation');
+        $EKAT->setWhere(['article_id' => $categoryId, 'language_id' => $languageId]);
 
-        $EKAT->update();
-
-        // --- Kategorie Kindelemente updaten
         if (isset($data['catname'])) {
-            $ArtSql = Sql::factory();
-            $ArtSql->setQuery('SELECT id FROM rex_article WHERE parent_id=? AND startarticle=0 AND language_id=?', [$categoryId, $languageId]);
+            $EKAT->setValue('catname', $data['catname']);
+            $EKAT->update();
 
-            $EART = Sql::factory();
-            for ($i = 0; $i < $ArtSql->getRows(); ++$i) {
-                $EART->setTable('rex_article');
-                $EART->setWhere(['id' => (int) $ArtSql->getValue('id'), 'startarticle' => '0', 'language_id' => $languageId]);
-                $EART->setValue('catname', $data['catname']);
-                $EART->addGlobalUpdateFields($user);
+            // --- Kategorie Kindelemente updaten
+            $children = Sql::factory();
+            $children->setQuery('
+                UPDATE rex_article_translation t
+                JOIN rex_article a ON a.id = t.article_id
+                SET t.catname = ?
+                WHERE a.parent_id = ? AND a.startarticle = 0 AND t.language_id = ?
+            ', [$data['catname'], $categoryId, $languageId]);
 
-                $EART->update();
-                ArticleCache::delete((int) $ArtSql->getValue('id'), $languageId);
-
-                $ArtSql->next();
+            $children->setQuery('SELECT id FROM rex_article WHERE parent_id = ? AND startarticle = 0', [$categoryId]);
+            foreach ($children as $child) {
+                ArticleCache::delete((int) $child->getValue('id'), $languageId);
             }
         }
+
+        $shared = Sql::factory();
+        $shared->setTable('rex_article');
+        $shared->setWhere(['id' => $categoryId]);
+        if (isset($data['catpriority'])) {
+            $shared->setValue('catpriority', $data['catpriority']);
+        }
+        $shared->addGlobalUpdateFields($user);
+        $shared->update();
 
         // ----- PRIOR
         if (isset($data['catpriority'])) {
@@ -203,16 +193,7 @@ final class CategoryHandler
             }
 
             if ($oldPrio != $data['catpriority']) {
-                Sql::factory()
-                    ->setTable('rex_article')
-                    ->setWhere('id = :id AND language_id != :language', ['id' => $categoryId, 'language' => $languageId])
-                    ->setValue('catpriority', $data['catpriority'])
-                    ->addGlobalUpdateFields($user)
-                    ->update();
-
-                foreach (Language::getAllIds() as $languageId) {
-                    self::newCatPrio($parentId, $languageId, $data['catpriority'], $oldPrio);
-                }
+                self::newCatPrio($parentId, $data['catpriority'], $oldPrio);
             }
         }
 
@@ -225,9 +206,9 @@ final class CategoryHandler
         $message = Extension::dispatch(new ExtensionPoint('CAT_UPDATED', $message, [
             'id' => $categoryId,
 
-            'category' => clone $EKAT,
+            'category' => self::select($categoryId, $languageId),
             'category_old' => clone $thisCat,
-            'article' => clone $EKAT,
+            'article' => self::select($categoryId, $languageId),
 
             'parent_id' => $thisCat->getValue('parent_id'),
             'language' => $languageId,
@@ -251,54 +232,42 @@ final class CategoryHandler
      */
     public static function deleteCategory(int $categoryId): string
     {
-        $languageId = Language::getStartId();
-
         $thisCat = Sql::factory();
-        $thisCat->setQuery('SELECT * FROM rex_article WHERE id=? and language_id=?', [$categoryId, $languageId]);
+        $thisCat->setQuery('SELECT * FROM rex_article WHERE id = ? AND startarticle = 1', [$categoryId]);
 
         // Prüfen ob die Kategorie existiert
-        if (1 == $thisCat->getRows()) {
-            $KAT = Sql::factory();
-            $KAT->setQuery('select * from rex_article where parent_id=? and language_id=? and startarticle=1', [$categoryId, $languageId]);
-            // Prüfen ob die Kategorie noch Unterkategorien besitzt
-            if (0 == $KAT->getRows()) {
-                $KAT->setQuery('select * from rex_article where parent_id=? and language_id=? and startarticle=0', [$categoryId, $languageId]);
-                // Prüfen ob die Kategorie noch Artikel besitzt (ausser dem Startartikel)
-                if (0 == $KAT->getRows()) {
-                    $thisCat = Sql::factory();
-                    $thisCat->setQuery('SELECT * FROM rex_article WHERE id=?', [$categoryId]);
-
-                    $parentId = $thisCat->getNullableIntValue('parent_id');
-                    $message = ArticleHandler::_deleteArticle($categoryId);
-
-                    foreach ($thisCat as $row) {
-                        $languageId = (int) $row->getValue('language_id');
-
-                        // ----- PRIOR
-                        self::newCatPrio($parentId, $languageId, 0, 1);
-
-                        // ----- EXTENSION POINT
-                        $message = Extension::dispatch(new ExtensionPoint('CAT_DELETED', $message, [
-                            'id' => $categoryId,
-                            'parent_id' => $parentId,
-                            'language' => $languageId,
-                            'name' => $row->getValue('catname'),
-                            'priority' => $row->getValue('catpriority'),
-                            'path' => $row->getValue('path'),
-                            'status' => $row->getValue('status'),
-                        ]));
-                    }
-
-                    ComplexPermission::removeItem('structure', $categoryId);
-                } else {
-                    throw new ApiFunctionException(I18n::msg('category_could_not_be_deleted') . ' ' . I18n::msg('category_still_contains_articles'));
-                }
-            } else {
-                throw new ApiFunctionException(I18n::msg('category_could_not_be_deleted') . ' ' . I18n::msg('category_still_contains_subcategories'));
-            }
-        } else {
+        if (1 != $thisCat->getRows()) {
             throw new ApiFunctionException(I18n::msg('category_could_not_be_deleted'));
         }
+
+        $KAT = Sql::factory();
+        $KAT->setQuery('SELECT id FROM rex_article WHERE parent_id = ? AND startarticle = 1 LIMIT 1', [$categoryId]);
+        // Prüfen ob die Kategorie noch Unterkategorien besitzt
+        if (0 != $KAT->getRows()) {
+            throw new ApiFunctionException(I18n::msg('category_could_not_be_deleted') . ' ' . I18n::msg('category_still_contains_subcategories'));
+        }
+
+        $KAT->setQuery('SELECT id FROM rex_article WHERE parent_id = ? AND startarticle = 0 LIMIT 1', [$categoryId]);
+        // Prüfen ob die Kategorie noch Artikel besitzt (ausser dem Startartikel)
+        if (0 != $KAT->getRows()) {
+            throw new ApiFunctionException(I18n::msg('category_could_not_be_deleted') . ' ' . I18n::msg('category_still_contains_articles'));
+        }
+
+        $parentId = $thisCat->getNullableIntValue('parent_id');
+        $message = ArticleHandler::_deleteArticle($categoryId);
+
+        // ----- PRIOR
+        self::newCatPrio($parentId, 0, 1);
+
+        // ----- EXTENSION POINT
+        $message = Extension::dispatch(new ExtensionPoint('CAT_DELETED', $message, [
+            'id' => $categoryId,
+            'parent_id' => $parentId,
+            'priority' => $thisCat->getValue('catpriority'),
+            'path' => $thisCat->getValue('path'),
+        ]));
+
+        ComplexPermission::removeItem('structure', $categoryId);
 
         return $message;
     }
@@ -314,8 +283,7 @@ final class CategoryHandler
      */
     public static function categoryStatus(int $categoryId, int $languageId, ?int $status = null): int
     {
-        $KAT = Sql::factory();
-        $KAT->setQuery('select * from rex_article where id=? and language_id=? and startarticle=1', [$categoryId, $languageId]);
+        $KAT = self::select($categoryId, $languageId);
         if (1 == $KAT->getRows()) {
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
@@ -325,13 +293,17 @@ final class CategoryHandler
                 $newstatus = $status;
             }
 
-            $EKAT = Sql::factory();
-            $EKAT->setTable('rex_article');
-            $EKAT->setWhere(['id' => $categoryId,  'language_id' => $languageId, 'startarticle' => 1]);
-            $EKAT->setValue('status', $newstatus);
-            $EKAT->addGlobalUpdateFields(self::getUser());
+            Sql::factory()
+                ->setTable('rex_article_translation')
+                ->setWhere(['article_id' => $categoryId, 'language_id' => $languageId])
+                ->setValue('status', $newstatus)
+                ->update();
 
-            $EKAT->update();
+            Sql::factory()
+                ->setTable('rex_article')
+                ->setWhere(['id' => $categoryId])
+                ->addGlobalUpdateFields(self::getUser())
+                ->update();
 
             ArticleCache::delete($categoryId, $languageId);
 
@@ -403,7 +375,7 @@ final class CategoryHandler
      *
      * @param int|null $parentId `null` for the root level
      */
-    public static function newCatPrio(?int $parentId, int $languageId, int $newPrio, int $oldPrio): void
+    public static function newCatPrio(?int $parentId, int $newPrio, int $oldPrio): void
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -415,7 +387,7 @@ final class CategoryHandler
             Util::organizePriorities(
                 'rex_article',
                 'catpriority',
-                'language_id=' . $languageId . ' AND parent_id ' . (null === $parentId ? 'IS NULL' : '=' . $parentId) . ' AND startarticle=1',
+                'parent_id ' . (null === $parentId ? 'IS NULL' : '=' . $parentId) . ' AND startarticle=1',
                 'catpriority,updatedate ' . $addsql,
             );
 
@@ -424,7 +396,7 @@ final class CategoryHandler
                 ArticleCache::deleteMeta($parentId);
             }
 
-            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=1 AND parent_id <=> ? GROUP BY id', [$parentId]);
+            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=1 AND parent_id <=> ?', [$parentId]);
             foreach ($ids as $id) {
                 ArticleCache::deleteMeta((int) $id['id']);
             }
@@ -446,10 +418,10 @@ final class CategoryHandler
         // kategorien vorhanden ?
         // ist die zielkategorie im pfad der quellkategeorie ?
         $fcat = Sql::factory();
-        $fcat->setQuery('select * from rex_article where startarticle=1 and id=? and language_id=?', [$fromCat, Language::getStartId()]);
+        $fcat->setQuery('SELECT * FROM rex_article WHERE startarticle = 1 AND id = ?', [$fromCat]);
 
         $tcat = Sql::factory();
-        $tcat->setQuery('select * from rex_article where startarticle=1 and id=? and language_id=?', [$toCat, Language::getStartId()]);
+        $tcat->setQuery('SELECT * FROM rex_article WHERE startarticle = 1 AND id = ?', [$toCat]);
 
         if (1 != $fcat->getRows() || (1 != $tcat->getRows() && null !== $toCat)) {
             // eine der kategorien existiert nicht
@@ -482,15 +454,13 @@ final class CategoryHandler
         $fromPath = $fcat->getValue('path') . $fromCat . '|';
 
         $gcats = Sql::factory();
-        // $gcats->setDebug();
-        $gcats->setQuery('select * from rex_article where path like ? and language_id=?', [$fromPath . '%', Language::getStartId()]);
+        $gcats->setQuery('SELECT id, path FROM rex_article WHERE path LIKE ?', [$fromPath . '%']);
 
         $up = Sql::factory();
-        // $up->setDebug();
-        for ($i = 0; $i < $gcats->getRows(); ++$i) {
+        foreach ($gcats as $gcat) {
             // make update
-            $newPath = $toPath . $fromCat . '|' . str_replace($fromPath, '', (string) $gcats->getValue('path'));
-            $icid = (int) $gcats->getValue('id');
+            $newPath = $toPath . $fromCat . '|' . str_replace($fromPath, '', (string) $gcat->getValue('path'));
+            $icid = (int) $gcat->getValue('id');
 
             // path aendern und speichern
             $up->setTable('rex_article');
@@ -500,40 +470,43 @@ final class CategoryHandler
 
             // cat in gen eintragen
             $RC[$icid] = 1;
-
-            $gcats->next();
         }
 
         $gmax = Sql::factory();
+        $gmax->setQuery('SELECT MAX(catpriority) AS catpriority FROM rex_article WHERE parent_id <=> ?', [$toCat]);
+        $catpriority = (int) $gmax->getValue('catpriority');
+
         $up = Sql::factory();
-        // $up->setDebug();
-        foreach (Language::getAllIds() as $languageId) {
-            $gmax->setQuery('select max(catpriority) from rex_article where parent_id<=>? and language_id=?', [$toCat, $languageId]);
-            $catpriority = (int) $gmax->getValue('max(catpriority)');
-            $up->setTable('rex_article');
-            $up->setWhere(['id' => $fromCat, 'language_id' => $languageId]);
-            $up->setValue('path', $toPath);
-            $up->setValue('parent_id', $toCat);
-            $up->setValue('catpriority', $catpriority + 1);
-            $up->update();
-        }
+        $up->setTable('rex_article');
+        $up->setWhere(['id' => $fromCat]);
+        $up->setValue('path', $toPath);
+        $up->setValue('parent_id', $toCat);
+        $up->setValue('catpriority', $catpriority + 1);
+        $up->addGlobalUpdateFields(self::getUser());
+        $up->update();
 
         // ----- generiere artikel neu - ohne neue inhaltsgenerierung
         foreach ($RC as $id => $key) {
             ArticleCache::delete($id);
         }
 
-        foreach (Language::getAllIds() as $languageId) {
-            self::newCatPrio($fromParentId, $languageId, 0, 1);
+        self::newCatPrio($fromParentId, 0, 1);
 
-            Extension::dispatch(new ExtensionPoint('CAT_MOVED', null, [
-                'id' => $fromCat,
-                'language' => $languageId,
-                'category_id' => $toCat,
-            ]));
-        }
+        Extension::dispatch(new ExtensionPoint('CAT_MOVED', null, [
+            'id' => $fromCat,
+            'category_id' => $toCat,
+        ]));
 
         return true;
+    }
+
+    /** Selects the category (the start article) together with its translation in the given language. */
+    private static function select(int $id, int $languageId): Sql
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ? WHERE a.id = ? AND a.startarticle = 1', [$languageId, $id]);
+
+        return $sql;
     }
 
     /**

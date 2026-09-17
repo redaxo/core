@@ -21,10 +21,7 @@ final class Category extends StructureElement
     private function __construct(array $data)
     {
         // strip irrelevant + Article-only fields up front
-        unset(
-            $data['pid'],
-            $data['name'], $data['priority'], $data['template'], $data['startarticle'],
-        );
+        unset($data['name'], $data['priority'], $data['template'], $data['startarticle']);
         foreach (array_keys($data) as $key) {
             if (str_starts_with((string) $key, 'art_')) {
                 unset($data[$key]);

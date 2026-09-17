@@ -8,8 +8,6 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
 use Redaxo\Core\Translation\I18n;
 
-use function array_filter;
-use function array_values;
 use function implode;
 
 /** @internal */
@@ -29,12 +27,11 @@ final class ArticleStatusType extends AbstractType
             'after' => 0,
         ];
 
-        $table = Table::get('rex_article');
-        $missing = array_values(array_filter(
-            [$from['field'], $to['field']],
-            static fn (string $field): bool => !$table->hasColumn($field),
-        ));
-        if ([] !== $missing) {
+        // the date fields may be shared or translatable, so they live in either of the two tables
+        $fromTable = self::tableOfColumn($from['field']);
+        $toTable = self::tableOfColumn($to['field']);
+        if (null === $fromTable || null === $toTable) {
+            $missing = array_keys(array_filter([$from['field'] => $fromTable, $to['field'] => $toTable], is_null(...)));
             $this->message = 'Metainfo field(s) `' . implode('`, `', $missing) . '` not found. Please define them in your meta schema.';
             return false;
         }
@@ -43,18 +40,19 @@ final class ArticleStatusType extends AbstractType
         $time = time();
         $sql->setQuery(
             '
-            SELECT  id, language_id, status
-            FROM    rex_article
+            SELECT  a.id, t.language_id, t.status
+            FROM    rex_article a
+            JOIN    rex_article_translation t ON t.article_id = a.id
             WHERE
                 (     ' . $sql->escapeIdentifier($from['field']) . ' > 0
                 AND   ' . $sql->escapeIdentifier($from['field']) . ' < :time
-                AND   status IN (' . $sql->in([$from['before']]) . ')
+                AND   t.status IN (' . $sql->in([$from['before']]) . ')
                 AND   (' . $sql->escapeIdentifier($to['field']) . ' > :time OR ' . $sql->escapeIdentifier($to['field']) . ' = 0 OR ' . $sql->escapeIdentifier($to['field']) . ' = "")
                 )
             OR
                 (     ' . $sql->escapeIdentifier($to['field']) . ' > 0
                 AND   ' . $sql->escapeIdentifier($to['field']) . ' < :time
-                AND   status IN (' . $sql->in([$to['before']]) . ')
+                AND   t.status IN (' . $sql->in([$to['before']]) . ')
                 )',
             ['time' => $time],
         );
@@ -75,7 +73,7 @@ final class ArticleStatusType extends AbstractType
         if ($this->getParam('reset_date')) {
             $sql->setQuery(
                 '
-                UPDATE rex_article
+                UPDATE ' . $fromTable . '
                 SET ' . $sql->escapeIdentifier($from['field']) . ' = ""
                 WHERE     ' . $sql->escapeIdentifier($from['field']) . ' > 0
                     AND   ' . $sql->escapeIdentifier($from['field']) . ' < :time',
@@ -83,7 +81,7 @@ final class ArticleStatusType extends AbstractType
             );
             $sql->setQuery(
                 '
-                UPDATE rex_article
+                UPDATE ' . $toTable . '
                 SET ' . $sql->escapeIdentifier($to['field']) . ' = ""
                 WHERE ' . $sql->escapeIdentifier($to['field']) . ' > 0
                 AND   ' . $sql->escapeIdentifier($to['field']) . ' < :time',
@@ -110,5 +108,17 @@ final class ArticleStatusType extends AbstractType
                 'notice' => I18n::msg('cronjob_article_reset_date_info'),
             ],
         ];
+    }
+
+    /** @return non-empty-string|null */
+    private static function tableOfColumn(string $column): ?string
+    {
+        foreach (['rex_article', 'rex_article_translation'] as $table) {
+            if (Table::get($table)->hasColumn($column)) {
+                return $table;
+            }
+        }
+
+        return null;
     }
 }

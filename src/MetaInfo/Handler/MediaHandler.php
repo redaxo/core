@@ -60,7 +60,7 @@ final class MediaHandler extends AbstractHandler
 
         $articles = '';
         if (!empty($where['articles'])) {
-            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM rex_article WHERE ' . implode(' OR ', $where['articles']));
+            $items = $sql->getArray('SELECT a.id, t.language_id, a.parent_id, t.name, t.catname, a.startarticle FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE ' . implode(' OR ', $where['articles']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $languageId = (int) $artArr['language_id'];
@@ -73,7 +73,7 @@ final class MediaHandler extends AbstractHandler
 
         $categories = '';
         if (!empty($where['categories'])) {
-            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM rex_article WHERE ' . implode(' OR ', $where['categories']));
+            $items = $sql->getArray('SELECT a.id, t.language_id, a.parent_id, t.name, t.catname, a.startarticle FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE ' . implode(' OR ', $where['categories']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $languageId = (int) $artArr['language_id'];

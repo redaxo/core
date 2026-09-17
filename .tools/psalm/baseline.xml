@@ -1422,23 +1422,11 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/Content/ArticleHandler.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$id]]></code>
-    </ArgumentTypeCoercion>
     <InvalidOperand>
-      <code><![CDATA[$fromSql->getValue('name')]]></code>
-      <code><![CDATA[$toSql->getValue('id')]]></code>
-      <code><![CDATA[$toSql->getValue('id')]]></code>
       <code><![CDATA[$toSql->getValue('path')]]></code>
       <code><![CDATA[$toSql->getValue('path')]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$id]]></code>
-    </MixedArgument>
     <PossiblyNullOperand>
-      <code><![CDATA[$fromSql->getValue('name')]]></code>
-      <code><![CDATA[$toSql->getValue('id')]]></code>
-      <code><![CDATA[$toSql->getValue('id')]]></code>
       <code><![CDATA[$toSql->getValue('path')]]></code>
       <code><![CDATA[$toSql->getValue('path')]]></code>
     </PossiblyNullOperand>
@@ -1481,16 +1469,10 @@
     </MoreSpecificReturnType>
   </file>
   <file src="src/Content/CategoryHandler.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$id]]></code>
-    </ArgumentTypeCoercion>
     <InvalidOperand>
       <code><![CDATA[$fcat->getValue('path')]]></code>
       <code><![CDATA[$tcat->getValue('path')]]></code>
     </InvalidOperand>
-    <MixedArgument>
-      <code><![CDATA[$id]]></code>
-    </MixedArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$fcat->getValue('path')]]></code>
       <code><![CDATA[$tcat->getValue('path')]]></code>

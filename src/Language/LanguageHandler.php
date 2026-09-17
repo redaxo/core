@@ -45,43 +45,9 @@ final class LanguageHandler
             }
         }
 
-        $firstLang = Sql::factory();
-        $firstLang->setQuery('select * from rex_article where language_id=?', [$sourceId]);
-        $fields = $firstLang->getFieldnames();
-
-        $newLang = Sql::factory();
-        // $newLang->setDebug();
-        foreach ($firstLang as $firstLangArt) {
-            $newLang->setTable('rex_article');
-
-            foreach ($fields as $value) {
-                if ('pid' == $value) {
-                    continue;
-                } // nix passiert
-                if ('language_id' == $value) {
-                    $newLang->setValue('language_id', $id);
-                } elseif ('status' == $value) {
-                    $newLang->setValue('status', '0');
-                } // Alle neuen Artikel offline
-                else {
-                    $newLang->setValue($value, $firstLangArt->getValue($value));
-                }
-            }
-
-            $newLang->insert();
-        }
-
-        // the media translations of the source language are the starting point for the new language
-        $columns = array_keys(Table::get('rex_media_translation')->getColumns());
-        $insertColumns = implode(', ', array_map($sql->escapeIdentifier(...), $columns));
-        $selectColumns = implode(', ', array_map(
-            static fn (string $column): string => 'language_id' === $column ? (string) $id : $sql->escapeIdentifier($column),
-            $columns,
-        ));
-        $sql->setQuery(
-            'INSERT INTO rex_media_translation (' . $insertColumns . ') SELECT ' . $selectColumns . ' FROM rex_media_translation WHERE language_id = ?',
-            [$sourceId],
-        );
+        // the translations of the source language are the starting point for the new language, articles start offline
+        self::copyTranslations('rex_article_translation', $sourceId, $id, ['status' => 0]);
+        self::copyTranslations('rex_media_translation', $sourceId, $id);
 
         Cache::delete();
 
@@ -143,7 +109,7 @@ final class LanguageHandler
 
         Util::organizePriorities('rex_language', 'priority', '', 'priority');
 
-        $del->setQuery('delete from rex_article where language_id=?', [$id]);
+        // the translations are removed by the foreign keys
         $del->setQuery('delete from rex_article_slice where language_id=?', [$id]);
 
         Cache::delete();
@@ -176,5 +142,29 @@ final class LanguageHandler
         }
 
         return $languages;
+    }
+
+    /**
+     * Copies all rows of a translation table from one language to another.
+     *
+     * @param non-empty-string $table
+     * @param array<string, int|string> $overrides values replacing the copied ones, keyed by column
+     */
+    private static function copyTranslations(string $table, int $fromLanguageId, int $toLanguageId, array $overrides = []): void
+    {
+        $sql = Sql::factory();
+        $overrides['language_id'] = $toLanguageId;
+
+        $columns = array_keys(Table::get($table)->getColumns());
+        $insertColumns = implode(', ', array_map($sql->escapeIdentifier(...), $columns));
+        $selectColumns = implode(', ', array_map(
+            static fn (string $column): string => isset($overrides[$column]) ? $sql->escape((string) $overrides[$column]) : $sql->escapeIdentifier($column),
+            $columns,
+        ));
+
+        $sql->setQuery(
+            'INSERT INTO ' . $sql->escapeIdentifier($table) . ' (' . $insertColumns . ') SELECT ' . $selectColumns . ' FROM ' . $sql->escapeIdentifier($table) . ' WHERE language_id = ?',
+            [$fromLanguageId],
+        );
     }
 }

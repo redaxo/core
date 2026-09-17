@@ -104,9 +104,9 @@ $KAT = Sql::factory();
 // $KAT->setDebug();
 if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->categoryId) {
     $parentIds = $KAT->in($structureContext->getMountpoints());
-    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_article WHERE id IN (' . $parentIds . ') AND startarticle=1 AND language_id=?', [$structureContext->languageId]);
+    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_article WHERE id IN (' . $parentIds . ') AND startarticle=1');
 } else {
-    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_article WHERE parent_id=? AND startarticle=1 AND language_id=?', [$structureContext->categoryId, $structureContext->languageId]);
+    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_article WHERE parent_id <=> ? AND startarticle=1', [$structureContext->categoryId ?: null]);
 }
 
 // --------------------- ADD PAGINATION
@@ -124,11 +124,11 @@ if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->c
     $parentIds = $KAT->in($structureContext->getMountpoints());
 
     $KAT->setQuery('SELECT parent_id FROM rex_article WHERE id IN (' . $parentIds . ') GROUP BY parent_id');
-    $orderBy = $KAT->getRows() > 1 ? 'catname' : 'catpriority';
+    $orderBy = $KAT->getRows() > 1 ? 't.catname' : 'a.catpriority';
 
-    $KAT->setQuery('SELECT * FROM rex_article WHERE id IN (' . $parentIds . ') AND startarticle=1 AND language_id = ? ORDER BY ' . $orderBy . ' LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId]);
+    $KAT->setQuery('SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ? WHERE a.id IN (' . $parentIds . ') AND a.startarticle=1 ORDER BY ' . $orderBy . ' LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId]);
 } else {
-    $KAT->setQuery('SELECT * FROM rex_article WHERE parent_id <=> ? AND startarticle=1 AND language_id = ? ORDER BY catpriority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->categoryId ?: null, $structureContext->languageId]);
+    $KAT->setQuery('SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ? WHERE a.parent_id <=> ? AND a.startarticle=1 ORDER BY a.catpriority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId, $structureContext->categoryId ?: null]);
 }
 
 $trStatusClass = 'rex-status';
@@ -370,11 +370,9 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         SELECT COUNT(*) as artCount
         FROM rex_article
         WHERE
-            ((parent_id <=> :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
-            AND language_id = :language_id
+            (parent_id <=> :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1)
     ', [
         'category_id' => $structureContext->categoryId ?: null,
-        'language_id' => $structureContext->languageId,
     ]);
 
     // --------------------- ADD PAGINATION
@@ -388,11 +386,11 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
     // ---------- READ DATA
     $sql->setQuery('
-        SELECT *
-        FROM rex_article
+        SELECT a.*, t.*
+        FROM rex_article a
+        JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = :language_id
         WHERE
-            ((parent_id <=> :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
-            AND language_id = :language_id
+            (a.parent_id <=> :category_id AND a.startarticle=0) OR (a.id = :category_id AND a.startarticle=1)
         ORDER BY
             ' . $articleOrderBy . '
         LIMIT ' . $artPager->getCursor() . ',' . $artPager->getRowsPerPage(),

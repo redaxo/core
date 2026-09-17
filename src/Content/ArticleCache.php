@@ -118,13 +118,16 @@ final class ArticleCache
             return false;
         }
 
-        $qry = 'SELECT * FROM rex_article WHERE id=' . $articleId;
+        // one cache file per language, holding the shared columns together with the translation
+        $qry = 'SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE a.id = ?';
+        $params = [$articleId];
         if (null !== $languageId) {
-            $qry .= ' AND language_id=' . $languageId;
+            $qry .= ' AND t.language_id = ?';
+            $params[] = $languageId;
         }
 
         $sql = Sql::factory();
-        $sql->setQuery($qry);
+        $sql->setQuery($qry, $params);
         $fieldnames = $sql->getFieldnames();
         foreach ($sql as $row) {
             $rowLanguageId = $row->getValue('language_id');
@@ -132,6 +135,9 @@ final class ArticleCache
             // --------------------------------------------------- Artikelparameter speichern
             $params = [];
             foreach ($fieldnames as $field) {
+                if ('article_id' === $field) {
+                    continue;
+                }
                 $params[$field] = match ($field) {
                     'createdate', 'updatedate' => $row->getDateTimeValue($field),
                     default => $row->getValue($field),
@@ -164,7 +170,8 @@ final class ArticleCache
 
         $GC = Sql::factory();
         // $GC->setDebug();
-        $GC->setQuery('select * from rex_article where language_id=:language AND ((parent_id<=>:id and startarticle=0) OR (id=:id and startarticle=1)) order by priority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
+        // the lists are shared by all languages, the names of the start language break priority ties
+        $GC->setQuery('SELECT a.id FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = :language WHERE (a.parent_id <=> :id AND a.startarticle = 0) OR (a.id = :id AND a.startarticle = 1) ORDER BY a.priority, t.name', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
@@ -179,7 +186,7 @@ final class ArticleCache
         // --------------------------------------- CAT LIST
 
         $GC = Sql::factory();
-        $GC->setQuery('select * from rex_article where parent_id<=>:id and language_id=:language and startarticle=1 order by catpriority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
+        $GC->setQuery('SELECT a.id FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = :language WHERE a.parent_id <=> :id AND a.startarticle = 1 ORDER BY a.catpriority, t.catname', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
