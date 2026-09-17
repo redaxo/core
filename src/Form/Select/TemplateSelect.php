@@ -5,7 +5,6 @@ namespace Redaxo\Core\Form\Select;
 use Collator;
 use Locale;
 use Redaxo\Core\Content\Template;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
@@ -57,7 +56,7 @@ final class TemplateSelect extends Select
         // Inherit template from start article
         if ($this->categoryId > 0) {
             $sql = Sql::factory();
-            $sql->setQuery('SELECT template FROM ' . Core::getTable('article') . ' WHERE id = ? AND language_id = ? AND startarticle = 1', [
+            $sql->setQuery('SELECT template FROM rex_article WHERE id = ? AND language_id = ? AND startarticle = 1', [
                 $this->categoryId,
                 $this->languageId,
             ]);

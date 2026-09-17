@@ -4,7 +4,6 @@ namespace Redaxo\Core\MediaPool;
 
 use enshrined\svgSanitize\Sanitizer;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -127,7 +126,7 @@ final class MediaHandler
         }
 
         $saveObject = Sql::factory();
-        $saveObject->setTable(Core::getTablePrefix() . 'media');
+        $saveObject->setTable('rex_media');
         $saveObject->setValue('filetype', $data['file']['type']);
         $saveObject->setValue('title', $title);
         $saveObject->setValue('filename', $data['file']['name_new']);
@@ -195,7 +194,7 @@ final class MediaHandler
         }
 
         $saveObject = Sql::factory();
-        $saveObject->setTable(Core::getTablePrefix() . 'media');
+        $saveObject->setTable('rex_media');
         $saveObject->setWhere(['filename' => $filename]);
         $saveObject->setValue('title', $data['title']);
         $saveObject->setValue('category_id', (int) $data['category_id']);
@@ -292,7 +291,7 @@ final class MediaHandler
         }
 
         $sql = Sql::factory();
-        $sql->setQuery('DELETE FROM ' . Core::getTable('media') . ' WHERE filename = ? LIMIT 1', [$filename]);
+        $sql->setQuery('DELETE FROM rex_media WHERE filename = ? LIMIT 1', [$filename]);
 
         File::delete(Path::media($filename));
         MediaPoolCache::delete($filename);
@@ -313,7 +312,7 @@ final class MediaHandler
         $where = [];
         $queryParams = [];
         $tables = [];
-        $tables[] = Core::getTable('media') . ' AS m';
+        $tables[] = 'rex_media AS m';
 
         $counter = 0;
         foreach ($filter as $type => $value) {
@@ -328,7 +327,7 @@ final class MediaHandler
                     break;
                 case 'category_id_path':
                     if (is_int($value)) {
-                        $tables[] = Core::getTable('media_category') . ' AS c';
+                        $tables[] = 'rex_media_category AS c';
                         $where[] = '(m.category_id = c.id AND (c.path LIKE "%|' . $value . '|%" OR c.id=' . $value . ') )';
                         $queryParams['search_' . $counter] = $value;
                     }

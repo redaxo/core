@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\Backend\Accesskey;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -142,7 +141,7 @@ if ('add' == $func) {
     $content .= Extension::dispatch(new LanguageFormAdd());
 }
 
-$sql = Sql::factory()->setQuery('SELECT * FROM ' . Core::getTable('language') . ' ORDER BY priority');
+$sql = Sql::factory()->setQuery('SELECT * FROM rex_language ORDER BY priority');
 foreach ($sql as $row) {
     $langId = (int) $sql->getValue('id');
     $addTd = '<td class="rex-table-id" data-title="' . I18n::msg('id') . '">' . $langId . '</td>';

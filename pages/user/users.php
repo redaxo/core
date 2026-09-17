@@ -65,7 +65,7 @@ $selRole->setAttribute('class', 'form-control selectpicker');
 // $sel_role->addOption(I18n::msg('user_no_role'), 0);
 $roles = [];
 $sqlRole = Sql::factory();
-$sqlRole->setQuery('SELECT id, name FROM ' . Core::getTablePrefix() . 'user_role ORDER BY name');
+$sqlRole->setQuery('SELECT id, name FROM rex_user_role ORDER BY name');
 foreach ($sqlRole as $role) {
     $roles[$role->getValue('id')] = $role->getValue('name');
     $selRole->addOption($role->getValue('name'), $role->getValue('id'));
@@ -153,7 +153,7 @@ if ($warnings) {
     }
 
     $updateuser = Sql::factory();
-    $updateuser->setTable(Core::getTablePrefix() . 'user');
+    $updateuser->setTable('rex_user');
     $updateuser->setWhere(['id' => $userId]);
     $updateuser->setValue('name', $username);
     $updateuser->setValue('role', implode(',', $userrole));
@@ -215,7 +215,7 @@ if ($warnings) {
         $warnings[] = I18n::msg('csrf_token_invalid');
     } else {
         $deleteuser = Sql::factory();
-        $deleteuser->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'user WHERE id = ? LIMIT 1', [$userId]);
+        $deleteuser->setQuery('DELETE FROM rex_user WHERE id = ? LIMIT 1', [$userId]);
         $info[] = I18n::msg('user_deleted');
 
         User::clearInstance($userId);
@@ -229,13 +229,13 @@ if ($warnings) {
     $userId = 0;
 } elseif ('' != $fUNCADD && 1 == $save) {
     $adduser = Sql::factory();
-    $adduser->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'user WHERE login = ?', [$userlogin]);
+    $adduser->setQuery('SELECT * FROM rex_user WHERE login = ?', [$userlogin]);
 
     if (0 == $adduser->getRows() && '' != $userlogin && '' != $userpsw) {
         $userpswHash = Login::passwordHash($userpsw);
 
         $adduser = Sql::factory();
-        $adduser->setTable(Core::getTablePrefix() . 'user');
+        $adduser->setTable('rex_user');
         $adduser->setValue('name', $username);
         $adduser->setValue('password', $userpswHash);
         $adduser->setValue('login', $userlogin);
@@ -356,13 +356,13 @@ if ('' != $fUNCADD || $user) {
 
         if (!$fUNCUPDATE && !$fUNCAPPLY) {
             $sql = Sql::factory();
-            $sql->setQuery('select * from ' . Core::getTablePrefix() . 'user where id=' . $userId);
+            $sql->setQuery('select * from rex_user where id=' . $userId);
 
             if (1 == $sql->getRows()) {
                 $passwordChangeRequired = (bool) $sql->getValue('password_change_required');
                 $useradmin = $sql->getValue('admin');
-                $userstatus = $sql->getValue(Core::getTablePrefix() . 'user.status');
-                $userrole = $sql->getValue(Core::getTablePrefix() . 'user.role');
+                $userstatus = $sql->getValue('rex_user.status');
+                $userrole = $sql->getValue('rex_user.role');
                 if ('' == $userrole) {
                     $userrole = [];
                 } else {
@@ -370,9 +370,9 @@ if ('' != $fUNCADD || $user) {
                 }
                 $userpermBeSprache = $sql->getValue('language');
                 $userpermStartpage = $sql->getValue('startpage');
-                $username = $sql->getValue(Core::getTablePrefix() . 'user.name');
-                $userdesc = $sql->getValue(Core::getTablePrefix() . 'user.description');
-                $useremail = $sql->getValue(Core::getTablePrefix() . 'user.email');
+                $username = $sql->getValue('rex_user.name');
+                $userdesc = $sql->getValue('rex_user.description');
+                $useremail = $sql->getValue('rex_user.email');
             }
         }
 
@@ -606,10 +606,10 @@ if ($SHOW) {
             IF(name <> "", name, login) as name,
             login,
             `admin`,
-            IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "' . $separator . '") FROM ' . Core::getTable('user_role') . ' r WHERE FIND_IN_SET(r.id, u.role)), "' . $noRole . '")) as role,
+            IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR "' . $separator . '") FROM rex_user_role r WHERE FIND_IN_SET(r.id, u.role)), "' . $noRole . '")) as role,
             status,
             lastlogin
-        FROM ' . Core::getTable('user') . ' u
+        FROM rex_user u
         ' . $where . '
     ', defaultSort: ['name' => 'asc']);
     $list->addTableAttribute('class', 'table-striped table-hover');

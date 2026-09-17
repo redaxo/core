@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\MediaPool;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -31,7 +30,7 @@ final class MediaCategoryHandler
             $path .= implode('|', $parent->path) . '|' . $parent->id . '|';
         }
 
-        $db->setTable(Core::getTablePrefix() . 'media_category');
+        $db->setTable('rex_media_category');
         $db->setValue('name', $name);
         $db->setValue('parent_id', $parentId);
         $db->setValue('path', $path);
@@ -58,17 +57,17 @@ final class MediaCategoryHandler
     public static function deleteCategory(int $categoryId): string
     {
         $gf = Sql::factory();
-        $gf->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'media WHERE category_id=?', [$categoryId]);
+        $gf->setQuery('SELECT * FROM rex_media WHERE category_id=?', [$categoryId]);
         $gd = Sql::factory();
-        $gd->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'media_category WHERE parent_id=?', [$categoryId]);
+        $gd->setQuery('SELECT * FROM rex_media_category WHERE parent_id=?', [$categoryId]);
         if (0 == $gf->getRows() && 0 == $gd->getRows()) {
             if ($uses = self::categoryIsInUse($categoryId)) {
-                $gf->setQuery('SELECT name FROM ' . Core::getTable('media_category') . ' WHERE id=?', [$categoryId]);
+                $gf->setQuery('SELECT name FROM rex_media_category WHERE id=?', [$categoryId]);
                 $name = "{$gf->getValue('name')} [$categoryId]";
                 throw new UserMessageException('<strong>' . I18n::msg('pool_kat_delete_error', $name) . ' ' . I18n::msg('pool_object_in_use_by') . '</strong><br />' . $uses);
             }
 
-            $gf->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'media_category WHERE id=?', [$categoryId]);
+            $gf->setQuery('DELETE FROM rex_media_category WHERE id=?', [$categoryId]);
             MediaPoolCache::deleteCategory($categoryId);
             MediaPoolCache::deleteLists();
         } else {
@@ -107,7 +106,7 @@ final class MediaCategoryHandler
         $catName = $data['name'];
 
         $db = Sql::factory();
-        $db->setTable(Core::getTablePrefix() . 'media_category');
+        $db->setTable('rex_media_category');
         $db->setWhere(['id' => $categoryId]);
         $db->setValue('name', $catName);
         $db->addGlobalUpdateFields();

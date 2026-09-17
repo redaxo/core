@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Symfony\Component\Console\Attribute\Argument;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -24,7 +23,7 @@ final class UserListCommand extends AbstractCommand
         SymfonyStyle $io,
         #[Argument('Username', suggestedValues: static function (): array {
             /** @var list<string> */
-            return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
+            return array_column(Sql::factory()->getArray('SELECT login FROM rex_user'), 'login');
         })] ?string $user = null,
     ): int {
         $sql = Sql::factory();
@@ -33,10 +32,10 @@ final class UserListCommand extends AbstractCommand
                 IF(name <> "", name, login) as name,
                 `login`,
                 `email`,
-                IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR ", ") FROM ' . Core::getTable('user_role') . ' r WHERE FIND_IN_SET(r.id, role)), "")) as role,
+                IF(`admin`, "Admin", IFNULL((SELECT GROUP_CONCAT(name ORDER BY name SEPARATOR ", ") FROM rex_user_role r WHERE FIND_IN_SET(r.id, role)), "")) as role,
                 `createdate`,
                 `lastlogin`
-            FROM ' . Core::getTable('user') . '
+            FROM rex_user
         ';
         if ($user) {
             $sql->setQuery($query . ' WHERE login = :login', [

@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Content;
 
 use Redaxo\Core\Content\Exception\ArticleNotFoundException;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
@@ -78,7 +77,7 @@ class ArticleContentBase
      */
     protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
-        $moduleKey = (string) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.module');
+        $moduleKey = (string) $artDataSql->getValue('rex_article_slice.module');
         $slice = ArticleSlice::fromSql($artDataSql);
 
         $module = Module::get($moduleKey);
@@ -141,15 +140,15 @@ class ArticleContentBase
 
         $articleLimit = '';
         if (0 !== $this->articleId) {
-            $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . $this->articleId;
+            $articleLimit = ' AND rex_article_slice.article_id=' . $this->articleId;
         }
 
         $sliceLimit = '';
         if (0 !== $this->singleSliceId) {
-            $sliceLimit = ' AND ' . Core::getTablePrefix() . "article_slice.id = '" . $this->singleSliceId . "' ";
+            $sliceLimit = " AND rex_article_slice.id = '" . $this->singleSliceId . "' ";
         }
         if ('edit' !== $this->mode) {
-            $sliceLimit .= ' AND ' . Core::getTablePrefix() . 'article_slice.status = 1';
+            $sliceLimit .= ' AND rex_article_slice.status = 1';
         }
 
         // ----- start: article caching
@@ -234,20 +233,19 @@ class ArticleContentBase
         $moduleKey = Request::request('module', 'string', '');
 
         // ---------- alle teile/slices eines artikels auswaehlen
-        $prefix = Core::getTablePrefix();
         $query = <<<SQL
             SELECT
-                {$prefix}article_slice.*,
-                {$prefix}article.parent_id
-            FROM {$prefix}article_slice
-            LEFT JOIN {$prefix}article ON {$prefix}article_slice.article_id = {$prefix}article.id
+                rex_article_slice.*,
+                rex_article.parent_id
+            FROM rex_article_slice
+            LEFT JOIN rex_article ON rex_article_slice.article_id = rex_article.id
             WHERE
-                {$prefix}article_slice.language_id = {$this->languageId} AND
-                {$prefix}article.language_id = {$this->languageId} AND
-                {$prefix}article_slice.revision = {$this->sliceRevision}
+                rex_article_slice.language_id = {$this->languageId} AND
+                rex_article.language_id = {$this->languageId} AND
+                rex_article_slice.revision = {$this->sliceRevision}
                 {$articleLimit}
                 {$sliceLimit}
-            ORDER BY {$prefix}article_slice.priority
+            ORDER BY rex_article_slice.priority
             SQL;
 
         $query = Extension::dispatch(new ExtensionPoint('ART_SLICES_QUERY', $query, ['article' => $this]));
@@ -266,14 +264,14 @@ class ArticleContentBase
         $artDataSql->reset();
         $rows = $artDataSql->getRows();
         for ($i = 0; $i < $rows; ++$i) {
-            $sliceId = (int) $artDataSql->getValue($prefix . 'article_slice.id');
-            $sliceCtypeId = (int) $artDataSql->getValue($prefix . 'article_slice.ctype_id');
+            $sliceId = (int) $artDataSql->getValue('rex_article_slice.id');
+            $sliceCtypeId = (int) $artDataSql->getValue('rex_article_slice.ctype_id');
             /**
              * Module key from internal DB table, safe to embed in generated cache code.
              * @psalm-taint-escape html
              * @psalm-taint-escape has_quotes
              */
-            $sliceModuleKey = (string) $artDataSql->getValue($prefix . 'article_slice.module');
+            $sliceModuleKey = (string) $artDataSql->getValue('rex_article_slice.module');
 
             // ----- ctype unterscheidung
             if ('edit' !== $this->mode && !$this->eval) {

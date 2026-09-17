@@ -5,7 +5,6 @@ namespace Redaxo\Core\Security;
 use Redaxo\Core\Base\InstancePoolTrait;
 use Redaxo\Core\Content\ModulePermission;
 use Redaxo\Core\Content\StructurePermission;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Language\LanguagePermission;
@@ -67,7 +66,7 @@ final class User
     public static function get(int $id): ?self
     {
         return self::getInstance($id, static function () use ($id): ?self {
-            $sql = Sql::factory()->setQuery('SELECT * FROM ' . Core::getTable('user') . ' WHERE id = ?', [$id]);
+            $sql = Sql::factory()->setQuery('SELECT * FROM rex_user WHERE id = ?', [$id]);
 
             if ($sql->getRows()) {
                 $user = new static($sql);
@@ -82,7 +81,7 @@ final class User
     public static function forLogin(#[SensitiveParameter] string $login): ?self
     {
         return self::getInstance('login_' . $login, static function () use ($login): ?self {
-            $sql = Sql::factory()->setQuery('SELECT * FROM ' . Core::getTable('user') . ' WHERE login = ?', [$login]);
+            $sql = Sql::factory()->setQuery('SELECT * FROM rex_user WHERE login = ?', [$login]);
 
             if ($sql->getRows()) {
                 $user = new static($sql);

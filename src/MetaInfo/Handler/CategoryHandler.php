@@ -4,7 +4,6 @@ namespace Redaxo\Core\MetaInfo\Handler;
 
 use Redaxo\Core\Content\ArticleCache;
 use Redaxo\Core\Content\Category;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
@@ -81,7 +80,7 @@ final class CategoryHandler extends AbstractHandler
     private function save(int $id, int $languageId, MetaContext $context): void
     {
         $sql = Sql::factory();
-        $sql->setTable(Core::getTablePrefix() . 'article');
+        $sql->setTable('rex_article');
         $sql->setWhere('id=:id AND language_id=:language', ['id' => $id, 'language' => $languageId]);
 
         $this->saveRequestValues($sql, $context);

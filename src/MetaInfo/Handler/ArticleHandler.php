@@ -5,7 +5,6 @@ namespace Redaxo\Core\MetaInfo\Handler;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleCache;
 use Redaxo\Core\Content\Category;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -46,7 +45,7 @@ final class ArticleHandler extends AbstractHandler
         $languageId = $params['language'];
 
         $sql = Sql::factory();
-        $sql->setTable(Core::getTablePrefix() . 'article');
+        $sql->setTable('rex_article');
         $sql->setWhere('id=:id AND language_id=:language', ['id' => $id, 'language' => $languageId]);
         $sql->setValue('name', Request::post('meta_article_name', 'string'));
 

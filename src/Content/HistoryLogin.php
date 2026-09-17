@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Content;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\Login;
@@ -29,7 +28,7 @@ final class HistoryLogin extends BackendLogin
         // so expired rows can linger). Otherwise a known but expired session id could still forge a token.
         $sessionSql = Sql::factory($this->DB);
         $sessionSql->setQuery(
-            'SELECT session_id FROM ' . Core::getTable('user_session') . '
+            'SELECT session_id FROM rex_user_session
                 WHERE user_id = ? AND UNIX_TIMESTAMP(last_activity) >= IF(cookie_key IS NULL, ?, ?)',
             [
                 (int) $userSql->getValue($this->idColumn),

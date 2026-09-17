@@ -45,12 +45,12 @@ final class ArticleContentEditor extends ArticleContentBase
                 $moduleKeyToAdd,
             );
         } else {
-            $sliceId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.id');
-            $sliceCtype = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.ctype_id');
-            $sliceStatus = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.status');
-            $sliceRevision = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.revision');
+            $sliceId = (int) $artDataSql->getValue('rex_article_slice.id');
+            $sliceCtype = (int) $artDataSql->getValue('rex_article_slice.ctype_id');
+            $sliceStatus = (int) $artDataSql->getValue('rex_article_slice.status');
+            $sliceRevision = (int) $artDataSql->getValue('rex_article_slice.revision');
 
-            $moduleKey = (string) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.module');
+            $moduleKey = (string) $artDataSql->getValue('rex_article_slice.module');
             $module = Module::get($moduleKey);
 
             // ----- add select box einbauen
@@ -136,11 +136,11 @@ final class ArticleContentEditor extends ArticleContentBase
         // the editor always operates on a concrete content section
         assert($this->contentSectionId > 0);
 
-        $sliceId = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.id');
-        $sliceCtype = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.ctype_id');
-        $sliceStatus = (int) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.status');
+        $sliceId = (int) $artDataSql->getValue('rex_article_slice.id');
+        $sliceCtype = (int) $artDataSql->getValue('rex_article_slice.ctype_id');
+        $sliceStatus = (int) $artDataSql->getValue('rex_article_slice.status');
 
-        $moduleKey = (string) $artDataSql->getValue(Core::getTablePrefix() . 'article_slice.module');
+        $moduleKey = (string) $artDataSql->getValue('rex_article_slice.module');
         $moduleName = $this->getSliceHeading($moduleKey);
 
         $context = new Context([

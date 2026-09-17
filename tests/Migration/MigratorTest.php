@@ -37,7 +37,7 @@ final class MigratorTest extends TestCase
                 'id' => (string) $row['id'],
                 'executed' => (string) $row['executed'],
             ],
-            $sql->getArray('SELECT * FROM ' . $sql->escapeIdentifier(Core::getTable('migration'))),
+            $sql->getArray('SELECT * FROM rex_migration'),
         );
     }
 
@@ -51,11 +51,9 @@ final class MigratorTest extends TestCase
         }
 
         $sql = Sql::factory();
-        $table = $sql->escapeIdentifier(Core::getTable('migration'));
-
-        $sql->setQuery('DELETE FROM ' . $table);
+        $sql->setQuery('DELETE FROM rex_migration');
         foreach ($this->ledger as $row) {
-            $sql->setTable(Core::getTable('migration'))->setValues($row)->insert();
+            $sql->setTable('rex_migration')->setValues($row)->insert();
         }
 
         $sql->setQuery('DROP TABLE IF EXISTS `rex_migrator_test_table`');
@@ -137,7 +135,7 @@ final class MigratorTest extends TestCase
     {
         $sql = Sql::factory();
         $ids = $sql->getArray(
-            'SELECT `id` FROM ' . $sql->escapeIdentifier(Core::getTable('migration')) . ' WHERE `id` LIKE ?',
+            'SELECT `id` FROM rex_migration WHERE `id` LIKE ?',
             [self::ID_PREFIX . '%'],
         );
 

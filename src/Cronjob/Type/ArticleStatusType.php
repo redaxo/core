@@ -4,7 +4,6 @@ namespace Redaxo\Core\Cronjob\Type;
 
 use Override;
 use Redaxo\Core\Content\ArticleHandler;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
 use Redaxo\Core\Translation\I18n;
@@ -30,7 +29,7 @@ final class ArticleStatusType extends AbstractType
             'after' => 0,
         ];
 
-        $table = Table::get(Core::getTable('article'));
+        $table = Table::get('rex_article');
         $missing = array_values(array_filter(
             [$from['field'], $to['field']],
             static fn (string $field): bool => !$table->hasColumn($field),
@@ -45,7 +44,7 @@ final class ArticleStatusType extends AbstractType
         $sql->setQuery(
             '
             SELECT  id, language_id, status
-            FROM    ' . Core::getTablePrefix() . 'article
+            FROM    rex_article
             WHERE
                 (     ' . $sql->escapeIdentifier($from['field']) . ' > 0
                 AND   ' . $sql->escapeIdentifier($from['field']) . ' < :time
@@ -76,7 +75,7 @@ final class ArticleStatusType extends AbstractType
         if ($this->getParam('reset_date')) {
             $sql->setQuery(
                 '
-                UPDATE ' . Core::getTablePrefix() . 'article
+                UPDATE rex_article
                 SET ' . $sql->escapeIdentifier($from['field']) . ' = ""
                 WHERE     ' . $sql->escapeIdentifier($from['field']) . ' > 0
                     AND   ' . $sql->escapeIdentifier($from['field']) . ' < :time',
@@ -84,7 +83,7 @@ final class ArticleStatusType extends AbstractType
             );
             $sql->setQuery(
                 '
-                UPDATE ' . Core::getTablePrefix() . 'article
+                UPDATE rex_article
                 SET ' . $sql->escapeIdentifier($to['field']) . ' = ""
                 WHERE ' . $sql->escapeIdentifier($to['field']) . ' > 0
                 AND   ' . $sql->escapeIdentifier($to['field']) . ' < :time',

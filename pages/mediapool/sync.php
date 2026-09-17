@@ -34,7 +34,7 @@ foreach ($iterator as $file) {
 
 // ---- Dateien aus der DB lesen
 $db = Sql::factory();
-$db->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'media');
+$db->setQuery('SELECT * FROM rex_media');
 $dbFiles = [];
 $dbFilenames = [];
 
@@ -57,7 +57,7 @@ foreach ($dbFiles as $dbFile) {
     $fileFilesize = filesize($path);
     if ($dbFile['filesize'] != $fileFilesize) {
         $fileSql = Sql::factory();
-        $fileSql->setTable(Core::getTable('media'));
+        $fileSql->setTable('rex_media');
         $fileSql->setWhere(['filename' => $filename]);
         $fileSql->setValue('filesize', $fileFilesize);
         if ($dbFile['width'] > 0) {

@@ -2,8 +2,6 @@
 
 namespace Redaxo\Core\MetaInfo;
 
-use Redaxo\Core\Core;
-
 /**
  * The entity a set of meta fields belongs to.
  *
@@ -32,9 +30,9 @@ enum MetaEntity
     public function table(): string
     {
         return match ($this) {
-            self::Article, self::Category => Core::getTable('article'),
-            self::Media => Core::getTable('media'),
-            self::Language => Core::getTable('language'),
+            self::Article, self::Category => 'rex_article',
+            self::Media => 'rex_media',
+            self::Language => 'rex_language',
         };
     }
 }

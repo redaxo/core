@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -24,7 +23,7 @@ final class UserDeleteCommand extends AbstractCommand
         SymfonyStyle $io,
         #[Argument('Username', suggestedValues: static function (): array {
             /** @var list<string> */
-            return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
+            return array_column(Sql::factory()->getArray('SELECT login FROM rex_user'), 'login');
         })] string $user,
     ): int {
         $username = $user;
@@ -51,7 +50,7 @@ final class UserDeleteCommand extends AbstractCommand
     private function deleteUser(User $user): void
     {
         $sql = Sql::factory();
-        $sql->setTable(Core::getTable('user'));
+        $sql->setTable('rex_user');
         $sql->setWhere(['id' => $user->id])->delete();
 
         User::clearInstance($user->id);

@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\MetaInfo\Handler;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
@@ -57,7 +56,7 @@ final class LanguageHandler extends AbstractHandler
         }
 
         $sql = Sql::factory();
-        $sql->setTable(Core::getTablePrefix() . 'language');
+        $sql->setTable('rex_language');
         $sql->setWhere('id=:id', ['id' => $ep->language->id]);
 
         $this->saveRequestValues($sql, new MetaContext(MetaEntity::Language));

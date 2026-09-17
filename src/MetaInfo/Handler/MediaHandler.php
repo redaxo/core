@@ -59,7 +59,7 @@ final class MediaHandler extends AbstractHandler
 
         $articles = '';
         if (!empty($where['articles'])) {
-            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM ' . Core::getTablePrefix() . 'article WHERE ' . implode(' OR ', $where['articles']));
+            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM rex_article WHERE ' . implode(' OR ', $where['articles']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $languageId = (int) $artArr['language_id'];
@@ -72,7 +72,7 @@ final class MediaHandler extends AbstractHandler
 
         $categories = '';
         if (!empty($where['categories'])) {
-            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM ' . Core::getTablePrefix() . 'article WHERE ' . implode(' OR ', $where['categories']));
+            $items = $sql->getArray('SELECT id, language_id, parent_id, name, catname, startarticle FROM rex_article WHERE ' . implode(' OR ', $where['categories']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $languageId = (int) $artArr['language_id'];
@@ -86,7 +86,7 @@ final class MediaHandler extends AbstractHandler
 
         $media = '';
         if (!empty($where['media'])) {
-            $items = $sql->getArray('SELECT id, filename, category_id FROM ' . Core::getTablePrefix() . 'media WHERE ' . implode(' OR ', $where['media']));
+            $items = $sql->getArray('SELECT id, filename, category_id FROM rex_media WHERE ' . implode(' OR ', $where['media']));
             foreach ($items as $medArr) {
                 $id = (int) $medArr['id'];
                 $filename = escape((string) $medArr['filename']);
@@ -100,7 +100,7 @@ final class MediaHandler extends AbstractHandler
 
         $languageList = '';
         if (!empty($where['languages'])) {
-            $items = $sql->getArray('SELECT id, name FROM ' . Core::getTablePrefix() . 'language WHERE ' . implode(' OR ', $where['languages']));
+            $items = $sql->getArray('SELECT id, name FROM rex_language WHERE ' . implode(' OR ', $where['languages']));
             foreach ($items as $languageRow) {
                 $name = escape((string) $languageRow['name']);
                 if (Core::getUser()?->admin) {
@@ -134,7 +134,7 @@ final class MediaHandler extends AbstractHandler
             $media = $params['media'] ?? null;
         } elseif ('MEDIA_ADDED' == $ep->name) {
             $sql = Sql::factory();
-            $sql->setQuery('SELECT id FROM ' . Core::getTablePrefix() . 'media WHERE filename=:filename', ['filename' => $params['filename']]);
+            $sql->setQuery('SELECT id FROM rex_media WHERE filename=:filename', ['filename' => $params['filename']]);
             if (1 == $sql->getRows()) {
                 $params['id'] = (int) $sql->getValue('id');
             } else {
@@ -155,7 +155,7 @@ final class MediaHandler extends AbstractHandler
     private function save(int $id, MetaContext $context): void
     {
         $sql = Sql::factory();
-        $sql->setTable(Core::getTablePrefix() . 'media');
+        $sql->setTable('rex_media');
         $sql->setWhere('id=:mediaid', ['mediaid' => $id]);
 
         $this->saveRequestValues($sql, $context);

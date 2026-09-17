@@ -78,7 +78,7 @@ final readonly class ArticleSlice
     /** @internal  */
     public static function fromSql(Sql $sql): self
     {
-        $table = Core::getTable('article_slice');
+        $table = 'rex_article_slice';
 
         $data = [];
         foreach (['value' => 20, 'media' => 10, 'medialist' => 10, 'link' => 10, 'linklist' => 10] as $list => $count) {
@@ -294,7 +294,7 @@ final readonly class ArticleSlice
         // $sql->setDebug();
         $query = '
             SELECT *
-            FROM ' . Core::getTable('article_slice') . '
+            FROM rex_article_slice
             WHERE ' . $where . '
             ORDER BY ctype_id ' . $orderDirection . ', priority ' . $orderDirection;
 

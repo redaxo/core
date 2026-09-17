@@ -58,7 +58,7 @@ $rexFileCategory = Request::request('rex_file_category', 'int', -1);
 
 if ('' != $fileName) {
     $sql = Sql::factory();
-    $sql->setQuery('select * from ' . Core::getTablePrefix() . 'media where filename=?', [$fileName]);
+    $sql->setQuery('select * from rex_media where filename=?', [$fileName]);
     if (1 == $sql->getRows()) {
         $fileId = (int) $sql->getValue('id');
         $rexFileCategory = (int) $sql->getValue('category_id');
@@ -72,7 +72,7 @@ if (-1 == $rexFileCategory) {
 }
 
 $gc = Sql::factory();
-$gc->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'media_category WHERE id=?', [$rexFileCategory]);
+$gc->setQuery('SELECT * FROM rex_media_category WHERE id=?', [$rexFileCategory]);
 if (1 != $gc->getRows()) {
     $rexFileCategory = 0;
     $rexFileCategoryName = I18n::msg('pool_kats_no');

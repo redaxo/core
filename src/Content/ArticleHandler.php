@@ -70,7 +70,7 @@ final class ArticleHandler
                 $categoryName = $category->name;
             }
 
-            $AART->setTable(Core::getTablePrefix() . 'article');
+            $AART->setTable('rex_article');
             if (!isset($id) || !$id) {
                 $id = $AART->setNewId('id');
             } else {
@@ -127,7 +127,7 @@ final class ArticleHandler
 
         // Artikel mit alten Daten selektieren
         $thisArt = Sql::factory();
-        $thisArt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and language_id=?', [$articleId, $languageId]);
+        $thisArt->setQuery('select * from rex_article where id=? and language_id=?', [$articleId, $languageId]);
 
         if (1 != $thisArt->getRows()) {
             throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and language "' . $languageId . '"!');
@@ -156,7 +156,7 @@ final class ArticleHandler
         $data['priority'] ??= (int) $thisArt->getValue('priority');
 
         $EA = Sql::factory();
-        $EA->setTable(Core::getTablePrefix() . 'article');
+        $EA->setTable('rex_article');
         $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
         $EA->setValue('name', $data['name']);
         $EA->setValue('template', $data['template']);
@@ -171,7 +171,7 @@ final class ArticleHandler
 
         if ($oldPrio != $data['priority']) {
             Sql::factory()
-                ->setTable(Core::getTable('article'))
+                ->setTable('rex_article')
                 ->setWhere('id = :id AND language_id != :language', ['id' => $articleId, 'language' => $languageId])
                 ->setValue('priority', $data['priority'])
                 ->addGlobalUpdateFields(self::getUser())
@@ -212,7 +212,7 @@ final class ArticleHandler
     public static function deleteArticle(int $articleId): string
     {
         $Art = Sql::factory();
-        $Art->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0', [$articleId]);
+        $Art->setQuery('select * from rex_article where id=? and startarticle=0', [$articleId]);
 
         if ($Art->getRows() > 0) {
             $message = self::_deleteArticle($articleId);
@@ -273,7 +273,7 @@ final class ArticleHandler
         }
 
         $ART = Sql::factory();
-        $ART->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and language_id=?', [$id, Language::getStartId()]);
+        $ART->setQuery('select * from rex_article where id=? and language_id=?', [$id, Language::getStartId()]);
 
         $message = '';
         if ($ART->getRows() > 0) {
@@ -291,7 +291,7 @@ final class ArticleHandler
             if (1 == $ART->getValue('startarticle')) {
                 $message = I18n::msg('category_deleted');
                 $SART = Sql::factory();
-                $SART->setQuery('select * from ' . Core::getTablePrefix() . 'article where parent_id=? and language_id=?', [$id, Language::getStartId()]);
+                $SART->setQuery('select * from rex_article where parent_id=? and language_id=?', [$id, Language::getStartId()]);
                 for ($i = 0; $i < $SART->getRows(); ++$i) {
                     self::_deleteArticle($id);
                     $SART->next();
@@ -301,8 +301,8 @@ final class ArticleHandler
             }
 
             ArticleCache::delete($id);
-            $ART->setQuery('delete from ' . Core::getTablePrefix() . 'article where id=?', [$id]);
-            $ART->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where article_id=?', [$id]);
+            $ART->setQuery('delete from rex_article where id=?', [$id]);
+            $ART->setQuery('delete from rex_article_slice where article_id=?', [$id]);
 
             // --------------------------------------------------- Listen generieren
             ArticleCache::deleteLists($parentId);
@@ -324,7 +324,7 @@ final class ArticleHandler
     public static function articleStatus(int $articleId, int $languageId, ?int $status = null): int
     {
         $GA = Sql::factory();
-        $GA->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and language_id=?', [$articleId, $languageId]);
+        $GA->setQuery('select * from rex_article where id=? and language_id=?', [$articleId, $languageId]);
         if (1 == $GA->getRows()) {
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
@@ -335,7 +335,7 @@ final class ArticleHandler
             }
 
             $EA = Sql::factory();
-            $EA->setTable(Core::getTablePrefix() . 'article');
+            $EA->setTable('rex_article');
             $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
             $EA->setValue('status', $newstatus);
             $EA->addGlobalUpdateFields(self::getUser());
@@ -410,7 +410,7 @@ final class ArticleHandler
             }
 
             Util::organizePriorities(
-                Core::getTable('article'),
+                'rex_article',
                 'priority',
                 'language_id=' . $languageId . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
                 'priority,updatedate ' . $addsql,
@@ -419,7 +419,7 @@ final class ArticleHandler
             ArticleCache::deleteLists($parentId);
             ArticleCache::deleteMeta($parentId);
 
-            $ids = Sql::factory()->getArray('SELECT id FROM ' . Core::getTable('article') . ' WHERE startarticle=0 AND parent_id = ? GROUP BY id', [$parentId]);
+            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=0 AND parent_id = ? GROUP BY id', [$parentId]);
             foreach ($ids as $id) {
                 ArticleCache::deleteMeta((int) $id['id']);
             }
@@ -435,14 +435,14 @@ final class ArticleHandler
         // LANG SCHLEIFE
         foreach (Language::getAllIds() as $languageId) {
             // artikel
-            $sql->setQuery('select parent_id, name from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and language_id=?', [$artId, $languageId]);
+            $sql->setQuery('select parent_id, name from rex_article where id=? and startarticle=0 and language_id=?', [$artId, $languageId]);
 
             if (!$parentId) {
                 $parentId = (int) $sql->getValue('parent_id');
             }
 
             // artikel updaten
-            $sql->setTable(Core::getTablePrefix() . 'article');
+            $sql->setTable('rex_article');
             $sql->setWhere(['id' => $artId, 'language_id' => $languageId]);
             $sql->setValue('startarticle', 1);
             $sql->setValue('catname', $sql->getValue('name'));
@@ -473,7 +473,7 @@ final class ArticleHandler
         $parentId = 0;
 
         // Kategorie muss leer sein
-        $sql->setQuery('SELECT pid FROM ' . Core::getTablePrefix() . 'article WHERE parent_id=? LIMIT 1', [$artId]);
+        $sql->setQuery('SELECT pid FROM rex_article WHERE parent_id=? LIMIT 1', [$artId]);
         if (0 != $sql->getRows()) {
             return false;
         }
@@ -482,8 +482,8 @@ final class ArticleHandler
         foreach (Language::getAllIds() as $languageId) {
             // artikel
             $sql->setQuery('
-                select parent_id, (select catname FROM ' . Core::getTable('article') . ' parent WHERE parent.id = category.parent_id AND parent.language_id = category.language_id) as catname
-                from ' . Core::getTable('article') . ' category
+                select parent_id, (select catname FROM rex_article parent WHERE parent.id = category.parent_id AND parent.language_id = category.language_id) as catname
+                from rex_article category
                 where id=? and startarticle=1 and language_id=?
             ', [$artId, $languageId]);
 
@@ -494,7 +494,7 @@ final class ArticleHandler
             $catname = (string) $sql->getValue('catname');
 
             // artikel updaten
-            $sql->setTable(Core::getTablePrefix() . 'article');
+            $sql->setTable('rex_article');
             $sql->setWhere(['id' => $artId, 'language_id' => $languageId]);
             $sql->setValue('startarticle', 0);
             $sql->setValue('catname', $catname);
@@ -525,7 +525,7 @@ final class ArticleHandler
 
         // neuen startartikel holen und schauen ob da
         $neu = Sql::factory();
-        $neu->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and language_id=?', [$neuId, Language::getStartId()]);
+        $neu->setQuery('select * from rex_article where id=? and startarticle=0 and language_id=?', [$neuId, Language::getStartId()]);
         if (1 != $neu->getRows()) {
             return false;
         }
@@ -538,7 +538,7 @@ final class ArticleHandler
 
         // alten startartikel
         $alt = Sql::factory();
-        $alt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1 and language_id=?', [$neuCatId, Language::getStartId()]);
+        $alt->setQuery('select * from rex_article where id=? and startarticle=1 and language_id=?', [$neuCatId, Language::getStartId()]);
         if (1 != $alt->getRows()) {
             return false;
         }
@@ -556,20 +556,20 @@ final class ArticleHandler
         // LANG SCHLEIFE
         foreach (Language::getAllIds() as $languageId) {
             // alter startartikel
-            $alt->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=1 and language_id=?', [$neuCatId, $languageId]);
+            $alt->setQuery('select * from rex_article where id=? and startarticle=1 and language_id=?', [$neuCatId, $languageId]);
 
             // neuer startartikel
-            $neu->setQuery('select * from ' . Core::getTablePrefix() . 'article where id=? and startarticle=0 and language_id=?', [$neuId, $languageId]);
+            $neu->setQuery('select * from rex_article where id=? and startarticle=0 and language_id=?', [$neuId, $languageId]);
 
             // alter startartikel updaten
             $alt2 = Sql::factory();
-            $alt2->setTable(Core::getTablePrefix() . 'article');
+            $alt2->setTable('rex_article');
             $alt2->setWhere(['id' => $altId, 'language_id' => $languageId]);
             $alt2->setValue('parent_id', $neuId);
 
             // neuer startartikel updaten
             $neu2 = Sql::factory();
-            $neu2->setTable(Core::getTablePrefix() . 'article');
+            $neu2->setTable('rex_article');
             $neu2->setWhere(['id' => $neuId, 'language_id' => $languageId]);
             $neu2->setValue('parent_id', (int) $alt->getValue('parent_id'));
 
@@ -587,12 +587,12 @@ final class ArticleHandler
 
         $articles = Sql::factory();
         $ia = Sql::factory();
-        $articles->setQuery('select * from ' . Core::getTablePrefix() . "article where path like '%|$altId|%'");
+        $articles->setQuery("select * from rex_article where path like '%|$altId|%'");
         for ($i = 0; $i < $articles->getRows(); ++$i) {
             $iid = (int) $articles->getValue('id');
             $ipath = str_replace("|$altId|", "|$neuId|", (string) $articles->getValue('path'));
 
-            $ia->setTable(Core::getTablePrefix() . 'article');
+            $ia->setTable('rex_article');
             $ia->setWhere(['id' => $iid]);
             $ia->setValue('path', $ipath);
             if ($articles->getValue('parent_id') == $altId) {
@@ -636,12 +636,12 @@ final class ArticleHandler
         }
 
         $gc = Sql::factory();
-        $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and id=?', [$fromLanguageId, $fromId]);
+        $gc->setQuery('select * from rex_article where language_id=? and id=?', [$fromLanguageId, $fromId]);
 
         if (1 == $gc->getRows()) {
             $uc = Sql::factory();
             // $uc->setDebug();
-            $uc->setTable(Core::getTablePrefix() . 'article');
+            $uc->setTable('rex_article');
             $uc->setWhere(['language_id' => $toLanguageId, 'id' => $toId]);
             $uc->addGlobalUpdateFields(self::getUser());
 
@@ -671,12 +671,12 @@ final class ArticleHandler
         foreach (Language::getAllIds() as $languageId) {
             // validierung der id & from_cat_id
             $fromSql = Sql::factory();
-            $fromSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and id=?', [$languageId, $id]);
+            $fromSql->setQuery('select * from rex_article where language_id=? and id=?', [$languageId, $id]);
 
             if (1 == $fromSql->getRows()) {
                 // validierung der to_cat_id
                 $toSql = Sql::factory();
-                $toSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
+                $toSql->setQuery('select * from rex_article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
 
                 if (1 == $toSql->getRows() || 0 == $toCatId) {
                     if (1 == $toSql->getRows()) {
@@ -689,7 +689,7 @@ final class ArticleHandler
                     }
 
                     $artSql = Sql::factory();
-                    $artSql->setTable(Core::getTablePrefix() . 'article');
+                    $artSql->setTable('rex_article');
                     if (false === $newId) {
                         $newId = $artSql->setNewId('id');
                     }
@@ -716,7 +716,7 @@ final class ArticleHandler
                     $artSql->insert();
 
                     $revisions = Sql::factory();
-                    $revisions->setQuery('select revision from ' . Core::getTablePrefix() . 'article_slice where priority=1 AND article_id=? AND language_id=? GROUP BY revision', [$id, $languageId]);
+                    $revisions->setQuery('select revision from rex_article_slice where priority=1 AND article_id=? AND language_id=? GROUP BY revision', [$id, $languageId]);
                     foreach ($revisions as $rev) {
                         // FIXME this dependency is very ugly!
                         // ArticleSlices kopieren
@@ -760,12 +760,12 @@ final class ArticleHandler
         foreach (Language::getAllIds() as $languageId) {
             // validierung der id & from_cat_id
             $fromSql = Sql::factory();
-            $fromSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and startarticle<>1 and id=? and parent_id=?', [$languageId, $id, $fromCatId]);
+            $fromSql->setQuery('select * from rex_article where language_id=? and startarticle<>1 and id=? and parent_id=?', [$languageId, $id, $fromCatId]);
 
             if (1 == $fromSql->getRows()) {
                 // validierung der to_cat_id
                 $toSql = Sql::factory();
-                $toSql->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
+                $toSql->setQuery('select * from rex_article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
 
                 if (1 == $toSql->getRows() || 0 == $toCatId) {
                     if (1 == $toSql->getRows()) {
@@ -782,7 +782,7 @@ final class ArticleHandler
                     $artSql = Sql::factory();
                     // $art_sql->setDebug();
 
-                    $artSql->setTable(Core::getTablePrefix() . 'article');
+                    $artSql->setTable('rex_article');
                     $artSql->setValue('parent_id', $parentId);
                     $artSql->setValue('path', $path);
                     $artSql->setValue('catname', $catname);

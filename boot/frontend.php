@@ -117,26 +117,26 @@ if (Core::getConfig('article_history', false)) {
 
                 $articleLimit = '';
                 if (0 != $article->articleId) {
-                    $articleLimit = ' AND ' . Core::getTablePrefix() . 'article_slice.article_id=' . $article->articleId;
+                    $articleLimit = ' AND rex_article_slice.article_id=' . $article->articleId;
                 }
 
                 ArticleSliceHistory::checkTables();
 
                 $escapeSql = Sql::factory();
 
-                $sliceDate = ' AND ' . Core::getTablePrefix() . 'article_slice.history_date = ' . $escapeSql->escape($historyDate);
+                $sliceDate = ' AND rex_article_slice.history_date = ' . $escapeSql->escape($historyDate);
 
-                return 'SELECT ' . Core::getTablePrefix() . 'article_slice.*, ' . Core::getTablePrefix() . 'article.parent_id
+                return 'SELECT rex_article_slice.*, rex_article.parent_id
                     FROM
-                        ' . ArticleSliceHistory::getTable() . ' as ' . Core::getTablePrefix() . 'article_slice
-                    LEFT JOIN ' . Core::getTablePrefix() . 'article ON ' . Core::getTablePrefix() . 'article_slice.article_id=' . Core::getTablePrefix() . 'article.id
+                        ' . ArticleSliceHistory::getTable() . ' as rex_article_slice
+                    LEFT JOIN rex_article ON rex_article_slice.article_id=rex_article.id
                     WHERE
-                        ' . Core::getTablePrefix() . "article_slice.language_id='" . $article->languageId . "' AND
-                        " . Core::getTablePrefix() . "article.language_id='" . $article->languageId . "' AND
-                        " . Core::getTablePrefix() . 'article_slice.revision=0
+                        rex_article_slice.language_id=' . $article->languageId . ' AND
+                        rex_article.language_id=' . $article->languageId . ' AND
+                        rex_article_slice.revision=0
                         ' . $articleLimit . '
                         ' . $sliceDate . '
-                        ORDER BY ' . Core::getTablePrefix() . 'article_slice.priority';
+                        ORDER BY rex_article_slice.priority';
             }
 
             return null;

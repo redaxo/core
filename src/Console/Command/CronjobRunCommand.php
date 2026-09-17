@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Cronjob\CronjobManager;
 use Redaxo\Core\Database\Sql;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -63,7 +62,7 @@ final class CronjobRunCommand extends AbstractCommand
         if (null === $id) {
             $jobs = Sql::factory()->getArray('
                 SELECT id, name
-                FROM ' . Core::getTable('cronjob') . '
+                FROM rex_cronjob
                 WHERE environment LIKE "%|script|%"
                 ORDER BY id
             ');

@@ -4,7 +4,6 @@ namespace Redaxo\Core\Tests\Content;
 
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Content\ArticleSlice;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 
 /** @internal */
@@ -15,7 +14,7 @@ final class ArticleSliceTest extends TestCase
     protected function tearDown(): void
     {
         Sql::factory()
-            ->setTable(Core::getTable('article_slice'))
+            ->setTable('rex_article_slice')
             ->setWhere(['article_id' => self::FAKE_ID])
             ->delete();
     }
@@ -65,7 +64,7 @@ final class ArticleSliceTest extends TestCase
     {
         $sql = Sql::factory();
         $sql
-            ->setTable(Core::getTable('article_slice'))
+            ->setTable('rex_article_slice')
             ->setValues([
                 'article_id' => self::FAKE_ID,
                 'language_id' => 1,

@@ -143,8 +143,6 @@ final readonly class Util
 
         $query = str_replace('%USER%', $user, $query);
         $query = str_replace('%TIME%', (string) time(), $query);
-        $query = str_replace('%TABLE_PREFIX%', Core::getTablePrefix(), $query);
-        $query = str_replace('%TEMP_PREFIX%', Core::TEMP_PREFIX, $query);
 
         return $query;
     }

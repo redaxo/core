@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\MediaPool;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
@@ -82,7 +81,7 @@ final class MediaPoolCache
      */
     public static function generate(string $filename): bool
     {
-        $query = 'SELECT * FROM ' . Core::getTable('media') . ' WHERE filename = ?';
+        $query = 'SELECT * FROM rex_media WHERE filename = ?';
         $sql = Sql::factory();
         // $sql->setDebug();
         $sql->setQuery($query, [$filename]);
@@ -117,7 +116,7 @@ final class MediaPoolCache
             return false;
         }
 
-        $query = 'SELECT * FROM ' . Core::getTable('media_category') . ' WHERE id = ?';
+        $query = 'SELECT * FROM rex_media_category WHERE id = ?';
         $sql = Sql::factory();
         // $sql->setDebug();
         $sql->setQuery($query, [$categoryId]);
@@ -152,7 +151,7 @@ final class MediaPoolCache
             return false;
         }
 
-        $query = 'SELECT filename FROM ' . Core::getTable('media') . ' WHERE category_id = ?';
+        $query = 'SELECT filename FROM rex_media WHERE category_id = ?';
         $sql = Sql::factory();
         $sql->setQuery($query, [$categoryId]);
 
@@ -180,7 +179,7 @@ final class MediaPoolCache
             return false;
         }
 
-        $query = 'SELECT id, cast( name AS SIGNED ) AS sort FROM ' . Core::getTable('media_category') . ' WHERE parent_id = ? ORDER BY sort, name';
+        $query = 'SELECT id, cast( name AS SIGNED ) AS sort FROM rex_media_category WHERE parent_id = ? ORDER BY sort, name';
         $sql = Sql::factory();
         // $sql->setDebug();
         $sql->setQuery($query, [$categoryId]);

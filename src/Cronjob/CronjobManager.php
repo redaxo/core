@@ -53,7 +53,7 @@ final class CronjobManager
     {
         $this->sql->setQuery('
             SELECT  name
-            FROM    ' . Core::getTable('cronjob') . '
+            FROM    rex_cronjob
             WHERE   id = ?
             LIMIT   1
         ', [$id]);
@@ -65,7 +65,7 @@ final class CronjobManager
 
     public function setStatus(int $id, int $status): void
     {
-        $this->sql->setTable(Core::getTable('cronjob'));
+        $this->sql->setTable('rex_cronjob');
         $this->sql->setWhere(['id' => $id]);
         $this->sql->setValue('status', $status);
         $this->sql->addGlobalUpdateFields();
@@ -75,7 +75,7 @@ final class CronjobManager
 
     public function setExecutionStart(int $id, bool $reset = false): void
     {
-        $this->sql->setTable(Core::getTable('cronjob'));
+        $this->sql->setTable('rex_cronjob');
         $this->sql->setWhere(['id' => $id]);
         $this->sql->setDateTimeValue('execution_start', $reset ? null : time());
         $this->sql->update();
@@ -83,7 +83,7 @@ final class CronjobManager
 
     public function delete(int $id): void
     {
-        $this->sql->setTable(Core::getTable('cronjob'));
+        $this->sql->setTable('rex_cronjob');
         $this->sql->setWhere(['id' => $id]);
         $this->sql->delete();
         $this->saveNextTime();
@@ -100,7 +100,7 @@ final class CronjobManager
 
         $query = '
             SELECT    id, name, type, parameters, `interval`, execution_moment
-            FROM      ' . Core::getTable('cronjob') . '
+            FROM      rex_cronjob
             WHERE     status = 1
                 AND   execution_start IS NULL OR execution_start < ?
                 AND   environment LIKE ?
@@ -182,7 +182,7 @@ final class CronjobManager
         $sql = Sql::factory();
         $jobs = $sql->getArray('
             SELECT    id, name, type, parameters, `interval`
-            FROM      ' . Core::getTable('cronjob') . '
+            FROM      rex_cronjob
             WHERE     id = ? AND environment LIKE ?
             LIMIT     1
         ', [$id, '%|' . CronjobExecutor::getCurrentEnvironment() . '|%']);
@@ -221,7 +221,7 @@ final class CronjobManager
         $nexttime = $nexttime ? Sql::datetime($nexttime) : null;
         $add = $resetExecutionStart ? ', execution_start = NULL' : '';
         $this->sql->setQuery('
-            UPDATE  ' . Core::getTable('cronjob') . '
+            UPDATE  rex_cronjob
             SET     nexttime = ?' . $add . '
             WHERE   id = ?
         ', [$nexttime, $id]);
@@ -232,7 +232,7 @@ final class CronjobManager
     {
         $this->sql->setQuery('
             SELECT  MIN(nexttime) AS nexttime
-            FROM    ' . Core::getTable('cronjob') . '
+            FROM    rex_cronjob
             WHERE   status = 1
         ');
 

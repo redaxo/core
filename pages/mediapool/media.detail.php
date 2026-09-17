@@ -46,7 +46,7 @@ if (Request::post('btn_delete', 'string')) {
     if (!$csrf->isValid()) {
         $error = I18n::msg('csrf_token_invalid');
     } else {
-        $sql = Sql::factory()->setQuery('SELECT filename FROM ' . Core::getTable('media') . ' WHERE id = ?', [$fileId]);
+        $sql = Sql::factory()->setQuery('SELECT filename FROM rex_media WHERE id = ?', [$fileId]);
         $media = null;
         if (1 == $sql->getRows()) {
             $media = Media::get((string) $sql->getValue('filename'));
@@ -79,7 +79,7 @@ if (Request::post('btn_update', 'string')) {
         $error = I18n::msg('csrf_token_invalid');
     } else {
         $gf = Sql::factory();
-        $gf->setQuery('select * from ' . Core::getTablePrefix() . 'media where id=?', [$fileId]);
+        $gf->setQuery('select * from rex_media where id=?', [$fileId]);
         if (1 != $gf->getRows()) {
             $error = I18n::msg('pool_file_not_found');
             $fileId = 0;
@@ -117,7 +117,7 @@ if (Request::post('btn_update', 'string')) {
 }
 
 $gf = Sql::factory();
-$gf->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'media WHERE id = ?', [$fileId]);
+$gf->setQuery('SELECT * FROM rex_media WHERE id = ?', [$fileId]);
 if (1 != $gf->getRows()) {
     $error = I18n::msg('pool_file_not_found');
     $fileId = 0;

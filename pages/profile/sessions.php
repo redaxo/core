@@ -15,7 +15,7 @@ if (!isset($userId) || 1 > $userId) {
 }
 Type::int($userId);
 
-$list = DataList::factory('Select session_id, cookie_key, ip, useragent, starttime, last_activity from ' . Core::getTablePrefix() . 'user_session where user_id = ' . $userId . ' ORDER BY last_activity DESC');
+$list = DataList::factory('Select session_id, cookie_key, ip, useragent, starttime, last_activity from rex_user_session where user_id = ' . $userId . ' ORDER BY last_activity DESC');
 $list->addTableAttribute('class', 'table-hover');
 
 $list->addColumn('remove_session', '<i class="rex-icon rex-icon-delete"></i>', 0, ['<th class="rex-table-icon"></th>', '<td class="rex-table-icon">###VALUE###</td>']);

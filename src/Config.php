@@ -274,7 +274,7 @@ final class Config
     private static function loadFromDb(): void
     {
         $sql = Sql::factory();
-        $sql->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'config');
+        $sql->setQuery('SELECT * FROM rex_config');
 
         self::$data = [];
         foreach ($sql as $cfg) {
@@ -321,7 +321,7 @@ final class Config
 
         // remove all deleted data
         if (self::$deletedData) {
-            $sql->setTable(Core::getTable('config'));
+            $sql->setTable('rex_config');
 
             $where = [];
             $params = [];
@@ -340,7 +340,7 @@ final class Config
 
         // update all changed data
         if (self::$changedData) {
-            $sql->setTable(Core::getTable('config'));
+            $sql->setTable('rex_config');
 
             foreach (self::$changedData as $namespace => $nsData) {
                 foreach ($nsData as $key => $value) {

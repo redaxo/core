@@ -8,7 +8,7 @@ use Redaxo\Core\Database\Index;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
 
-Table::get(Core::getTable('language'))
+Table::get('rex_language')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::varchar('code', 35)) // maximum length of a well-formed BCP 47 language tag
     ->ensureColumn(Column::varchar('name', 255))
@@ -17,13 +17,13 @@ Table::get(Core::getTable('language'))
     ->ensure();
 
 $sql = Sql::factory();
-if (!$sql->setQuery('SELECT 1 FROM ' . Core::getTable('language') . ' LIMIT 1')->getRows()) {
-    $sql->setTable(Core::getTable('language'));
+if (!$sql->setQuery('SELECT 1 FROM rex_language LIMIT 1')->getRows()) {
+    $sql->setTable('rex_language');
     $sql->setValues(['id' => 1, 'code' => 'de', 'name' => 'deutsch', 'priority' => 1, 'status' => 1]);
     $sql->insert();
 }
 
-Table::get(Core::getTable('config'))
+Table::get('rex_config')
     ->removeColumn('id')
     ->ensureColumn(Column::varchar('namespace', 75))
     ->ensureColumn(Column::varchar('key', 255))
@@ -31,14 +31,14 @@ Table::get(Core::getTable('config'))
     ->setPrimaryKey(['namespace', 'key'])
     ->ensure();
 
-Table::get(Core::getTable('migration'))
+Table::get('rex_migration')
     ->ensureColumn(Column::varchar('package', 191))
     ->ensureColumn(Column::varchar('id', 191))
     ->ensureColumn(Column::datetime('executed'))
     ->setPrimaryKey(['package', 'id'])
     ->ensure();
 
-Table::get(Core::getTable('article'))
+Table::get('rex_article')
     ->ensureColumn(Column::int('pid', unsigned: true, autoIncrement: true))
     ->ensureColumn(Column::int('id', unsigned: true))
     ->ensureColumn(Column::int('parent_id', unsigned: true))
@@ -58,7 +58,7 @@ Table::get(Core::getTable('article'))
     ->ensureIndex(new Index('parent_id', ['parent_id']))
     ->ensure();
 
-Table::get(Core::getTable('article_slice'))
+Table::get('rex_article_slice')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::int('article_id', unsigned: true))
     ->ensureColumn(Column::int('language_id', unsigned: true))
@@ -132,7 +132,7 @@ Table::get(Core::getTable('article_slice'))
     ->ensureIndex(new Index('find_slices', ['language_id', 'article_id']))
     ->ensure();
 
-Table::get(Core::getTable('article_slice_history'))
+Table::get('rex_article_slice_history')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::int('slice_id', unsigned: true))
     ->ensureColumn(Column::varchar('history_type', 50))
@@ -209,7 +209,7 @@ Table::get(Core::getTable('article_slice_history'))
     ->ensureIndex(new Index('snapshot', ['article_id', 'language_id', 'revision', 'history_date']))
     ->ensure();
 
-Table::get(Core::getTable('cronjob'))
+Table::get('rex_cronjob')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::varchar('name', 255))
     ->ensureColumn(Column::varchar('description', 255, nullable: true))
@@ -226,7 +226,7 @@ Table::get(Core::getTable('cronjob'))
     ->ensureGlobalColumns()
     ->ensure();
 
-Table::get(Core::getTable('media'))
+Table::get('rex_media')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::int('category_id', unsigned: true))
     ->ensureColumn(Column::varchar('filetype', 255, nullable: true))
@@ -241,7 +241,7 @@ Table::get(Core::getTable('media'))
     ->ensureIndex(new Index('filename', ['filename'], Index::UNIQUE))
     ->ensure();
 
-Table::get(Core::getTable('media_category'))
+Table::get('rex_media_category')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::varchar('name', 255))
     ->ensureColumn(Column::int('parent_id', unsigned: true))
@@ -250,7 +250,7 @@ Table::get(Core::getTable('media_category'))
     ->ensureIndex(new Index('parent_id', ['parent_id']))
     ->ensure();
 
-Table::get(Core::getTable('user'))
+Table::get('rex_user')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::varchar('name', 255, nullable: true))
     ->ensureColumn(Column::text('description', nullable: true))
@@ -275,15 +275,15 @@ Table::get(Core::getTable('user'))
     ->removeColumn('session_id')
     ->ensure();
 
-Table::get(Core::getTable('user_passkey'))
+Table::get('rex_user_passkey')
     ->ensureColumn(Column::varchar('id', 255))
-    ->ensureForeignIdColumn('user_id', Core::getTable('user'), onUpdate: ForeignKey::CASCADE, onDelete: ForeignKey::CASCADE)
+    ->ensureForeignIdColumn('user_id', 'rex_user', onUpdate: ForeignKey::CASCADE, onDelete: ForeignKey::CASCADE)
     ->ensureColumn(Column::text('public_key'))
     ->ensureColumn(Column::datetime('createdate'))
     ->setPrimaryKey('id')
     ->ensure();
 
-Table::get(Core::getTable('user_role'))
+Table::get('rex_user_role')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::varchar('name', 255, nullable: true))
     ->ensureColumn(Column::text('description', nullable: true))
@@ -291,9 +291,9 @@ Table::get(Core::getTable('user_role'))
     ->ensureGlobalColumns()
     ->ensure();
 
-Table::get(Core::getTable('user_session'))
+Table::get('rex_user_session')
     ->ensureColumn(Column::varchar('session_id', 255))
-    ->ensureForeignIdColumn('user_id', Core::getTable('user'), onUpdate: ForeignKey::CASCADE, onDelete: ForeignKey::CASCADE)
+    ->ensureForeignIdColumn('user_id', 'rex_user', onUpdate: ForeignKey::CASCADE, onDelete: ForeignKey::CASCADE)
     ->ensureColumn(Column::varchar('cookie_key', 88, nullable: true))
     ->ensureColumn(Column::varchar('passkey_id', 255, nullable: true))
     ->ensureColumn(Column::varchar('ip', 39)) // max for ipv6
@@ -302,7 +302,7 @@ Table::get(Core::getTable('user_session'))
     ->ensureColumn(Column::datetime('last_activity'))
     ->setPrimaryKey('session_id')
     ->ensureIndex(new Index('cookie_key', ['cookie_key'], Index::UNIQUE))
-    ->ensureForeignKeyTo(Core::getTable('user_passkey'), ['passkey_id' => 'id'], ForeignKey::CASCADE, ForeignKey::CASCADE)
+    ->ensureForeignKeyTo('rex_user_passkey', ['passkey_id' => 'id'], ForeignKey::CASCADE, ForeignKey::CASCADE)
     ->ensure();
 
 $defaultConfig = [

@@ -20,7 +20,7 @@ final class ArticleSliceHistory
      */
     public static function getTable(): string
     {
-        return Core::getTablePrefix() . 'article_slice_history';
+        return 'rex_article_slice_history';
     }
 
     /** Only Snapshots from LiveVersion. */
@@ -29,7 +29,7 @@ final class ArticleSliceHistory
         self::checkTables();
 
         $slices = Sql::factory()->getArray(
-            'select * from ' . Core::getTable('article_slice') . ' where article_id=? and language_id=? and revision=?',
+            'select * from rex_article_slice where article_id=? and language_id=? and revision=?',
             [
                 $articleId,
                 $languageId,
@@ -81,17 +81,17 @@ final class ArticleSliceHistory
 
         self::makeSnapshot($articleId, $languageId, 'version set ' . $historyDate);
 
-        $articleSlicesTable = Table::get(Core::getTable('article_slice'));
+        $articleSlicesTable = Table::get('rex_article_slice');
 
         $sql = Sql::factory();
-        $sql->setQuery('delete from ' . $sql->escapeIdentifier(Core::getTable('article_slice')) . ' where article_id=? and language_id=? and revision=?', [$articleId, $languageId, 0]);
+        $sql->setQuery('delete from rex_article_slice where article_id=? and language_id=? and revision=?', [$articleId, $languageId, 0]);
 
         $slices = Sql::factory();
         $slices = $slices->getArray('select * from ' . $slices->escapeIdentifier(self::getTable()) . ' where article_id=? and language_id=? and revision=? and history_date=?', [$articleId, $languageId, 0, $historyDate]);
 
         foreach ($slices as $slice) {
             $sql = Sql::factory();
-            $sql->setTable(Core::getTable('article_slice'));
+            $sql->setTable('rex_article_slice');
 
             $ignoreFields = ['id', 'slice_id', 'history_date', 'history_type', 'history_user'];
             foreach ($articleSlicesTable->getColumns() as $column) {
@@ -121,7 +121,7 @@ final class ArticleSliceHistory
 
     public static function checkTables(): void
     {
-        $slicesTable = Table::get(Core::getTable('article_slice'));
+        $slicesTable = Table::get('rex_article_slice');
         $historyTable = Table::get(self::getTable());
 
         foreach ($slicesTable->getColumns() as $column) {

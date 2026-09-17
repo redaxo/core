@@ -17,9 +17,9 @@ if (!isset($userId) || 1 > $userId) {
 Type::int($userId);
 
 $list = DataList::factory('
-    select null as id, password_changed as createdate from ' . Core::getTable('user') . ' where id = ' . $userId . ' AND password IS NOT NULL
+    select null as id, password_changed as createdate from rex_user where id = ' . $userId . ' AND password IS NOT NULL
     union
-    select id, createdate from ' . Core::getTable('user_passkey') . ' where user_id = ' . $userId . '
+    select id, createdate from rex_user_passkey where user_id = ' . $userId . '
 ');
 $list->addTableAttribute('class', 'table-hover');
 

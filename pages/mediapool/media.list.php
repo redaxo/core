@@ -80,7 +80,7 @@ if ($hasCategoryPerm && 'updatecat_selectedmedia' == $mediaMethod) {
 
                 $db = Sql::factory();
                 // $db->setDebug();
-                $db->setTable(Core::getTablePrefix() . 'media');
+                $db->setTable('rex_media');
                 $db->setWhere(['filename' => $fileName]);
                 $db->setValue('category_id', $rexFileCategory);
                 $db->addGlobalUpdateFields();
@@ -230,7 +230,7 @@ $panel .= '
 if ($hasCategoryPerm) {
     $addInput = '';
     $filecat = Sql::factory();
-    $filecat->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'media_category ORDER BY name ASC LIMIT 1');
+    $filecat->setQuery('SELECT * FROM rex_media_category ORDER BY name ASC LIMIT 1');
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_select_all') . '</label>';

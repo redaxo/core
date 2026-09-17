@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Language;
 
 use Redaxo\Core\Cache;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\RuntimeException;
@@ -24,7 +23,7 @@ final class LanguageHandler
     public static function add(string $code, string $name, int $priority, bool $status = false): void
     {
         $sql = Sql::factory();
-        $sql->setTable(Core::getTablePrefix() . 'language');
+        $sql->setTable('rex_language');
         $sql->setNewId('id');
         $sql->setValue('code', $code);
         $sql->setValue('name', $name);
@@ -33,7 +32,7 @@ final class LanguageHandler
         $sql->insert();
         $id = $sql->getLastId();
 
-        Util::organizePriorities(Core::getTable('language'), 'priority', '', 'priority, id != ' . $id);
+        Util::organizePriorities('rex_language', 'priority', '', 'priority, id != ' . $id);
 
         $sourceId = Language::getStartId();
         if ($sourceId === $id) {
@@ -46,13 +45,13 @@ final class LanguageHandler
         }
 
         $firstLang = Sql::factory();
-        $firstLang->setQuery('select * from ' . Core::getTablePrefix() . 'article where language_id=?', [$sourceId]);
+        $firstLang->setQuery('select * from rex_article where language_id=?', [$sourceId]);
         $fields = $firstLang->getFieldnames();
 
         $newLang = Sql::factory();
         // $newLang->setDebug();
         foreach ($firstLang as $firstLangArt) {
-            $newLang->setTable(Core::getTablePrefix() . 'article');
+            $newLang->setTable('rex_article');
 
             foreach ($fields as $value) {
                 if ('pid' == $value) {
@@ -87,7 +86,7 @@ final class LanguageHandler
         $oldPriority = Language::require($id)->priority;
 
         $editLang = Sql::factory();
-        $editLang->setTable(Core::getTablePrefix() . 'language');
+        $editLang->setTable('rex_language');
         $editLang->setWhere(['id' => $id]);
         $editLang->setValue('code', $code);
         $editLang->setValue('name', $name);
@@ -98,7 +97,7 @@ final class LanguageHandler
         $editLang->update();
 
         $comparator = $oldPriority < $priority ? '=' : '!=';
-        Util::organizePriorities(Core::getTable('language'), 'priority', '', 'priority, id' . $comparator . $id);
+        Util::organizePriorities('rex_language', 'priority', '', 'priority, id' . $comparator . $id);
 
         Cache::delete();
 
@@ -127,12 +126,12 @@ final class LanguageHandler
         $language = Language::require($id);
 
         $del = Sql::factory();
-        $del->setQuery('delete from ' . Core::getTablePrefix() . 'language where id=?', [$id]);
+        $del->setQuery('delete from rex_language where id=?', [$id]);
 
-        Util::organizePriorities(Core::getTable('language'), 'priority', '', 'priority');
+        Util::organizePriorities('rex_language', 'priority', '', 'priority');
 
-        $del->setQuery('delete from ' . Core::getTablePrefix() . 'article where language_id=?', [$id]);
-        $del->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where language_id=?', [$id]);
+        $del->setQuery('delete from rex_article where language_id=?', [$id]);
+        $del->setQuery('delete from rex_article_slice where language_id=?', [$id]);
 
         Cache::delete();
 
@@ -148,7 +147,7 @@ final class LanguageHandler
     public static function generateCache(): array
     {
         $lg = Sql::factory();
-        $lg->setQuery('select * from ' . Core::getTablePrefix() . 'language order by priority');
+        $lg->setQuery('select * from rex_language order by priority');
 
         $languages = [];
         foreach ($lg as $lang) {
