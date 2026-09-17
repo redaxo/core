@@ -432,7 +432,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
 
         $user = Sql::factory();
         $user
-            ->setTable(Core::getTable('user'))
+            ->setTable('rex_user')
             ->select();
 
         $skipUserCreation = $user->getRows() > 0;
@@ -459,7 +459,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
                     }
                     $user = Sql::factory();
                     $user
-                        ->setTable(Core::getTable('user'))
+                        ->setTable('rex_user')
                         ->setWhere(['login' => $login])
                         ->select();
 
@@ -496,7 +496,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
             $passwordHash = BackendLogin::passwordHash($password);
 
             $user = Sql::factory();
-            $user->setTable(Core::getTablePrefix() . 'user');
+            $user->setTable('rex_user');
             $user->setValue('login', $login);
             $user->setValue('password', $passwordHash);
             $user->setValue('admin', 1);

@@ -44,13 +44,13 @@ final class SchemaDumperTest extends TestCase
             ->ensure();
 
         $expected = <<<'CODE'
-            \Redaxo\Core\Database\Table::get(\Redaxo\Core\Core::getTable('schema_dumper_test'))
+            \Redaxo\Core\Database\Table::get('rex_schema_dumper_test')
                 ->ensurePrimaryIdColumn()
-                ->ensureForeignIdColumn('parent_id', \Redaxo\Core\Core::getTable('schema_dumper_parent'), onDelete: \Redaxo\Core\Database\ForeignKey::CASCADE)
-                ->ensureForeignIdColumn('optional_id', \Redaxo\Core\Core::getTable('schema_dumper_parent'), nullable: true, onDelete: \Redaxo\Core\Database\ForeignKey::SET_NULL)
+                ->ensureForeignIdColumn('parent_id', 'rex_schema_dumper_parent', onDelete: \Redaxo\Core\Database\ForeignKey::CASCADE)
+                ->ensureForeignIdColumn('optional_id', 'rex_schema_dumper_parent', nullable: true, onDelete: \Redaxo\Core\Database\ForeignKey::SET_NULL)
                 ->ensureColumn(\Redaxo\Core\Database\Column::varchar('parent_code', 10))
-                ->ensureForeignKeyTo(\Redaxo\Core\Core::getTable('schema_dumper_parent'), ['parent_code' => 'code'])
-                ->ensureForeignKey(new \Redaxo\Core\Database\ForeignKey('custom_name_fk', \Redaxo\Core\Core::getTable('schema_dumper_parent'), ['parent_code' => 'code']))
+                ->ensureForeignKeyTo('rex_schema_dumper_parent', ['parent_code' => 'code'])
+                ->ensureForeignKey(new \Redaxo\Core\Database\ForeignKey('custom_name_fk', 'rex_schema_dumper_parent', ['parent_code' => 'code']))
                 ->ensure();
 
             CODE;
@@ -98,7 +98,7 @@ final class SchemaDumperTest extends TestCase
             ->ensure();
 
         $expected = <<<'CODE'
-            \Redaxo\Core\Database\Table::get(\Redaxo\Core\Core::getTable('schema_dumper_test'))
+            \Redaxo\Core\Database\Table::get('rex_schema_dumper_test')
                 ->ensurePrimaryIdColumn()
                 ->ensureColumn(\Redaxo\Core\Database\Column::int('parent_id', unsigned: true, nullable: true))
                 ->ensureColumn(\Redaxo\Core\Database\Column::smallint('offset', default: -1))

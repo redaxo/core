@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Security;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -86,7 +85,7 @@ final class UserRole
     public static function get(string $ids): ?self
     {
         $sql = Sql::factory();
-        $userRoles = $sql->getArray('SELECT perms FROM ' . Core::getTablePrefix() . 'user_role WHERE FIND_IN_SET(id, ?)', [$ids]);
+        $userRoles = $sql->getArray('SELECT perms FROM rex_user_role WHERE FIND_IN_SET(id, ?)', [$ids]);
         if (0 == count($userRoles)) {
             return null;
         }
@@ -108,9 +107,9 @@ final class UserRole
         $item = '|' . $params['item'] . '|';
         $new = isset($params['new']) ? '|' . $params['new'] . '|' : '|';
         $sql = Sql::factory();
-        $sql->setQuery('SELECT id, perms FROM ' . Core::getTable('user_role'));
+        $sql->setQuery('SELECT id, perms FROM rex_user_role');
         $update = Sql::factory();
-        $update->prepareQuery('UPDATE ' . Core::getTable('user_role') . ' SET perms = ? WHERE id = ?');
+        $update->prepareQuery('UPDATE rex_user_role SET perms = ? WHERE id = ?');
         foreach ($sql as $row) {
             $perms = $row->getArrayValue('perms');
             if (isset($perms[$key]) && str_contains($perms[$key], $item)) {

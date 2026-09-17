@@ -74,7 +74,7 @@ final class WebAuthn
         }
 
         $sql = Sql::factory();
-        $sql->setQuery('SELECT public_key FROM ' . Core::getTable('user_passkey') . ' WHERE id = ? AND user_id = ?', [$data->id, $id]);
+        $sql->setQuery('SELECT public_key FROM rex_user_passkey WHERE id = ? AND user_id = ?', [$data->id, $id]);
 
         if (!$sql->getRows()) {
             return null;

@@ -29,17 +29,17 @@ final class ArticleRevision
         // clear the revision to which we will later copy all slices
         $dc = Sql::factory();
         // $dc->setDebug();
-        $dc->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=?', [$articleId, $languageId, $toRevisionId]);
+        $dc->setQuery('delete from rex_article_slice where article_id=? and language_id=? and revision=?', [$articleId, $languageId, $toRevisionId]);
 
         $gc = Sql::factory();
-        $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=? ORDER by ctype_id, priority', [$articleId, $languageId, $fromRevisionId]);
+        $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? and revision=? ORDER by ctype_id, priority', [$articleId, $languageId, $fromRevisionId]);
 
         $cols = Sql::factory();
-        $cols->setQuery('SHOW COLUMNS FROM ' . Core::getTablePrefix() . 'article_slice');
+        $cols->setQuery('SHOW COLUMNS FROM rex_article_slice');
         foreach ($gc as $slice) {
             $ins = Sql::factory();
             // $ins->setDebug();
-            $ins->setTable(Core::getTablePrefix() . 'article_slice');
+            $ins->setTable('rex_article_slice');
 
             foreach ($cols as $col) {
                 $colname = (string) $col->getValue('Field');
@@ -66,7 +66,7 @@ final class ArticleRevision
 
         $dc = Sql::factory();
         // $dc->setDebug();
-        $dc->setQuery('delete from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=?', [$articleId, $languageId, $fromRevisionId]);
+        $dc->setQuery('delete from rex_article_slice where article_id=? and language_id=? and revision=?', [$articleId, $languageId, $fromRevisionId]);
 
         return true;
     }

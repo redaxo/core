@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\Login;
@@ -17,7 +16,7 @@ final class BackendLoginTest extends TestCase
     protected function setUp(): void
     {
         $adduser = Sql::factory();
-        $adduser->setTable(Core::getTablePrefix() . 'user');
+        $adduser->setTable('rex_user');
         $adduser->setValue('name', 'test user');
         $adduser->setValue('login', self::LOGIN);
         $adduser->setValue('password', $psw = Login::passwordHash(self::PASSWORD));
@@ -33,7 +32,7 @@ final class BackendLoginTest extends TestCase
     protected function tearDown(): void
     {
         $deleteuser = Sql::factory();
-        $deleteuser->setQuery('DELETE FROM ' . Core::getTablePrefix() . "user WHERE login = '" . self::LOGIN . "' LIMIT 1");
+        $deleteuser->setQuery("DELETE FROM rex_user WHERE login = '" . self::LOGIN . "' LIMIT 1");
     }
 
     public function testSuccessfullLogin(): void

@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Environment;
 use Redaxo\Core\Security\BackendLogin;
@@ -31,7 +30,7 @@ final class UserCreateCommand extends AbstractCommand
     ): int {
         $user = Sql::factory();
         $user
-            ->setTable(Core::getTable('user'))
+            ->setTable('rex_user')
             ->setWhere(['login' => $login])
             ->select();
 
@@ -69,7 +68,7 @@ final class UserCreateCommand extends AbstractCommand
         $passwordHash = BackendLogin::passwordHash($password);
 
         $user = Sql::factory();
-        $user->setTable(Core::getTablePrefix() . 'user');
+        $user->setTable('rex_user');
         $user->setValue('name', $name);
         $user->setValue('login', $login);
         $user->setValue('password', $passwordHash);

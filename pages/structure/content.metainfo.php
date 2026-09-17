@@ -83,9 +83,9 @@ $content[] = '<dl class="dl-horizontal text-left">' . implode('', $panels) . '</
 // ------------------
 
 $article = Sql::factory();
-$article->setQuery('
+$article->setQuery("
             SELECT article.*
-            FROM ' . Core::getTablePrefix() . "article as article
+            FROM rex_article as article
             WHERE
                 article.id='$articleId'
                 AND language_id=$languageId",

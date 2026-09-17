@@ -37,7 +37,7 @@ final class UserRemoveAuthMethod extends ApiFunction
     private function removePassword(int $userId): Result
     {
         $sql = Sql::factory()
-            ->setTable(Core::getTable('user'))
+            ->setTable('rex_user')
             ->setWhere(['id' => $userId])
             ->setValue('password', null)
             ->addGlobalUpdateFields()
@@ -60,7 +60,7 @@ final class UserRemoveAuthMethod extends ApiFunction
         $passkeyId = Request::get('passkey_id', 'string');
 
         $sql = Sql::factory()
-            ->setTable(Core::getTable('user_passkey'))
+            ->setTable('rex_user_passkey')
             ->setWhere(['id' => $passkeyId, 'user_id' => $userId])
             ->delete();
 

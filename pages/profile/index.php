@@ -103,7 +103,7 @@ if (Request::request('rex_user_updated', 'bool', false)) {
 
 if ($update && !$error) {
     $updateuser = Sql::factory();
-    $updateuser->setTable(Core::getTablePrefix() . 'user');
+    $updateuser->setTable('rex_user');
     $updateuser->setWhere(['id' => $userId]);
     $updateuser->setValue('name', $username);
     $updateuser->setValue('description', $userdesc);
@@ -161,7 +161,7 @@ if (Request::post('upd_psw_button', 'bool')) {
         $userpswNew1 = BackendLogin::passwordHash($userpswNew1);
 
         $updateuser = Sql::factory();
-        $updateuser->setTable(Core::getTablePrefix() . 'user');
+        $updateuser->setTable('rex_user');
         $updateuser->setWhere(['id' => $userId]);
         $updateuser->setValue('password', $userpswNew1);
         $updateuser->addGlobalUpdateFields();
@@ -196,7 +196,7 @@ if ('add_passkey' === Request::request('function', 'string')) {
         [$passkeyId, $passkeyPublicKey] = $webauthn->processCreate($passkey);
 
         $sql = Sql::factory();
-        $sql->setTable(Core::getTable('user_passkey'));
+        $sql->setTable('rex_user_passkey');
         $sql->setValue('id', $passkeyId);
         $sql->setValue('user_id', $userId);
         $sql->setValue('public_key', $passkeyPublicKey);

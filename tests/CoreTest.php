@@ -164,16 +164,6 @@ final class CoreTest extends TestCase
         }
     }
 
-    public function testGetTablePrefix(): void
-    {
-        self::assertEquals(Core::getTablePrefix(), 'rex_', 'table prefix defauts to rex_');
-    }
-
-    public function testGetTable(): void
-    {
-        self::assertEquals(Core::getTable('mytable'), 'rex_mytable', 'tablename gets properly prefixed');
-    }
-
     public function testGetServer(): void
     {
         $origServer = Core::getProperty('server');

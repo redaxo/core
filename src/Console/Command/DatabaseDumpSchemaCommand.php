@@ -25,7 +25,7 @@ final class DatabaseDumpSchemaCommand extends AbstractCommand
         OutputInterface $output,
         SymfonyStyle $io,
         #[Argument('Database table', suggestedValues: static function (): array {
-            return Sql::factory()->getTables(Core::getTablePrefix());
+            return Sql::factory()->getTables(Core::TABLE_PREFIX);
         })] string $table,
     ): int {
         $table = Table::get($table);

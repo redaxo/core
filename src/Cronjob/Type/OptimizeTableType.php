@@ -14,7 +14,7 @@ final class OptimizeTableType extends AbstractType
     #[Override]
     public function execute(): bool
     {
-        $tables = Sql::factory()->getTables(Core::getTablePrefix());
+        $tables = Sql::factory()->getTables(Core::TABLE_PREFIX);
         if (!empty($tables)) {
             $sql = Sql::factory();
             // $sql->setDebug();

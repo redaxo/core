@@ -52,7 +52,7 @@ class BackendLogin extends Login
     {
         parent::__construct();
 
-        $tableName = Core::getTablePrefix() . 'user';
+        $tableName = 'rex_user';
         $this->systemId = self::SYSTEM_ID;
         $sessionPolicy = self::getSessionPolicy();
         $this->sessionDuration = $sessionPolicy->duration;
@@ -111,8 +111,8 @@ class BackendLogin extends Login
             if (!$userId) {
                 $sql->setQuery('
                     SELECT id, password
-                    FROM ' . Core::getTable('user') . ' user
-                    JOIN ' . Core::getTable('user_session') . ' ON user.id = user_id
+                    FROM rex_user user
+                    JOIN rex_user_session ON user.id = user_id
                     WHERE cookie_key = ?
                     LIMIT 1
                 ', [$cookiekey]);
@@ -221,7 +221,7 @@ class BackendLogin extends Login
 
         // check if session was killed only if the user is logged in
         if ($check) {
-            $sql->setQuery('SELECT passkey_id FROM ' . Core::getTable('user_session') . ' where session_id = ?', [session_id()]);
+            $sql->setQuery('SELECT passkey_id FROM rex_user_session where session_id = ?', [session_id()]);
             if (0 === $sql->getRows()) {
                 $check = false;
                 $this->message = I18n::msg('login_session_expired');

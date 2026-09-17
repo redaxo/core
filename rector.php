@@ -145,6 +145,9 @@ return RectorConfig::configure()
     ])
 
     // Upgrade REDAXO 5 to 6
+    ->withRules([
+        RedaxoRule\LiteralTableNameRector::class,
+    ])
     ->withConfiguredRule(RenameClassRector::class, [
         'rex' => Core::class,
         'rex_package_interface' => Addon\Addon::class,

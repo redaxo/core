@@ -2,7 +2,6 @@
 
 use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Controller;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -34,7 +33,7 @@ if ('delete' == $func) {
         $message = Message::error(I18n::msg('csrf_token_invalid'));
     } else {
         $sql = Sql::factory();
-        $sql->setQuery('DELETE FROM ' . Core::getTable('user_role') . ' WHERE id = ? LIMIT 1', [$id]);
+        $sql->setQuery('DELETE FROM rex_user_role WHERE id = ? LIMIT 1', [$id]);
         $message = Message::info(I18n::msg('user_role_deleted'));
     }
 
@@ -44,7 +43,7 @@ if ('delete' == $func) {
 if ('' == $func) {
     $title = I18n::msg('user_role_caption');
 
-    $list = DataList::factory('SELECT id, name FROM ' . Core::getTablePrefix() . 'user_role ORDER BY name', 100);
+    $list = DataList::factory('SELECT id, name FROM rex_user_role ORDER BY name', 100);
     $list->addTableAttribute('class', 'table-striped table-hover');
 
     $tdIcon = '<i class="rex-icon rex-icon-userrole"></i>';
@@ -83,7 +82,7 @@ if ('' == $func) {
 } else {
     $title = 'edit' == $func ? I18n::msg('edit_user_role') : I18n::msg('add_user_role');
 
-    $form = Form::factory(Core::getTablePrefix() . 'user_role', '', 'id = ' . $id);
+    $form = Form::factory('rex_user_role', '', 'id = ' . $id);
     $form->addParam('id', $id);
     $form->setApplyUrl(Url::currentBackendPage());
     $form->setEditMode('edit' == $func);

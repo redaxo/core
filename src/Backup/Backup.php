@@ -134,24 +134,11 @@ final class Backup
         $conts = trim(str_replace('## Redaxo Database Dump Version ' . $mainVersion, '', $conts));
 
         // Prefix prüfen
-        // ## Prefix xxx_
-        if (preg_match('/^## Prefix ([a-zA-Z0-9\_]*)/', $conts, $matches) && isset($matches[1])) {
-            // prefix entfernen
-            $prefix = $matches[1];
-            $conts = trim(str_replace('## Prefix ' . $prefix, '', $conts));
-        } else {
-            // Prefix wurde nicht gefunden
-            return $returnError(I18n::msg('backup_no_valid_import_file') . '. [## Prefix ' . Core::getTablePrefix() . '] is missing');
+        // ## Prefix rex_
+        if (!str_starts_with($conts, '## Prefix ' . Core::TABLE_PREFIX)) {
+            return $returnError(I18n::msg('backup_no_valid_import_file') . '. [## Prefix ' . Core::TABLE_PREFIX . '] is missing');
         }
-
-        // Prefix im export mit dem der installation angleichen
-        if (Core::getTablePrefix() != $prefix) {
-            // Hier case-insensitiv ersetzen, damit alle möglich Schreibweisen (TABLE TablE, tAblE,..) ersetzt werden
-            // Dies ist wichtig, da auch SQLs innerhalb von Ein/Ausgabe der Module vom rex-admin verwendet werden
-            $conts = preg_replace('/(TABLES? `?)' . preg_quote($prefix, '/') . '/i', '$1' . Core::getTablePrefix(), $conts);
-            $conts = preg_replace('/(INTO `?)' . preg_quote($prefix, '/') . '/i', '$1' . Core::getTablePrefix(), $conts);
-            $conts = preg_replace('/(EXISTS `?)' . preg_quote($prefix, '/') . '/i', '$1' . Core::getTablePrefix(), $conts);
-        }
+        $conts = trim(substr($conts, strlen('## Prefix ' . Core::TABLE_PREFIX)));
 
         // ----- EXTENSION POINT
         $filesize = filesize($filename);
@@ -286,7 +273,7 @@ final class Backup
 
         // Versionsstempel hinzufügen
         fwrite($fp, '## Redaxo Database Dump Version ' . Core::getVersion('%s') . $nl);
-        fwrite($fp, '## Prefix ' . Core::getTablePrefix() . $nl);
+        fwrite($fp, '## Prefix ' . Core::TABLE_PREFIX . $nl);
         //  fwrite($fp, '/*!40110 START TRANSACTION; */'.$nl);
 
         fwrite($fp, 'SET FOREIGN_KEY_CHECKS = 0;' . $nl . $nl);
@@ -459,7 +446,7 @@ final class Backup
     public static function getTables(): array
     {
         $tables = [];
-        foreach (Sql::factory()->getTables(Core::getTablePrefix()) as $table) {
+        foreach (Sql::factory()->getTables(Core::TABLE_PREFIX) as $table) {
             if (!str_starts_with($table, Core::TABLE_PREFIX . Core::TEMP_PREFIX)) { // Tabellen die mit rex_tmp_ beginnne, werden nicht exportiert!
                 $tables[] = $table;
             }

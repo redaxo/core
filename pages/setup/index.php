@@ -311,7 +311,7 @@ if (6 === $step) {
 
         if (0 == count($errors)) {
             $ga = Sql::factory();
-            $ga->setQuery('select * from ' . Core::getTablePrefix() . 'user where login = ? ', [$redaxoUserLogin]);
+            $ga->setQuery('select * from rex_user where login = ? ', [$redaxoUserLogin]);
 
             if ($ga->getRows() > 0) {
                 $errors[] = Message::error(I18n::msg('setup_503'));
@@ -322,7 +322,7 @@ if (6 === $step) {
 
                 $user = Sql::factory();
                 // $user->setDebug();
-                $user->setTable(Core::getTablePrefix() . 'user');
+                $user->setTable('rex_user');
                 $user->setValue('name', 'Administrator');
                 $user->setValue('login', $redaxoUserLogin);
                 $user->setValue('password', $redaxoUserPass);
@@ -337,7 +337,7 @@ if (6 === $step) {
         }
     } else {
         $gu = Sql::factory();
-        $gu->setQuery('select * from ' . Core::getTablePrefix() . 'user LIMIT 1');
+        $gu->setQuery('select * from rex_user LIMIT 1');
         if (0 == $gu->getRows()) {
             $errors[] = Message::error(I18n::msg('setup_505'));
         }

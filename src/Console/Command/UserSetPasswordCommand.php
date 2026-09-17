@@ -2,7 +2,6 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Environment;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -28,7 +27,7 @@ final class UserSetPasswordCommand extends AbstractCommand
         SymfonyStyle $io,
         #[Argument('Username', suggestedValues: static function (): array {
             /** @var list<string> */
-            return array_column(Sql::factory()->getArray('SELECT login FROM ' . Core::getTable('user')), 'login');
+            return array_column(Sql::factory()->getArray('SELECT login FROM rex_user'), 'login');
         })] string $user,
         #[Argument('Password')] ?string $password = null,
         #[Option('Require password change after login')] bool $passwordChangeRequired = false,
@@ -37,7 +36,7 @@ final class UserSetPasswordCommand extends AbstractCommand
 
         $user = Sql::factory();
         $user
-            ->setTable(Core::getTable('user'))
+            ->setTable('rex_user')
             ->setWhere(['login' => $username])
             ->select();
 
@@ -74,7 +73,7 @@ final class UserSetPasswordCommand extends AbstractCommand
         $passwordHash = BackendLogin::passwordHash($password);
 
         Sql::factory()
-            ->setTable(Core::getTable('user'))
+            ->setTable('rex_user')
             ->setWhere(['id' => $id])
             ->setValue('password', $passwordHash)
             ->setValue('login_tries', 0)

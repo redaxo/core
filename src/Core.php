@@ -304,30 +304,6 @@ final class Core
         return Env::require('REX_INSTANCE_ID');
     }
 
-    /**
-     * Returns the table prefix.
-     *
-     * Prefer the literal table name in queries, so that IDEs and analysers can resolve them.
-     *
-     * @return non-empty-string
-     */
-    public static function getTablePrefix(): string
-    {
-        return self::TABLE_PREFIX;
-    }
-
-    /**
-     * Adds the table prefix to the table name.
-     *
-     * @param non-empty-string $table Table name
-     *
-     * @return non-empty-string
-     */
-    public static function getTable(string $table): string
-    {
-        return self::getTablePrefix() . $table;
-    }
-
     /** Returns the current user. */
     public static function getUser(): ?User
     {

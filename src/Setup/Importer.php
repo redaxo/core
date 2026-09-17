@@ -114,7 +114,7 @@ final class Importer
         $errMsg = '';
 
         // Prüfen, welche Tabellen bereits vorhanden sind
-        $existingTables = Sql::factory()->getTables(Core::getTablePrefix());
+        $existingTables = Sql::factory()->getTables(Core::TABLE_PREFIX);
 
         foreach (array_diff(self::getRequiredTables(), $existingTables) as $missingTable) {
             $errMsg .= I18n::msg('setup_402', $missingTable) . '<br />';
@@ -126,11 +126,11 @@ final class Importer
     private static function getRequiredTables(): array
     {
         return [
-            Core::getTablePrefix() . 'language',
-            Core::getTablePrefix() . 'user_session',
-            Core::getTablePrefix() . 'user_passkey',
-            Core::getTablePrefix() . 'user',
-            Core::getTablePrefix() . 'config',
+            'rex_language',
+            'rex_user_session',
+            'rex_user_passkey',
+            'rex_user',
+            'rex_config',
         ];
     }
 

@@ -420,8 +420,7 @@ if (Core::getConfig('article_work_version', false)) {
         $workingVersionEmpty = true;
         $gw = Sql::factory();
         $gw->setQuery(
-            'select * from ' . Core::getTablePrefix(
-            ) . 'article_slice where article_id=? and language_id=? and revision=1 LIMIT 1',
+            'select * from rex_article_slice where article_id=? and language_id=? and revision=1 LIMIT 1',
             [$articleId, $languageId],
         );
         if ($gw->getRows() > 0) {

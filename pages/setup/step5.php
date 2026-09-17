@@ -1,6 +1,5 @@
 <?php
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
@@ -18,7 +17,7 @@ assert(isset($errors) && is_array($errors));
 assert(isset($cancelSetupBtn));
 
 $userSql = Sql::factory();
-$userSql->setQuery('select * from ' . Core::getTablePrefix() . 'user LIMIT 1');
+$userSql->setQuery('select * from rex_user LIMIT 1');
 
 $headline = View::title(I18n::msg('setup_500') . $cancelSetupBtn);
 

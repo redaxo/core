@@ -2,13 +2,10 @@
 
 namespace Redaxo\Core\Database;
 
-use Redaxo\Core\Core;
-
 use function array_keys;
 use function count;
 use function in_array;
 use function is_string;
-use function strlen;
 
 /**
  * Class for generating the php code for a Table definition.
@@ -20,7 +17,7 @@ final readonly class SchemaDumper
     /** Dumps the schema for the given table as php code (using `Table`). */
     public function dumpTable(Table $table): string
     {
-        $code = '\\' . Table::class . '::get(' . $this->tableName($table->getName()) . ')';
+        $code = '\\' . Table::class . '::get(' . $this->scalar($table->getName()) . ')';
 
         $setPrimaryKey = true;
         $primaryKeyIsId = ['id'] === $table->getPrimaryKey();
@@ -283,7 +280,7 @@ final readonly class SchemaDumper
             return null;
         }
 
-        $arguments = [$this->scalar($column->name), $this->tableName($foreignKey->table)];
+        $arguments = [$this->scalar($column->name), $this->scalar($foreignKey->table)];
 
         if ($column->nullable) {
             $arguments[] = 'nullable: true';
@@ -304,14 +301,14 @@ final readonly class SchemaDumper
         }
 
         if ($foreignKey->name === $table->getForeignKeyName(array_keys($foreignKey->columns))) {
-            $parameters = [$this->tableName($foreignKey->table), $this->map($foreignKey->columns), ...$actions];
+            $parameters = [$this->scalar($foreignKey->table), $this->map($foreignKey->columns), ...$actions];
 
             return 'ensureForeignKeyTo(' . implode(', ', $parameters) . ')';
         }
 
         $parameters = [
             $this->scalar($foreignKey->name),
-            $this->tableName($foreignKey->table),
+            $this->scalar($foreignKey->table),
             $this->map($foreignKey->columns),
             ...$actions,
         ];
@@ -354,17 +351,6 @@ final readonly class SchemaDumper
         }
 
         return $this->simpleArray($primaryKey);
-    }
-
-    private function tableName(string $name): string
-    {
-        if (!str_starts_with($name, Core::getTablePrefix())) {
-            return $this->scalar($name);
-        }
-
-        $name = substr($name, strlen(Core::getTablePrefix()));
-
-        return '\\' . Core::class . '::getTable(' . $this->scalar($name) . ')';
     }
 
     private function scalar(string|bool|null $scalar): string

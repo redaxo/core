@@ -319,7 +319,7 @@ final class Setup
 
         try {
             $userSql = Sql::factory();
-            $userSql->setQuery('select * from ' . Core::getTable('user') . ' LIMIT 1');
+            $userSql->setQuery('select * from rex_user LIMIT 1');
 
             return $initial = 0 == $userSql->getRows();
         } catch (CouldNotConnectException) {

@@ -1,6 +1,5 @@
 <?php
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Cronjob\CronjobExecutor;
 use Redaxo\Core\Cronjob\CronjobManager;
 use Redaxo\Core\Cronjob\Form\CronjobForm;
@@ -61,7 +60,7 @@ if (in_array($func, ['setstatus', 'delete', 'execute']) && !$csrfToken->isValid(
 }
 
 if ('' == $func) {
-    $query = 'SELECT id, name, type, environment, execution_moment, nexttime, status FROM ' . Core::getTable('cronjob') . ' ORDER BY name';
+    $query = 'SELECT id, name, type, environment, execution_moment, nexttime, status FROM rex_cronjob ORDER BY name';
 
     $list = DataList::factory($query, 30, 'cronjobs');
     $list->addTableAttribute('class', 'table-striped table-hover');
@@ -146,7 +145,7 @@ if ('' == $func) {
 } elseif ('edit' == $func || 'add' == $func) {
     $fieldset = 'edit' == $func ? I18n::msg('edit') : I18n::msg('add');
 
-    $form = new CronjobForm(Core::getTable('cronjob'), $fieldset, 'id = ' . $oid, 'post', false);
+    $form = new CronjobForm('rex_cronjob', $fieldset, 'id = ' . $oid, 'post', false);
     $form->addParam('oid', $oid);
     $form->setEditMode('edit' == $func);
 

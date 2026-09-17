@@ -113,7 +113,7 @@ final class Migrator
     public static function markExecuted(MigrationFile $migration): void
     {
         Sql::factory()
-            ->setTable(Core::getTable('migration'))
+            ->setTable('rex_migration')
             ->setValue('package', $migration->package)
             ->setValue('id', $migration->id)
             ->setValue('executed', Sql::datetime())
@@ -154,7 +154,7 @@ final class Migrator
         }
 
         $sql = Sql::factory();
-        $sql->setQuery('DELETE FROM ' . $sql->escapeIdentifier(Core::getTable('migration')) . ' WHERE `package` = ?', [$package]);
+        $sql->setQuery('DELETE FROM rex_migration WHERE `package` = ?', [$package]);
     }
 
     /**
@@ -188,7 +188,7 @@ final class Migrator
     /** The ledger table is created by the core schema, which may not have run yet. */
     private static function ledgerExists(): bool
     {
-        return in_array(Core::getTable('migration'), Sql::factory()->getTables(Core::getTablePrefix()), true);
+        return in_array('rex_migration', Sql::factory()->getTables(Core::TABLE_PREFIX), true);
     }
 
     /** @return array<string, array<string, true>> Executed migration ids, grouped by package */
@@ -201,7 +201,7 @@ final class Migrator
         $sql = Sql::factory();
 
         $executed = [];
-        foreach ($sql->getArray('SELECT `package`, `id` FROM ' . $sql->escapeIdentifier(Core::getTable('migration'))) as $row) {
+        foreach ($sql->getArray('SELECT `package`, `id` FROM rex_migration') as $row) {
             $executed[(string) $row['package']][(string) $row['id']] = true;
         }
 

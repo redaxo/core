@@ -4,7 +4,6 @@ namespace Redaxo\Core\MediaPool;
 
 use Redaxo\Core\Base\InstanceListPoolTrait;
 use Redaxo\Core\Base\InstancePoolTrait;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -88,7 +87,7 @@ final class Media
     public static function forId(int $mediaId): ?self
     {
         $media = Sql::factory();
-        $media->setQuery('select filename from ' . Core::getTable('media') . ' where id=?', [$mediaId]);
+        $media->setQuery('select filename from rex_media where id=?', [$mediaId]);
 
         if (1 != $media->getRows()) {
             return null;

@@ -48,7 +48,7 @@ $globalInfo = '';
 $article = Sql::factory();
 $article->setQuery('
         SELECT article.*
-        FROM ' . Core::getTablePrefix() . 'article as article
+        FROM rex_article as article
         WHERE
             article.id=?
             AND language_id=?', [$articleId, $languageId]);
@@ -136,7 +136,7 @@ if (
             // edit/ delete
             // article_id must match: the permission check above is based on the requested article, so slices of
             // other articles (possibly in categories the user has no permission for) must not be addressable here
-            $CM->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=? AND article_id=? AND language_id=?', [$sliceId, $articleId, $languageId]);
+            $CM->setQuery('SELECT * FROM rex_article_slice WHERE id=? AND article_id=? AND language_id=?', [$sliceId, $articleId, $languageId]);
             if (1 == $CM->getRows()) {
                 $moduleKey = (string) $CM->getValue('module');
             }
@@ -209,7 +209,7 @@ if (
 
                     // ----- SAVE/UPDATE SLICE
                     if ('add' == $function || 'edit' == $function) {
-                        $sliceTable = Core::getTablePrefix() . 'article_slice';
+                        $sliceTable = 'rex_article_slice';
                         $newsql->setTable($sliceTable);
 
                         if ('edit' == $function) {
@@ -276,7 +276,7 @@ if (
                             $sliceId = $newsql->getLastId();
 
                             Util::organizePriorities(
-                                Core::getTable('article_slice'),
+                                'rex_article_slice',
                                 'priority',
                                 'article_id=' . $articleId . ' AND language_id=' . $languageId . ' AND ctype_id=' . $ctype . ' AND revision=' . (int) $sliceRevision,
                                 'priority, updatedate DESC',
@@ -330,7 +330,7 @@ if (
 
                     // ----- artikel neu generieren
                     $EA = Sql::factory();
-                    $EA->setTable(Core::getTablePrefix() . 'article');
+                    $EA->setTable('rex_article');
                     $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
                     $EA->addGlobalUpdateFields();
                     $EA->update();

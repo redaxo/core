@@ -37,7 +37,7 @@ final class ContentHandler
 
         if (!isset($data['priority'])) {
             $prevSlice = Sql::factory();
-            $prevSlice->setQuery('SELECT IFNULL(MAX(priority),0)+1 as priority FROM ' . Core::getTable('article_slice') . ' WHERE ' . $where);
+            $prevSlice->setQuery('SELECT IFNULL(MAX(priority),0)+1 as priority FROM rex_article_slice WHERE ' . $where);
 
             $data['priority'] = $prevSlice->getValue('priority');
         } elseif ($data['priority'] <= 0) {
@@ -45,7 +45,7 @@ final class ContentHandler
         }
 
         $sql = Sql::factory();
-        $sql->setTable(Core::getTable('article_slice'));
+        $sql->setTable('rex_article_slice');
         $sql->setValue('article_id', $articleId);
         $sql->setValue('language_id', $languageId);
         $sql->setValue('ctype_id', $ctypeId);
@@ -62,7 +62,7 @@ final class ContentHandler
         $sliceId = $sql->getLastId();
 
         Util::organizePriorities(
-            Core::getTable('article_slice'),
+            'rex_article_slice',
             'priority',
             $where,
             'priority, updatedate DESC',
@@ -106,14 +106,14 @@ final class ContentHandler
 
         // check if slice id is valid
         $CM = Sql::factory();
-        $CM->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where id=? and language_id=?', [$sliceId, $languageId]);
+        $CM->setQuery('select * from rex_article_slice where id=? and language_id=?', [$sliceId, $languageId]);
         if (1 == $CM->getRows()) {
             // origin value for later success-check
             $oldPriority = $CM->getValue('priority');
 
             // prepare sql for later saving
             $upd = Sql::factory();
-            $upd->setTable(Core::getTablePrefix() . 'article_slice');
+            $upd->setTable('rex_article_slice');
             $upd->setWhere([
                 'id' => $sliceId,
             ]);
@@ -143,14 +143,14 @@ final class ContentHandler
                 $upd->update();
 
                 Util::organizePriorities(
-                    Core::getTable('article_slice'),
+                    'rex_article_slice',
                     'priority',
                     'article_id=' . (int) $articleId . ' AND language_id=' . $languageId . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . (int) $sliceRevision,
                     'priority, updatedate ' . $updSort,
                 );
 
                 // check if the slice moved at all (first cannot be moved up, last not down)
-                $CM->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where id=? and language_id=?', [$sliceId, $languageId]);
+                $CM->setQuery('select * from rex_article_slice where id=? and language_id=?', [$sliceId, $languageId]);
                 $newPriority = $CM->getValue('priority');
                 if ($oldPriority == $newPriority) {
                     throw new ApiFunctionException(I18n::msg('slice_moved_error'));
@@ -176,7 +176,7 @@ final class ContentHandler
     {
         // check if slice id is valid
         $curr = Sql::factory();
-        $curr->setQuery('SELECT * FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=?', [$sliceId]);
+        $curr->setQuery('SELECT * FROM rex_article_slice WHERE id=?', [$sliceId]);
         if (1 != $curr->getRows()) {
             return false;
         }
@@ -190,11 +190,11 @@ final class ContentHandler
 
         // delete the slice
         $del = Sql::factory();
-        $del->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'article_slice WHERE id=?', [$sliceId]);
+        $del->setQuery('DELETE FROM rex_article_slice WHERE id=?', [$sliceId]);
 
         // reorg remaining slices
         Util::organizePriorities(
-            Core::getTable('article_slice'),
+            'rex_article_slice',
             'priority',
             'article_id=' . (int) $curr->getValue('article_id') . ' AND language_id=' . (int) $curr->getValue('language_id') . ' AND ctype_id=' . (int) $curr->getValue('ctype_id') . ' AND revision=' . (int) $curr->getValue('revision'),
             'priority',
@@ -207,7 +207,7 @@ final class ContentHandler
     public static function sliceStatus(int $sliceId, int $status): void
     {
         $sql = Sql::factory();
-        $sql->setQuery('SELECT article_id, language_id FROM ' . Core::getTable('article_slice') . ' WHERE id = ?', [$sliceId]);
+        $sql->setQuery('SELECT article_id, language_id FROM rex_article_slice WHERE id = ?', [$sliceId]);
 
         if (!$sql->getRows()) {
             throw new RuntimeException(sprintf('Slice with id=%d not found.', $sliceId));
@@ -215,7 +215,7 @@ final class ContentHandler
 
         $article = Article::require((int) $sql->getValue('article_id'), (int) $sql->getValue('language_id'));
 
-        $sql->setTable(Core::getTable('article_slice'));
+        $sql->setTable('rex_article_slice');
         $sql->setWhere(['id' => $sliceId]);
         $sql->setValue('status', $status);
         $sql->update();
@@ -239,9 +239,9 @@ final class ContentHandler
 
         $gc = Sql::factory();
         if (null === $revision) {
-            $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=?', [$fromId, $fromLanguageId]);
+            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=?', [$fromId, $fromLanguageId]);
         } else {
-            $gc->setQuery('select * from ' . Core::getTablePrefix() . 'article_slice where article_id=? and language_id=? and revision=?', [$fromId, $fromLanguageId, $revision]);
+            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? and revision=?', [$fromId, $fromLanguageId, $revision]);
         }
 
         Extension::dispatch(new ExtensionPoint('ART_SLICES_COPY', '', [
@@ -255,9 +255,9 @@ final class ContentHandler
         if ($overwrite) {
             $sql = Sql::factory();
             if (null === $revision) {
-                $sql->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'article_slice WHERE article_id=? AND language_id=?', [$toId, $toLanguageId]);
+                $sql->setQuery('DELETE FROM rex_article_slice WHERE article_id=? AND language_id=?', [$toId, $toLanguageId]);
             } else {
-                $sql->setQuery('DELETE FROM ' . Core::getTablePrefix() . 'article_slice WHERE article_id=? AND language_id=? AND revision=?', [$toId, $toLanguageId, $revision]);
+                $sql->setQuery('DELETE FROM rex_article_slice WHERE article_id=? AND language_id=? AND revision=?', [$toId, $toLanguageId, $revision]);
             }
         }
 
@@ -267,10 +267,10 @@ final class ContentHandler
 
         $cols = Sql::factory();
         // $cols->setDebug();
-        $cols->setQuery('SHOW COLUMNS FROM ' . Core::getTablePrefix() . 'article_slice');
+        $cols->setQuery('SHOW COLUMNS FROM rex_article_slice');
 
         $maxPriorityRaw = Sql::factory()->getArray(
-            'SELECT `ctype_id`, `revision`, MAX(`priority`) as max FROM ' . Core::getTable('article_slice') . ' WHERE `article_id` = :to_id AND `language_id` = :to_language GROUP BY `ctype_id`, `revision`',
+            'SELECT `ctype_id`, `revision`, MAX(`priority`) as max FROM rex_article_slice WHERE `article_id` = :to_id AND `language_id` = :to_language GROUP BY `ctype_id`, `revision`',
             ['to_id' => $toId, 'to_language' => $toLanguageId],
         );
         $maxPriority = [];
@@ -306,7 +306,7 @@ final class ContentHandler
 
             $ins->addGlobalUpdateFields($user);
             $ins->addGlobalCreateFields($user);
-            $ins->setTable(Core::getTablePrefix() . 'article_slice');
+            $ins->setTable('rex_article_slice');
             $ins->insert();
         }
 
@@ -314,7 +314,7 @@ final class ContentHandler
             foreach ($revisions as $revision => $_) {
                 // reorg slices
                 Util::organizePriorities(
-                    Core::getTable('article_slice'),
+                    'rex_article_slice',
                     'priority',
                     'article_id=' . $toId . ' AND language_id=' . $toLanguageId . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . $revision,
                     'priority, updatedate',

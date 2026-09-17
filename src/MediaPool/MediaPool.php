@@ -3,7 +3,6 @@
 namespace Redaxo\Core\MediaPool;
 
 use Redaxo\Core\Content\Article;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -158,7 +157,7 @@ final class MediaPool
         $where .= implode(' OR ', $files) . ' OR ';
         $where .= implode(' OR ', $filelists) . ' OR ';
         $where .= implode(' OR ', $values);
-        $query = 'SELECT DISTINCT article_id, language_id FROM ' . Core::getTablePrefix() . 'article_slice WHERE ' . $where;
+        $query = 'SELECT DISTINCT article_id, language_id FROM rex_article_slice WHERE ' . $where;
 
         $warning = [];
         $res = $sql->getArray($query);
