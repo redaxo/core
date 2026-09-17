@@ -14,8 +14,8 @@ INSERT IGNORE INTO `rex_article_translation` (`article_id`, `language_id`, `name
 (2,1,'test article',0,'test'),
 (2,2,'test article',0,'test');
 
-INSERT IGNORE INTO `rex_category` (`id`, `priority`) VALUES
-(1,1);
+INSERT IGNORE INTO `rex_category` (`id`, `priority`, `createdate`, `createuser`, `updatedate`, `updateuser`) VALUES
+(1,1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
 
 INSERT IGNORE INTO `rex_category_translation` (`category_id`, `language_id`, `name`) VALUES
 (1,1,'test category'),

@@ -124,7 +124,9 @@ final class ArticleCache
         // one cache file per language, holding the article and (for a start article) the category columns of that
         // language in one flat row
         $qry = '
-            SELECT a.*, t.*, c.priority AS catpriority, ct.name AS catname, c.id IS NOT NULL AS startarticle' . self::categoryMetaColumns() . '
+            SELECT a.*, t.*, c.id IS NOT NULL AS startarticle,
+                c.priority AS catpriority, ct.name AS catname,
+                c.createdate AS catcreatedate, c.createuser AS catcreateuser, c.updatedate AS catupdatedate, c.updateuser AS catupdateuser' . self::categoryMetaColumns() . '
             FROM rex_article a
             JOIN rex_article_translation t ON t.article_id = a.id
             LEFT JOIN rex_category c ON c.id = a.id
@@ -150,7 +152,7 @@ final class ArticleCache
                     continue;
                 }
                 $params[$field] = match ($field) {
-                    'createdate', 'updatedate' => $row->getDateTimeValue($field),
+                    'createdate', 'updatedate', 'catcreatedate', 'catupdatedate' => $row->getDateTimeValue($field),
                     default => $row->getValue($field),
                 };
             }
@@ -237,7 +239,7 @@ final class ArticleCache
         $select = '';
         foreach (['c' => 'rex_category', 'ct' => 'rex_category_translation'] as $alias => $table) {
             foreach (array_keys(Table::get($table)->getColumns()) as $column) {
-                if (in_array($column, ['id', 'priority', 'category_id', 'language_id', 'name'], true)) {
+                if (in_array($column, ['id', 'priority', 'category_id', 'language_id', 'name', 'createdate', 'createuser', 'updatedate', 'updateuser'], true)) {
                     continue;
                 }
                 $select .= ', ' . $alias . '.' . $column;

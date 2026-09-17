@@ -97,15 +97,8 @@ final class CategoryHandler extends AbstractHandler
         $shared->setTable('rex_category');
         $shared->setWhere(['id' => $id]);
         $this->saveRequestValues($shared, $context, translatable: false);
-        if ($shared->hasValues()) {
-            $shared->update();
-        }
-
-        Sql::factory()
-            ->setTable('rex_article')
-            ->setWhere(['id' => $id])
-            ->addGlobalUpdateFields()
-            ->update();
+        $shared->addGlobalUpdateFields();
+        $shared->update();
 
         // Regenerate the article with the additional values.
         ArticleCache::generateMeta($id);

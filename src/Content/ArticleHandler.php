@@ -16,6 +16,7 @@ use Redaxo\Core\Util\Type;
 
 use function array_key_exists;
 use function count;
+use function in_array;
 
 final class ArticleHandler
 {
@@ -421,9 +422,13 @@ final class ArticleHandler
         }
         $parentId = $sql->getNullableIntValue('parent_id');
 
+        $user = self::getUser();
+
         Sql::factory()
             ->setTable('rex_category')
             ->setValues(['id' => $artId, 'priority' => 99999])
+            ->addGlobalCreateFields($user)
+            ->addGlobalUpdateFields($user)
             ->insert();
 
         // the category starts out with the article name in every language
@@ -433,7 +438,7 @@ final class ArticleHandler
             ->setTable('rex_article')
             ->setWhere(['id' => $artId])
             ->setValue('priority', 1)
-            ->addGlobalUpdateFields(self::getUser())
+            ->addGlobalUpdateFields($user)
             ->update();
 
         CategoryHandler::newCatPrio($parentId, 1, 0);
@@ -518,8 +523,13 @@ final class ArticleHandler
 
         // the category continues under the id of the new start article; the foreign keys carry its translations and
         // the children (the new start article among them) along
+        Sql::factory()
+            ->setTable('rex_category')
+            ->setWhere(['id' => $altId])
+            ->setValue('id', $neuId)
+            ->addGlobalUpdateFields($user)
+            ->update();
         $sql = Sql::factory();
-        $sql->setQuery('UPDATE rex_category SET id = ? WHERE id = ?', [$neuId, $altId]);
 
         // the articles swap their position: the new start article takes the place of the category
         $alt2 = Sql::factory();
@@ -609,7 +619,8 @@ final class ArticleHandler
             'rex_category_translation' => [['category_id' => $fromId, 'language_id' => $fromLanguageId], ['category_id' => $toId, 'language_id' => $toLanguageId]],
         ];
 
-        $copied = false;
+        $user = self::getUser();
+        $copied = [];
         $sharedCopied = false;
         foreach ($tables as $table => [$from, $to]) {
             $columns = array_intersect($params, array_keys(Table::get($table)->getColumns()));
@@ -631,20 +642,30 @@ final class ArticleHandler
             foreach ($columns as $column) {
                 $target->setValue($column, $source->getValue($column));
             }
-            if ('rex_article' === $table) {
-                $target->addGlobalUpdateFields(self::getUser());
+            if (in_array($table, ['rex_article', 'rex_category'], true)) {
+                $target->addGlobalUpdateFields($user);
             }
             $target->update();
 
-            $copied = true;
+            $copied[] = $table;
             $sharedCopied = $sharedCopied || !str_ends_with($table, '_translation');
         }
 
-        if (!$copied) {
+        if ([] === $copied) {
             return false;
         }
 
-        self::touch($toId);
+        // the owner of a changed translation counts as updated as well
+        if (in_array('rex_article_translation', $copied, true) && !in_array('rex_article', $copied, true)) {
+            self::touch($toId);
+        }
+        if (in_array('rex_category_translation', $copied, true) && !in_array('rex_category', $copied, true)) {
+            Sql::factory()
+                ->setTable('rex_category')
+                ->setWhere(['id' => $toId])
+                ->addGlobalUpdateFields($user)
+                ->update();
+        }
 
         if ($sharedCopied) {
             ArticleCache::deleteMeta($toId);

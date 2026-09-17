@@ -61,6 +61,7 @@ Table::get('rex_article_translation')
 Table::get('rex_category')
     ->ensureForeignIdColumn('id', 'rex_article', onDelete: ForeignKey::CASCADE)
     ->ensureColumn(Column::int('priority', unsigned: true))
+    ->ensureGlobalColumns()
     ->setPrimaryKey('id')
     ->ensure();
 

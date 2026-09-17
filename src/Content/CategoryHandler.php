@@ -91,6 +91,8 @@ final class CategoryHandler
         Sql::factory()
             ->setTable('rex_category')
             ->setValues(['id' => $id, 'priority' => $data['catpriority']])
+            ->addGlobalCreateFields($user)
+            ->addGlobalUpdateFields($user)
             ->insert();
 
         foreach (Language::getAllIds() as $languageId) {
@@ -171,23 +173,17 @@ final class CategoryHandler
                 ->update();
         }
 
+        $category = Sql::factory();
+        $category->setTable('rex_category');
+        $category->setWhere(['id' => $categoryId]);
         if (isset($data['catpriority'])) {
             if ($data['catpriority'] <= 0) {
                 $data['catpriority'] = 1;
             }
-
-            Sql::factory()
-                ->setTable('rex_category')
-                ->setWhere(['id' => $categoryId])
-                ->setValue('priority', $data['catpriority'])
-                ->update();
+            $category->setValue('priority', $data['catpriority']);
         }
-
-        Sql::factory()
-            ->setTable('rex_article')
-            ->setWhere(['id' => $categoryId])
-            ->addGlobalUpdateFields(self::getUser())
-            ->update();
+        $category->addGlobalUpdateFields(self::getUser());
+        $category->update();
 
         // ----- PRIOR
         if (isset($data['catpriority'])) {
@@ -384,12 +380,11 @@ final class CategoryHandler
                 $addsql = 'asc';
             }
 
-            // the most recently updated category wins a priority tie, so the edited one lands where it was put
             Util::organizePriorities(
                 'rex_category',
                 'priority',
                 'id IN (SELECT id FROM rex_article WHERE parent_id ' . (null === $parentId ? 'IS NULL' : '= ' . $parentId) . ')',
-                'priority, (SELECT updatedate FROM rex_article WHERE rex_article.id = rex_category.id) ' . $addsql,
+                'priority, updatedate ' . $addsql,
             );
 
             ArticleCache::deleteLists($parentId);
@@ -477,18 +472,21 @@ final class CategoryHandler
         $gmax->setQuery('SELECT MAX(c.priority) AS priority FROM rex_category c JOIN rex_article a ON a.id = c.id WHERE a.parent_id <=> ?', [$toCat]);
         $priority = (int) $gmax->getValue('priority');
 
+        $user = self::getUser();
+
         $up = Sql::factory();
         $up->setTable('rex_article');
         $up->setWhere(['id' => $fromCat]);
         $up->setValue('path', $toPath);
         $up->setValue('parent_id', $toCat);
-        $up->addGlobalUpdateFields(self::getUser());
+        $up->addGlobalUpdateFields($user);
         $up->update();
 
         Sql::factory()
             ->setTable('rex_category')
             ->setWhere(['id' => $fromCat])
             ->setValue('priority', $priority + 1)
+            ->addGlobalUpdateFields($user)
             ->update();
 
         // ----- generiere artikel neu - ohne neue inhaltsgenerierung
