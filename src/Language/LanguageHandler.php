@@ -105,13 +105,9 @@ final class LanguageHandler
 
         $language = Language::require($id);
 
-        $del = Sql::factory();
-        $del->setQuery('delete from rex_language where id=?', [$id]);
+        Sql::factory()->setQuery('delete from rex_language where id=?', [$id]);
 
         Util::organizePriorities('rex_language', 'priority', '', 'priority');
-
-        // the translations are removed by the foreign keys
-        $del->setQuery('delete from rex_article_slice where language_id=?', [$id]);
 
         Cache::delete();
 
