@@ -1,17 +1,23 @@
 ## Redaxo Database Dump Version 6
 
-INSERT IGNORE INTO `rex_article` VALUES
-(1,1,NULL,'test category','test category',1,1,1,'|',1,'test',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername'),
-(2,2,NULL,'test article','',0,0,1,'|',0,'test',1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
+INSERT IGNORE INTO `rex_language` VALUES
+(1,'de','deutsch',1,1),
+(2,'en','english',2,0);
+
+INSERT IGNORE INTO `rex_article` (`id`, `parent_id`, `catpriority`, `startarticle`, `priority`, `path`, `createdate`, `createuser`, `updatedate`, `updateuser`) VALUES
+(1,NULL,1,1,1,'|','2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername'),
+(2,NULL,0,0,1,'|','2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
+
+INSERT IGNORE INTO `rex_article_translation` (`article_id`, `language_id`, `name`, `catname`, `status`, `template`) VALUES
+(1,1,'test category','test category',1,'test'),
+(1,2,'test category','test category',0,'test'),
+(2,1,'test article','',0,'test'),
+(2,2,'test article','',0,'test');
 
 INSERT IGNORE INTO `rex_article_slice` VALUES
 (1,1,1,1,'testmodule1',0,1,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername'),
 (2,2,1,1,'testmodule1',0,1,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername'),
 (3,1,1,1,'testmodule1',1,1,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
-
-INSERT IGNORE INTO `rex_language` VALUES
-(1,'de','deutsch',1,1),
-(2,'en','english',2,0);
 
 REPLACE INTO `rex_config` VALUES
 ('core','article_history','true'),

@@ -133,7 +133,7 @@ if (!$isStartpage && $user->hasPerm('article2category[]')) {
 // --------------------------------------------------- IN ARTIKEL UMWANDELN START
 if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPerm('structure')->hasCategoryPerm($article->getNullableIntValue('parent_id'))) {
     $sql = Sql::factory();
-    $sql->setQuery('SELECT pid FROM rex_article WHERE parent_id=? LIMIT 1', [$articleId]);
+    $sql->setQuery('SELECT id FROM rex_article WHERE parent_id=? LIMIT 1', [$articleId]);
     $emptyCategory = 0 == $sql->getRows();
 
     $panel = '<fieldset>';

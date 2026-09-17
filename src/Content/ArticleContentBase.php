@@ -241,7 +241,6 @@ class ArticleContentBase
             LEFT JOIN rex_article ON rex_article_slice.article_id = rex_article.id
             WHERE
                 rex_article_slice.language_id = {$this->languageId} AND
-                rex_article.language_id = {$this->languageId} AND
                 rex_article_slice.revision = {$this->sliceRevision}
                 {$articleLimit}
                 {$sliceLimit}

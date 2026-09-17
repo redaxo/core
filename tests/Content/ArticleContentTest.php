@@ -19,7 +19,6 @@ final class ArticleContentTest extends TestCase
         // fake article
         $articleFile = Path::coreCache('structure/1.1.article');
         File::putCache($articleFile, [
-            'pid' => 1,
             'id' => 1,
             'parent_id' => null,
             'name' => 'Testarticle',

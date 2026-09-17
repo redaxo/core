@@ -42,16 +42,14 @@ enum MetaEntity
     /**
      * The table holding the per-language values, or `null` if the entity has no translation table.
      *
-     * Articles and categories still keep one row per language in their main table, so their translatable fields
-     * end up there until the language split.
-     *
      * @return non-empty-string|null
      */
     public function translationTable(): ?string
     {
         return match ($this) {
+            self::Article, self::Category => 'rex_article_translation',
             self::Media => 'rex_media_translation',
-            default => null,
+            self::Language => null,
         };
     }
 

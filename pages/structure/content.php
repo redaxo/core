@@ -47,11 +47,13 @@ $globalInfo = '';
 
 $article = Sql::factory();
 $article->setQuery('
-        SELECT article.*
-        FROM rex_article as article
-        WHERE
-            article.id=?
-            AND language_id=?', [$articleId, $languageId]);
+    SELECT article.*, translation.*
+    FROM rex_article AS article
+    JOIN rex_article_translation AS translation ON translation.article_id = article.id
+    WHERE
+        article.id=?
+        AND translation.language_id=?
+', [$articleId, $languageId]);
 
 if (1 !== $article->getRows()) {
     echo View::title(I18n::msg('content'), '');
@@ -331,7 +333,7 @@ if (
                     // ----- artikel neu generieren
                     $EA = Sql::factory();
                     $EA->setTable('rex_article');
-                    $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
+                    $EA->setWhere(['id' => $articleId]);
                     $EA->addGlobalUpdateFields();
                     $EA->update();
                     ArticleCache::delete($articleId, $languageId);

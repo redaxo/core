@@ -5,6 +5,7 @@ namespace Redaxo\Core\Content;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Database\Table;
 use Redaxo\Core\Database\Util;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -15,6 +16,7 @@ use Redaxo\Core\Util\Type;
 
 use function array_key_exists;
 use function count;
+use function in_array;
 
 final class ArticleHandler
 {
@@ -24,7 +26,7 @@ final class ArticleHandler
      * Creates a new article.
      *
      * @param array{category_id: int|null, priority: int, name: string, template?: string} $data Article data,
-     *     `category_id` is `null` for the root level
+     *     `category_id` is `null` for the root level, `name` is used for all languages
      *
      * @throws ApiFunctionException
      *
@@ -61,71 +63,68 @@ final class ArticleHandler
             $data['template'] = array_key_first($templates);
         }
 
-        $message = I18n::msg('article_added');
+        $user = self::getUser();
 
         $AART = Sql::factory();
-        $user = self::getUser();
-        foreach (Language::getAllIds() as $key) {
-            $categoryName = null === $categoryId ? '' : (Category::get($categoryId, $key)->name ?? '');
+        $AART->setTable('rex_article');
+        $AART->setValue('parent_id', $categoryId);
+        $AART->setValue('priority', $data['priority']);
+        $AART->setValue('catpriority', 0);
+        $AART->setValue('path', $path);
+        $AART->setValue('startarticle', 0);
+        $AART->addGlobalCreateFields($user);
+        $AART->addGlobalUpdateFields($user);
+        $AART->insert();
+        $id = $AART->getLastId();
 
-            $AART->setTable('rex_article');
-            if (!isset($id) || !$id) {
-                $id = $AART->setNewId('id');
-            } else {
-                $AART->setValue('id', $id);
-            }
-            $AART->setValue('name', $data['name']);
-            $AART->setValue('catname', $categoryName);
-            $AART->setValue('catpriority', 0);
-            $AART->setValue('language_id', $key);
-            $AART->setValue('parent_id', $categoryId);
-            $AART->setValue('priority', $data['priority']);
-            $AART->setValue('path', $path);
-            $AART->setValue('startarticle', 0);
-            $AART->setValue('status', 0);
-            $AART->setValue('template', $data['template']);
-            $AART->addGlobalCreateFields($user);
-            $AART->addGlobalUpdateFields($user);
-
-            $AART->insert();
-            // ----- PRIOR
-            self::newArtPrio($categoryId, $key, 0, $data['priority']);
-
-            ArticleCache::delete($id, $key);
-
-            // ----- EXTENSION POINT
-            $message = Extension::dispatch(new ExtensionPoint('ART_ADDED', $message, [
-                'id' => $id,
-                'language' => $key,
-                'status' => 0,
-                'name' => $data['name'],
-                'parent_id' => $categoryId,
-                'priority' => $data['priority'],
-                'path' => $path,
-                'template_key' => $data['template'],
-                'data' => $data,
-            ]));
+        foreach (Language::getAllIds() as $languageId) {
+            Sql::factory()
+                ->setTable('rex_article_translation')
+                ->setValues([
+                    'article_id' => $id,
+                    'language_id' => $languageId,
+                    'name' => $data['name'],
+                    'catname' => '',
+                    'status' => 0,
+                    'template' => $data['template'],
+                ])
+                ->insert();
         }
+        self::updateCategoryNames($id, $categoryId);
+
+        self::newArtPrio($categoryId, 0, $data['priority']);
+
+        ArticleCache::delete($id);
+
+        // ----- EXTENSION POINT
+        $message = Extension::dispatch(new ExtensionPoint('ART_ADDED', I18n::msg('article_added'), [
+            'id' => $id,
+            'status' => 0,
+            'name' => $data['name'],
+            'parent_id' => $categoryId,
+            'priority' => $data['priority'],
+            'path' => $path,
+            'template_key' => $data['template'],
+            'data' => $data,
+        ]));
 
         return $message;
     }
 
     /**
-     * Bearbeitet einen Artikel.
+     * Edits an article: name and template in the given language, the priority for all languages.
      *
-     * @param array{name: string, priority?: int, template?: string|null} $data Array mit den Daten des Artikels
+     * @param array{name: string, priority?: int, template?: string|null} $data Article data
      *
      * @throws ApiFunctionException
      *
-     * @return string Eine Statusmeldung
+     * @return string A status message
      */
     public static function editArticle(int $articleId, int $languageId, array $data): string
     {
         self::reqKey($data, 'name');
 
-        // Artikel mit alten Daten selektieren
-        $thisArt = Sql::factory();
-        $thisArt->setQuery('select * from rex_article where id=? and language_id=?', [$articleId, $languageId]);
+        $thisArt = self::select($articleId, $languageId);
 
         if (1 != $thisArt->getRows()) {
             throw new ApiFunctionException('Unable to find article with id "' . $articleId . '" and language "' . $languageId . '"!');
@@ -153,31 +152,27 @@ final class ArticleHandler
         $data['path'] = $thisArt->getValue('path');
         $data['priority'] ??= (int) $thisArt->getValue('priority');
 
+        Sql::factory()
+            ->setTable('rex_article_translation')
+            ->setWhere(['article_id' => $articleId, 'language_id' => $languageId])
+            ->setValue('name', $data['name'])
+            ->setValue('template', $data['template'])
+            ->update();
+
         $EA = Sql::factory();
         $EA->setTable('rex_article');
-        $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
-        $EA->setValue('name', $data['name']);
-        $EA->setValue('template', $data['template']);
+        $EA->setWhere(['id' => $articleId]);
         $EA->setValue('priority', $data['priority']);
         $EA->addGlobalUpdateFields(self::getUser());
-
         $EA->update();
+
         $message = I18n::msg('article_updated');
 
         // ----- PRIOR
         $oldPrio = (int) $thisArt->getValue('priority');
 
         if ($oldPrio != $data['priority']) {
-            Sql::factory()
-                ->setTable('rex_article')
-                ->setWhere('id = :id AND language_id != :language', ['id' => $articleId, 'language' => $languageId])
-                ->setValue('priority', $data['priority'])
-                ->addGlobalUpdateFields(self::getUser())
-                ->update();
-
-            foreach (Language::getAllIds() as $languageId) {
-                self::newArtPrio($data['category_id'], $languageId, $data['priority'], $oldPrio);
-            }
+            self::newArtPrio($data['category_id'], $data['priority'], $oldPrio);
         }
 
         ArticleCache::delete($articleId);
@@ -185,7 +180,7 @@ final class ArticleHandler
         // ----- EXTENSION POINT
         $message = Extension::dispatch(new ExtensionPoint('ART_UPDATED', $message, [
             'id' => $articleId,
-            'article' => clone $EA,
+            'article' => self::select($articleId, $languageId),
             'article_old' => clone $thisArt,
             'status' => $thisArt->getValue('status'),
             'name' => $data['name'],
@@ -210,33 +205,25 @@ final class ArticleHandler
     public static function deleteArticle(int $articleId): string
     {
         $Art = Sql::factory();
-        $Art->setQuery('select * from rex_article where id=? and startarticle=0', [$articleId]);
+        $Art->setQuery('SELECT * FROM rex_article WHERE id = ? AND startarticle = 0', [$articleId]);
 
-        if ($Art->getRows() > 0) {
-            $message = self::_deleteArticle($articleId);
-            $parentId = $Art->getNullableIntValue('parent_id');
-
-            foreach (Language::getAllIds() as $languageId) {
-                // ----- PRIOR
-                self::newArtPrio($parentId, $languageId, 0, 1);
-
-                // ----- EXTENSION POINT
-                $message = Extension::dispatch(new ExtensionPoint('ART_DELETED', $message, [
-                    'id' => $articleId,
-                    'language' => $languageId,
-                    'parent_id' => $parentId,
-                    'name' => $Art->getValue('name'),
-                    'status' => $Art->getValue('status'),
-                    'priority' => $Art->getValue('priority'),
-                    'path' => $Art->getValue('path'),
-                    'template_key' => $Art->getValue('template'),
-                ]));
-
-                $Art->next();
-            }
-        } else {
+        if (1 != $Art->getRows()) {
             throw new ApiFunctionException(I18n::msg('article_doesnt_exist'));
         }
+
+        $message = self::_deleteArticle($articleId);
+        $parentId = $Art->getNullableIntValue('parent_id');
+
+        // ----- PRIOR
+        self::newArtPrio($parentId, 0, 1);
+
+        // ----- EXTENSION POINT
+        $message = Extension::dispatch(new ExtensionPoint('ART_DELETED', $message, [
+            'id' => $articleId,
+            'parent_id' => $parentId,
+            'priority' => $Art->getValue('priority'),
+            'path' => $Art->getValue('path'),
+        ]));
 
         return $message;
     }
@@ -271,7 +258,7 @@ final class ArticleHandler
         }
 
         $ART = Sql::factory();
-        $ART->setQuery('select * from rex_article where id=? and language_id=?', [$id, Language::getStartId()]);
+        $ART->setQuery('SELECT * FROM rex_article WHERE id = ?', [$id]);
 
         $message = '';
         if ($ART->getRows() > 0) {
@@ -279,28 +266,25 @@ final class ArticleHandler
             $message = Extension::dispatch(new ExtensionPoint('ART_PRE_DELETED', $message, [
                 'id' => $id,
                 'parent_id' => $parentId,
-                'name' => $ART->getValue('name'),
-                'status' => $ART->getValue('status'),
                 'priority' => $ART->getValue('priority'),
                 'path' => $ART->getValue('path'),
-                'template_key' => $ART->getValue('template'),
             ]));
 
             if (1 == $ART->getValue('startarticle')) {
                 $message = I18n::msg('category_deleted');
                 $SART = Sql::factory();
-                $SART->setQuery('select * from rex_article where parent_id=? and language_id=?', [$id, Language::getStartId()]);
-                for ($i = 0; $i < $SART->getRows(); ++$i) {
-                    self::_deleteArticle($id);
-                    $SART->next();
+                $SART->setQuery('SELECT id FROM rex_article WHERE parent_id = ?', [$id]);
+                foreach ($SART as $child) {
+                    self::_deleteArticle((int) $child->getValue('id'));
                 }
             } else {
                 $message = I18n::msg('article_deleted');
             }
 
             ArticleCache::delete($id);
-            $ART->setQuery('delete from rex_article where id=?', [$id]);
-            $ART->setQuery('delete from rex_article_slice where article_id=?', [$id]);
+            // the translations are removed by the foreign key
+            $ART->setQuery('DELETE FROM rex_article WHERE id = ?', [$id]);
+            $ART->setQuery('DELETE FROM rex_article_slice WHERE article_id = ?', [$id]);
 
             // --------------------------------------------------- Listen generieren
             ArticleCache::deleteLists($parentId);
@@ -321,8 +305,7 @@ final class ArticleHandler
      */
     public static function articleStatus(int $articleId, int $languageId, ?int $status = null): int
     {
-        $GA = Sql::factory();
-        $GA->setQuery('select * from rex_article where id=? and language_id=?', [$articleId, $languageId]);
+        $GA = self::select($articleId, $languageId);
         if (1 == $GA->getRows()) {
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
@@ -332,13 +315,13 @@ final class ArticleHandler
                 $newstatus = $status;
             }
 
-            $EA = Sql::factory();
-            $EA->setTable('rex_article');
-            $EA->setWhere(['id' => $articleId, 'language_id' => $languageId]);
-            $EA->setValue('status', $newstatus);
-            $EA->addGlobalUpdateFields(self::getUser());
+            Sql::factory()
+                ->setTable('rex_article_translation')
+                ->setWhere(['article_id' => $articleId, 'language_id' => $languageId])
+                ->setValue('status', $newstatus)
+                ->update();
 
-            $EA->update();
+            self::touch($articleId);
 
             ArticleCache::delete($articleId, $languageId);
 
@@ -400,7 +383,7 @@ final class ArticleHandler
      *
      * @param int|null $parentId `null` for the root level
      */
-    public static function newArtPrio(?int $parentId, int $languageId, int $newPrio, int $oldPrio): void
+    public static function newArtPrio(?int $parentId, int $newPrio, int $oldPrio): void
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -417,7 +400,7 @@ final class ArticleHandler
             Util::organizePriorities(
                 'rex_article',
                 'priority',
-                'language_id=' . $languageId . ' AND (' . $where . ')',
+                $where,
                 'priority,updatedate ' . $addsql,
             );
 
@@ -426,7 +409,7 @@ final class ArticleHandler
                 ArticleCache::deleteMeta($parentId);
             }
 
-            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=0 AND parent_id <=> ? GROUP BY id', [$parentId]);
+            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=0 AND parent_id <=> ?', [$parentId]);
             foreach ($ids as $id) {
                 ArticleCache::deleteMeta((int) $id['id']);
             }
@@ -437,35 +420,30 @@ final class ArticleHandler
     public static function article2category(int $artId): bool
     {
         $sql = Sql::factory();
-        $sql->setQuery('select parent_id from rex_article where id=? and startarticle=0 and language_id=?', [$artId, Language::getStartId()]);
+        $sql->setQuery('SELECT parent_id FROM rex_article WHERE id = ? AND startarticle = 0', [$artId]);
+        if (1 != $sql->getRows()) {
+            return false;
+        }
         $parentId = $sql->getNullableIntValue('parent_id');
 
-        // LANG SCHLEIFE
-        foreach (Language::getAllIds() as $languageId) {
-            // artikel
-            $sql->setQuery('select name from rex_article where id=? and startarticle=0 and language_id=?', [$artId, $languageId]);
+        Sql::factory()
+            ->setTable('rex_article')
+            ->setWhere(['id' => $artId])
+            ->setValue('startarticle', 1)
+            ->setValue('catpriority', 99999)
+            ->setValue('priority', 1)
+            ->addGlobalUpdateFields(self::getUser())
+            ->update();
 
-            // artikel updaten
-            $sql->setTable('rex_article');
-            $sql->setWhere(['id' => $artId, 'language_id' => $languageId]);
-            $sql->setValue('startarticle', 1);
-            $sql->setValue('catname', $sql->getValue('name'));
-            $sql->setValue('catpriority', 99999);
-            $sql->setValue('priority', 1);
-            $sql->update();
+        // the category starts out with the article name in every language
+        $sql->setQuery('UPDATE rex_article_translation SET catname = name WHERE article_id = ?', [$artId]);
 
-            CategoryHandler::newCatPrio($parentId, $languageId, 1, 0);
-        }
+        CategoryHandler::newCatPrio($parentId, 1, 0);
 
         ArticleCache::deleteLists($parentId);
         ArticleCache::delete($artId);
 
-        foreach (Language::getAllIds() as $languageId) {
-            Extension::dispatch(new ExtensionPoint('ART_TO_CAT', '', [
-                'id' => $artId,
-                'language' => $languageId,
-            ]));
-        }
+        Extension::dispatch(new ExtensionPoint('ART_TO_CAT', '', ['id' => $artId]));
 
         return true;
     }
@@ -476,58 +454,51 @@ final class ArticleHandler
         $sql = Sql::factory();
 
         // Kategorie muss leer sein
-        $sql->setQuery('SELECT pid FROM rex_article WHERE parent_id=? LIMIT 1', [$artId]);
+        $sql->setQuery('SELECT id FROM rex_article WHERE parent_id = ? LIMIT 1', [$artId]);
         if (0 != $sql->getRows()) {
             return false;
         }
 
-        $sql->setQuery('select parent_id from rex_article where id=? and startarticle=1 and language_id=?', [$artId, Language::getStartId()]);
+        $sql->setQuery('SELECT parent_id FROM rex_article WHERE id = ? AND startarticle = 1', [$artId]);
+        if (1 != $sql->getRows()) {
+            return false;
+        }
         $parentId = $sql->getNullableIntValue('parent_id');
 
-        // LANG SCHLEIFE
-        foreach (Language::getAllIds() as $languageId) {
-            // artikel
-            $sql->setQuery('
-                select (select catname FROM rex_article parent WHERE parent.id = category.parent_id AND parent.language_id = category.language_id) as catname
-                from rex_article category
-                where id=? and startarticle=1 and language_id=?
-            ', [$artId, $languageId]);
+        Sql::factory()
+            ->setTable('rex_article')
+            ->setWhere(['id' => $artId])
+            ->setValue('startarticle', 0)
+            ->setValue('priority', 99999)
+            ->setValue('catpriority', 0)
+            ->addGlobalUpdateFields(self::getUser())
+            ->update();
 
-            $catname = (string) $sql->getValue('catname');
+        self::updateCategoryNames($artId, $parentId);
 
-            // artikel updaten
-            $sql->setTable('rex_article');
-            $sql->setWhere(['id' => $artId, 'language_id' => $languageId]);
-            $sql->setValue('startarticle', 0);
-            $sql->setValue('catname', $catname);
-            $sql->setValue('priority', 99999);
-            $sql->setValue('catpriority', 0);
-            $sql->update();
-
-            self::newArtPrio($parentId, $languageId, 1, 0);
-        }
+        self::newArtPrio($parentId, 1, 0);
 
         ArticleCache::deleteLists($parentId);
         ArticleCache::delete($artId);
 
-        foreach (Language::getAllIds() as $languageId) {
-            Extension::dispatch(new ExtensionPoint('CAT_TO_ART', '', [
-                'id' => $artId,
-                'language' => $languageId,
-            ]));
-        }
+        Extension::dispatch(new ExtensionPoint('CAT_TO_ART', '', ['id' => $artId]));
 
         return true;
     }
 
-    /** Konvertiert einen Artikel zum Startartikel der eigenen Kategorie. */
+    /**
+     * Makes an article the start article of its category.
+     *
+     * The category keeps its position and settings, but continues under the id of the new start article, while the
+     * previous start article becomes a plain article inside the category.
+     */
     public static function article2startarticle(int $neuId): bool
     {
         $GAID = [];
 
         // neuen startartikel holen und schauen ob da
         $neu = Sql::factory();
-        $neu->setQuery('select * from rex_article where id=? and startarticle=0 and language_id=?', [$neuId, Language::getStartId()]);
+        $neu->setQuery('SELECT * FROM rex_article WHERE id = ? AND startarticle = 0', [$neuId]);
         if (1 != $neu->getRows()) {
             return false;
         }
@@ -540,45 +511,58 @@ final class ArticleHandler
 
         // alten startartikel
         $alt = Sql::factory();
-        $alt->setQuery('select * from rex_article where id=? and startarticle=1 and language_id=?', [$neuCatId, Language::getStartId()]);
+        $alt->setQuery('SELECT * FROM rex_article WHERE id = ? AND startarticle = 1', [$neuCatId]);
         if (1 != $alt->getRows()) {
             return false;
         }
-        $altId = (int) $alt->getValue('id');
+        $altId = $neuCatId;
         $parentId = $alt->getNullableIntValue('parent_id');
 
-        // cat felder sammeln. +
-        $params = ['path', 'priority', 'catname', 'startarticle', 'catpriority', 'status'];
-        foreach ($alt->getFieldnames() as $field) {
-            if (str_starts_with($field, 'cat_')) {
-                $params[] = $field;
-            }
+        // the category-related columns change owner, the article-related ones stay with their article
+        $sharedParams = ['path', 'priority', 'startarticle', 'catpriority', ...self::categoryMetaColumns('rex_article')];
+        $translatedParams = ['catname', 'status', ...self::categoryMetaColumns('rex_article_translation')];
+
+        $user = self::getUser();
+
+        $alt2 = Sql::factory();
+        $alt2->setTable('rex_article');
+        $alt2->setWhere(['id' => $altId]);
+        $alt2->setValue('parent_id', $neuId);
+        $alt2->addGlobalUpdateFields($user);
+
+        $neu2 = Sql::factory();
+        $neu2->setTable('rex_article');
+        $neu2->setWhere(['id' => $neuId]);
+        $neu2->setValue('parent_id', $parentId);
+        $neu2->addGlobalUpdateFields($user);
+
+        foreach ($sharedParams as $param) {
+            $alt2->setValue($param, $neu->getValue($param));
+            $neu2->setValue($param, $alt->getValue($param));
         }
+        $alt2->update();
+        $neu2->update();
 
-        // LANG SCHLEIFE
         foreach (Language::getAllIds() as $languageId) {
-            // alter startartikel
-            $alt->setQuery('select * from rex_article where id=? and startarticle=1 and language_id=?', [$neuCatId, $languageId]);
+            $altTranslation = Sql::factory();
+            $altTranslation->setQuery('SELECT * FROM rex_article_translation WHERE article_id = ? AND language_id = ?', [$altId, $languageId]);
+            $neuTranslation = Sql::factory();
+            $neuTranslation->setQuery('SELECT * FROM rex_article_translation WHERE article_id = ? AND language_id = ?', [$neuId, $languageId]);
+            if (1 != $altTranslation->getRows() || 1 != $neuTranslation->getRows()) {
+                continue;
+            }
 
-            // neuer startartikel
-            $neu->setQuery('select * from rex_article where id=? and startarticle=0 and language_id=?', [$neuId, $languageId]);
-
-            // alter startartikel updaten
             $alt2 = Sql::factory();
-            $alt2->setTable('rex_article');
-            $alt2->setWhere(['id' => $altId, 'language_id' => $languageId]);
-            $alt2->setValue('parent_id', $neuId);
+            $alt2->setTable('rex_article_translation');
+            $alt2->setWhere(['article_id' => $altId, 'language_id' => $languageId]);
 
-            // neuer startartikel updaten
             $neu2 = Sql::factory();
-            $neu2->setTable('rex_article');
-            $neu2->setWhere(['id' => $neuId, 'language_id' => $languageId]);
-            $neu2->setValue('parent_id', $parentId);
+            $neu2->setTable('rex_article_translation');
+            $neu2->setWhere(['article_id' => $neuId, 'language_id' => $languageId]);
 
-            // austauschen der definierten paramater
-            foreach ($params as $param) {
-                $alt2->setValue($param, $neu->getValue($param));
-                $neu2->setValue($param, $alt->getValue($param));
+            foreach ($translatedParams as $param) {
+                $alt2->setValue($param, $neuTranslation->getValue($param));
+                $neu2->setValue($param, $altTranslation->getValue($param));
             }
             $alt2->update();
             $neu2->update();
@@ -589,20 +573,19 @@ final class ArticleHandler
 
         $articles = Sql::factory();
         $ia = Sql::factory();
-        $articles->setQuery("select * from rex_article where path like '%|$altId|%'");
-        for ($i = 0; $i < $articles->getRows(); ++$i) {
-            $iid = (int) $articles->getValue('id');
-            $ipath = str_replace("|$altId|", "|$neuId|", (string) $articles->getValue('path'));
+        $articles->setQuery('SELECT id, parent_id, path FROM rex_article WHERE path LIKE ?', ['%|' . $altId . '|%']);
+        foreach ($articles as $article) {
+            $iid = (int) $article->getValue('id');
+            $ipath = str_replace("|$altId|", "|$neuId|", (string) $article->getValue('path'));
 
             $ia->setTable('rex_article');
             $ia->setWhere(['id' => $iid]);
             $ia->setValue('path', $ipath);
-            if ($articles->getValue('parent_id') == $altId) {
+            if ($article->getValue('parent_id') == $altId) {
                 $ia->setValue('parent_id', $neuId);
             }
             $ia->update();
             $GAID[$iid] = $iid;
-            $articles->next();
         }
 
         $GAID[$neuId] = $neuId;
@@ -617,21 +600,20 @@ final class ArticleHandler
 
         ComplexPermission::replaceItem('structure', $altId, $neuId);
 
-        foreach (Language::getAllIds() as $languageId) {
-            Extension::dispatch(new ExtensionPoint('ART_TO_STARTARTICLE', '', [
-                'id' => $neuId,
-                'id_old' => $altId,
-                'language' => $languageId,
-            ]));
-        }
+        Extension::dispatch(new ExtensionPoint('ART_TO_STARTARTICLE', '', [
+            'id' => $neuId,
+            'id_old' => $altId,
+        ]));
 
         return true;
     }
 
     /**
-     * Kopiert die Metadaten eines Artikels in einen anderen Artikel.
+     * Copies meta values from one article to another.
      *
-     * @param list<string> $params Array von Spaltennamen, welche kopiert werden sollen
+     * Shared columns are copied once for all languages, translatable ones from `$fromLanguageId` to `$toLanguageId`.
+     *
+     * @param list<string> $params Names of the columns to copy
      */
     public static function copyMeta(int $fromId, int $toId, int $fromLanguageId = 1, int $toLanguageId = 1, array $params = []): bool
     {
@@ -639,26 +621,48 @@ final class ArticleHandler
             return false;
         }
 
-        $gc = Sql::factory();
-        $gc->setQuery('select * from rex_article where language_id=? and id=?', [$fromLanguageId, $fromId]);
+        $gc = self::select($fromId, $fromLanguageId);
 
-        if (1 == $gc->getRows()) {
-            $uc = Sql::factory();
-            // $uc->setDebug();
-            $uc->setTable('rex_article');
-            $uc->setWhere(['language_id' => $toLanguageId, 'id' => $toId]);
-            $uc->addGlobalUpdateFields(self::getUser());
+        if (1 != $gc->getRows()) {
+            return false;
+        }
 
-            foreach ($params as $value) {
-                $uc->setValue($value, $gc->getValue($value));
+        $sharedColumns = array_keys(Table::get('rex_article')->getColumns());
+
+        $uc = Sql::factory();
+        $uc->setTable('rex_article');
+        $uc->setWhere(['id' => $toId]);
+        $ut = Sql::factory();
+        $ut->setTable('rex_article_translation');
+        $ut->setWhere(['article_id' => $toId, 'language_id' => $toLanguageId]);
+
+        foreach ($params as $param) {
+            if (in_array($param, $sharedColumns, true)) {
+                $uc->setValue($param, $gc->getValue($param));
+            } else {
+                $ut->setValue($param, $gc->getValue($param));
             }
+        }
 
-            $uc->update();
-
-            ArticleCache::deleteMeta($toId, $toLanguageId);
+        if (!$uc->hasValues() && !$ut->hasValues()) {
             return true;
         }
-        return false;
+
+        if ($ut->hasValues()) {
+            $ut->update();
+        }
+
+        $sharedChanged = $uc->hasValues();
+        $uc->addGlobalUpdateFields(self::getUser());
+        $uc->update();
+
+        if ($sharedChanged) {
+            ArticleCache::deleteMeta($toId);
+        } else {
+            ArticleCache::deleteMeta($toId, $toLanguageId);
+        }
+
+        return true;
     }
 
     /**
@@ -670,81 +674,82 @@ final class ArticleHandler
      */
     public static function copyArticle(int $id, ?int $toCatId): int|false
     {
-        $newId = false;
         $user = self::getUser();
 
-        // Artikel in jeder Sprache kopieren
-        foreach (Language::getAllIds() as $languageId) {
-            // validierung der id & from_cat_id
-            $fromSql = Sql::factory();
-            $fromSql->setQuery('select * from rex_article where language_id=? and id=?', [$languageId, $id]);
+        $fromSql = Sql::factory();
+        $fromSql->setQuery('SELECT * FROM rex_article WHERE id = ?', [$id]);
+        if (1 != $fromSql->getRows()) {
+            return false;
+        }
 
-            if (1 == $fromSql->getRows()) {
-                // validierung der to_cat_id
-                $toSql = Sql::factory();
-                $toSql->setQuery('select * from rex_article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
-
-                if (1 == $toSql->getRows() || null === $toCatId) {
-                    if (1 == $toSql->getRows()) {
-                        $path = $toSql->getValue('path') . $toSql->getValue('id') . '|';
-                        $catname = $toSql->getValue('catname');
-                    } else {
-                        // In RootEbene
-                        $path = '|';
-                        $catname = $fromSql->getValue('name');
-                    }
-
-                    $artSql = Sql::factory();
-                    $artSql->setTable('rex_article');
-                    if (false === $newId) {
-                        $newId = $artSql->setNewId('id');
-                    }
-                    $artSql->setValue('id', $newId); // neuen auto_incrment erzwingen
-                    $artSql->setValue('parent_id', $toCatId);
-                    $artSql->setValue('catname', $catname);
-                    $artSql->setValue('catpriority', 0);
-                    $artSql->setValue('path', $path);
-                    $artSql->setValue('name', $fromSql->getValue('name') . ' ' . I18n::msg('structure_copy'));
-                    $artSql->setValue('priority', 99_999); // Artikel als letzten Artikel in die neue Kat einfügen
-                    $artSql->setValue('status', 0); // Kopierter Artikel offline setzen
-                    $artSql->setValue('startarticle', 0);
-                    $artSql->addGlobalUpdateFields($user);
-                    $artSql->addGlobalCreateFields($user);
-
-                    // schon gesetzte Felder nicht wieder überschreiben
-                    $dontCopy = ['id', 'pid', 'parent_id', 'catname', 'name', 'catpriority', 'path', 'priority', 'status', 'updatedate', 'updateuser', 'createdate', 'createuser', 'startarticle'];
-
-                    foreach (array_diff($fromSql->getFieldnames(), $dontCopy) as $fldName) {
-                        $artSql->setValue($fldName, $fromSql->getValue($fldName));
-                    }
-
-                    $artSql->setValue('language_id', $languageId);
-                    $artSql->insert();
-
-                    $revisions = Sql::factory();
-                    $revisions->setQuery('select revision from rex_article_slice where priority=1 AND article_id=? AND language_id=? GROUP BY revision', [$id, $languageId]);
-                    foreach ($revisions as $rev) {
-                        // FIXME this dependency is very ugly!
-                        // ArticleSlices kopieren
-                        ContentHandler::copyContent($id, $newId, $languageId, $languageId, (int) $rev->getValue('revision'));
-                    }
-
-                    // Prios neu berechnen
-                    self::newArtPrio($toCatId, $languageId, 1, 0);
-
-                    Extension::dispatch(new ExtensionPoint('ART_COPIED', null, [
-                        'id_source' => $id,
-                        'id' => $newId,
-                        'language' => $languageId,
-                        'category_id' => $toCatId,
-                    ]));
-                } else {
-                    return false;
-                }
-            } else {
+        $path = '|';
+        if (null !== $toCatId) {
+            $toSql = Sql::factory();
+            $toSql->setQuery('SELECT path FROM rex_article WHERE id = ? AND startarticle = 1', [$toCatId]);
+            if (1 != $toSql->getRows()) {
                 return false;
             }
+            $path = $toSql->getValue('path') . $toCatId . '|';
         }
+
+        $artSql = Sql::factory();
+        $artSql->setTable('rex_article');
+        $artSql->setValue('parent_id', $toCatId);
+        $artSql->setValue('catpriority', 0);
+        $artSql->setValue('path', $path);
+        $artSql->setValue('priority', 99_999); // Artikel als letzten Artikel in die neue Kat einfügen
+        $artSql->setValue('startarticle', 0);
+        $artSql->addGlobalUpdateFields($user);
+        $artSql->addGlobalCreateFields($user);
+
+        // schon gesetzte Felder nicht wieder überschreiben
+        $dontCopy = ['id', 'parent_id', 'catpriority', 'path', 'priority', 'startarticle', 'updatedate', 'updateuser', 'createdate', 'createuser'];
+        foreach (array_diff($fromSql->getFieldnames(), $dontCopy) as $fldName) {
+            $artSql->setValue($fldName, $fromSql->getValue($fldName));
+        }
+
+        $artSql->insert();
+        $newId = $artSql->getLastId();
+
+        foreach (Language::getAllIds() as $languageId) {
+            $fromTranslation = Sql::factory();
+            $fromTranslation->setQuery('SELECT * FROM rex_article_translation WHERE article_id = ? AND language_id = ?', [$id, $languageId]);
+            if (1 != $fromTranslation->getRows()) {
+                continue;
+            }
+
+            $translation = Sql::factory();
+            $translation->setTable('rex_article_translation');
+            $translation->setValue('article_id', $newId);
+            $translation->setValue('language_id', $languageId);
+            $translation->setValue('name', (string) $fromTranslation->getValue('name') . ' ' . I18n::msg('structure_copy'));
+            $translation->setValue('catname', '');
+            $translation->setValue('status', 0); // Kopierter Artikel offline setzen
+
+            $dontCopy = ['article_id', 'language_id', 'name', 'catname', 'status'];
+            foreach (array_diff($fromTranslation->getFieldnames(), $dontCopy) as $fldName) {
+                $translation->setValue($fldName, $fromTranslation->getValue($fldName));
+            }
+
+            $translation->insert();
+
+            $revisions = Sql::factory();
+            $revisions->setQuery('select revision from rex_article_slice where priority=1 AND article_id=? AND language_id=? GROUP BY revision', [$id, $languageId]);
+            foreach ($revisions as $rev) {
+                // ArticleSlices kopieren
+                ContentHandler::copyContent($id, $newId, $languageId, $languageId, (int) $rev->getValue('revision'));
+            }
+        }
+        self::updateCategoryNames($newId, $toCatId);
+
+        // Prios neu berechnen
+        self::newArtPrio($toCatId, 1, 0);
+
+        Extension::dispatch(new ExtensionPoint('ART_COPIED', null, [
+            'id_source' => $id,
+            'id' => $newId,
+            'category_id' => $toCatId,
+        ]));
 
         // Caches des Artikels löschen, in allen Sprachen
         ArticleCache::delete($id);
@@ -769,61 +774,44 @@ final class ArticleHandler
             return false;
         }
 
-        // Artikel in jeder Sprache verschieben
-        foreach (Language::getAllIds() as $languageId) {
-            // validierung der id & from_cat_id
-            $fromSql = Sql::factory();
-            $fromSql->setQuery('select * from rex_article where language_id=? and startarticle<>1 and id=? and parent_id<=>?', [$languageId, $id, $fromCatId]);
+        // validierung der id & from_cat_id
+        $fromSql = Sql::factory();
+        $fromSql->setQuery('SELECT id FROM rex_article WHERE id = ? AND startarticle = 0 AND parent_id <=> ?', [$id, $fromCatId]);
+        if (1 != $fromSql->getRows()) {
+            return false;
+        }
 
-            if (1 == $fromSql->getRows()) {
-                // validierung der to_cat_id
-                $toSql = Sql::factory();
-                $toSql->setQuery('select * from rex_article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
-
-                if (1 == $toSql->getRows() || null === $toCatId) {
-                    if (1 == $toSql->getRows()) {
-                        $parentId = (int) $toSql->getValue('id');
-                        $path = $toSql->getValue('path') . $toSql->getValue('id') . '|';
-                        $catname = $toSql->getValue('catname');
-                    } else {
-                        // In RootEbene
-                        $parentId = null;
-                        $path = '|';
-                        $catname = $fromSql->getValue('name');
-                    }
-
-                    $artSql = Sql::factory();
-                    // $art_sql->setDebug();
-
-                    $artSql->setTable('rex_article');
-                    $artSql->setValue('parent_id', $parentId);
-                    $artSql->setValue('path', $path);
-                    $artSql->setValue('catname', $catname);
-                    // Artikel als letzten Artikel in die neue Kat einfügen
-                    $artSql->setValue('priority', 99999);
-                    // Kopierter Artikel offline setzen
-                    $artSql->setValue('status', $fromSql->getValue('status'));
-                    $artSql->addGlobalUpdateFields(self::getUser());
-
-                    $artSql->setWhere(['id' => $id, 'language_id' => $languageId, 'startarticle' => 0, 'parent_id' => $fromCatId]);
-                    $artSql->update();
-
-                    // Prios neu berechnen
-                    self::newArtPrio($toCatId, $languageId, 1, 0);
-                    self::newArtPrio($fromCatId, $languageId, 1, 0);
-
-                    Extension::dispatch(new ExtensionPoint('ART_MOVED', null, [
-                        'id' => $id,
-                        'language' => $languageId,
-                        'category_id' => $parentId,
-                    ]));
-                } else {
-                    return false;
-                }
-            } else {
+        // validierung der to_cat_id
+        $path = '|';
+        if (null !== $toCatId) {
+            $toSql = Sql::factory();
+            $toSql->setQuery('SELECT path FROM rex_article WHERE id = ? AND startarticle = 1', [$toCatId]);
+            if (1 != $toSql->getRows()) {
                 return false;
             }
+            $path = $toSql->getValue('path') . $toCatId . '|';
         }
+
+        $artSql = Sql::factory();
+        $artSql->setTable('rex_article');
+        $artSql->setWhere(['id' => $id]);
+        $artSql->setValue('parent_id', $toCatId);
+        $artSql->setValue('path', $path);
+        // Artikel als letzten Artikel in die neue Kat einfügen
+        $artSql->setValue('priority', 99999);
+        $artSql->addGlobalUpdateFields(self::getUser());
+        $artSql->update();
+
+        self::updateCategoryNames($id, $toCatId);
+
+        // Prios neu berechnen
+        self::newArtPrio($toCatId, 1, 0);
+        self::newArtPrio($fromCatId, 1, 0);
+
+        Extension::dispatch(new ExtensionPoint('ART_MOVED', null, [
+            'id' => $id,
+            'category_id' => $toCatId,
+        ]));
 
         // Caches des Artikels löschen, in allen Sprachen
         ArticleCache::delete($id);
@@ -836,6 +824,54 @@ final class ArticleHandler
         }
 
         return true;
+    }
+
+    /** Selects the article together with its translation in the given language. */
+    private static function select(int $id, int $languageId): Sql
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ? WHERE a.id = ?', [$languageId, $id]);
+
+        return $sql;
+    }
+
+    /** Marks the article as updated. */
+    private static function touch(int $id): void
+    {
+        Sql::factory()
+            ->setTable('rex_article')
+            ->setWhere(['id' => $id])
+            ->addGlobalUpdateFields(self::getUser())
+            ->update();
+    }
+
+    /**
+     * Stores the name of the given category with the article in every language (an empty name at the root level).
+     *
+     * @param int|null $categoryId `null` for the root level
+     */
+    private static function updateCategoryNames(int $articleId, ?int $categoryId): void
+    {
+        Sql::factory()->setQuery('
+            UPDATE rex_article_translation t
+            LEFT JOIN rex_article_translation c ON c.article_id = ? AND c.language_id = t.language_id
+            SET t.catname = COALESCE(c.catname, "")
+            WHERE t.article_id = ?
+        ', [$categoryId, $articleId]);
+    }
+
+    /**
+     * The category meta columns (`cat_*`) of the given table.
+     *
+     * @param non-empty-string $table
+     * @return list<string>
+     */
+    private static function categoryMetaColumns(string $table): array
+    {
+        return array_values(array_filter(
+            array_keys(Table::get($table)->getColumns()),
+            static fn (string $column): bool => str_starts_with($column, 'cat_'),
+        ));
     }
 
     /**

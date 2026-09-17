@@ -83,13 +83,14 @@ $content[] = '<dl class="dl-horizontal text-left">' . implode('', $panels) . '</
 // ------------------
 
 $article = Sql::factory();
-$article->setQuery("
-            SELECT article.*
-            FROM rex_article as article
-            WHERE
-                article.id='$articleId'
-                AND language_id=$languageId",
-);
+$article->setQuery('
+    SELECT article.*, translation.*
+    FROM rex_article AS article
+    JOIN rex_article_translation AS translation ON translation.article_id = article.id
+    WHERE
+        article.id = ?
+        AND translation.language_id = ?
+', [$articleId, $languageId]);
 
 if (1 == $article->getRows()) {
     $template = Template::get((string) $article->getValue('template'));

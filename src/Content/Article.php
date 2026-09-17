@@ -25,7 +25,7 @@ final class Article extends StructureElement
     {
         // strip irrelevant + Category-only fields up front; the rest gets explicitly
         // pulled into typed properties below, what remains lands in additionalData.
-        unset($data['pid'], $data['catname'], $data['catpriority']);
+        unset($data['catname'], $data['catpriority']);
         foreach (array_keys($data) as $key) {
             if (str_starts_with((string) $key, 'cat_')) {
                 unset($data[$key]);

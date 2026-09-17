@@ -44,19 +44,21 @@ final class ArticleHandler extends AbstractHandler
         $id = $params['id'];
         $languageId = $params['language'];
 
-        $sql = Sql::factory();
-        $sql->setTable('rex_article');
-        $sql->setWhere('id=:id AND language_id=:language', ['id' => $id, 'language' => $languageId]);
-        $sql->setValue('name', Request::post('meta_article_name', 'string'));
+        $translation = Sql::factory();
+        $translation->setTable('rex_article_translation');
+        $translation->setWhere(['article_id' => $id, 'language_id' => $languageId]);
+        $translation->setValue('name', Request::post('meta_article_name', 'string'));
+        $saved = $this->saveRequestValues($translation, $context, translatable: true);
+        $translation->update();
 
-        $saved = $this->saveRequestValues($sql, $context);
+        $shared = Sql::factory();
+        $shared->setTable('rex_article');
+        $shared->setWhere(['id' => $id]);
+        $saved += $this->saveRequestValues($shared, $context, translatable: false);
+        $shared->addGlobalUpdateFields();
+        $shared->update();
 
-        if ($sql->hasValues()) {
-            $sql->addGlobalUpdateFields();
-            $sql->update();
-        }
-
-        ArticleCache::deleteMeta($id, $languageId);
+        ArticleCache::deleteMeta($id);
 
         Extension::dispatch(new ExtensionPoint('ART_META_UPDATED', '', $params));
 
