@@ -133,13 +133,6 @@ final class Backup
         // Versionsstempel entfernen
         $conts = trim(str_replace('## Redaxo Database Dump Version ' . $mainVersion, '', $conts));
 
-        // Prefix prüfen
-        // ## Prefix rex_
-        if (!str_starts_with($conts, '## Prefix ' . Core::TABLE_PREFIX)) {
-            return $returnError(I18n::msg('backup_no_valid_import_file') . '. [## Prefix ' . Core::TABLE_PREFIX . '] is missing');
-        }
-        $conts = trim(substr($conts, strlen('## Prefix ' . Core::TABLE_PREFIX)));
-
         // ----- EXTENSION POINT
         $filesize = filesize($filename);
         $msg = '';
@@ -273,7 +266,6 @@ final class Backup
 
         // Versionsstempel hinzufügen
         fwrite($fp, '## Redaxo Database Dump Version ' . Core::getVersion('%s') . $nl);
-        fwrite($fp, '## Prefix ' . Core::TABLE_PREFIX . $nl);
         //  fwrite($fp, '/*!40110 START TRANSACTION; */'.$nl);
 
         fwrite($fp, 'SET FOREIGN_KEY_CHECKS = 0;' . $nl . $nl);
