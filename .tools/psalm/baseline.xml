@@ -830,7 +830,6 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[[$fileId]]]></code>
       <code><![CDATA[[$fileId]]]></code>
-      <code><![CDATA[[$fileId]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedOperand>
       <code><![CDATA[$fileId]]></code>
