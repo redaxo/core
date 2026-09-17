@@ -1198,11 +1198,6 @@
     <PossiblyFalseOperand>
       <code><![CDATA[realpath($path . $dir)]]></code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$conts]]></code>
-      <code><![CDATA[$conts]]></code>
-      <code><![CDATA[$conts]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/Backup/FileCompressor.php">
     <PossiblyFalseArgument>
