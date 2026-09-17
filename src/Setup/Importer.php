@@ -62,9 +62,13 @@ final class Importer
         $errMsg = '';
 
         $db = Sql::factory();
+        // the tables are referenced by foreign keys (e.g. `rex_language` by the translation tables) and are recreated
+        // by the install right after
+        $db->setQuery('SET FOREIGN_KEY_CHECKS = 0');
         foreach (self::getRequiredTables() as $table) {
             $db->setQuery('DROP TABLE IF EXISTS `' . $table . '`');
         }
+        $db->setQuery('SET FOREIGN_KEY_CHECKS = 1');
 
         try {
             include Path::core('setup/install.php');
