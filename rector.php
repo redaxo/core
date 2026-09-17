@@ -218,7 +218,7 @@ return RectorConfig::configure()
         'rex_command_standalone' => Console\Command\StandaloneInterface::class,
         'rex_cronjob_form' => Cronjob\Form\CronjobForm::class,
         'rex_config' => Config::class,
-        'rex_config_db' => Database\Configuration::class,
+        'rex_config_db' => Database\ConnectionConfig::class,
         'rex_context' => Http\Context::class,
         'rex_context_provider_interface' => Http\ContextProviderInterface::class,
         'rex_request' => Http\Request::class,

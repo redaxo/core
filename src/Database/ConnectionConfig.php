@@ -2,7 +2,7 @@
 
 namespace Redaxo\Core\Database;
 
-final readonly class Configuration
+final readonly class ConnectionConfig
 {
     public string $host;
     public string $login;
