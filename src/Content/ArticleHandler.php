@@ -278,9 +278,8 @@ final class ArticleHandler
             }
 
             ArticleCache::delete($id);
-            // the translations and the category row are removed by the foreign keys
+            // the translations, the category row, the slices and their history are removed by the foreign keys
             $ART->setQuery('DELETE FROM rex_article WHERE id = ?', [$id]);
-            $ART->setQuery('DELETE FROM rex_article_slice WHERE article_id = ?', [$id]);
 
             // --------------------------------------------------- Listen generieren
             ArticleCache::deleteLists($parentId);
