@@ -43,7 +43,7 @@ if (!isset($error)) {
     $error = '';
 }
 
-/** @var array{types?: string, opener_input_field?: string} $argUrl */
+/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
 $argUrl ??= [];
 
 $mediaMethod = Request::request('media_method', 'string');

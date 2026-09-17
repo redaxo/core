@@ -54,9 +54,10 @@ class ChoiceField extends AbstractInputField
         ?string $note = null,
         bool $required = false,
         ?string $default = null,
+        bool $translatable = false,
         HtmlAttributes $attributes = new HtmlAttributes(),
     ) {
-        parent::__construct($name, $label, $note, $required, $default, $attributes);
+        parent::__construct($name, $label, $note, $required, $default, $translatable, $attributes);
     }
 
     /**

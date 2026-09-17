@@ -10,6 +10,7 @@ use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Session;
+use Redaxo\Core\Language\Language;
 use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MetaInfo\Field\MediaField;
 use Redaxo\Core\MetaInfo\MetaContext;
@@ -86,7 +87,7 @@ final class MediaHandler extends AbstractHandler
 
         $media = '';
         if (!empty($where['media'])) {
-            $items = $sql->getArray('SELECT id, filename, category_id FROM rex_media WHERE ' . implode(' OR ', $where['media']));
+            $items = $sql->getArray('SELECT DISTINCT m.id, m.filename, m.category_id FROM rex_media m LEFT JOIN rex_media_translation l ON l.media_id = m.id WHERE ' . implode(' OR ', $where['media']));
             foreach ($items as $medArr) {
                 $id = (int) $medArr['id'];
                 $filename = escape((string) $medArr['filename']);
@@ -146,22 +147,37 @@ final class MediaHandler extends AbstractHandler
         $context = new MetaContext(MetaEntity::Media, $media, mediaCategory: $catId > 0 ? MediaCategory::get($catId) : null);
 
         if ($save && isset($params['id'])) {
-            $this->save((int) $params['id'], $context);
+            // a freshly added medium gets the submitted values in all languages, an edited one only in the current
+            $languageIds = 'MEDIA_ADDED' == $ep->name ? Language::getAllIds() : [Language::getCurrentId()];
+            $this->save((int) $params['id'], $context, $languageIds);
         }
 
         return $ep->subject . $this->renderFields($context);
     }
 
-    private function save(int $id, MetaContext $context): void
+    /** @param list<int> $languageIds */
+    private function save(int $id, MetaContext $context, array $languageIds): void
     {
         $sql = Sql::factory();
         $sql->setTable('rex_media');
-        $sql->setWhere('id=:mediaid', ['mediaid' => $id]);
+        $sql->setWhere(['id' => $id]);
 
-        $this->saveRequestValues($sql, $context);
+        $this->saveRequestValues($sql, $context, translatable: false);
 
         if ($sql->hasValues()) {
             $sql->update();
+        }
+
+        foreach ($languageIds as $languageId) {
+            $sql = Sql::factory();
+            $sql->setTable('rex_media_translation');
+            $sql->setWhere(['media_id' => $id, 'language_id' => $languageId]);
+
+            $this->saveRequestValues($sql, $context, translatable: true);
+
+            if ($sql->hasValues()) {
+                $sql->update();
+            }
         }
     }
 }

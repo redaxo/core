@@ -75,14 +75,20 @@ abstract class AbstractHandler
     /**
      * Reads the submitted values into the given save object.
      *
+     * @param bool|null $translatable restrict to the translatable (`true`) or the shared (`false`) fields, e.g. when
+     *     both are saved into different tables; `null` reads all fields
+     *
      * @return array<string, int|string|null> the parsed values keyed by column name (e.g. to redisplay them after the save)
      */
-    public function saveRequestValues(Sql $sqlSave, MetaContext $context): array
+    public function saveRequestValues(Sql $sqlSave, MetaContext $context, ?bool $translatable = null): array
     {
         $saved = [];
         foreach (MetaSchema::getFields($context->entity) as $field) {
             if (!$field->isAllowed($context) || null === $field->column($context->entity)) {
                 // hidden field, or a structural field without a value (e.g. legend)
+                continue;
+            }
+            if (null !== $translatable && $field->translatable !== $translatable) {
                 continue;
             }
 

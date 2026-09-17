@@ -32,8 +32,9 @@ class ArticleField extends MetaField
         public readonly ?int $category = null,
         ?string $note = null,
         bool $required = false,
+        bool $translatable = false,
     ) {
-        parent::__construct($name, $label, $note, $required);
+        parent::__construct($name, $label, $note, $required, translatable: $translatable);
     }
 
     public function column(MetaEntity $entity): ?Column

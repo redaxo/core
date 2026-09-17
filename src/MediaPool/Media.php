@@ -10,10 +10,14 @@ use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
+use Redaxo\Core\Language\Language;
 use Redaxo\Core\Util\Formatter;
 
+use function is_array;
+
 /**
- * Bildet ein Medium des Medienpools ab.
+ * A medium of the media pool, seen through one language: the title and the translatable meta fields carry the values
+ * of that language, everything else is shared between all languages.
  */
 final class Media
 {
@@ -22,6 +26,7 @@ final class Media
 
     private function __construct(
         public readonly int $id,
+        public readonly int $languageId,
         public readonly ?int $categoryId,
         public readonly string $fileName,
         public readonly string $originalFileName,
@@ -38,13 +43,16 @@ final class Media
         private readonly array $additionalData,
     ) {}
 
-    public static function get(string $name): ?self
+    /** @param int|null $languageId defaults to the current language */
+    public static function get(string $name, ?int $languageId = null): ?self
     {
         if (!$name) {
             return null;
         }
 
-        return self::getInstance($name, static function () use ($name): ?self {
+        $languageId ??= Language::getCurrentId();
+
+        return self::getInstance([$name, $languageId], static function () use ($name, $languageId): ?self {
             $mediaPath = Path::coreCache('mediapool/' . $name . '.media');
 
             $cache = File::getCache($mediaPath, []);
@@ -53,20 +61,30 @@ final class Media
                 $cache = File::getCache($mediaPath, []);
             }
 
-            /** @var array<string, string|int|null>|null $cache */
+            /** @var array<string, string|int|array<int, array<string, string|int|null>>|null>|null $cache */
             if (!$cache) {
                 return null;
             }
 
-            $getAndUnset = static function (string $key) use (&$cache): mixed {
-                $value = $cache[$key];
-                unset($cache[$key]);
+            $translations = is_array($cache['translations'] ?? null) ? $cache['translations'] : [];
+            unset($cache['translations']);
+            /** @var array<string, string|int|null> $shared */
+            $shared = $cache;
+            /** @var array<string, string|int|null> $translation */
+            $translation = $translations[$languageId] ?? [];
+            $title = $translation['title'] ?? '';
+            unset($translation['title']);
+
+            $getAndUnset = static function (string $key) use (&$shared): mixed {
+                $value = $shared[$key];
+                unset($shared[$key]);
                 return $value;
             };
 
             /** @psalm-suppress InvalidScalarArgument */
             return new self(
                 $getAndUnset('id'),
+                $languageId,
                 $getAndUnset('category_id'),
                 $getAndUnset('filename'),
                 $getAndUnset('originalname'),
@@ -74,17 +92,18 @@ final class Media
                 $getAndUnset('filesize'),
                 $getAndUnset('width'),
                 $getAndUnset('height'),
-                $getAndUnset('title'),
+                (string) $title,
                 $getAndUnset('createdate'),
                 $getAndUnset('updatedate'),
                 $getAndUnset('createuser'),
                 $getAndUnset('updateuser'),
-                $cache,
+                [...$shared, ...$translation],
             );
         });
     }
 
-    public static function forId(int $mediaId): ?self
+    /** @param int|null $languageId defaults to the current language */
+    public static function forId(int $mediaId, ?int $languageId = null): ?self
     {
         $media = Sql::factory();
         $media->setQuery('select filename from rex_media where id=?', [$mediaId]);
@@ -92,7 +111,7 @@ final class Media
         if (1 != $media->getRows()) {
             return null;
         }
-        return self::get((string) $media->getValue('filename'));
+        return self::get((string) $media->getValue('filename'), $languageId);
     }
 
     /** @return list<self> */
@@ -114,6 +133,14 @@ final class Media
                 return $list;
             },
         );
+    }
+
+    /** Removes the cached instances of the medium in all languages. */
+    public static function clearInstances(string $name): void
+    {
+        foreach (Language::getAllIds() as $languageId) {
+            self::clearInstance([$name, $languageId]);
+        }
     }
 
     public function getCategory(): ?MediaCategory
@@ -153,6 +180,7 @@ final class Media
 
         return match ($value) {
             'id' => $this->id,
+            'language_id' => $this->languageId,
             'category_id' => $this->categoryId,
             'name' => $this->fileName,
             'originalname' => $this->originalFileName,

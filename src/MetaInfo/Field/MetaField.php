@@ -29,6 +29,11 @@ abstract class MetaField
         public readonly ?string $note = null,
         public readonly bool $required = false,
         public readonly ?string $default = null,
+        /**
+         * Whether the value is maintained per language. Translatable fields are stored in the translation table of
+         * the entity (see {@see MetaEntity::translationTable()}); shared fields live in the entity table itself.
+         */
+        public readonly bool $translatable = false,
     ) {}
 
     /** Full column name including the entity prefix. */

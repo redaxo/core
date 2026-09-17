@@ -4,6 +4,7 @@ namespace Redaxo\Core\Language;
 
 use Redaxo\Core\Cache;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Database\Table;
 use Redaxo\Core\Database\Util;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Exception\UserMessageException;
@@ -69,6 +70,18 @@ final class LanguageHandler
 
             $newLang->insert();
         }
+
+        // the media translations of the source language are the starting point for the new language
+        $columns = array_keys(Table::get('rex_media_translation')->getColumns());
+        $insertColumns = implode(', ', array_map($sql->escapeIdentifier(...), $columns));
+        $selectColumns = implode(', ', array_map(
+            static fn (string $column): string => 'language_id' === $column ? (string) $id : $sql->escapeIdentifier($column),
+            $columns,
+        ));
+        $sql->setQuery(
+            'INSERT INTO rex_media_translation (' . $insertColumns . ') SELECT ' . $selectColumns . ' FROM rex_media_translation WHERE language_id = ?',
+            [$sourceId],
+        );
 
         Cache::delete();
 

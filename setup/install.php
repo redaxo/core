@@ -244,10 +244,16 @@ Table::get('rex_media')
     ->ensureColumn(Column::bigint('filesize', unsigned: true))
     ->ensureColumn(Column::mediumint('width', unsigned: true, nullable: true))
     ->ensureColumn(Column::mediumint('height', unsigned: true, nullable: true))
-    ->ensureColumn(Column::varchar('title', 255))
     ->ensureGlobalColumns()
     ->ensureIndex(new Index('category_id', ['category_id']))
     ->ensureIndex(new Index('filename', ['filename'], Index::UNIQUE))
+    ->ensure();
+
+Table::get('rex_media_translation')
+    ->ensureForeignIdColumn('media_id', 'rex_media', onDelete: ForeignKey::CASCADE)
+    ->ensureForeignIdColumn('language_id', 'rex_language', onDelete: ForeignKey::CASCADE)
+    ->ensureColumn(Column::varchar('title', 255))
+    ->setPrimaryKey(['media_id', 'language_id'])
     ->ensure();
 
 Table::get('rex_user')

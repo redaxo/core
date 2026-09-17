@@ -2,6 +2,8 @@
 
 namespace Redaxo\Core\MetaInfo;
 
+use Redaxo\Core\MetaInfo\Field\MetaField;
+
 /**
  * The entity a set of meta fields belongs to.
  *
@@ -27,6 +29,7 @@ enum MetaEntity
         };
     }
 
+    /** @return non-empty-string */
     public function table(): string
     {
         return match ($this) {
@@ -34,5 +37,31 @@ enum MetaEntity
             self::Media => 'rex_media',
             self::Language => 'rex_language',
         };
+    }
+
+    /**
+     * The table holding the per-language values, or `null` if the entity has no translation table.
+     *
+     * Articles and categories still keep one row per language in their main table, so their translatable fields
+     * end up there until the language split.
+     *
+     * @return non-empty-string|null
+     */
+    public function translationTable(): ?string
+    {
+        return match ($this) {
+            self::Media => 'rex_media_translation',
+            default => null,
+        };
+    }
+
+    /**
+     * The table the given field is stored in.
+     *
+     * @return non-empty-string
+     */
+    public function tableForField(MetaField $field): string
+    {
+        return $field->translatable ? $this->translationTable() ?? $this->table() : $this->table();
     }
 }

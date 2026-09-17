@@ -3,8 +3,10 @@
 namespace Redaxo\Core\MetaInfo;
 
 use Redaxo\Core\Database\Table;
+use Redaxo\Core\MetaInfo\Field\MetaField;
 
 use function array_any;
+use function array_filter;
 use function array_map;
 use function str_starts_with;
 
@@ -33,42 +35,47 @@ final class MetaSync
         $dropped = [];
         $kept = [];
 
-        // Article and Category share the same table, so group entities by table to sync each table only once.
+        // Article and Category share the same table, and translatable fields go to a separate translation table,
+        // so group the fields by their target table to sync each table only once.
+        /** @var array<non-empty-string, list<array{MetaEntity, MetaField}>> $fieldsByTable */
+        $fieldsByTable = [];
+        /** @var array<non-empty-string, list<MetaEntity>> $entitiesByTable */
         $entitiesByTable = [];
         foreach (MetaEntity::cases() as $entity) {
-            $entitiesByTable[$entity->table()][] = $entity;
+            foreach (array_filter([$entity->table(), $entity->translationTable()]) as $tableName) {
+                $fieldsByTable[$tableName] ??= [];
+                $entitiesByTable[$tableName][] = $entity;
+            }
+            foreach (MetaSchema::getFields($entity) as $field) {
+                $fieldsByTable[$entity->tableForField($field)][] = [$entity, $field];
+            }
         }
 
-        foreach ($entitiesByTable as $tableName => $entities) {
-            if ('' === $tableName) {
-                continue;
-            }
-
+        /** @var non-empty-string $tableName */
+        foreach ($fieldsByTable as $tableName => $fields) {
             $table = Table::get($tableName);
 
             $desired = [];
-            foreach ($entities as $entity) {
-                foreach (MetaSchema::getFields($entity) as $field) {
-                    $column = $field->column($entity);
-                    if (null === $column) {
-                        continue;
-                    }
-
-                    $name = $column->name;
-                    $existing = $table->getColumn($name);
-                    if (null === $existing) {
-                        $added[] = $tableName . '.' . $name;
-                    } elseif (!$existing->equals($column)) {
-                        $modified[] = $tableName . '.' . $name;
-                    }
-
-                    $table->ensureColumn($column);
-                    $desired[$name] = true;
+            foreach ($fields as [$entity, $field]) {
+                $column = $field->column($entity);
+                if (null === $column) {
+                    continue;
                 }
+
+                $name = $column->name;
+                $existing = $table->getColumn($name);
+                if (null === $existing) {
+                    $added[] = $tableName . '.' . $name;
+                } elseif (!$existing->equals($column)) {
+                    $modified[] = $tableName . '.' . $name;
+                }
+
+                $table->ensureColumn($column);
+                $desired[$name] = true;
             }
 
             // Columns carrying a managed prefix but no longer defined by any field are obsolete.
-            $prefixes = array_map(static fn (MetaEntity $entity): string => $entity->prefix(), $entities);
+            $prefixes = array_map(static fn (MetaEntity $entity): string => $entity->prefix(), $entitiesByTable[$tableName]);
             foreach ($table->getColumns() as $name => $column) {
                 if (isset($desired[$name]) || !self::hasManagedPrefix($name, $prefixes)) {
                     continue;

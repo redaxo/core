@@ -18,7 +18,7 @@ final class MediaPoolCache
     public static function delete(string $filename): void
     {
         File::delete(Path::coreCache('mediapool/' . $filename . '.media'));
-        Media::clearInstance($filename);
+        Media::clearInstances($filename);
         self::deleteLists();
     }
 
@@ -81,18 +81,14 @@ final class MediaPoolCache
     }
 
     /**
-     * Generiert den Cache des Mediums.
+     * Generates the cache of a medium: the shared columns plus the rows of the translation table keyed by language.
      *
-     * @param string $filename Dateiname des zu generierenden Mediums
-     *
-     * @return bool TRUE bei Erfolg, sonst FALSE
+     * @return bool `true` on success, otherwise `false`
      */
     public static function generate(string $filename): bool
     {
-        $query = 'SELECT * FROM rex_media WHERE filename = ?';
         $sql = Sql::factory();
-        // $sql->setDebug();
-        $sql->setQuery($query, [$filename]);
+        $sql->setQuery('SELECT * FROM rex_media WHERE filename = ?', [$filename]);
 
         if (0 == $sql->getRows()) {
             return false;
@@ -104,6 +100,19 @@ final class MediaPoolCache
                 'createdate', 'updatedate' => $sql->getDateTimeValue($fieldName),
                 default => $sql->getValue($fieldName),
             };
+        }
+
+        $cacheArray['translations'] = [];
+        $translations = Sql::factory();
+        $translations->setQuery('SELECT * FROM rex_media_translation WHERE media_id = ?', [$cacheArray['id']]);
+        foreach ($translations as $translation) {
+            $languageId = (int) $translation->getValue('language_id');
+            foreach ($translation->getFieldNames() as $fieldName) {
+                if ('media_id' === $fieldName || 'language_id' === $fieldName) {
+                    continue;
+                }
+                $cacheArray['translations'][$languageId][$fieldName] = $translation->getValue($fieldName);
+            }
         }
 
         $mediaFile = Path::coreCache('mediapool/' . $filename . '.media');
