@@ -104,9 +104,9 @@ $KAT = Sql::factory();
 // $KAT->setDebug();
 if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->categoryId) {
     $parentIds = $KAT->in($structureContext->getMountpoints());
-    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_article WHERE id IN (' . $parentIds . ') AND startarticle=1');
+    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_category WHERE id IN (' . $parentIds . ')');
 } else {
-    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_article WHERE parent_id <=> ? AND startarticle=1', [$structureContext->categoryId ?: null]);
+    $KAT->setQuery('SELECT COUNT(*) as rowCount FROM rex_category c JOIN rex_article a ON a.id = c.id WHERE a.parent_id <=> ?', [$structureContext->categoryId ?: null]);
 }
 
 // --------------------- ADD PAGINATION
@@ -120,15 +120,24 @@ echo $catFragment->parse('core/navigations/pagination.php');
 
 // --------------------- GET THE DATA
 
+// the categories with their start articles, both in the current language
+$categoryListQuery = '
+    SELECT a.*, t.*, c.priority AS catpriority, ct.name AS catname
+    FROM rex_category c
+    JOIN rex_article a ON a.id = c.id
+    JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ?
+    JOIN rex_category_translation ct ON ct.category_id = c.id AND ct.language_id = t.language_id
+';
+
 if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->categoryId) {
     $parentIds = $KAT->in($structureContext->getMountpoints());
 
     $KAT->setQuery('SELECT parent_id FROM rex_article WHERE id IN (' . $parentIds . ') GROUP BY parent_id');
-    $orderBy = $KAT->getRows() > 1 ? 't.catname' : 'a.catpriority';
+    $orderBy = $KAT->getRows() > 1 ? 'ct.name' : 'c.priority';
 
-    $KAT->setQuery('SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ? WHERE a.id IN (' . $parentIds . ') AND a.startarticle=1 ORDER BY ' . $orderBy . ' LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId]);
+    $KAT->setQuery($categoryListQuery . ' WHERE a.id IN (' . $parentIds . ') ORDER BY ' . $orderBy . ' LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId]);
 } else {
-    $KAT->setQuery('SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ? WHERE a.parent_id <=> ? AND a.startarticle=1 ORDER BY a.catpriority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId, $structureContext->categoryId ?: null]);
+    $KAT->setQuery($categoryListQuery . ' WHERE a.parent_id <=> ? ORDER BY c.priority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId, $structureContext->categoryId ?: null]);
 }
 
 $trStatusClass = 'rex-status';
@@ -368,9 +377,10 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     // $sql->setDebug();
     $sql->setQuery('
         SELECT COUNT(*) as artCount
-        FROM rex_article
+        FROM rex_article a
+        LEFT JOIN rex_category c ON c.id = a.id
         WHERE
-            (parent_id <=> :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1)
+            (a.parent_id <=> :category_id AND c.id IS NULL) OR (a.id = :category_id AND c.id IS NOT NULL)
     ', [
         'category_id' => $structureContext->categoryId ?: null,
     ]);
@@ -386,11 +396,12 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
     // ---------- READ DATA
     $sql->setQuery('
-        SELECT a.*, t.*
+        SELECT a.*, t.*, c.id IS NOT NULL AS startarticle
         FROM rex_article a
         JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = :language_id
+        LEFT JOIN rex_category c ON c.id = a.id
         WHERE
-            (a.parent_id <=> :category_id AND a.startarticle=0) OR (a.id = :category_id AND a.startarticle=1)
+            (a.parent_id <=> :category_id AND c.id IS NULL) OR (a.id = :category_id AND c.id IS NOT NULL)
         ORDER BY
             ' . $articleOrderBy . '
         LIMIT ' . $artPager->getCursor() . ',' . $artPager->getRowsPerPage(),

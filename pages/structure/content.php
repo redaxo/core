@@ -47,9 +47,10 @@ $globalInfo = '';
 
 $article = Sql::factory();
 $article->setQuery('
-    SELECT article.*, translation.*
+    SELECT article.*, translation.*, category.id IS NOT NULL AS startarticle
     FROM rex_article AS article
     JOIN rex_article_translation AS translation ON translation.article_id = article.id
+    LEFT JOIN rex_category AS category ON category.id = article.id
     WHERE
         article.id=?
         AND translation.language_id=?

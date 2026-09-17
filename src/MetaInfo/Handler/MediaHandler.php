@@ -60,7 +60,7 @@ final class MediaHandler extends AbstractHandler
 
         $articles = '';
         if (!empty($where['articles'])) {
-            $items = $sql->getArray('SELECT a.id, t.language_id, a.parent_id, t.name, t.catname, a.startarticle FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE ' . implode(' OR ', $where['articles']));
+            $items = $sql->getArray('SELECT a.id, t.language_id, t.name FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE ' . implode(' OR ', $where['articles']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $languageId = (int) $artArr['language_id'];
@@ -73,12 +73,12 @@ final class MediaHandler extends AbstractHandler
 
         $categories = '';
         if (!empty($where['categories'])) {
-            $items = $sql->getArray('SELECT a.id, t.language_id, a.parent_id, t.name, t.catname, a.startarticle FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE ' . implode(' OR ', $where['categories']));
+            $items = $sql->getArray('SELECT c.id, ct.language_id, a.parent_id, ct.name FROM rex_category c JOIN rex_article a ON a.id = c.id JOIN rex_category_translation ct ON ct.category_id = c.id WHERE ' . implode(' OR ', $where['categories']));
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $languageId = (int) $artArr['language_id'];
                 $parentId = (int) $artArr['parent_id'];
-                $categories .= '<li><a href="javascript:openPage(\'' . Url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'language' => $languageId]) . '\')">' . escape((string) $artArr['catname']) . '</a></li>';
+                $categories .= '<li><a href="javascript:openPage(\'' . Url::backendPage('structure', ['edit_id' => $aid, 'function' => 'edit_cat', 'category_id' => $parentId, 'language' => $languageId]) . '\')">' . escape((string) $artArr['name']) . '</a></li>';
             }
             if ('' != $categories) {
                 $warning[] = I18n::msg('minfo_media_in_use_cat') . '<br /><ul>' . $categories . '</ul>';
