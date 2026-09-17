@@ -15,6 +15,9 @@ assert(isset($PERMALL) && is_bool($PERMALL));
 assert(isset($openerInputField) && is_string($openerInputField));
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
 
+/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
+$argUrl ??= [];
+
 if (!$PERMALL && !Core::requireUser()->getComplexPerm('media')->hasCategoryPerm($rexFileCategory)) {
     $rexFileCategory = 0;
 }
@@ -47,7 +50,7 @@ if ('add_file' == $mediaMethod) {
                     if ('' != $openerInputField) {
                         if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
                             $js = "selectMedialist('" . $data['filename'] . "');";
-                            $js .= 'location.href = "' . Url::backendPage('mediapool', ['info' => $info, 'opener_input_field' => $openerInputField]) . '";';
+                            $js .= 'location.href = "' . Url::backendPage('mediapool', ['info' => $info, ...$argUrl]) . '";';
                         } else {
                             $js = "selectMedia('" . $data['filename'] . "');";
                         }
@@ -61,7 +64,7 @@ if ('add_file' == $mediaMethod) {
                     exit;
                 }
 
-                Response::sendRedirect(Url::backendPage('mediapool/media', ['info' => $info, 'opener_input_field' => $openerInputField]));
+                Response::sendRedirect(Url::backendPage('mediapool/media', ['info' => $info, ...$argUrl]));
             } catch (ApiFunctionException $e) {
                 $warning = $e->getMessage();
             }

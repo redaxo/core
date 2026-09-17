@@ -19,9 +19,10 @@ class TextareaField extends AbstractInputField
         public readonly int $rows = 5,
         ?string $note = null,
         bool $required = false,
+        bool $translatable = false,
         HtmlAttributes $attributes = new HtmlAttributes(),
     ) {
-        parent::__construct($name, $label, $note, $required, null, $attributes);
+        parent::__construct($name, $label, $note, $required, null, $translatable, $attributes);
     }
 
     public function column(MetaEntity $entity): ?Column

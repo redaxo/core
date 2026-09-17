@@ -6,6 +6,7 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Http\Session;
+use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\View\Message;
@@ -32,6 +33,10 @@ $argFields = '';
 if ('' !== $types) {
     $argUrl['types'] = $types;
     $argFields .= '<input type="hidden" name="types" value="' . escape($types) . '" />' . "\n";
+}
+if (Language::count() > 1) {
+    $argUrl['language'] = Language::getCurrentId();
+    $argFields .= '<input type="hidden" name="language" value="' . Language::getCurrentId() . '" />' . "\n";
 }
 
 // ----- opener_input_field setzen

@@ -10,6 +10,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Form\Select\MediaCategorySelect;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Language\Language;
 use Redaxo\Core\MediaManager\MediaManager;
 use Redaxo\Core\MediaPool\Media;
 use Redaxo\Core\MediaPool\MediaCategory;
@@ -79,7 +80,7 @@ if (Request::post('btn_update', 'string')) {
         $error = I18n::msg('csrf_token_invalid');
     } else {
         $gf = Sql::factory();
-        $gf->setQuery('select * from rex_media where id=?', [$fileId]);
+        $gf->setQuery('SELECT * FROM rex_media WHERE id = ?', [$fileId]);
         if (1 != $gf->getRows()) {
             $error = I18n::msg('pool_file_not_found');
             $fileId = 0;
@@ -116,8 +117,9 @@ if (Request::post('btn_update', 'string')) {
     }
 }
 
+// the shared columns together with the translation of the current language
 $gf = Sql::factory();
-$gf->setQuery('SELECT * FROM rex_media WHERE id = ?', [$fileId]);
+$gf->setQuery('SELECT m.*, l.* FROM rex_media m JOIN rex_media_translation l ON l.media_id = m.id WHERE m.id = ? AND l.language_id = ?', [(int) $fileId, Language::getCurrentId()]);
 if (1 != $gf->getRows()) {
     $error = I18n::msg('pool_file_not_found');
     $fileId = 0;

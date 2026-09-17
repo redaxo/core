@@ -10,6 +10,7 @@ use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
@@ -43,7 +44,8 @@ final class MediaHandler
      * Dabei wird kontrolliert ob das File schon vorhanden ist und es
      * wird eventuell angepasst, weiterhin werden die Fileinformationen übergeben.
      *
-     * @param array{category_id: int|null, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}} $data `category_id` is `null` for the root level
+     * @param array{category_id: int|null, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}} $data `category_id` is `null` for the root level,
+     *     `title` is used for all languages
      * @param bool $doSubindexing // echte Dateinamen anpassen, falls schon vorhanden
      * @param list<string> $types Restrict the allowed file extensions to these types
      * @return array{category_id: int|null, title: string, file: array{name: string, path: string, tmp_name?: string, error?: int, name_new: string, type: string|null}, width?: int, height?: int, message: string, type: string|null, msg: string, filename: string, old_filename: string, ok: 1}
@@ -128,7 +130,6 @@ final class MediaHandler
         $saveObject = Sql::factory();
         $saveObject->setTable('rex_media');
         $saveObject->setValue('filetype', $data['file']['type']);
-        $saveObject->setValue('title', $title);
         $saveObject->setValue('filename', $data['file']['name_new']);
         $saveObject->setValue('originalname', $data['file']['name']);
         $saveObject->setValue('filesize', filesize($dstFile));
@@ -144,6 +145,14 @@ final class MediaHandler
         $saveObject->addGlobalCreateFields();
         $saveObject->addGlobalUpdateFields();
         $saveObject->insert();
+        $mediaId = $saveObject->getLastId();
+
+        foreach (Language::getAllIds() as $languageId) {
+            Sql::factory()
+                ->setTable('rex_media_translation')
+                ->setValues(['media_id' => $mediaId, 'language_id' => $languageId, 'title' => $title])
+                ->insert();
+        }
 
         $message = [];
 
@@ -180,9 +189,10 @@ final class MediaHandler
      * wird eventuell angepasst, weiterhin werden die Fileinformationen übergeben.
      *
      * @param array{category_id: int|null, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}} $data `category_id` is `null` for the root level
+     * @param int|null $languageId the language the title is saved for, defaults to the current language
      * @return array{category_id: int|null, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}, ok: 1, msg: string, id: int, filename: string, type: string|null, filetype: string|null}
      */
-    public static function updateMedia(string $filename, array $data): array
+    public static function updateMedia(string $filename, array $data, ?int $languageId = null): array
     {
         if ('' === $filename) {
             throw new ApiFunctionException('Expecting Filename.');
@@ -193,10 +203,15 @@ final class MediaHandler
             throw new ApiFunctionException(I18n::msg('pool_file_not_found'));
         }
 
+        Sql::factory()
+            ->setTable('rex_media_translation')
+            ->setWhere(['media_id' => $media->id, 'language_id' => $languageId ?? Language::getCurrentId()])
+            ->setValue('title', $data['title'])
+            ->update();
+
         $saveObject = Sql::factory();
         $saveObject->setTable('rex_media');
         $saveObject->setWhere(['filename' => $filename]);
-        $saveObject->setValue('title', $data['title']);
         $saveObject->setValue('category_id', $data['category_id'] ?: null);
 
         $file = $data['file'] ?? null;
@@ -310,9 +325,9 @@ final class MediaHandler
     {
         $sql = Sql::factory();
         $where = [];
-        $queryParams = [];
+        $queryParams = ['language_id' => Language::getCurrentId()];
         $tables = [];
-        $tables[] = 'rex_media AS m';
+        $tables[] = 'rex_media AS m LEFT JOIN rex_media_translation AS l ON l.media_id = m.id AND l.language_id = :language_id';
 
         $counter = 0;
         foreach ($filter as $type => $value) {
@@ -353,7 +368,7 @@ final class MediaHandler
                         }
 
                         $param = "search_{$counter}_{$i}";
-                        $where[] = '(m.filename LIKE :' . $param . ' || m.title LIKE :' . $param . ')';
+                        $where[] = '(m.filename LIKE :' . $param . ' || l.title LIKE :' . $param . ')';
                         $queryParams[$param] = '%' . $sql->escapeLikeWildcards($part) . '%';
                     }
                     break;
@@ -372,7 +387,7 @@ final class MediaHandler
                 continue;
             }
             $orderbys[] = ':orderby_' . $index . ' ' . ('ASC' == $orderByItem[1] ? 'ASC' : 'DESC');
-            $queryParams['orderby_' . $index] = 'm.' . $orderByItem[0];
+            $queryParams['orderby_' . $index] = ('title' === $orderByItem[0] ? 'l.' : 'm.') . $orderByItem[0];
         }
 
         if (0 == count($orderbys)) {

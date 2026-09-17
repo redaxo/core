@@ -8,15 +8,20 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Form\Select\MediaCategorySelect;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Language\Language;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\View;
 
 use function Redaxo\Core\View\escape;
 
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
 assert(isset($argFields) && is_string($argFields));
 assert(isset($fileId) && is_int($fileId));
+
+/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
+$argUrl ??= [];
 
 $subpage = Controller::getCurrentPagePart(2);
 
@@ -75,6 +80,19 @@ $toolbar = '
 $context = new Context([
     'page' => Controller::getCurrentPage(),
 ]);
+
+// title and translatable meta fields are edited per language; the wrapper keeps the floated switch out of the
+// section header that follows
+$languageSwitch = View::languageSwitchAsButtons(new Context([
+    'page' => Controller::getCurrentPage(),
+    'rex_file_category' => $rexFileCategory,
+    ...($fileId ? ['file_id' => $fileId] : []),
+    ...$argUrl,
+    'language' => Language::getCurrentId(),
+]));
+if ('' !== $languageSwitch) {
+    echo '<div class="clearfix">' . $languageSwitch . '</div>';
+}
 
 // ----- EXTENSION POINT
 $toolbar = Extension::dispatch(new ExtensionPoint('MEDIA_LIST_TOOLBAR', $toolbar, [

@@ -23,8 +23,9 @@ abstract class AbstractInputField extends MetaField
         ?string $note = null,
         bool $required = false,
         ?string $default = null,
+        bool $translatable = false,
         protected readonly HtmlAttributes $attributes = new HtmlAttributes(),
     ) {
-        parent::__construct($name, $label, $note, $required, $default);
+        parent::__construct($name, $label, $note, $required, $default, $translatable);
     }
 }
