@@ -80,7 +80,7 @@ class Sql implements Iterator
 
     /**
      * Where condition as string or as nested array (see `setWhere` for examples).
-     * @var string|array<scalar|array<scalar|array<mixed>>>|null
+     * @var string|array<scalar|array<scalar|array<mixed>|null>|null>|null
      */
     protected string|array|null $wherevar;
 
@@ -627,7 +627,7 @@ class Sql implements Iterator
      * example 3 (deprecated):
      *    $sql->setWhere('myid="35" OR abc="zdf"');
      *
-     * @param string|array<scalar|array<scalar|array<mixed>>> $where
+     * @param string|array<scalar|array<scalar|array<mixed>|null>|null> $where `null` values are matched with `IS NULL`
      * @param array<scalar> $params
      */
     public function setWhere(string|array $where, array $params = []): static
@@ -668,7 +668,7 @@ class Sql implements Iterator
      * Concats the given array to a sql condition using bound parameters.
      * AND/OR opartors are alternated depending on $level.
      *
-     * @param array<scalar|array<scalar|array<mixed>>> $columns
+     * @param array<scalar|array<scalar|array<mixed>|null>|null> $columns
      * @param array<scalar> $params
      */
     private function buildWhereArg(array $columns, array &$params, int $level = 0): string
@@ -682,15 +682,17 @@ class Sql implements Iterator
         $qry = '';
         foreach ($columns as $fldName => $value) {
             if (is_array($value)) {
-                /** @var array<scalar|array<scalar|array<mixed>>> $value */
+                /** @var array<scalar|array<scalar|array<mixed>|null>|null> $value */
                 $arg = '(' . $this->buildWhereArg($value, $params, $level + 1) . ')';
+            } elseif (null === $value) {
+                $arg = $this->escapeIdentifier((string) $fldName) . ' IS NULL';
             } else {
                 $paramName = $fldName;
                 for ($i = 1; array_key_exists($paramName, $params) || array_key_exists($paramName, $this->values); ++$i) {
                     $paramName = $fldName . '_' . $i;
                 }
 
-                $arg = $this->escapeIdentifier($fldName) . ' = :' . $paramName;
+                $arg = $this->escapeIdentifier((string) $fldName) . ' = :' . $paramName;
                 $params[$paramName] = $value;
             }
 
@@ -719,6 +721,18 @@ class Sql implements Iterator
         }
 
         return $this->fetchValue($column);
+    }
+
+    /**
+     * Returns the integer value of a column, or `null` if the column is `NULL`.
+     *
+     * @param string $column Name of the column
+     */
+    public function getNullableIntValue(string $column): ?int
+    {
+        $value = $this->getValue($column);
+
+        return null === $value ? null : (int) $value;
     }
 
     /**

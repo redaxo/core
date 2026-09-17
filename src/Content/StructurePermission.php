@@ -12,18 +12,16 @@ use function in_array;
 /** @extends ComplexPermission<int> */
 final class StructurePermission extends ComplexPermission
 {
+    /** @param int|null $categoryId `null` for the root level */
     public function hasCategoryPerm(?int $categoryId): bool
     {
         if ($this->hasAll()) {
             return true;
         }
-        if (null === $categoryId) {
-            return false;
-        }
-        if (in_array($categoryId, $this->perms, true)) {
+        if (in_array($categoryId ?? 0, $this->perms, true)) {
             return true;
         }
-        if ($c = Category::get($categoryId)) {
+        if (null !== $categoryId && $c = Category::get($categoryId)) {
             $perms = $this->perms;
             return array_any($c->path, static fn (int $k) => in_array($k, $perms, true));
         }

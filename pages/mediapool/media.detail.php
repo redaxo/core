@@ -102,7 +102,7 @@ if (Request::post('btn_update', 'string')) {
             try {
                 MediaHandler::updateMedia($filename, $data);
 
-                if ($gf->getValue('category_id') != $rexFileCategory) {
+                if ((int) $gf->getValue('category_id') !== $rexFileCategory) {
                     Extension::dispatch(new ExtensionPoint('MEDIA_MOVED', null, [
                         'filename' => $filename,
                         'category_id' => $rexFileCategory,

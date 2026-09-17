@@ -44,7 +44,7 @@ if ($user->hasPerm('article2startarticle[]')) {
 
     $panelClass = 'default';
     $buttons = '';
-    if (!$isStartpage && 0 == $article->getValue('parent_id')) {
+    if (!$isStartpage && null === $article->getNullableIntValue('parent_id')) {
         $panelClass = 'info';
 
         $formElements = [];
@@ -131,7 +131,7 @@ if (!$isStartpage && $user->hasPerm('article2category[]')) {
 // --------------------------------------------------- IN KATEGORIE UMWANDELN END
 
 // --------------------------------------------------- IN ARTIKEL UMWANDELN START
-if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPerm('structure')->hasCategoryPerm($article->getValue('parent_id'))) {
+if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPerm('structure')->hasCategoryPerm($article->getNullableIntValue('parent_id'))) {
     $sql = Sql::factory();
     $sql->setQuery('SELECT pid FROM rex_article WHERE parent_id=? LIMIT 1', [$articleId]);
     $emptyCategory = 0 == $sql->getRows();
@@ -347,7 +347,7 @@ if ($user->hasPerm('copyArticle[]')) {
 // --------------------------------------------------- ARTIKEL KOPIEREN ENDE
 
 // --------------------------------------------------- KATEGORIE/STARTARTIKEL VERSCHIEBEN START
-if ($isStartpage && $user->hasPerm('moveCategory[]') && $user->getComplexPerm('structure')->hasCategoryPerm($article->getValue('parent_id'))) {
+if ($isStartpage && $user->hasPerm('moveCategory[]') && $user->getComplexPerm('structure')->hasCategoryPerm($article->getNullableIntValue('parent_id'))) {
     $moveA = new CategorySelect(false, null, true, !$user->getComplexPerm('structure')->hasMountPoints());
     $moveA->setId('category_id_new');
     $moveA->setName('category_id_new');

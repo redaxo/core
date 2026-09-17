@@ -39,7 +39,7 @@ final class Article extends StructureElement
         };
 
         $id = (int) $getAndUnset('id');
-        $parentId = (int) $getAndUnset('parent_id');
+        $parentId = $getAndUnset('parent_id');
         $startArticle = (bool) $getAndUnset('startarticle');
         $path = array_map('intval', array_filter(explode('|', (string) $getAndUnset('path'))));
         // start-articles share the cache row with their category; their DB path
@@ -63,7 +63,7 @@ final class Article extends StructureElement
             additionalData: $data,
         );
 
-        $this->categoryId = $startArticle ? $id : ($parentId > 0 ? $parentId : null);
+        $this->categoryId = $startArticle ? $id : (null === $parentId ? null : (int) $parentId);
         $this->templateKey = null === ($t = $getAndUnset('template')) ? null : (string) $t;
         $this->startArticle = $startArticle;
     }
@@ -118,7 +118,7 @@ final class Article extends StructureElement
      */
     public static function getRootArticles(bool $ignoreOfflines = false, ?int $languageId = null): array
     {
-        return self::getChildElements(0, 'alist', $ignoreOfflines, $languageId);
+        return self::getChildElements(null, 'alist', $ignoreOfflines, $languageId);
     }
 
     /** Returns the category this article belongs to (for start-articles the category itself). */

@@ -104,11 +104,13 @@ abstract class StructureElement
      */
     abstract protected static function fromCache(array $data): ?static;
 
-    /** @return list<static> */
-    final protected static function getChildElements(int $parentId, string $listType, bool $ignoreOfflines = false, ?int $languageId = null): array
+    /**
+     * @param int|null $parentId `null` for the root level
+     * @return list<static>
+     */
+    final protected static function getChildElements(?int $parentId, string $listType, bool $ignoreOfflines = false, ?int $languageId = null): array
     {
-        // for $parentId=0 root elements will be returned, so abort here for $parentId<0 only
-        if (0 > $parentId) {
+        if (null !== $parentId && $parentId < 1) {
             return [];
         }
         if (!$languageId) {
@@ -118,7 +120,7 @@ abstract class StructureElement
         $class = static::class;
         return static::getInstanceList(
             // list key
-            [$parentId, $listType],
+            [$parentId ?? 0, $listType],
             // callback to get an instance for a given ID, status will be checked if $ignoreOfflines==true
             static function (int $id) use ($class, $ignoreOfflines, $languageId) {
                 if ($instance = $class::get($id, $languageId)) {
@@ -128,7 +130,7 @@ abstract class StructureElement
             },
             // callback to create the list of IDs
             static function () use ($parentId, $listType) {
-                $listFile = Path::coreCache('structure/' . $parentId . '.' . $listType);
+                $listFile = Path::coreCache('structure/' . ($parentId ?? 0) . '.' . $listType);
 
                 $list = File::getCache($listFile, null);
                 if (null === $list) {

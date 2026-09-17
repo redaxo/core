@@ -476,6 +476,27 @@ final class SqlTest extends TestCase
         self::assertEquals(6, $sql->getValue('col_int'));
     }
 
+    public function testUpdateRowByWhereArrayWithNull(): void
+    {
+        $sql = Sql::factory();
+        $sql->setTable(self::TABLE);
+        $sql->setValue('col_str', 'abc');
+        $sql->setValue('col_int', null);
+        $sql->insert();
+
+        $sql = Sql::factory();
+        $sql->setTable(self::TABLE);
+        $sql->setWhere(['col_int' => null, 'col_str' => 'abc']);
+        $sql->setValue('col_str', 'def');
+
+        $sql->update();
+        self::assertEquals(1, $sql->getRows());
+
+        $sql->setQuery('SELECT * FROM ' . self::TABLE);
+        self::assertSame('def', $sql->getValue('col_str'));
+        self::assertNull($sql->getNullableIntValue('col_int'));
+    }
+
     public function testUpdateRowByNamedWhere(): void
     {
         // create a row we later update

@@ -90,18 +90,17 @@ final class ArticleCache
      * Löscht die gecachten List-Dateien eines Artikels. Wenn keine Sprache angegeben, wird
      * der Artikel in allen Sprachen gelöscht.
      */
-    public static function deleteLists(int $id): bool
+    public static function deleteLists(?int $id): bool
     {
-        // sanity check
-        if ($id < 0) {
+        if (null !== $id && $id < 1) {
             return false;
         }
 
         $cachePath = Path::coreCache('structure/');
 
         foreach (['alist', 'clist'] as $list) {
-            File::delete($cachePath . $id . '.' . $list);
-            StructureElement::clearInstanceList([$id, $list]);
+            File::delete($cachePath . ($id ?? 0) . '.' . $list);
+            StructureElement::clearInstanceList([$id ?? 0, $list]);
         }
 
         return true;
@@ -151,14 +150,13 @@ final class ArticleCache
     /**
      * Generiert alle *.alist u. *.clist Dateien einer Kategorie/eines Artikels.
      *
-     * @param int $parentId KategorieId oder ArtikelId, die erneuert werden soll
+     * @param int|null $parentId KategorieId oder ArtikelId, die erneuert werden soll, `null` für die Root-Ebene
      *
      * @return bool|string TRUE wenn der Artikel gelöscht wurde, sonst eine Fehlermeldung
      */
-    public static function generateLists(int $parentId): bool|string
+    public static function generateLists(?int $parentId): bool|string
     {
-        // sanity check
-        if ($parentId < 0) {
+        if (null !== $parentId && $parentId < 1) {
             return false;
         }
 
@@ -166,14 +164,14 @@ final class ArticleCache
 
         $GC = Sql::factory();
         // $GC->setDebug();
-        $GC->setQuery('select * from rex_article where language_id=:language AND ((parent_id=:id and startarticle=0) OR (id=:id and startarticle=1)) order by priority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
+        $GC->setQuery('select * from rex_article where language_id=:language AND ((parent_id<=>:id and startarticle=0) OR (id=:id and startarticle=1)) order by priority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
             $cacheArray[] = (int) $row->getValue('id');
         }
 
-        $articleListFile = Path::coreCache('structure/' . $parentId . '.alist');
+        $articleListFile = Path::coreCache('structure/' . ($parentId ?? 0) . '.alist');
         if (!File::putCache($articleListFile, $cacheArray)) {
             return I18n::msg('article_could_not_be_generated') . ' ' . I18n::msg('check_rights_in_directory') . Path::coreCache('structure/');
         }
@@ -181,14 +179,14 @@ final class ArticleCache
         // --------------------------------------- CAT LIST
 
         $GC = Sql::factory();
-        $GC->setQuery('select * from rex_article where parent_id=:id and language_id=:language and startarticle=1 order by catpriority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
+        $GC->setQuery('select * from rex_article where parent_id<=>:id and language_id=:language and startarticle=1 order by catpriority,name', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
             $cacheArray[] = (int) $row->getValue('id');
         }
 
-        $articleCategoriesFile = Path::coreCache('structure/' . $parentId . '.clist');
+        $articleCategoriesFile = Path::coreCache('structure/' . ($parentId ?? 0) . '.clist');
         if (!File::putCache($articleCategoriesFile, $cacheArray)) {
             return I18n::msg('article_could_not_be_generated') . ' ' . I18n::msg('check_rights_in_directory') . Path::coreCache('structure/');
         }

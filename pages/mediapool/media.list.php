@@ -82,7 +82,7 @@ if ($hasCategoryPerm && 'updatecat_selectedmedia' == $mediaMethod) {
                 // $db->setDebug();
                 $db->setTable('rex_media');
                 $db->setWhere(['filename' => $fileName]);
-                $db->setValue('category_id', $rexFileCategory);
+                $db->setValue('category_id', $rexFileCategory ?: null);
                 $db->addGlobalUpdateFields();
                 $db->update();
                 ++$countMoved;
@@ -184,7 +184,7 @@ if ('' != $mediaName) {
         $filter['category_id_path'] = $rexFileCategory;
     }
 } else {
-    $filter['category_id'] = $rexFileCategory;
+    $filter['category_id'] = $rexFileCategory ?: null;
 }
 
 if (isset($argUrl['types'])) {

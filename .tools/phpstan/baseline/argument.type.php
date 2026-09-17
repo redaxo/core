@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 $ignoreErrors = [];
 $ignoreErrors[] = [
-    'rawMessage' => 'Parameter #1 $data of static method Redaxo\\Core\\MediaPool\\MediaHandler::addMedia() expects array{category_id: int, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}}, array{title: mixed, category_id: int, filename: mixed, file: array{name: mixed, path: non-empty-string}} given.',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../pages/mediapool/sync.php',
-];
-$ignoreErrors[] = [
     'rawMessage' => 'Parameter #1 $job of method Redaxo\\Core\\Cronjob\\CronjobManager::tryExecuteJob() expects array{id: int, interval: string, name: string, parameters: string|null, type: class-string<Redaxo\\Core\\Cronjob\\Type\\AbstractType>}, array<string, bool|float|int|string|null> given.',
     'count' => 1,
     'path' => __DIR__ . '/../../../src/Cronjob/CronjobManager.php',

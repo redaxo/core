@@ -44,11 +44,15 @@ final class MediaPoolCache
         MediaCategory::clearInstanceListPool();
     }
 
-    /** Löscht die gecachte Liste mit den Media der Kategorie. */
-    public static function deleteList(int $categoryId): void
+    /**
+     * Löscht die gecachte Liste mit den Media der Kategorie.
+     *
+     * @param int|null $categoryId `null` für die Root-Ebene
+     */
+    public static function deleteList(?int $categoryId): void
     {
-        File::delete(Path::coreCache('mediapool/' . $categoryId . '.mlist'));
-        MediaCategory::clearInstanceList([$categoryId, 'media']);
+        File::delete(Path::coreCache('mediapool/' . ($categoryId ?? 0) . '.mlist'));
+        MediaCategory::clearInstanceList([$categoryId ?? 0, 'media']);
     }
 
     /** Löscht die gecachten Media-Kategorien-Listen. */
@@ -65,11 +69,15 @@ final class MediaPoolCache
         MediaCategory::clearInstanceListPool();
     }
 
-    /** Löscht die gecachte Media-Kategorien-Liste. */
-    public static function deleteCategoryList(int $categoryId): void
+    /**
+     * Löscht die gecachte Media-Kategorien-Liste.
+     *
+     * @param int|null $categoryId `null` für die Root-Ebene
+     */
+    public static function deleteCategoryList(?int $categoryId): void
     {
-        File::delete(Path::coreCache('mediapool/' . $categoryId . '.mclist'));
-        MediaCategory::clearInstanceList([$categoryId, 'children']);
+        File::delete(Path::coreCache('mediapool/' . ($categoryId ?? 0) . '.mclist'));
+        MediaCategory::clearInstanceList([$categoryId ?? 0, 'children']);
     }
 
     /**
@@ -140,18 +148,17 @@ final class MediaPoolCache
     /**
      * Generiert eine Liste mit den Media einer Kategorie.
      *
-     * @param int $categoryId Id der Kategorie
+     * @param int|null $categoryId Id der Kategorie, `null` für die Root-Ebene
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function generateList(int $categoryId): bool
+    public static function generateList(?int $categoryId): bool
     {
-        // sanity check
-        if ($categoryId < 0) {
+        if (null !== $categoryId && $categoryId < 1) {
             return false;
         }
 
-        $query = 'SELECT filename FROM rex_media WHERE category_id = ?';
+        $query = 'SELECT filename FROM rex_media WHERE category_id <=> ?';
         $sql = Sql::factory();
         $sql->setQuery($query, [$categoryId]);
 
@@ -161,25 +168,24 @@ final class MediaPoolCache
             $sql->next();
         }
 
-        $listFile = Path::coreCache('mediapool/' . $categoryId . '.mlist');
+        $listFile = Path::coreCache('mediapool/' . ($categoryId ?? 0) . '.mlist');
         return File::putCache($listFile, $cacheArray);
     }
 
     /**
      * Generiert eine Liste mit den Kindkategorien einer Kategorie.
      *
-     * @param int $categoryId Id der Kategorie
+     * @param int|null $categoryId Id der Kategorie, `null` für die Root-Ebene
      *
      * @return bool TRUE bei Erfolg, sonst FALSE
      */
-    public static function generateCategoryList(int $categoryId): bool
+    public static function generateCategoryList(?int $categoryId): bool
     {
-        // sanity check
-        if ($categoryId < 0) {
+        if (null !== $categoryId && $categoryId < 1) {
             return false;
         }
 
-        $query = 'SELECT id, cast( name AS SIGNED ) AS sort FROM rex_media_category WHERE parent_id = ? ORDER BY sort, name';
+        $query = 'SELECT id, cast( name AS SIGNED ) AS sort FROM rex_media_category WHERE parent_id <=> ? ORDER BY sort, name';
         $sql = Sql::factory();
         // $sql->setDebug();
         $sql->setQuery($query, [$categoryId]);
@@ -190,7 +196,7 @@ final class MediaPoolCache
             $sql->next();
         }
 
-        $listFile = Path::coreCache('mediapool/' . $categoryId . '.mclist');
+        $listFile = Path::coreCache('mediapool/' . ($categoryId ?? 0) . '.mclist');
         return File::putCache($listFile, $cacheArray);
     }
 }

@@ -22,11 +22,9 @@ final class MediaCategoryHandler
     {
         $db = Sql::factory();
 
-        // root category
-        $parentId = 0;
+        $parentId = $parent?->id;
         $path = '|';
         if ($parent) {
-            $parentId = $parent->id;
             $path .= implode('|', $parent->path) . '|' . $parent->id . '|';
         }
 

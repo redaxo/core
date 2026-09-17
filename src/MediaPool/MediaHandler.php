@@ -43,10 +43,10 @@ final class MediaHandler
      * Dabei wird kontrolliert ob das File schon vorhanden ist und es
      * wird eventuell angepasst, weiterhin werden die Fileinformationen übergeben.
      *
-     * @param array{category_id: int, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}} $data
+     * @param array{category_id: int|null, title: string, file: array{name: string, path?: string, tmp_name?: string, error?: int}} $data `category_id` is `null` for the root level
      * @param bool $doSubindexing // echte Dateinamen anpassen, falls schon vorhanden
      * @param list<string> $types Restrict the allowed file extensions to these types
-     * @return array{category_id: int, title: string, file: array{name: string, path: string, tmp_name?: string, error?: int, name_new: string, type: string|null}, width?: int, height?: int, message: string, type: string|null, msg: string, filename: string, old_filename: string, ok: 1}
+     * @return array{category_id: int|null, title: string, file: array{name: string, path: string, tmp_name?: string, error?: int, name_new: string, type: string|null}, width?: int, height?: int, message: string, type: string|null, msg: string, filename: string, old_filename: string, ok: 1}
      */
     public static function addMedia(array $data, bool $doSubindexing = true, array $types = []): array
     {
@@ -80,7 +80,7 @@ final class MediaHandler
             throw new ApiFunctionException($warning);
         }
 
-        $categoryId = (int) $data['category_id'];
+        $categoryId = $data['category_id'] ?: null;
         $title = (string) $data['title'];
 
         $data['file']['name_new'] = MediaPool::filename($data['file']['name'], $doSubindexing);
@@ -179,8 +179,8 @@ final class MediaHandler
      * Dabei wird kontrolliert ob das File schon vorhanden ist und es
      * wird eventuell angepasst, weiterhin werden die Fileinformationen übergeben.
      *
-     * @param array{category_id: int, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}} $data
-     * @return array{category_id: int, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}, ok: 1, msg: string, id: int, filename: string, type: string|null, filetype: string|null}
+     * @param array{category_id: int|null, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}} $data `category_id` is `null` for the root level
+     * @return array{category_id: int|null, title: string, file?: array{name: string, path?: string, tmp_name?: string, error?: int}, ok: 1, msg: string, id: int, filename: string, type: string|null, filetype: string|null}
      */
     public static function updateMedia(string $filename, array $data): array
     {
@@ -197,7 +197,7 @@ final class MediaHandler
         $saveObject->setTable('rex_media');
         $saveObject->setWhere(['filename' => $filename]);
         $saveObject->setValue('title', $data['title']);
-        $saveObject->setValue('category_id', (int) $data['category_id']);
+        $saveObject->setValue('category_id', $data['category_id'] ?: null);
 
         $file = $data['file'] ?? null;
         $filetype = null;
@@ -302,7 +302,7 @@ final class MediaHandler
     }
 
     /**
-     * @param array{category_id?: int, category_id_path?: int, types?: list<string>, term?: string} $filter
+     * @param array{category_id?: int|null, category_id_path?: int, types?: list<string>, term?: string} $filter `category_id` is `null` for the root level
      * @param list<array{string, 'ASC'|'DESC'}> $orderBy
      * @return list<Media>
      */
@@ -320,8 +320,8 @@ final class MediaHandler
 
             switch ($type) {
                 case 'category_id':
-                    if (is_int($value)) {
-                        $where[] = '(m.category_id = :search_' . $counter . ')';
+                    if (null === $value || is_int($value)) {
+                        $where[] = '(m.category_id <=> :search_' . $counter . ')';
                         $queryParams['search_' . $counter] = $value;
                     }
                     break;

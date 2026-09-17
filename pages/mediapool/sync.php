@@ -90,8 +90,7 @@ if (Request::post('save', 'boolean') && Request::post('sync_files', 'boolean')) 
 
                 $data = [];
                 $data['title'] = $ftitle;
-                $data['category_id'] = $rexFileCategory;
-                $data['filename'] = $filename;
+                $data['category_id'] = $rexFileCategory ?: null;
                 $data['file'] = [
                     'name' => $filename,
                     'path' => Path::media($filename),

@@ -55,7 +55,7 @@ final class ArticleCopy extends ApiFunction
             'language' => $languageId,
         ]);
 
-        if (false !== ($newId = ArticleHandler::copyArticle($articleId, $categoryCopyIdNew))) {
+        if (false !== ($newId = ArticleHandler::copyArticle($articleId, $categoryCopyIdNew ?: null))) {
             $result = new Result(true, I18n::msg('content_articlecopied'));
             Response::sendRedirect($context->getUrl([
                 'article_id' => $newId,

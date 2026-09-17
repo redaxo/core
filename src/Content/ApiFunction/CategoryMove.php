@@ -45,7 +45,7 @@ final class CategoryMove extends ApiFunction
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 
-        if ($categoryId !== $categoryIdNew && CategoryHandler::moveCategory($categoryId, $categoryIdNew)) {
+        if ($categoryId !== $categoryIdNew && CategoryHandler::moveCategory($categoryId, $categoryIdNew ?: null)) {
             return new Result(true, I18n::msg('category_moved'));
         }
 

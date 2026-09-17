@@ -40,7 +40,7 @@ final class ArticleMove extends ApiFunction
             throw new ApiFunctionException('Unable to find category with id "' . $categoryIdNew . '"!');
         }
 
-        $categoryId = $article->categoryId ?? 0;
+        $categoryId = $article->categoryId;
 
         if (
             !$user->getComplexPerm('structure')->hasCategoryPerm($categoryId)
@@ -49,7 +49,7 @@ final class ArticleMove extends ApiFunction
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 
-        if (ArticleHandler::moveArticle($articleId, $categoryId, $categoryIdNew)) {
+        if (ArticleHandler::moveArticle($articleId, $categoryId, $categoryIdNew ?: null)) {
             return new Result(true, I18n::msg('content_articlemoved'));
         }
 

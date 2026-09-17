@@ -128,7 +128,7 @@ if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->c
 
     $KAT->setQuery('SELECT * FROM rex_article WHERE id IN (' . $parentIds . ') AND startarticle=1 AND language_id = ? ORDER BY ' . $orderBy . ' LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId]);
 } else {
-    $KAT->setQuery('SELECT * FROM rex_article WHERE parent_id = ? AND startarticle=1 AND language_id = ? ORDER BY catpriority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->categoryId, $structureContext->languageId]);
+    $KAT->setQuery('SELECT * FROM rex_article WHERE parent_id <=> ? AND startarticle=1 AND language_id = ? ORDER BY catpriority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->categoryId ?: null, $structureContext->languageId]);
 }
 
 $trStatusClass = 'rex-status';
@@ -370,10 +370,10 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         SELECT COUNT(*) as artCount
         FROM rex_article
         WHERE
-            ((parent_id = :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
+            ((parent_id <=> :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
             AND language_id = :language_id
     ', [
-        'category_id' => $structureContext->categoryId,
+        'category_id' => $structureContext->categoryId ?: null,
         'language_id' => $structureContext->languageId,
     ]);
 
@@ -391,13 +391,13 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         SELECT *
         FROM rex_article
         WHERE
-            ((parent_id = :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
+            ((parent_id <=> :category_id AND startarticle=0) OR (id = :category_id AND startarticle=1))
             AND language_id = :language_id
         ORDER BY
             ' . $articleOrderBy . '
         LIMIT ' . $artPager->getCursor() . ',' . $artPager->getRowsPerPage(),
         [
-            'category_id' => $structureContext->categoryId,
+            'category_id' => $structureContext->categoryId ?: null,
             'language_id' => $structureContext->languageId,
         ],
     );

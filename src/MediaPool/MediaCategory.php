@@ -67,19 +67,21 @@ final class MediaCategory
     /** @return list<self> */
     public static function getRootCategories(): array
     {
-        return self::getChildCategories(0);
+        return self::getChildCategories(null);
     }
 
-    /** @return list<self> */
-    private static function getChildCategories(int $parentId): array
+    /**
+     * @param int|null $parentId `null` for the root level
+     * @return list<self>
+     */
+    private static function getChildCategories(?int $parentId): array
     {
-        // for $parentId=0 root categories will be returned, so abort here for $parentId<0 only
-        if (0 > $parentId) {
+        if (null !== $parentId && $parentId < 1) {
             return [];
         }
 
-        return self::getInstanceList([$parentId, 'children'], self::get(...), static function () use ($parentId) {
-            $catlistPath = Path::coreCache('mediapool/' . $parentId . '.mclist');
+        return self::getInstanceList([$parentId ?? 0, 'children'], self::get(...), static function () use ($parentId) {
+            $catlistPath = Path::coreCache('mediapool/' . ($parentId ?? 0) . '.mclist');
 
             $list = File::getCache($catlistPath, null);
             if (null === $list) {
