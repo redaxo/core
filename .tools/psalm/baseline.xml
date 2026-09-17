@@ -1752,8 +1752,6 @@
       <code><![CDATA[$this->getConnection()->quote($value)]]></code>
     </LessSpecificReturnStatement>
     <MixedArgument>
-      <code><![CDATA[$metadata['name']]]></code>
-      <code><![CDATA[$metadata['name']]]></code>
       <code><![CDATA[$version]]></code>
       <code><![CDATA[$version]]></code>
     </MixedArgument>
@@ -1763,19 +1761,9 @@
     <MixedAssignment>
       <code><![CDATA[$buffered]]></code>
       <code><![CDATA[$decoded]]></code>
-      <code><![CDATA[$lastRow]]></code>
       <code><![CDATA[$version]]></code>
       <code><![CDATA[$version]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$metadata['table']]]></code>
-      <code><![CDATA[$metadata['table']]]></code>
-    </MixedOperand>
-    <MixedPropertyTypeCoercion>
-      <code><![CDATA[$this->fieldnames]]></code>
-      <code><![CDATA[$this->rawFieldnames]]></code>
-      <code><![CDATA[$this->tablenames]]></code>
-    </MixedPropertyTypeCoercion>
     <MixedReturnStatement>
       <code><![CDATA[$version]]></code>
     </MixedReturnStatement>
@@ -1805,13 +1793,7 @@
     <PossiblyFalseOperand>
       <code><![CDATA[json_encode($params)]]></code>
     </PossiblyFalseOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$this->rawFieldnames]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullReference>
-      <code><![CDATA[fetch]]></code>
-      <code><![CDATA[fetchAll]]></code>
-      <code><![CDATA[fetchAll]]></code>
       <code><![CDATA[getColumnMeta]]></code>
     </PossiblyNullReference>
     <PossiblyUndefinedArrayOffset>
