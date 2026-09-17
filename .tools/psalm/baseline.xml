@@ -1116,15 +1116,8 @@
       <code><![CDATA[$role->getValue('name')]]></code>
       <code><![CDATA[$userpermBeSprache]]></code>
       <code><![CDATA[$userpermStartpage]]></code>
-      <code><![CDATA[$userrole]]></code>
-      <code><![CDATA[$userrole]]></code>
-      <code><![CDATA[$userrole]]></code>
       <code><![CDATA[['_impersonate' => $list->getValue('id')] + UserImpersonate::getUrlParams()]]></code>
     </ArgumentTypeCoercion>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$userrole]]></code>
-      <code><![CDATA[$userrole]]></code>
-    </MixedArgumentTypeCoercion>
     <NullArgument>
       <code><![CDATA[escape($roles)]]></code>
     </NullArgument>
@@ -1137,7 +1130,6 @@
     <PossiblyNullArgument>
       <code><![CDATA[$role->getValue('id')]]></code>
       <code><![CDATA[$role->getValue('name')]]></code>
-      <code><![CDATA[$userrole]]></code>
     </PossiblyNullArgument>
     <PossiblyNullArrayOffset>
       <code><![CDATA[$roles]]></code>
@@ -2304,9 +2296,6 @@
     </PossiblyFalseArgument>
   </file>
   <file src="src/Security/User.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$role]]></code>
-    </ArgumentTypeCoercion>
     <MixedReturnStatement>
       <code><![CDATA[$complexPerm ? $complexPerm->$method() : false]]></code>
       <code><![CDATA[$complexPerm ? $complexPerm->$method() : false]]></code>
