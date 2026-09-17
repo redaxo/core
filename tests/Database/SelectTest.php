@@ -45,6 +45,7 @@ final class SelectTest extends TestCase
         // Drops the table and all therefore all its rows
         $sql = Sql::factory();
         $sql->setQuery('DROP TABLE `' . self::TABLE . '`');
+        $sql->setQuery('DROP TABLE IF EXISTS `' . self::TABLE . '_join`');
     }
 
     public function testGetRow(): void
@@ -85,6 +86,140 @@ final class SelectTest extends TestCase
         self::assertEquals('abc', $sql->getValue(self::TABLE . '.col_str'), 'getValue() retrievs field by table.fieldname');
 
         self::assertSame(['id', 'col_str', 'col_int', 'col_date', 'col_time', 'col_text'], $sql->getFieldnames());
+    }
+
+    public function testJoinWithAmbiguousColumns(): void
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('CREATE TABLE `' . self::TABLE . '_join` (`id` INT NOT NULL, `col_str` VARCHAR(255) NOT NULL, `col_other` INT NOT NULL)');
+        $sql->setQuery('INSERT INTO `' . self::TABLE . '_join` VALUES (1, "joined", 7)');
+
+        $sql->setQuery('SELECT a.*, b.* FROM ' . self::TABLE . ' a JOIN ' . self::TABLE . '_join b ON a.id = b.id');
+
+        self::assertSame(['a', 'b'], $sql->getTablenames());
+        self::assertSame(['id', 'col_str', 'col_int', 'col_date', 'col_time', 'col_text', 'id', 'col_str', 'col_other'], $sql->getFieldnames());
+
+        self::assertTrue($sql->hasValue('col_str'));
+        self::assertTrue($sql->hasValue('a.col_str'));
+        self::assertTrue($sql->hasValue('b.col_str'));
+        self::assertFalse($sql->hasValue('b.col_int'), 'hasValue() checks the column of the given table');
+        self::assertFalse($sql->hasValue('c.col_str'));
+
+        self::assertSame('abc', $sql->getValue('col_str'), 'ambiguous columns resolve to the first occurrence');
+        self::assertSame('abc', $sql->getValue('a.col_str'));
+        self::assertSame('joined', $sql->getValue('b.col_str'));
+        self::assertSame(7, $sql->getValue('col_other'));
+        self::assertSame(7, $sql->getValue('b.col_other'));
+
+        $row = $sql->getRow();
+        self::assertSame(['id', 'col_str', 'col_int', 'col_date', 'col_time', 'col_text', 'col_other'], array_keys($row));
+        self::assertSame('joined', $row['col_str'], 'getRow() resolves ambiguous columns like PDO::FETCH_ASSOC (last occurrence)');
+        $numRow = $sql->getRow(PDO::FETCH_NUM);
+        self::assertCount(9, $numRow);
+
+        $array = $sql->getArray();
+        self::assertCount(1, $array);
+        self::assertSame($row, $array[0]);
+
+        $array = $sql->getArray(null, [], PDO::FETCH_NUM);
+        self::assertSame($numRow, $array[0]);
+    }
+
+    public function testExpressionColumns(): void
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT COUNT(*) AS cnt, MAX(col_int), "lit" AS lit FROM ' . self::TABLE);
+
+        self::assertSame([], $sql->getTablenames());
+        self::assertSame(['cnt', 'MAX(col_int)', 'lit'], $sql->getFieldnames());
+
+        self::assertTrue($sql->hasValue('cnt'));
+        self::assertSame(1, $sql->getValue('cnt'));
+        self::assertSame(5, $sql->getValue('MAX(col_int)'));
+        self::assertSame('lit', $sql->getValue('lit'));
+
+        self::assertSame(['cnt' => 1, 'MAX(col_int)' => 5, 'lit' => 'lit'], $sql->getRow());
+        self::assertSame([['cnt' => 1, 'MAX(col_int)' => 5, 'lit' => 'lit']], $sql->getArray());
+    }
+
+    public function testGetArrayExecutesQueryOnlyOnce(): void
+    {
+        $sql = new class extends Sql {
+            public int $executions = 0;
+
+            public function __construct(int $db = 1)
+            {
+                parent::__construct($db);
+            }
+
+            public function execute(array $params = [], array $options = []): static
+            {
+                ++$this->executions;
+                parent::execute($params, $options);
+
+                return $this;
+            }
+        };
+
+        $sql->setTable(self::TABLE);
+        $sql->setWhere(['col_int' => 5]);
+        $sql->select();
+        self::assertSame(1, $sql->getRows());
+
+        $array = $sql->getArray();
+        self::assertSame(1, $sql->executions, 'getArray() reuses the result of the previous query');
+        self::assertCount(1, $array);
+        self::assertSame('abc', $array[0]['col_str']);
+
+        $array = $sql->getArray();
+        self::assertSame(2, $sql->executions, 'a second getArray() must execute the query again');
+        self::assertCount(1, $array);
+
+        $sql->setQuery('SELECT * FROM ' . self::TABLE);
+        $values = [];
+        foreach ($sql as $row) {
+            $values[] = $row->getValue('col_str');
+        }
+        self::assertSame(['abc'], $values);
+        self::assertSame(3, $sql->executions, 'iterating the result does not execute the query again');
+    }
+
+    public function testGetArrayAfterFetchingRows(): void
+    {
+        $this->insertRow();
+        $this->insertRow();
+
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT * FROM ' . self::TABLE . ' ORDER BY id');
+        self::assertSame(1, $sql->getValue('id'), 'fetches the first row');
+        self::assertCount(3, $sql->getArray(), 'getArray() contains the already fetched row');
+
+        $sql->setQuery('SELECT * FROM ' . self::TABLE . ' ORDER BY id');
+        foreach ($sql as $row) {
+            if (2 === $row->getValue('id')) {
+                break;
+            }
+        }
+        self::assertCount(3, $sql->getArray(), 'getArray() contains all rows after a partial iteration');
+
+        self::assertCount(3, $sql->getArray('SELECT * FROM ' . self::TABLE), 'getArray() with an explicit query ignores the previous result');
+
+        $sql->setQuery('SELECT * FROM ' . self::TABLE . ' ORDER BY id');
+        $sql->getArray();
+        self::assertFalse($sql->hasNext(), 'the cursor is at the end after getArray()');
+        $ids = [];
+        foreach ($sql as $row) {
+            $ids[] = $row->getValue('id');
+        }
+        self::assertSame([1, 2, 3], $ids, 'iterating after getArray() starts from the beginning');
+    }
+
+    public function testGetArrayWithoutQuery(): void
+    {
+        $sql = Sql::factory();
+
+        $this->expectException(SqlException::class);
+        $sql->getArray();
     }
 
     public function testGetArray(): void

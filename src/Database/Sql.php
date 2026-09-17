@@ -30,7 +30,6 @@ use function is_array;
 use function is_int;
 use function is_string;
 use function sprintf;
-use function strlen;
 
 use const E_USER_WARNING;
 use const FILTER_FLAG_HOSTNAME;
@@ -67,11 +66,14 @@ class Sql implements Iterator
     protected array $rawValues = []; // Werte von setRawValue
     /** @var list<string>|null */
     protected ?array $fieldnames = null; // Spalten im ResultSet
-    /** @var list<string>|null */
-    protected ?array $rawFieldnames = null;
+    /**
+     * Column positions by plain column name (first occurrence wins) and by `table.column`.
+     * @var array<string, int<0, max>>|null
+     */
+    private ?array $columnIndexes = null;
     /** @var list<string>|null */
     protected ?array $tablenames = null; // Tabelle im ResultSet
-    /** @var array<scalar|null>|null */
+    /** @var list<scalar|null>|null */
     protected ?array $lastRow = null; // Wert der zuletzt gefetchten zeile
     /** @var non-empty-string|null */
     protected ?string $table = null; // Tabelle setzen
@@ -86,7 +88,6 @@ class Sql implements Iterator
     protected array $whereParams = [];
 
     protected int $rows = 0; // anzahl der treffer
-    /** @var int<0, max> */
     protected int $counter = 0; // pointer
 
     protected string $query = ''; // Die Abfrage
@@ -256,7 +257,6 @@ class Sql implements Iterator
         // array_merge() doesnt work because it looses integer keys
         $options += [
             PDO::ATTR_PERSISTENT => $persistent,
-            PDO::ATTR_FETCH_TABLE_NAMES => true,
         ];
 
         return @new Mysql($dsn, $login, $password, $options);
@@ -705,7 +705,8 @@ class Sql implements Iterator
     /**
      * Returns the value of a column.
      *
-     * @param string $column Name of the column
+     * @param string $column Name of the column, optionally qualified with the table (alias) as `table.column`
+     *     to disambiguate columns in joins
      * @throws SqlException
      * @return scalar|null
      *
@@ -715,22 +716,6 @@ class Sql implements Iterator
     {
         if (empty($column)) {
             throw new InvalidArgumentException('Parameter $column must not be empty.');
-        }
-
-        // fast fail,... value already set manually?
-        if (isset($this->values[$column])) {
-            return $this->values[$column];
-        }
-
-        // check if there is an table alias defined
-        // if not, try to guess the tablename
-        if (!str_contains($column, '.')) {
-            $tables = $this->getTablenames();
-            foreach ($tables as $table) {
-                if (in_array($table . '.' . $column, $this->rawFieldnames)) {
-                    return $this->fetchValue($table . '.' . $column);
-                }
-            }
         }
 
         return $this->fetchValue($column);
@@ -775,33 +760,38 @@ class Sql implements Iterator
         return $value ? strtotime($value) : null;
     }
 
-    /** @return scalar|null */
+    /**
+     * Returns the value of a column of the current row, either by plain column name or as `table.column`.
+     *
+     * @return scalar|null
+     */
     protected function fetchValue(string $column): string|int|float|bool|null
     {
+        // value already set manually?
         if (isset($this->values[$column])) {
             return $this->values[$column];
         }
 
-        if (empty($this->lastRow)) {
-            // no row fetched, but also no query was executed before
-            if (null == $this->stmt) {
-                return null;
-            }
-            $this->getRow(PDO::FETCH_ASSOC);
+        // no query was executed before
+        if (null === $this->stmt) {
+            return null;
         }
 
-        // isset() alone doesn't work here, because values may also be null
-        if (is_array($this->lastRow) && (isset($this->lastRow[$column]) || array_key_exists($column, $this->lastRow))) {
-            return $this->lastRow[$column];
+        $this->fetchMeta();
+
+        if (!isset($this->columnIndexes[$column])) {
+            trigger_error('Field "' . $column . '" does not exist in result!', E_USER_WARNING);
+            return null;
         }
-        trigger_error('Field "' . $column . '" does not exist in result!', E_USER_WARNING);
-        return null;
+
+        return $this->fetchRow()[$this->columnIndexes[$column]];
     }
 
     /**
-     * Gibt den Wert der aktuellen Zeile im ResultSet zurueck
-     * Falls es noch keine erste Zeile (lastRow) gibt, wird der Satzzeiger
-     * initialisiert. Weitere Satzwechsel mittels next().
+     * Returns the current row of the result set.
+     *
+     * The first call fetches the row, further rows are reached via `next()`.
+     * Ambiguous column names (e.g. in joins) are resolved to the last occurrence, like `PDO::FETCH_ASSOC` does.
      *
      * @template TFetchType of PDO::FETCH_ASSOC|PDO::FETCH_NUM
      * @param TFetchType $fetchType
@@ -811,15 +801,45 @@ class Sql implements Iterator
      */
     public function getRow(int $fetchType = PDO::FETCH_ASSOC): array
     {
-        if (!$this->lastRow) {
-            $lastRow = $this->stmt->fetch($fetchType);
-            if (false === $lastRow) {
-                throw new SqlException('Unable to fetch row for statement "' . $this->query . '".', null, $this);
-            }
-            /** @var array<scalar|null> $lastRow */
-            $this->lastRow = $lastRow;
+        $row = $this->fetchRow();
+
+        if (PDO::FETCH_NUM === $fetchType) {
+            return $row;
         }
-        return $this->lastRow;
+
+        $this->fetchMeta();
+
+        $assoc = [];
+        foreach ($this->fieldnames as $i => $name) {
+            $assoc[$name] = $row[$i];
+        }
+
+        return $assoc;
+    }
+
+    /**
+     * Fetches the current row (numerically indexed) unless it is already fetched.
+     *
+     * @throws SqlException
+     * @return list<scalar|null>
+     */
+    private function fetchRow(): array
+    {
+        if (null !== $this->lastRow) {
+            return $this->lastRow;
+        }
+
+        if (!$this->stmt) {
+            throw new SqlException('you need to execute a query before fetching a row.', null, $this);
+        }
+
+        /** @var list<scalar|null>|false $row */
+        $row = $this->stmt->fetch(PDO::FETCH_NUM);
+        if (false === $row) {
+            throw new SqlException('Unable to fetch row for statement "' . $this->query . '".', null, $this);
+        }
+
+        return $this->lastRow = $row;
     }
 
     /**
@@ -837,11 +857,9 @@ class Sql implements Iterator
             return true;
         }
 
-        if (str_contains($column, '.')) {
-            $parts = explode('.', $column);
-            return in_array($parts[0], $this->getTablenames()) && in_array($parts[1], $this->getFieldnames());
-        }
-        return in_array($column, $this->getFieldnames());
+        $this->fetchMeta();
+
+        return isset($this->columnIndexes[$column]);
     }
 
     /**
@@ -1059,7 +1077,7 @@ class Sql implements Iterator
         $this->whereParams = [];
         $this->lastRow = null;
         $this->fieldnames = null;
-        $this->rawFieldnames = null;
+        $this->columnIndexes = null;
         $this->tablenames = null;
 
         $this->table = null;
@@ -1117,8 +1135,9 @@ class Sql implements Iterator
     }
 
     /**
-     * Laedt das komplette Resultset in ein Array und gibt dieses zurueck und
-     * wechselt die DBID falls vorhanden.
+     * Executes the given query (with support for the `(DB1)` prefix) and returns the complete result set as array.
+     *
+     * Without a query, the result set of the previously executed query is returned instead.
      *
      * @template TFetchType as PDO::FETCH_ASSOC|PDO::FETCH_NUM|PDO::FETCH_KEY_PAIR
      *
@@ -1140,22 +1159,22 @@ class Sql implements Iterator
      */
     public function getDBArray(?string $query = null, array $params = [], int $fetchType = PDO::FETCH_ASSOC): array
     {
-        if (!$query) {
-            $query = $this->query;
-            $params = $this->params;
+        if ($query) {
+            $this->setDBQuery($query, $params);
         }
 
-        $pdo = $this->getConnection();
-
-        $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, false);
-        $this->setDBQuery($query, $params);
-        $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
+        $this->prepareFetchAll();
 
         return $this->stmt->fetchAll($fetchType);
     }
 
     /**
-     * Laedt das komplette Resultset in ein Array und gibt dieses zurueck.
+     * Executes the given query and returns the complete result set as array.
+     *
+     * Without a query, the result set of the previously executed query is returned instead:
+     *
+     *    $sql->setTable('mytable')->setWhere(['id' => 3])->select();
+     *    $rows = $sql->getArray();
      *
      * @template TFetchType as PDO::FETCH_ASSOC|PDO::FETCH_NUM|PDO::FETCH_KEY_PAIR
      *
@@ -1177,18 +1196,36 @@ class Sql implements Iterator
      */
     public function getArray(?string $query = null, array $params = [], int $fetchType = PDO::FETCH_ASSOC): array
     {
-        if (!$query) {
-            $query = $this->query;
-            $params = $this->params;
+        if ($query) {
+            $this->setQuery($query, $params);
         }
 
-        $pdo = $this->getConnection();
-
-        $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, false);
-        $this->setQuery($query, $params);
-        $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
+        $this->prepareFetchAll();
 
         return $this->stmt->fetchAll($fetchType);
+    }
+
+    /**
+     * Prepares the statement for fetching the complete result set.
+     *
+     * PDO can not rewind a result set, so the statement is executed again if rows were already fetched.
+     *
+     * @throws SqlException
+     *
+     * @psalm-assert !null $this->stmt
+     */
+    private function prepareFetchAll(): void
+    {
+        if (!$this->stmt) {
+            throw new SqlException('you need to execute a query before fetching the result.', null, $this);
+        }
+
+        if (null !== $this->lastRow || 0 !== $this->counter) {
+            $this->execute($this->params);
+        }
+
+        // the cursor will be at the end, so a following `getArray()` or `rewind()` executes the statement again
+        $this->counter = $this->rows;
     }
 
     /** Gibt die zuletzt aufgetretene Fehlernummer zurueck. */
@@ -1321,36 +1358,41 @@ class Sql implements Iterator
 
     /**
      * @psalm-assert !null $this->fieldnames
-     * @psalm-assert !null $this->rawFieldnames
+     * @psalm-assert !null $this->columnIndexes
      * @psalm-assert !null $this->tablenames
      */
     private function fetchMeta(): void
     {
-        if (null === $this->fieldnames) {
-            $this->rawFieldnames = [];
-            $this->fieldnames = [];
-            $this->tablenames = [];
+        if (null !== $this->fieldnames) {
+            return;
+        }
 
-            $stripTableName = null;
-            for ($i = 0; $i < $this->getFields(); ++$i) {
-                $metadata = $this->stmt->getColumnMeta($i);
+        $this->fieldnames = [];
+        $this->columnIndexes = [];
+        $this->tablenames = [];
 
-                $this->rawFieldnames[] = $metadata['name'];
+        $qualifiedIndexes = [];
+        for ($i = 0; $i < $this->getFields(); ++$i) {
+            $metadata = $this->stmt->getColumnMeta($i);
+            $name = Type::string($metadata['name']);
+            // the table alias, empty for expressions and literals
+            $table = Type::string($metadata['table']);
 
-                if (null === $stripTableName) {
-                    $stripTableName = str_starts_with($metadata['name'], $metadata['table'] . '.');
-                }
-                if ($stripTableName) {
-                    $metadata['name'] = substr($metadata['name'], strlen($metadata['table'] . '.'));
-                }
+            $this->fieldnames[] = $name;
+            $this->columnIndexes[$name] ??= $i;
 
-                $this->fieldnames[] = $metadata['name'];
+            if ('' === $table) {
+                continue;
+            }
 
-                if (!in_array($metadata['table'], $this->tablenames)) {
-                    $this->tablenames[] = $metadata['table'];
-                }
+            $qualifiedIndexes[$table . '.' . $name] ??= $i;
+            if (!in_array($table, $this->tablenames, true)) {
+                $this->tablenames[] = $table;
             }
         }
+
+        // plain names take precedence over qualified ones
+        $this->columnIndexes += $qualifiedIndexes;
     }
 
     /**
