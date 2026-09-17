@@ -90,7 +90,6 @@ jobs:
                     sudo /etc/init.d/mysql start
                     mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo6;'
                     php project/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo6 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
-                    # creates the meta columns of the fixture schemas, which the mock data below fills
                     php project/bin/console migrate -n --ansi -v
                     php project/bin/console config:set --type boolean debug.enabled true -v
                     php project/bin/console config:set --type boolean debug.throw_always_exception true -v

@@ -9,7 +9,6 @@ use Redaxo\Core\MetaInfo\Field\TextField;
 use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\MetaInfo\MetaSchema;
 
-/** One shared and one translatable field, so the media forms show both kinds. */
 #[AsMetaSchema(MetaEntity::Media)]
 final class TestMediaMetaSchema extends MetaSchema
 {
