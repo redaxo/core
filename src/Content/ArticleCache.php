@@ -3,10 +3,13 @@
 namespace Redaxo\Core\Content;
 
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Database\Table;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
+
+use function in_array;
 
 final class ArticleCache
 {
@@ -118,8 +121,16 @@ final class ArticleCache
             return false;
         }
 
-        // one cache file per language, holding the shared columns together with the translation
-        $qry = 'SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE a.id = ?';
+        // one cache file per language, holding the article and (for a start article) the category columns of that
+        // language in one flat row
+        $qry = '
+            SELECT a.*, t.*, c.priority AS catpriority, ct.name AS catname, c.id IS NOT NULL AS startarticle' . self::categoryMetaColumns() . '
+            FROM rex_article a
+            JOIN rex_article_translation t ON t.article_id = a.id
+            LEFT JOIN rex_category c ON c.id = a.id
+            LEFT JOIN rex_category_translation ct ON ct.category_id = c.id AND ct.language_id = t.language_id
+            WHERE a.id = ?
+        ';
         $params = [$articleId];
         if (null !== $languageId) {
             $qry .= ' AND t.language_id = ?';
@@ -170,8 +181,16 @@ final class ArticleCache
 
         $GC = Sql::factory();
         // $GC->setDebug();
-        // the lists are shared by all languages, the names of the start language break priority ties
-        $GC->setQuery('SELECT a.id FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = :language WHERE (a.parent_id <=> :id AND a.startarticle = 0) OR (a.id = :id AND a.startarticle = 1) ORDER BY a.priority, t.name', ['id' => $parentId, 'language' => Language::getStartId()]);
+        // the lists are shared by all languages, the names of the start language break priority ties;
+        // the start article is listed among the articles of its own category
+        $GC->setQuery('
+            SELECT a.id
+            FROM rex_article a
+            JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = :language
+            LEFT JOIN rex_category c ON c.id = a.id
+            WHERE (a.parent_id <=> :id AND c.id IS NULL) OR (a.id = :id AND c.id IS NOT NULL)
+            ORDER BY a.priority, t.name
+        ', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
@@ -186,7 +205,14 @@ final class ArticleCache
         // --------------------------------------- CAT LIST
 
         $GC = Sql::factory();
-        $GC->setQuery('SELECT a.id FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = :language WHERE a.parent_id <=> :id AND a.startarticle = 1 ORDER BY a.catpriority, t.catname', ['id' => $parentId, 'language' => Language::getStartId()]);
+        $GC->setQuery('
+            SELECT c.id
+            FROM rex_category c
+            JOIN rex_article a ON a.id = c.id
+            JOIN rex_category_translation ct ON ct.category_id = c.id AND ct.language_id = :language
+            WHERE a.parent_id <=> :id
+            ORDER BY c.priority, ct.name
+        ', ['id' => $parentId, 'language' => Language::getStartId()]);
 
         $cacheArray = [];
         foreach ($GC as $row) {
@@ -199,5 +225,25 @@ final class ArticleCache
         }
 
         return true;
+    }
+
+    /**
+     * The meta columns of the category tables as select list, to be appended to the article columns.
+     *
+     * The other category columns are mapped explicitly, as their names collide with the article columns.
+     */
+    private static function categoryMetaColumns(): string
+    {
+        $select = '';
+        foreach (['c' => 'rex_category', 'ct' => 'rex_category_translation'] as $alias => $table) {
+            foreach (array_keys(Table::get($table)->getColumns()) as $column) {
+                if (in_array($column, ['id', 'priority', 'category_id', 'language_id', 'name'], true)) {
+                    continue;
+                }
+                $select .= ', ' . $alias . '.' . $column;
+            }
+        }
+
+        return $select;
     }
 }

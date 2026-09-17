@@ -47,6 +47,7 @@ final class LanguageHandler
 
         // the translations of the source language are the starting point for the new language, articles start offline
         self::copyTranslations('rex_article_translation', $sourceId, $id, ['status' => 0]);
+        self::copyTranslations('rex_category_translation', $sourceId, $id);
         self::copyTranslations('rex_media_translation', $sourceId, $id);
 
         Cache::delete();

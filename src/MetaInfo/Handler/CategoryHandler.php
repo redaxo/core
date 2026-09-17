@@ -85,8 +85,8 @@ final class CategoryHandler extends AbstractHandler
     {
         foreach ($languageIds as $languageId) {
             $translation = Sql::factory();
-            $translation->setTable('rex_article_translation');
-            $translation->setWhere(['article_id' => $id, 'language_id' => $languageId]);
+            $translation->setTable('rex_category_translation');
+            $translation->setWhere(['category_id' => $id, 'language_id' => $languageId]);
             $this->saveRequestValues($translation, $context, translatable: true);
             if ($translation->hasValues()) {
                 $translation->update();
@@ -94,11 +94,18 @@ final class CategoryHandler extends AbstractHandler
         }
 
         $shared = Sql::factory();
-        $shared->setTable('rex_article');
+        $shared->setTable('rex_category');
         $shared->setWhere(['id' => $id]);
         $this->saveRequestValues($shared, $context, translatable: false);
-        $shared->addGlobalUpdateFields();
-        $shared->update();
+        if ($shared->hasValues()) {
+            $shared->update();
+        }
+
+        Sql::factory()
+            ->setTable('rex_article')
+            ->setWhere(['id' => $id])
+            ->addGlobalUpdateFields()
+            ->update();
 
         // Regenerate the article with the additional values.
         ArticleCache::generateMeta($id);

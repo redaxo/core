@@ -56,7 +56,7 @@ final class TemplateSelect extends Select
         // Inherit template from start article
         if ($this->categoryId > 0) {
             $sql = Sql::factory();
-            $sql->setQuery('SELECT t.template FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id WHERE a.id = ? AND t.language_id = ? AND a.startarticle = 1', [
+            $sql->setQuery('SELECT t.template FROM rex_category c JOIN rex_article_translation t ON t.article_id = c.id WHERE c.id = ? AND t.language_id = ?', [
                 $this->categoryId,
                 $this->languageId,
             ]);

@@ -23,7 +23,7 @@ final class CategoryHandler
     private function __construct() {}
 
     /**
-     * Creates a new category.
+     * Creates a new category together with its start article.
      *
      * @param int|null $categoryId Id of the parent category, `null` for the root level
      * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Category data, the names
@@ -35,8 +35,6 @@ final class CategoryHandler
      */
     public static function addCategory(?int $categoryId, array $data): string
     {
-        $message = '';
-
         self::reqKey($data, 'catpriority');
         self::reqKey($data, 'catname');
 
@@ -83,14 +81,17 @@ final class CategoryHandler
         $AART = Sql::factory();
         $AART->setTable('rex_article');
         $AART->setValue('parent_id', $categoryId);
-        $AART->setValue('catpriority', $data['catpriority']);
         $AART->setValue('priority', 1);
         $AART->setValue('path', $path);
-        $AART->setValue('startarticle', 1);
         $AART->addGlobalUpdateFields($user);
         $AART->addGlobalCreateFields($user);
         $AART->insert();
         $id = $AART->getLastId();
+
+        Sql::factory()
+            ->setTable('rex_category')
+            ->setValues(['id' => $id, 'priority' => $data['catpriority']])
+            ->insert();
 
         foreach (Language::getAllIds() as $languageId) {
             // Inherit the template from the start article of the respective language, otherwise use the default
@@ -101,15 +102,25 @@ final class CategoryHandler
                 $templateKey = array_key_first($templates);
             }
 
-            $translation = Sql::factory();
-            $translation->setTable('rex_article_translation');
-            $translation->setValue('article_id', $id);
-            $translation->setValue('language_id', $languageId);
-            $translation->setValue('template', $templateKey);
-            $translation->setValue('name', $data['name']);
-            $translation->setValue('catname', $data['catname']);
-            $translation->setValue('status', $data['status']);
-            $translation->insert();
+            Sql::factory()
+                ->setTable('rex_article_translation')
+                ->setValues([
+                    'article_id' => $id,
+                    'language_id' => $languageId,
+                    'name' => $data['name'],
+                    'status' => $data['status'],
+                    'template' => $templateKey,
+                ])
+                ->insert();
+
+            Sql::factory()
+                ->setTable('rex_category_translation')
+                ->setValues([
+                    'category_id' => $id,
+                    'language_id' => $languageId,
+                    'name' => $data['catname'],
+                ])
+                ->insert();
         }
 
         // ----- PRIOR
@@ -148,52 +159,42 @@ final class CategoryHandler
         // --- Kategorie mit alten Daten selektieren
         $thisCat = self::select($categoryId, $languageId);
 
-        $user = self::getUser();
-
-        // --- Kategorie selbst updaten
-        $EKAT = Sql::factory();
-        $EKAT->setTable('rex_article_translation');
-        $EKAT->setWhere(['article_id' => $categoryId, 'language_id' => $languageId]);
+        if (1 != $thisCat->getRows()) {
+            throw new ApiFunctionException(I18n::msg('no_such_category'));
+        }
 
         if (isset($data['catname'])) {
-            $EKAT->setValue('catname', $data['catname']);
-            $EKAT->update();
-
-            // --- Kategorie Kindelemente updaten
-            $children = Sql::factory();
-            $children->setQuery('
-                UPDATE rex_article_translation t
-                JOIN rex_article a ON a.id = t.article_id
-                SET t.catname = ?
-                WHERE a.parent_id = ? AND a.startarticle = 0 AND t.language_id = ?
-            ', [$data['catname'], $categoryId, $languageId]);
-
-            $children->setQuery('SELECT id FROM rex_article WHERE parent_id = ? AND startarticle = 0', [$categoryId]);
-            foreach ($children as $child) {
-                ArticleCache::delete((int) $child->getValue('id'), $languageId);
-            }
+            Sql::factory()
+                ->setTable('rex_category_translation')
+                ->setWhere(['category_id' => $categoryId, 'language_id' => $languageId])
+                ->setValue('name', $data['catname'])
+                ->update();
         }
 
-        $shared = Sql::factory();
-        $shared->setTable('rex_article');
-        $shared->setWhere(['id' => $categoryId]);
         if (isset($data['catpriority'])) {
-            $shared->setValue('catpriority', $data['catpriority']);
-        }
-        $shared->addGlobalUpdateFields($user);
-        $shared->update();
-
-        // ----- PRIOR
-        if (isset($data['catpriority'])) {
-            $parentId = $thisCat->getNullableIntValue('parent_id');
-            $oldPrio = (int) $thisCat->getValue('catpriority');
-
             if ($data['catpriority'] <= 0) {
                 $data['catpriority'] = 1;
             }
 
+            Sql::factory()
+                ->setTable('rex_category')
+                ->setWhere(['id' => $categoryId])
+                ->setValue('priority', $data['catpriority'])
+                ->update();
+        }
+
+        Sql::factory()
+            ->setTable('rex_article')
+            ->setWhere(['id' => $categoryId])
+            ->addGlobalUpdateFields(self::getUser())
+            ->update();
+
+        // ----- PRIOR
+        if (isset($data['catpriority'])) {
+            $oldPrio = (int) $thisCat->getValue('catpriority');
+
             if ($oldPrio != $data['catpriority']) {
-                self::newCatPrio($parentId, $data['catpriority'], $oldPrio);
+                self::newCatPrio($thisCat->getNullableIntValue('parent_id'), $data['catpriority'], $oldPrio);
             }
         }
 
@@ -202,7 +203,6 @@ final class CategoryHandler
         ArticleCache::delete($categoryId);
 
         // ----- EXTENSION POINT
-        // Objekte clonen, damit diese nicht von der extension veraendert werden koennen
         $message = Extension::dispatch(new ExtensionPoint('CAT_UPDATED', $message, [
             'id' => $categoryId,
 
@@ -233,7 +233,7 @@ final class CategoryHandler
     public static function deleteCategory(int $categoryId): string
     {
         $thisCat = Sql::factory();
-        $thisCat->setQuery('SELECT * FROM rex_article WHERE id = ? AND startarticle = 1', [$categoryId]);
+        $thisCat->setQuery('SELECT a.*, c.priority AS catpriority FROM rex_article a JOIN rex_category c ON c.id = a.id WHERE a.id = ?', [$categoryId]);
 
         // Prüfen ob die Kategorie existiert
         if (1 != $thisCat->getRows()) {
@@ -241,13 +241,13 @@ final class CategoryHandler
         }
 
         $KAT = Sql::factory();
-        $KAT->setQuery('SELECT id FROM rex_article WHERE parent_id = ? AND startarticle = 1 LIMIT 1', [$categoryId]);
+        $KAT->setQuery('SELECT a.id FROM rex_article a JOIN rex_category c ON c.id = a.id WHERE a.parent_id = ? LIMIT 1', [$categoryId]);
         // Prüfen ob die Kategorie noch Unterkategorien besitzt
         if (0 != $KAT->getRows()) {
             throw new ApiFunctionException(I18n::msg('category_could_not_be_deleted') . ' ' . I18n::msg('category_still_contains_subcategories'));
         }
 
-        $KAT->setQuery('SELECT id FROM rex_article WHERE parent_id = ? AND startarticle = 0 LIMIT 1', [$categoryId]);
+        $KAT->setQuery('SELECT a.id FROM rex_article a LEFT JOIN rex_category c ON c.id = a.id WHERE a.parent_id = ? AND c.id IS NULL LIMIT 1', [$categoryId]);
         // Prüfen ob die Kategorie noch Artikel besitzt (ausser dem Startartikel)
         if (0 != $KAT->getRows()) {
             throw new ApiFunctionException(I18n::msg('category_could_not_be_deleted') . ' ' . I18n::msg('category_still_contains_articles'));
@@ -384,11 +384,12 @@ final class CategoryHandler
                 $addsql = 'asc';
             }
 
+            // the most recently updated category wins a priority tie, so the edited one lands where it was put
             Util::organizePriorities(
-                'rex_article',
-                'catpriority',
-                'parent_id ' . (null === $parentId ? 'IS NULL' : '=' . $parentId) . ' AND startarticle=1',
-                'catpriority,updatedate ' . $addsql,
+                'rex_category',
+                'priority',
+                'id IN (SELECT id FROM rex_article WHERE parent_id ' . (null === $parentId ? 'IS NULL' : '= ' . $parentId) . ')',
+                'priority, (SELECT updatedate FROM rex_article WHERE rex_article.id = rex_category.id) ' . $addsql,
             );
 
             ArticleCache::deleteLists($parentId);
@@ -396,7 +397,7 @@ final class CategoryHandler
                 ArticleCache::deleteMeta($parentId);
             }
 
-            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=1 AND parent_id <=> ?', [$parentId]);
+            $ids = Sql::factory()->getArray('SELECT c.id FROM rex_category c JOIN rex_article a ON a.id = c.id WHERE a.parent_id <=> ?', [$parentId]);
             foreach ($ids as $id) {
                 ArticleCache::deleteMeta((int) $id['id']);
             }
@@ -418,10 +419,10 @@ final class CategoryHandler
         // kategorien vorhanden ?
         // ist die zielkategorie im pfad der quellkategeorie ?
         $fcat = Sql::factory();
-        $fcat->setQuery('SELECT * FROM rex_article WHERE startarticle = 1 AND id = ?', [$fromCat]);
+        $fcat->setQuery('SELECT a.* FROM rex_article a JOIN rex_category c ON c.id = a.id WHERE a.id = ?', [$fromCat]);
 
         $tcat = Sql::factory();
-        $tcat->setQuery('SELECT * FROM rex_article WHERE startarticle = 1 AND id = ?', [$toCat]);
+        $tcat->setQuery('SELECT a.* FROM rex_article a JOIN rex_category c ON c.id = a.id WHERE a.id = ?', [$toCat]);
 
         if (1 != $fcat->getRows() || (1 != $tcat->getRows() && null !== $toCat)) {
             // eine der kategorien existiert nicht
@@ -473,17 +474,22 @@ final class CategoryHandler
         }
 
         $gmax = Sql::factory();
-        $gmax->setQuery('SELECT MAX(catpriority) AS catpriority FROM rex_article WHERE parent_id <=> ?', [$toCat]);
-        $catpriority = (int) $gmax->getValue('catpriority');
+        $gmax->setQuery('SELECT MAX(c.priority) AS priority FROM rex_category c JOIN rex_article a ON a.id = c.id WHERE a.parent_id <=> ?', [$toCat]);
+        $priority = (int) $gmax->getValue('priority');
 
         $up = Sql::factory();
         $up->setTable('rex_article');
         $up->setWhere(['id' => $fromCat]);
         $up->setValue('path', $toPath);
         $up->setValue('parent_id', $toCat);
-        $up->setValue('catpriority', $catpriority + 1);
         $up->addGlobalUpdateFields(self::getUser());
         $up->update();
+
+        Sql::factory()
+            ->setTable('rex_category')
+            ->setWhere(['id' => $fromCat])
+            ->setValue('priority', $priority + 1)
+            ->update();
 
         // ----- generiere artikel neu - ohne neue inhaltsgenerierung
         foreach ($RC as $id => $key) {
@@ -500,11 +506,18 @@ final class CategoryHandler
         return true;
     }
 
-    /** Selects the category (the start article) together with its translation in the given language. */
+    /** Selects the category with its start article and the translations in the given language. */
     private static function select(int $id, int $languageId): Sql
     {
         $sql = Sql::factory();
-        $sql->setQuery('SELECT a.*, t.* FROM rex_article a JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ? WHERE a.id = ? AND a.startarticle = 1', [$languageId, $id]);
+        $sql->setQuery('
+            SELECT a.*, t.*, c.priority AS catpriority, ct.name AS catname
+            FROM rex_article a
+            JOIN rex_article_translation t ON t.article_id = a.id AND t.language_id = ?
+            JOIN rex_category c ON c.id = a.id
+            JOIN rex_category_translation ct ON ct.category_id = c.id AND ct.language_id = t.language_id
+            WHERE a.id = ?
+        ', [$languageId, $id]);
 
         return $sql;
     }
