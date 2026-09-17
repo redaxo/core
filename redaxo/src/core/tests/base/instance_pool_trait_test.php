@@ -60,6 +60,23 @@ final class rex_instance_pool_trait_test extends TestCase
         });
     }
 
+    public function testGetInstanceCachesNullResult(): void
+    {
+        $calls = 0;
+        $callback = static function () use (&$calls) {
+            ++$calls;
+            return null;
+        };
+
+        self::assertNull(rex_test_instance_pool_1::getInstance(4, $callback));
+        self::assertNull(rex_test_instance_pool_1::getInstance(4, $callback));
+        self::assertSame(1, $calls, 'getInstance does not call $createCallback again after it returned null');
+
+        rex_test_instance_pool_1::clearInstance(4);
+        self::assertNull(rex_test_instance_pool_1::getInstance(4, $callback));
+        self::assertSame(2, $calls, 'getInstance calls $createCallback again after clearInstance()');
+    }
+
     #[Depends('testGetInstance')]
     public function testClearInstance(): void
     {
