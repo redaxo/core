@@ -23,14 +23,14 @@ final class CategoryHandler
     private function __construct() {}
 
     /**
-     * Erstellt eine neue Kategorie.
+     * Creates a new category.
      *
-     * @param int|null $categoryId KategorieId in der die neue Kategorie erstellt werden soll, `null` für die Root-Ebene
-     * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Array mit den Daten der Kategorie
+     * @param int|null $categoryId Id of the parent category, `null` for the root level
+     * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Category data
      *
      * @throws ApiFunctionException
      *
-     * @return string Eine Statusmeldung
+     * @return string A status message
      */
     public static function addCategory(?int $categoryId, array $data): string
     {
@@ -389,9 +389,9 @@ final class CategoryHandler
     }
 
     /**
-     * Kopiert eine Kategorie in eine andere.
+     * Copies a category into another category.
      *
-     * @param int|null $toCat `null` für die Root-Ebene
+     * @param int|null $toCat `null` for the root level
      */
     public static function copyCategory(int $fromCat, ?int $toCat): void
     {
@@ -399,9 +399,9 @@ final class CategoryHandler
     }
 
     /**
-     * Berechnet die Prios der Kategorien in einer Kategorie neu.
+     * Recalculates the priorities of the subcategories of a category.
      *
-     * @param int|null $parentId `null` für die Root-Ebene
+     * @param int|null $parentId `null` for the root level
      */
     public static function newCatPrio(?int $parentId, int $languageId, int $newPrio, int $oldPrio): void
     {
@@ -432,9 +432,9 @@ final class CategoryHandler
     }
 
     /**
-     * Verschieben einer Kategorie in eine andere.
+     * Moves a category into another category.
      *
-     * @param int|null $toCat `null` für die Root-Ebene
+     * @param int|null $toCat `null` for the root level
      */
     public static function moveCategory(int $fromCat, ?int $toCat): bool
     {

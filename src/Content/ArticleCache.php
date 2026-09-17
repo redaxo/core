@@ -148,11 +148,11 @@ final class ArticleCache
     }
 
     /**
-     * Generiert alle *.alist u. *.clist Dateien einer Kategorie/eines Artikels.
+     * Generates the article list (`*.alist`) and category list (`*.clist`) files of a category.
      *
-     * @param int|null $parentId KategorieId oder ArtikelId, die erneuert werden soll, `null` für die Root-Ebene
+     * @param int|null $parentId Id of the category, `null` for the root level
      *
-     * @return bool|string TRUE wenn der Artikel gelöscht wurde, sonst eine Fehlermeldung
+     * @return bool|string `true` on success, otherwise an error message
      */
     public static function generateLists(?int $parentId): bool|string
     {

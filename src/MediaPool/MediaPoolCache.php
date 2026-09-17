@@ -45,9 +45,9 @@ final class MediaPoolCache
     }
 
     /**
-     * Löscht die gecachte Liste mit den Media der Kategorie.
+     * Deletes the cached media list of a category.
      *
-     * @param int|null $categoryId `null` für die Root-Ebene
+     * @param int|null $categoryId `null` for the root level
      */
     public static function deleteList(?int $categoryId): void
     {
@@ -70,9 +70,9 @@ final class MediaPoolCache
     }
 
     /**
-     * Löscht die gecachte Media-Kategorien-Liste.
+     * Deletes the cached subcategory list of a category.
      *
-     * @param int|null $categoryId `null` für die Root-Ebene
+     * @param int|null $categoryId `null` for the root level
      */
     public static function deleteCategoryList(?int $categoryId): void
     {
@@ -146,11 +146,11 @@ final class MediaPoolCache
     }
 
     /**
-     * Generiert eine Liste mit den Media einer Kategorie.
+     * Generates the cached media list of a category.
      *
-     * @param int|null $categoryId Id der Kategorie, `null` für die Root-Ebene
+     * @param int|null $categoryId Id of the category, `null` for the root level
      *
-     * @return bool TRUE bei Erfolg, sonst FALSE
+     * @return bool `true` on success, otherwise `false`
      */
     public static function generateList(?int $categoryId): bool
     {
@@ -173,11 +173,11 @@ final class MediaPoolCache
     }
 
     /**
-     * Generiert eine Liste mit den Kindkategorien einer Kategorie.
+     * Generates the cached subcategory list of a category.
      *
-     * @param int|null $categoryId Id der Kategorie, `null` für die Root-Ebene
+     * @param int|null $categoryId Id of the category, `null` for the root level
      *
-     * @return bool TRUE bei Erfolg, sonst FALSE
+     * @return bool `true` on success, otherwise `false`
      */
     public static function generateCategoryList(?int $categoryId): bool
     {

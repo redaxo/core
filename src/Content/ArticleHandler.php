@@ -21,13 +21,14 @@ final class ArticleHandler
     private function __construct() {}
 
     /**
-     * Erstellt einen neuen Artikel.
+     * Creates a new article.
      *
-     * @param array{category_id: int|null, priority: int, name: string, template?: string} $data Array mit den Daten des Artikels, `category_id` ist `null` für die Root-Ebene
+     * @param array{category_id: int|null, priority: int, name: string, template?: string} $data Article data,
+     *     `category_id` is `null` for the root level
      *
      * @throws ApiFunctionException
      *
-     * @return string Eine Statusmeldung
+     * @return string A status message
      */
     public static function addArticle(array $data): string
     {
@@ -395,9 +396,9 @@ final class ArticleHandler
     }
 
     /**
-     * Berechnet die Prios der Artikel in einer Kategorie neu.
+     * Recalculates the priorities of the articles in a category.
      *
-     * @param int|null $parentId `null` für die Root-Ebene
+     * @param int|null $parentId `null` for the root level
      */
     public static function newArtPrio(?int $parentId, int $languageId, int $newPrio, int $oldPrio): void
     {
@@ -661,11 +662,11 @@ final class ArticleHandler
     }
 
     /**
-     * Kopieren eines Artikels von einer Kategorie in eine andere.
+     * Copies an article into another category.
      *
-     * @param int|null $toCatId `null` für die Root-Ebene
+     * @param int|null $toCatId `null` for the root level
      *
-     * @return int|false FALSE bei Fehler, sonst die Artikel Id des neue kopierten Artikels
+     * @return int|false The id of the copied article, or `false` on failure
      */
     public static function copyArticle(int $id, ?int $toCatId): int|false
     {
@@ -757,10 +758,10 @@ final class ArticleHandler
     }
 
     /**
-     * Verschieben eines Artikels von einer Kategorie in eine Andere.
+     * Moves an article into another category.
      *
-     * @param int|null $fromCatId `null` für die Root-Ebene
-     * @param int|null $toCatId `null` für die Root-Ebene
+     * @param int|null $fromCatId `null` for the root level
+     * @param int|null $toCatId `null` for the root level
      */
     public static function moveArticle(int $id, ?int $fromCatId, ?int $toCatId): bool
     {
