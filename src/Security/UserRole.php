@@ -77,15 +77,16 @@ final class UserRole
         return $this->complexPerms[$key];
     }
 
-    /**
-     * Returns the role for the given ID.
-     *
-     * @param string $ids Comma separated role IDs
-     */
-    public static function get(string $ids): ?self
+    /** Returns the merged role of all roles assigned to the given user. */
+    public static function forUser(int $userId): ?self
     {
         $sql = Sql::factory();
-        $userRoles = $sql->getArray('SELECT perms FROM rex_user_role WHERE FIND_IN_SET(id, ?)', [$ids]);
+        $userRoles = $sql->getArray('
+            SELECT r.perms
+            FROM rex_user_role r
+            JOIN rex_user_role_assignment a ON a.role_id = r.id
+            WHERE a.user_id = ?
+        ', [$userId]);
         if (0 == count($userRoles)) {
             return null;
         }
@@ -96,6 +97,35 @@ final class UserRole
         }
 
         return new self($roles);
+    }
+
+    /** @return list<int> */
+    public static function getIdsForUser(int $userId): array
+    {
+        $assignments = Sql::factory()->getArray('SELECT role_id FROM rex_user_role_assignment WHERE user_id = ?', [$userId]);
+
+        return array_map('intval', array_column($assignments, 'role_id'));
+    }
+
+    /**
+     * Replaces the roles of the given user. Unknown role IDs are ignored.
+     *
+     * @param list<int> $roleIds
+     */
+    public static function setForUser(int $userId, array $roleIds): void
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('DELETE FROM rex_user_role_assignment WHERE user_id = ?', [$userId]);
+
+        if (!$roleIds) {
+            return;
+        }
+
+        $placeholders = implode(', ', array_fill(0, count($roleIds), '?'));
+        $sql->setQuery('
+            INSERT INTO rex_user_role_assignment (user_id, role_id)
+            SELECT ?, id FROM rex_user_role WHERE id IN (' . $placeholders . ')
+        ', [$userId, ...$roleIds]);
     }
 
     #[AsExtension('COMPLEX_PERM_REMOVE_ITEM')]

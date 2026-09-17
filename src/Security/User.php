@@ -58,6 +58,7 @@ final class User
     }
 
     private ?UserRole $role = null;
+    private bool $roleLoaded = false;
 
     private function __construct(
         private readonly Sql $sql,
@@ -124,8 +125,9 @@ final class User
     /** Returns if the user has a role. */
     public function hasRole(): bool
     {
-        if (!is_object($this->role) && ($role = $this->sql->getValue('role'))) {
-            $this->role = UserRole::get($role);
+        if (!$this->roleLoaded) {
+            $this->role = UserRole::forUser($this->id);
+            $this->roleLoaded = true;
         }
         return is_object($this->role);
     }
