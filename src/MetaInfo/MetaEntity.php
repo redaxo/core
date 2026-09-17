@@ -7,9 +7,7 @@ use Redaxo\Core\MetaInfo\Field\MetaField;
 /**
  * The entity a set of meta fields belongs to.
  *
- * Carries the column-name prefix (also used to scope which columns of a table are metainfo-managed)
- * and the target table. Note that {@see self::Article} and {@see self::Category} share the same
- * table (categories are start articles), which is exactly why the prefix must encode the entity.
+ * Carries the column-name prefix (used to scope which columns of a table are metainfo-managed) and the target tables.
  */
 enum MetaEntity
 {
@@ -33,7 +31,8 @@ enum MetaEntity
     public function table(): string
     {
         return match ($this) {
-            self::Article, self::Category => 'rex_article',
+            self::Article => 'rex_article',
+            self::Category => 'rex_category',
             self::Media => 'rex_media',
             self::Language => 'rex_language',
         };
@@ -47,7 +46,8 @@ enum MetaEntity
     public function translationTable(): ?string
     {
         return match ($this) {
-            self::Article, self::Category => 'rex_article_translation',
+            self::Article => 'rex_article_translation',
+            self::Category => 'rex_category_translation',
             self::Media => 'rex_media_translation',
             self::Language => null,
         };

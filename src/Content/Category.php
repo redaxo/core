@@ -21,7 +21,10 @@ final class Category extends StructureElement
     private function __construct(array $data)
     {
         // strip irrelevant + Article-only fields up front
-        unset($data['name'], $data['priority'], $data['template'], $data['startarticle']);
+        unset(
+            $data['name'], $data['priority'], $data['template'], $data['startarticle'],
+            $data['createdate'], $data['createuser'], $data['updatedate'], $data['updateuser'],
+        );
         foreach (array_keys($data) as $key) {
             if (str_starts_with((string) $key, 'art_')) {
                 unset($data[$key]);
@@ -43,10 +46,10 @@ final class Category extends StructureElement
             priority: (int) $getAndUnset('catpriority'),
             path: array_values(array_map('intval', array_filter(explode('|', (string) $getAndUnset('path'))))),
             status: (int) $getAndUnset('status'),
-            createDate: (int) $getAndUnset('createdate'),
-            updateDate: (int) $getAndUnset('updatedate'),
-            createUser: (string) $getAndUnset('createuser'),
-            updateUser: (string) $getAndUnset('updateuser'),
+            createDate: (int) $getAndUnset('catcreatedate'),
+            updateDate: (int) $getAndUnset('catupdatedate'),
+            createUser: (string) $getAndUnset('catcreateuser'),
+            updateUser: (string) $getAndUnset('catupdateuser'),
             additionalData: $data,
         );
 

@@ -35,8 +35,7 @@ final class MetaSync
         $dropped = [];
         $kept = [];
 
-        // Article and Category share the same table, and translatable fields go to a separate translation table,
-        // so group the fields by their target table to sync each table only once.
+        // Translatable fields go to the translation table of their entity, so group the fields by their target table.
         /** @var array<non-empty-string, list<array{MetaEntity, MetaField}>> $fieldsByTable */
         $fieldsByTable = [];
         /** @var array<non-empty-string, list<MetaEntity>> $entitiesByTable */

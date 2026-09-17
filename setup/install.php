@@ -37,11 +37,10 @@ Table::get('rex_migration')
     ->setPrimaryKey(['package', 'id'])
     ->ensure();
 
+// every structure node is an article; the foreign key of `parent_id` follows below, once the categories exist
 Table::get('rex_article')
     ->ensurePrimaryIdColumn()
     ->ensureColumn(Column::int('parent_id', unsigned: true, nullable: true))
-    ->ensureColumn(Column::int('catpriority', unsigned: true))
-    ->ensureColumn(Column::bool('startarticle'))
     ->ensureColumn(Column::int('priority', unsigned: true))
     ->ensureColumn(Column::varchar('path', 255))
     ->ensureGlobalColumns()
@@ -52,11 +51,31 @@ Table::get('rex_article_translation')
     ->ensureForeignIdColumn('article_id', 'rex_article', onDelete: ForeignKey::CASCADE)
     ->ensureForeignIdColumn('language_id', 'rex_language', onDelete: ForeignKey::CASCADE)
     ->ensureColumn(Column::varchar('name', 255))
-    ->ensureColumn(Column::varchar('catname', 255))
     ->ensureColumn(Column::bool('status'))
     ->ensureColumn(Column::varchar('template', 191, nullable: true))
     ->setPrimaryKey(['article_id', 'language_id'])
     ->ensure();
+
+// a category is an article (its start article) with an additional row here, sharing the id. The id changes when
+// another article becomes the start article, so the references to it cascade on update.
+Table::get('rex_category')
+    ->ensureForeignIdColumn('id', 'rex_article', onDelete: ForeignKey::CASCADE)
+    ->ensureColumn(Column::int('priority', unsigned: true))
+    ->ensureGlobalColumns()
+    ->setPrimaryKey('id')
+    ->ensure();
+
+Table::get('rex_category_translation')
+    ->ensureForeignIdColumn('category_id', 'rex_category', onUpdate: ForeignKey::CASCADE, onDelete: ForeignKey::CASCADE)
+    ->ensureForeignIdColumn('language_id', 'rex_language', onDelete: ForeignKey::CASCADE)
+    ->ensureColumn(Column::varchar('name', 255))
+    ->setPrimaryKey(['category_id', 'language_id'])
+    ->ensure();
+
+// a parent is always a category, and only empty categories can be removed
+Table::get('rex_article')
+    ->ensureForeignKeyTo('rex_category', ['parent_id' => 'id'], onUpdate: ForeignKey::CASCADE)
+    ->alter();
 
 Table::get('rex_article_slice')
     ->ensurePrimaryIdColumn()
