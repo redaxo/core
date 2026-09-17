@@ -1955,7 +1955,7 @@ class Sql implements Iterator
      *
      * @internal
      */
-    public static function createSslOptions(Configuration $dbConfig): array
+    public static function createSslOptions(ConnectionConfig $dbConfig): array
     {
         $options = [];
 
