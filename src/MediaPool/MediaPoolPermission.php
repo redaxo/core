@@ -12,9 +12,10 @@ use function in_array;
 /** @extends ComplexPermission<int> */
 final class MediaPoolPermission extends ComplexPermission
 {
-    public function hasCategoryPerm(int $categoryId): bool
+    /** @param int|null $categoryId `null` for the root level */
+    public function hasCategoryPerm(?int $categoryId): bool
     {
-        return $this->hasAll() || in_array($categoryId, $this->perms);
+        return $this->hasAll() || in_array($categoryId ?? 0, $this->perms);
     }
 
     public function hasMediaPerm(): bool

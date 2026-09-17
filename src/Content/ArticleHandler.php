@@ -13,6 +13,7 @@ use Redaxo\Core\Security\ComplexPermission;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 
+use function array_key_exists;
 use function count;
 
 final class ArticleHandler
@@ -20,13 +21,14 @@ final class ArticleHandler
     private function __construct() {}
 
     /**
-     * Erstellt einen neuen Artikel.
+     * Creates a new article.
      *
-     * @param array{category_id: int, priority: int, name: string, template?: string} $data Array mit den Daten des Artikels
+     * @param array{category_id: int|null, priority: int, name: string, template?: string} $data Article data,
+     *     `category_id` is `null` for the root level
      *
      * @throws ApiFunctionException
      *
-     * @return string Eine Statusmeldung
+     * @return string A status message
      */
     public static function addArticle(array $data): string
     {
@@ -38,17 +40,19 @@ final class ArticleHandler
             $data['priority'] = 1;
         }
 
-        if ($data['category_id']) {
-            $parent = Category::get($data['category_id']);
+        $categoryId = $data['category_id'];
+
+        if (null !== $categoryId) {
+            $parent = Category::get($categoryId);
             if (!$parent) {
-                throw new ApiFunctionException('Target category with ID "' . $data['category_id'] . '" does not exist.');
+                throw new ApiFunctionException('Target category with ID "' . $categoryId . '" does not exist.');
             }
             $path = '|' . implode('|', [...$parent->path, $parent->id]) . '|';
         } else {
             $path = '|';
         }
 
-        $templates = Template::getTemplatesForCategory($data['category_id']);
+        $templates = Template::getTemplatesForCategory($categoryId);
         $data['template'] = isset($data['template']) ? Type::string($data['template']) : null;
 
         // Wenn Template nicht vorhanden, dann entweder erlaubtes nehmen
@@ -62,13 +66,7 @@ final class ArticleHandler
         $AART = Sql::factory();
         $user = self::getUser();
         foreach (Language::getAllIds() as $key) {
-            // ------- Kategorienamen holen
-            $category = Category::get($data['category_id'], $key);
-
-            $categoryName = '';
-            if ($category) {
-                $categoryName = $category->name;
-            }
+            $categoryName = null === $categoryId ? '' : (Category::get($categoryId, $key)->name ?? '');
 
             $AART->setTable('rex_article');
             if (!isset($id) || !$id) {
@@ -80,7 +78,7 @@ final class ArticleHandler
             $AART->setValue('catname', $categoryName);
             $AART->setValue('catpriority', 0);
             $AART->setValue('language_id', $key);
-            $AART->setValue('parent_id', $data['category_id']);
+            $AART->setValue('parent_id', $categoryId);
             $AART->setValue('priority', $data['priority']);
             $AART->setValue('path', $path);
             $AART->setValue('startarticle', 0);
@@ -91,7 +89,7 @@ final class ArticleHandler
 
             $AART->insert();
             // ----- PRIOR
-            self::newArtPrio($data['category_id'], $key, 0, $data['priority']);
+            self::newArtPrio($categoryId, $key, 0, $data['priority']);
 
             ArticleCache::delete($id, $key);
 
@@ -101,7 +99,7 @@ final class ArticleHandler
                 'language' => $key,
                 'status' => 0,
                 'name' => $data['name'],
-                'parent_id' => $data['category_id'],
+                'parent_id' => $categoryId,
                 'priority' => $data['priority'],
                 'path' => $path,
                 'template_key' => $data['template'],
@@ -216,7 +214,7 @@ final class ArticleHandler
 
         if ($Art->getRows() > 0) {
             $message = self::_deleteArticle($articleId);
-            $parentId = (int) $Art->getValue('parent_id');
+            $parentId = $Art->getNullableIntValue('parent_id');
 
             foreach (Language::getAllIds() as $languageId) {
                 // ----- PRIOR
@@ -277,7 +275,7 @@ final class ArticleHandler
 
         $message = '';
         if ($ART->getRows() > 0) {
-            $parentId = (int) $ART->getValue('parent_id');
+            $parentId = $ART->getNullableIntValue('parent_id');
             $message = Extension::dispatch(new ExtensionPoint('ART_PRE_DELETED', $message, [
                 'id' => $id,
                 'parent_id' => $parentId,
@@ -397,11 +395,13 @@ final class ArticleHandler
         return ($currentStatus - 1) % count($artStatusTypes);
     }
 
-    /** Berechnet die Prios der Artikel in einer Kategorie neu. */
+    /**
+     * Recalculates the priorities of the articles in a category.
+     *
+     * @param int|null $parentId `null` for the root level
+     */
     public static function newArtPrio(?int $parentId, int $languageId, int $newPrio, int $oldPrio): void
     {
-        $parentId = (int) $parentId;
-
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
                 $addsql = 'desc';
@@ -409,17 +409,24 @@ final class ArticleHandler
                 $addsql = 'asc';
             }
 
+            // the start article is listed among the articles of its own category
+            $where = null === $parentId
+                ? 'startarticle<>1 AND parent_id IS NULL'
+                : '(startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . ')';
+
             Util::organizePriorities(
                 'rex_article',
                 'priority',
-                'language_id=' . $languageId . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
+                'language_id=' . $languageId . ' AND (' . $where . ')',
                 'priority,updatedate ' . $addsql,
             );
 
             ArticleCache::deleteLists($parentId);
-            ArticleCache::deleteMeta($parentId);
+            if (null !== $parentId) {
+                ArticleCache::deleteMeta($parentId);
+            }
 
-            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=0 AND parent_id = ? GROUP BY id', [$parentId]);
+            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=0 AND parent_id <=> ? GROUP BY id', [$parentId]);
             foreach ($ids as $id) {
                 ArticleCache::deleteMeta((int) $id['id']);
             }
@@ -430,16 +437,13 @@ final class ArticleHandler
     public static function article2category(int $artId): bool
     {
         $sql = Sql::factory();
-        $parentId = 0;
+        $sql->setQuery('select parent_id from rex_article where id=? and startarticle=0 and language_id=?', [$artId, Language::getStartId()]);
+        $parentId = $sql->getNullableIntValue('parent_id');
 
         // LANG SCHLEIFE
         foreach (Language::getAllIds() as $languageId) {
             // artikel
-            $sql->setQuery('select parent_id, name from rex_article where id=? and startarticle=0 and language_id=?', [$artId, $languageId]);
-
-            if (!$parentId) {
-                $parentId = (int) $sql->getValue('parent_id');
-            }
+            $sql->setQuery('select name from rex_article where id=? and startarticle=0 and language_id=?', [$artId, $languageId]);
 
             // artikel updaten
             $sql->setTable('rex_article');
@@ -470,7 +474,6 @@ final class ArticleHandler
     public static function category2article(int $artId): bool
     {
         $sql = Sql::factory();
-        $parentId = 0;
 
         // Kategorie muss leer sein
         $sql->setQuery('SELECT pid FROM rex_article WHERE parent_id=? LIMIT 1', [$artId]);
@@ -478,18 +481,17 @@ final class ArticleHandler
             return false;
         }
 
+        $sql->setQuery('select parent_id from rex_article where id=? and startarticle=1 and language_id=?', [$artId, Language::getStartId()]);
+        $parentId = $sql->getNullableIntValue('parent_id');
+
         // LANG SCHLEIFE
         foreach (Language::getAllIds() as $languageId) {
             // artikel
             $sql->setQuery('
-                select parent_id, (select catname FROM rex_article parent WHERE parent.id = category.parent_id AND parent.language_id = category.language_id) as catname
+                select (select catname FROM rex_article parent WHERE parent.id = category.parent_id AND parent.language_id = category.language_id) as catname
                 from rex_article category
                 where id=? and startarticle=1 and language_id=?
             ', [$artId, $languageId]);
-
-            if (!$parentId) {
-                $parentId = (int) $sql->getValue('parent_id');
-            }
 
             $catname = (string) $sql->getValue('catname');
 
@@ -529,10 +531,10 @@ final class ArticleHandler
         if (1 != $neu->getRows()) {
             return false;
         }
-        $neuCatId = (int) $neu->getValue('parent_id');
+        $neuCatId = $neu->getNullableIntValue('parent_id');
 
         // in oberster kategorie dann return
-        if (0 == $neuCatId) {
+        if (null === $neuCatId) {
             return false;
         }
 
@@ -543,7 +545,7 @@ final class ArticleHandler
             return false;
         }
         $altId = (int) $alt->getValue('id');
-        $parentId = (int) $alt->getValue('parent_id');
+        $parentId = $alt->getNullableIntValue('parent_id');
 
         // cat felder sammeln. +
         $params = ['path', 'priority', 'catname', 'startarticle', 'catpriority', 'status'];
@@ -571,7 +573,7 @@ final class ArticleHandler
             $neu2 = Sql::factory();
             $neu2->setTable('rex_article');
             $neu2->setWhere(['id' => $neuId, 'language_id' => $languageId]);
-            $neu2->setValue('parent_id', (int) $alt->getValue('parent_id'));
+            $neu2->setValue('parent_id', $parentId);
 
             // austauschen der definierten paramater
             foreach ($params as $param) {
@@ -605,7 +607,9 @@ final class ArticleHandler
 
         $GAID[$neuId] = $neuId;
         $GAID[$altId] = $altId;
-        $GAID[$parentId] = $parentId;
+        if (null !== $parentId) {
+            $GAID[$parentId] = $parentId;
+        }
 
         foreach ($GAID as $gid) {
             ArticleCache::delete($gid);
@@ -658,11 +662,13 @@ final class ArticleHandler
     }
 
     /**
-     * Kopieren eines Artikels von einer Kategorie in eine andere.
+     * Copies an article into another category.
      *
-     * @return int|false FALSE bei Fehler, sonst die Artikel Id des neue kopierten Artikels
+     * @param int|null $toCatId `null` for the root level
+     *
+     * @return int|false The id of the copied article, or `false` on failure
      */
-    public static function copyArticle(int $id, int $toCatId): int|false
+    public static function copyArticle(int $id, ?int $toCatId): int|false
     {
         $newId = false;
         $user = self::getUser();
@@ -678,7 +684,7 @@ final class ArticleHandler
                 $toSql = Sql::factory();
                 $toSql->setQuery('select * from rex_article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
 
-                if (1 == $toSql->getRows() || 0 == $toCatId) {
+                if (1 == $toSql->getRows() || null === $toCatId) {
                     if (1 == $toSql->getRows()) {
                         $path = $toSql->getValue('path') . $toSql->getValue('id') . '|';
                         $catname = $toSql->getValue('catname');
@@ -744,13 +750,20 @@ final class ArticleHandler
         ArticleCache::delete($id);
 
         // Caches der Kategorien löschen, da sich derin befindliche Artikel geändert haben
-        ArticleCache::delete($toCatId);
+        if (null !== $toCatId) {
+            ArticleCache::delete($toCatId);
+        }
 
         return $newId;
     }
 
-    /** Verschieben eines Artikels von einer Kategorie in eine Andere. */
-    public static function moveArticle(int $id, int $fromCatId, int $toCatId): bool
+    /**
+     * Moves an article into another category.
+     *
+     * @param int|null $fromCatId `null` for the root level
+     * @param int|null $toCatId `null` for the root level
+     */
+    public static function moveArticle(int $id, ?int $fromCatId, ?int $toCatId): bool
     {
         if ($fromCatId === $toCatId) {
             return false;
@@ -760,21 +773,21 @@ final class ArticleHandler
         foreach (Language::getAllIds() as $languageId) {
             // validierung der id & from_cat_id
             $fromSql = Sql::factory();
-            $fromSql->setQuery('select * from rex_article where language_id=? and startarticle<>1 and id=? and parent_id=?', [$languageId, $id, $fromCatId]);
+            $fromSql->setQuery('select * from rex_article where language_id=? and startarticle<>1 and id=? and parent_id<=>?', [$languageId, $id, $fromCatId]);
 
             if (1 == $fromSql->getRows()) {
                 // validierung der to_cat_id
                 $toSql = Sql::factory();
                 $toSql->setQuery('select * from rex_article where language_id=? and startarticle=1 and id=?', [$languageId, $toCatId]);
 
-                if (1 == $toSql->getRows() || 0 == $toCatId) {
+                if (1 == $toSql->getRows() || null === $toCatId) {
                     if (1 == $toSql->getRows()) {
-                        $parentId = $toSql->getValue('id');
+                        $parentId = (int) $toSql->getValue('id');
                         $path = $toSql->getValue('path') . $toSql->getValue('id') . '|';
                         $catname = $toSql->getValue('catname');
                     } else {
                         // In RootEbene
-                        $parentId = 0;
+                        $parentId = null;
                         $path = '|';
                         $catname = $fromSql->getValue('name');
                     }
@@ -792,7 +805,7 @@ final class ArticleHandler
                     $artSql->setValue('status', $fromSql->getValue('status'));
                     $artSql->addGlobalUpdateFields(self::getUser());
 
-                    $artSql->setWhere('language_id="' . $languageId . '" and startarticle<>1 and id="' . $id . '" and parent_id="' . $fromCatId . '"');
+                    $artSql->setWhere(['id' => $id, 'language_id' => $languageId, 'startarticle' => 0, 'parent_id' => $fromCatId]);
                     $artSql->update();
 
                     // Prios neu berechnen
@@ -816,8 +829,11 @@ final class ArticleHandler
         ArticleCache::delete($id);
 
         // Caches der Kategorien löschen, da sich derin befindliche Artikel geändert haben
-        ArticleCache::delete($fromCatId);
-        ArticleCache::delete($toCatId);
+        foreach ([$fromCatId, $toCatId] as $categoryId) {
+            if (null !== $categoryId) {
+                ArticleCache::delete($categoryId);
+            }
+        }
 
         return true;
     }
@@ -831,7 +847,7 @@ final class ArticleHandler
      */
     private static function reqKey(array $array, string $keyName): void
     {
-        if (!isset($array[$keyName])) {
+        if (!array_key_exists($keyName, $array)) {
             throw new ApiFunctionException('Missing required parameter "' . $keyName . '"!');
         }
     }

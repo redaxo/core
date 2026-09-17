@@ -21,7 +21,7 @@ final class ArticleContentTest extends TestCase
         File::putCache($articleFile, [
             'pid' => 1,
             'id' => 1,
-            'parent_id' => 0,
+            'parent_id' => null,
             'name' => 'Testarticle',
             'catname' => 'Testcategory',
             'catpriority' => 1,

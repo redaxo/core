@@ -37,7 +37,7 @@ final class Category extends StructureElement
             return $value;
         };
 
-        $parentId = (int) $getAndUnset('parent_id');
+        $parentId = $getAndUnset('parent_id');
 
         parent::__construct(
             id: (int) $getAndUnset('id'),
@@ -53,7 +53,7 @@ final class Category extends StructureElement
             additionalData: $data,
         );
 
-        $this->parentId = $parentId > 0 ? $parentId : null;
+        $this->parentId = null === $parentId ? null : (int) $parentId;
     }
 
     /** @param array<string, string|int|null> $data */
@@ -89,7 +89,7 @@ final class Category extends StructureElement
      */
     public static function getRootCategories(bool $ignoreOfflines = false, ?int $languageId = null): array
     {
-        return self::getChildElements(0, 'clist', $ignoreOfflines, $languageId);
+        return self::getChildElements(null, 'clist', $ignoreOfflines, $languageId);
     }
 
     /**

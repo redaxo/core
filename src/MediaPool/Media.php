@@ -22,7 +22,7 @@ final class Media
 
     private function __construct(
         public readonly int $id,
-        public readonly int $categoryId,
+        public readonly ?int $categoryId,
         public readonly string $fileName,
         public readonly string $originalFileName,
         public readonly ?string $type,
@@ -106,7 +106,7 @@ final class Media
 
                 $list = File::getCache($listPath, null);
                 if (null === $list) {
-                    MediaPoolCache::generateList(0);
+                    MediaPoolCache::generateList(null);
                     $list = File::getCache($listPath);
                 }
 
@@ -118,7 +118,7 @@ final class Media
 
     public function getCategory(): ?MediaCategory
     {
-        return MediaCategory::get($this->categoryId);
+        return null === $this->categoryId ? null : MediaCategory::get($this->categoryId);
     }
 
     public function getUrl(): string

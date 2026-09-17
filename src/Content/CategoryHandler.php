@@ -23,23 +23,23 @@ final class CategoryHandler
     private function __construct() {}
 
     /**
-     * Erstellt eine neue Kategorie.
+     * Creates a new category.
      *
-     * @param int $categoryId KategorieId in der die neue Kategorie erstellt werden soll
-     * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Array mit den Daten der Kategorie
+     * @param int|null $categoryId Id of the parent category, `null` for the root level
+     * @param array{catpriority: int, catname: string, name?: string, status?: int} $data Category data
      *
      * @throws ApiFunctionException
      *
-     * @return string Eine Statusmeldung
+     * @return string A status message
      */
-    public static function addCategory(int $categoryId, array $data): string
+    public static function addCategory(?int $categoryId, array $data): string
     {
         $message = '';
 
         self::reqKey($data, 'catpriority');
         self::reqKey($data, 'catname');
 
-        if ($categoryId) {
+        if (null !== $categoryId) {
             $parent = Category::get($categoryId);
             if (!$parent) {
                 throw new ApiFunctionException('Target category with ID "' . $categoryId . '" does not exist.');
@@ -62,7 +62,7 @@ final class CategoryHandler
         }
 
         $startpageTemplates = [];
-        if ('' != $categoryId) {
+        if (null !== $categoryId) {
             // TemplateId vom Startartikel der jeweiligen Sprache vererben
             $sql = Sql::factory();
             // $sql->setDebug();
@@ -195,7 +195,7 @@ final class CategoryHandler
 
         // ----- PRIOR
         if (isset($data['catpriority'])) {
-            $parentId = (int) $thisCat->getValue('parent_id');
+            $parentId = $thisCat->getNullableIntValue('parent_id');
             $oldPrio = (int) $thisCat->getValue('catpriority');
 
             if ($data['catpriority'] <= 0) {
@@ -268,7 +268,7 @@ final class CategoryHandler
                     $thisCat = Sql::factory();
                     $thisCat->setQuery('SELECT * FROM rex_article WHERE id=?', [$categoryId]);
 
-                    $parentId = (int) $thisCat->getValue('parent_id');
+                    $parentId = $thisCat->getNullableIntValue('parent_id');
                     $message = ArticleHandler::_deleteArticle($categoryId);
 
                     foreach ($thisCat as $row) {
@@ -388,14 +388,22 @@ final class CategoryHandler
         return ($currentStatus - 1) % count($catStatusTypes);
     }
 
-    /** Kopiert eine Kategorie in eine andere. */
-    public static function copyCategory(int $fromCat, int $toCat): void
+    /**
+     * Copies a category into another category.
+     *
+     * @param int|null $toCat `null` for the root level
+     */
+    public static function copyCategory(int $fromCat, ?int $toCat): void
     {
         // TODO copyCategory implementieren
     }
 
-    /** Berechnet die Prios der Kategorien in einer Kategorie neu. */
-    public static function newCatPrio(int $parentId, int $languageId, int $newPrio, int $oldPrio): void
+    /**
+     * Recalculates the priorities of the subcategories of a category.
+     *
+     * @param int|null $parentId `null` for the root level
+     */
+    public static function newCatPrio(?int $parentId, int $languageId, int $newPrio, int $oldPrio): void
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -407,24 +415,30 @@ final class CategoryHandler
             Util::organizePriorities(
                 'rex_article',
                 'catpriority',
-                'language_id=' . $languageId . ' AND parent_id=' . $parentId . ' AND startarticle=1',
+                'language_id=' . $languageId . ' AND parent_id ' . (null === $parentId ? 'IS NULL' : '=' . $parentId) . ' AND startarticle=1',
                 'catpriority,updatedate ' . $addsql,
             );
 
             ArticleCache::deleteLists($parentId);
-            ArticleCache::deleteMeta($parentId);
+            if (null !== $parentId) {
+                ArticleCache::deleteMeta($parentId);
+            }
 
-            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=1 AND parent_id = ? GROUP BY id', [$parentId]);
+            $ids = Sql::factory()->getArray('SELECT id FROM rex_article WHERE startarticle=1 AND parent_id <=> ? GROUP BY id', [$parentId]);
             foreach ($ids as $id) {
                 ArticleCache::deleteMeta((int) $id['id']);
             }
         }
     }
 
-    /** Verschieben einer Kategorie in eine andere. */
-    public static function moveCategory(int $fromCat, int $toCat): bool
+    /**
+     * Moves a category into another category.
+     *
+     * @param int|null $toCat `null` for the root level
+     */
+    public static function moveCategory(int $fromCat, ?int $toCat): bool
     {
-        if ($fromCat == $toCat) {
+        if ($fromCat === $toCat) {
             // kann nicht in gleiche kategroie kopiert werden
             return false;
         }
@@ -437,11 +451,11 @@ final class CategoryHandler
         $tcat = Sql::factory();
         $tcat->setQuery('select * from rex_article where startarticle=1 and id=? and language_id=?', [$toCat, Language::getStartId()]);
 
-        if (1 != $fcat->getRows() || (1 != $tcat->getRows() && 0 != $toCat)) {
+        if (1 != $fcat->getRows() || (1 != $tcat->getRows() && null !== $toCat)) {
             // eine der kategorien existiert nicht
             return false;
         }
-        if ($toCat > 0) {
+        if (null !== $toCat) {
             $tcats = explode('|', (string) $tcat->getValue('path'));
             if (in_array($fromCat, $tcats)) {
                 // zielkategorie ist in quellkategorie -> nicht verschiebbar
@@ -449,13 +463,17 @@ final class CategoryHandler
             }
         }
 
+        $fromParentId = $fcat->getNullableIntValue('parent_id');
+
         // ----- folgende cats regenerate
         $RC = [];
-        $RC[(int) $fcat->getValue('parent_id')] = 1;
-        $RC[$fromCat] = 1;
-        $RC[$toCat] = 1;
+        foreach ([$fromParentId, $fromCat, $toCat] as $regenerateId) {
+            if (null !== $regenerateId) {
+                $RC[$regenerateId] = 1;
+            }
+        }
 
-        if ($toCat > 0) {
+        if (null !== $toCat) {
             $toPath = $tcat->getValue('path') . $toCat . '|';
         } else {
             $toPath = '|';
@@ -490,7 +508,7 @@ final class CategoryHandler
         $up = Sql::factory();
         // $up->setDebug();
         foreach (Language::getAllIds() as $languageId) {
-            $gmax->setQuery('select max(catpriority) from rex_article where parent_id=? and language_id=?', [$toCat, $languageId]);
+            $gmax->setQuery('select max(catpriority) from rex_article where parent_id<=>? and language_id=?', [$toCat, $languageId]);
             $catpriority = (int) $gmax->getValue('max(catpriority)');
             $up->setTable('rex_article');
             $up->setWhere(['id' => $fromCat, 'language_id' => $languageId]);
@@ -506,7 +524,7 @@ final class CategoryHandler
         }
 
         foreach (Language::getAllIds() as $languageId) {
-            self::newCatPrio((int) $fcat->getValue('parent_id'), $languageId, 0, 1);
+            self::newCatPrio($fromParentId, $languageId, 0, 1);
 
             Extension::dispatch(new ExtensionPoint('CAT_MOVED', null, [
                 'id' => $fromCat,

@@ -841,10 +841,6 @@
       <code><![CDATA[escape($gf->getValue('title'), 'js')]]></code>
       <code><![CDATA[escape($gf->getValue('updateuser'))]]></code>
     </NullOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$gf->getValue('category_id')]]></code>
-      <code><![CDATA[$gf->getValue('category_id')]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullOperand>
       <code><![CDATA[$gf->getDateTimeValue('updatedate')]]></code>
     </PossiblyNullOperand>
@@ -885,11 +881,6 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[array_merge($argUrl, ['cat_id' => ''])]]></code>
     </MixedArgumentTypeCoercion>
-  </file>
-  <file src="pages/mediapool/sync.php">
-    <InvalidArgument>
-      <code><![CDATA[$data]]></code>
-    </InvalidArgument>
   </file>
   <file src="pages/mediapool/upload.php">
     <MixedArgument>
@@ -968,10 +959,6 @@
     </PossiblyNullPropertyAssignmentValue>
   </file>
   <file src="pages/structure/content.functions.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$article->getValue('parent_id')]]></code>
-      <code><![CDATA[$article->getValue('parent_id')]]></code>
-    </ArgumentTypeCoercion>
     <MixedOperand>
       <code><![CDATA[escape($hiddenFields)]]></code>
     </MixedOperand>
@@ -1750,9 +1737,6 @@
       <code><![CDATA[$version]]></code>
       <code><![CDATA[$version]]></code>
     </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$fldName]]></code>
-    </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$buffered]]></code>
       <code><![CDATA[$decoded]]></code>
@@ -2355,11 +2339,6 @@
       <code><![CDATA[$params['item']]]></code>
       <code><![CDATA[$params['new']]]></code>
     </MixedOperand>
-  </file>
-  <file src="src/Security/UserSession.php">
-    <InvalidArgument>
-      <code><![CDATA[['cookie_key' => $cookieKey]]]></code>
-    </InvalidArgument>
   </file>
   <file src="src/Security/WebAuthn.php">
     <FalsableReturnStatement>
