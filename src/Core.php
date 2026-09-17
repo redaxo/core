@@ -4,7 +4,7 @@ namespace Redaxo\Core;
 
 use Composer\InstalledVersions;
 use Redaxo\Core\Console\Application;
-use Redaxo\Core\Database\Configuration as DatabaseConfiguration;
+use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
@@ -378,7 +378,7 @@ final class Core
     }
 
     /** @param positive-int $db */
-    public static function getDbConfig(int $db = 1): DatabaseConfiguration
+    public static function getDbConfig(int $db = 1): ConnectionConfig
     {
         $config = self::getProperty('db', null);
 
@@ -388,7 +388,7 @@ final class Core
             throw new RuntimeException('Unable to read db config from "' . $configFile . '".');
         }
 
-        return new DatabaseConfiguration($config[$db]);
+        return new ConnectionConfig($config[$db]);
     }
 
     /** Returns the server URL. */
