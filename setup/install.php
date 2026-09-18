@@ -147,8 +147,9 @@ Table::get('rex_article_slice')
     ->ensureColumn(Column::text('linklist9', nullable: true))
     ->ensureColumn(Column::text('linklist10', nullable: true))
     ->ensureGlobalColumns()
-    ->ensureIndex(new Index('slice_priority', ['article_id', 'priority', 'module']))
-    ->ensureIndex(new Index('find_slices', ['article_id', 'language_id']))
+    // all slice queries filter by article, language and revision and sort within a content section by priority;
+    // the leading columns double as the index for the foreign key below
+    ->ensureIndex(new Index('find_slices', ['article_id', 'language_id', 'revision', 'ctype_id', 'priority']))
     ->ensureForeignKeyTo('rex_article_translation', ['article_id' => 'article_id', 'language_id' => 'language_id'], onDelete: ForeignKey::CASCADE)
     ->ensure();
 

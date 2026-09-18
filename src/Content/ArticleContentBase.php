@@ -244,7 +244,7 @@ class ArticleContentBase
                 rex_article_slice.revision = {$this->sliceRevision}
                 {$articleLimit}
                 {$sliceLimit}
-            ORDER BY rex_article_slice.priority
+            ORDER BY rex_article_slice.ctype_id, rex_article_slice.priority
             SQL;
 
         $query = Extension::dispatch(new ExtensionPoint('ART_SLICES_QUERY', $query, ['article' => $this]));
