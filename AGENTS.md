@@ -42,7 +42,7 @@ vendor/bin/phpunit tests/Database/SqlTest.php
 ### Console & Docker
 ```bash
 php project/bin/console                      # List all CLI commands (Symfony Console)
-php project/bin/console setup:run            # Run setup
+php project/bin/console setup                # Run setup
 php project/bin/console migrate              # Bring the DB in line with the code after a code update
 php project/bin/console migrate:status       # List pending migrations (exits non-zero if there are any)
 php project/bin/console migrate:make <desc>  # Create a migration file (--package=core|project|<addon>)

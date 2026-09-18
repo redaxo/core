@@ -37,8 +37,8 @@ use const PHP_VERSION;
 /**
  * @internal
  */
-#[AsCommand(name: 'setup:run', description: 'Perform redaxo setup')]
-final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsInterface, AvailableInSetupInterface
+#[AsCommand(name: 'setup', description: 'Sets up this installation')]
+final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInterface, AvailableInSetupInterface
 {
     private SymfonyStyle $io;
     private InputInterface $input;
@@ -567,7 +567,7 @@ final class SetupRunCommand extends AbstractCommand implements OnlySetupAddonsIn
 
     private function performSystemcheck(): int
     {
-        /** Cloned from comannd setup:check*/
+        /** Cloned from command system:check*/
         $errors = Setup::checkEnvironment();
         if (0 == count($errors)) {
             $phpEol = Setup::checkPhpSecurity();

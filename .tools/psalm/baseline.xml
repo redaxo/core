@@ -1325,12 +1325,12 @@
       <code><![CDATA[$config['db'][1] ?? []]]></code>
     </MixedOperand>
   </file>
-  <file src="src/Console/Command/SetupCheckCommand.php">
+  <file src="src/Console/Command/SystemCheckCommand.php">
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$config]]></code>
     </MixedArgumentTypeCoercion>
   </file>
-  <file src="src/Console/Command/SetupRunCommand.php">
+  <file src="src/Console/Command/SetupCommand.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$login]]></code>
     </ArgumentTypeCoercion>
