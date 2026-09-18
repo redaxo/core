@@ -4,7 +4,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
@@ -25,15 +24,15 @@ class TextareaField extends AbstractInputField
         parent::__construct($name, $label, $note, $required, null, $translatable, $attributes);
     }
 
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
         // `text` columns can not carry a default value in MySQL.
-        return Column::text($this->columnName($entity), nullable: true);
+        return Column::text($this->columnName(), nullable: true);
     }
 
     public function renderInput(MetaContext $context): string
     {
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
 
         $attributes = $this->attributes->with([
             'class' => ['form-control'],

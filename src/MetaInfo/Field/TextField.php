@@ -4,7 +4,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\View\HtmlAttributes;
 
 use function sprintf;
@@ -26,14 +25,14 @@ class TextField extends AbstractInputField
         parent::__construct($name, $label, $note, $required, $default, $translatable, $attributes);
     }
 
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
-        return Column::varchar($this->columnName($entity), $this->maxLength, nullable: true, default: $this->default);
+        return Column::varchar($this->columnName(), $this->maxLength, nullable: true, default: $this->default);
     }
 
     public function renderInput(MetaContext $context): string
     {
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
 
         $attributes = $this->attributes->with([
             'class' => ['form-control'],

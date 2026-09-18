@@ -4,7 +4,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\RexVar\MediaListVar;
 use Redaxo\Core\RexVar\MediaVar;
 
@@ -38,12 +37,12 @@ class MediaField extends MetaField
         parent::__construct($name, $label, $note, $required, translatable: $translatable);
     }
 
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
         // A single filename fits a varchar; multiple filenames are pipe-delimited and need a text column.
         return $this->multiple
-            ? Column::text($this->columnName($entity), nullable: true)
-            : Column::varchar($this->columnName($entity), 255, nullable: true);
+            ? Column::text($this->columnName(), nullable: true)
+            : Column::varchar($this->columnName(), 255, nullable: true);
     }
 
     /** @return string|list<string> the filename, or the list of filenames for `multiple` */
@@ -60,7 +59,7 @@ class MediaField extends MetaField
     {
         $category = $this->category ?? $context->mediaCategory?->id;
 
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
         $id = ++self::$widgetCounter;
         $value = (string) $context->value($this);
 

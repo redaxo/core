@@ -25,24 +25,24 @@ final class ArticleTest extends TestCase
 
     public function testHasValue(): void
     {
-        $instance = $this->createArticleWithAdditionalData(['art_foo' => 'teststring']);
+        $instance = $this->createArticleWithAdditionalData(['meta_foo' => 'teststring']);
 
         self::assertTrue($instance->hasValue('foo'));
-        self::assertTrue($instance->hasValue('art_foo'));
+        self::assertTrue($instance->hasValue('meta_foo'));
 
         self::assertFalse($instance->hasValue('bar'));
-        self::assertFalse($instance->hasValue('art_bar'));
+        self::assertFalse($instance->hasValue('meta_bar'));
     }
 
     public function testGetValue(): void
     {
-        $instance = $this->createArticleWithAdditionalData(['art_foo' => 'teststring']);
+        $instance = $this->createArticleWithAdditionalData(['meta_foo' => 'teststring']);
 
         self::assertEquals('teststring', $instance->getValue('foo'));
-        self::assertEquals('teststring', $instance->getValue('art_foo'));
+        self::assertEquals('teststring', $instance->getValue('meta_foo'));
 
         self::assertNull($instance->getValue('bar'));
-        self::assertNull($instance->getValue('art_bar'));
+        self::assertNull($instance->getValue('meta_bar'));
     }
 
     /** @param callable(StructureElement):bool $callback */
@@ -77,15 +77,15 @@ final class ArticleTest extends TestCase
         $article = self::createArticle($lev3, ['status' => 0]);
         yield [null, $article, $statusCallback];
 
-        // meta-info value found via metaInfoPrefix lookup: art_foo on article, cat_foo on cats
+        // meta field addressed without its column prefix
         $fooCallback = static fn (StructureElement $el): bool => $el->getValue('foo') > 3;
-        [$lev1, $_, $lev3] = self::createCategories(['cat_foo' => 4], [], ['cat_foo' => 2]);
-        $article = self::createArticle($lev3, ['art_foo' => 1]);
+        [$lev1, $_, $lev3] = self::createCategories(['meta_foo' => 4], [], ['meta_foo' => 2]);
+        $article = self::createArticle($lev3, ['meta_foo' => 1]);
         yield [$lev1, $article, $fooCallback];
 
-        // article's own art_foo matches first
-        [$_, $_, $lev3] = self::createCategories(['cat_foo' => 4], [], ['cat_foo' => 2]);
-        $article = self::createArticle($lev3, ['art_foo' => 5]);
+        // article's own meta_foo matches first
+        [$_, $_, $lev3] = self::createCategories(['meta_foo' => 4], [], ['meta_foo' => 2]);
+        $article = self::createArticle($lev3, ['meta_foo' => 5]);
         yield [$article, $article, $fooCallback];
     }
 
@@ -101,30 +101,30 @@ final class ArticleTest extends TestCase
         [$_, $_, $lev3] = self::createCategories([], [], []);
         yield [null, self::createArticle($lev3, [])];
 
-        // article's own art_foo wins over everything else in the cat tree
-        [$_, $_, $lev3] = self::createCategories(['cat_foo' => 'baz'], ['cat_foo' => 'bar'], ['cat_foo' => 'foo']);
-        yield ['from-article', self::createArticle($lev3, ['art_foo' => 'from-article'])];
+        // article's own meta_foo wins over everything else in the cat tree
+        [$_, $_, $lev3] = self::createCategories(['meta_foo' => 'baz'], ['meta_foo' => 'bar'], ['meta_foo' => 'foo']);
+        yield ['from-article', self::createArticle($lev3, ['meta_foo' => 'from-article'])];
 
-        // no art_foo on article — falls through to cat_foo on containing cat
-        [$_, $_, $lev3] = self::createCategories([], [], ['cat_foo' => 'foo']);
+        // no meta_foo on article — falls through to meta_foo on containing cat
+        [$_, $_, $lev3] = self::createCategories([], [], ['meta_foo' => 'foo']);
         yield ['foo', self::createArticle($lev3, [])];
 
         // direct cat wins over grandparents
-        [$_, $_, $lev3] = self::createCategories([], ['cat_foo' => 'bar'], ['cat_foo' => 'foo']);
+        [$_, $_, $lev3] = self::createCategories([], ['meta_foo' => 'bar'], ['meta_foo' => 'foo']);
         yield ['foo', self::createArticle($lev3, [])];
 
         // walks up to nearest cat with value
-        [$_, $_, $lev3] = self::createCategories([], ['cat_foo' => 'bar'], []);
+        [$_, $_, $lev3] = self::createCategories([], ['meta_foo' => 'bar'], []);
         yield ['bar', self::createArticle($lev3, [])];
 
-        [$_, $_, $lev3] = self::createCategories(['cat_foo' => 'baz'], [], []);
+        [$_, $_, $lev3] = self::createCategories(['meta_foo' => 'baz'], [], []);
         yield ['baz', self::createArticle($lev3, [])];
 
-        [$_, $_, $lev3] = self::createCategories([], ['cat_foo' => 0], []);
+        [$_, $_, $lev3] = self::createCategories([], ['meta_foo' => 0], []);
         yield [0, self::createArticle($lev3, [])];
 
         // start-articles fall through to their parent category — own cat (lev3) is skipped
-        [$_, $_, $lev3] = self::createCategories(['cat_foo' => 'baz'], ['cat_foo' => 'bar'], ['cat_foo' => 'foo']);
+        [$_, $_, $lev3] = self::createCategories(['meta_foo' => 'baz'], ['meta_foo' => 'bar'], ['meta_foo' => 'foo']);
         yield ['bar', self::createArticle($lev3, [], startArticle: true)];
     }
 

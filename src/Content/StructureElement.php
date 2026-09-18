@@ -10,6 +10,7 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\MetaInfo\Field\MetaField;
 use Redaxo\Core\Util\Str;
 
 use function array_key_exists;
@@ -25,9 +26,6 @@ abstract class StructureElement
 {
     use InstanceListPoolTrait;
     use InstancePoolTrait;
-
-    /** Prefix used for meta-info fields of this element type (`art_` or `cat_`). */
-    abstract protected string $metaInfoPrefix { get; }
 
     protected function __construct(
         public readonly int $id,
@@ -163,7 +161,7 @@ abstract class StructureElement
             'updatedate' => $this->updateDate,
             'createuser' => $this->createUser,
             'updateuser' => $this->updateUser,
-            default => $this->additionalData[$key] ?? $this->additionalData[$this->metaInfoPrefix . $key] ?? null,
+            default => $this->additionalData[$key] ?? $this->additionalData[MetaField::COLUMN_PREFIX . $key] ?? null,
         };
     }
 
@@ -177,7 +175,7 @@ abstract class StructureElement
             'createdate', 'updatedate', 'createuser', 'updateuser',
         ], true)
             || array_key_exists($key, $this->additionalData)
-            || array_key_exists($this->metaInfoPrefix . $key, $this->additionalData);
+            || array_key_exists(MetaField::COLUMN_PREFIX . $key, $this->additionalData);
     }
 
     /**

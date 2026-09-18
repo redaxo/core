@@ -35,10 +35,10 @@ INSERT IGNORE INTO `rex_cronjob` VALUES
 (1,'Artikel-Status',NULL,'Redaxo\\Core\\Cronjob\\Type\\ArticleStatusType',NULL,'{\"minutes\":[0],\"hours\":[0],\"days\":\"all\",\"weekdays\":\"all\",\"months\":\"all\"}',NULL,'|frontend|backend|script|',1,NULL,0,'2022-07-17 21:08:53','admin','2022-07-18 00:03:20','admin'),
 (2,'Tabellen-Optimierung',NULL,'Redaxo\\Core\\Cronjob\\Type\\OptimizeTableType',NULL,'{\"minutes\":[0],\"hours\":[0],\"days\":\"all\",\"weekdays\":\"all\",\"months\":\"all\"}',NULL,'|frontend|backend|script|',0,NULL,0,'2022-07-17 21:08:54','admin','2022-07-17 21:18:38','admin');
 
-INSERT IGNORE INTO `rex_media` (`id`, `category_id`, `filetype`, `filename`, `originalname`, `filesize`, `width`, `height`, `med_ai_generated`, `createdate`, `createuser`, `updatedate`, `updateuser`) VALUES
+INSERT IGNORE INTO `rex_media` (`id`, `category_id`, `filetype`, `filename`, `originalname`, `filesize`, `width`, `height`, `meta_ai_generated`, `createdate`, `createuser`, `updatedate`, `updateuser`) VALUES
 (1,NULL,'image/jpeg','redaxo_2018_berlin_sticker.jpg','redaxo_2018_berlin_sticker.jpg','78410',1200,900,1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
 
-INSERT IGNORE INTO `rex_media_translation` (`media_id`, `language_id`, `title`, `med_alt`) VALUES
+INSERT IGNORE INTO `rex_media_translation` (`media_id`, `language_id`, `title`, `meta_alt`) VALUES
 (1,1,'Sticker','REDAXO-Sticker auf einem Laptop'),
 (1,2,'Sticker','REDAXO sticker on a laptop');
 

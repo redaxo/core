@@ -13,22 +13,22 @@ final class MediaTest extends TestCase
     {
         $media = $this->createMediaWithoutConstructor();
 
-        self::assertTrue($media->hasValue('med_foo'));
+        self::assertTrue($media->hasValue('meta_foo'));
         self::assertTrue($media->hasValue('foo'));
 
         self::assertFalse($media->hasValue('bar'));
-        self::assertFalse($media->hasValue('med_bar'));
+        self::assertFalse($media->hasValue('meta_bar'));
     }
 
     public function testGetValue(): void
     {
         $media = $this->createMediaWithoutConstructor();
 
-        self::assertEquals('teststring', $media->getValue('med_foo'));
+        self::assertEquals('teststring', $media->getValue('meta_foo'));
         self::assertEquals('teststring', $media->getValue('foo'));
 
         self::assertNull($media->getValue('bar'));
-        self::assertNull($media->getValue('med_bar'));
+        self::assertNull($media->getValue('meta_bar'));
     }
 
     private function createMediaWithoutConstructor(): Media
@@ -36,7 +36,7 @@ final class MediaTest extends TestCase
         $reflectionClass = new ReflectionClass(Media::class);
         $media = $reflectionClass->newInstanceWithoutConstructor();
 
-        $reflectionClass->getProperty('additionalData')->setValue($media, ['med_foo' => 'teststring']);
+        $reflectionClass->getProperty('additionalData')->setValue($media, ['meta_foo' => 'teststring']);
 
         return $media;
     }

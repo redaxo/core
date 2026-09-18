@@ -36,7 +36,7 @@ final readonly class MetaContext
     /** Current value of the given field: an override if present, otherwise the subject's value, else the default. */
     public function value(MetaField $field): string|int|float|bool|null
     {
-        $column = $field->columnName($this->entity);
+        $column = $field->columnName();
 
         if (array_key_exists($column, $this->valueOverride)) {
             return $this->valueOverride[$column];

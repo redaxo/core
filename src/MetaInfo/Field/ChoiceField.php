@@ -5,7 +5,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\View\HtmlAttributes;
 
 use function array_filter;
@@ -70,18 +69,18 @@ class ChoiceField extends AbstractInputField
         return $this->choices;
     }
 
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
         // Multiple values are comma-separated and can outgrow a varchar; a single value never does.
         // `text` can not carry a default, so the default only applies to the single-value case.
         return $this->multiple
-            ? Column::text($this->columnName($entity), nullable: true)
-            : Column::varchar($this->columnName($entity), 255, nullable: true, default: $this->default);
+            ? Column::text($this->columnName(), nullable: true)
+            : Column::varchar($this->columnName(), 255, nullable: true, default: $this->default);
     }
 
     public function parseRequest(MetaContext $context): int|string|null
     {
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
 
         if (!$this->multiple) {
             return Request::post($name, 'string', '');
@@ -101,7 +100,7 @@ class ChoiceField extends AbstractInputField
 
     public function renderInput(MetaContext $context): string
     {
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
         $selected = $this->multiple ? self::splitMultiple((string) $context->value($this)) : [(string) $context->value($this)];
 
         if ($this->expanded) {
