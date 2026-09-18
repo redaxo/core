@@ -80,7 +80,7 @@ final class ScriptHandler
 
             ```bash
             composer install
-            php bin/console setup:run
+            php bin/console setup
             ```
 
             Point your web server's document root at the `public/` directory.

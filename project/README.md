@@ -15,7 +15,7 @@ cd my-project
 Point your web server's document root to `public/`, then run the setup:
 
 ```bash
-php bin/console setup:run
+php bin/console setup
 ```
 
 ## Structure
