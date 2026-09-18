@@ -65,18 +65,18 @@ abstract class StructureElement
         }
 
         return static::getInstance([$id, $languageId], static function () use ($id, $languageId): ?static {
-            $articlePath = Path::coreCache('structure/' . $id . '.' . $languageId . '.article');
+            $cachePath = Path::coreCache('structure/' . $id . '.' . $languageId . '.' . static::cacheFileSuffix());
 
             // load metadata from cache
-            $metadata = File::getCache($articlePath);
+            $metadata = File::getCache($cachePath);
 
             // generate cache if not exists
             if (!$metadata) {
                 ArticleCache::generateMeta($id, $languageId);
-                $metadata = File::getCache($articlePath);
+                $metadata = File::getCache($cachePath);
             }
 
-            // if cache does not exist after generation, the article id is invalid
+            // still no cache file: the id does not exist, or it is not a category
             if (!$metadata) {
                 return null;
             }
@@ -97,12 +97,15 @@ abstract class StructureElement
             ?? throw new RuntimeException(sprintf('Required %s with id "%d" and language "%s" does not exist.', static::class, $id, $languageId ?? Language::getCurrentId()));
     }
 
+    /** Suffix of the cache file this element type is built from. */
+    abstract protected static function cacheFileSuffix(): string;
+
     /**
      * Builds an instance from the cache row.
      *
      * @param array<string, string|int|null> $data
      */
-    abstract protected static function fromCache(array $data): ?static;
+    abstract protected static function fromCache(array $data): static;
 
     /**
      * @param int|null $parentId `null` for the root level
