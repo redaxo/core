@@ -3,6 +3,7 @@
 namespace Redaxo\Core;
 
 use Redaxo\Core\Addon\Addon;
+use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Filesystem\Path;
@@ -59,11 +60,7 @@ final class SystemReport
             $data['PHP']['Warning'] = implode('<br/>', $security);
         }
 
-        foreach (Core::getProperty('db') as $dbId => $db) {
-            if (empty($db['name'])) {
-                continue;
-            }
-
+        foreach (ConnectionConfig::getAll() as $dbId => $db) {
             $dbData = [];
 
             try {

@@ -3,24 +3,3 @@ server: https://www.redaxo.org/
 servername: REDAXO
 error_email: null
 setup_addons: []
-db:
-    1:
-        host: localhost
-        login: root
-        password: ''
-        name: redaxo6
-        persistent: false
-        ssl_key: null
-        ssl_cert: null
-        ssl_ca: null
-        ssl_verify_server_cert: true
-    2:
-        host: ''
-        login: ''
-        password: ''
-        name: ''
-        persistent: false
-        ssl_key: null
-        ssl_cert: null
-        ssl_ca: null
-        ssl_verify_server_cert: true

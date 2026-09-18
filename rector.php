@@ -201,7 +201,6 @@ return RectorConfig::configure()
         'rex_command_config_set' => Console\Command\ConfigSetCommand::class,
         'rex_command_db_connection_options' => Console\Command\DatabaseConnectionOptionsCommand::class,
         'rex_command_db_dump_schema' => Console\Command\DatabaseDumpSchemaCommand::class,
-        'rex_command_db_set_connection' => Console\Command\DatabaseSetConnectionCommand::class,
         'rex_command_setup_check' => Console\Command\SystemCheckCommand::class,
         'rex_command_setup_run' => Console\Command\SetupCommand::class,
         'rex_command_assets_sync' => Console\Command\AssetsSyncCommand::class,

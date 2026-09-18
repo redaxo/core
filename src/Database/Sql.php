@@ -137,7 +137,7 @@ class Sql implements Iterator
 
         try {
             if (!isset(self::$pdo[$db])) {
-                $dbconfig = Core::getDbConfig($db);
+                $dbconfig = ConnectionConfig::get($db);
 
                 $conn = self::createConnection(
                     $dbconfig->host,
@@ -1715,7 +1715,7 @@ class Sql implements Iterator
      */
     private function fetchTablesAndViews(?string $tablePrefix = null, ?string $where = null): array
     {
-        $dbConfig = Core::getDbConfig($this->DBID);
+        $dbConfig = ConnectionConfig::get($this->DBID);
 
         $qry = 'SHOW FULL TABLES';
 

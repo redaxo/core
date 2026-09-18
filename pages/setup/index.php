@@ -137,36 +137,6 @@ if ($step > 3) {
         $config['server'] = Request::post('serveraddress', 'string');
         $config['servername'] = Request::post('servername', 'string');
         $config['error_email'] = Request::post('error_email', 'string');
-        $config['db'][1]['host'] = trim(Request::post('mysql_host', 'string'));
-        $config['db'][1]['login'] = trim(Request::post('redaxo_db_user_login', 'string'));
-
-        $passwd = Request::post('redaxo_db_user_pass', 'string', Setup::DEFAULT_DUMMY_PASSWORD);
-        if (Setup::DEFAULT_DUMMY_PASSWORD != $passwd) {
-            $config['db'][1]['password'] = $passwd;
-        }
-        $config['db'][1]['name'] = trim(Request::post('dbname', 'string'));
-
-        if (Request::post('db_ssl_toggle', 'boolean')) {
-            $sslCaMode = Request::post('db_ssl_ca_mode', 'string');
-            if ('system' === $sslCaMode) {
-                $config['db'][1]['ssl_ca'] = true;
-            } elseif ('file' === $sslCaMode) {
-                $sslCaFile = Request::post('db_ssl_ca_file', 'string');
-                if (!empty($sslCaFile)) {
-                    $config['db'][1]['ssl_ca'] = $sslCaFile;
-                }
-            } else {
-                $config['db'][1]['ssl_ca'] = null;
-            }
-
-            $config['db'][1]['ssl_key'] = trim(Request::post('db_ssl_key', 'string')) ?: null;
-            $config['db'][1]['ssl_cert'] = trim(Request::post('db_ssl_cert', 'string')) ?: null;
-            $config['db'][1]['ssl_verify_server_cert'] = Request::post('db_ssl_verify_server_cert', 'boolean');
-        } else {
-            $config['db'][1]['ssl_ca'] = null;
-            $config['db'][1]['ssl_key'] = null;
-            $config['db'][1]['ssl_cert'] = null;
-        }
     }
 
     $redaxoDbCreate = Request::post('redaxo_db_create', 'boolean');
@@ -200,7 +170,7 @@ if ($step > 3) {
     if (0 == count($errorArray)) {
         try {
             Sql::closeConnection();
-            $err = Setup::checkDb($config, $redaxoDbCreate);
+            $err = Setup::checkDb($redaxoDbCreate);
         } catch (PDOException $e) {
             $err = I18n::msg('setup_315', $e->getMessage());
         }

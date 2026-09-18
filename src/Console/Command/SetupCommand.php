@@ -5,7 +5,9 @@ namespace Redaxo\Core\Console\Command;
 use PDOException;
 use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Env;
 use Redaxo\Core\Environment;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
@@ -42,6 +44,8 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
 {
     private SymfonyStyle $io;
     private InputInterface $input;
+
+    /** Set while a failed database connection is being corrected, so that the options are asked again. */
     private bool $forceAsking = false;
 
     public function __invoke(
@@ -52,17 +56,18 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
         #[Option('Website URL e.g. "https://example.org/"')] ?string $server = null,
         #[Option('Website name')] ?string $servername = null,
         #[Option('Error mail address e.g. "info@example.org"')] ?string $errorEmail = null,
+        #[Option('Database url, e.g. "mysql://<login>:<password>@<host>/<name>"')] ?string $databaseUrl = null,
         #[Option('Database hostname e.g. "localhost" or "127.0.0.1"')] ?string $dbHost = null,
-        #[Option('Database username e.g. "root"')] ?string $dbLogin = null,
-        #[Option('Database user password')] ?string $dbPassword = null,
-        #[Option('Database name e.g. "redaxo"')] ?string $dbName = null,
-        #[Option('Creates the database "yes" or "no"', suggestedValues: ['yes', 'no'])] ?string $dbCreatedb = null,
-        #[Option('Database setup mode e.g. "normal", "override" or "import"', suggestedValues: ['normal', 'override', 'import'])] ?string $dbSetup = null,
-        #[Option('Database import filename if "import" is used as --db-setup')] ?string $dbImport = null,
+        #[Option('Database login')] ?string $dbLogin = null,
+        #[Option('Database password')] ?string $dbPassword = null,
+        #[Option('Database name')] ?string $dbName = null,
         #[Option('Path to SSL Certificate Authority file or use without value to enable CA mode')] bool|string $dbSslCa = false,
         #[Option('Path to SSL key file')] ?string $dbSslKey = null,
         #[Option('Path to SSL certificate file')] ?string $dbSslCert = null,
         #[Option('Verify SSL server certificate (yes/no)', suggestedValues: ['yes', 'no'])] ?string $dbSslVerifyServerCert = null,
+        #[Option('Creates the database "yes" or "no"', suggestedValues: ['yes', 'no'])] ?string $dbCreatedb = null,
+        #[Option('Database setup mode e.g. "normal", "override" or "import"', suggestedValues: ['normal', 'override', 'import'])] ?string $dbSetup = null,
+        #[Option('Database import filename if "import" is used as --db-setup')] ?string $dbImport = null,
         #[Option('Creates a redaxo admin user with the given username')] ?string $adminUsername = null,
         #[Option('Sets the password for the admin user account')] ?string $adminPassword = null,
     ): int {
@@ -163,137 +168,84 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
 
         $io->section('Database information');
 
-        $previousHost = $config['db'][1]['host'] ?? null;
-        $previousLogin = $config['db'][1]['login'] ?? null;
-        $previousPassword = $config['db'][1]['password'] ?? null;
+        // a url the environment already provides seeds the questions, so that a re-run can keep or adjust it
+        $envUrl = Env::get('DATABASE_URL');
+        $current = ConnectionConfig::tryFromUrl($envUrl);
+
+        $previousHost = $current?->host;
+        $previousLogin = $current?->login;
+        $previousPassword = $current?->password;
+
+        $db = [
+            'host' => $previousHost ?? 'localhost',
+            'login' => $previousLogin ?? 'root',
+            'password' => $previousPassword ?? '',
+            'name' => $current->name ?? '',
+            'ssl_ca' => $current?->sslCa,
+            'ssl_key' => $current?->sslKey,
+            'ssl_cert' => $current?->sslCert,
+            'ssl_verify_server_cert' => $current->sslVerifyServerCert ?? true,
+        ];
 
         do {
-            $config['db'][1]['host'] = $this->getOptionOrAsk(
-                'MySQL Host',
-                'db-host',
-                $previousHost,
-                'Using MySQL Host "%s"',
-                $requiredValue,
-            );
-            $config['db'][1]['login'] = $this->getOptionOrAsk(
-                'Login',
-                'db-login',
-                $previousLogin,
-                'Using database login "%s"',
-                $requiredValue,
-            );
-
-            $keepPassword = false;
-            if ($previousPassword
-                && $config['db'][1]['host'] === $previousHost
-                && $config['db'][1]['login'] === $previousLogin
-                && null === $input->getOption('db-password')
-                && $input->isInteractive()
-            ) {
-                $keepPassword = $io->confirm('Keep existing database password?', true);
-            }
-
-            if (!$keepPassword) {
-                $q = new Question('Password');
-                $q->setHidden(true);
-
-                $config['db'][1]['password'] = (string) $this->getOptionOrAsk(
-                    $q,
-                    'db-password',
-                    '',
-                    'Using database password *secret*',
-                    null,
-                );
-            }
-
-            $config['db'][1]['name'] = $this->getOptionOrAsk(
-                'Database name',
-                'db-name',
-                $config['db'][1]['name'],
-                'Using database name "%s"',
-                $requiredValue,
-            );
-
-            $sslRequired = $input->isInteractive() && $this->io->confirm('Configure SSL database connection?', false);
-            $sslConfigured = false; // Track if any SSL option was configured
-
-            if ($sslRequired && ($this->forceAsking || false === $dbSslCa)) {
-                /** @var string $sslCaChoice */
-                $sslCaChoice = $this->io->choice('SSL Certificate Authority', [
-                    'none' => 'No CA verification',
-                    'system' => 'Use system CA (recommended for managed databases)',
-                    'file' => 'Specify CA certificate file path',
-                ], 'none');
-
-                if ('none' === $sslCaChoice) {
-                    $config['db'][1]['ssl_ca'] = null;
-                } elseif ('system' === $sslCaChoice) {
-                    $config['db'][1]['ssl_ca'] = true;
-                    $sslConfigured = true;
-                } elseif ('file' === $sslCaChoice) {
-                    $config['db'][1]['ssl_ca'] = Type::string($this->io->ask('Path to CA certificate file', null, static function (mixed $path): string {
-                        if (!$path || !is_string($path)) {
-                            throw new InvalidArgumentException('CA certificate file path required');
-                        }
-                        if (!is_file($path) || !is_readable($path)) {
-                            throw new InvalidArgumentException('SSL CA file not found or not readable: ' . $path);
-                        }
-                        return $path;
-                    }));
-                    $sslConfigured = true;
-                }
-            } elseif (false === $dbSslCa) {
-                $config['db'][1]['ssl_ca'] = null;
-            } elseif (true === $dbSslCa) {
-                $config['db'][1]['ssl_ca'] = true;
-                $io->success('Using SSL system CA verification');
-                $sslConfigured = true;
+            if (null !== $databaseUrl) {
+                $url = $databaseUrl;
             } else {
-                if (!is_file($dbSslCa) || !is_readable($dbSslCa)) {
-                    throw new InvalidArgumentException('SSL CA file not found or not readable: ' . $dbSslCa);
+                $db['host'] = Type::string($this->getOptionOrAsk(
+                    'MySQL Host',
+                    'db-host',
+                    $db['host'],
+                    'Using MySQL Host "%s"',
+                    $requiredValue,
+                ));
+                $db['login'] = Type::string($this->getOptionOrAsk(
+                    'Login',
+                    'db-login',
+                    $db['login'],
+                    'Using database login "%s"',
+                    $requiredValue,
+                ));
+
+                $keepPassword = false;
+                if ('' !== $db['password']
+                    && $db['host'] === $previousHost
+                    && $db['login'] === $previousLogin
+                    && null === $input->getOption('db-password')
+                    && $input->isInteractive()
+                ) {
+                    $keepPassword = $io->confirm('Keep existing database password?', true);
                 }
-                $config['db'][1]['ssl_ca'] = $dbSslCa;
-                $io->success(sprintf('Using SSL CA file "%s"', $dbSslCa));
-                $sslConfigured = true;
-            }
 
-            $sslClientCertificateRequired = $sslRequired && $this->io->confirm('Use client certificate authentication?', false);
+                if (!$keepPassword) {
+                    $q = new Question('Password');
+                    $q->setHidden(true);
 
-            foreach (['ssl_key' => 'key', 'ssl_cert' => 'certificate'] as $key => $name) {
-                $value = Type::nullOrString($input->getOption('db-' . str_replace('_', '-', $key)));
-                if ($sslClientCertificateRequired && (null === $value || $this->forceAsking)) {
-                    $value = Type::string($io->ask("Path to SSL $name file", Type::nullOrString($config['db'][1][$key] ?? null), static function (string $value) use ($name) {
-                        if (!$value) {
-                            throw new InvalidArgumentException("SSL $name file path required");
-                        }
-                        if (!is_file($value) || !is_readable($value)) {
-                            throw new InvalidArgumentException("SSL $name file not found or not readable: " . $value);
-                        }
-                        return $value;
-                    }));
-                    $sslConfigured = true;
-                } elseif (is_string($value)) {
-                    if (!is_file($value) || !is_readable($value)) {
-                        throw new InvalidArgumentException("SSL $name file not found or not readable: " . $value);
-                    }
-                    $io->success(sprintf('Using SSL %s file "%s"', $name, $value));
-                    $sslConfigured = true;
+                    $db['password'] = (string) $this->getOptionOrAsk(
+                        $q,
+                        'db-password',
+                        $db['password'],
+                        'Using database password *secret*',
+                        null,
+                    );
                 }
-                $config['db'][1][$key] = $value;
+
+                $db['name'] = Type::string($this->getOptionOrAsk(
+                    'Database name',
+                    'db-name',
+                    $db['name'],
+                    'Using database name "%s"',
+                    $requiredValue,
+                ));
+
+                $db = $this->askSslOptions($db, $dbSslCa) + $db;
+
+                $url = self::buildDatabaseUrl($db);
             }
 
-            $sslVerifyServerCert = $dbSslVerifyServerCert;
-            if (
-                $sslRequired && $sslConfigured
-                && (null === $sslVerifyServerCert || $this->forceAsking)
-            ) {
-                $config['db'][1]['ssl_verify_server_cert'] = $this->io->confirm('Verify SSL server certificate?', true);
-            } elseif (null !== $sslVerifyServerCert) {
-                $config['db'][1]['ssl_verify_server_cert'] = 'yes' === $sslVerifyServerCert || 'true' === $sslVerifyServerCert;
-                $io->success('SSL server certificate verification ' . ($config['db'][1]['ssl_verify_server_cert'] ? 'enabled' : 'disabled'));
-            } else {
-                $config['db'][1]['ssl_verify_server_cert'] = true;
-            }
+            // reports a malformed url before anything is connected to
+            ConnectionConfig::fromUrl($url);
+
+            $_SERVER['DATABASE_URL'] = $url;
 
             $dbCreate = $this->getOptionOrAsk(
                 new ConfirmationQuestion('Create database?', false),
@@ -313,9 +265,8 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
                 $io->success('Database will ' . ($dbCreate ? '' : 'not ') . 'be created');
             }
 
-            Core::setProperty('db', $config['db']);
             try {
-                $err = Setup::checkDb($config, $dbCreate);
+                $err = Setup::checkDb($dbCreate);
             } catch (PDOException $e) {
                 $err = 'The following error occured: ' . $e->getMessage();
             }
@@ -325,12 +276,22 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
                 if (!$input->isInteractive()) {
                     return Command::FAILURE;
                 }
+                // a url that was passed as a whole is not offered again unchanged
+                $databaseUrl = null;
                 $this->forceAsking = true;
             }
         } while ('' !== $err);
-        $this->forceAsking = false;
 
         $io->success('Database connection successfully established');
+        $this->forceAsking = false;
+
+        // only when it differs from what the environment already provides - a url coming from a real env var
+        // (a hosting platform, a ci job) belongs there, not in a file
+        if ($url !== $envUrl && !self::persistEnvVar('DATABASE_URL', $url)) {
+            $io->error('Unable to write "' . Path::base('.env.local') . '".');
+
+            return Command::FAILURE;
+        }
 
         // ---------------------------------- step 4 . create db / demo
         $io->title('Step 4 of 5 / Database');
@@ -523,6 +484,164 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
 
         $io->success('Congratulations! REDAXO has successfully been installed.');
         return Command::SUCCESS;
+    }
+
+    /**
+     * Asks for the ssl settings of the connection.
+     *
+     * @param array{ssl_ca: string|bool|null, ssl_key: ?string, ssl_cert: ?string, ssl_verify_server_cert: bool, ...} $db
+     * @return array{ssl_ca: string|bool|null, ssl_key: ?string, ssl_cert: ?string, ssl_verify_server_cert: bool}
+     */
+    private function askSslOptions(array $db, bool|string $dbSslCa): array
+    {
+        $io = $this->io;
+        $sslRequired = $this->input->isInteractive() && $io->confirm('Configure SSL database connection?', null !== $db['ssl_key'] || null !== $db['ssl_cert'] || null !== $db['ssl_ca'] && false !== $db['ssl_ca']);
+        $sslConfigured = false;
+        $sslCa = $db['ssl_ca'];
+
+        if ($sslRequired && ($this->forceAsking || false === $dbSslCa)) {
+            /** @var string $sslCaChoice */
+            $sslCaChoice = $io->choice('SSL Certificate Authority', [
+                'none' => 'No CA verification',
+                'system' => 'Use system CA (recommended for managed databases)',
+                'file' => 'Specify CA certificate file path',
+            ], true === $db['ssl_ca'] ? 'system' : (is_string($db['ssl_ca']) ? 'file' : 'none'));
+
+            if ('none' === $sslCaChoice) {
+                $sslCa = null;
+            } elseif ('system' === $sslCaChoice) {
+                $sslCa = true;
+                $sslConfigured = true;
+            } elseif ('file' === $sslCaChoice) {
+                $sslCa = Type::string($io->ask('Path to CA certificate file', is_string($db['ssl_ca']) ? $db['ssl_ca'] : null, static function (mixed $path): string {
+                    if (!$path || !is_string($path)) {
+                        throw new InvalidArgumentException('CA certificate file path required');
+                    }
+                    if (!is_file($path) || !is_readable($path)) {
+                        throw new InvalidArgumentException('SSL CA file not found or not readable: ' . $path);
+                    }
+                    return $path;
+                }));
+                $sslConfigured = true;
+            }
+        } elseif (false === $dbSslCa) {
+            $sslCa = null;
+        } elseif (true === $dbSslCa) {
+            $sslCa = true;
+            $io->success('Using SSL system CA verification');
+            $sslConfigured = true;
+        } else {
+            if (!is_file($dbSslCa) || !is_readable($dbSslCa)) {
+                throw new InvalidArgumentException('SSL CA file not found or not readable: ' . $dbSslCa);
+            }
+            $sslCa = $dbSslCa;
+            $io->success(sprintf('Using SSL CA file "%s"', $dbSslCa));
+            $sslConfigured = true;
+        }
+
+        $sslClientCertificateRequired = $sslRequired && $io->confirm('Use client certificate authentication?', null !== $db['ssl_key'] || null !== $db['ssl_cert']);
+
+        $sslFiles = ['ssl_key' => null, 'ssl_cert' => null];
+
+        foreach (['ssl_key' => 'key', 'ssl_cert' => 'certificate'] as $key => $name) {
+            $value = Type::nullOrString($this->input->getOption('db-' . str_replace('_', '-', $key)));
+            if ($sslClientCertificateRequired && (null === $value || $this->forceAsking)) {
+                $value = Type::string($io->ask("Path to SSL $name file", $db[$key], static function (string $value) use ($name) {
+                    if (!$value) {
+                        throw new InvalidArgumentException("SSL $name file path required");
+                    }
+                    if (!is_file($value) || !is_readable($value)) {
+                        throw new InvalidArgumentException("SSL $name file not found or not readable: " . $value);
+                    }
+                    return $value;
+                }));
+                $sslConfigured = true;
+            } elseif (is_string($value)) {
+                if (!is_file($value) || !is_readable($value)) {
+                    throw new InvalidArgumentException("SSL $name file not found or not readable: " . $value);
+                }
+                $io->success(sprintf('Using SSL %s file "%s"', $name, $value));
+                $sslConfigured = true;
+            }
+            $sslFiles[$key] = $value;
+        }
+
+        $sslVerifyServerCert = Type::nullOrString($this->input->getOption('db-ssl-verify-server-cert'));
+        if ($sslRequired && $sslConfigured && (null === $sslVerifyServerCert || $this->forceAsking)) {
+            $verify = $io->confirm('Verify SSL server certificate?', $db['ssl_verify_server_cert']);
+        } elseif (null !== $sslVerifyServerCert) {
+            $verify = 'yes' === $sslVerifyServerCert || 'true' === $sslVerifyServerCert;
+            $io->success('SSL server certificate verification ' . ($verify ? 'enabled' : 'disabled'));
+        } else {
+            $verify = true;
+        }
+
+        return [
+            'ssl_ca' => $sslCa,
+            'ssl_key' => $sslFiles['ssl_key'],
+            'ssl_cert' => $sslFiles['ssl_cert'],
+            'ssl_verify_server_cert' => $verify,
+        ];
+    }
+
+    /**
+     * Assembles the url from its parts.
+     *
+     * The parts are percent-encoded here, which is the reason to ask for them separately at all: it takes the
+     * burden of escaping "/", "?" and "#" in a password off whoever runs the setup.
+     *
+     * @param array{host: string, login: string, password: string, name: string, ssl_ca: string|bool|null, ssl_key: ?string, ssl_cert: ?string, ssl_verify_server_cert: bool} $db
+     */
+    private static function buildDatabaseUrl(array $db): string
+    {
+        $credentials = rawurlencode($db['login']);
+
+        if ('' !== $db['password']) {
+            $credentials .= ':' . rawurlencode($db['password']);
+        }
+
+        $query = [];
+
+        if (true === $db['ssl_ca']) {
+            $query['ssl_ca'] = '1';
+        } elseif (is_string($db['ssl_ca']) && '' !== $db['ssl_ca']) {
+            $query['ssl_ca'] = $db['ssl_ca'];
+        }
+
+        if (null !== $db['ssl_key'] && '' !== $db['ssl_key']) {
+            $query['ssl_key'] = $db['ssl_key'];
+        }
+
+        if (null !== $db['ssl_cert'] && '' !== $db['ssl_cert']) {
+            $query['ssl_cert'] = $db['ssl_cert'];
+        }
+
+        if ([] !== $query && !$db['ssl_verify_server_cert']) {
+            $query['ssl_verify_server_cert'] = '0';
+        }
+
+        return 'mysql://' . ('' === $credentials ? '' : $credentials . '@') . $db['host'] . '/' . rawurlencode($db['name'])
+            . ([] === $query ? '' : '?' . http_build_query($query));
+    }
+
+    /** Writes the variable to `.env.local`, replacing an existing definition and keeping the rest of the file. */
+    private static function persistEnvVar(string $name, string $value): bool
+    {
+        $file = Path::base('.env.local');
+        $line = $name . "='" . $value . "'";
+        $content = is_file($file) ? (string) File::get($file) : '';
+
+        $replaced = Type::string(preg_replace('/^' . preg_quote($name, '/') . '=.*$/m', $line, $content, -1, $count));
+
+        if ($count) {
+            return File::put($file, $replaced);
+        }
+
+        if ('' !== $content && !str_ends_with($content, "\n")) {
+            $content .= "\n";
+        }
+
+        return File::put($file, $content . $line . "\n");
     }
 
     /**

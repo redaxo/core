@@ -147,16 +147,13 @@ final class Setup
 
     /**
      * Checks the version of the connected database server.
-     * When validation of the database configs succeeds the settings will be used for Sql class.
-     *
-     * @param array<string, mixed> $config array of database config
      * @param bool $createDb Should the database be created, if it not exists
      *
      * @return string Error message
      */
-    public static function checkDb(array $config, bool $createDb): string
+    public static function checkDb(bool $createDb): string
     {
-        $dbConfig = new ConnectionConfig($config['db'][1]);
+        $dbConfig = ConnectionConfig::get();
 
         $err = Sql::checkDbConnection($dbConfig->host, $dbConfig->login, $dbConfig->password, $dbConfig->name, $createDb, Sql::createSslOptions($dbConfig));
 
@@ -164,16 +161,9 @@ final class Setup
             return $err;
         }
 
-        // use given db config instead of saved config
-        $orgDbConfig = Core::getProperty('db');
-        try {
-            Core::setProperty('db', $config['db']);
-            $sql = Sql::factory();
-            $type = $sql->getDbType();
-            $version = $sql->getDbVersion();
-        } finally {
-            Core::setProperty('db', $orgDbConfig);
-        }
+        $sql = Sql::factory();
+        $type = $sql->getDbType();
+        $version = $sql->getDbVersion();
 
         $minVersion = Sql::MARIADB === $type ? self::MIN_MARIADB_VERSION : self::MIN_MYSQL_VERSION;
         if (Version::compare($version, $minVersion, '<')) {

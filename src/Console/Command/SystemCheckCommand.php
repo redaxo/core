@@ -60,7 +60,7 @@ final class SystemCheckCommand extends AbstractCommand implements AvailableInSet
         }
         try {
             if ($config) {
-                $err = Setup::checkDb($config, false);
+                $err = Setup::checkDb(false);
             } else {
                 $err = 'config.yml not found';
             }

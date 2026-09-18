@@ -7,8 +7,7 @@
         "setup",
         "server",
         "servername",
-        "error_email",
-        "db"
+        "error_email"
     ],
     "properties": {
         "setup": {
@@ -47,64 +46,6 @@
                 "type": "string",
                 "pattern": "^[^/]+$"
             }
-        },
-        "db": {
-            "description": "Database connections",
-            "patternProperties": {
-                "^\\d+$": {
-                    "type": "object",
-                    "required": ["host", "login", "password", "name", "persistent"],
-                    "properties": {
-                        "host": {
-                            "description": "Database hostname (optional with port)",
-                            "type": "string",
-                            "default": "localhost"
-                        },
-                        "login": {
-                            "description": "Database user name",
-                            "type": "string",
-                            "default": "root"
-                        },
-                        "password": {
-                            "description": "Database password",
-                            "type": "string"
-                        },
-                        "name": {
-                            "description": "Database name",
-                            "type": "string"
-                        },
-                        "persistent": {
-                            "description": "Whether a persistent connection should be used",
-                            "type": "boolean",
-                            "default": false
-                        },
-                        "ssl_key": {
-                            "description": "File path to the ssl key",
-                            "type": ["null", "string"]
-                        },
-                        "ssl_cert": {
-                            "description": "File path to the ssl certificate",
-                            "type": ["null", "string"]
-                        },
-                        "ssl_ca": {
-                            "description": "File path to the ssl certificate authority",
-                            "type": ["null", "boolean", "string"]
-                        },
-                        "ssl_verify_server_cert": {
-                            "description": "Verification of the server SSL certificate",
-                            "type": "boolean",
-                            "default": true
-                        }
-                    },
-                    "additionalProperties": false,
-                    "dependencies": {
-                        "ssl_key": ["ssl_cert", "ssl_ca"],
-                        "ssl_cert": ["ssl_key", "ssl_ca"],
-                        "ssl_ca": ["ssl_key", "ssl_cert"]
-                    }
-                }
-            },
-            "additionalProperties": false
         }
     },
     "additionalProperties": false
