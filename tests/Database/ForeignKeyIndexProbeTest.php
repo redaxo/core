@@ -9,6 +9,8 @@ use Redaxo\Core\Database\Index;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
 
+use function sprintf;
+
 /**
  * Temporary probe: does InnoDB drop the index it generated for a foreign key once another index
  * covers the constraint? Green means it does, red means the redundant single column index lingers.
