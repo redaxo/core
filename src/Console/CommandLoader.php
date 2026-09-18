@@ -5,8 +5,6 @@ namespace Redaxo\Core\Console;
 use Override;
 use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Console\Command\AbstractCommand;
-use Redaxo\Core\Console\Command\AvailableInSetupInterface;
-use Redaxo\Core\Core;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LazyCommand;
@@ -16,7 +14,6 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use function array_shift;
 use function array_slice;
 use function explode;
-use function is_a;
 use function sprintf;
 
 /**
@@ -36,14 +33,7 @@ final class CommandLoader implements CommandLoaderInterface
 
     public function __construct()
     {
-        $isSetup = Core::isSetup();
-
         foreach (ClassDiscovery::getInstance()->discoverByAttribute(AsCommand::class, AbstractCommand::class) as $class => $attribute) {
-            // Before the setup is completed only the explicitly marked commands are available.
-            if ($isSetup && !is_a($class, AvailableInSetupInterface::class, true)) {
-                continue;
-            }
-
             // The name may contain aliases, separated by "|" (and an empty first segment for hidden commands).
             $names = explode('|', $attribute->name);
             $hidden = '' === $names[0];

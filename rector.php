@@ -205,7 +205,6 @@ return RectorConfig::configure()
         'rex_command_setup_run' => Console\Command\SetupCommand::class,
         'rex_command_assets_sync' => Console\Command\AssetsSyncCommand::class,
         'rex_command_cronjob_run' => Console\Command\CronjobRunCommand::class,
-        'rex_command_list' => Console\Command\ListCommand::class,
         'rex_command_package_list' => Console\Command\AddonListCommand::class,
         'rex_command_package_uninstall' => Console\Command\AddonUninstallCommand::class,
         'rex_command_system_report' => Console\Command\SystemReportCommand::class,

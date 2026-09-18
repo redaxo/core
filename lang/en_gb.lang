@@ -87,7 +87,6 @@ system_settings = Settings
 activated = Activated
 deactivated = Deactivated
 general_info_header = General information:
-db1_can_only_be_changed_by_setup = Database[1] can only be changed during setup.
 system_others = Misc.
 system_update = update
 main_preferences = Settings
@@ -160,102 +159,19 @@ dev_mode_marker = The dev mode is enabled
 system_report = System report
 system_report_markdown = As markdown
 
-# src\core\pages\setup.php
-setup = Setup
-setup_cancel = Cancel setup
-setup_restart = Restart setup
-setup_text = Here you can restart the setup process. This is for emergencies only and should not be required under normal circumstances.
-setup_error2 = Unfortunately, the configuration file could not be written to. Please make change \"setup: true\" in config.yml
-
-
-
-setup_100 = Setup: step 1 of 6 / Language
-setup_101 = Select a language
-setup_110 = Continue with step 2
-setup_199 = 1 / Language
-
-setup_200 = Setup: step 2 of 6 / System check
 setup_201 = The PHP version on this server is outdated ({0}), please update it (minimum version {1}, latest version is recommended)
 setup_202 = Couldn't find the required PHP extension module <b>{0}</b>!
 setup_204 = The following directories are not writable:
 setup_205 = The following files are not writable:
 setup_206 = The following directories do not exist or do not have the correct permissions:
-setup_207 = PHP version check | Permission check
 setup_208 = PHP version <b>{0}</b> ok
-setup_209 = Directory permissions ok
-setup_210 = Continue with step 3
 setup_211 = The following files/folder are editable by all users on this server ("Others"-Mode-Bit 7). Permissions should be more restrictive:
-setup_212 = Repeat step 2
-setup_299 = 2 / System check
 
-setup_300 = Setup: step 3 of 6 / Creating file '{0}'
-setup_301 = '{0}' could not be written to.
-setup_302 = General
-setup_303 = Database information
-setup_304 = The specified database already exists
-setup_308 = Database name
-setup_309 = Password
-setup_310 = Continue with step 4
-setup_311 = Create database?
-setup_314 = Repeat step 3
-setup_315 = The following error occurred: {0}
-setup_316 = REDAXO settings
-setup_399 = 3 / config.yml
-
-# SSL Database Configuration
-setup_database_ssl = SSL Database Connection
-setup_database_ssl_optional = optional
-setup_database_ssl_title = Configure SSL Database Connection
-setup_database_ssl_info = Configure SSL settings for secure database connections. Particularly important for cloud databases and enterprise environments.
-setup_ssl_ca = SSL Certificate Authority
-setup_ssl_ca_none = No SSL verification
-setup_ssl_ca_system = Use system CA (recommended for managed databases)
-setup_ssl_ca_file = Specify CA certificate file
-setup_ssl_ca_file_path = Path to CA certificate file
-setup_ssl_key = Path to SSL key file
-setup_ssl_cert = Path to SSL certificate file
-setup_ssl_verify = Verify SSL server certificate
-
-setup_400 = Setup: step 4 of 6 / Database
-setup_401 = Setup database
 setup_402 = Table {0} could not be found!
-setup_403 = Please setup the database again.
-setup_404 = Setup database
-setup_405 = Setup database and overwrite it if it exists already
-setup_405_note = Caution - All existing data will be deleted!
-setup_406 = Database already exists
-setup_406_note = Continue without database import
-setup_407 = Import existing database export:
-setup_407_note = Import demo
 setup_408 = Please choose a database export!
 setup_409 = No exported files found!
-setup_411 = Continue with step 5
-setup_412 = Repeat step 4
-setup_499 = 4 / Database
 
-setup_500 = Setup: step 5 of 6 / Administrator
-setup_501 = Please enter a administrator username!
-setup_502 = Please enter a administrator password!
-setup_503 = User account already exists!
-setup_505 = No users found. Please create a user.
-setup_506 = Create administrator account
-setup_507 = Username
-setup_508 = Password
-setup_509 = Do not create a user
-setup_510 = Continue with step 6
-setup_511 = Repeat step 5
-setup_599 = 5 / Admin
-
-setup_600 = Setup: step 6 of 6 / Hooray
-setup_601 = Writing to config.yml failed. Please change the file manually by FTP.
-setup_602 = Congratulations! REDAXO has successfully been installed.
-setup_603 = Please note:
-setup_604 = <ol><li>{0}Sign in{1} with the created account</li><li>Within the community we have developed several website demos that show typical use cases with REDAXO. They can be downloaded after login via the already included <strong>install</strong> add-on. <a href="https://redaxo.org/download/website-demos/">Info about website demos on redaxo.org</a> <i>(German)</i></li></ol>
-setup_605 = Have fun and good luck!<br />The REDAXO team
-setup_606 = Sign in
-setup_699 = 6 / Hooray
-
-setup_security_no_https = The setup will continue without SSL encryption. It is recommended to use SSL encryption for each call to the front- and backend in order to ensure privacy and data protection.
+setup_security_no_https = The connection is not encrypted. It is recommended to use SSL encryption for each call to the front- and backend in order to ensure privacy and data protection.
 setup_security_warn_mod_security = The Apache module "mod_security" is loaded. This can cause problems if not configured correctly.
 setup_security_deprecated_php = The used PHP Version {0} version will no longer receive updates. You should consider upgrading to a newer version.
 setup_security_deprecated_mysql = The used MySQL Version {0} version will no longer receive updates. You should consider upgrading to a newer version.
@@ -271,10 +187,6 @@ sql_unable_to_connect_server = Unable to establish a connection to the database 
 sql_unable_to_create_database = Unable to create the database!
 sql_unable_to_find_database = The specified database could not be found!
 sql_unable_to_open_database = Unable to open the specified database!
-
-
-
-setup_password_hint = Enter a new password or leave the input unchanged otherwise.
 
 # src\core\pages\addon.php
 addon_no_install = AddOn "{0}" <b>could not</b> be installed due to the following reasons:

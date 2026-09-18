@@ -25,7 +25,6 @@ const GOLDEN_SAMPLES_DIR = '.tools/visual-tests/screenshots/';
 
 const myArgs = process.argv.slice(2);
 let minDiffPixels = 1;
-let isSetup = false;
 //  overall exit-code
 let exitCode = 0;
 const expectedFiles = new Set();
@@ -33,9 +32,6 @@ const expectedFiles = new Set();
 if (myArgs.includes('regenerate-all')) {
     // force sample-regeneration, even if pixelmatch() thinks nothing changed
     minDiffPixels = 0;
-}
-if (myArgs.includes('setup')) {
-    isSetup = true;
 }
 const MIN_DIFF_PIXELS = minDiffPixels;
 
@@ -110,8 +106,6 @@ async function processScreenshot(page, screenshotName) {
     await page.evaluate(function() {
         var changingElements = [
             '.rex-js-script-time',
-            '#rex-page-setup .panel-success li:first-child b',
-            '.rex-js-setup-step-4 .form-control-static',
             'td[data-title="Letzter Login"]',
             '#rex-form-exportfilename',
             '#rex-page-system-settings .col-lg-4 td',
@@ -276,90 +270,58 @@ async function main() {
     );
     const context = await browser.newContext();
 
-    switch (true) {
+    let page = await context.newPage();
+    setupPageConsoleLogging(page);
+    await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
 
-        case isSetup: {
-            let page = await context.newPage();
-            setupPageConsoleLogging(page);
-            await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+    // login page
+    await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
+    await page.waitForSelector('.rex-background--ready');
+    await page.waitForTimeout(200); // wait for bg image to fade in
+    await createScreenshots(page, 'login.png');
 
-            // setup step 1
-            await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-            await createScreenshots(page, 'setup.png');
+    // login successful
+    await logIntoBackend(page);
+    await createScreenshots(page, 'index.png');
 
-            // setup steps 2-5
-            for (var step = 2; step <= 5; step++) {
-                // step 2: wait until `networkidle0` to finish AJAX requests, see https://github.com/puppeteer/puppeteer/blob/main/docs/api.md#pagegotourl-options
-                await goToUrlOrThrow(page, START_URL + '?page=setup&lang=de_de&step=' + step, { waitUntil: step === 2 ? 'networkidle0' : 'load'});
-                await createScreenshots(page, 'setup_' + step + '.png');
-            }
+    // run through all pages in parallel
+    await processAllPagesParallel(browser);
 
-            // step 6
-            // requires form in step 5 to be submitted
-            await page.$eval('.rex-js-createadminform', form => form.submit());
-            await page.waitForTimeout(200);
-            await createScreenshots(page, 'setup_6.png');
+    // the following steps have side effects and must run sequentially on a single page
 
-            await page.close();
-            break;
-        }
+    await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
+    await createScreenshots(page, 'users_edit.png');
 
-        default: {
-            let page = await context.newPage();
-            setupPageConsoleLogging(page);
-            await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+    // test safe mode
+    await goToUrlOrThrow(page, START_URL + '?page=system/settings', { waitUntil: 'load' });
+    await Promise.all([
+        page.waitForNavigation({ waitUntil: 'load' }),
+        page.click('.btn-safemode-activate') // enable safe mode
+    ]);
+    await createScreenshots(page, 'system_settings_safemode.png');
+    await Promise.all([
+        page.waitForNavigation({ waitUntil: 'load' }),
+        page.click('.btn-safemode-deactivate') // disable safe mode again
+    ]);
 
-            // login page
-            await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-            await page.waitForSelector('.rex-background--ready');
-            await page.waitForTimeout(200); // wait for bg image to fade in
-            await createScreenshots(page, 'login.png');
+    // test debug
+    const debugApiPattern = /rex-api-call=debug/;
+    const abortDebugApi = route => route.abort();
+    await page.route(debugApiPattern, abortDebugApi);
+    await goToUrlOrThrow(page, START_URL + '?page=debug', { waitUntil: 'load' });
+    await createScreenshots(page, 'debug_clockwork.png');
+    await page.unroute(debugApiPattern, abortDebugApi);
 
-            // login successful
-            await logIntoBackend(page);
-            await createScreenshots(page, 'index.png');
+    // the debug page is the bare clockwork ui, so get back to a page that has the backend chrome
+    await goToUrlOrThrow(page, START_URL + '?page=structure', { waitUntil: 'load' });
 
-            // run through all pages in parallel
-            await processAllPagesParallel(browser);
+    // logout
+    await page.click('#rex-js-nav-top .rex-logout');
+    await page.waitForSelector('.rex-background--ready');
+    await page.waitForTimeout(200); // wait for bg image to fade in
+    await createScreenshots(page, 'logout.png');
 
-            // the following steps have side effects and must run sequentially on a single page
-
-            await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
-            await createScreenshots(page, 'users_edit.png');
-
-            // test safe mode
-            await goToUrlOrThrow(page, START_URL + '?page=system/settings', { waitUntil: 'load' });
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: 'load' }),
-                page.click('.btn-safemode-activate') // enable safe mode
-            ]);
-            await createScreenshots(page, 'system_settings_safemode.png');
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: 'load' }),
-                page.click('.btn-safemode-deactivate') // disable safe mode again
-            ]);
-
-            // test debug
-            const debugApiPattern = /rex-api-call=debug/;
-            const abortDebugApi = route => route.abort();
-            await page.route(debugApiPattern, abortDebugApi);
-            await goToUrlOrThrow(page, START_URL + '?page=debug', { waitUntil: 'load' });
-            await createScreenshots(page, 'debug_clockwork.png');
-            await page.unroute(debugApiPattern, abortDebugApi);
-
-            // the debug page is the bare clockwork ui, so get back to a page that has the backend chrome
-            await goToUrlOrThrow(page, START_URL + '?page=structure', { waitUntil: 'load' });
-
-            // logout
-            await page.click('#rex-js-nav-top .rex-logout');
-            await page.waitForSelector('.rex-background--ready');
-            await page.waitForTimeout(200); // wait for bg image to fade in
-            await createScreenshots(page, 'logout.png');
-
-            await page.close();
-            break;
-        }
-    }
+    await page.close();
 
     await context.close();
     await browser.close();
@@ -368,11 +330,6 @@ async function main() {
     if (fs.existsSync(GOLDEN_SAMPLES_DIR)) {
         for (const file of fs.readdirSync(GOLDEN_SAMPLES_DIR)) {
             if (!file.endsWith('.png') || expectedFiles.has(file)) {
-                continue;
-            }
-            // setup and default run as separate processes,
-            // so only clean up files matching the current run's scope
-            if (isSetup !== file.startsWith('setup')) {
                 continue;
             }
             console.log('DELETING STALE SCREENSHOT: ' + file);

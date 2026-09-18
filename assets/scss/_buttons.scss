@@ -44,7 +44,6 @@
 .btn-save:hover,
 .btn-select:hover,
 .btn-send:hover,
-.btn-setup:hover,
 .btn-update:hover {
     background-color: $color-a-darker;
     border-color: $color-a-darker;
@@ -154,7 +153,6 @@
     .btn-save,
     .btn-select,
     .btn-send,
-    .btn-setup,
     .btn-update {
         @include dark-button-variant($color-text-light, $dark-brand-primary, darken($dark-brand-primary, 20%));
     }

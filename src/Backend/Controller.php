@@ -135,13 +135,6 @@ final class Controller
         return implode(' · ', $parts);
     }
 
-    public static function getSetupPage(): Page
-    {
-        $page = new Page('setup', I18n::msg('setup'));
-        $page->setPath(Path::core('pages/setup/index.php'));
-        return $page;
-    }
-
     public static function getLoginPage(): Page
     {
         $page = new Page('login', 'Login');

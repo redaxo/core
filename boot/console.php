@@ -2,7 +2,6 @@
 
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Console\Application;
-use Redaxo\Core\Console\Command\ListCommand;
 use Redaxo\Core\Console\CommandLoader;
 use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
@@ -18,19 +17,12 @@ Core::setProperty('console', $application);
 
 Addon::initialize();
 
-if (!Core::isSetup()) {
-    foreach (Addon::getBootOrder() as $packageId) {
-        Addon::require($packageId)->enlist();
-    }
-
-    $project->enlist();
+foreach (Addon::getBootOrder() as $packageId) {
+    Addon::require($packageId)->enlist();
 }
 
-$application->setCommandLoader(new CommandLoader());
+$project->enlist();
 
-// Override default list command to display information, that more commands are available after setup.
-$command = new ListCommand();
-$application->addCommand($command);
-$application->setDefaultCommand($command->getName());
+$application->setCommandLoader(new CommandLoader());
 
 $application->run();

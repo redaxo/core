@@ -111,11 +111,6 @@ jobs:
 
             -   name: Take screenshots (differential)
                 run: |
-                    php project/bin/console config:set setup true -t boolean --ansi -v
-                    php project/bin/console cache:clear --ansi -v
-                    node .tools/visual-tests/visual-record.js setup
-                    php project/bin/console config:set setup false -t boolean --ansi -v
-                    php project/bin/console cache:clear --ansi -v
                     node .tools/visual-tests/visual-record.js
                     git add .tools/visual-tests/screenshots/
                     git diff --cached --exit-code --name-only .tools/visual-tests/screenshots/

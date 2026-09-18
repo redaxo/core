@@ -35,11 +35,11 @@ use function is_array;
           <info>%command.full_name% error_email mail@example.org</info>
         EOF,
 )]
-final class ConfigSetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
+final class ConfigSetCommand extends AbstractCommand implements StandaloneInterface
 {
     public function __invoke(
         SymfonyStyle $io,
-        #[Argument('config path separated by periods, e.g. "setup" or "db.1.host"')] string $key,
+        #[Argument('config path separated by periods, e.g. "servername"')] string $key,
         #[Argument('new value for config key, e.g. "somestring" or "1"')] ?string $value = null,
         #[Option('php type of new value, e.g. "bool" or "int"', shortcut: 't')] string $type = 'string',
         #[Option('sets the config key to null')] bool $unset = false,

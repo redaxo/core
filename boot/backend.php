@@ -99,103 +99,93 @@ if (Request::get('asset') && Request::get('buster')) {
 // ----- verfuegbare seiten
 $pages = [];
 
-// ----------------- SETUP
-if (Core::isSetup()) {
-    // ----------------- SET SETUP LANG
-    $requestLang = Request::request('lang', 'string', I18n::$defaultLocale);
-    I18n::setLocale(in_array($requestLang, I18n::getLocales()) ? $requestLang : 'en_gb');
+// ----------------- CREATE LANG OBJ
+I18n::setLocale(I18n::$defaultLocale);
 
-    $pages['setup'] = Controller::getSetupPage();
-    Controller::setCurrentPage('setup');
+// ---- prepare login
+$login = new BackendLogin();
+Core::setProperty('login', $login);
+
+$passkey = Request::post('rex_user_passkey', 'string', null);
+$rexUserLogin = Request::post('rex_user_login', 'string');
+$rexUserPsw = Request::post('rex_user_psw', 'string');
+$rexUserStayLoggedIn = Request::post('rex_user_stay_logged_in', 'boolean', false);
+
+if (Request::get('rex_logout', 'boolean') && CsrfToken::factory('backend_logout')->isValid()) {
+    $login->setLogout(true);
+    $login->checkLogin();
+    CsrfToken::removeAll();
+
+    // "cache" is deliberately omitted, see the comment on the login page below.
+    Response::setHeader('Clear-Site-Data', '"storage", "executionContexts"');
+
+    // Not all browsers support the header Clear-Site-Data.
+    // we dont kill/regenerate the session so e.g. the frontend will not get logged out
+    Session::start()->clear();
+
+    // is necessary for login after logout
+    // and without the redirect, the csrf token would be invalid
+    Response::sendRedirect(Url::backendController(['rex_logged_out' => 1]));
+}
+
+if (($rexUserLogin || $passkey) && !CsrfToken::factory('backend_login')->isValid()) {
+    $loginCheck = false;
+    $login->message = I18n::msg('csrf_token_invalid');
 } else {
-    // ----------------- CREATE LANG OBJ
-    I18n::setLocale(I18n::$defaultLocale);
+    $login->setLogin($rexUserLogin, $rexUserPsw);
+    $login->setPasskey('' === $passkey ? null : $passkey);
+    $login->setStayLoggedIn($rexUserStayLoggedIn);
+    $loginCheck = $login->checkLogin();
+}
 
-    // ---- prepare login
-    $login = new BackendLogin();
-    Core::setProperty('login', $login);
+if (!$loginCheck) {
+    if (Request::isXmlHttpRequest()) {
+        Response::setStatus(Response::HTTP_UNAUTHORIZED);
+    }
 
-    $passkey = Request::post('rex_user_passkey', 'string', null);
-    $rexUserLogin = Request::post('rex_user_login', 'string');
-    $rexUserPsw = Request::post('rex_user_psw', 'string');
-    $rexUserStayLoggedIn = Request::post('rex_user_stay_logged_in', 'boolean', false);
+    $pages['login'] = Controller::getLoginPage();
+    Controller::setCurrentPage('login');
 
-    if (Request::get('rex_logout', 'boolean') && CsrfToken::factory('backend_logout')->isValid()) {
-        $login->setLogout(true);
-        $login->checkLogin();
-        CsrfToken::removeAll();
-
-        // "cache" is deliberately omitted, see the comment on the login page below.
-        Response::setHeader('Clear-Site-Data', '"storage", "executionContexts"');
+    if ('login' !== Request::request('page', 'string', 'login')) {
+        // clear in-browser data of a previous session with the same browser for security reasons.
+        // a possible attacker should not be able to access cached data of a previous valid session on the same computer.
+        // clearing "executionContext" or "cookies" would result in a endless loop.
+        //
+        // "cache" is deliberately omitted: browsers hold back the response until the entire HTTP cache
+        // has been walked to filter it by origin, which takes seconds on a well-filled profile and
+        // therefore delays every backend request made with an expired session.
+        // It also buys very little, because backend pages are sent with "no-cache, max-age=0, private"
+        // anyway, while the clearing would additionally wipe the cache of the website on the same origin.
+        Response::setHeader('Clear-Site-Data', '"storage"');
 
         // Not all browsers support the header Clear-Site-Data.
         // we dont kill/regenerate the session so e.g. the frontend will not get logged out
         Session::start()->clear();
-
-        // is necessary for login after logout
-        // and without the redirect, the csrf token would be invalid
-        Response::sendRedirect(Url::backendController(['rex_logged_out' => 1]));
+    }
+} else {
+    // Userspezifische Sprache einstellen
+    $user = Type::notNull($login->getUser());
+    $lang = $user->language;
+    if ($lang && 'default' != $lang && $lang != I18n::getLocale()) {
+        I18n::setLocale($lang);
     }
 
-    if (($rexUserLogin || $passkey) && !CsrfToken::factory('backend_login')->isValid()) {
-        $loginCheck = false;
-        $login->message = I18n::msg('csrf_token_invalid');
-    } else {
-        $login->setLogin($rexUserLogin, $rexUserPsw);
-        $login->setPasskey('' === $passkey ? null : $passkey);
-        $login->setStayLoggedIn($rexUserStayLoggedIn);
-        $loginCheck = $login->checkLogin();
-    }
+    Core::setProperty('user', $user);
 
-    if (!$loginCheck) {
-        if (Request::isXmlHttpRequest()) {
-            Response::setStatus(Response::HTTP_UNAUTHORIZED);
-        }
+    // Safe Mode
+    if (!Core::isHardenedMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
+        $session = Session::start();
 
-        $pages['login'] = Controller::getLoginPage();
-        Controller::setCurrentPage('login');
-
-        if ('login' !== Request::request('page', 'string', 'login')) {
-            // clear in-browser data of a previous session with the same browser for security reasons.
-            // a possible attacker should not be able to access cached data of a previous valid session on the same computer.
-            // clearing "executionContext" or "cookies" would result in a endless loop.
-            //
-            // "cache" is deliberately omitted: browsers hold back the response until the entire HTTP cache
-            // has been walked to filter it by origin, which takes seconds on a well-filled profile and
-            // therefore delays every backend request made with an expired session.
-            // It also buys very little, because backend pages are sent with "no-cache, max-age=0, private"
-            // anyway, while the clearing would additionally wipe the cache of the website on the same origin.
-            Response::setHeader('Clear-Site-Data', '"storage"');
-
-            // Not all browsers support the header Clear-Site-Data.
-            // we dont kill/regenerate the session so e.g. the frontend will not get logged out
-            Session::start()->clear();
-        }
-    } else {
-        // Userspezifische Sprache einstellen
-        $user = Type::notNull($login->getUser());
-        $lang = $user->language;
-        if ($lang && 'default' != $lang && $lang != I18n::getLocale()) {
-            I18n::setLocale($lang);
-        }
-
-        Core::setProperty('user', $user);
-
-        // Safe Mode
-        if (!Core::isHardenedMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
-            $session = Session::start();
-
-            if ($safeMode) {
-                $session->set('safemode', true);
-            } else {
-                $session->remove('safemode');
-            }
+        if ($safeMode) {
+            $session->set('safemode', true);
+        } else {
+            $session->remove('safemode');
         }
     }
+}
 
-    if ('' === $login->message && Request::get('rex_logged_out', 'boolean')) {
-        $login->message = I18n::msg('login_logged_out');
-    }
+if ('' === $login->message && Request::get('rex_logged_out', 'boolean')) {
+    $login->message = I18n::msg('login_logged_out');
 }
 
 Controller::setPages($pages);

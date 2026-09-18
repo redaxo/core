@@ -25,8 +25,7 @@ $transitionDuration: 300ms;
 }
 
 // requires more specificity
-.rex-is-logged-in,
-#rex-page-setup {
+.rex-is-logged-in {
 
     .rex-nav-main {
         display: block;
@@ -271,8 +270,7 @@ $transitionDuration: 300ms;
     }
 }
 
-.rex-is-logged-in,
-#rex-page-setup {
+.rex-is-logged-in {
     .rex-nav-top {
         position: absolute;
         top: 0;
@@ -551,15 +549,6 @@ $transitionDuration: 300ms;
     }
 }
 
-#rex-page-setup {
-    .rex-nav-top .container-fluid {
-        @media (min-width: $grid-float-breakpoint) {
-            // navbar is left aligned on setup page
-            justify-content: flex-start;
-        }
-    }
-}
-
 .rex-slice-input .nav-tabs {
     margin-bottom: $line-height-computed;
 }
@@ -688,24 +677,6 @@ $transitionDuration: 300ms;
     }
 }
 
-#rex-page-setup {
-    .rex-nav-main {
-        li {
-            > a {
-                padding-left: $navbar-padding-horizontal;
-            }
-            &.active > a {
-                cursor: default;
-            }
-            &.disabled > a {
-                cursor: default;
-                color: $color-a;
-                background-color: transparent;
-            }
-        }
-    }
-}
-
 // ----------------------------------------------------------------------------
 
 @mixin _dark-navs {
@@ -750,8 +721,7 @@ $transitionDuration: 300ms;
         }
     }
 
-    &.rex-is-logged-in,
-    &#rex-page-setup {
+    &.rex-is-logged-in {
         .rex-nav-top {
             .navbar {
                 background-color: $color-blue-3;

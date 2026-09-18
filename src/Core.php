@@ -12,7 +12,6 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Session;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\User;
-use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
@@ -152,10 +151,9 @@ final class Core
      *      ($key is 'server' ? string :
      *      ($key is 'servername' ? string :
      *      ($key is 'error_email' ? string :
-     *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      )))))))
+     *      ))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -187,12 +185,6 @@ final class Core
         $exists = isset(self::$properties[$key]);
         unset(self::$properties[$key]);
         return $exists;
-    }
-
-    /** Returns if the setup is active. */
-    public static function isSetup(): bool
-    {
-        return Setup::isEnabled();
     }
 
     /** Returns if the environment is the backend (the console counts as backend, too). */

@@ -100,8 +100,8 @@ Core::loadConfigYml();
 
 Core::getProject()->configure();
 
-// in setup the locale comes from the request (there may be no database yet), in the console it is always english
-if (!Core::isSetup() && 'cli' !== PHP_SAPI) {
+// on the console the locale is always english
+if ('cli' !== PHP_SAPI) {
     I18n::$defaultLocale = Type::string(Core::getConfig('lang', I18n::$defaultLocale));
 }
 
@@ -125,14 +125,14 @@ ComplexPermission::register('media', MediaPoolPermission::class);
 // Only when one is requested explicitly. Without a parameter the current language resolves lazily on first
 // access (see Language::getCurrentId()), so a run that never asks for one - the console, or a request against
 // a database whose language table is not in shape yet - does not read it at all.
-if (!Core::isSetup() && null !== ($languageId = Request::request('language', 'int', null))) {
+if (null !== ($languageId = Request::request('language', 'int', null))) {
     if (Core::isBackend() || Language::exists($languageId)) {
         Language::setCurrentId($languageId);
     }
 }
 
 // ----------------- HTTPS REDIRECT
-if ('cli' !== PHP_SAPI && !Core::isSetup()) {
+if ('cli' !== PHP_SAPI) {
     if (Response::$forceHttps && !Request::isHttps()) {
         Response::enforceHttps();
     }
@@ -144,48 +144,46 @@ if ('cli' !== PHP_SAPI && !Core::isSetup()) {
     }
 }
 
-$nexttime = Core::isSetup() || 'cli' === PHP_SAPI ? 0 : (int) Core::getConfig('cronjob_nexttime', 0);
+$nexttime = 'cli' === PHP_SAPI ? 0 : (int) Core::getConfig('cronjob_nexttime', 0);
 if (0 !== $nexttime && time() >= $nexttime) {
     $env = CronjobExecutor::getCurrentEnvironment();
     $EP = 'backend' === $env ? 'PAGE_CHECKED' : 'PACKAGES_INCLUDED';
     Extension::register($EP, static function () use ($env) {
-        if ('backend' !== $env || !in_array(Controller::getCurrentPagePart(1), ['setup', 'login', 'cronjob'], true)) {
+        if ('backend' !== $env || !in_array(Controller::getCurrentPagePart(1), ['login', 'cronjob'], true)) {
             CronjobManager::factory()->check();
         }
     });
 }
 
-if (!Core::isSetup()) {
-    Core::setProperty('start_article_id', Core::getConfig('start_article_id', 1));
-    Core::setProperty('notfound_article_id', Core::getConfig('notfound_article_id', 1));
-    Core::setProperty('rows_per_page', 50);
+Core::setProperty('start_article_id', Core::getConfig('start_article_id', 1));
+Core::setProperty('notfound_article_id', Core::getConfig('notfound_article_id', 1));
+Core::setProperty('rows_per_page', 50);
 
-    if (0 == Request::request('article_id', 'int')) {
-        Core::setProperty('article_id', Article::getSiteStartArticleId());
-    } else {
-        $articleId = Request::request('article_id', 'int');
-        $articleId = Article::get($articleId) ? $articleId : Article::getNotfoundArticleId();
-        Core::setProperty('article_id', $articleId);
-    }
+if (0 == Request::request('article_id', 'int')) {
+    Core::setProperty('article_id', Article::getSiteStartArticleId());
+} else {
+    $articleId = Request::request('article_id', 'int');
+    $articleId = Article::get($articleId) ? $articleId : Article::getNotfoundArticleId();
+    Core::setProperty('article_id', $articleId);
+}
 
-    if (Core::getConfig('article_history', false)) {
-        Extension::register(
-            ['ART_SLICES_COPY', 'SLICE_ADD', 'SLICE_UPDATE', 'SLICE_MOVE', 'SLICE_DELETE'],
-            static function (ExtensionPoint $ep) {
-                $type = match ($ep->name) {
-                    'ART_SLICES_COPY' => 'slices_copy',
-                    'SLICE_MOVE' => 'slice_' . $ep->getParam('direction'),
-                    default => strtolower($ep->name),
-                };
+if (Core::getConfig('article_history', false)) {
+    Extension::register(
+        ['ART_SLICES_COPY', 'SLICE_ADD', 'SLICE_UPDATE', 'SLICE_MOVE', 'SLICE_DELETE'],
+        static function (ExtensionPoint $ep) {
+            $type = match ($ep->name) {
+                'ART_SLICES_COPY' => 'slices_copy',
+                'SLICE_MOVE' => 'slice_' . $ep->getParam('direction'),
+                default => strtolower($ep->name),
+            };
 
-                $articleId = $ep->getParam('article_id');
-                $languageId = $ep->getParam('language_id');
-                $sliceRevision = $ep->getParam('slice_revision');
+            $articleId = $ep->getParam('article_id');
+            $languageId = $ep->getParam('language_id');
+            $sliceRevision = $ep->getParam('slice_revision');
 
-                if (0 == $sliceRevision) {
-                    ArticleSliceHistory::makeSnapshot($articleId, $languageId, $type);
-                }
-            },
-        );
-    }
+            if (0 == $sliceRevision) {
+                ArticleSliceHistory::makeSnapshot($articleId, $languageId, $type);
+            }
+        },
+    );
 }

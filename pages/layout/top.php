@@ -11,7 +11,6 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Security\ApiFunction\UserImpersonate;
 use Redaxo\Core\Security\CsrfToken;
-use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\View\Asset;
@@ -39,10 +38,7 @@ if (!$curPage->hasLayout()) {
 
 $bodyAttr = [];
 
-// Str::normalize requires intl extension, which may not exist before extensions check in setup
-$bodyId = Core::isSetup() ? 'setup' : Str::normalize(Controller::getCurrentPage(), '-', ' ');
-
-$bodyAttr['id'] = ['rex-page-' . $bodyId];
+$bodyAttr['id'] = ['rex-page-' . Str::normalize(Controller::getCurrentPage(), '-', ' ')];
 
 $bodyAttr['class'] = ['rex-is-logged-out'];
 if ($user) {
@@ -117,7 +113,7 @@ if ($user && $hasNavigation) {
     }
     $metaItems[] = $item;
     unset($item);
-} elseif ($hasNavigation && !Core::isSetup()) {
+} elseif ($hasNavigation) {
     $item = [];
     $item['title'] = I18n::msg('logged_out');
     $metaItems[] = $item;
@@ -156,51 +152,6 @@ if ($user && $hasNavigation) {
         $fragment->setVar('items', $block['navigation'], false);
         $navigation .= $fragment->parse('core/navigations/main.php');
     }
-}
-
-/* Setup Navigation ********************************************************** */
-if ('setup' == Controller::getCurrentPagePart(1)) {
-    $step = Request::request('step', 'float');
-    $lang = Request::request('lang', 'string', '');
-
-    $context = Setup::getContext();
-
-    $navi = [];
-    $end = $lang ? 6 : 1;
-    for ($i = 1; $i <= $end; ++$i) {
-        $n = [];
-        if (!$step || $i == $step) {
-            $n['active'] = true;
-        }
-
-        $n['href'] = 'javascript:void(0)';
-        if ($i < $step) {
-            $n['itemAttr']['class'][] = 'bg-success';
-            $n['href'] = $context->getUrl(['step' => $i]);
-            if (7 == $step) {
-                $n['href'] = 'javascript:void(0)';
-            }
-        }
-
-        if ($step && $i > $step) {
-            $n['itemAttr']['class'][] = 'disabled';
-        }
-
-        if (isset($n['href']) && '' != $lang) {
-            $name = I18n::msg('setup_' . $i . '99');
-        } else {
-            $name = '<span>' . I18n::msg('setup_' . $i . '99') . '</span>';
-        }
-
-        $n['title'] = $name;
-
-        $navi[] = $n;
-    }
-
-    $fragment = new Fragment();
-    $fragment->setVar('headline', ['title' => 'Setup'], false);
-    $fragment->setVar('items', $navi, false);
-    $navigation = $fragment->parse('core/navigations/main.php');
 }
 
 /* PJAX Footer Header ********************************************************** */
