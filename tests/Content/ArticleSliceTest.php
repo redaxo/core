@@ -11,11 +11,28 @@ final class ArticleSliceTest extends TestCase
 {
     private const FAKE_ID = 2_147_483_647; // max int on 32bit
 
+    protected function setUp(): void
+    {
+        // the slices need an article to hang off, see the foreign key of `rex_article_slice`
+        Sql::factory()
+            ->setTable('rex_article')
+            ->setValues(['id' => self::FAKE_ID, 'parent_id' => null, 'priority' => 1, 'path' => '|'])
+            ->addGlobalCreateFields()
+            ->addGlobalUpdateFields()
+            ->insert();
+
+        Sql::factory()
+            ->setTable('rex_article_translation')
+            ->setValues(['article_id' => self::FAKE_ID, 'language_id' => 1, 'name' => 'test', 'status' => 1])
+            ->insert();
+    }
+
     protected function tearDown(): void
     {
+        // the translation and the slices are removed by the foreign keys
         Sql::factory()
-            ->setTable('rex_article_slice')
-            ->setWhere(['article_id' => self::FAKE_ID])
+            ->setTable('rex_article')
+            ->setWhere(['id' => self::FAKE_ID])
             ->delete();
     }
 

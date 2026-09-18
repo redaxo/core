@@ -148,7 +148,8 @@ Table::get('rex_article_slice')
     ->ensureColumn(Column::text('linklist10', nullable: true))
     ->ensureGlobalColumns()
     ->ensureIndex(new Index('slice_priority', ['article_id', 'priority', 'module']))
-    ->ensureIndex(new Index('find_slices', ['language_id', 'article_id']))
+    ->ensureIndex(new Index('find_slices', ['article_id', 'language_id']))
+    ->ensureForeignKeyTo('rex_article_translation', ['article_id' => 'article_id', 'language_id' => 'language_id'], onDelete: ForeignKey::CASCADE)
     ->ensure();
 
 Table::get('rex_article_slice_history')
@@ -226,6 +227,7 @@ Table::get('rex_article_slice_history')
     ->ensureGlobalColumns()
     ->ensureColumn(Column::tinyint('revision', unsigned: true))
     ->ensureIndex(new Index('snapshot', ['article_id', 'language_id', 'revision', 'history_date']))
+    ->ensureForeignKeyTo('rex_article_translation', ['article_id' => 'article_id', 'language_id' => 'language_id'], onDelete: ForeignKey::CASCADE)
     ->ensure();
 
 Table::get('rex_cronjob')
