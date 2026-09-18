@@ -24,7 +24,6 @@ jobs:
             contents: write  # for Git to git apply
 
         strategy:
-            fail-fast: false
             matrix:
                 include:
                     -   php-version: '8.5'
