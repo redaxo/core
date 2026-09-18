@@ -128,10 +128,6 @@ final class UserSession
     /**
      * The points in time before which a session counts as expired, one per kind of session.
      *
-     * They are datetimes rather than unix timestamps: `last_activity` is written with the PHP time zone, so
-     * running it through `UNIX_TIMESTAMP()` would shift the comparison by whatever the database session's
-     * time zone differs.
-     *
      * @return array{session: string, stay_logged_in: string}
      */
     public static function getExpiryCutoffs(): array
