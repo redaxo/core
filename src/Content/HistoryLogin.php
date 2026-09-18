@@ -29,12 +29,8 @@ final class HistoryLogin extends BackendLogin
         $sessionSql = Sql::factory($this->DB);
         $sessionSql->setQuery(
             'SELECT session_id FROM rex_user_session
-                WHERE user_id = ? AND UNIX_TIMESTAMP(last_activity) >= IF(cookie_key IS NULL, ?, ?)',
-            [
-                (int) $userSql->getValue($this->idColumn),
-                time() - BackendLogin::getSessionPolicy()->duration,
-                strtotime('-' . UserSession::STAY_LOGGED_IN_DURATION . ' months'),
-            ],
+                WHERE user_id = :user_id AND last_activity >= IF(cookie_key IS NULL, :session, :stay_logged_in)',
+            ['user_id' => (int) $userSql->getValue($this->idColumn)] + UserSession::getExpiryCutoffs(),
         );
 
         // The session id is the shared secret — only its HMAC is in the URL. A matching row also proves
