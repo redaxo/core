@@ -97,6 +97,7 @@ languages_edit = Sprachen bearbeiten
 id_exists = ID existiert schon.
 enter_code = Bitte geben Sie einen Code ein.
 enter_name = Bitte einen Namen eingeben.
+code_exists = Code existiert schon.
 language_add = Sprache hinzufügen
 language_update = Sprache übernehmen
 language_created = Sprache wurde angelegt.

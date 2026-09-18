@@ -14,6 +14,7 @@ Table::get('rex_language')
     ->ensureColumn(Column::varchar('name', 255))
     ->ensureColumn(Column::smallint('priority', unsigned: true))
     ->ensureColumn(Column::bool('status'))
+    ->ensureIndex(new Index('code', ['code'], Index::UNIQUE))
     ->ensure();
 
 $sql = Sql::factory();

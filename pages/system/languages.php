@@ -81,6 +81,9 @@ if ($addClangSave || $editClangSave) {
     } elseif ('' == $languageName) {
         $error = I18n::msg('enter_name');
         $func = $addClangSave ? 'add' : 'edit';
+    } elseif (array_any(Language::getAll(), static fn (Language $language): bool => $language->id !== $languageId && $language->code === $languageCode)) {
+        $error = I18n::msg('code_exists');
+        $func = $addClangSave ? 'add' : 'edit';
     } elseif ($addClangSave) {
         $success = I18n::msg('language_created');
         LanguageHandler::add($languageCode, $languageName, $languagePrio);
