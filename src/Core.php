@@ -4,7 +4,6 @@ namespace Redaxo\Core;
 
 use Composer\InstalledVersions;
 use Redaxo\Core\Console\Application;
-use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
@@ -153,11 +152,10 @@ final class Core
      *      ($key is 'server' ? string :
      *      ($key is 'servername' ? string :
      *      ($key is 'error_email' ? string :
-     *      ($key is 'db' ? array<int, string[]> :
      *      ($key is 'setup' ? bool|array<string, int> :
      *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      ))))))))
+     *      )))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -375,20 +373,6 @@ final class Core
             // Neutral User-Agent without version to avoid fingerprinting the installation
             'headers' => ['User-Agent' => 'REDAXO'],
         ]);
-    }
-
-    /** @param positive-int $db */
-    public static function getDbConfig(int $db = 1): ConnectionConfig
-    {
-        $config = self::getProperty('db', null);
-
-        if (!$config) {
-            $configFile = Path::coreData('config.yml');
-
-            throw new RuntimeException('Unable to read db config from "' . $configFile . '".');
-        }
-
-        return new ConnectionConfig($config[$db]);
     }
 
     /** Returns the server URL. */

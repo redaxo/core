@@ -10,6 +10,7 @@ use Pdo\Mysql;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Util\Type;
@@ -60,31 +61,31 @@ final class SqlTest extends TestCase
 
     public function testCheckConnection(): void
     {
-        $dbConfig = Core::getDbConfig();
+        $dbConfig = ConnectionConfig::get();
         self::assertTrue(Sql::checkDbConnection($dbConfig->host, $dbConfig->login, $dbConfig->password, $dbConfig->name));
     }
 
     public function testCheckConnectionInvalidPassword(): void
     {
-        $dbConfig = Core::getDbConfig();
+        $dbConfig = ConnectionConfig::get();
         self::assertTrue(true !== Sql::checkDbConnection($dbConfig->host, $dbConfig->login, 'fu-password', $dbConfig->name));
     }
 
     public function testCheckConnectionInvalidHost(): void
     {
-        $dbConfig = Core::getDbConfig();
+        $dbConfig = ConnectionConfig::get();
         self::assertTrue(true !== Sql::checkDbConnection('fu-host', $dbConfig->login, $dbConfig->password, $dbConfig->name));
     }
 
     public function testCheckConnectionInvalidLogin(): void
     {
-        $dbConfig = Core::getDbConfig();
+        $dbConfig = ConnectionConfig::get();
         self::assertTrue(true !== Sql::checkDbConnection($dbConfig->host, 'fu-login', $dbConfig->password, $dbConfig->name));
     }
 
     public function testCheckConnectionInvalidDatabase(): void
     {
-        $dbConfig = Core::getDbConfig();
+        $dbConfig = ConnectionConfig::get();
         self::assertTrue(true !== Sql::checkDbConnection($dbConfig->host, $dbConfig->login, $dbConfig->password, 'fu-database'));
     }
 

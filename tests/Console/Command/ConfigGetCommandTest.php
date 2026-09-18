@@ -26,7 +26,6 @@ final class ConfigGetCommandTest extends TestCase
     {
         return [
             ["false\n", 'setup'],
-            ["\"root\"\n", 'db.1.login'],
         ];
     }
 

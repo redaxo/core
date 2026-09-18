@@ -1297,39 +1297,6 @@
       <code><![CDATA[$table]]></code>
     </ArgumentTypeCoercion>
   </file>
-  <file src="src/Console/Command/DatabaseSetConnectionCommand.php">
-    <MixedArgument>
-      <code><![CDATA[$db['host']]]></code>
-      <code><![CDATA[$db['login']]]></code>
-      <code><![CDATA[$db['name']]]></code>
-      <code><![CDATA[$db['password']]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$db['host']]]></code>
-      <code><![CDATA[$db['login']]]></code>
-      <code><![CDATA[$db['name']]]></code>
-      <code><![CDATA[$db['password']]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$config['db'][1]]]></code>
-      <code><![CDATA[$db['host']]]></code>
-      <code><![CDATA[$db['login']]]></code>
-      <code><![CDATA[$db['name']]]></code>
-      <code><![CDATA[$db['password']]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$config['db'][1]]]></code>
-      <code><![CDATA[$db]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$config['db'][1] ?? []]]></code>
-    </MixedOperand>
-  </file>
-  <file src="src/Console/Command/SystemCheckCommand.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$config]]></code>
-    </MixedArgumentTypeCoercion>
-  </file>
   <file src="src/Console/Command/SetupCommand.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$login]]></code>
@@ -1338,7 +1305,6 @@
       <code><![CDATA[$backups]]></code>
     </InvalidArgument>
     <MixedArgument>
-      <code><![CDATA[$config['db'][1]['name']]]></code>
       <code><![CDATA[$dbCreate]]></code>
       <code><![CDATA[$login]]></code>
       <code><![CDATA[$login]]></code>
@@ -1351,9 +1317,6 @@
       <code><![CDATA[['login' => $login]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
-      <code><![CDATA[$config['db'][1]['host']]]></code>
-      <code><![CDATA[$config['db'][1]['login']]]></code>
-      <code><![CDATA[$config['db'][1]['name']]]></code>
       <code><![CDATA[$config['error_email']]]></code>
       <code><![CDATA[$config['server']]]></code>
       <code><![CDATA[$config['servername']]]></code>
@@ -1527,9 +1490,6 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
     </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$config[$db]]]></code>
-    </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code><![CDATA[$login]]></code>
       <code><![CDATA[$request]]></code>
@@ -2317,13 +2277,9 @@
   </file>
   <file src="src/Setup/Setup.php">
     <MixedArgument>
-      <code><![CDATA[$config['db'][1]]]></code>
       <code><![CDATA[$func($path)]]></code>
       <code><![CDATA[$path]]></code>
     </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$config['db'][1]]]></code>
-    </MixedArrayAccess>
     <PossiblyFalseArgument>
       <code><![CDATA[fileperms($path)]]></code>
     </PossiblyFalseArgument>
@@ -2332,9 +2288,6 @@
     </PossiblyNullArrayOffset>
   </file>
   <file src="src/SystemReport.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$dbId]]></code>
-    </ArgumentTypeCoercion>
     <InvalidReturnStatement>
       <code><![CDATA[$data]]></code>
     </InvalidReturnStatement>

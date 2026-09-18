@@ -4,6 +4,7 @@ use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Cache;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Env;
 use Redaxo\Core\Exception\InvalidArgumentException;
@@ -160,7 +161,7 @@ if ('' != $success) {
     echo Message::success($success);
 }
 
-$dbconfig = Core::getDbConfig(1);
+$dbconfig = ConnectionConfig::get(1);
 
 $rexVersion = Core::getVersion();
 if (str_contains($rexVersion, '-dev')) {

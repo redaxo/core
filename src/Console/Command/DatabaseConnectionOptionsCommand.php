@@ -2,7 +2,7 @@
 
 namespace Redaxo\Core\Console\Command;
 
-use Redaxo\Core\Core;
+use Redaxo\Core\Database\ConnectionConfig;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,7 +30,7 @@ final class DatabaseConnectionOptionsCommand extends AbstractCommand implements 
 {
     public function __invoke(OutputInterface $output): int
     {
-        $db = Core::getDbConfig(1);
+        $db = ConnectionConfig::get(1);
 
         if (!str_contains($db->host, ':')) {
             $output->writeln('--host=' . escapeshellarg($db->host));
