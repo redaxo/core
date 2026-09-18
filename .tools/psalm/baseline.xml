@@ -1402,14 +1402,6 @@
       <code><![CDATA[Core::getProperty('start_article_id', 1)]]></code>
     </NullableReturnStatement>
   </file>
-  <file src="src/Content/ArticleCache.php">
-    <InvalidOperand>
-      <code><![CDATA[$rowLanguageId]]></code>
-    </InvalidOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$rowLanguageId]]></code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/Content/ArticleContentBase.php">
     <FalsableReturnStatement>
       <code><![CDATA[$CONTENT]]></code>
