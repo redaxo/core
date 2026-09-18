@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Security;
 
+use DateTimeImmutable;
 use Redaxo\Core\Base\SingletonTrait;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\RuntimeException;
@@ -113,13 +114,32 @@ final class UserSession
 
     public static function clearExpiredSessions(): void
     {
+        // split into one branch per cutoff instead of comparing against an `IF()` over `cookie_key`, so that
+        // both halves stay a plain range over `last_activity`
         Sql::factory()
             ->setTable('rex_user_session')
-            ->setWhere('UNIX_TIMESTAMP(last_activity) < IF(cookie_key IS NULL, ?, ?)', [
-                time() - BackendLogin::getSessionPolicy()->duration,
-                strtotime('-' . self::STAY_LOGGED_IN_DURATION . ' months'),
-            ])
+            ->setWhere(
+                '(cookie_key IS NULL AND last_activity < :session) OR (cookie_key IS NOT NULL AND last_activity < :stay_logged_in)',
+                self::getExpiryCutoffs(),
+            )
             ->delete();
+    }
+
+    /**
+     * The points in time before which a session counts as expired, one per kind of session.
+     *
+     * They are datetimes rather than unix timestamps: `last_activity` is written with the PHP time zone, so
+     * running it through `UNIX_TIMESTAMP()` would shift the comparison by whatever the database session's
+     * time zone differs.
+     *
+     * @return array{session: string, stay_logged_in: string}
+     */
+    public static function getExpiryCutoffs(): array
+    {
+        return [
+            'session' => Sql::datetime(time() - BackendLogin::getSessionPolicy()->duration),
+            'stay_logged_in' => Sql::datetime(new DateTimeImmutable('-' . self::STAY_LOGGED_IN_DURATION . ' months')->getTimestamp()),
+        ];
     }
 
     public function removeSession(string $sessionId, int $userId): bool
