@@ -5,7 +5,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 
 use function date;
 use function sprintf;
@@ -14,14 +13,14 @@ use function strtotime;
 /** Date picker (HTML5), stored as a SQL `date` (`Y-m-d`). */
 class DateField extends AbstractInputField
 {
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
-        return Column::date($this->columnName($entity), nullable: true);
+        return Column::date($this->columnName(), nullable: true);
     }
 
     public function parseRequest(MetaContext $context): int|string|null
     {
-        $value = Request::post($this->columnName($context->entity), 'string', '');
+        $value = Request::post($this->columnName(), 'string', '');
         $time = '' === $value ? false : strtotime($value);
 
         return false === $time ? null : date('Y-m-d', $time);
@@ -38,7 +37,7 @@ class DateField extends AbstractInputField
         $stored = $context->value($this);
         // The stored value is already `Y-m-d`, exactly what the date input expects.
         $value = null === $stored || '' === $stored ? '' : (string) $stored;
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
 
         $attributes = $this->attributes->with([
             'class' => ['form-control'],

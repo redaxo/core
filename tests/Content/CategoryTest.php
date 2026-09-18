@@ -21,30 +21,30 @@ final class CategoryTest extends TestCase
 
     public function testHasValue(): void
     {
-        $instance = $this->createCategoryWithAdditionalData(['cat_foo' => 'teststring']);
+        $instance = $this->createCategoryWithAdditionalData(['meta_foo' => 'teststring']);
 
         self::assertTrue($instance->hasValue('foo'));
-        self::assertTrue($instance->hasValue('cat_foo'));
+        self::assertTrue($instance->hasValue('meta_foo'));
 
         self::assertFalse($instance->hasValue('bar'));
-        self::assertFalse($instance->hasValue('cat_bar'));
+        self::assertFalse($instance->hasValue('meta_bar'));
     }
 
     public function testGetValue(): void
     {
-        $instance = $this->createCategoryWithAdditionalData(['cat_foo' => 'teststring']);
+        $instance = $this->createCategoryWithAdditionalData(['meta_foo' => 'teststring']);
 
         self::assertEquals('teststring', $instance->getValue('foo'));
-        self::assertEquals('teststring', $instance->getValue('cat_foo'));
+        self::assertEquals('teststring', $instance->getValue('meta_foo'));
 
         self::assertNull($instance->getValue('bar'));
-        self::assertNull($instance->getValue('cat_bar'));
+        self::assertNull($instance->getValue('meta_bar'));
     }
 
     #[DataProvider('dataGetClosestValue')]
     public function testGetClosestValue(string|int|null $expectedValue, Category $category): void
     {
-        self::assertSame($expectedValue, $category->getClosestValue('cat_foo'));
+        self::assertSame($expectedValue, $category->getClosestValue('meta_foo'));
     }
 
     /** @return iterable<int, array{(int|string|null), Category}> */
@@ -54,23 +54,23 @@ final class CategoryTest extends TestCase
         yield [null, $lev1];
         yield [null, $lev3];
 
-        [$_, $_, $lev3] = self::createCategories([], [], ['cat_foo' => 'foo']);
+        [$_, $_, $lev3] = self::createCategories([], [], ['meta_foo' => 'foo']);
         yield ['foo', $lev3];
 
-        [$_, $_, $lev3] = self::createCategories([], ['cat_foo' => 'bar'], ['cat_foo' => 'foo']);
+        [$_, $_, $lev3] = self::createCategories([], ['meta_foo' => 'bar'], ['meta_foo' => 'foo']);
         yield ['foo', $lev3];
 
-        [$_, $_, $lev3] = self::createCategories([], ['cat_foo' => 'bar'], []);
+        [$_, $_, $lev3] = self::createCategories([], ['meta_foo' => 'bar'], []);
         yield ['bar', $lev3];
 
-        [$_, $_, $lev3] = self::createCategories(['cat_foo' => 'baz'], ['cat_foo' => 'bar'], []);
+        [$_, $_, $lev3] = self::createCategories(['meta_foo' => 'baz'], ['meta_foo' => 'bar'], []);
         yield ['bar', $lev3];
 
-        [$lev1, $_, $lev3] = self::createCategories(['cat_foo' => 'baz'], [], []);
+        [$lev1, $_, $lev3] = self::createCategories(['meta_foo' => 'baz'], [], []);
         yield ['baz', $lev1];
         yield ['baz', $lev3];
 
-        [$_, $_, $lev3] = self::createCategories([], ['cat_foo' => 0], []);
+        [$_, $_, $lev3] = self::createCategories([], ['meta_foo' => 0], []);
         yield [0, $lev3];
     }
 
@@ -126,9 +126,9 @@ final class CategoryTest extends TestCase
         [$lev1, $_, $lev3] = self::createCategories(['status' => 1], ['status' => 0], ['status' => 0]);
         yield [$lev1, $lev3, $statusCallback];
 
-        $fooCallback = static fn (Category $category): bool => $category->getValue('cat_foo') > 3;
+        $fooCallback = static fn (Category $category): bool => $category->getValue('meta_foo') > 3;
 
-        [$lev1, $_, $lev3] = self::createCategories(['cat_foo' => 4], [], ['cat_foo' => 2]);
+        [$lev1, $_, $lev3] = self::createCategories(['meta_foo' => 4], [], ['meta_foo' => 2]);
         yield [$lev1, $lev3, $fooCallback];
     }
 

@@ -84,7 +84,7 @@ abstract class AbstractHandler
     {
         $saved = [];
         foreach (MetaSchema::getFields($context->entity) as $field) {
-            if (!$field->isAllowed($context) || null === $field->column($context->entity)) {
+            if (!$field->isAllowed($context) || null === $field->column()) {
                 // hidden field, or a structural field without a value (e.g. legend)
                 continue;
             }
@@ -92,7 +92,7 @@ abstract class AbstractHandler
                 continue;
             }
 
-            $column = $field->columnName($context->entity);
+            $column = $field->columnName();
             $value = $field->parseRequest($context);
             $sqlSave->setValue($column, $value);
             $saved[$column] = $value;

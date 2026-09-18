@@ -34,10 +34,10 @@ final class LanguageTest extends TestCase
         $language = $this->createLanguageWithoutConstructor();
 
         self::assertTrue($language->hasValue('foo'));
-        self::assertTrue($language->hasValue('lang_foo'));
+        self::assertTrue($language->hasValue('meta_foo'));
 
         self::assertFalse($language->hasValue('bar'));
-        self::assertFalse($language->hasValue('lang_bar'));
+        self::assertFalse($language->hasValue('meta_bar'));
     }
 
     public function testGetValue(): void
@@ -47,10 +47,10 @@ final class LanguageTest extends TestCase
         $language = $this->createLanguageWithoutConstructor();
 
         self::assertEquals('teststring', $language->getValue('foo'));
-        self::assertEquals('teststring', $language->getValue('lang_foo'));
+        self::assertEquals('teststring', $language->getValue('meta_foo'));
 
         self::assertNull($language->getValue('bar'));
-        self::assertNull($language->getValue('lang_bar'));
+        self::assertNull($language->getValue('meta_bar'));
     }
 
     private function createLanguageWithoutConstructor(): Language
@@ -58,7 +58,7 @@ final class LanguageTest extends TestCase
         $reflectionClass = new ReflectionClass(Language::class);
         $language = $reflectionClass->newInstanceWithoutConstructor();
 
-        $reflectionClass->getProperty('additionalData')->setValue($language, ['lang_foo' => 'teststring']);
+        $reflectionClass->getProperty('additionalData')->setValue($language, ['meta_foo' => 'teststring']);
 
         return $language;
     }

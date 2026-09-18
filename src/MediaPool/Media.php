@@ -11,6 +11,7 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\MetaInfo\Field\MetaField;
 use Redaxo\Core\Util\Formatter;
 
 use function is_array;
@@ -193,7 +194,7 @@ final class Media
             'updatedate' => $this->updateDate,
             'createuser' => $this->createUser,
             'updateuser' => $this->updateUser,
-            default => $this->additionalData[$value] ?? $this->additionalData['med_' . $value] ?? null,
+            default => $this->additionalData[$value] ?? $this->additionalData[MetaField::COLUMN_PREFIX . $value] ?? null,
         };
     }
 

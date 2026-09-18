@@ -53,7 +53,7 @@ final class MediaHandler extends AbstractHandler
         foreach ($map as [$entity, $key]) {
             foreach (MetaSchema::getFields($entity) as $field) {
                 if ($field instanceof MediaField) {
-                    $where[$key][] = 'FIND_IN_SET(' . $escapedFilename . ', ' . $sql->escapeIdentifier($field->columnName($entity)) . ')';
+                    $where[$key][] = 'FIND_IN_SET(' . $escapedFilename . ', ' . $sql->escapeIdentifier($field->columnName()) . ')';
                 }
             }
         }
