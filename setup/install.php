@@ -44,7 +44,6 @@ Table::get('rex_article')
     ->ensureColumn(Column::int('priority', unsigned: true))
     ->ensureColumn(Column::varchar('path', 255))
     ->ensureGlobalColumns()
-    ->ensureIndex(new Index('parent_id', ['parent_id']))
     ->ensure();
 
 Table::get('rex_article_translation')
@@ -256,7 +255,6 @@ Table::get('rex_media_category')
     ->ensureForeignIdColumn('parent_id', 'rex_media_category', nullable: true)
     ->ensureColumn(Column::varchar('path', 255))
     ->ensureGlobalColumns()
-    ->ensureIndex(new Index('parent_id', ['parent_id']))
     ->ensure();
 
 Table::get('rex_media')
@@ -269,7 +267,6 @@ Table::get('rex_media')
     ->ensureColumn(Column::mediumint('width', unsigned: true, nullable: true))
     ->ensureColumn(Column::mediumint('height', unsigned: true, nullable: true))
     ->ensureGlobalColumns()
-    ->ensureIndex(new Index('category_id', ['category_id']))
     ->ensureIndex(new Index('filename', ['filename'], Index::UNIQUE))
     ->ensure();
 
