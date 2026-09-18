@@ -307,7 +307,7 @@ $panel .= '<tbody>';
 
 foreach ($items as $media) {
     $alt = escape($media->title);
-    $desc = '<p>' . escape(strip_tags((string) $media->getValue('med_description'))) . '</p>';
+    $desc = '<p>' . escape(strip_tags((string) $media->getValue('description'))) . '</p>';
 
     if (!is_file(Path::media($media->fileName))) {
         $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '"></i><span class="sr-only">' . $media->fileName . '</span>';

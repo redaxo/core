@@ -5,7 +5,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 
 use function Redaxo\Core\View\escape;
 use function sprintf;
@@ -13,14 +12,14 @@ use function sprintf;
 /** A single boolean checkbox, stored as 0/1. */
 class CheckboxField extends AbstractInputField
 {
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
-        return Column::bool($this->columnName($entity), default: false);
+        return Column::bool($this->columnName(), default: false);
     }
 
     public function parseRequest(MetaContext $context): int|string|null
     {
-        return Request::post($this->columnName($context->entity), 'bool', false) ? 1 : 0;
+        return Request::post($this->columnName(), 'bool', false) ? 1 : 0;
     }
 
     public function format(mixed $stored): bool
@@ -30,7 +29,7 @@ class CheckboxField extends AbstractInputField
 
     public function renderInput(MetaContext $context): string
     {
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
 
         $attributes = $this->attributes->with([
             'type' => 'checkbox',

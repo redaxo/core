@@ -17,12 +17,12 @@ final class ArticleStatusType extends AbstractType
     public function execute(): bool
     {
         $from = [
-            'field' => 'art_online_from',
+            'field' => 'meta_online_from',
             'before' => 0,
             'after' => 1,
         ];
         $to = [
-            'field' => 'art_online_to',
+            'field' => 'meta_online_to',
             'before' => 1,
             'after' => 0,
         ];

@@ -4,7 +4,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
@@ -25,7 +24,7 @@ final class Fieldset extends MetaField
         parent::__construct('', $legend ?? '');
     }
 
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
         return null;
     }

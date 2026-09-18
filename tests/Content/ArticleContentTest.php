@@ -34,7 +34,7 @@ final class ArticleContentTest extends TestCase
             'updateuser' => 'tests',
             'revision' => 0,
 
-            'art_foo' => 'teststring',
+            'meta_foo' => 'teststring',
         ]);
     }
 

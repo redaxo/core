@@ -6,6 +6,7 @@ use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\MetaInfo\Field\MetaField;
 
 use function count;
 use function sprintf;
@@ -106,7 +107,7 @@ final class Language
             'name' => $this->name,
             'priority' => $this->priority,
             'status' => $this->status,
-            default => $this->additionalData[$key] ?? $this->additionalData['lang_' . $key] ?? null,
+            default => $this->additionalData[$key] ?? $this->additionalData[MetaField::COLUMN_PREFIX . $key] ?? null,
         };
     }
 

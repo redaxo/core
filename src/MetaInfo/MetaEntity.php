@@ -7,7 +7,7 @@ use Redaxo\Core\MetaInfo\Field\MetaField;
 /**
  * The entity a set of meta fields belongs to.
  *
- * Carries the column-name prefix (used to scope which columns of a table are metainfo-managed) and the target tables.
+ * Carries the tables the fields of that entity are stored in.
  */
 enum MetaEntity
 {
@@ -15,17 +15,6 @@ enum MetaEntity
     case Category;
     case Media;
     case Language;
-
-    /** Column-name prefix, including the trailing underscore. */
-    public function prefix(): string
-    {
-        return match ($this) {
-            self::Article => 'art_',
-            self::Category => 'cat_',
-            self::Media => 'med_',
-            self::Language => 'lang_',
-        };
-    }
 
     /** @return non-empty-string */
     public function table(): string

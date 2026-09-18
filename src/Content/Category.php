@@ -13,8 +13,6 @@ use function in_array;
  */
 final class Category extends StructureElement
 {
-    protected string $metaInfoPrefix = 'cat_';
-
     public readonly ?int $parentId;
 
     /** @param array<string, string|int|null> $data */

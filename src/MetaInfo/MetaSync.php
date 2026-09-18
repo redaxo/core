@@ -5,17 +5,16 @@ namespace Redaxo\Core\MetaInfo;
 use Redaxo\Core\Database\Table;
 use Redaxo\Core\MetaInfo\Field\MetaField;
 
-use function array_any;
 use function array_filter;
-use function array_map;
 use function str_starts_with;
 
 /**
  * Synchronises the database columns backing the meta fields with the current {@see MetaSchema} definitions.
  *
- * Adding and modifying columns happens automatically. Dropping an obsolete column (one whose entity prefix is
- * managed but for which no field exists anymore) destroys data, so the decision is delegated to the caller via
- * the `$confirmDrop` callback; callers should keep the column (and warn) when running non-interactively.
+ * Adding and modifying columns happens automatically. Dropping an obsolete column (one carrying the
+ * {@see MetaField::COLUMN_PREFIX} but for which no field exists anymore) destroys data, so the decision is delegated
+ * to the caller via the `$confirmDrop` callback; callers should keep the column (and warn) when running
+ * non-interactively.
  *
  * Run from the `migrate` command after the core/addon base schema is in place.
  *
@@ -36,17 +35,14 @@ final class MetaSync
         $kept = [];
 
         // Translatable fields go to the translation table of their entity, so group the fields by their target table.
-        /** @var array<non-empty-string, list<array{MetaEntity, MetaField}>> $fieldsByTable */
+        /** @var array<non-empty-string, list<MetaField>> $fieldsByTable */
         $fieldsByTable = [];
-        /** @var array<non-empty-string, list<MetaEntity>> $entitiesByTable */
-        $entitiesByTable = [];
         foreach (MetaEntity::cases() as $entity) {
             foreach (array_filter([$entity->table(), $entity->translationTable()]) as $tableName) {
                 $fieldsByTable[$tableName] ??= [];
-                $entitiesByTable[$tableName][] = $entity;
             }
             foreach (MetaSchema::getFields($entity) as $field) {
-                $fieldsByTable[$entity->tableForField($field)][] = [$entity, $field];
+                $fieldsByTable[$entity->tableForField($field)][] = $field;
             }
         }
 
@@ -55,8 +51,8 @@ final class MetaSync
             $table = Table::get($tableName);
 
             $desired = [];
-            foreach ($fields as [$entity, $field]) {
-                $column = $field->column($entity);
+            foreach ($fields as $field) {
+                $column = $field->column();
                 if (null === $column) {
                     continue;
                 }
@@ -73,10 +69,9 @@ final class MetaSync
                 $desired[$name] = true;
             }
 
-            // Columns carrying a managed prefix but no longer defined by any field are obsolete.
-            $prefixes = array_map(static fn (MetaEntity $entity): string => $entity->prefix(), $entitiesByTable[$tableName]);
+            // Meta columns no longer defined by any field are obsolete.
             foreach ($table->getColumns() as $name => $column) {
-                if (isset($desired[$name]) || !self::hasManagedPrefix($name, $prefixes)) {
+                if (isset($desired[$name]) || !str_starts_with($name, MetaField::COLUMN_PREFIX)) {
                     continue;
                 }
 
@@ -92,11 +87,5 @@ final class MetaSync
         }
 
         return ['added' => $added, 'modified' => $modified, 'dropped' => $dropped, 'kept' => $kept];
-    }
-
-    /** @param list<string> $prefixes */
-    private static function hasManagedPrefix(string $column, array $prefixes): bool
-    {
-        return array_any($prefixes, static fn (string $prefix): bool => str_starts_with($column, $prefix));
     }
 }

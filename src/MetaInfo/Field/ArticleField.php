@@ -5,7 +5,6 @@ namespace Redaxo\Core\MetaInfo\Field;
 use Redaxo\Core\Database\Column;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\MetaInfo\MetaContext;
-use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\RexVar\LinkListVar;
 use Redaxo\Core\RexVar\LinkVar;
 
@@ -37,17 +36,17 @@ class ArticleField extends MetaField
         parent::__construct($name, $label, $note, $required, translatable: $translatable);
     }
 
-    public function column(MetaEntity $entity): ?Column
+    public function column(): ?Column
     {
         // A single article is just an id; multiple ids stay short enough for a varchar.
         return $this->multiple
-            ? Column::varchar($this->columnName($entity), 255, nullable: true)
-            : Column::int($this->columnName($entity), nullable: true);
+            ? Column::varchar($this->columnName(), 255, nullable: true)
+            : Column::int($this->columnName(), nullable: true);
     }
 
     public function parseRequest(MetaContext $context): int|string|null
     {
-        $value = Request::post($this->columnName($context->entity), 'string', '');
+        $value = Request::post($this->columnName(), 'string', '');
 
         if ($this->multiple) {
             return $value;
@@ -73,7 +72,7 @@ class ArticleField extends MetaField
     {
         $category = $this->category ?? $context->category?->id;
 
-        $name = $this->columnName($context->entity);
+        $name = $this->columnName();
         $id = ++self::$widgetCounter;
         $value = (string) $context->value($this);
 

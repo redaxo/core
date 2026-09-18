@@ -22,8 +22,11 @@ use function sprintf;
  */
 abstract class MetaField
 {
+    /** Prefix every meta column carries, so that meta columns are distinguishable from the columns owned by core. */
+    public const string COLUMN_PREFIX = 'meta_';
+
     public function __construct(
-        /** Field name without the entity prefix. */
+        /** Field name without the column prefix. */
         public readonly string $name,
         public readonly string $label,
         public readonly ?string $note = null,
@@ -36,17 +39,17 @@ abstract class MetaField
         public readonly bool $translatable = false,
     ) {}
 
-    /** Full column name including the entity prefix. */
-    final public function columnName(MetaEntity $entity): string
+    /** Full column name including the {@see self::COLUMN_PREFIX}. */
+    final public function columnName(): string
     {
-        return $entity->prefix() . $this->name;
+        return self::COLUMN_PREFIX . $this->name;
     }
 
     /**
      * The database column backing this field, or `null` if the field stores no value
      * (e.g. a {@see Fieldset}). Used by the migrate column sync.
      */
-    abstract public function column(MetaEntity $entity): ?Column;
+    abstract public function column(): ?Column;
 
     /** Renders the form control only (without label/note wrapper). */
     abstract public function renderInput(MetaContext $context): string;
@@ -65,7 +68,7 @@ abstract class MetaField
 
         return sprintf(
             '<div class="form-group"><label for="%s">%s</label>%s%s</div>',
-            escape($this->columnName($context->entity)),
+            escape($this->columnName()),
             escape($this->label),
             $this->renderInput($context),
             $note,
@@ -75,7 +78,7 @@ abstract class MetaField
     /** Reads and normalises the submitted value into its DB representation. */
     public function parseRequest(MetaContext $context): int|string|null
     {
-        return Request::post($this->columnName($context->entity), 'string', '');
+        return Request::post($this->columnName(), 'string', '');
     }
 
     /** Converts the stored DB value into the value exposed to the application (e.g. `getValue()`). */

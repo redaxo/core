@@ -14,8 +14,6 @@ use function in_array;
  */
 final class Article extends StructureElement
 {
-    protected string $metaInfoPrefix = 'art_';
-
     public readonly ?int $categoryId;
     public readonly ?string $templateKey;
     public readonly bool $startArticle;
