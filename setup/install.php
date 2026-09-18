@@ -228,6 +228,8 @@ Table::get('rex_article_slice_history')
     ->ensureGlobalColumns()
     ->ensureColumn(Column::tinyint('revision', unsigned: true))
     ->ensureIndex(new Index('snapshot', ['article_id', 'language_id', 'revision', 'history_date']))
+    // the cleanup cronjob deletes the old tail of this ever-growing table by date alone
+    ->ensureIndex(new Index('history_date', ['history_date']))
     ->ensureForeignKeyTo('rex_article_translation', ['article_id' => 'article_id', 'language_id' => 'language_id'], onDelete: ForeignKey::CASCADE)
     ->ensure();
 
