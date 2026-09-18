@@ -3,13 +3,10 @@
 namespace Redaxo\Core\Content;
 
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Database\Table;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
-
-use function in_array;
 
 final class ArticleCache
 {
@@ -58,6 +55,7 @@ final class ArticleCache
             }
 
             File::delete($cachePath . $id . '.' . $otherClangId . '.article');
+            File::delete($cachePath . $id . '.' . $otherClangId . '.category');
             Article::clearInstance([$id, $otherClangId]);
             Category::clearInstance([$id, $otherClangId]);
         }
@@ -121,49 +119,83 @@ final class ArticleCache
             return false;
         }
 
-        // one cache file per language, holding the article and (for a start article) the category columns of that
-        // language in one flat row
-        $qry = '
-            SELECT a.*, t.*, c.id IS NOT NULL AS startarticle,
-                c.priority AS catpriority, ct.name AS catname,
-                c.createdate AS catcreatedate, c.createuser AS catcreateuser, c.updatedate AS catupdatedate, c.updateuser AS catupdateuser' . self::categoryMetaColumns() . '
-            FROM rex_article a
-            JOIN rex_article_translation t ON t.article_id = a.id
-            LEFT JOIN rex_category c ON c.id = a.id
-            LEFT JOIN rex_category_translation ct ON ct.category_id = c.id AND ct.language_id = t.language_id
-            WHERE a.id = ?
-        ';
-        $params = [$articleId];
-        if (null !== $languageId) {
-            $qry .= ' AND t.language_id = ?';
-            $params[] = $languageId;
+        $cachePath = Path::coreCache('structure/');
+
+        $categories = [];
+        foreach (self::selectRows('rex_category', 'rex_category_translation', 'category_id', $articleId, $languageId) as $row) {
+            $categories[(int) $row['language_id']] = $row;
         }
 
-        $sql = Sql::factory();
-        $sql->setQuery($qry, $params);
-        $fieldnames = $sql->getFieldnames();
-        foreach ($sql as $row) {
-            $rowLanguageId = $row->getValue('language_id');
+        foreach (self::selectRows('rex_article', 'rex_article_translation', 'article_id', $articleId, $languageId) as $article) {
+            $rowLanguageId = (int) $article['language_id'];
+            $category = $categories[$rowLanguageId] ?? null;
+            $article['startarticle'] = (int) (null !== $category);
 
-            // --------------------------------------------------- Artikelparameter speichern
-            $params = [];
-            foreach ($fieldnames as $field) {
-                if ('article_id' === $field) {
-                    continue;
-                }
-                $params[$field] = match ($field) {
-                    'createdate', 'updatedate', 'catcreatedate', 'catupdatedate' => $row->getDateTimeValue($field),
-                    default => $row->getValue($field),
-                };
+            if (!File::putCache($cachePath . $articleId . '.' . $rowLanguageId . '.article', $article)) {
+                return I18n::msg('article_could_not_be_generated') . ' ' . I18n::msg('check_rights_in_directory') . $cachePath;
             }
 
-            $articleFile = Path::coreCache('structure/' . $articleId . '.' . $rowLanguageId . '.article');
-            if (!File::putCache($articleFile, $params)) {
-                return I18n::msg('article_could_not_be_generated') . ' ' . I18n::msg('check_rights_in_directory') . Path::coreCache('structure/');
+            if (null === $category) {
+                continue;
+            }
+
+            // parent, path and status belong to the start article; they are copied over so that a category can be
+            // built from its own cache file alone
+            $category['parent_id'] = $article['parent_id'];
+            $category['path'] = $article['path'];
+            $category['status'] = $article['status'];
+
+            if (!File::putCache($cachePath . $articleId . '.' . $rowLanguageId . '.category', $category)) {
+                return I18n::msg('article_could_not_be_generated') . ' ' . I18n::msg('check_rights_in_directory') . $cachePath;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Reads the rows of a structure table joined with its translation table, one flat row per language.
+     *
+     * @param non-empty-string $table
+     * @param non-empty-string $translationTable
+     * @param non-empty-string $foreignKey name of the column referencing $table in $translationTable
+     *
+     * @return list<array<string, scalar|null>>
+     */
+    private static function selectRows(string $table, string $translationTable, string $foreignKey, int $id, ?int $languageId): array
+    {
+        $query = '
+            SELECT e.*, t.*
+            FROM ' . $table . ' e
+            JOIN ' . $translationTable . ' t ON t.' . $foreignKey . ' = e.id
+            WHERE e.id = ?
+        ';
+        $params = [$id];
+        if (null !== $languageId) {
+            $query .= ' AND t.language_id = ?';
+            $params[] = $languageId;
+        }
+
+        $sql = Sql::factory();
+        $sql->setQuery($query, $params);
+        $fieldnames = $sql->getFieldnames();
+
+        $rows = [];
+        foreach ($sql as $row) {
+            $values = [];
+            foreach ($fieldnames as $field) {
+                if ($foreignKey === $field) {
+                    continue;
+                }
+                $values[$field] = match ($field) {
+                    'createdate', 'updatedate' => $row->getDateTimeValue($field),
+                    default => $row->getValue($field),
+                };
+            }
+            $rows[] = $values;
+        }
+
+        return $rows;
     }
 
     /**
@@ -227,25 +259,5 @@ final class ArticleCache
         }
 
         return true;
-    }
-
-    /**
-     * The meta columns of the category tables as select list, to be appended to the article columns.
-     *
-     * The other category columns are mapped explicitly, as their names collide with the article columns.
-     */
-    private static function categoryMetaColumns(): string
-    {
-        $select = '';
-        foreach (['c' => 'rex_category', 'ct' => 'rex_category_translation'] as $alias => $table) {
-            foreach (array_keys(Table::get($table)->getColumns()) as $column) {
-                if (in_array($column, ['id', 'priority', 'category_id', 'language_id', 'name', 'createdate', 'createuser', 'updatedate', 'updateuser'], true)) {
-                    continue;
-                }
-                $select .= ', ' . $alias . '.' . $column;
-            }
-        }
-
-        return $select;
     }
 }

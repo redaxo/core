@@ -23,15 +23,6 @@ final class Article extends StructureElement
     /** @param array<string, string|int|null> $data */
     private function __construct(array $data)
     {
-        // strip irrelevant + Category-only fields up front; the rest gets explicitly
-        // pulled into typed properties below, what remains lands in additionalData.
-        unset($data['catname'], $data['catpriority'], $data['catcreatedate'], $data['catcreateuser'], $data['catupdatedate'], $data['catupdateuser']);
-        foreach (array_keys($data) as $key) {
-            if (str_starts_with((string) $key, 'cat_')) {
-                unset($data[$key]);
-            }
-        }
-
         $getAndUnset = static function (string $key) use (&$data): string|int|null {
             $value = $data[$key] ?? null;
             unset($data[$key]);
@@ -42,8 +33,7 @@ final class Article extends StructureElement
         $parentId = $getAndUnset('parent_id');
         $startArticle = (bool) $getAndUnset('startarticle');
         $path = array_map('intval', array_filter(explode('|', (string) $getAndUnset('path'))));
-        // start-articles share the cache row with their category; their DB path
-        // only includes ancestor categories, so add their own id to keep the
+        // the stored path only contains the ancestor categories, so a start article adds its own id to keep the
         // semantic "all category ids on the way to this element"
         if ($startArticle) {
             $path[] = $id;
@@ -66,6 +56,12 @@ final class Article extends StructureElement
         $this->categoryId = $startArticle ? $id : (null === $parentId ? null : (int) $parentId);
         $this->templateKey = null === ($t = $getAndUnset('template')) ? null : (string) $t;
         $this->startArticle = $startArticle;
+    }
+
+    #[Override]
+    protected static function cacheFileSuffix(): string
+    {
+        return 'article';
     }
 
     /** @param array<string, string|int|null> $data */

@@ -20,17 +20,6 @@ final class Category extends StructureElement
     /** @param array<string, string|int|null> $data */
     private function __construct(array $data)
     {
-        // strip irrelevant + Article-only fields up front
-        unset(
-            $data['name'], $data['priority'], $data['template'], $data['startarticle'],
-            $data['createdate'], $data['createuser'], $data['updatedate'], $data['updateuser'],
-        );
-        foreach (array_keys($data) as $key) {
-            if (str_starts_with((string) $key, 'art_')) {
-                unset($data[$key]);
-            }
-        }
-
         $getAndUnset = static function (string $key) use (&$data): string|int|null {
             $value = $data[$key] ?? null;
             unset($data[$key]);
@@ -42,29 +31,30 @@ final class Category extends StructureElement
         parent::__construct(
             id: (int) $getAndUnset('id'),
             languageId: (int) $getAndUnset('language_id'),
-            name: (string) $getAndUnset('catname'),
-            priority: (int) $getAndUnset('catpriority'),
+            name: (string) $getAndUnset('name'),
+            priority: (int) $getAndUnset('priority'),
             path: array_values(array_map('intval', array_filter(explode('|', (string) $getAndUnset('path'))))),
             status: (int) $getAndUnset('status'),
-            createDate: (int) $getAndUnset('catcreatedate'),
-            updateDate: (int) $getAndUnset('catupdatedate'),
-            createUser: (string) $getAndUnset('catcreateuser'),
-            updateUser: (string) $getAndUnset('catupdateuser'),
+            createDate: (int) $getAndUnset('createdate'),
+            updateDate: (int) $getAndUnset('updatedate'),
+            createUser: (string) $getAndUnset('createuser'),
+            updateUser: (string) $getAndUnset('updateuser'),
             additionalData: $data,
         );
 
         $this->parentId = null === $parentId ? null : (int) $parentId;
     }
 
+    #[Override]
+    protected static function cacheFileSuffix(): string
+    {
+        return 'category';
+    }
+
     /** @param array<string, string|int|null> $data */
     #[Override]
-    protected static function fromCache(array $data): ?static
+    protected static function fromCache(array $data): static
     {
-        // categories only exist for start-articles (which share their cache row)
-        if (!$data['startarticle']) {
-            return null;
-        }
-
         return new self($data);
     }
 

@@ -22,8 +22,6 @@ final class ArticleContentTest extends TestCase
             'id' => 1,
             'parent_id' => null,
             'name' => 'Testarticle',
-            'catname' => 'Testcategory',
-            'catpriority' => 1,
             'startarticle' => 1,
             'priority' => 1,
             'path' => '|',
