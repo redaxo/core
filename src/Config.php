@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core;
 
+use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Exception\CouldNotConnectException;
 use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
@@ -241,6 +242,12 @@ final class Config
     {
         // check if we can load the config from the filesystem
         if (self::loadFromFile()) {
+            return;
+        }
+
+        // Without a configured connection there is nothing to read from, which is not Config's to report:
+        // whatever actually needs the database says so, and the backend points the way (see WebRunner).
+        if (!ConnectionConfig::exists()) {
             return;
         }
 

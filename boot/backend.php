@@ -25,6 +25,7 @@ use Redaxo\Core\Language\Language;
 use Redaxo\Core\MetaInfo\Handler\CategoryHandler as MetaInfoCategoryHandler;
 use Redaxo\Core\MetaInfo\Handler\LanguageHandler as MetaInfoLanguageHandler;
 use Redaxo\Core\MetaInfo\Handler\MediaHandler as MetaInfoMediaHandler;
+use Redaxo\Core\Migration\WebRunner;
 use Redaxo\Core\Mode;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
@@ -44,6 +45,17 @@ header('X-Frame-Options: SAMEORIGIN');
 header("Content-Security-Policy: frame-ancestors 'self'");
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: no-referrer');
+
+// Deliberately before anything that expects a usable database or a booted addon: this is the entry point for
+// instances that are deployed without shell access, and its whole job is to get the schema in shape.
+if (WebRunner::isRequested()) {
+    WebRunner::handle();
+}
+
+// Nothing to log into yet, so say what is missing instead of failing somewhere down in the login.
+if (WebRunner::isInstallationPending()) {
+    WebRunner::showGettingStarted();
+}
 
 // assets which are passed with a cachebuster will be cached very long,
 // as we assume their url will change when the underlying content changes

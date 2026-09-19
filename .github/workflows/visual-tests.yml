@@ -85,21 +85,23 @@ jobs:
             -   name: Composer install
                 uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
-            -   name: Init database
+            -   name: Configure instance
                 run: |
                     sudo /etc/init.d/mysql start
-                    mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo6;'
-                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
+                    # setup is what writes the connection to .env.local and the config.yml, so it runs even
+                    # though the database it fills on the way is emptied again before the first screenshots
+                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=yes --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
                     php project/bin/console migrate -n --ansi -v
                     php project/bin/console config:set --type boolean debug.enabled true -v
                     php project/bin/console config:set --type boolean debug.throw_always_exception true -v
 
-            -   name: Import mock data
+            -   name: Prepare mock data
                 run: |
-                    echo "REX_INSTANCE_COLOR='#3bb594'" > project/.env.local
+                    echo "REX_INSTANCE_COLOR='#3bb594'" >> project/.env.local
+                    echo "REX_MIGRATE_TOKEN=visual-test-token" >> project/.env.local
                     mkdir -p $GITHUB_WORKSPACE/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/project/var/data/core/backup/
                     cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/project/public/media/
-                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
+
             -   name: Start php server
                 run: |
                     cat <<EOF > project/public/router.php
@@ -111,7 +113,17 @@ jobs:
 
             -   name: Take screenshots (differential)
                 run: |
+                    # A fresh installation first: everything but the configuration is gone, and the endpoint
+                    # being recorded is what installs the instance the rest of the run works with.
+                    mysql -uroot -h127.0.0.1 -proot -e 'drop database redaxo6; create database redaxo6;'
+                    php project/bin/console cache:clear --ansi -v
+                    node .tools/visual-tests/visual-record.js migrate-install
+
+                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
+
+                    node .tools/visual-tests/visual-record.js migrate-update
                     node .tools/visual-tests/visual-record.js
+
                     git add .tools/visual-tests/screenshots/
                     git diff --cached --exit-code --name-only .tools/visual-tests/screenshots/
 
