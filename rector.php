@@ -628,6 +628,8 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getForceRenewAfter', 'forceRenewAfter'),
         new MethodCallToPropertyFetch(Security\BackendPasswordPolicy::class, 'getBlockAccountAfter', 'blockAccountAfter'),
 
+        new MethodCallToPropertyFetch(Security\Login::class, 'getMessage', 'message'),
+
         new MethodCallToPropertyFetch(Security\LoginPolicy::class, 'getMaxTriesUntilDelay', 'maxTriesUntilDelay'),
         new MethodCallToPropertyFetch(Security\LoginPolicy::class, 'getMaxTriesUntilBlock', 'maxTriesUntilBlock'),
         new MethodCallToPropertyFetch(Security\LoginPolicy::class, 'getReloginDelay', 'reloginDelay'),

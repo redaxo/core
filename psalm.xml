@@ -51,14 +51,6 @@
     </plugins>
     <issueHandlers>
         <Trace errorLevel="error"/> <!-- https://psalm.dev/docs/running_psalm/issues/Trace/ -->
-        <InvalidGlobal>
-            <errorLevel type="info">
-                <file name="boot/backend.php"/>
-                <file name="pages/mediapool/index.php"/>
-                <file name="pages/mediapool/upload.php"/>
-                <file name="pages/login.php"/>
-            </errorLevel>
-        </InvalidGlobal>
 <!-- level 2 issues - slightly lazy code writing, but provably low false-negatives -->
         <ClassMustBeFinal errorLevel="info" />
         <DocblockTypeContradiction errorLevel="info" />
