@@ -137,11 +137,9 @@ if (Core::isSetup()) {
         Response::sendRedirect(Url::backendController(['rex_logged_out' => 1]));
     }
 
-    global $rexUserLoginmessage;
-    $rexUserLoginmessage = '';
-
     if (($rexUserLogin || $passkey) && !CsrfToken::factory('backend_login')->isValid()) {
-        $loginCheck = I18n::msg('csrf_token_invalid');
+        $loginCheck = false;
+        $login->message = I18n::msg('csrf_token_invalid');
     } else {
         $login->setLogin($rexUserLogin, $rexUserPsw);
         $login->setPasskey('' === $passkey ? null : $passkey);
@@ -149,17 +147,9 @@ if (Core::isSetup()) {
         $loginCheck = $login->checkLogin();
     }
 
-    if (true !== $loginCheck) {
+    if (!$loginCheck) {
         if (Request::isXmlHttpRequest()) {
             Response::setStatus(Response::HTTP_UNAUTHORIZED);
-        }
-
-        // login failed
-        $rexUserLoginmessage = $login->getMessage();
-
-        // Fehlermeldung von der Datenbank
-        if (is_string($loginCheck)) {
-            $rexUserLoginmessage = $loginCheck;
         }
 
         $pages['login'] = Controller::getLoginPage();
@@ -203,8 +193,8 @@ if (Core::isSetup()) {
         }
     }
 
-    if ('' === $rexUserLoginmessage && Request::get('rex_logged_out', 'boolean')) {
-        $rexUserLoginmessage = I18n::msg('login_logged_out');
+    if ('' === $login->message && Request::get('rex_logged_out', 'boolean')) {
+        $login->message = I18n::msg('login_logged_out');
     }
 }
 

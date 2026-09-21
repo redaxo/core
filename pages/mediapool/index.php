@@ -14,8 +14,6 @@ use Redaxo\Core\View\View;
 
 use function Redaxo\Core\View\escape;
 
-global $ftitle, $error, $success;
-
 // -------------- Defaults
 $subpage = Controller::getCurrentPagePart(2);
 $func = Request::request('func', 'string');

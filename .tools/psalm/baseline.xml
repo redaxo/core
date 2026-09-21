@@ -740,11 +740,6 @@
       <code><![CDATA[preg_replace('/[^a-zA-Z0-9\-]*/', '', str_replace('_', '-', $p))]]></code>
     </PossiblyNullArgument>
   </file>
-  <file src="pages/login.php">
-    <MixedArgument>
-      <code><![CDATA[$rexUserLoginmessage]]></code>
-    </MixedArgument>
-  </file>
   <file src="pages/mailer/checkmail.php">
     <MixedArgument>
       <code><![CDATA[Core::getConfig('phpmailer_test_address')]]></code>

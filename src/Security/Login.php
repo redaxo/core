@@ -55,7 +55,9 @@ class Login
 
     protected bool $cache = false;
     protected int $loginStatus = 0; // 0 = noch checken, 1 = ok, -1 = not ok
-    protected string $message = '';
+
+    /** Message about the outcome of the current login attempt, rendered on the login page. */
+    public string $message = '';
 
     protected Sql|User|null $user = null;
     protected Sql|User|null $impersonator = null;
@@ -82,12 +84,6 @@ class Login
     public function isLoggedOut(): bool
     {
         return $this->logout;
-    }
-
-    /** Returns the message. */
-    public function getMessage(): string
-    {
-        return $this->message;
     }
 
     /**
