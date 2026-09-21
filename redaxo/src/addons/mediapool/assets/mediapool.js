@@ -107,7 +107,7 @@ function openREXMedialist(id,param)
     var mediaselect = 'REX_MEDIALIST_SELECT_' + id;
     var needle = new getObj(mediaselect);
     var source = needle.obj;
-    var sourcelength = source.options.length;
+    var sourcelength = source?.options?.length ?? 0;
     if ( typeof(param) == 'undefined')
     {
         param = '';
@@ -127,7 +127,7 @@ function viewREXMedialist(id,param)
     var mediaselect = 'REX_MEDIALIST_SELECT_' + id;
     var needle = new getObj(mediaselect);
     var source = needle.obj;
-    var sourcelength = source.options.length;
+    var sourcelength = source?.options?.length ?? 0;
     if ( typeof(param) == 'undefined')
     {
         param = '';
