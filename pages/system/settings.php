@@ -18,7 +18,6 @@ use Redaxo\Core\Form\Select\Select;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Security\CsrfToken;
-use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Type;
@@ -37,13 +36,6 @@ $csrfToken = CsrfToken::factory('system');
 
 if ($func && !$csrfToken->isValid()) {
     $error[] = I18n::msg('csrf_token_invalid');
-} elseif ('setup' == $func && !Core::isHardenedMode()) {
-    // REACTIVATE SETUP
-    if (false !== $url = Setup::startWithToken()) {
-        header('Location:' . $url);
-        exit;
-    }
-    $error[] = I18n::msg('setup_error2');
 } elseif ('generate' == $func) {
     // generate all articles,cats,templates,caches
     $success = Cache::delete();
@@ -200,12 +192,6 @@ if (!Core::isHardenedMode()) {
         $content .= '
         <p><a class="btn btn-safemode-activate" href="' . $safemodeUrl . '" data-pjax="false">' . (Core::isSafeMode() ? I18n::msg('safemode_deactivate') : I18n::msg('safemode_activate')) . '</a></p>';
     }
-
-    $content .= '
-
-        <h3>' . I18n::msg('setup') . '</h3>
-        <p>' . I18n::msg('setup_text') . '</p>
-        <p><a class="btn btn-setup" href="' . Url::currentBackendPage(['func' => 'setup'] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('setup_restart') . '?" data-pjax="false">' . I18n::msg('setup') . '</a></p>';
 }
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('system_features'));

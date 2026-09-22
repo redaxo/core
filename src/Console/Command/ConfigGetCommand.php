@@ -18,12 +18,12 @@ use function is_array;
  * @internal
  */
 #[AsCommand(name: 'config:get', description: 'Get config variables')]
-final class ConfigGetCommand extends AbstractCommand implements StandaloneInterface, AvailableInSetupInterface
+final class ConfigGetCommand extends AbstractCommand implements StandaloneInterface
 {
     public function __invoke(
         SymfonyStyle $io,
         OutputInterface $output,
-        #[Argument('config path separated by periods, e.g. "setup" or "db.1.host"')] string $key,
+        #[Argument('config path separated by periods, e.g. "servername"')] string $key,
         #[Option('addon to inspect, defaults to redaxo-core', name: 'addon', shortcut: 'p')] string $package = 'core',
     ): int {
         if (!$key) {

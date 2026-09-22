@@ -30,7 +30,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use function array_key_exists;
 use function count;
 use function in_array;
-use function is_array;
 use function is_string;
 use function sprintf;
 
@@ -40,7 +39,7 @@ use const PHP_VERSION;
  * @internal
  */
 #[AsCommand(name: 'setup', description: 'Sets up this installation')]
-final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInterface, AvailableInSetupInterface
+final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInterface
 {
     private SymfonyStyle $io;
     private InputInterface $input;
@@ -77,20 +76,9 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
         $configFile = Path::coreData('config.yml');
         /**
          * @var array{
-         *     setup: bool,
          *     server: string|null,
          *     servername: string|null,
          *     error_email: string|null,
-         *     db: array{1?: array{
-         *         host: string|null,
-         *         login: string|null,
-         *         password: string|null,
-         *         name: string|null,
-         *         ssl_ca?: string|bool|null,
-         *         ssl_key?: string|null,
-         *         ssl_cert?: string|null,
-         *         ssl_verify_server_cert?: bool
-         *     }},
          * } $config
          */
         $config = array_merge(
@@ -475,7 +463,6 @@ final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInter
 
         // ---------------------------------- last step. save config
 
-        $config['setup'] = is_array($config['setup']) ? $config['setup'] : false;
         if (!File::putConfig($configFile, $config)) {
             $io->error('Writing to config.yml failed.');
             return Command::FAILURE;

@@ -7,6 +7,9 @@
  * 4. Make sure a admin-user with login `myusername` and password `mypassword` exists
  * 5. Make sure the REDAXO instance running at START_URL is accessible and login screen appears on the url
  * 6. Start the visual recording with `node .tools/visual-tests/visual-record.js`
+ *
+ * The migration pages need instance states the regular run must not be left in - an empty database, no user -
+ * so they are recorded by separate runs, see SCOPES below.
  */
 
 import playwright from 'playwright';
@@ -22,10 +25,19 @@ const START_URL = 'http://localhost:8080/redaxo/index.php';
 const DEBUGGING = false;
 const WORKING_DIR = '.tests-visual/';
 const GOLDEN_SAMPLES_DIR = '.tools/visual-tests/screenshots/';
+// matches REX_MIGRATE_TOKEN as the workflow sets it for the migration runs
+const MIGRATE_TOKEN = 'visual-test-token';
+
+// Each scope records its own set of screenshots, recognizable by the file prefix, and cleans up stale files
+// only within that set. Without a scope everything else is recorded.
+const SCOPES = {
+    'migrate-install': 'migrate_install',
+    'migrate-update': 'migrate_update',
+};
 
 const myArgs = process.argv.slice(2);
+const scope = myArgs.find(arg => arg in SCOPES) ?? null;
 let minDiffPixels = 1;
-let isSetup = false;
 //  overall exit-code
 let exitCode = 0;
 const expectedFiles = new Set();
@@ -34,10 +46,13 @@ if (myArgs.includes('regenerate-all')) {
     // force sample-regeneration, even if pixelmatch() thinks nothing changed
     minDiffPixels = 0;
 }
-if (myArgs.includes('setup')) {
-    isSetup = true;
-}
 const MIN_DIFF_PIXELS = minDiffPixels;
+
+function isRecordedByThisRun(file) {
+    return scope
+        ? file.startsWith(SCOPES[scope])
+        : !Object.values(SCOPES).some(prefix => file.startsWith(prefix));
+}
 
 // all pages
 const allPages = {
@@ -110,8 +125,6 @@ async function processScreenshot(page, screenshotName) {
     await page.evaluate(function() {
         var changingElements = [
             '.rex-js-script-time',
-            '#rex-page-setup .panel-success li:first-child b',
-            '.rex-js-setup-step-4 .form-control-static',
             'td[data-title="Letzter Login"]',
             '#rex-form-exportfilename',
             '#rex-page-system-settings .col-lg-4 td',
@@ -276,111 +289,126 @@ async function main() {
     );
     const context = await browser.newContext();
 
-    switch (true) {
+    let page = await context.newPage();
+    setupPageConsoleLogging(page);
+    await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
 
-        case isSetup: {
-            let page = await context.newPage();
-            setupPageConsoleLogging(page);
-            await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+    if (scope) {
+        await recordMigrationPages(page);
 
-            // setup step 1
-            await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-            await createScreenshots(page, 'setup.png');
+        await page.close();
+        await context.close();
+        await browser.close();
 
-            // setup steps 2-5
-            for (var step = 2; step <= 5; step++) {
-                // step 2: wait until `networkidle0` to finish AJAX requests, see https://github.com/puppeteer/puppeteer/blob/main/docs/api.md#pagegotourl-options
-                await goToUrlOrThrow(page, START_URL + '?page=setup&lang=de_de&step=' + step, { waitUntil: step === 2 ? 'networkidle0' : 'load'});
-                await createScreenshots(page, 'setup_' + step + '.png');
-            }
-
-            // step 6
-            // requires form in step 5 to be submitted
-            await page.$eval('.rex-js-createadminform', form => form.submit());
-            await page.waitForTimeout(200);
-            await createScreenshots(page, 'setup_6.png');
-
-            await page.close();
-            break;
-        }
-
-        default: {
-            let page = await context.newPage();
-            setupPageConsoleLogging(page);
-            await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
-
-            // login page
-            await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-            await page.waitForSelector('.rex-background--ready');
-            await page.waitForTimeout(200); // wait for bg image to fade in
-            await createScreenshots(page, 'login.png');
-
-            // login successful
-            await logIntoBackend(page);
-            await createScreenshots(page, 'index.png');
-
-            // run through all pages in parallel
-            await processAllPagesParallel(browser);
-
-            // the following steps have side effects and must run sequentially on a single page
-
-            await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
-            await createScreenshots(page, 'users_edit.png');
-
-            // test safe mode
-            await goToUrlOrThrow(page, START_URL + '?page=system/settings', { waitUntil: 'load' });
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: 'load' }),
-                page.click('.btn-safemode-activate') // enable safe mode
-            ]);
-            await createScreenshots(page, 'system_settings_safemode.png');
-            await Promise.all([
-                page.waitForNavigation({ waitUntil: 'load' }),
-                page.click('.btn-safemode-deactivate') // disable safe mode again
-            ]);
-
-            // test debug
-            const debugApiPattern = /rex-api-call=debug/;
-            const abortDebugApi = route => route.abort();
-            await page.route(debugApiPattern, abortDebugApi);
-            await goToUrlOrThrow(page, START_URL + '?page=debug', { waitUntil: 'load' });
-            await createScreenshots(page, 'debug_clockwork.png');
-            await page.unroute(debugApiPattern, abortDebugApi);
-
-            // the debug page is the bare clockwork ui, so get back to a page that has the backend chrome
-            await goToUrlOrThrow(page, START_URL + '?page=structure', { waitUntil: 'load' });
-
-            // logout
-            await page.click('#rex-js-nav-top .rex-logout');
-            await page.waitForSelector('.rex-background--ready');
-            await page.waitForTimeout(200); // wait for bg image to fade in
-            await createScreenshots(page, 'logout.png');
-
-            await page.close();
-            break;
-        }
+        cleanUpStaleScreenshots();
+        process.exit(exitCode);
     }
+
+    // login page
+    await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
+    await page.waitForSelector('.rex-background--ready');
+    await page.waitForTimeout(200); // wait for bg image to fade in
+    await createScreenshots(page, 'login.png');
+
+    // login successful
+    await logIntoBackend(page);
+    await createScreenshots(page, 'index.png');
+
+    // run through all pages in parallel
+    await processAllPagesParallel(browser);
+
+    // the following steps have side effects and must run sequentially on a single page
+
+    await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
+    await createScreenshots(page, 'users_edit.png');
+
+    // test safe mode
+    await goToUrlOrThrow(page, START_URL + '?page=system/settings', { waitUntil: 'load' });
+    await Promise.all([
+        page.waitForNavigation({ waitUntil: 'load' }),
+        page.click('.btn-safemode-activate') // enable safe mode
+    ]);
+    await createScreenshots(page, 'system_settings_safemode.png');
+    await Promise.all([
+        page.waitForNavigation({ waitUntil: 'load' }),
+        page.click('.btn-safemode-deactivate') // disable safe mode again
+    ]);
+
+    // test debug
+    const debugApiPattern = /rex-api-call=debug/;
+    const abortDebugApi = route => route.abort();
+    await page.route(debugApiPattern, abortDebugApi);
+    await goToUrlOrThrow(page, START_URL + '?page=debug', { waitUntil: 'load' });
+    await createScreenshots(page, 'debug_clockwork.png');
+    await page.unroute(debugApiPattern, abortDebugApi);
+
+    // the debug page is the bare clockwork ui, so get back to a page that has the backend chrome
+    await goToUrlOrThrow(page, START_URL + '?page=structure', { waitUntil: 'load' });
+
+    // logout
+    await page.click('#rex-js-nav-top .rex-logout');
+    await page.waitForSelector('.rex-background--ready');
+    await page.waitForTimeout(200); // wait for bg image to fade in
+    await createScreenshots(page, 'logout.png');
+
+    await page.close();
 
     await context.close();
     await browser.close();
 
-    // delete stale screenshots that are no longer generated by this run
-    if (fs.existsSync(GOLDEN_SAMPLES_DIR)) {
-        for (const file of fs.readdirSync(GOLDEN_SAMPLES_DIR)) {
-            if (!file.endsWith('.png') || expectedFiles.has(file)) {
-                continue;
-            }
-            // setup and default run as separate processes,
-            // so only clean up files matching the current run's scope
-            if (isSetup !== file.startsWith('setup')) {
-                continue;
-            }
-            console.log('DELETING STALE SCREENSHOT: ' + file);
-            fs.unlinkSync(GOLDEN_SAMPLES_DIR + file);
-        }
+    cleanUpStaleScreenshots();
+    process.exit(exitCode);
+}
+
+function cleanUpStaleScreenshots() {
+    if (!fs.existsSync(GOLDEN_SAMPLES_DIR)) {
+        return;
     }
 
-    process.exit(exitCode);
+    for (const file of fs.readdirSync(GOLDEN_SAMPLES_DIR)) {
+        if (!file.endsWith('.png') || expectedFiles.has(file) || !isRecordedByThisRun(file)) {
+            continue;
+        }
+        console.log('DELETING STALE SCREENSHOT: ' + file);
+        fs.unlinkSync(GOLDEN_SAMPLES_DIR + file);
+    }
+}
+
+/**
+ * The token-gated migration endpoint, in the two states it appears in: on a fresh instance, where it also
+ * creates the first admin, and on an instance that is only being brought up to date.
+ */
+async function recordMigrationPages(page) {
+    const endpointUrl = START_URL + '?rex_migrate=' + MIGRATE_TOKEN;
+
+    if ('migrate-install' === scope) {
+        // this run works against an empty database, so the backend shows the way instead of a login
+        await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
+        await createScreenshots(page, 'migrate_install_notice.png');
+
+        await goToUrlOrThrow(page, endpointUrl, { waitUntil: 'load' });
+        await createScreenshots(page, 'migrate_install_form.png');
+
+        await page.fill('#login', 'myusername');
+        await page.fill('#password', 'mypassword');
+        await submitForm(page);
+        await createScreenshots(page, 'migrate_install_result.png');
+
+        return;
+    }
+
+    await goToUrlOrThrow(page, endpointUrl, { waitUntil: 'load' });
+    await createScreenshots(page, 'migrate_update_form.png');
+
+    await submitForm(page);
+    await createScreenshots(page, 'migrate_update_result.png');
+}
+
+async function submitForm(page) {
+    await Promise.all([
+        page.waitForNavigation({ waitUntil: 'load' }),
+        page.$eval('form', form => form.submit()),
+    ]);
 }
 
 // print uncaught exceptions and make github action fail

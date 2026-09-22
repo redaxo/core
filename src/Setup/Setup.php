@@ -2,20 +2,13 @@
 
 namespace Redaxo\Core\Setup;
 
-use DateTimeImmutable;
 use Redaxo\Core\Cache;
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\ConnectionConfig;
-use Redaxo\Core\Database\Exception\CouldNotConnectException;
-use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\Dir;
-use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
-use Redaxo\Core\Filesystem\Url;
-use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
@@ -27,7 +20,6 @@ use function extension_loaded;
 use function function_exists;
 use function in_array;
 use function ini_get;
-use function is_array;
 use function sprintf;
 
 use const PHP_OS;
@@ -48,14 +40,9 @@ final class Setup
     /** no-password placeholder required to support empty passwords/clearing the password. */
     public const DEFAULT_DUMMY_PASSWORD = '-REDAXO-DEFAULT-DUMMY-PASSWORD-';
 
-    public const DB_MODE_SETUP_NO_OVERRIDE = 0;
-    public const DB_MODE_SETUP_AND_OVERRIDE = 1;
-    public const DB_MODE_SETUP_SKIP = 2;
-    public const DB_MODE_SETUP_IMPORT_BACKUP = 3;
-
     private function __construct() {}
 
-    /** very basic setup steps, so everything is in place for our browser-based setup wizard. */
+    /** Prepares the filesystem for a fresh installation. */
     public static function init(): void
     {
         // initial purge all generated files
@@ -292,137 +279,5 @@ final class Setup
         }
 
         return $security;
-    }
-
-    /**
-     * Returns true when we are running the very first setup for this instance.
-     * Otherwise false is returned, e.g. when setup was re-started from the core/systems page.
-     */
-    public static function isInitialSetup(): bool
-    {
-        /** @var bool|null $initial */
-        static $initial;
-
-        if (null !== $initial) {
-            return $initial;
-        }
-
-        try {
-            $userSql = Sql::factory();
-            $userSql->setQuery('select * from rex_user LIMIT 1');
-
-            return $initial = 0 == $userSql->getRows();
-        } catch (CouldNotConnectException) {
-            return $initial = true;
-        } catch (SqlException $e) {
-            if (Sql::ERRNO_TABLE_OR_VIEW_DOESNT_EXIST === $e->sql?->getErrno()) {
-                return $initial = true;
-            }
-            throw $e;
-        }
-    }
-
-    /** @return string|false Single-User-Setup URL or `false` on failure */
-    public static function startWithToken(): string|false
-    {
-        $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
-
-        $configFile = Path::coreData('config.yml');
-        $config = File::getConfig($configFile);
-
-        $config['setup'] = isset($config['setup']) && is_array($config['setup']) ? $config['setup'] : [];
-        $config['setup'][$token] = new DateTimeImmutable('+1 hour')->format('Y-m-d H:i:s');
-
-        if (!File::putConfig($configFile, $config)) {
-            return false;
-        }
-
-        return Url::backendPage('setup', ['setup_token' => $token]);
-    }
-
-    public static function isEnabled(): bool
-    {
-        $setup = Core::getProperty('setup', false);
-
-        if (!is_array($setup)) {
-            // system wide setup
-            return (bool) $setup;
-        }
-
-        $currentToken = self::getToken();
-
-        if (!$currentToken && Core::isFrontend()) {
-            // no token in url, fast fail in frontend
-            // (in backend all existing tokens are revalidated below)
-            return false;
-        }
-
-        // invalidate expired tokens
-        $updated = false;
-        foreach ($setup as $token => $expire) {
-            if (strtotime((string) $expire) < time()) {
-                unset($setup[$token]);
-                $updated = true;
-            }
-        }
-
-        if ($updated) {
-            $configFile = Path::coreData('config.yml');
-            $config = File::getConfig($configFile);
-            $config['setup'] = $setup ?: false;
-            File::putConfig($configFile, $config);
-        }
-
-        return isset($setup[$currentToken]);
-    }
-
-    public static function getContext(): Context
-    {
-        $context = new Context([
-            'page' => 'setup',
-            'lang' => Request::request('lang', 'string', ''),
-            'step' => Request::request('step', 'int', 1),
-        ]);
-
-        if ($token = self::getToken()) {
-            $context->setParam('setup_token', $token);
-        }
-
-        return $context;
-    }
-
-    /** Mark the setup as completed. */
-    public static function markSetupCompleted(): bool
-    {
-        $configFile = Path::coreData('config.yml');
-        $config = array_merge(
-            File::getConfig(Path::core('setup/default.config.yml')),
-            File::getConfig($configFile),
-        );
-
-        if (is_array($config['setup'])) {
-            // remove current token
-            if ($token = self::getToken()) {
-                unset($config['setup'][$token]);
-            }
-
-            // if array is empty now, convert it to global `false` value
-            $config['setup'] = $config['setup'] ?: false;
-        } else {
-            $config['setup'] = false;
-        }
-
-        $configWritten = File::putConfig($configFile, $config);
-
-        if ($configWritten) {
-            File::delete(Path::coreCache('config.yml.cache'));
-        }
-
-        return $configWritten;
-    }
-
-    private static function getToken(): ?string
-    {
-        return Request::get('setup_token', 'string', null);
     }
 }

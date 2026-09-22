@@ -25,7 +25,7 @@ final class ConfigGetCommandTest extends TestCase
     public static function dataKeyFound(): array
     {
         return [
-            ["false\n", 'setup'],
+            ["[]\n", 'setup_addons'],
         ];
     }
 

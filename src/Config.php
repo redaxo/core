@@ -2,12 +2,14 @@
 
 namespace Redaxo\Core;
 
+use Redaxo\Core\Database\ConnectionConfig;
+use Redaxo\Core\Database\Exception\CouldNotConnectException;
+use Redaxo\Core\Database\Exception\SqlException;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
-use Redaxo\Core\Setup\Setup;
 
 use function count;
 use function dirname;
@@ -243,14 +245,28 @@ final class Config
             return;
         }
 
-        // during setup there may be no (working) database yet, so skip the db fallback
-        // and keep the config empty (consumers fall back to their defaults)
-        if (Setup::isEnabled()) {
+        // Without a configured connection there is nothing to read from, which is not Config's to report:
+        // whatever actually needs the database says so, and the backend points the way (see WebRunner).
+        if (!ConnectionConfig::exists()) {
             return;
         }
 
-        // fallback to load config from the db
-        self::loadFromDb();
+        try {
+            // fallback to load config from the db
+            self::loadFromDb();
+        } catch (CouldNotConnectException $e) {
+            // rethrown first so that the errno is only asked for below when there is a connection to ask
+            throw $e;
+        } catch (SqlException $e) {
+            // as long as the schema is not set up there is nothing to read and consumers fall back to their
+            // defaults; nothing is cached either, so the next request picks the config up once the table is there
+            if (Sql::ERRNO_TABLE_OR_VIEW_DOESNT_EXIST !== $e->sql?->getErrno()) {
+                throw $e;
+            }
+
+            return;
+        }
+
         // afterwards persist loaded data into file-cache
         self::generateCache();
     }

@@ -18,7 +18,7 @@ use const PHP_VERSION;
  * @internal
  */
 #[AsCommand(name: 'system:check', description: 'Check the commandline interface (CLI) environment for REDAXO requirements')]
-final class SystemCheckCommand extends AbstractCommand implements AvailableInSetupInterface
+final class SystemCheckCommand extends AbstractCommand
 {
     public function __invoke(SymfonyStyle $io): int
     {

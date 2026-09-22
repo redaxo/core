@@ -94,27 +94,19 @@ final class Application extends SymfonyApplication
             return;
         }
 
-        // Loads only setup packages
-        // This is useful for any kind of pre-setup commands
-        // there a packages which are needed during the setup e.g. backup
+        // Boots only the addons that must be available before the database is set up, e.g. backup for the
+        // import option of the setup command.
         if ($command instanceof OnlySetupAddonsInterface) {
-            if (Core::isSetup()) {
-                foreach (Addon::getSetupAddons() as $package) {
-                    $package->enlist();
-                }
-            }
             foreach (Addon::getSetupAddons() as $package) {
                 $package->boot();
             }
             return;
         }
 
-        if (!Core::isSetup()) {
-            // boot all known packages in the defined order
-            // which reflects dependencies before consumers
-            foreach (Addon::getBootOrder() as $packageId) {
-                Addon::require($packageId)->boot();
-            }
+        // boot all known packages in the defined order
+        // which reflects dependencies before consumers
+        foreach (Addon::getBootOrder() as $packageId) {
+            Addon::require($packageId)->boot();
         }
 
         Extension::registerByAttribute($this->project);

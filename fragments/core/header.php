@@ -17,12 +17,11 @@ use function Redaxo\Core\View\escape;
 
 $isPopup = Controller::requireCurrentPageObject()->isPopup();
 $isLogin = ('login' === Controller::getCurrentPage());
-$isSetup = ('setup' === Controller::getCurrentPage());
 
 $instanceColor = Appearance::getInstanceColor();
 ?>
 
-        <div id="rex-js-nav-top" class="rex-nav-top<?php if (!$isPopup && !$isSetup): ?> rex-nav-top-is-fixed<?php endif ?>">
+        <div id="rex-js-nav-top" class="rex-nav-top<?php if (!$isPopup): ?> rex-nav-top-is-fixed<?php endif ?>">
             <nav class="navbar navbar-default"<?= null !== $instanceColor ? ' style="border-bottom: 5px solid ' . escape($instanceColor) . '"' : '' ?>>
                 <div class="container-fluid">
 

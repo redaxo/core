@@ -43,6 +43,16 @@ final readonly class ConnectionConfig
     }
 
     /**
+     * Whether a connection is configured at all.
+     *
+     * @param positive-int $db
+     */
+    public static function exists(int $db = 1): bool
+    {
+        return null !== Env::get(self::getEnvVar($db));
+    }
+
+    /**
      * Returns the configuration of every database connection, keyed by its number.
      *
      * The connections must be numbered without gaps, the first undefined one ends the list.
@@ -53,7 +63,7 @@ final readonly class ConnectionConfig
     {
         $configs = [];
 
-        for ($db = 1; null !== Env::get(self::getEnvVar($db)); ++$db) {
+        for ($db = 1; self::exists($db); ++$db) {
             $configs[$db] = self::get($db);
         }
 

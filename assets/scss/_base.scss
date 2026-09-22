@@ -32,11 +32,6 @@ body:after {
 }
 
 
-#rex-page-setup .bg-success,
-#rex-page-setup .bg-success > a {
-    color: #fff;
-}
-
 .nav-tabs > li.pull-right > a {
     margin-left: 2px;
     margin-right: 0;
@@ -53,8 +48,7 @@ body:after {
     }
 
 
-    .rex-is-logged-in,
-    #rex-page-setup {
+    .rex-is-logged-in {
         .rex-page {
             position: relative;
         }
@@ -197,9 +191,6 @@ body:after {
 }
 // send a form, e.g. content functions
 .btn-send {
-    @extend .btn-primary;
-}
-.btn-setup {
     @extend .btn-primary;
 }
 .btn-update {

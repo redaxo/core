@@ -24,10 +24,6 @@ use Redaxo\Core\Security\UserSession;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 
-if (Core::isSetup()) {
-    Response::sendRedirect(Url::backendController());
-}
-
 if (Core::isDevMode()) {
     header('X-Robots-Tag: noindex, nofollow, noarchive');
 }

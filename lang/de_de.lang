@@ -87,7 +87,6 @@ system_settings = Einstellungen
 activated = Aktiviert
 deactivated = Deaktiviert
 general_info_header = Allgemeine Informationen:
-db1_can_only_be_changed_by_setup = Datenbank[1] kann nur über das Setup geändert werden.
 system_others = Sonstiges
 system_update = ändern
 main_preferences = Einstellungen
@@ -161,102 +160,19 @@ dev_mode_marker = Der Dev-Modus ist aktiv
 system_report = Systembericht
 system_report_markdown = Als Markdown
 
-# src\core\pages\setup.php
-setup = Setup
-setup_cancel = Setup abbrechen
-setup_restart = Setup neu starten
-setup_text = Hier können Sie das Setup erneut starten. Dies sollten Sie nur im Notfall machen. Unter normalen Umständen ist es nicht nötig.
-setup_error2 = Leider konnte die config.yml nicht gespeichert werden. Bitte tragen Sie dort in der \"setup: true\" ein
-
-
-
-setup_100 = Setup: Schritt 1 von 6 / Sprache
-setup_101 = Sprache wählen
-setup_110 = Weiter zu Schritt 2
-setup_199 = 1 / Sprache
-
-setup_200 = Setup: Schritt 2 von 6 / Systemcheck
 setup_201 = Die PHP-Version des Servers ist veraltet ({0}), bitte aktualisieren Sie auf eine höhere Version (mindestens {1}, neueste empfohlen)
 setup_202 = Die benötigte PHP-Extension <b>{0}</b> wurde nicht gefunden!
 setup_204 = Die folgenden Verzeichnisse sind nicht beschreibbar:
 setup_205 = Die folgenden Dateien sind nicht beschreibbar:
 setup_206 = Die folgenden Verzeichnisse sind nicht vorhanden oder es fehlt die Berechtigung:
-setup_207 = PHP-Versionscheck | Rechteüberprüfung
 setup_208 = PHP-Version <b>{0}</b> ok
-setup_209 = Ordnerrechte ok
-setup_210 = Weiter mit Schritt 3
 setup_211 = Die folgenden Dateien/Verzeichnisse sind für alle Anwender auf dem Server veränderbar (Others-Mode-Bit 7). Die Berechtigungen sollten restriktiver sein:
-setup_212 = Schritt 2 erneut durchführen
-setup_299 = 2 / Systemcheck
 
-setup_300 = Setup: Schritt 3 von 6 / Schreiben der '{0}'
-setup_301 = '{0}' konnte nicht geschrieben werden.
-setup_302 = Allgemeines
-setup_303 = Datenbankinformationen
-setup_304 = Die angegebene Datenbank existiert bereits!
-setup_308 = Name der Datenbank
-setup_309 = Passwort
-setup_310 = Weiter zu Schritt 4
-setup_311 = Datenbank anlegen?
-setup_314 = Schritt 3 erneut durchführen
-setup_315 = Folgender Fehler wurde gemeldet: {0}
-setup_316 = REDAXO-Einstellungen
-setup_399 = 3 / config.yml
-
-# SSL Database Configuration
-setup_database_ssl = SSL-Datenbankverbindung
-setup_database_ssl_optional = optional
-setup_database_ssl_title = SSL-Datenbankverbindung konfigurieren
-setup_database_ssl_info = Konfiguriere SSL-Einstellungen für sichere Datenbankverbindungen. Besonders wichtig für Cloud-Datenbanken und Unternehmensumgebungen.
-setup_ssl_ca = SSL-Zertifikats-Autorität
-setup_ssl_ca_none = Keine SSL-Verifizierung
-setup_ssl_ca_system = System-CA verwenden (empfohlen für verwaltete Datenbanken)
-setup_ssl_ca_file = CA-Zertifikat-Datei angeben
-setup_ssl_ca_file_path = Pfad zur CA-Zertifikat-Datei
-setup_ssl_key = Pfad zur SSL-Schlüssel-Datei
-setup_ssl_cert = Pfad zur SSL-Zertifikat-Datei
-setup_ssl_verify = SSL-Server-Zertifikat verifizieren
-
-setup_400 = Setup: Schritt 4 von 6 / Datenbank
-setup_401 = Datenbank einrichten
 setup_402 = Tabelle {0} wurde nicht gefunden!
-setup_403 = Bitte richten Sie die Datenbank erneut ein.
-setup_404 = Datenbank einrichten
-setup_405 = Datenbank einrichten und alte überschreiben falls vorhanden
-setup_405_note = Vorsicht - Alte Seite wird komplett gelöscht!
-setup_406 = Datenbank existiert schon
-setup_406_note = Weiter ohne Datenbankimport
-setup_407 = Vorhandenen Export einspielen:
-setup_407_note = Demo einspielen
 setup_408 = Bitte wählen Sie einen Export aus!
 setup_409 = Export-Dateien konnten nicht gefunden werden!
-setup_411 = Weiter zu Schritt 5
-setup_412 = Schritt 4 erneut durchführen
-setup_499 = 4 / Datenbank
 
-setup_500 = Setup: Schritt 5 von 6 / Administrator
-setup_501 = Bitte geben Sie das Administratorlogin ein!
-setup_502 = Bitte geben Sie das Administratorpasswort ein!
-setup_503 = Dieses Login existiert schon.
-setup_505 = Es existiert noch kein User. Bitte legen Sie einen an.
-setup_506 = Administrator anlegen
-setup_507 = Login
-setup_508 = Passwort
-setup_509 = Keinen User anlegen
-setup_510 = Weiter zu Schritt 6
-setup_511 = Schritt 5 erneut durchführen
-setup_599 = 5 / Administrator
-
-setup_600 = Setup: Schritt 6 von 6 / Heureka
-setup_601 = Leider konnte die config.yml nicht gespeichert werden. Bitte ändern Sie die Datei manuell über FTP.
-setup_602 = Herzlichen Glückwunsch zur REDAXO-Installation!
-setup_603 = Bitte noch dieses beachten:
-setup_604 = <ol><li>Mit dem {0}eingerichtetem Zugang einloggen{1}</li><li>Innerhalb der Community haben wir mehrere Website-Demos entwickelt, die typische Anwendungsfälle mit REDAXO zeigen. Sie können nach Login über das bereits enthaltene <strong>Install</strong>-AddOn runtergeladen werden. <a href="https://redaxo.org/download/website-demos/">Infos zu Website-Demos auf redaxo.org</a></li></ol>
-setup_605 = Viel Spaß und Erfolg!<br />Das REDAXO-Team
-setup_606 = zum Login
-setup_699 = 6 / Heureka
-
-setup_security_no_https = Das Setup wird unverschlüsselt durchgeführt. Frontend und Backend sollten grundsätzlich durch HTTPS verschlüsselt aufgerufen werden, um die Privatsphäre zu schützen und den Datenschutz zu gewährleisten.
+setup_security_no_https = Die Verbindung ist unverschlüsselt. Frontend und Backend sollten grundsätzlich durch HTTPS verschlüsselt aufgerufen werden, um die Privatsphäre zu schützen und den Datenschutz zu gewährleisten.
 setup_security_warn_mod_security = Das Apache Modul "mod_security" ist geladen. Dies kann bei falscher Konfiguration zu Problemen führen.
 setup_security_deprecated_php = Die verwendete PHP-Version {0} wird nicht mehr vom Hersteller gepflegt und sollte aktualisiert werden.
 setup_security_deprecated_mysql = Die verwendete MySQL-Version {0} wird nicht mehr vom Hersteller gepflegt und sollte aktualisiert werden.
@@ -272,10 +188,6 @@ sql_unable_to_connect_server = Es konnte keine Verbindung zum Datenbankserver he
 sql_unable_to_create_database = Die angegebene Datenbank konnte nicht angelegt werden!
 sql_unable_to_find_database = Die angegebene Datenbank konnte nicht gefunden werden!
 sql_unable_to_open_database = Die angegebene Datenbank konnte nicht geöffnet werden!
-
-
-
-setup_password_hint = Zur Vergabe eines neuen Passwortes dieses eintragen. Sonst unverändert lassen.
 
 # src\core\pages\addon.php
 addon_no_install = AddOn <b>{0}</b> konnte aus folgendem Grund <b>nicht</b> installiert werden:

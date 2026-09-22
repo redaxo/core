@@ -10,7 +10,7 @@ $project = Core::getProject();
 
 Addon::initialize();
 
-if (Core::isSetup() || Core::isSafeMode()) {
+if (Core::isSafeMode()) {
     $packageOrder = array_keys(Addon::getSetupAddons());
 } else {
     $packageOrder = Addon::getBootOrder();

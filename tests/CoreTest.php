@@ -60,12 +60,6 @@ final class CoreTest extends TestCase
         self::assertEquals(Core::getProperty($key, 'defVal'), 'defVal', 'getting non existing key returns a given default');
     }
 
-    public function testIsSetup(): void
-    {
-        self::assertFalse(Core::isSetup(), 'test run not within the setup');
-        // TODO find more appropriate tests
-    }
-
     public function testIsBackend(): void
     {
         self::assertTrue(Core::isBackend(), 'test run in the backend');

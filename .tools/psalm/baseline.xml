@@ -37,11 +37,6 @@
       <code><![CDATA[$_SERVER['PHP_SELF']]]></code>
     </PossiblyUndefinedArrayOffset>
   </file>
-  <file src="boot/console.php">
-    <PossiblyNullArgument>
-      <code><![CDATA[$command->getName()]]></code>
-    </PossiblyNullArgument>
-  </file>
   <file src="boot/core.php">
     <MixedArgument>
       <code><![CDATA[$articleId]]></code>
@@ -900,51 +895,6 @@
     <PossiblyNullOperand>
       <code><![CDATA[escape($userdesc)]]></code>
     </PossiblyNullOperand>
-  </file>
-  <file src="pages/setup/step1.php">
-    <MixedOperand>
-      <code><![CDATA[$cancelSetupBtn]]></code>
-    </MixedOperand>
-  </file>
-  <file src="pages/setup/step2.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$errorArray]]></code>
-      <code><![CDATA[$successArray]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$cancelSetupBtn]]></code>
-    </MixedOperand>
-  </file>
-  <file src="pages/setup/step3.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$errorArray]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$cancelSetupBtn]]></code>
-      <code><![CDATA[escape($config['error_email'])]]></code>
-      <code><![CDATA[escape($config['server'])]]></code>
-      <code><![CDATA[escape($config['servername'])]]></code>
-    </MixedOperand>
-  </file>
-  <file src="pages/setup/step4.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$errors]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$cancelSetupBtn]]></code>
-    </MixedOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$sqlExport]]></code>
-      <code><![CDATA[$sqlExport]]></code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="pages/setup/step5.php">
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$errors]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedOperand>
-      <code><![CDATA[$cancelSetupBtn]]></code>
-    </MixedOperand>
   </file>
   <file src="pages/structure/content.edit.php">
     <PossiblyNullPropertyAssignmentValue>
@@ -2278,9 +2228,6 @@
     <PossiblyFalseArgument>
       <code><![CDATA[fileperms($path)]]></code>
     </PossiblyFalseArgument>
-    <PossiblyNullArrayOffset>
-      <code><![CDATA[$setup]]></code>
-    </PossiblyNullArrayOffset>
   </file>
   <file src="src/SystemReport.php">
     <InvalidReturnStatement>

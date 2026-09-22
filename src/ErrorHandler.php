@@ -104,7 +104,7 @@ final class ErrorHandler
             }
             Response::setStatus($status);
 
-            if (Core::isSetup() || Core::isDevMode() || !Core::isHardenedMode() && BackendLogin::createUser()?->admin) {
+            if (Core::isDevMode() || !Core::isHardenedMode() && BackendLogin::createUser()?->admin) {
                 [$errPage, $contentType] = self::renderWhoops($exception);
                 Response::sendContent($errPage, $contentType);
                 exit(1);
@@ -244,7 +244,7 @@ final class ErrorHandler
                 </style>';
 
         $saveModeLink = '';
-        if (!Core::isSetup() && Core::isBackend() && !Core::isSafeMode()) {
+        if (Core::isBackend() && !Core::isSafeMode()) {
             $saveModeLink = '<a class="rex-safemode" href="' . Url::backendController(['safemode' => 1]) . '">activate safe mode</a>';
         }
 
@@ -331,7 +331,7 @@ final class ErrorHandler
             throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
         }
 
-        if (ini_get('display_errors') && (Core::isSetup() || Core::isDevMode() || 'cli' === PHP_SAPI || !Core::isHardenedMode() && BackendLogin::createUser()?->admin)) {
+        if (ini_get('display_errors') && (Core::isDevMode() || 'cli' === PHP_SAPI || !Core::isHardenedMode() && BackendLogin::createUser()?->admin)) {
             $file = Path::relative($errfile);
             if ('cli' === PHP_SAPI) {
                 echo self::getErrorType($errno) . ": $errstr in $file on line $errline";
