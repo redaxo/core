@@ -298,9 +298,9 @@ final class File
         if ('text/plain' !== $mimeType) {
             // map less common types to their more common equivalent
             return match ($mimeType) {
+                'application/javascript' => 'text/javascript',
                 'application/xml' => 'text/xml',
                 'image/svg' => 'image/svg+xml',
-                'text/javascript' => 'application/javascript',
                 default => $mimeType ?: null,
             };
         }
@@ -310,7 +310,7 @@ final class File
             'csv' => 'text/csv',
             'html' => 'text/html',
             'ics' => 'text/calendar',
-            'js' => 'application/javascript',
+            'js' => 'text/javascript',
             'json' => 'application/json',
             'md' => 'text/markdown',
             'svg' => 'image/svg+xml',

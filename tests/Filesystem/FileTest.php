@@ -154,7 +154,7 @@ final class FileTest extends TestCase
         yield ['image/png', Path::coreAssets('icons/apple-touch-icon.png')];
         yield ['text/xml', Path::coreAssets('icons/browserconfig.xml')];
         yield ['text/css', Path::coreAssets('css/styles.css')];
-        yield ['application/javascript', Path::coreAssets('js/redaxo.js')];
+        yield ['text/javascript', Path::coreAssets('js/redaxo.js')];
         yield ['image/svg+xml', Path::coreAssets('images/redaxo-logo.svg')];
 
         // simulates an uploaded file: extensionless tmp path, original name given separately
