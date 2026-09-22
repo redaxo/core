@@ -26,7 +26,6 @@ use Redaxo\Core\MetaInfo\Handler\CategoryHandler as MetaInfoCategoryHandler;
 use Redaxo\Core\MetaInfo\Handler\LanguageHandler as MetaInfoLanguageHandler;
 use Redaxo\Core\MetaInfo\Handler\MediaHandler as MetaInfoMediaHandler;
 use Redaxo\Core\Migration\WebRunner;
-use Redaxo\Core\Mode;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
@@ -183,17 +182,6 @@ if (!$loginCheck) {
     }
 
     Core::setProperty('user', $user);
-
-    // Safe Mode
-    if (!Core::isHardenedMode() && $user->admin && null !== ($safeMode = Request::get('safemode', 'boolean', null))) {
-        $session = Session::start();
-
-        if ($safeMode) {
-            $session->set('safemode', true);
-        } else {
-            $session->remove('safemode');
-        }
-    }
 }
 
 if ('' === $login->message && Request::get('rex_logged_out', 'boolean')) {

@@ -374,22 +374,6 @@ abstract class Addon
         return self::$bootOrder;
     }
 
-    /**
-     * Returns the setup addons.
-     *
-     * @return array<non-empty-string, self>
-     */
-    final public static function getSetupAddons(): array
-    {
-        $addons = [];
-        foreach ((array) Core::getProperty('setup_addons', []) as $addon) {
-            if (self::exists($addon)) {
-                $addons[$addon] = self::require($addon);
-            }
-        }
-        return $addons;
-    }
-
     /** Initializes all addons. */
     final public static function initialize(): void
     {

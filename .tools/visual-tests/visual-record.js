@@ -322,18 +322,6 @@ async function main() {
     await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
     await createScreenshots(page, 'users_edit.png');
 
-    // test safe mode
-    await goToUrlOrThrow(page, START_URL + '?page=system/settings', { waitUntil: 'load' });
-    await Promise.all([
-        page.waitForNavigation({ waitUntil: 'load' }),
-        page.click('.btn-safemode-activate') // enable safe mode
-    ]);
-    await createScreenshots(page, 'system_settings_safemode.png');
-    await Promise.all([
-        page.waitForNavigation({ waitUntil: 'load' }),
-        page.click('.btn-safemode-deactivate') // disable safe mode again
-    ]);
-
     // test debug
     const debugApiPattern = /rex-api-call=debug/;
     const abortDebugApi = route => route.abort();

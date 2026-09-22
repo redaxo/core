@@ -192,23 +192,6 @@ final class ErrorHandler
                     .rex-logo > svg {
                         vertical-align: middle;
                     }
-                    .rex-safemode {
-                        position: absolute;
-                        top: 17px;
-                        right: 40px;
-                        display: inline-block;
-                        padding: 10px;
-                        background-color: #f90;
-                        border-radius: 4px;
-                        color: #754600;
-                        font-size: .875rem;
-                        font-weight: 700;
-                        transition: 0.2s ease-out;
-                    }
-                    .rex-safemode:hover {
-                        background-color: #754600;
-                        color: #f90;
-                    }
                     .rex-report-bug {
                         position: absolute;
                         top: 17px;
@@ -243,11 +226,6 @@ final class ErrorHandler
                     }
                 </style>';
 
-        $saveModeLink = '';
-        if (Core::isBackend() && !Core::isSafeMode()) {
-            $saveModeLink = '<a class="rex-safemode" href="' . Url::backendController(['safemode' => 1]) . '">activate safe mode</a>';
-        }
-
         try {
             $markdownReport = self::getMarkdownReport($exception);
         } catch (Throwable) {
@@ -278,7 +256,7 @@ final class ErrorHandler
                 '</body>',
             ], [
                 $styles . '</head>',
-                '<div class="rex-whoops-header"><a href="' . $url . '" class="rex-logo">' . $logo . '</a>' . $reportBugLink . $saveModeLink . '</div></body>',
+                '<div class="rex-whoops-header"><a href="' . $url . '" class="rex-logo">' . $logo . '</a>' . $reportBugLink . '</div></body>',
             ],
             $errPage,
         );

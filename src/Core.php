@@ -9,7 +9,6 @@ use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
-use Redaxo\Core\Http\Session;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Util\Formatter;
@@ -24,8 +23,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use function is_array;
 use function is_string;
 use function sprintf;
-
-use const PHP_SESSION_ACTIVE;
 
 /**
  * Base class for core properties etc.
@@ -151,9 +148,8 @@ final class Core
      *      ($key is 'server' ? string :
      *      ($key is 'servername' ? string :
      *      ($key is 'error_email' ? string :
-     *      ($key is 'setup_addons' ? non-empty-string[] :
      *      mixed|null
-     *      ))))))
+     *      )))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -249,38 +245,6 @@ final class Core
     public static function isHardenedMode(): bool
     {
         return Mode::Hardened === self::getMode();
-    }
-
-    /** Returns if the safe mode is active. */
-    public static function isSafeMode(): bool
-    {
-        if (!self::isBackend()) {
-            return false;
-        }
-
-        if (self::isSafeModeForced()) {
-            return true;
-        }
-
-        // In the hardened mode, the (session based) safe mode can not be activated in the backend,
-        // it can only be forced via the env var.
-        if (self::isHardenedMode()) {
-            return false;
-        }
-
-        return PHP_SESSION_ACTIVE == session_status() && true === Session::start()->get('safemode');
-    }
-
-    /**
-     * Returns if the safe mode is forced via the env var `REX_SAFE_MODE`.
-     *
-     * In contrast to the session based safe mode, the forced safe mode can not be deactivated in the backend.
-     *
-     * @internal
-     */
-    public static function isSafeModeForced(): bool
-    {
-        return Env::getBool('REX_SAFE_MODE');
     }
 
     /**
