@@ -1196,24 +1196,6 @@
       <code><![CDATA[$folder2]]></code>
     </PossiblyFalseOperand>
   </file>
-  <file src="src/Console/Command/ConfigGetCommand.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$propertyKey]]></code>
-    </ArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$config]]></code>
-      <code><![CDATA[$config]]></code>
-    </MixedAssignment>
-    <PossiblyFalseArgument>
-      <code><![CDATA[json_encode($config)]]></code>
-    </PossiblyFalseArgument>
-  </file>
-  <file src="src/Console/Command/ConfigSetCommand.php">
-    <MixedAssignment>
-      <code><![CDATA[$config[$pathPart]]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-  </file>
   <file src="src/Console/Command/CronjobRunCommand.php">
     <MixedArgument>
       <code><![CDATA[$id]]></code>
@@ -2484,11 +2466,6 @@
       <code><![CDATA[1 === strlen($char) ? ord($char) : mb_ord($char, 'UTF-8')]]></code>
       <code><![CDATA[mb_ord($chr, 'UTF-8')]]></code>
     </PossiblyFalseArgument>
-  </file>
-  <file src="tests/Console/Command/ConfigSetCommandTest.php">
-    <PossiblyFalsePropertyAssignmentValue>
-      <code><![CDATA[file_get_contents($configPath)]]></code>
-    </PossiblyFalsePropertyAssignmentValue>
   </file>
   <file src="tests/Content/CategoryTest.php">
     <MixedArgumentTypeCoercion>
