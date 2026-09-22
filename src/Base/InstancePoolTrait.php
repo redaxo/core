@@ -4,6 +4,8 @@ namespace Redaxo\Core\Base;
 
 use Redaxo\Core\Util\Type;
 
+use function array_key_exists;
+
 /**
  * @psalm-type TKey = int|string|list<int|string>
  */
@@ -52,7 +54,7 @@ trait InstancePoolTrait
         $args = (array) $key;
         $key = self::getInstancePoolKey($args);
         $class = static::class;
-        if (!isset(self::$instances[$class][$key]) && $createCallback) {
+        if ($createCallback && !array_key_exists($key, self::$instances[$class] ?? [])) {
             $instance = $createCallback();
             /** @psalm-suppress PropertyTypeCoercion https://github.com/vimeo/psalm/issues/10835 */
             self::$instances[$class][$key] = $instance instanceof static ? $instance : null;
