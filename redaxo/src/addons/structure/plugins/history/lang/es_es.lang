@@ -1,12 +1,18 @@
 structure_history = Historia
 structure_history_title_info = Breve explicación
 structure_history_snapshot_reactivate = Aceptar esta versión
+structure_history_snapshot_live_reactivate = Aceptar esta versión en la versión en vivo
+structure_history_snapshot_draft_reactivate = Aceptar esta versión en la versión de trabajo
+structure_history_draft_warning = Atención: La versión de trabajo no está versionada. Si restaura la versión seleccionada a la versión de trabajo, el contenido actual de la versión de trabajo se perderá de forma irrecuperable. ¿Está seguro?
 structure_history_snapshot_reactivated = Se adoptó la versión
 structure_history_overview_versions = Versiones generales de la historia
 structure_history_current_version = Versión actual
+structure_history_current_live_version = Versión en vivo actual
 structure_history_info_content = <p>Un plug-in de la historia con la que puede registrar los cambios en el contenido del artículo. En cada caso, una versión instantánea y dado una fecha. Posteriormente versiones anteriores pueden entonces ser re-activados.</p>
 
-perm_options_history[article_rollback] = Restablecimiento del artículo (Historia)
+perm_options_history[read] = Ver historial del artículo
+perm_options_history[article_rollback] = Restaurar instantáneas anteriores del artículo (Historia)
+perm_options_history[article_draft_rollback] = Restaurar instantáneas anteriores del artículo en versión de trabajo (Historia)
 
 structure_history_button_delete_history = Borrar por completo la historia
 structure_history_deleted = La historia ha sido completamente borrada.
