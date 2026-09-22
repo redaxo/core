@@ -6,14 +6,6 @@
 mkdir -p project/public/assets/core
 cp -R assets/* project/public/assets/core/
 
-if [ "true" = $(project/bin/console config:get setup) ]; then
-    project/bin/console cache:clear --ansi
-
-    echo "Core/Addons can not be re-installed, because the REDAXO setup is not done yet."
-
-    exit
-fi
-
 project/bin/console migrate --ansi
 project/bin/console cache:clear --ansi
 

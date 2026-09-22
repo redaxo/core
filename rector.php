@@ -197,8 +197,6 @@ return RectorConfig::configure()
         'rex_console_command' => Console\Command\AbstractCommand::class,
         'rex_console_command_loader' => Console\CommandLoader::class,
         'rex_command_cache_clear' => Console\Command\CacheClearCommand::class,
-        'rex_command_config_get' => Console\Command\ConfigGetCommand::class,
-        'rex_command_config_set' => Console\Command\ConfigSetCommand::class,
         'rex_command_db_connection_options' => Console\Command\DatabaseConnectionOptionsCommand::class,
         'rex_command_db_dump_schema' => Console\Command\DatabaseDumpSchemaCommand::class,
         'rex_command_setup_check' => Console\Command\SystemCheckCommand::class,
