@@ -98,10 +98,6 @@ class AddonManager
             }
 
             $this->message = $this->i18n('installed', $this->addon->name);
-            $successMessage = (string) $this->addon->getProperty('successmsg', '');
-            if ($successMessage) {
-                $this->message .= ' ' . $successMessage;
-            }
 
             return true;
         } catch (UserMessageException $e) {

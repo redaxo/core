@@ -77,13 +77,6 @@ abstract class Addon
      */
     public protected(set) array $defaultConfig = [];
 
-    /**
-     * Properties.
-     *
-     * @var array<string, mixed>
-     */
-    private array $properties = [];
-
     /** @var array<string, mixed>|null */
     private ?array $composerJson = null;
 
@@ -194,33 +187,6 @@ abstract class Addon
     final public function removeConfig(string $key): bool
     {
         return Config::remove($this->name, $key);
-    }
-
-    /** @param non-empty-string $key */
-    final public function setProperty(string $key, mixed $value): void
-    {
-        $this->properties[$key] = $value;
-    }
-
-    /** @param non-empty-string $key */
-    final public function getProperty(string $key, mixed $default = null): mixed
-    {
-        if ($this->hasProperty($key)) {
-            return $this->properties[$key];
-        }
-        return $default;
-    }
-
-    /** @param non-empty-string $key */
-    final public function hasProperty(string $key): bool
-    {
-        return isset($this->properties[$key]);
-    }
-
-    /** @param non-empty-string $key */
-    final public function removeProperty(string $key): void
-    {
-        unset($this->properties[$key]);
     }
 
     final public function getAuthor(?string $default = null): ?string
