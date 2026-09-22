@@ -56,6 +56,25 @@ final class InstancePoolTraitTest extends TestCase
         });
     }
 
+    public function testGetInstanceCachesNullResult(): void
+    {
+        $callback = static fn () => null;
+
+        self::assertNull(TestInstancePool1::getInstance(4, $callback));
+        self::assertNull(TestInstancePool1::getInstance(4, function () {
+            $this->fail('getInstance does not call $createCallback again after it returned null');
+        }));
+
+        TestInstancePool1::clearInstance(4);
+
+        $called = false;
+        self::assertNull(TestInstancePool1::getInstance(4, static function () use (&$called) {
+            $called = true;
+            return null;
+        }));
+        self::assertTrue($called, 'getInstance calls $createCallback again after clearInstance()');
+    }
+
     #[Depends('testGetInstance')]
     public function testClearInstance(): void
     {

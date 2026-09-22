@@ -300,6 +300,7 @@ final class File
             return match ($mimeType) {
                 'application/xml' => 'text/xml',
                 'image/svg' => 'image/svg+xml',
+                'text/javascript' => 'application/javascript',
                 default => $mimeType ?: null,
             };
         }
