@@ -22,14 +22,6 @@
             "description": "Error email",
             "type": ["null", "string"],
             "format": "email"
-        },
-        "setup_addons": {
-            "description": "Addons loaded in setup and in safe mode",
-            "type": "array",
-            "items": {
-                "type": "string",
-                "pattern": "^[^/]+$"
-            }
         }
     },
     "additionalProperties": false

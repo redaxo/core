@@ -175,24 +175,6 @@ $content = '
     <p>' . I18n::msg('delete_cache_description') . '</p>
     <p><a class="btn btn-delete" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('delete_cache') . '</a></p>';
 
-if (!Core::isHardenedMode()) {
-    $content .= '
-        <h3>' . I18n::msg('safemode') . '</h3>
-        <p>' . I18n::msg('safemode_text') . '</p>';
-
-    if (Core::isSafeModeForced()) {
-        $content .= '
-        <p>' . I18n::msg('safemode_forced') . '</p>';
-    } else {
-        $safemodeUrl = Url::currentBackendPage(['safemode' => '1'] + $csrfToken->getUrlParams());
-        if (Core::isSafeMode()) {
-            $safemodeUrl = Url::currentBackendPage(['safemode' => '0'] + $csrfToken->getUrlParams());
-        }
-
-        $content .= '
-        <p><a class="btn btn-safemode-activate" href="' . $safemodeUrl . '" data-pjax="false">' . (Core::isSafeMode() ? I18n::msg('safemode_deactivate') : I18n::msg('safemode_activate')) . '</a></p>';
-    }
-}
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('system_features'));
 $fragment->setVar('body', $content, false);

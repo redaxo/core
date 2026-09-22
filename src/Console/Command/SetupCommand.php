@@ -39,7 +39,7 @@ use const PHP_VERSION;
  * @internal
  */
 #[AsCommand(name: 'setup', description: 'Sets up this installation')]
-final class SetupCommand extends AbstractCommand implements OnlySetupAddonsInterface
+final class SetupCommand extends AbstractCommand implements StandaloneInterface
 {
     private SymfonyStyle $io;
     private InputInterface $input;

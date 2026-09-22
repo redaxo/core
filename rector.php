@@ -210,7 +210,7 @@ return RectorConfig::configure()
         'rex_command_user_delete' => Console\Command\UserDeleteCommand::class,
         'rex_command_user_list' => Console\Command\UserListCommand::class,
         'rex_command_user_set_password' => Console\Command\UserSetPasswordCommand::class,
-        'rex_command_only_setup_packages' => Console\Command\OnlySetupAddonsInterface::class,
+        'rex_command_only_setup_packages' => Console\Command\StandaloneInterface::class,
         'rex_command_standalone' => Console\Command\StandaloneInterface::class,
         'rex_cronjob_form' => Cronjob\Form\CronjobForm::class,
         'rex_config' => Config::class,
@@ -384,7 +384,6 @@ return RectorConfig::configure()
         new MethodCallRename(Addon\Addon::class, 'getInstalledPackages', 'getAll'),
         new MethodCallRename(Addon\Addon::class, 'getAvailablePackages', 'getAll'),
         new MethodCallRename(Addon\Addon::class, 'getAvailableAddons', 'getAll'),
-        new MethodCallRename(Addon\Addon::class, 'getSetupPackages', 'getSetupAddons'),
 
         new MethodCallRename(ApiFunction\Result::class, 'toJSON', 'toJson'),
         new MethodCallRename(ApiFunction\Result::class, 'fromJSON', 'fromJson'),

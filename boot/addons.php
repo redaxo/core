@@ -10,11 +10,7 @@ $project = Core::getProject();
 
 Addon::initialize();
 
-if (Core::isSafeMode()) {
-    $packageOrder = array_keys(Addon::getSetupAddons());
-} else {
-    $packageOrder = Addon::getBootOrder();
-}
+$packageOrder = Addon::getBootOrder();
 
 // in the first run, we register all folders for class- and fragment-loading,
 // so it is transparent in which order the addons are included afterwards.

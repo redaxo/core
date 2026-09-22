@@ -176,9 +176,6 @@ body:after {
 .btn-reset {
     @extend .btn-default;
 }
-.btn-safemode-activate {
-    @extend .btn-danger;
-}
 // save and quit a form with data
 .btn-save {
     @extend .btn-primary;

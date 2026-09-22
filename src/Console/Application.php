@@ -9,7 +9,6 @@ use ParseError;
 use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Console\Command\AbstractCommand;
-use Redaxo\Core\Console\Command\OnlySetupAddonsInterface;
 use Redaxo\Core\Console\Command\StandaloneInterface;
 use Redaxo\Core\Console\ExtensionPoint\ConsoleShutdown;
 use Redaxo\Core\Core;
@@ -91,15 +90,6 @@ final class Application extends SymfonyApplication
         // in this case if no connection is available, no commands can be used
         // but this command should be always usable
         if ($command instanceof StandaloneInterface) {
-            return;
-        }
-
-        // Boots only the addons that must be available before the database is set up, e.g. backup for the
-        // import option of the setup command.
-        if ($command instanceof OnlySetupAddonsInterface) {
-            foreach (Addon::getSetupAddons() as $package) {
-                $package->boot();
-            }
             return;
         }
 

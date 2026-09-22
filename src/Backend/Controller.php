@@ -308,8 +308,7 @@ final class Controller
 
     public static function appendPackagePages(): void
     {
-        $addons = Core::isSafeMode() ? Addon::getSetupAddons() : Addon::getAll();
-        foreach ($addons as $addon) {
+        foreach (Addon::getAll() as $addon) {
             foreach ($addon->getPages() as $page) {
                 self::registerAddonPage($page, $addon);
             }

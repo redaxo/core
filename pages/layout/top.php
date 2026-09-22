@@ -47,9 +47,6 @@ if ($user) {
 if (Core::isDevMode()) {
     $bodyAttr['class'][] = 'rex-is-devmode';
 }
-if (Core::isSafeMode()) {
-    $bodyAttr['class'][] = 'rex-is-safemode';
-}
 if ($curPage->isPopup()) {
     $bodyAttr['class'][] = 'rex-is-popup';
 }
@@ -78,15 +75,6 @@ $hasNavigation = $curPage->hasNavigation();
 
 $metaItems = [];
 if ($user && $hasNavigation) {
-    if (Core::isSafeMode() && !Core::isSafeModeForced() && $user->admin) {
-        $item = [];
-        $item['title'] = I18n::msg('safemode_deactivate');
-        $item['href'] = Url::backendController(['safemode' => 0]);
-        $item['attributes'] = 'class="btn btn-safemode-deactivate" data-pjax="false"';
-        $metaItems[] = $item;
-        unset($item);
-    }
-
     $userName = $user->name ?: $user->login;
     $impersonator = Core::getImpersonator();
     if ($impersonator) {

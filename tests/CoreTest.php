@@ -101,30 +101,6 @@ final class CoreTest extends TestCase
         }
     }
 
-    public function testIsSafeMode(): void
-    {
-        $origMode = $_SERVER['REX_MODE'] ?? null;
-        $origSafeMode = $_SERVER['REX_SAFE_MODE'] ?? null;
-
-        try {
-            $_SERVER['REX_MODE'] = 'dev';
-            $_SERVER['REX_SAFE_MODE'] = '1';
-            self::assertTrue(Core::isSafeModeForced());
-            self::assertTrue(Core::isSafeMode());
-
-            // the env var based safe mode works even in the hardened mode (only the session based one is blocked)
-            $_SERVER['REX_MODE'] = 'hardened';
-            self::assertTrue(Core::isSafeMode());
-
-            $_SERVER['REX_SAFE_MODE'] = '0';
-            self::assertFalse(Core::isSafeModeForced());
-            self::assertFalse(Core::isSafeMode());
-        } finally {
-            self::restoreEnv('REX_MODE', $origMode);
-            self::restoreEnv('REX_SAFE_MODE', $origSafeMode);
-        }
-    }
-
     public function testGetInstanceId(): void
     {
         $origServer = $_SERVER['REX_INSTANCE_ID'] ?? null;
