@@ -92,7 +92,7 @@ if (Request::get('asset') && Request::get('buster')) {
         $js = preg_replace('@^//# sourceMappingURL=.*$@m', '', $content);
 
         Response::sendCacheControl('max-age=31536000, immutable');
-        Response::sendContent($js, 'application/javascript');
+        Response::sendContent($js, 'text/javascript');
     } else {
         // If we are in a directory off the root, add a relative path here back to the root, like "../"
         // get the public path to this file, plus the baseurl
