@@ -50,15 +50,6 @@
     <MixedOperand>
       <code><![CDATA[$ep->getParam('direction')]]></code>
     </MixedOperand>
-    <PossiblyInvalidArgument>
-      <code><![CDATA[$REX['PATH_PROVIDER']]]></code>
-      <code><![CDATA[$REX['URL_PROVIDER']]]></code>
-    </PossiblyInvalidArgument>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$REX['PATH_PROVIDER']]]></code>
-      <code><![CDATA[$REX['REDAXO']]]></code>
-      <code><![CDATA[$REX['URL_PROVIDER']]]></code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="boot/frontend.php">
     <MixedAssignment>
