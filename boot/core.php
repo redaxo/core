@@ -12,7 +12,6 @@ use Redaxo\Core\ErrorHandler;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\DefaultPathProvider;
-use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
@@ -29,26 +28,11 @@ use Redaxo\Core\Util\VarDumper;
 use Redaxo\Core\View\Fragment;
 use Symfony\Component\HttpFoundation\Request as BaseRequest;
 
-/**
- * REDAXO main boot file.
- *
- * @var array{REDAXO: bool, PATH_PROVIDER: DefaultPathProvider, URL_PROVIDER: DefaultPathProvider} $REX
- *          REDAXO         [Required] Backend/Frontend flag
- *          PATH_PROVIDER  [Required] Path provider
- *          URL_PROVIDER   [Required] Url provider
- */
-
 define('REX_MIN_PHP_VERSION', '8.5');
 
 if (version_compare(PHP_VERSION, REX_MIN_PHP_VERSION) < 0) {
     echo 'Ooops, something went wrong!<br>';
     throw new Exception('PHP version >=' . REX_MIN_PHP_VERSION . ' needed!');
-}
-
-foreach (['REDAXO', 'PATH_PROVIDER', 'URL_PROVIDER'] as $key) {
-    if (!isset($REX[$key])) {
-        throw new Exception('Missing required global variable $REX[\'' . $key . "']");
-    }
 }
 
 // start output buffering as early as possible, so we can be sure
@@ -76,13 +60,11 @@ mb_internal_encoding('UTF-8');
 // the same times on every server. Projects with another timezone call `date_default_timezone_set` themselves.
 date_default_timezone_set('Europe/Berlin');
 
-Path::init($REX['PATH_PROVIDER']);
-Url::init($REX['URL_PROVIDER']);
+Path::init(new DefaultPathProvider(Core::getProject(), true));
+Url::init(new DefaultPathProvider(Core::getProject(), false));
 
 // start timer at the very beginning
 Core::setProperty('timer', new Timer($_SERVER['REQUEST_TIME_FLOAT'] ?? null));
-// add backend flag to rex
-Core::setProperty('redaxo', $REX['REDAXO']);
 // add core lang directory to I18n
 I18n::addDirectory(Path::core('lang'));
 // add core base-fragmentpath to fragmentloader
