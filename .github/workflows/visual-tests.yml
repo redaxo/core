@@ -88,10 +88,9 @@ jobs:
             -   name: Configure instance
                 run: |
                     sudo /etc/init.d/mysql start
-                    # setup is what writes the connection to .env.local, so it runs even
-                    # though the database it fills on the way is emptied again before the first screenshots
+                    # setup writes the connection to .env.local and copies the core assets, both needed by the
+                    # recording of a fresh installation; the database it fills on the way is emptied again there
                     php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=yes --db-setup=normal --admin-username=admin --admin-password=adminpassword --ansi -v
-                    php project/bin/console migrate -n --ansi -v
 
             -   name: Prepare mock data
                 run: |
