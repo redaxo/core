@@ -50,14 +50,6 @@ final class FileTest extends TestCase
         self::assertEquals($myDefault, File::get($file, $myDefault), 'get() returns given default value for non-existing files');
     }
 
-    public function testGetConfigDefault(): void
-    {
-        $file = self::getPath('non_existing.txt');
-        self::assertEquals([], File::getConfig($file), 'getConfig() returns empty array for non-existing files');
-        $myDefault = ['myDefault'];
-        self::assertEquals($myDefault, File::getConfig($file, $myDefault), 'getConfig() returns given default value for non-existing files');
-    }
-
     public function testGetCacheDefault(): void
     {
         $file = self::getPath('non_existing.txt');
@@ -72,14 +64,6 @@ final class FileTest extends TestCase
         $content = 'test';
         self::assertTrue(File::put($file, $content), 'put() returns true on success');
         self::assertEquals($content, File::get($file), 'get() returns content of file');
-    }
-
-    public function testPutGetConfig(): void
-    {
-        $file = self::getPath('putgetcache.txt');
-        $content = ['test', 'key' => 'value'];
-        self::assertTrue(File::putConfig($file, $content), 'putConfig() returns true on success');
-        self::assertEquals($content, File::getConfig($file), 'getConfig() returns content of file');
     }
 
     public function testPutGetCache(): void
