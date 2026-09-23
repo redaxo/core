@@ -127,7 +127,7 @@ final class Controller
         if ($activePageObj->getTitle()) {
             $parts[] = $activePageObj->getTitle();
         }
-        $parts[] = Core::getInstanceName();
+        $parts[] = Core::getProject()->instanceName;
         $parts[] = 'REDAXO CMS';
 
         return implode(' · ', $parts);

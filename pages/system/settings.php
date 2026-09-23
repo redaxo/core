@@ -169,7 +169,7 @@ $content = '
         </tr>
         <tr>
             <th>' . I18n::msg('base_url') . '</th>
-            <td><span class="rex-word-break">' . escape(Core::getBaseUrl()) . '</span></td>
+            <td><span class="rex-word-break">' . escape(Url::absoluteBase()) . '</span></td>
         </tr>
         <tr>
             <th>' . I18n::msg('error_email') . '</th>

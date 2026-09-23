@@ -266,7 +266,7 @@ class Mailer extends PHPMailer
         $logevent = false;
 
         // Start - generate mail body
-        $mailBody = '<h2>Error protocol for: ' . Core::getInstanceName() . '</h2>';
+        $mailBody = '<h2>Error protocol for: ' . Core::getProject()->instanceName . '</h2>';
         $mailBody .= '<style nonce="' . Response::getNonce() . '"> .errorbg {background: #F6C4AF; } .eventbg {background: #E1E1E1; } td, th {padding: 5px;} table {width: 100%; border: 1px solid #ccc; } th {background: #b00; color: #fff;} td { border: 0; border-bottom: 1px solid #b00;} </style> ';
         $mailBody .= '<table>';
         $mailBody .= '    <thead>';
@@ -335,7 +335,7 @@ class Mailer extends PHPMailer
 
         // Send email
         $mail = new self();
-        $mail->Subject = Core::getInstanceName() . ' - Error Report';
+        $mail->Subject = Core::getProject()->instanceName . ' - Error Report';
         $mail->Body = $mailBody;
         $mail->AltBody = strip_tags($mailBody);
         $mail->FromName = 'REDAXO Error Report';

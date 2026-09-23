@@ -8,6 +8,7 @@ use Redaxo\Core\Database\Table;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\DefaultPathProvider;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Migration\Migration;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
@@ -56,6 +57,22 @@ abstract class AbstractProject implements RunnerInterface
 
     /** @var non-empty-string */
     public string $backendDirectory = 'redaxo';
+
+    /**
+     * Name of this installation, shown in the backend and used e.g. in mail subjects and backup file names.
+     * Defaults to the env var `REX_INSTANCE_NAME`.
+     */
+    public string $instanceName {
+        get => $this->instanceName ?? Env::get('REX_INSTANCE_NAME') ?? 'REDAXO';
+    }
+
+    /**
+     * Absolute url of the frontend, e.g. `https://example.org/`. Defaults to the env var `REX_BASE_URL`, if neither
+     * is set, {@see Url::absoluteBase()} derives the url from the request.
+     */
+    public ?string $baseUrl = null {
+        get => $this->baseUrl ?? Env::get('REX_BASE_URL');
+    }
 
     public function __construct(
         public readonly Environment $environment,

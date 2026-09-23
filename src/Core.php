@@ -12,7 +12,6 @@ use Redaxo\Core\Security\User;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
-use Redaxo\Core\Validator\Validator;
 use Symfony\Component\HttpClient\HttpClient as HttpClientFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -308,49 +307,6 @@ final class Core
             // Neutral User-Agent without version to avoid fingerprinting the installation
             'headers' => ['User-Agent' => 'REDAXO'],
         ]);
-    }
-
-    /**
-     * Returns the absolute url of the frontend, with a trailing slash.
-     *
-     * It is defined by the env var `REX_BASE_URL`, otherwise derived from the current request (so it follows the
-     * `Host` header then). On the console there is no request, so the env var is required there.
-     *
-     * @return non-empty-string
-     */
-    public static function getBaseUrl(): string
-    {
-        $url = Env::get('REX_BASE_URL');
-
-        if (null !== $url) {
-            if (!Validator::factory()->url($url)) {
-                throw new InvalidArgumentException(sprintf('The env var "REX_BASE_URL" must be a full url, "%s" given.', $url));
-            }
-
-            return rtrim($url, '/') . '/';
-        }
-
-        $request = self::getProperty('request');
-        if (!$request instanceof Request) {
-            throw new LogicException('The env var "REX_BASE_URL" is missing, it is required to build absolute urls on the console.');
-        }
-
-        $path = $request->getBasePath();
-        if (self::isBackend()) {
-            $path = substr($path, 0, (int) strrpos($path, '/'));
-        }
-
-        return $request->getSchemeAndHttpHost() . $path . '/';
-    }
-
-    /**
-     * Returns the name of this installation, defined by the env var `REX_INSTANCE_NAME` (usually in the `.env` file).
-     *
-     * @return non-empty-string
-     */
-    public static function getInstanceName(): string
-    {
-        return Env::get('REX_INSTANCE_NAME') ?? 'REDAXO';
     }
 
     /**
