@@ -8,11 +8,14 @@ use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\Url;
+use Redaxo\Core\Util\Type;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @internal */
 final class UrlTest extends TestCase
 {
+    private ?string $origServerEnv;
+    private ?string $origEnv;
     private ?string $origBaseUrl;
     private ?Request $origRequest;
     private bool $origBackend;
@@ -20,6 +23,11 @@ final class UrlTest extends TestCase
     #[Override]
     protected function setUp(): void
     {
+        // the tests must not depend on a base url the instance running them configures
+        $this->origServerEnv = Type::nullOrString($_SERVER['REX_BASE_URL'] ?? null);
+        $this->origEnv = Type::nullOrString($_ENV['REX_BASE_URL'] ?? null);
+        unset($_SERVER['REX_BASE_URL'], $_ENV['REX_BASE_URL']);
+
         $this->origBaseUrl = Core::getProject()->baseUrl;
         /** @var Request|null $request */
         $request = Core::getProperty('request');
@@ -30,6 +38,13 @@ final class UrlTest extends TestCase
     #[Override]
     protected function tearDown(): void
     {
+        if (null !== $this->origServerEnv) {
+            $_SERVER['REX_BASE_URL'] = $this->origServerEnv;
+        }
+        if (null !== $this->origEnv) {
+            $_ENV['REX_BASE_URL'] = $this->origEnv;
+        }
+
         Core::getProject()->baseUrl = $this->origBaseUrl;
         Core::setProperty('request', $this->origRequest);
         Core::setProperty('redaxo', $this->origBackend);
@@ -57,7 +72,7 @@ final class UrlTest extends TestCase
     #[DataProvider('provideAbsoluteBaseFromRequest')]
     public function testAbsoluteBaseFromRequest(string $expected, bool $backend, string $scriptName): void
     {
-        $this->unsetBaseUrl();
+        Core::getProject()->baseUrl = null;
         Core::setProperty('redaxo', $backend);
         Core::setProperty('request', Request::create('https://example.org' . $scriptName, server: [
             'SCRIPT_NAME' => $scriptName,
@@ -80,18 +95,10 @@ final class UrlTest extends TestCase
 
     public function testAbsoluteBaseWithoutBaseUrlAndRequest(): void
     {
-        $this->unsetBaseUrl();
+        Core::getProject()->baseUrl = null;
         Core::setProperty('request', null);
 
         $this->expectException(LogicException::class);
         Url::absoluteBase();
-    }
-
-    private function unsetBaseUrl(): void
-    {
-        Core::getProject()->baseUrl = null;
-        if (null !== Core::getProject()->baseUrl) {
-            self::markTestSkipped('The env var "REX_BASE_URL" is set.');
-        }
     }
 }
