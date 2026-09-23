@@ -69,29 +69,22 @@ abstract class AbstractProject implements RunnerInterface
     }
 
     /**
-     * Absolute url of the frontend with a trailing slash, e.g. `https://example.org/`. Defaults to the env var
-     * `REX_BASE_URL`, if neither is set, {@see Url::absoluteBase()} derives the url from the request.
+     * Absolute url of the frontend with a trailing slash, e.g. `https://example.org/`.
+     *
+     * Defaults to the env var `REX_BASE_URL`, the project may assign it in {@see configure()} instead, e.g. to derive
+     * it from a variable the hosting platform provides. If neither is set, {@see Url::absoluteBase()} derives the
+     * url from the request.
      */
-    public ?string $baseUrl = null {
+    final public ?string $baseUrl = null {
         get {
-            if (null === $this->normalizedBaseUrl && null !== $url = $this->baseUrl ?? Env::get('REX_BASE_URL')) {
-                $this->normalizedBaseUrl = self::normalizeBaseUrl($url);
+            if (null === $this->baseUrl && null !== $url = Env::get('REX_BASE_URL')) {
+                $this->baseUrl = self::normalizeBaseUrl($url);
             }
 
-            return $this->normalizedBaseUrl;
+            return $this->baseUrl;
         }
-        set(?string $value) {
-            $this->baseUrl = null === $value ? null : self::normalizeBaseUrl($value);
-            $this->normalizedBaseUrl = $this->baseUrl;
-        }
+        set(?string $value) => null === $value ? null : self::normalizeBaseUrl($value);
     }
-
-    /**
-     * Default values bypass the set hook, so a url declared by a subclass is normalized on first access instead.
-     *
-     * @var non-empty-string|null
-     */
-    private ?string $normalizedBaseUrl = null;
 
     public function __construct(
         public readonly Environment $environment,

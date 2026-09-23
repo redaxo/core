@@ -62,15 +62,6 @@ final class AbstractProjectTest extends TestCase
         ];
     }
 
-    public function testBaseUrlDeclaredBySubclass(): void
-    {
-        $project = new class(Environment::Frontend) extends AbstractProject {
-            public ?string $baseUrl = 'https://example.org';
-        };
-
-        self::assertSame('https://example.org/', $project->baseUrl);
-    }
-
     public function testBaseUrlWithInvalidValue(): void
     {
         $project = new class(Environment::Frontend) extends AbstractProject {};
