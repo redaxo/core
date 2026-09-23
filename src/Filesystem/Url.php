@@ -6,16 +6,12 @@ use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Core;
-use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Util\Str;
-use Redaxo\Core\Validator\Validator;
 use Symfony\Component\HttpFoundation\Request;
-
-use function sprintf;
 
 /**
  * Utility class to generate URLs, relative ones unless stated otherwise.
@@ -54,14 +50,11 @@ final class Url
      */
     public static function absoluteBase(string $file = ''): string
     {
+        /** @var non-empty-string|null $url normalized by the property hook */
         $url = Core::getProject()->baseUrl;
 
         if (null !== $url) {
-            if (!Validator::factory()->url($url)) {
-                throw new InvalidArgumentException(sprintf('The base url must be a full url, "%s" given.', $url));
-            }
-
-            return rtrim($url, '/') . '/' . $file;
+            return $url . $file;
         }
 
         $request = Core::getProperty('request');

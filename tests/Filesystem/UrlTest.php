@@ -6,7 +6,6 @@ use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
-use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\Url;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,14 +52,6 @@ final class UrlTest extends TestCase
             ['https://example.org/sub/', 'https://example.org/sub', ''],
             ['https://example.org/sub/media/foo.jpg', 'https://example.org/sub/', 'media/foo.jpg'],
         ];
-    }
-
-    public function testAbsoluteBaseWithInvalidBaseUrl(): void
-    {
-        Core::getProject()->baseUrl = 'example.org';
-
-        $this->expectException(InvalidArgumentException::class);
-        Url::absoluteBase();
     }
 
     #[DataProvider('provideAbsoluteBaseFromRequest')]

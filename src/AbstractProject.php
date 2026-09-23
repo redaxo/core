@@ -5,12 +5,14 @@ namespace Redaxo\Core;
 use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Database\Table;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\DefaultPathProvider;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Migration\Migration;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Validator\Validator;
 use Redaxo\Core\View\Fragment;
 use ReflectionObject;
 use Symfony\Component\Runtime\RunnerInterface;
@@ -67,12 +69,29 @@ abstract class AbstractProject implements RunnerInterface
     }
 
     /**
-     * Absolute url of the frontend, e.g. `https://example.org/`. Defaults to the env var `REX_BASE_URL`, if neither
-     * is set, {@see Url::absoluteBase()} derives the url from the request.
+     * Absolute url of the frontend with a trailing slash, e.g. `https://example.org/`. Defaults to the env var
+     * `REX_BASE_URL`, if neither is set, {@see Url::absoluteBase()} derives the url from the request.
      */
     public ?string $baseUrl = null {
-        get => $this->baseUrl ?? Env::get('REX_BASE_URL');
+        get {
+            if (null === $this->normalizedBaseUrl && null !== $url = $this->baseUrl ?? Env::get('REX_BASE_URL')) {
+                $this->normalizedBaseUrl = self::normalizeBaseUrl($url);
+            }
+
+            return $this->normalizedBaseUrl;
+        }
+        set(?string $value) {
+            $this->baseUrl = null === $value ? null : self::normalizeBaseUrl($value);
+            $this->normalizedBaseUrl = $this->baseUrl;
+        }
     }
+
+    /**
+     * Default values bypass the set hook, so a url declared by a subclass is normalized on first access instead.
+     *
+     * @var non-empty-string|null
+     */
+    private ?string $normalizedBaseUrl = null;
 
     public function __construct(
         public readonly Environment $environment,
@@ -95,6 +114,16 @@ abstract class AbstractProject implements RunnerInterface
      * backfill.
      */
     public function install(): void {}
+
+    /** @return non-empty-string */
+    private static function normalizeBaseUrl(string $url): string
+    {
+        if (!Validator::factory()->url($url)) {
+            throw new InvalidArgumentException(sprintf('The base url must be a full url, "%s" given.', $url));
+        }
+
+        return rtrim($url, '/') . '/';
+    }
 
     final public function bootCore(): void
     {
