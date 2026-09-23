@@ -15,7 +15,7 @@ if ('' == Core::getConfig('phpmailer_from') || '' == Core::getConfig('phpmailer_
 } else {
     $mail = new Mailer();
     $mail->addAddress(Core::getConfig('phpmailer_test_address'));
-    $mail->Subject = 'PHPMailer-Test | ' . escape(Core::getServerName()) . ' | ' . date_format($date, 'Y-m-d H:i:s');
+    $mail->Subject = 'PHPMailer-Test | ' . escape(Core::getInstanceName()) . ' | ' . date_format($date, 'Y-m-d H:i:s');
 
     $devider = "\n--------------------------------------------------";
     $securityMode = '';
@@ -36,7 +36,7 @@ if ('' == Core::getConfig('phpmailer_from') || '' == Core::getConfig('phpmailer_
         }
     }
 
-    $mail->Body = I18n::msg('phpmailer_checkmail_greeting') . "\n\n" . I18n::msg('phpmailer_checkmail_text') . ' ' . Core::getServerName();
+    $mail->Body = I18n::msg('phpmailer_checkmail_greeting') . "\n\n" . I18n::msg('phpmailer_checkmail_text') . ' ' . Core::getInstanceName();
     $mail->Body .= "\n\nDomain: " . $_SERVER['HTTP_HOST'];
 
     $mail->Body .= "\nMailer: " . Core::getConfig('phpmailer_mailer') . $devider . $securityMode;

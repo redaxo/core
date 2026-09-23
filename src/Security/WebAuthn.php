@@ -98,6 +98,6 @@ final class WebAuthn
 
     private function createWebauthnBase(): BaseWebAuthn
     {
-        return new BaseWebAuthn(Core::getServerName(), Core::getRequest()->getHost());
+        return new BaseWebAuthn(Core::getInstanceName(), Core::getRequest()->getHost());
     }
 }

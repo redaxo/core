@@ -1027,16 +1027,12 @@
   <file src="pages/system/settings.php">
     <MixedArgument>
       <code><![CDATA[Core::getConfig('notfound_article_id', 1)]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_errormail', 1)]]></code>
       <code><![CDATA[Core::getConfig('start_article_id', 1)]]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$key]]></code>
       <code><![CDATA[$key]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$config[$key]]]></code>
-    </MixedAssignment>
     <NullOperand>
       <code><![CDATA[escape($editor->getBasepath())]]></code>
     </NullOperand>
@@ -1244,9 +1240,6 @@
       <code><![CDATA[['login' => $login]]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
-      <code><![CDATA[$config['error_email']]]></code>
-      <code><![CDATA[$config['server']]]></code>
-      <code><![CDATA[$config['servername']]]></code>
       <code><![CDATA[$createdb]]></code>
       <code><![CDATA[$dbCreate]]></code>
       <code><![CDATA[$login]]></code>
@@ -1413,10 +1406,6 @@
     </MixedReturnStatement>
   </file>
   <file src="src/Core.php">
-    <MixedArgument>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedArgument>
     <MixedAssignment>
       <code><![CDATA[$login]]></code>
       <code><![CDATA[$request]]></code>
@@ -1431,9 +1420,6 @@
       <code><![CDATA[$request]]></code>
       <code><![CDATA[Config::get(self::CONFIG_NAMESPACE, $key, $default)]]></code>
     </MixedReturnStatement>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$server]]></code>
-    </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Cronjob/CronjobExecutor.php">
     <MixedAssignment>

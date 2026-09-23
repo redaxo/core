@@ -9,7 +9,6 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Env;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Filesystem\Dir;
-use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Form\Field\ArticleField;
@@ -44,26 +43,7 @@ if ($func && !$csrfToken->isValid()) {
 
     $success = 'Updated assets';
 } elseif ('updateinfos' == $func) {
-    $configFile = Path::coreData('config.yml');
-    $config = array_merge(
-        File::getConfig(Path::core('setup/default.config.yml')),
-        File::getConfig($configFile),
-    );
-
     $settings = Request::post('settings', 'array', []);
-
-    foreach (['server', 'servername', 'error_email'] as $key) {
-        if (!isset($settings[$key]) || !$settings[$key]) {
-            $error[] = I18n::msg($key . '_required');
-            continue;
-        }
-        $config[$key] = $settings[$key];
-        try {
-            Core::setProperty($key, $settings[$key]);
-        } catch (InvalidArgumentException) {
-            $error[] = I18n::msg($key . '_invalid');
-        }
-    }
 
     foreach ($settings as $key => $value) {
         switch ($key) {
@@ -90,18 +70,11 @@ if ($func && !$csrfToken->isValid()) {
                 $value = (bool) $value;
                 Core::setConfig($key, $value);
                 break;
-
-            case 'phpmailer_errormail':
-                $value = (int) $value;
-                Core::setConfig('phpmailer_errormail', $value);
-                break;
         }
     }
 
     if (empty($error)) {
-        if (File::putConfig($configFile, $config)) {
-            $success = I18n::msg('info_updated');
-        }
+        $success = I18n::msg('info_updated');
     }
 } elseif ('update_editor' === $func) {
     $editor = Request::post('editor', [
@@ -195,6 +168,14 @@ $content = '
             <td>' . PHP_VERSION . ' <a class="rex-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" onclick="newWindow(\'phpinfo\', this.href, 1000,800,\',status=yes,resizable=yes\');return false;"><i class="rex-icon rex-icon-phpinfo"></i></a></td>
         </tr>
         <tr>
+            <th>' . I18n::msg('base_url') . '</th>
+            <td><span class="rex-word-break">' . escape(Core::getBaseUrl()) . '</span></td>
+        </tr>
+        <tr>
+            <th>' . I18n::msg('error_email') . '</th>
+            <td><span class="rex-word-break">' . escape(Env::get('REX_ERROR_EMAIL') ?? I18n::msg('deactivated')) . '</span></td>
+        </tr>
+        <tr>
             <th>' . I18n::msg('path') . '</th>
 			<td>
 			<div class="rex-word-break">' . Path::base() . '</div>
@@ -235,23 +216,8 @@ $content = '';
 $formElements = [];
 
 $n = [];
-$n['label'] = '<label for="rex-id-server" class="required">' . I18n::msg('server') . '</label>';
-$n['field'] = '<input class="form-control" type="url" id="rex-id-server" name="settings[server]" value="' . escape(Core::getServer()) . '" required />';
-$formElements[] = $n;
-
-$n = [];
-$n['label'] = '<label for="rex-id-servername" class="required">' . I18n::msg('servername') . '</label>';
-$n['field'] = '<input class="form-control" type="text" id="rex-id-servername" name="settings[servername]" value="' . escape(Core::getServerName()) . '" required />';
-$formElements[] = $n;
-
-$n = [];
 $n['label'] = '<label for="rex-id-lang" class="required">' . I18n::msg('backend_language') . '</label>';
 $n['field'] = $selLang->get();
-$formElements[] = $n;
-
-$n = [];
-$n['label'] = '<label for="rex-id-error-email" class="required">' . I18n::msg('error_email') . '</label>';
-$n['field'] = '<input class="form-control" type="email" id="rex-id-error-email" name="settings[error_email]" value="' . escape(Core::getErrorEmail()) . '" required />';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -292,34 +258,6 @@ $select->addOption(I18n::msg('deactivated'), 0);
 $select->setSelected(Core::getConfig('article_work_version', false) ? 1 : 0);
 $content .= $field->get();
 
-$field = new SelectField();
-$field->setAttribute('class', 'form-control selectpicker');
-$field->setAttribute('name', 'settings[phpmailer_errormail]');
-$field->setLabel(I18n::msg('system_setting_errormail'));
-$select = $field->getSelect();
-$select->addOption(I18n::msg('phpmailer_errormail_disabled'), 0);
-$select->addOption(I18n::msg('phpmailer_errormail_15min'), 900);
-$select->addOption(I18n::msg('phpmailer_errormail_30min'), 1800);
-$select->addOption(I18n::msg('phpmailer_errormail_60min'), 3600);
-$select->setSelected(Core::getConfig('phpmailer_errormail', 1));
-$content .= $field->get();
-
-$formElements = [];
-
-$editor = Editor::factory();
-$configYml = Path::coreData('config.yml');
-if ($url = $editor->getUrl($configYml, 0)) {
-    $n = [];
-    $n['label'] = '';
-    $n['field'] = $n['field'] = '<a class="btn btn-sm btn-primary" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($configYml)) . '</a>';
-    $n['note'] = I18n::msg('system_edit_config_note');
-    $formElements[] = $n;
-}
-
-$fragment = new Fragment();
-$fragment->setVar('elements', $formElements, false);
-$content .= $fragment->parse('core/form/form.php');
-
 $formElements = [];
 
 $n = [];
@@ -355,6 +293,7 @@ if ($viaCookie) {
 
 $formElements = [];
 
+$editor = Editor::factory();
 $selEditor = new Select();
 $selEditor->setStyle('class="form-control"');
 $selEditor->setName('editor[name]');

@@ -205,7 +205,7 @@ jobs:
                 run: |
                     sudo /etc/init.d/mysql start
                     mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo6;'
-                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
+                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --ansi -v
 
             -   name: Run phpstan analysis
                 if: github.event_name != 'repository_dispatch'

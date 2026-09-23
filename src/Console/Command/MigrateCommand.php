@@ -8,7 +8,6 @@ use Redaxo\Core\Cache;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
-use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\MetaInfo\MetaSync;
 use Redaxo\Core\Migration\Migration;
@@ -51,13 +50,6 @@ final class MigrateCommand extends AbstractCommand implements StandaloneInterfac
             $io->error(I18n::msg('sql_database_required_version', $dbType, $dbVersion, Setup::MIN_MYSQL_VERSION, Setup::MIN_MARIADB_VERSION));
             return Command::FAILURE;
         }
-
-        // merge new defaults from the shipped default.config.yml into the user's config.yml
-        $configPath = Path::coreData('config.yml');
-        File::putConfig($configPath, array_merge(
-            File::getConfig(Path::core('setup/default.config.yml')),
-            File::getConfig($configPath),
-        ));
 
         if (!$this->convergeSchema($io)) {
             return Command::FAILURE;

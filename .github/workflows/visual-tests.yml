@@ -88,9 +88,9 @@ jobs:
             -   name: Configure instance
                 run: |
                     sudo /etc/init.d/mysql start
-                    # setup is what writes the connection to .env.local and the config.yml, so it runs even
+                    # setup is what writes the connection to .env.local, so it runs even
                     # though the database it fills on the way is emptied again before the first screenshots
-                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=yes --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
+                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=yes --db-setup=normal --admin-username=admin --admin-password=adminpassword --ansi -v
                     php project/bin/console migrate -n --ansi -v
 
             -   name: Prepare mock data

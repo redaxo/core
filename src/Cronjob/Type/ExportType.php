@@ -25,7 +25,7 @@ final class ExportType extends AbstractType
     public function execute(): bool
     {
         $filename = $this->getParam('filename', self::DEFAULT_FILENAME);
-        $filename = str_replace('%REX_SERVER', Str::normalize(Core::getServerName(), '-'), $filename);
+        $filename = str_replace('%REX_SERVER', Str::normalize(Core::getInstanceName(), '-'), $filename);
         $filename = str_replace('%REX_VERSION', Core::getVersion(), $filename);
         $now = new DateTimeImmutable();
         $filename = str_replace(
@@ -134,7 +134,7 @@ final class ExportType extends AbstractType
                 $mail = new Mailer();
                 $mail->addAddress($this->getParam('mailaddress'));
                 $mail->Subject = I18n::rawMsg('backup_mail_subject');
-                $mail->Body = I18n::rawMsg('backup_mail_body', Core::getServerName());
+                $mail->Body = I18n::rawMsg('backup_mail_body', Core::getInstanceName());
                 $mail->addAttachment($exportFilePath, $filename);
                 if ($mail->send()) {
                     $this->message = $message . ', mail sent';

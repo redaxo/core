@@ -2,10 +2,13 @@
 
 namespace Redaxo\Core\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Core;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Mode;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @internal */
 final class CoreTest extends TestCase
@@ -134,17 +137,119 @@ final class CoreTest extends TestCase
         }
     }
 
-    public function testGetServer(): void
+    #[DataProvider('provideGetBaseUrlFromEnv')]
+    public function testGetBaseUrlFromEnv(string $expected, string $url): void
     {
-        $origServer = Core::getProperty('server');
+        $orig = $_SERVER['REX_BASE_URL'] ?? null;
 
         try {
-            Core::setProperty('server', 'http://www.redaxo.org');
-            self::assertEquals('http://www.redaxo.org/', Core::getServer());
-            self::assertEquals('https://www.redaxo.org/', Core::getServer('https'));
-            self::assertEquals('www.redaxo.org/', Core::getServer(''));
+            $_SERVER['REX_BASE_URL'] = $url;
+            self::assertSame($expected, Core::getBaseUrl());
         } finally {
-            Core::setProperty('server', $origServer);
+            self::restoreEnv('REX_BASE_URL', $orig);
+        }
+    }
+
+    /** @return list<array{string, string}> */
+    public static function provideGetBaseUrlFromEnv(): array
+    {
+        return [
+            ['https://example.org/', 'https://example.org'],
+            ['https://example.org/', 'https://example.org/'],
+            ['https://example.org/sub/', 'https://example.org/sub'],
+        ];
+    }
+
+    public function testGetBaseUrlWithInvalidEnv(): void
+    {
+        $orig = $_SERVER['REX_BASE_URL'] ?? null;
+
+        try {
+            $_SERVER['REX_BASE_URL'] = 'example.org';
+            $this->expectException(InvalidArgumentException::class);
+            Core::getBaseUrl();
+        } finally {
+            self::restoreEnv('REX_BASE_URL', $orig);
+        }
+    }
+
+    #[DataProvider('provideGetBaseUrlFromRequest')]
+    public function testGetBaseUrlFromRequest(string $expected, bool $backend, string $scriptName): void
+    {
+        $origUrl = $_SERVER['REX_BASE_URL'] ?? null;
+        $origEnvUrl = $_ENV['REX_BASE_URL'] ?? null;
+        /** @var Request|null $origRequest */
+        $origRequest = Core::getProperty('request');
+        $origBackend = (bool) Core::getProperty('redaxo', false);
+
+        try {
+            unset($_SERVER['REX_BASE_URL'], $_ENV['REX_BASE_URL']);
+            Core::setProperty('redaxo', $backend);
+            Core::setProperty('request', Request::create('https://example.org' . $scriptName, server: [
+                'SCRIPT_NAME' => $scriptName,
+                'SCRIPT_FILENAME' => '/var/www' . $scriptName,
+            ]));
+
+            self::assertSame($expected, Core::getBaseUrl());
+        } finally {
+            self::restoreEnv('REX_BASE_URL', $origUrl);
+            if (null !== $origEnvUrl) {
+                $_ENV['REX_BASE_URL'] = $origEnvUrl;
+            }
+            Core::setProperty('request', $origRequest);
+            Core::setProperty('redaxo', $origBackend);
+        }
+    }
+
+    /** @return list<array{string, bool, string}> */
+    public static function provideGetBaseUrlFromRequest(): array
+    {
+        return [
+            ['https://example.org/', false, '/index.php'],
+            ['https://example.org/sub/', false, '/sub/index.php'],
+            ['https://example.org/', true, '/redaxo/index.php'],
+            ['https://example.org/sub/', true, '/sub/redaxo/index.php'],
+        ];
+    }
+
+    public function testGetBaseUrlWithoutEnvAndRequest(): void
+    {
+        $origUrl = $_SERVER['REX_BASE_URL'] ?? null;
+        $origEnvUrl = $_ENV['REX_BASE_URL'] ?? null;
+        /** @var Request|null $origRequest */
+        $origRequest = Core::getProperty('request');
+
+        try {
+            unset($_SERVER['REX_BASE_URL'], $_ENV['REX_BASE_URL']);
+            Core::setProperty('request', null);
+
+            $this->expectException(LogicException::class);
+            Core::getBaseUrl();
+        } finally {
+            self::restoreEnv('REX_BASE_URL', $origUrl);
+            if (null !== $origEnvUrl) {
+                $_ENV['REX_BASE_URL'] = $origEnvUrl;
+            }
+            Core::setProperty('request', $origRequest);
+        }
+    }
+
+    public function testGetInstanceName(): void
+    {
+        $origServer = $_SERVER['REX_INSTANCE_NAME'] ?? null;
+        $origEnv = $_ENV['REX_INSTANCE_NAME'] ?? null;
+
+        try {
+            $_SERVER['REX_INSTANCE_NAME'] = 'My Site';
+            self::assertSame('My Site', Core::getInstanceName());
+
+            unset($_SERVER['REX_INSTANCE_NAME'], $_ENV['REX_INSTANCE_NAME']);
+            self::assertSame('REDAXO', Core::getInstanceName());
+        } finally {
+            self::restoreEnv('REX_INSTANCE_NAME', $origServer);
+            if (null !== $origEnv) {
+                $_ENV['REX_INSTANCE_NAME'] = $origEnv;
+            }
         }
     }
 

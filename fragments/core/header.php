@@ -48,7 +48,7 @@ $instanceColor = Appearance::getInstanceColor();
                             </a>
                         <?php endif ?>
                         <?php if (!$isPopup && Core::getUser()): ?>
-                            <h1 class="rex-nav-top-title"><a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-nav-top-title-name"><?= escape(Core::getServerName()) ?></span><i class="rex-icon rex-icon-external-link"></i></a></h1>
+                            <h1 class="rex-nav-top-title"><a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-nav-top-title-name"><?= escape(Core::getInstanceName()) ?></span><i class="rex-icon rex-icon-external-link"></i></a></h1>
                         <?php endif ?>
                     </div>
 

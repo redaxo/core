@@ -9,6 +9,7 @@ use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 use Redaxo\Core\Content\HistoryLogin;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Env;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Path;
@@ -28,7 +29,7 @@ if (Core::isDevMode()) {
     header('X-Robots-Tag: noindex, nofollow, noarchive');
 }
 
-if (0 != Core::getConfig('phpmailer_errormail')) {
+if (Env::get('REX_ERROR_EMAIL')) {
     Extension::register('RESPONSE_SHUTDOWN', static function () {
         Mailer::errorMail();
     });

@@ -52,9 +52,6 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
         SymfonyStyle $io,
         #[Option('System language e.g. "de_de" or "en_gb"', suggestedValues: I18n::getLocales(...))] ?string $lang = null,
         #[Option('Accept license terms and conditions')] bool $agreeLicense = false, // BC, not used anymore
-        #[Option('Website URL e.g. "https://example.org/"')] ?string $server = null,
-        #[Option('Website name')] ?string $servername = null,
-        #[Option('Error mail address e.g. "info@example.org"')] ?string $errorEmail = null,
         #[Option('Database url, e.g. "mysql://<login>:<password>@<host>/<name>"')] ?string $databaseUrl = null,
         #[Option('Database hostname e.g. "localhost" or "127.0.0.1"')] ?string $dbHost = null,
         #[Option('Database login')] ?string $dbLogin = null,
@@ -72,19 +69,6 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
     ): int {
         $this->io = $io;
         $this->input = $input;
-
-        $configFile = Path::coreData('config.yml');
-        /**
-         * @var array{
-         *     server: string|null,
-         *     servername: string|null,
-         *     error_email: string|null,
-         * } $config
-         */
-        $config = array_merge(
-            File::getConfig(Path::core('setup/default.config.yml')),
-            File::getConfig($configFile),
-        );
 
         $requiredValue = static function ($value) {
             if (empty($value)) {
@@ -125,36 +109,8 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
             return $code;
         }
 
-        // ---------------------------------- step 3 . Config
-        $io->title('Step 3 of 5 / Creating config');
-
-        $io->section('General');
-
-        $config['server'] = $this->getOptionOrAsk(
-            'Website URL',
-            'server',
-            $config['server'],
-            'Using website URL "%s"',
-            $requiredValue,
-        );
-
-        $config['servername'] = $this->getOptionOrAsk(
-            'Website name',
-            'servername',
-            $config['servername'],
-            'Using website name "%s"',
-            $requiredValue,
-        );
-
-        $config['error_email'] = $this->getOptionOrAsk(
-            'E-mail address in case of errors',
-            'error-email',
-            $config['error_email'],
-            'Using "%s" in case of errors',
-            $requiredValue,
-        );
-
-        $io->section('Database information');
+        // ---------------------------------- step 3 . Database
+        $io->title('Step 3 of 5 / Database');
 
         // a url the environment already provides seeds the questions, so that a re-run can keep or adjust it
         $envUrl = Env::get('DATABASE_URL');
@@ -460,14 +416,6 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
         } else {
             $io->success('No additional admin user created');
         }
-
-        // ---------------------------------- last step. save config
-
-        if (!File::putConfig($configFile, $config)) {
-            $io->error('Writing to config.yml failed.');
-            return Command::FAILURE;
-        }
-        File::delete(Path::coreCache('config.yml.cache'));
 
         $io->success('Congratulations! REDAXO has successfully been installed.');
         return Command::SUCCESS;
