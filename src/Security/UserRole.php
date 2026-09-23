@@ -3,8 +3,6 @@
 namespace Redaxo\Core\Security;
 
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\ExtensionPoint\AsExtension;
-use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 
 use function count;
 use function in_array;
@@ -128,14 +126,11 @@ final class UserRole
         ', [$userId, ...$roleIds]);
     }
 
-    #[AsExtension('COMPLEX_PERM_REMOVE_ITEM')]
-    #[AsExtension('COMPLEX_PERM_REPLACE_ITEM')]
-    public static function removeOrReplaceItem(ExtensionPoint $ep): void
+    /** Replaces the given complex perm item in all roles, or removes it if `$new` is null. */
+    public static function replaceComplexPermItem(string $key, int|string $item, int|string|null $new): void
     {
-        $params = $ep->getParams();
-        $key = $params['key'];
-        $item = '|' . $params['item'] . '|';
-        $new = isset($params['new']) ? '|' . $params['new'] . '|' : '|';
+        $item = '|' . $item . '|';
+        $new = null === $new ? '|' : '|' . $new . '|';
         $sql = Sql::factory();
         $sql->setQuery('SELECT id, perms FROM rex_user_role');
         $update = Sql::factory();
