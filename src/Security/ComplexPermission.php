@@ -3,8 +3,6 @@
 namespace Redaxo\Core\Security;
 
 use Redaxo\Core\Exception\InvalidArgumentException;
-use Redaxo\Core\ExtensionPoint\Extension;
-use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Form\Select\Select;
 
 use function is_array;
@@ -96,12 +94,12 @@ abstract class ComplexPermission
     /** Should be called if an item is removed. */
     final public static function removeItem(string $key, int|string $item): void
     {
-        Extension::dispatch(new ExtensionPoint('COMPLEX_PERM_REMOVE_ITEM', '', ['key' => $key, 'item' => $item], true));
+        UserRole::replaceComplexPermItem($key, $item, null);
     }
 
     /** Should be called if an item is replaced. */
     final public static function replaceItem(string $key, int|string $item, int|string $new): void
     {
-        Extension::dispatch(new ExtensionPoint('COMPLEX_PERM_REPLACE_ITEM', '', ['key' => $key, 'item' => $item, 'new' => $new], true));
+        UserRole::replaceComplexPermItem($key, $item, $new);
     }
 }

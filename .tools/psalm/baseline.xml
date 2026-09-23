@@ -2176,18 +2176,9 @@
     <MixedArgumentTypeCoercion>
       <code><![CDATA[$roles]]></code>
     </MixedArgumentTypeCoercion>
-    <MixedArrayOffset>
-      <code><![CDATA[$perms[$key]]]></code>
-      <code><![CDATA[$perms[$key]]]></code>
-    </MixedArrayOffset>
     <MixedAssignment>
-      <code><![CDATA[$key]]></code>
       <code><![CDATA[$roles[]]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$params['item']]]></code>
-      <code><![CDATA[$params['new']]]></code>
-    </MixedOperand>
   </file>
   <file src="src/Security/WebAuthn.php">
     <FalsableReturnStatement>
