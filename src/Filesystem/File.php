@@ -3,9 +3,7 @@
 namespace Redaxo\Core\Filesystem;
 
 use Redaxo\Core\Exception\RuntimeException;
-use Redaxo\Core\Util\Exception\YamlParseException;
 use Redaxo\Core\Util\Formatter;
-use Redaxo\Core\Util\Str;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 
@@ -58,21 +56,6 @@ final class File
             $content = @file_get_contents($file);
             return false !== $content ? $content : $default;
         });
-    }
-
-    /**
-     * Returns the content of a config file.
-     *
-     * @param string $file Path to the file
-     * @param array<mixed>|null $default Default value
-     * @throws YamlParseException
-     * @return array<mixed>|null Content of the file or default value if the file isn't readable
-     * @psalm-return ($default is null ? array<mixed>|null : array<mixed>)
-     */
-    public static function getConfig(string $file, ?array $default = []): ?array
-    {
-        $content = self::get($file);
-        return null === $content ? $default : Str::yamlDecode($content);
     }
 
     /**
@@ -151,22 +134,6 @@ final class File
             // No chmod needed: file_put_contents() applies the umask-derived perms on creation.
             return false !== file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
         });
-    }
-
-    /**
-     * Puts content in a config file.
-     *
-     * @param string $file Path to the file
-     * @param array<mixed> $content Content for the file
-     * @param int $inline The level where you switch to inline YAML
-     *
-     * @return bool TRUE on success, FALSE on failure
-     *
-     * @psalm-assert-if-true =non-empty-string $file
-     */
-    public static function putConfig(string $file, array $content, int $inline = 3): bool
-    {
-        return self::put($file, Str::yamlEncode($content, $inline));
     }
 
     /**

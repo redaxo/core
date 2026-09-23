@@ -360,7 +360,6 @@ return RectorConfig::configure()
         'rex_media_manager_not_found_exception' => MediaManager\Exception\MediaNotFoundException::class,
         'rex_sql_exception' => Database\Exception\SqlException::class,
         'rex_sql_could_not_connect_exception' => Database\Exception\CouldNotConnectException::class,
-        'rex_yaml_parse_exception' => Util\Exception\YamlParseException::class,
     ])
     ->withConfiguredRule(RenameFunctionRector::class, [
         'rex_escape' => 'Redaxo\\Core\\View\\escape',

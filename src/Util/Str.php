@@ -4,9 +4,6 @@ namespace Redaxo\Core\Util;
 
 use Normalizer;
 use Redaxo\Core\Exception\InvalidArgumentException;
-use Redaxo\Core\Util\Exception\YamlParseException;
-use Symfony\Component\Yaml\Exception\ParseException;
-use Symfony\Component\Yaml\Yaml;
 use voku\helper\AntiXSS;
 
 use function is_array;
@@ -102,45 +99,6 @@ final class Str
                 $value = $part[0] == $spacer ? $quoted[$i++] : $part[0];
                 $result[] = $value;
             }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Returns a string containing the YAML representation of $value.
-     *
-     * @param array<mixed> $value The value being encoded
-     * @param int $inline The level where you switch to inline YAML
-     */
-    public static function yamlEncode(array $value, int $inline = 3): string
-    {
-        return Yaml::dump($value, $inline, 4);
-    }
-
-    /**
-     * Parses YAML into a PHP array.
-     *
-     * @param string $value YAML string
-     *
-     * @throws YamlParseException
-     *
-     * @return array<mixed>
-     */
-    public static function yamlDecode(string $value): array
-    {
-        if ('' === $value) {
-            return [];
-        }
-
-        try {
-            $result = Yaml::parse($value, Yaml::PARSE_CUSTOM_TAGS);
-        } catch (ParseException $exception) {
-            throw new YamlParseException($exception->getMessage(), $exception);
-        }
-
-        if (!is_array($result)) {
-            throw new YamlParseException(__FUNCTION__ . ' does not support YAML content containing a single scalar value (given "' . $value . '")');
         }
 
         return $result;
