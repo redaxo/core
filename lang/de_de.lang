@@ -128,14 +128,8 @@ syslog_phperrors = PHP Errorlog
 syslog_slowqueries = DB Slow-Query log
 syslog_empty = Leere Logdatei
 syslog_download = "{0}" herunterladen
-server = URL der Website
-servername = Name der Website
+base_url = URL der Website
 error_email = E-Mail-Adresse bei Fehlern
-error_email_required = Es wird eine E-Mail-Adresse für Fehler benötigt!
-error_email_invalid = Die E-Mail-Adresse für Fehler ist keine gültige E-Mail-Adresse!
-server_required = Es wird eine URL für die Website benötigt!
-server_invalid = Die Website-URL ist ungültig, sie muss vollständig inkl. Protokoll angegeben werden!
-servername_required = Es wird ein Servername benötigt!
 system_editor = Editor-Integration
 system_editor_note = Verknüpft REDAXO mit einem Editor um darin Quellcode-Dateien direkt öffnen zu können.<br> Die Einstellungen können global über die Umgebungsvariablen <code>REX_EDITOR</code> und <code>REX_EDITOR_BASEPATH</code> gesetzt oder individuell pro Nutzer im Browser als Cookie gespeichert werden.
 system_editor_note_cookie = Aktuell werden die folgenden Einstellungen aus dem Cookie verwendet.
@@ -149,7 +143,6 @@ system_editor_update_cookie = Als Cookie speichern
 system_editor_delete_cookie = Cookie löschen
 system_editor_success_cookie = Die Editor-Einstellungen wurden als Browser-Cookie gespeichert.
 system_editor_success_cookie_deleted = Die Cookies für die Editor-Einstellungen wurden gelöscht, es werden nun wieder die globalen Einstellungen verwendet.
-system_edit_config_note = Die REDAXO Hauptkonfiguration bietet die Möglichkeit interne Systemparameter zu verändern. Die Datei sollte nur von erfahrenen Nutzern bearbeitet werden.
 dev_mode_marker = Der Dev-Modus ist aktiv
 
 system_report = Systembericht
@@ -261,7 +254,7 @@ password_change_required = Das Passwort ist abgelaufen. Um fortzufahren, bitte e
 password_not_changed = Das neue Passwort muss sich vom vorherigen unterscheiden!
 password_already_used = Das Passwort wurde schon benutzt und kann nicht erneut verwendet werden!
 password_invalid = Das Passwort entspricht nicht den geforderten Regeln ({0})!
-password_admin_notice = Die Passwort-Regeln können über die config.yml geändert werden.
+password_admin_notice = Die Passwort-Regeln können im Projekt über BackendLogin::$passwordPolicy angepasst werden.
 password_rule_min = min. {0}
 password_rule_max = max. {0}
 password_rule_between = {0} bis {1}
@@ -660,12 +653,7 @@ phpmailer_log_from = Von
 phpmailer_log_to = An
 phpmailer_log_subject = Betreff
 phpmailer_log_msg = Meldung
-phpmailer_errormail_disabled = deaktiviert
-phpmailer_errormail_15min = im 15 Minuten-Intervall
-phpmailer_errormail_30min = im 30 Minuten-Intervall
-phpmailer_errormail_60min = im 60 Minuten-Intervall
 
-system_setting_errormail = E-Mail-Benachrichtigung bei Fehlern
 perm_general_phpmailer[] = PHPMailer-Einstellungen
 
 # Archive Maintenance

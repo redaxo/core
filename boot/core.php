@@ -96,8 +96,6 @@ ErrorHandler::register();
 // APP_ENV (hosting panel default, copied Symfony .env) must not leak a different environment.
 $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = Core::isDevMode() ? 'dev' : 'prod';
 
-Core::loadConfigYml();
-
 Core::getProject()->configure();
 
 // on the console the locale is always english

@@ -361,7 +361,6 @@ $defaultConfig = [
     'phpmailer_password' => '',
     'phpmailer_smtp_debug' => '0',
     'phpmailer_logging' => 0,
-    'phpmailer_errormail' => 0,
     'phpmailer_archive' => false,
     'phpmailer_detour_mode' => false,
 ];

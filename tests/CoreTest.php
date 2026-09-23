@@ -134,20 +134,6 @@ final class CoreTest extends TestCase
         }
     }
 
-    public function testGetServer(): void
-    {
-        $origServer = Core::getProperty('server');
-
-        try {
-            Core::setProperty('server', 'http://www.redaxo.org');
-            self::assertEquals('http://www.redaxo.org/', Core::getServer());
-            self::assertEquals('https://www.redaxo.org/', Core::getServer('https'));
-            self::assertEquals('www.redaxo.org/', Core::getServer(''));
-        } finally {
-            Core::setProperty('server', $origServer);
-        }
-    }
-
     public function testGetVersion(): void
     {
         self::assertTrue('' != Core::getVersion(), 'a version string is returned');

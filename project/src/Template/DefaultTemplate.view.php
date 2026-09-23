@@ -11,7 +11,7 @@ return static function (ArticleContent $content): void { ?>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title><?= escape($content->article->name) ?> – <?= escape(Core::getServerName()) ?></title>
+        <title><?= escape($content->article->name) ?> – <?= escape(Core::getProject()->instanceName) ?></title>
     </head>
     <body>
         <?= $content->renderContent() ?>

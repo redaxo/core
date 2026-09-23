@@ -7,21 +7,15 @@ use Redaxo\Core\Console\Application;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
-use Redaxo\Core\Filesystem\File;
-use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
-use Redaxo\Core\Validator\Validator;
 use Symfony\Component\HttpClient\HttpClient as HttpClientFactory;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Yaml\Tag\TaggedValue;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-use function is_array;
-use function is_string;
 use function sprintf;
 
 /**
@@ -36,8 +30,6 @@ final class Core
 
     /** Prefix marking temporary database tables and files. */
     public const string TEMP_PREFIX = 'tmp_';
-
-    private const CACHE_ENV_KEY = "\0rex_env_var\0";
 
     /**
      * Array of properties.
@@ -114,17 +106,6 @@ final class Core
     public static function setProperty(string $key, mixed $value): bool
     {
         switch ($key) {
-            case 'server':
-                if (!Validator::factory()->url($value)) {
-                    throw new InvalidArgumentException('"' . $key . '" property: expecting $value to be a full URL.');
-                }
-                $value = rtrim($value, '/') . '/';
-                break;
-            case 'error_email':
-                if (null !== $value && !Validator::factory()->email($value)) {
-                    throw new InvalidArgumentException('"' . $key . '" property: expecting $value to be an email address.');
-                }
-                break;
             case 'console':
                 if (null !== $value && !$value instanceof Application) {
                     throw new InvalidArgumentException(sprintf('"%s" property: expecting $value to be an instance of %s, "%s" found.', $key, Application::class, get_debug_type($value)));
@@ -145,11 +126,8 @@ final class Core
      * @return (
      *      $key is 'login' ? BackendLogin|null :
      *      ($key is 'timer' ? Timer :
-     *      ($key is 'server' ? string :
-     *      ($key is 'servername' ? string :
-     *      ($key is 'error_email' ? string :
      *      mixed|null
-     *      )))))
+     *      ))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
@@ -331,28 +309,6 @@ final class Core
         ]);
     }
 
-    /** Returns the server URL. */
-    public static function getServer(?string $protocol = null): string
-    {
-        if (null === $protocol) {
-            return self::getProperty('server');
-        }
-        [, $server] = explode('://', self::getProperty('server'), 2);
-        return $protocol ? $protocol . '://' . $server : $server;
-    }
-
-    /** Returns the server name. */
-    public static function getServerName(): string
-    {
-        return self::getProperty('servername');
-    }
-
-    /** Returns the error email. */
-    public static function getErrorEmail(): string
-    {
-        return self::getProperty('error_email');
-    }
-
     /**
      * Returns the redaxo version.
      *
@@ -372,66 +328,5 @@ final class Core
             return Formatter::version($version, $format);
         }
         return $version;
-    }
-
-    /** @internal */
-    public static function loadConfigYml(): void
-    {
-        $cacheFile = Path::coreCache('config.yml.cache');
-        $configFile = Path::coreData('config.yml');
-
-        $cacheMtime = @filemtime($cacheFile);
-        if ($cacheMtime && $cacheMtime >= @filemtime($configFile)) {
-            $config = File::getCache($cacheFile);
-        } else {
-            $config = array_merge(
-                File::getConfig(Path::core('setup/default.config.yml')),
-                File::getConfig($configFile),
-            );
-            $config = array_map(static fn (mixed $value) => self::convertYamlTags($value), $config);
-            File::putCache($cacheFile, $config);
-        }
-
-        /**
-         * @var string $key
-         * @var mixed $value
-         */
-        foreach ($config as $key => $value) {
-            /** @psalm-suppress MixedAssignment */
-            $value = self::convertEnvVariables($value);
-
-            self::setProperty($key, $value);
-        }
-    }
-
-    private static function convertYamlTags(mixed $value): mixed
-    {
-        if ($value instanceof TaggedValue) {
-            if ('env' !== $value->getTag()) {
-                return $value->getValue();
-            }
-
-            return [self::CACHE_ENV_KEY => $value->getValue()];
-        }
-
-        if (!is_array($value)) {
-            return $value;
-        }
-
-        return array_map(static fn (mixed $value) => self::convertYamlTags($value), $value);
-    }
-
-    private static function convertEnvVariables(mixed $value): mixed
-    {
-        if (!is_array($value)) {
-            return $value;
-        }
-
-        $var = $value[self::CACHE_ENV_KEY] ?? null;
-        if (!is_string($var)) {
-            return array_map(static fn (mixed $value) => self::convertEnvVariables($value), $value);
-        }
-
-        return Env::get($var) ?? throw new InvalidArgumentException('Environment variable "' . $var . '" is not set.');
     }
 }

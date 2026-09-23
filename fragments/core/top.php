@@ -24,16 +24,7 @@ use function Redaxo\Core\View\escape;
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 <?php
-    $user = Core::getUser();
-
-    $colorScheme = 'light dark'; // default: support both
-    if (Core::getProperty('theme')) {
-        // global theme from config.yml
-        $colorScheme = escape((string) Core::getProperty('theme'));
-    } elseif ($user && $user->theme) {
-        // user selected theme
-        $colorScheme = escape($user->theme);
-    }
+    $colorScheme = Appearance::getTheme() ?? 'light dark';
     echo "\n" . '    <meta name="color-scheme" content="' . $colorScheme . '">';
     echo "\n" . '    <style nonce="' . Response::getNonce() . '">:root { color-scheme: ' . $colorScheme . ' }</style>';
 

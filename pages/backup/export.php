@@ -29,7 +29,7 @@ $EXPTABLES = Request::post('EXPTABLES', 'array[string]');
 $EXPDIR = Request::post('EXPDIR', 'array[string]');
 
 if ('' == $exportfilename) {
-    $exportfilename = Str::normalize(Core::getServerName()) . '_' . date('Ymd_Hi') . '_rex' . Core::getVersion();
+    $exportfilename = Str::normalize(Core::getProject()->instanceName) . '_' . date('Ymd_Hi') . '_rex' . Core::getVersion();
 }
 
 $tables = Sql::factory()->getTables();

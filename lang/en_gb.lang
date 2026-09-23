@@ -127,14 +127,8 @@ syslog_phperrors = PHP errorlog
 syslog_slowqueries = DB Slow-Query log
 syslog_empty = empty logfile
 syslog_download = Download "{0}"
-server = Website URL
-servername = Website name
+base_url = Website URL
 error_email = Email address in case of errors
-error_email_required = Email address is required!
-error_email_invalid = Please enter a valid email address
-server_required = A website URL is required
-server_invalid = The website URL is invalid, please enter a valid URL including protocol!
-servername_required = Server name is required
 system_editor = Editor integration
 system_editor_note = Links REDAXO with an editor to edit source files directly in an editor of choice. <br /> These settings can be set globally via the env vars <code>REX_EDITOR</code> and <code>REX_EDITOR_BASEPATH</code> or saved individually per user as a cookie in the browser.
 system_editor_note_cookie = Currently the following settings from the cookie are being used
@@ -148,7 +142,6 @@ system_editor_update_cookie = Save as cookie
 system_editor_delete_cookie = Delete cookie
 system_editor_success_cookie = Editor settings have been saved to a browser cookie.
 system_editor_success_cookie_deleted = The cookies containing editor settings have been deleted, global settings will be used instead.
-system_edit_config_note = The REDAXO main configuration offers the possibility to change internal system parameters. The file should only be edited by advanced users.
 dev_mode_marker = The dev mode is enabled
 
 system_report = System report
@@ -222,7 +215,7 @@ password_change_required = The password has expired. To continue, please enter a
 password_not_changed = The new password must be different than the previous one!
 password_already_used = This password has been used before and cannot be used again!
 password_invalid = The password does not match the required rules ({0})!
-password_admin_notice = The password rules can be changed in config.yml.
+password_admin_notice = The password rules can be changed in the project via BackendLogin::$passwordPolicy.
 password_rule_min = min. {0}
 password_rule_max = max. {0}
 password_rule_between = {0} to {1}
@@ -628,12 +621,7 @@ phpmailer_log_from = From
 phpmailer_log_to = To
 phpmailer_log_subject = Subject
 phpmailer_log_msg = Message
-phpmailer_errormail_disabled = disabled
-phpmailer_errormail_15min = 15 minute interval
-phpmailer_errormail_30min = 30 minute interval
-phpmailer_errormail_60min = 60 minute interval
 
-system_setting_errormail = Send e-mail on errors
 perm_general_phpmailer[] = PHPMailer settings
 
 # Archive Maintenance

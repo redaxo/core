@@ -7,6 +7,8 @@ use IntlDateFormatter;
 use LimitIterator;
 use PHPMailer\PHPMailer\PHPMailer;
 use Redaxo\Core\Core;
+use Redaxo\Core\Env;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
@@ -21,8 +23,10 @@ use Redaxo\Core\Util\Timer;
 
 use function array_slice;
 use function count;
+use function sprintf;
 
 use const FILTER_VALIDATE_EMAIL;
+use const FILTER_VALIDATE_INT;
 use const ICONV_MIME_DECODE_CONTINUE_ON_ERROR;
 use const JSON_PRETTY_PRINT;
 use const JSON_UNESCAPED_UNICODE;
@@ -243,6 +247,11 @@ class Mailer extends PHPMailer
     /** @internal */
     public static function errorMail(): void
     {
+        $recipient = Env::get('REX_ERROR_EMAIL');
+        if (null === $recipient) {
+            return;
+        }
+
         $logFile = Path::log('system.log');
         $lastSendTime = (int) Core::getConfig('phpmailer_last_log_file_send_time', 0);
         $lastErrors = (string) Core::getConfig('phpmailer_last_errors', '');
@@ -257,7 +266,7 @@ class Mailer extends PHPMailer
         $logevent = false;
 
         // Start - generate mail body
-        $mailBody = '<h2>Error protocol for: ' . Core::getServerName() . '</h2>';
+        $mailBody = '<h2>Error protocol for: ' . Core::getProject()->instanceName . '</h2>';
         $mailBody .= '<style nonce="' . Response::getNonce() . '"> .errorbg {background: #F6C4AF; } .eventbg {background: #E1E1E1; } td, th {padding: 5px;} table {width: 100%; border: 1px solid #ccc; } th {background: #b00; color: #fff;} td { border: 0; border-bottom: 1px solid #b00;} </style> ';
         $mailBody .= '<table>';
         $mailBody .= '    <thead>';
@@ -320,19 +329,17 @@ class Mailer extends PHPMailer
 
         // Combine time-based and content-based checks
         $timeSinceLastSend = time() - $lastSendTime;
-        $errorMailInterval = (int) Core::getConfig('phpmailer_errormail');
-
-        if ($timeSinceLastSend < $errorMailInterval && $currentErrorsHash === $lastErrors) {
+        if ($timeSinceLastSend < self::getErrorMailInterval() && $currentErrorsHash === $lastErrors) {
             return;
         }
 
         // Send email
         $mail = new self();
-        $mail->Subject = Core::getServerName() . ' - Error Report';
+        $mail->Subject = Core::getProject()->instanceName . ' - Error Report';
         $mail->Body = $mailBody;
         $mail->AltBody = strip_tags($mailBody);
         $mail->FromName = 'REDAXO Error Report';
-        $mail->addAddress(Core::getErrorEmail());
+        $mail->addAddress($recipient);
 
         // Set X-Mailer header for ErrorMails
         $mail->XMailer = 'REDAXO/' . Core::getVersion() . ' ErrorMailer';
@@ -342,6 +349,27 @@ class Mailer extends PHPMailer
             Core::setConfig('phpmailer_last_errors', $currentErrorsHash);
             Core::setConfig('phpmailer_last_log_file_send_time', time());
         }
+    }
+
+    /**
+     * Returns the minimum number of seconds between two error mails reporting the same errors, defined by the env var
+     * `REX_ERROR_EMAIL_INTERVAL` (default: one hour).
+     *
+     * @internal
+     */
+    public static function getErrorMailInterval(): int
+    {
+        $interval = Env::get('REX_ERROR_EMAIL_INTERVAL');
+        if (null === $interval) {
+            return 3600;
+        }
+
+        $seconds = filter_var($interval, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+        if (false === $seconds) {
+            throw new InvalidArgumentException(sprintf('The env var "REX_ERROR_EMAIL_INTERVAL" must be a number of seconds, "%s" given.', $interval));
+        }
+
+        return $seconds;
     }
 
     protected function microsoft365Send(): bool

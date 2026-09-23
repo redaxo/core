@@ -3,7 +3,7 @@
 namespace Redaxo\Core\Console\Command;
 
 use PDOException;
-use Redaxo\Core\Filesystem\File;
+use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Setup\Setup;
 use Redaxo\Core\Translation\I18n;
@@ -53,17 +53,8 @@ final class SystemCheckCommand extends AbstractCommand
             $io->success('Directory permissions ok');
         }
 
-        $config = null;
-        $configFile = Path::coreData('config.yml');
-        if ($configFile) {
-            $config = File::getConfig($configFile);
-        }
         try {
-            if ($config) {
-                $err = Setup::checkDb(false);
-            } else {
-                $err = 'config.yml not found';
-            }
+            $err = ConnectionConfig::exists() ? Setup::checkDb(false) : 'The env var "DATABASE_URL" is not set.';
             if ($err) {
                 $exitCode = 3;
                 $io->error("Database error:\n" . $this->decodeMessage($err));

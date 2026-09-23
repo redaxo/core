@@ -2,15 +2,19 @@
 
 namespace Redaxo\Core\Filesystem;
 
+use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\Article;
+use Redaxo\Core\Core;
+use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Util\Str;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Utility class to generate relative URLs.
+ * Utility class to generate URLs, relative ones unless stated otherwise.
  *
  * @psalm-import-type TUrlParams from Str
  */
@@ -34,6 +38,36 @@ final class Url
     public static function base(string $file = ''): string
     {
         return self::$pathprovider->base($file);
+    }
+
+    /**
+     * Returns an absolute url below the frontend base, see {@see AbstractProject::$baseUrl}.
+     *
+     * Without a configured base url it is derived from the current request (so it follows the `Host` header then).
+     * On the console there is no request, so the base url has to be configured there.
+     *
+     * @return non-empty-string
+     */
+    public static function absoluteBase(string $file = ''): string
+    {
+        /** @var non-empty-string|null $url normalized by the property hook */
+        $url = Core::getProject()->baseUrl;
+
+        if (null !== $url) {
+            return $url . $file;
+        }
+
+        $request = Core::getProperty('request');
+        if (!$request instanceof Request) {
+            throw new LogicException('The base url is missing, the env var "REX_BASE_URL" is required to build absolute urls on the console.');
+        }
+
+        $path = $request->getBasePath();
+        if (Core::isBackend()) {
+            $path = substr($path, 0, (int) strrpos($path, '/'));
+        }
+
+        return $request->getSchemeAndHttpHost() . $path . '/' . $file;
     }
 
     /**

@@ -29,7 +29,7 @@ final class ScriptHandler
     public static function postCreateProject(): void
     {
         self::cleanUpComposerJson();
-        self::generateInstanceId();
+        self::initEnv();
         self::writeReadme();
 
         echo "Initialized composer.json, .env and README.md for the new project.\n";
@@ -54,15 +54,23 @@ final class ScriptHandler
         file_put_contents($file, $manipulator->getContents());
     }
 
-    private static function generateInstanceId(): void
+    private static function initEnv(): void
     {
         $file = getcwd() . '/.env';
+        $dir = basename((string) getcwd());
 
-        $name = trim(strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', basename((string) getcwd()))), '-');
-        $id = ($name ?: 'redaxo') . '-' . bin2hex(random_bytes(4));
+        $slug = trim(strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $dir)), '-');
+        $id = ($slug ?: 'redaxo') . '-' . bin2hex(random_bytes(4));
+
+        // single quotes keep dotenv from interpreting spaces, `#` or `$`, but cannot be escaped themselves
+        $name = str_replace("'", '', $dir);
+        if (!preg_match('/^[\w.-]+$/', $name)) {
+            $name = "'" . $name . "'";
+        }
 
         $content = (string) file_get_contents($file);
         $content = (string) preg_replace('/^REX_INSTANCE_ID=.*$/m', 'REX_INSTANCE_ID=' . $id, $content, 1);
+        $content = (string) preg_replace_callback('/^REX_INSTANCE_NAME=.*$/m', static fn () => 'REX_INSTANCE_NAME=' . $name, $content, 1);
 
         file_put_contents($file, $content);
     }
