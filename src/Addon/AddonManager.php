@@ -76,6 +76,15 @@ class AddonManager
 
             $firstInstall = !self::hasBeenInstalled($this->addon->name);
 
+            // rebuilt from scratch so that files removed from the addon don't linger; install() may add generated ones
+            if (!Dir::delete($this->addon->getAssetsPath())) {
+                throw new UserMessageException($this->i18n('install_cant_delete_files'));
+            }
+            $assets = $this->addon->getPath('assets');
+            if (is_dir($assets) && !Dir::copy($assets, $this->addon->getAssetsPath())) {
+                throw new UserMessageException($this->i18n('install_cant_copy_files'));
+            }
+
             // run install hook (can only abort by throwing a UserMessageException)
             $this->addon->install();
 
@@ -83,12 +92,6 @@ class AddonManager
                 if (!$this->addon->hasConfig($key)) {
                     $this->addon->setConfig($key, $value);
                 }
-            }
-
-            // copy assets
-            $assets = $this->addon->getPath('assets');
-            if (is_dir($assets) && !Dir::copy($assets, $this->addon->getAssetsPath())) {
-                throw new UserMessageException($this->i18n('install_cant_copy_files'));
             }
 
             if ($firstInstall) {

@@ -7,6 +7,14 @@ use Redaxo\Core\Database\ForeignKey;
 use Redaxo\Core\Database\Index;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
+use Redaxo\Core\Exception\UserMessageException;
+use Redaxo\Core\Filesystem\Dir;
+use Redaxo\Core\Filesystem\Path;
+
+// rebuilt from scratch so that files removed from the core don't linger
+if (!Dir::delete(Path::coreAssets()) || !Dir::copy(Path::core('assets'), Path::coreAssets())) {
+    throw new UserMessageException('Unable to copy the assets to "' . Path::coreAssets() . '". Is the folder writable?');
+}
 
 Table::get('rex_language')
     ->ensurePrimaryIdColumn()

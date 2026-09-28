@@ -52,7 +52,12 @@ final class Importer
 
     public static function databaseAlreadyExists(): string
     {
-        // ----- db schon vorhanden, nichts tun
+        try {
+            include Path::core('setup/install.php');
+        } catch (UserMessageException $e) {
+            return $e->getMessage();
+        }
+
         return self::reinstallPackages();
     }
 

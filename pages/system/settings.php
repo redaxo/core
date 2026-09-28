@@ -8,7 +8,6 @@ use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Env;
 use Redaxo\Core\Exception\InvalidArgumentException;
-use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Form\Field\ArticleField;
@@ -38,10 +37,6 @@ if ($func && !$csrfToken->isValid()) {
 } elseif ('generate' == $func) {
     // generate all articles,cats,templates,caches
     $success = Cache::delete();
-} elseif ('updateassets' == $func && !Core::isHardenedMode()) {
-    Dir::copy(Path::core('assets'), Path::coreAssets());
-
-    $success = 'Updated assets';
 } elseif ('updateinfos' == $func) {
     $settings = Request::post('settings', 'array', []);
 
