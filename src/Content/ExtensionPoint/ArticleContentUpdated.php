@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Content\ExtensionPoint;
 
 use Redaxo\Core\Content\Article;
+use Redaxo\Core\Content\ArticleSlice;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 
 /**
@@ -16,6 +17,8 @@ final class ArticleContentUpdated extends ExtensionPoint
     public function __construct(
         public readonly Article $article,
         public readonly string $action,
+        /** Affected slice of the `slice_*` actions (for `slice_deleted` its state before deletion) */
+        public readonly ?ArticleSlice $slice = null,
         string $subject = '',
         array $params = [],
         bool $readonly = false,
