@@ -101,29 +101,6 @@ final class CoreTest extends TestCase
         }
     }
 
-    public function testGetInstanceId(): void
-    {
-        $origServer = $_SERVER['REX_INSTANCE_ID'] ?? null;
-        $origEnv = $_ENV['REX_INSTANCE_ID'] ?? null;
-
-        try {
-            $_SERVER['REX_INSTANCE_ID'] = 'test-instance';
-            self::assertSame('test-instance', Core::getInstanceId());
-
-            unset($_SERVER['REX_INSTANCE_ID'], $_ENV['REX_INSTANCE_ID']);
-            $this->expectException(LogicException::class);
-            Core::getInstanceId();
-        } finally {
-            self::restoreEnv('REX_INSTANCE_ID', $origServer);
-
-            if (null === $origEnv) {
-                unset($_ENV['REX_INSTANCE_ID']);
-            } else {
-                $_ENV['REX_INSTANCE_ID'] = $origEnv;
-            }
-        }
-    }
-
     /** @param non-empty-string $name */
     private static function restoreEnv(string $name, ?string $value): void
     {

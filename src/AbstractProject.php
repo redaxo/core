@@ -7,7 +7,6 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Database\Table;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
-use Redaxo\Core\Filesystem\DefaultPathProvider;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Migration\Migration;
@@ -59,6 +58,16 @@ abstract class AbstractProject implements RunnerInterface
 
     /** @var non-empty-string */
     public string $backendDirectory = 'redaxo';
+
+    /**
+     * Unique id of this installation, used to namespace sessions and cookies. Defaults to the env var
+     * `REX_INSTANCE_ID`, which `composer create-project` generates.
+     *
+     * @var non-empty-string
+     */
+    public string $instanceId {
+        get => $this->instanceId ?? Env::require('REX_INSTANCE_ID');
+    }
 
     /**
      * Name of this installation, shown in the backend and used e.g. in mail subjects and backup file names.
@@ -133,11 +142,6 @@ abstract class AbstractProject implements RunnerInterface
         }
 
         Core::setProject($this);
-
-        $REX = [];
-        $REX['REDAXO'] = Environment::Frontend !== $this->environment;
-        $REX['PATH_PROVIDER'] = new DefaultPathProvider($this, true);
-        $REX['URL_PROVIDER'] = new DefaultPathProvider($this, false);
 
         require dirname(__DIR__) . '/boot/core.php';
     }

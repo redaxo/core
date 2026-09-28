@@ -176,11 +176,7 @@ final class Core
     /** Returns the environment. */
     public static function getEnvironment(): Environment
     {
-        if (self::getConsole()) {
-            return Environment::Console;
-        }
-
-        return self::getProperty('redaxo', false) ? Environment::Backend : Environment::Frontend;
+        return self::getProject()->environment;
     }
 
     /**
@@ -223,17 +219,6 @@ final class Core
     public static function isHardenedMode(): bool
     {
         return Mode::Hardened === self::getMode();
-    }
-
-    /**
-     * Returns the unique id of this installation, defined by the env var `REX_INSTANCE_ID` (usually in the `.env`
-     * file).
-     *
-     * @return non-empty-string
-     */
-    public static function getInstanceId(): string
-    {
-        return Env::require('REX_INSTANCE_ID');
     }
 
     /** Returns the current user. */

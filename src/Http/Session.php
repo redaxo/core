@@ -124,7 +124,7 @@ final class Session
      */
     public static function getNamespace(): string
     {
-        return Core::getInstanceId() . (Core::isBackend() ? '_backend' : '');
+        return Core::getProject()->instanceId . (Core::isBackend() ? '_backend' : '');
     }
 
     /** Returns the attributes of the current environment. */
@@ -178,9 +178,9 @@ final class Session
 
         // both environments keep their attributes apart, so that e.g. the backend session can be cleared without
         // logging out the users in the frontend
-        $backendBag = new AttributeBag(Core::getInstanceId() . '_backend');
+        $backendBag = new AttributeBag(Core::getProject()->instanceId . '_backend');
         $backendBag->setName(self::BAG_BACKEND);
-        $frontendBag = new AttributeBag(Core::getInstanceId());
+        $frontendBag = new AttributeBag(Core::getProject()->instanceId);
         $frontendBag->setName(self::BAG_FRONTEND);
 
         $session = new HttpFoundationSession($storage, $backend ? $backendBag : $frontendBag);

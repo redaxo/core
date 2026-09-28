@@ -8,10 +8,37 @@ use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Env;
 use Redaxo\Core\Environment;
 use Redaxo\Core\Exception\InvalidArgumentException;
+use Redaxo\Core\Exception\LogicException;
 
 /** @internal */
 final class AbstractProjectTest extends TestCase
 {
+    public function testInstanceId(): void
+    {
+        $origServer = Env::get('REX_INSTANCE_ID');
+        $origEnv = $_ENV['REX_INSTANCE_ID'] ?? null;
+
+        try {
+            $project = new class(Environment::Frontend) extends AbstractProject {};
+
+            $_SERVER['REX_INSTANCE_ID'] = 'test-instance';
+            self::assertSame('test-instance', $project->instanceId);
+
+            unset($_SERVER['REX_INSTANCE_ID'], $_ENV['REX_INSTANCE_ID']);
+            $this->expectException(LogicException::class);
+            self::assertNotEmpty($project->instanceId);
+        } finally {
+            if (null === $origServer) {
+                unset($_SERVER['REX_INSTANCE_ID']);
+            } else {
+                $_SERVER['REX_INSTANCE_ID'] = $origServer;
+            }
+            if (null !== $origEnv) {
+                $_ENV['REX_INSTANCE_ID'] = $origEnv;
+            }
+        }
+    }
+
     public function testInstanceName(): void
     {
         $origServer = Env::get('REX_INSTANCE_NAME');

@@ -5,7 +5,9 @@ namespace Redaxo\Core\Tests\Filesystem;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Redaxo\Core\AbstractProject;
 use Redaxo\Core\Core;
+use Redaxo\Core\Environment;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Util\Type;
@@ -16,9 +18,8 @@ final class UrlTest extends TestCase
 {
     private ?string $origServerEnv;
     private ?string $origEnv;
-    private ?string $origBaseUrl;
+    private AbstractProject $origProject;
     private ?Request $origRequest;
-    private bool $origBackend;
 
     #[Override]
     protected function setUp(): void
@@ -28,11 +29,12 @@ final class UrlTest extends TestCase
         $this->origEnv = Type::nullOrString($_ENV['REX_BASE_URL'] ?? null);
         unset($_SERVER['REX_BASE_URL'], $_ENV['REX_BASE_URL']);
 
-        $this->origBaseUrl = Core::getProject()->baseUrl;
+        $this->origProject = Core::getProject();
         /** @var Request|null $request */
         $request = Core::getProperty('request');
         $this->origRequest = $request;
-        $this->origBackend = (bool) Core::getProperty('redaxo', false);
+
+        self::setProject(Environment::Frontend);
     }
 
     #[Override]
@@ -45,9 +47,8 @@ final class UrlTest extends TestCase
             $_ENV['REX_BASE_URL'] = $this->origEnv;
         }
 
-        Core::getProject()->baseUrl = $this->origBaseUrl;
+        Core::setProject($this->origProject);
         Core::setProperty('request', $this->origRequest);
-        Core::setProperty('redaxo', $this->origBackend);
     }
 
     #[DataProvider('provideAbsoluteBaseWithBaseUrl')]
@@ -72,8 +73,7 @@ final class UrlTest extends TestCase
     #[DataProvider('provideAbsoluteBaseFromRequest')]
     public function testAbsoluteBaseFromRequest(string $expected, bool $backend, string $scriptName): void
     {
-        Core::getProject()->baseUrl = null;
-        Core::setProperty('redaxo', $backend);
+        self::setProject($backend ? Environment::Backend : Environment::Frontend);
         Core::setProperty('request', Request::create('https://example.org' . $scriptName, server: [
             'SCRIPT_NAME' => $scriptName,
             'SCRIPT_FILENAME' => '/var/www' . $scriptName,
@@ -95,10 +95,14 @@ final class UrlTest extends TestCase
 
     public function testAbsoluteBaseWithoutBaseUrlAndRequest(): void
     {
-        Core::getProject()->baseUrl = null;
         Core::setProperty('request', null);
 
         $this->expectException(LogicException::class);
         Url::absoluteBase();
+    }
+
+    private static function setProject(Environment $environment): void
+    {
+        Core::setProject(new class($environment) extends AbstractProject {});
     }
 }

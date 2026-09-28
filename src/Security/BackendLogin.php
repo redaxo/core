@@ -301,7 +301,7 @@ class BackendLogin extends Login
 
     public static function getStayLoggedInCookieName(): string
     {
-        return 'rex_user_' . sha1(Core::getInstanceId());
+        return 'rex_user_' . sha1(Core::getProject()->instanceId);
     }
 
     public static function hasSession(): bool
