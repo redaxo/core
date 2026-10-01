@@ -151,15 +151,19 @@ class rex_managed_media
             $image = false;
             if (function_exists('imagecreatefromwebp')) {
                 $image = @imagecreatefromwebp($this->getSourcePath());
-                imagealphablending($image, false);
-                imagesavealpha($image, true);
+                if ($image) {
+                    imagealphablending($image, false);
+                    imagesavealpha($image, true);
+                }
             }
         } elseif ('avif' == $format) {
             $image = false;
             if (function_exists('imagecreatefromavif')) {
                 $image = @imagecreatefromavif($this->getSourcePath());
-                imagealphablending($image, false);
-                imagesavealpha($image, true);
+                if ($image) {
+                    imagealphablending($image, false);
+                    imagesavealpha($image, true);
+                }
             }
         } else {
             $image = @imagecreatefrompng($this->getSourcePath());
