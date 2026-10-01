@@ -1084,12 +1084,6 @@
       <code><![CDATA[$this->image]]></code>
       <code><![CDATA[$this->image]]></code>
     </InvalidPropertyAssignmentValue>
-    <PossiblyFalseArgument>
-      <code><![CDATA[$image]]></code>
-      <code><![CDATA[$image]]></code>
-      <code><![CDATA[$image]]></code>
-      <code><![CDATA[$image]]></code>
-    </PossiblyFalseArgument>
     <RedundantCast>
       <code><![CDATA[(int) $size[0]]]></code>
       <code><![CDATA[(int) $size[1]]]></code>
