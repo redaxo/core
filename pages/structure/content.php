@@ -248,23 +248,9 @@ if (
                             ]));
 
                             $newsql->update();
-                            $info = $actionMessage . I18n::msg('block_updated');
-                            $epParams = [
-                                'article_id' => $articleId,
-                                'language' => $languageId,
-                                'function' => $function,
-                                'slice_id' => $sliceId,
-                                'page' => Controller::getCurrentPage(),
-                                'ctype' => $ctype,
-                                'category_id' => $categoryId,
-                                'module_key' => $moduleKey,
-                                'article_revision' => &$articleRevision,
-                                'slice_revision' => &$sliceRevision,
-                            ];
 
-                            // ----- EXTENSION POINT
-                            $info = Extension::dispatch(new ExtensionPoint('SLICE_UPDATED', $info, $epParams));
-                            $info = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_updated', $info));
+                            $slice = ArticleSlice::getArticleSliceById($sliceId, $languageId, (int) $sliceRevision);
+                            $info = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_updated', $slice, $actionMessage . I18n::msg('block_updated')));
                         } else {
                             $newsql->addGlobalUpdateFields();
                             $newsql->addGlobalCreateFields();
@@ -285,49 +271,14 @@ if (
                                 'priority, updatedate DESC',
                             );
 
-                            $info = $actionMessage . I18n::msg('block_added');
                             $function = '';
-                            $epParams = [
-                                'article_id' => $articleId,
-                                'language' => $languageId,
-                                'function' => $function,
-                                'slice_id' => $sliceId,
-                                'page' => Controller::getCurrentPage(),
-                                'ctype' => $ctype,
-                                'category_id' => $categoryId,
-                                'module_key' => $moduleKey,
-                                'article_revision' => &$articleRevision,
-                                'slice_revision' => &$sliceRevision,
-                            ];
-
-                            // ----- EXTENSION POINT
-                            $info = Extension::dispatch(new ExtensionPoint('SLICE_ADDED', $info, $epParams));
-                            $info = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_added', $info));
+                            $slice = ArticleSlice::getArticleSliceById($sliceId, $languageId, (int) $sliceRevision);
+                            $info = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_added', $slice, $actionMessage . I18n::msg('block_added')));
                         }
                     } else {
                         // make delete
 
-                        if (ContentHandler::deleteSlice($sliceId)) {
-                            $globalInfo = I18n::msg('block_deleted');
-                            $epParams = [
-                                'article_id' => $articleId,
-                                'language' => $languageId,
-                                'function' => $function,
-                                'slice_id' => $sliceId,
-                                'page' => Controller::getCurrentPage(),
-                                'ctype' => $ctype,
-                                'category_id' => $categoryId,
-                                'module_key' => $moduleKey,
-                                'article_revision' => &$articleRevision,
-                                'slice_revision' => &$sliceRevision,
-                            ];
-
-                            // ----- EXTENSION POINT
-                            $globalInfo = Extension::dispatch(new ExtensionPoint('SLICE_DELETED', $globalInfo, $epParams));
-                            $globalInfo = Extension::dispatch(new ArticleContentUpdated($OOArt, 'slice_deleted', $globalInfo));
-                        } else {
-                            $globalWarning = I18n::msg('block_not_deleted');
-                        }
+                        $globalInfo = ContentHandler::deleteSlice($sliceId);
                     }
                     // ----- / SAVE SLICE
 
@@ -338,11 +289,6 @@ if (
                     $EA->addGlobalUpdateFields();
                     $EA->update();
                     ArticleCache::delete($articleId, $languageId);
-
-                    Extension::dispatch(new ExtensionPoint('STRUCTURE_CONTENT_ARTICLE_UPDATED', '', [
-                        'id' => $articleId,
-                        'language' => $languageId,
-                    ]));
 
                     // ----- POST SAVE ACTION [ADD/EDIT/DELETE]
                     $module->onPostsave($action);

@@ -896,7 +896,6 @@ block_added = Block wurde hinzugefügt
 module_not_found = FEHLER! Modul wurde nicht gefunden!
 confirm_delete_block = Block löschen?
 block_deleted = Block wurde gelöscht!
-block_not_deleted = Block wurde nicht gelöscht
 edit_mode = Editiermodus
 metafuncs = Funktionen
 metadata_updated = Metadaten wurden aktualisiert
