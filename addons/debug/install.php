@@ -2,14 +2,10 @@
 
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Exception\UserMessageException;
-use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 
 $addon = Addon::require('debug');
-
-// the filenames contain rev hashes and the old ones would never be cleaned up
-Dir::delete($addon->getAssetsPath());
 
 // extract clockwork frontend
 $zipArchive = new ZipArchive();

@@ -5,7 +5,6 @@ namespace Redaxo\Core\Setup;
 use Redaxo\Core\Cache;
 use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Sql;
-use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\Dir;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
@@ -47,15 +46,6 @@ final class Setup
     {
         // initial purge all generated files
         Cache::delete();
-
-        // copy alle media files of the current rex-version into redaxo_media
-        Dir::copy(Path::core('assets'), Path::coreAssets());
-        // in a regular release the folder will never be empty, because we ship it prefilled.
-        // provide a error message for 'git cloned' sources, to give newcomers a hint why the very first setup might look broken.
-        // we intentionally dont check permissions here, as those will be checked in a later setup step.
-        if (!is_dir(Path::coreAssets())) {
-            throw new RuntimeException('Unable to copy assets to "' . Path::coreAssets() . '". Is the folder writable for the webserver?');
-        }
     }
 
     /**
