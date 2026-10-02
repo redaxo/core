@@ -436,7 +436,7 @@ if (Core::getConfig('article_work_version', false)) {
                     ArticleRevision::setSessionArticleRevision($articleId, ArticleRevision::LIVE);
                     $params['slice_revision'] = ArticleRevision::LIVE;
                     $return = Extension::dispatch(
-                        new ArticleContentUpdated($article, 'work_to_live', $return),
+                        new ArticleContentUpdated($article, 'work_to_live', subject: $return),
                     );
                 }
                 break;

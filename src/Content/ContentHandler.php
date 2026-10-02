@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Content;
 
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
-use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\Exception\ArticleNotFoundException;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Core;
@@ -70,25 +69,10 @@ final class ContentHandler
 
         ArticleCache::delete($articleId, $languageId);
 
-        $message = I18n::msg('slice_added');
-
         $article = Article::require($articleId, $languageId);
+        $slice = ArticleSlice::getArticleSliceById($sliceId, $languageId, (int) $data['revision']);
 
-        // ----- EXTENSION POINT
-        $message = Extension::dispatch(new ExtensionPoint('SLICE_ADDED', $message, [
-            'article_id' => $articleId,
-            'language' => $languageId,
-            'function' => '',
-            'slice_id' => $sliceId,
-            'page' => Controller::getCurrentPage(),
-            'ctype' => $ctypeId,
-            'category_id' => $article->categoryId,
-            'module_key' => $moduleKey,
-            'article_revision' => 0,
-            'slice_revision' => $data['revision'],
-        ]));
-
-        return Extension::dispatch(new ArticleContentUpdated($article, 'slice_added', $message));
+        return Extension::dispatch(new ArticleContentUpdated($article, 'slice_added', $slice, I18n::msg('slice_added')));
     }
 
     /**
@@ -158,9 +142,9 @@ final class ContentHandler
 
                 ArticleCache::deleteContent($articleId, $languageId);
 
-                $info = I18n::msg('slice_moved');
-                $article = Article::get($articleId, $languageId);
-                $info = Extension::dispatch(new ArticleContentUpdated($article, 'slice_moved', $info));
+                $article = Article::require((int) $articleId, $languageId);
+                $slice = ArticleSlice::getArticleSliceById($sliceId, $languageId, (int) $sliceRevision);
+                $info = Extension::dispatch(new ArticleContentUpdated($article, 'slice_moved', $slice, I18n::msg('slice_moved')));
             } else {
                 throw new InvalidArgumentException('Unsupported move direction "' . $direction . '".');
             }
@@ -171,24 +155,28 @@ final class ContentHandler
         return $info;
     }
 
-    /** Löscht einen Slice. */
-    public static function deleteSlice(int $sliceId): bool
+    /**
+     * Deletes a slice.
+     *
+     * @return string Status message
+     */
+    public static function deleteSlice(int $sliceId): string
     {
-        // check if slice id is valid
         $curr = Sql::factory();
         $curr->setQuery('SELECT * FROM rex_article_slice WHERE id=?', [$sliceId]);
         if (1 != $curr->getRows()) {
-            return false;
+            throw new RuntimeException(sprintf('Slice with id=%d not found.', $sliceId));
         }
+
+        $slice = ArticleSlice::fromSql($curr);
 
         Extension::dispatch(new ExtensionPoint('SLICE_DELETE', '', [
             'slice_id' => $sliceId,
-            'article_id' => $curr->getValue('article_id'),
-            'language_id' => $curr->getValue('language_id'),
-            'slice_revision' => $curr->getValue('revision'),
+            'article_id' => $slice->articleId,
+            'language_id' => $slice->languageId,
+            'slice_revision' => $slice->revision,
         ]));
 
-        // delete the slice
         $del = Sql::factory();
         $del->setQuery('DELETE FROM rex_article_slice WHERE id=?', [$sliceId]);
 
@@ -196,24 +184,28 @@ final class ContentHandler
         Util::organizePriorities(
             'rex_article_slice',
             'priority',
-            'article_id=' . (int) $curr->getValue('article_id') . ' AND language_id=' . (int) $curr->getValue('language_id') . ' AND ctype_id=' . (int) $curr->getValue('ctype_id') . ' AND revision=' . (int) $curr->getValue('revision'),
+            'article_id=' . $slice->articleId . ' AND language_id=' . $slice->languageId . ' AND ctype_id=' . $slice->contentSectionId . ' AND revision=' . $slice->revision,
             'priority',
         );
 
-        // check if delete was successfull
-        return 1 == $curr->getRows();
+        ArticleCache::deleteContent($slice->articleId, $slice->languageId);
+
+        $article = Article::require($slice->articleId, $slice->languageId);
+
+        return Extension::dispatch(new ArticleContentUpdated($article, 'slice_deleted', $slice, I18n::msg('block_deleted')));
     }
 
     public static function sliceStatus(int $sliceId, int $status): void
     {
         $sql = Sql::factory();
-        $sql->setQuery('SELECT article_id, language_id FROM rex_article_slice WHERE id = ?', [$sliceId]);
+        $sql->setQuery('SELECT article_id, language_id, revision FROM rex_article_slice WHERE id = ?', [$sliceId]);
 
         if (!$sql->getRows()) {
             throw new RuntimeException(sprintf('Slice with id=%d not found.', $sliceId));
         }
 
         $article = Article::require((int) $sql->getValue('article_id'), (int) $sql->getValue('language_id'));
+        $revision = (int) $sql->getValue('revision');
 
         $sql->setTable('rex_article_slice');
         $sql->setWhere(['id' => $sliceId]);
@@ -222,7 +214,9 @@ final class ContentHandler
 
         ArticleCache::deleteContent($article->id, $article->languageId);
 
-        Extension::dispatch(new ArticleContentUpdated($article, 'slice_status'));
+        $slice = ArticleSlice::getArticleSliceById($sliceId, $article->languageId, $revision);
+
+        Extension::dispatch(new ArticleContentUpdated($article, 'slice_status', $slice));
     }
 
     /**
