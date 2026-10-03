@@ -39,9 +39,7 @@ final class Core
     private static array $properties = [];
 
     private static ?AbstractProject $project = null;
-
     private static ?Request $request = null;
-
     private static ?HttpClientInterface $httpClient = null;
 
     private static bool $invalidModeReported = false;
