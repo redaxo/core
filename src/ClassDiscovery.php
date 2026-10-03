@@ -3,7 +3,6 @@
 namespace Redaxo\Core;
 
 use Composer\Autoload\ClassLoader;
-use Composer\InstalledVersions;
 use FilesystemIterator;
 use Generator;
 use RecursiveDirectoryIterator;
@@ -50,11 +49,25 @@ final class ClassDiscovery
 
     private function __construct(
         private readonly ClassLoader $classLoader,
+        /** Vendor directory of the class loader, with a trailing directory separator. */
+        private readonly string $vendorPath,
     ) {}
 
     public static function getInstance(): self
     {
-        return self::$instance ??= new self(self::findClassLoader());
+        if (null !== self::$instance) {
+            return self::$instance;
+        }
+
+        // Not simply the first registered loader: dependencies with a scoped vendor (e.g. rector) prepend their own
+        // loader as soon as one of their classes is autoloaded.
+        foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
+            if (false !== $loader->findFile(self::class)) {
+                return self::$instance = new self($loader, (realpath($vendorDir) ?: $vendorDir) . DIRECTORY_SEPARATOR);
+            }
+        }
+
+        throw new RuntimeException('Composer ClassLoader not found.');
     }
 
     /**
@@ -292,16 +305,12 @@ final class ClassDiscovery
 
         $paths = [];
 
-        // PSR-4 directories of the root composer package (project-level code)
-        $rootPath = realpath(InstalledVersions::getRootPackage()['install_path']);
-        if (false !== $rootPath) {
-            $vendorPrefix = $rootPath . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR;
-            foreach ($this->classLoader->getPrefixesPsr4() as $dirs) {
-                foreach ($dirs as $dir) {
-                    $realDir = (string) realpath($dir);
-                    if ('' !== $realDir && !str_starts_with($realDir, $vendorPrefix)) {
-                        $paths[] = $realDir . DIRECTORY_SEPARATOR;
-                    }
+        // PSR-4 directories outside of the vendor directory (project-level code)
+        foreach ($this->classLoader->getPrefixesPsr4() as $dirs) {
+            foreach ($dirs as $dir) {
+                $realDir = (string) realpath($dir);
+                if ('' !== $realDir && !str_starts_with($realDir, $this->vendorPath)) {
+                    $paths[] = $realDir . DIRECTORY_SEPARATOR;
                 }
             }
         }
@@ -457,11 +466,5 @@ final class ClassDiscovery
     private static function getCacheFile(): string
     {
         return Path::coreCache('class_discovery.php');
-    }
-
-    private static function findClassLoader(): ClassLoader
-    {
-        return array_first(ClassLoader::getRegisteredLoaders())
-            ?? throw new RuntimeException('Composer ClassLoader not found.');
     }
 }

@@ -4,7 +4,6 @@ namespace Redaxo\Core\Addon;
 
 use Composer\Autoload\ClassLoader;
 use Composer\InstalledVersions;
-use OutOfBoundsException;
 use Redaxo\Core\Addon\ExtensionPoint\AddonCacheDeleted;
 use Redaxo\Core\Backend\Page;
 use Redaxo\Core\Config;
@@ -59,11 +58,7 @@ abstract class Addon
                 return $this->path;
             }
 
-            try {
-                return $this->path = realpath(InstalledVersions::getInstallPath($this->package));
-            } catch (OutOfBoundsException) {
-                return $this->path = realpath(InstalledVersions::getRootPackage()['install_path']) . '/vendor/' . $this->package;
-            }
+            return $this->path = realpath(InstalledVersions::getInstallPath($this->package));
         }
     }
 
