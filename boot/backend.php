@@ -125,7 +125,7 @@ I18n::setLocale(I18n::$defaultLocale);
 
 // ---- prepare login
 $login = new BackendLogin();
-Core::setProperty('login', $login);
+BackendLogin::setCurrent($login);
 
 $passkey = Request::post('rex_user_passkey', 'string', null);
 $rexUserLogin = Request::post('rex_user_login', 'string');
@@ -191,7 +191,7 @@ if (!$loginCheck) {
         I18n::setLocale($lang);
     }
 
-    Core::setProperty('user', $user);
+    Core::setUser($user);
 }
 
 if ('' === $login->message && Request::get('rex_logged_out', 'boolean')) {
@@ -205,7 +205,7 @@ if (Core::getUser()) {
     Controller::setCurrentPage(trim(Request::request('page', 'string')));
     Controller::appendLoggedInPages();
 
-    if ('profile' !== Controller::getCurrentPage() && Core::getProperty('login')->requiresPasswordChange()) {
+    if ('profile' !== Controller::getCurrentPage() && BackendLogin::requireCurrent()->requiresPasswordChange()) {
         Response::sendRedirect(Url::backendPage('profile'));
     }
 }
@@ -223,7 +223,7 @@ Asset::setJsProperty('accesskeys', Accesskey::$enabled);
 if (Core::getUser()) {
     Asset::addJsFile(Url::coreAssets('session-timeout.js'), [Asset::JS_IMMUTABLE => true]);
 
-    $login = Core::getProperty('login');
+    $login = BackendLogin::requireCurrent();
     Asset::setJsProperty('session_keep_alive_url', Url::backendController(['page' => 'credits', 'rex-api-call' => 'user_session_status']));
     Asset::setJsProperty('session_logout_url', Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams()));
     Asset::setJsProperty('session_login_url', Url::backendController());
@@ -587,7 +587,7 @@ Controller::setPages($pages);
 
 // Set Startpage
 if ($user = Core::getUser()) {
-    if (Core::getProperty('login')->requiresPasswordChange()) {
+    if (BackendLogin::requireCurrent()->requiresPasswordChange()) {
         // profile is available for everyone, no additional checks required
         Controller::setCurrentPage('profile');
     } elseif (!Controller::getCurrentPage()) {

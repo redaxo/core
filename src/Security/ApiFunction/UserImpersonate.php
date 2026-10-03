@@ -9,6 +9,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Security\BackendLogin;
 
 use function Redaxo\Core\View\escape;
 use function sprintf;
@@ -24,7 +25,7 @@ final class UserImpersonate extends ApiFunction
         $impersonate = Request::get('_impersonate');
 
         if ('_depersonate' === $impersonate) {
-            Core::getProperty('login')->depersonate();
+            BackendLogin::requireCurrent()->depersonate();
 
             Response::sendRedirect(Url::backendPage('users/users'));
         }
@@ -34,7 +35,7 @@ final class UserImpersonate extends ApiFunction
             throw new ApiFunctionException(escape(sprintf('Current user ("%s") must be admin to impersonate another user.', $user->login)));
         }
 
-        Core::getProperty('login')->impersonate((int) $impersonate);
+        BackendLogin::requireCurrent()->impersonate((int) $impersonate);
 
         Response::sendRedirect(Url::backendController());
     }

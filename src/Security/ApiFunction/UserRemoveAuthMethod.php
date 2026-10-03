@@ -9,6 +9,7 @@ use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Http\Request;
+use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Translation\I18n;
 
@@ -50,7 +51,7 @@ final class UserRemoveAuthMethod extends ApiFunction
         }
 
         User::clearInstance($userId);
-        Core::getProperty('login')->changedPassword(null);
+        BackendLogin::requireCurrent()->changedPassword(null);
 
         return new Result(true, I18n::msg('password_removed'));
     }

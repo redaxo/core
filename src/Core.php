@@ -16,7 +16,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use function sprintf;
 
 /**
- * Base class for core properties etc.
+ * Central registry of the running instance: project, environment, mode, config, request and current user.
  */
 final class Core
 {
@@ -28,15 +28,9 @@ final class Core
     /** Prefix marking temporary database tables and files. */
     public const string TEMP_PREFIX = 'tmp_';
 
-    /**
-     * Array of properties.
-     *
-     * @var array<string, mixed>
-     */
-    private static array $properties = [];
-
     private static ?AbstractProject $project = null;
     private static ?Request $request = null;
+    private static ?User $user = null;
     private static ?HttpClientInterface $httpClient = null;
 
     private static bool $invalidModeReported = false;
@@ -88,60 +82,6 @@ final class Core
     public static function removeConfig(string $key): bool
     {
         return Config::remove(self::CONFIG_NAMESPACE, $key);
-    }
-
-    /**
-     * Sets a property. Changes will not be persisted accross http request boundaries.
-     *
-     * @param string $key Key of the property
-     * @param mixed $value Value for the property
-     *
-     * @return bool TRUE when an existing value was overridden, otherwise FALSE
-     */
-    public static function setProperty(string $key, mixed $value): bool
-    {
-        $exists = isset(self::$properties[$key]);
-        self::$properties[$key] = $value;
-        return $exists;
-    }
-
-    /**
-     * Returns a property.
-     *
-     * @param string $key Key of the property
-     * @param mixed $default Default value, will be returned if the property isn't set
-     *
-     * @return ($key is 'login' ? BackendLogin|null : mixed|null) The value for $key or $default if $key cannot be found
-     */
-    public static function getProperty(string $key, mixed $default = null): mixed
-    {
-        /** @psalm-suppress MixedReturnStatement */
-        return self::$properties[$key] ?? $default;
-    }
-
-    /**
-     * Returns if a property is set.
-     *
-     * @param string $key Key of the property
-     *
-     * @return bool TRUE if the key is set, otherwise FALSE
-     */
-    public static function hasProperty(string $key): bool
-    {
-        return isset(self::$properties[$key]);
-    }
-
-    /**
-     * Removes a property.
-     *
-     * @param string $key Key of the property
-     * @return bool TRUE if the value was found and removed, otherwise FALSE
-     */
-    public static function removeProperty(string $key): bool
-    {
-        $exists = isset(self::$properties[$key]);
-        unset(self::$properties[$key]);
-        return $exists;
     }
 
     /** Returns if the environment is the backend (the console counts as backend, too). */
@@ -207,7 +147,7 @@ final class Core
     /** Returns the current user. */
     public static function getUser(): ?User
     {
-        return self::getProperty('user');
+        return self::$user;
     }
 
     /**
@@ -217,21 +157,19 @@ final class Core
      */
     public static function requireUser(): User
     {
-        $user = self::getProperty('user');
+        return self::$user ?? throw new LogicException('User object does not exist');
+    }
 
-        if (!$user instanceof User) {
-            throw new LogicException('User object does not exist');
-        }
-
-        return $user;
+    /** @internal */
+    public static function setUser(?User $user): void
+    {
+        self::$user = $user;
     }
 
     /** Returns the current impersonator user. */
     public static function getImpersonator(): ?User
     {
-        $login = self::$properties['login'] ?? null;
-
-        return $login ? $login->getImpersonator() : null;
+        return BackendLogin::getCurrent()?->getImpersonator();
     }
 
     /** @internal */

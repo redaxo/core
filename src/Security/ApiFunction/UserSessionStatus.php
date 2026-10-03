@@ -25,7 +25,7 @@ final class UserSessionStatus extends ApiFunction
             exit;
         }
 
-        $login = Core::getProperty('login');
+        $login = BackendLogin::requireCurrent();
 
         $restOverallTime = BackendLogin::getSessionPolicy()->maxOverallDuration + (int) $login->getSessionVar(BackendLogin::SESSION_START_TIME) - (int) $login->getSessionVar(BackendLogin::SESSION_LAST_ACTIVITY);
         Response::sendJson([

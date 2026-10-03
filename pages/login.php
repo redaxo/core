@@ -1,6 +1,5 @@
 <?php
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
@@ -14,7 +13,7 @@ use Redaxo\Core\View\View;
 
 use function Redaxo\Core\View\escape;
 
-$loginMessage = Core::getProperty('login')->message;
+$loginMessage = BackendLogin::requireCurrent()->message;
 $rexUserLogin = Request::post('rex_user_login', 'string');
 
 echo View::title(I18n::msg('login'));

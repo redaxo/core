@@ -35,31 +35,6 @@ final class CoreTest extends TestCase
         self::assertEquals(Core::getConfig($key, 'defVal'), 'defVal', 'getting non existing key returns a given default');
     }
 
-    public function testRexProperty(): void
-    {
-        $key = 'aTestKey:' . __METHOD__;
-        // initial test on empty config
-        self::assertFalse(Core::hasProperty($key), 'the key does not exists at first');
-        self::assertNull(Core::getProperty($key), 'getting non existing key returns null');
-        self::assertEquals(Core::getProperty($key, 'defVal'), 'defVal', 'getting non existing key returns a given default');
-        self::assertFalse(Core::removeProperty($key), 'remove non existing key returns false');
-
-        // test after setting a value
-        self::assertFalse(Core::setProperty($key, 'aVal'), 'setting non-existant value returns false');
-        self::assertEquals(Core::getProperty($key, 'defVal'), 'aVal', 'getting existing key returns its value');
-        self::assertTrue(Core::hasProperty($key), 'setted value exists');
-
-        // test after re-setting a value
-        self::assertTrue(Core::setProperty($key, 'aOtherVal'), 're-setting a value returns true');
-        self::assertEquals(Core::getProperty($key, 'defaOtherVal'), 'aOtherVal', 'getting existing key returns its value');
-
-        // test after cleanup
-        self::assertTrue(Core::removeProperty($key), 'remove a existing key returns true');
-        self::assertFalse(Core::hasProperty($key), 'the key does not exists after removal');
-        self::assertNull(Core::getProperty($key), 'getting non existing key returns null');
-        self::assertEquals(Core::getProperty($key, 'defVal'), 'defVal', 'getting non existing key returns a given default');
-    }
-
     public function testIsBackend(): void
     {
         self::assertTrue(Core::isBackend(), 'test run in the backend');

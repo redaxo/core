@@ -6,6 +6,7 @@ use DateTimeImmutable;
 use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\ExtensionPoint\AsExtension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Request;
@@ -43,6 +44,8 @@ class BackendLogin extends Login
     public static ?SessionPolicy $sessionPolicy = null;
 
     private static ?string $legacySha1Hash = null;
+
+    private static ?self $current = null;
 
     private readonly string $tableName;
     private ?string $passkey = null;
@@ -299,6 +302,28 @@ class BackendLogin extends Login
         Response::sendCookie(self::getStayLoggedInCookieName(), '');
     }
 
+    /** Returns the login of the current backend request (or of the backend session checked in the frontend). */
+    public static function getCurrent(): ?self
+    {
+        return self::$current;
+    }
+
+    /**
+     * Returns the current login.
+     *
+     * In contrast to `getCurrent`, this method throws an exception if there is no login.
+     */
+    public static function requireCurrent(): self
+    {
+        return self::$current ?? throw new LogicException('Login object does not exist');
+    }
+
+    /** @internal */
+    public static function setCurrent(?self $login): void
+    {
+        self::$current = $login;
+    }
+
     public static function getStayLoggedInCookieName(): string
     {
         return 'rex_user_' . sha1(Core::getProject()->instanceId);
@@ -337,10 +362,10 @@ class BackendLogin extends Login
         }
 
         $login = new self();
-        Core::setProperty('login', $login);
+        self::setCurrent($login);
         if ($login->checkLogin()) {
             $user = $login->getUser();
-            Core::setProperty('user', $user);
+            Core::setUser($user);
             return $user;
         }
         return null;

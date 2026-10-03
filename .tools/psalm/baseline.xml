@@ -1360,16 +1360,7 @@
     </MixedReturnStatement>
   </file>
   <file src="src/Core.php">
-    <MixedAssignment>
-      <code><![CDATA[$login]]></code>
-      <code><![CDATA[self::$properties[$key]]]></code>
-    </MixedAssignment>
-    <MixedMethodCall>
-      <code><![CDATA[getImpersonator]]></code>
-    </MixedMethodCall>
     <MixedReturnStatement>
-      <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>
-      <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>
       <code><![CDATA[Config::get(self::CONFIG_NAMESPACE, $key, $default)]]></code>
     </MixedReturnStatement>
   </file>

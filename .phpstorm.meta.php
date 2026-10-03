@@ -4,14 +4,6 @@ namespace PHPSTORM_META;
 
 // https://blog.jetbrains.com/phpstorm/2019/02/new-phpstorm-meta-php-features/
 
-override(
-    \Redaxo\Core\Core::getProperty(0),
-    map([
-        'login' => \Redaxo\Core\Security\BackendLogin::class,
-        'user' => \Redaxo\Core\Security\User::class,
-    ])
-);
-
 expectedArguments(\Redaxo\Core\Filesystem\Finder::sort(), 0, \Redaxo\Core\Util\SortableIterator::KEYS, \Redaxo\Core\Util\SortableIterator::VALUES);
 expectedArguments(\Redaxo\Core\Util\SortableIterator::__construct(), 1, \Redaxo\Core\Util\SortableIterator::KEYS, \Redaxo\Core\Util\SortableIterator::VALUES);
 
