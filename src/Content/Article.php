@@ -6,6 +6,8 @@ use Override;
 use Redaxo\Core\Core;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
+use Redaxo\Core\Http\Request;
+use Redaxo\Core\Util\Type;
 
 use function in_array;
 
@@ -14,6 +16,10 @@ use function in_array;
  */
 final class Article extends StructureElement
 {
+    private static ?int $currentId = null;
+    private static ?int $siteStartArticleId = null;
+    private static ?int $notfoundArticleId = null;
+
     public readonly ?int $categoryId;
     public readonly ?string $templateKey;
     public readonly bool $startArticle;
@@ -69,10 +75,21 @@ final class Article extends StructureElement
         return new self($data);
     }
 
-    /** Return the current article id. */
+    /**
+     * Returns the current article id.
+     *
+     * Unless set via `setCurrentId()`, it is resolved from the request param `article_id` on first access: the site
+     * start article without the param, the not-found article for an unknown id.
+     */
     public static function getCurrentId(): int
     {
-        return Core::getProperty('article_id', 1);
+        return self::$currentId ??= self::resolveCurrentId();
+    }
+
+    /** Sets the current article id, e.g. for addons resolving the article from the url. */
+    public static function setCurrentId(int $id): void
+    {
+        self::$currentId = $id;
     }
 
     /** Return the current article. */
@@ -81,10 +98,16 @@ final class Article extends StructureElement
         return self::get(self::getCurrentId(), $languageId);
     }
 
-    /** Return the site wide start article id. */
+    /** Returns the site wide start article id, the one from the system settings unless set via `setSiteStartArticleId()`. */
     public static function getSiteStartArticleId(): int
     {
-        return Core::getProperty('start_article_id', 1);
+        return self::$siteStartArticleId ?? Type::int(Core::getConfig('start_article_id', 1));
+    }
+
+    /** Overrides the site wide start article id for the current request, e.g. for addons managing multiple domains. */
+    public static function setSiteStartArticleId(int $id): void
+    {
+        self::$siteStartArticleId = $id;
     }
 
     /** Return the site wide start article. */
@@ -93,10 +116,16 @@ final class Article extends StructureElement
         return self::get(self::getSiteStartArticleId(), $languageId);
     }
 
-    /** Return the site wide notfound article id. */
+    /** Returns the site wide notfound article id, the one from the system settings unless set via `setNotfoundArticleId()`. */
     public static function getNotfoundArticleId(): int
     {
-        return Core::getProperty('notfound_article_id', 1);
+        return self::$notfoundArticleId ?? Type::int(Core::getConfig('notfound_article_id', 1));
+    }
+
+    /** Overrides the site wide notfound article id for the current request, e.g. for addons managing multiple domains. */
+    public static function setNotfoundArticleId(int $id): void
+    {
+        self::$notfoundArticleId = $id;
     }
 
     /** Return the site wide notfound article. */
@@ -113,6 +142,17 @@ final class Article extends StructureElement
     public static function getRootArticles(bool $ignoreOfflines = false, ?int $languageId = null): array
     {
         return self::getChildElements(null, 'alist', $ignoreOfflines, $languageId);
+    }
+
+    private static function resolveCurrentId(): int
+    {
+        $id = Request::request('article_id', 'int');
+
+        if (0 === $id) {
+            return self::getSiteStartArticleId();
+        }
+
+        return self::get($id) ? $id : self::getNotfoundArticleId();
     }
 
     /** Returns the category this article belongs to (for start-articles the category itself). */
