@@ -1377,7 +1377,6 @@
   <file src="src/Core.php">
     <MixedAssignment>
       <code><![CDATA[$login]]></code>
-      <code><![CDATA[$request]]></code>
       <code><![CDATA[self::$properties[$key]]]></code>
     </MixedAssignment>
     <MixedMethodCall>
@@ -1386,7 +1385,6 @@
     <MixedReturnStatement>
       <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>
       <code><![CDATA[$login ? $login->getImpersonator() : null]]></code>
-      <code><![CDATA[$request]]></code>
       <code><![CDATA[Config::get(self::CONFIG_NAMESPACE, $key, $default)]]></code>
     </MixedReturnStatement>
   </file>

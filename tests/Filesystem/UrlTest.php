@@ -30,9 +30,7 @@ final class UrlTest extends TestCase
         unset($_SERVER['REX_BASE_URL'], $_ENV['REX_BASE_URL']);
 
         $this->origProject = Core::getProject();
-        /** @var Request|null $request */
-        $request = Core::getProperty('request');
-        $this->origRequest = $request;
+        $this->origRequest = Core::hasRequest() ? Core::getRequest() : null;
 
         self::setProject(Environment::Frontend);
     }
@@ -48,7 +46,7 @@ final class UrlTest extends TestCase
         }
 
         Core::setProject($this->origProject);
-        Core::setProperty('request', $this->origRequest);
+        Core::setRequest($this->origRequest);
     }
 
     #[DataProvider('provideAbsoluteBaseWithBaseUrl')]
@@ -74,7 +72,7 @@ final class UrlTest extends TestCase
     public function testAbsoluteBaseFromRequest(string $expected, bool $backend, string $scriptName): void
     {
         self::setProject($backend ? Environment::Backend : Environment::Frontend);
-        Core::setProperty('request', Request::create('https://example.org' . $scriptName, server: [
+        Core::setRequest(Request::create('https://example.org' . $scriptName, server: [
             'SCRIPT_NAME' => $scriptName,
             'SCRIPT_FILENAME' => '/var/www' . $scriptName,
         ]));
@@ -95,7 +93,7 @@ final class UrlTest extends TestCase
 
     public function testAbsoluteBaseWithoutBaseUrlAndRequest(): void
     {
-        Core::setProperty('request', null);
+        Core::setRequest(null);
 
         $this->expectException(LogicException::class);
         Url::absoluteBase();

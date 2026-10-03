@@ -39,7 +39,7 @@ final class Core
     private static array $properties = [];
 
     private static ?AbstractProject $project = null;
-
+    private static ?Request $request = null;
     private static ?HttpClientInterface $httpClient = null;
 
     private static bool $invalidModeReported = false;
@@ -269,15 +269,22 @@ final class Core
         return self::getProperty('console', null);
     }
 
+    /** Returns the current http request, which is not available on the console. */
     public static function getRequest(): Request
     {
-        $request = self::getProperty('request');
+        return self::$request ?? throw new RuntimeException('The request object is not available on the console.');
+    }
 
-        if (null === $request) {
-            throw new RuntimeException('The request object is not available in cli');
-        }
+    /** Returns if the http request is available, which is not the case on the console. */
+    public static function hasRequest(): bool
+    {
+        return null !== self::$request;
+    }
 
-        return $request;
+    /** @internal */
+    public static function setRequest(?Request $request): void
+    {
+        self::$request = $request;
     }
 
     /**

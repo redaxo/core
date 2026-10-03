@@ -4,7 +4,6 @@ namespace Redaxo\Core;
 
 use ErrorException;
 use Redaxo\Core\Exception\LogicException;
-use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Exception\HttpException;
@@ -399,15 +398,11 @@ final class ErrorHandler
 
     private static function getUrl(): ?string
     {
-        if ('cli' === PHP_SAPI) {
+        if (!Core::hasRequest()) {
             return null;
         }
 
-        try {
-            $request = Core::getRequest();
-        } catch (RuntimeException) {
-            return null;
-        }
+        $request = Core::getRequest();
 
         // Backend URLs use `/` inside page param, and we try to use them unencoded
         // so for consistency we unencode them here too
