@@ -22,7 +22,6 @@ use Redaxo\Core\Language\LanguagePermission;
 use Redaxo\Core\MediaPool\MediaPoolPermission;
 use Redaxo\Core\Security\ComplexPermission;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\Util\VarDumper;
 use Redaxo\Core\View\Fragment;
@@ -63,8 +62,6 @@ date_default_timezone_set('Europe/Berlin');
 Path::init(new DefaultPathProvider(Core::getProject(), true));
 Url::init(new DefaultPathProvider(Core::getProject(), false));
 
-// start timer at the very beginning
-Core::setProperty('timer', new Timer($_SERVER['REQUEST_TIME_FLOAT'] ?? null));
 // add core lang directory to I18n
 I18n::addDirectory(Path::core('lang'));
 // add core base-fragmentpath to fragmentloader

@@ -9,7 +9,6 @@ override(
     map([
         'console' => \Redaxo\Core\Console\Application::class,
         'login' => \Redaxo\Core\Security\BackendLogin::class,
-        'timer' => \Redaxo\Core\Util\Timer::class,
         'user' => \Redaxo\Core\Security\User::class,
     ])
 );

@@ -10,7 +10,6 @@ use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Util\Formatter;
-use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 use Symfony\Component\HttpClient\HttpClient as HttpClientFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -123,12 +122,7 @@ final class Core
      * @param string $key Key of the property
      * @param mixed $default Default value, will be returned if the property isn't set
      *
-     * @return (
-     *      $key is 'login' ? BackendLogin|null :
-     *      ($key is 'timer' ? Timer :
-     *      mixed|null
-     *      ))
-     * ) The value for $key or $default if $key cannot be found
+     * @return ($key is 'login' ? BackendLogin|null : mixed|null) The value for $key or $default if $key cannot be found
      */
     public static function getProperty(string $key, mixed $default = null): mixed
     {

@@ -1,6 +1,5 @@
 <?php
 
-use Redaxo\Core\Core;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -21,8 +20,7 @@ final class rex_extension_debug extends Extension
 
     public static function dispatch(ExtensionPoint $extensionPoint): mixed
     {
-        $coreTimer = Core::getProperty('timer');
-        $absDur = $coreTimer->getDelta();
+        $absDur = Timer::sinceRequestStart()->getDelta();
 
         $timer = new Timer();
         $epStart = microtime(true);
