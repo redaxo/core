@@ -1174,15 +1174,6 @@
       <code><![CDATA[json_encode($rows)]]></code>
     </PossiblyFalseArgument>
   </file>
-  <file src="src/Console/Command/AssetsSyncCommand.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$folder1]]></code>
-      <code><![CDATA[$folder1]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand>
-      <code><![CDATA[$folder2]]></code>
-    </PossiblyFalseOperand>
-  </file>
   <file src="src/Console/Command/CronjobRunCommand.php">
     <MixedArgument>
       <code><![CDATA[$id]]></code>
