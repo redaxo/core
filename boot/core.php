@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\Backend\Controller;
-use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleSliceHistory;
 use Redaxo\Core\Content\ModulePermission;
 use Redaxo\Core\Content\StructurePermission;
@@ -130,17 +129,6 @@ if (0 !== $nexttime && time() >= $nexttime) {
             CronjobManager::factory()->check();
         }
     });
-}
-
-Core::setProperty('start_article_id', Core::getConfig('start_article_id', 1));
-Core::setProperty('notfound_article_id', Core::getConfig('notfound_article_id', 1));
-
-if (0 == Request::request('article_id', 'int')) {
-    Core::setProperty('article_id', Article::getSiteStartArticleId());
-} else {
-    $articleId = Request::request('article_id', 'int');
-    $articleId = Article::get($articleId) ? $articleId : Article::getNotfoundArticleId();
-    Core::setProperty('article_id', $articleId);
 }
 
 if (Core::getConfig('article_history', false)) {

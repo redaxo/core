@@ -1242,21 +1242,6 @@
       <code><![CDATA[$password]]></code>
     </MixedAssignment>
   </file>
-  <file src="src/Content/Article.php">
-    <MixedReturnStatement>
-      <code><![CDATA[Core::getProperty('article_id', 1)]]></code>
-      <code><![CDATA[Core::getProperty('article_id', 1)]]></code>
-      <code><![CDATA[Core::getProperty('notfound_article_id', 1)]]></code>
-      <code><![CDATA[Core::getProperty('notfound_article_id', 1)]]></code>
-      <code><![CDATA[Core::getProperty('start_article_id', 1)]]></code>
-      <code><![CDATA[Core::getProperty('start_article_id', 1)]]></code>
-    </MixedReturnStatement>
-    <NullableReturnStatement>
-      <code><![CDATA[Core::getProperty('article_id', 1)]]></code>
-      <code><![CDATA[Core::getProperty('notfound_article_id', 1)]]></code>
-      <code><![CDATA[Core::getProperty('start_article_id', 1)]]></code>
-    </NullableReturnStatement>
-  </file>
   <file src="src/Content/ArticleContentBase.php">
     <FalsableReturnStatement>
       <code><![CDATA[$CONTENT]]></code>

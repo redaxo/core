@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
-  <file src="boot/backend.php">
-    <TaintedHtml>
-      <code><![CDATA['<script nonce="' . Response::getNonce() . '">
-                    var history_article_id = ' . Article::getCurrentId() . ';
-                    var history_language_id = ' . Language::getCurrentId() . ';
-                    var history_ctype_id = ' . Request::request('ctype', 'int', 0) . ';
-                    var history_article_link = "' . escape($articleLink, 'js') . '";
-                    var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";
-                </script>']]></code>
-    </TaintedHtml>
-    <TaintedTextWithQuotes>
-      <code><![CDATA['<script nonce="' . Response::getNonce() . '">
-                    var history_article_id = ' . Article::getCurrentId() . ';
-                    var history_language_id = ' . Language::getCurrentId() . ';
-                    var history_ctype_id = ' . Request::request('ctype', 'int', 0) . ';
-                    var history_article_link = "' . escape($articleLink, 'js') . '";
-                    var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";
-                </script>']]></code>
-    </TaintedTextWithQuotes>
-  </file>
   <file src="fragments/core/fe_ooops.php">
     <TaintedHtml>
       <code><![CDATA[$this->getVar('content', '')]]></code>
@@ -82,10 +62,5 @@
     <TaintedExtract>
       <code><![CDATA[$__context]]></code>
     </TaintedExtract>
-  </file>
-  <file src="src/Http/Response.php">
-    <TaintedHeader>
-      <code><![CDATA['Location: ' . $url]]></code>
-    </TaintedHeader>
   </file>
 </files>
