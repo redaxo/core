@@ -7,7 +7,6 @@ namespace PHPSTORM_META;
 override(
     \Redaxo\Core\Core::getProperty(0),
     map([
-        'console' => \Redaxo\Core\Console\Application::class,
         'login' => \Redaxo\Core\Security\BackendLogin::class,
         'user' => \Redaxo\Core\Security\User::class,
     ])

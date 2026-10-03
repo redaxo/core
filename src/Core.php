@@ -3,8 +3,6 @@
 namespace Redaxo\Core;
 
 use Composer\InstalledVersions;
-use Redaxo\Core\Console\Application;
-use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Security\BackendLogin;
@@ -98,19 +96,10 @@ final class Core
      * @param string $key Key of the property
      * @param mixed $value Value for the property
      *
-     * @throws InvalidArgumentException on invalid parameters
-     *
      * @return bool TRUE when an existing value was overridden, otherwise FALSE
      */
     public static function setProperty(string $key, mixed $value): bool
     {
-        switch ($key) {
-            case 'console':
-                if (null !== $value && !$value instanceof Application) {
-                    throw new InvalidArgumentException(sprintf('"%s" property: expecting $value to be an instance of %s, "%s" found.', $key, Application::class, get_debug_type($value)));
-                }
-                break;
-        }
         $exists = isset(self::$properties[$key]);
         self::$properties[$key] = $value;
         return $exists;
@@ -255,12 +244,6 @@ final class Core
     public static function getProject(): AbstractProject
     {
         return self::$project ?? throw new LogicException('The project is not available before it has booted the core.');
-    }
-
-    /** Returns the console application. */
-    public static function getConsole(): ?Application
-    {
-        return self::getProperty('console', null);
     }
 
     /** Returns the current http request, which is not available on the console. */
