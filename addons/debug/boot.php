@@ -20,6 +20,8 @@ use Redaxo\Core\Log\Logger;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
 use function Redaxo\Core\View\escape;
 
@@ -149,7 +151,7 @@ if ('cli' === PHP_SAPI) {
 
         $command = $extensionPoint->command;
         $input = $extensionPoint->input;
-        // $output = $extensionPoint->output;
+        $output = $extensionPoint->output;
         $exitCode = $extensionPoint->exitCode;
 
         // we need to make sure that the storage path exists after actions like cache:clear
@@ -165,7 +167,14 @@ if ('cli' === PHP_SAPI) {
             $command->getDefinition()->getOptionDefaults(),
             // $output->fetch()
         );
-        $clockwork->storeRequest();
+
+        // a storage owned by another user (e.g. the web server) must not fail the command itself
+        try {
+            $clockwork->storeRequest();
+        } catch (Exception $e) {
+            $output = $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output;
+            $output->writeln('<comment>Clockwork could not store the command profile: ' . OutputFormatter::escape($e->getMessage()) . '</comment>');
+        }
     });
 } else {
     register_shutdown_function(static function () use ($shutdownFn) {
