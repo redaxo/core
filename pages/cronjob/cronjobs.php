@@ -62,7 +62,7 @@ if (in_array($func, ['setstatus', 'delete', 'execute']) && !$csrfToken->isValid(
 if ('' == $func) {
     $query = 'SELECT id, name, type, environment, execution_moment, nexttime, status FROM rex_cronjob ORDER BY name';
 
-    $list = DataList::factory($query, 30, 'cronjobs');
+    $list = DataList::factory($query, listName: 'cronjobs');
     $list->addTableAttribute('class', 'table-striped table-hover');
 
     $list->setNoRowsMessage(I18n::msg('cronjob_no_cronjobs'));

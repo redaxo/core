@@ -533,7 +533,6 @@ return RectorConfig::configure()
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getCatStart', 'catStart'),
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getEditId', 'editId'),
         new MethodCallToPropertyFetch(Content\StructureContext::class, 'getFunction', 'function'),
-        new MethodCallToPropertyFetch(Content\StructureContext::class, 'getRowsPerPage', 'rowsPerPage'),
 
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getId', 'id'),
         new MethodCallToPropertyFetch(Content\StructureElement::class, 'getParentId', 'parentId'),
