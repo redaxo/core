@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\Backend\Controller;
-use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\View\Fragment;
@@ -28,7 +27,7 @@ echo '</div>';
 
 if ('login' !== Controller::getCurrentPage()) {
     $footerfragment = new Fragment();
-    $footerfragment->setVar('time', Core::getProperty('timer')->getFormattedDelta(Timer::SEC));
+    $footerfragment->setVar('time', Timer::sinceRequestStart()->getFormattedDelta(Timer::SEC));
     echo $footerfragment->parse('core/footer.php');
     unset($footerfragment);
 }

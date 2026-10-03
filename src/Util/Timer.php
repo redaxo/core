@@ -4,6 +4,8 @@ namespace Redaxo\Core\Util;
 
 use Redaxo\Core\Core;
 
+use function is_float;
+
 /**
  * Class to stop the script time.
  */
@@ -30,6 +32,14 @@ final class Timer
         } else {
             $this->reset();
         }
+    }
+
+    /** Returns a timer that started with the current request (or console command). */
+    public static function sinceRequestStart(): self
+    {
+        $start = $_SERVER['REQUEST_TIME_FLOAT'] ?? null;
+
+        return new self(is_float($start) ? $start : null);
     }
 
     /**
