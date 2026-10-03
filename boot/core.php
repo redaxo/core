@@ -89,7 +89,7 @@ if ('cli' !== PHP_SAPI) {
     $request = BaseRequest::createFromGlobals();
     // the session is only created when it is actually used, see Session::start()
     $request->setSessionFactory(Session::get(...));
-    Core::setProperty('request', $request);
+    Core::setRequest($request);
 }
 
 VarDumper::register();

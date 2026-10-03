@@ -57,10 +57,11 @@ final class Url
             return $url . $file;
         }
 
-        $request = Core::getProperty('request');
-        if (!$request instanceof Request) {
+        if (!Core::hasRequest()) {
             throw new LogicException('The base url is missing, the env var "REX_BASE_URL" is required to build absolute urls on the console.');
         }
+
+        $request = Core::getRequest();
 
         $path = $request->getBasePath();
         if (Core::isBackend()) {
