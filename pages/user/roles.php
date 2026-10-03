@@ -43,7 +43,7 @@ if ('delete' == $func) {
 if ('' == $func) {
     $title = I18n::msg('user_role_caption');
 
-    $list = DataList::factory('SELECT id, name FROM rex_user_role ORDER BY name', rowsPerPage: 100);
+    $list = DataList::factory('SELECT id, name FROM rex_user_role ORDER BY name');
     $list->addTableAttribute('class', 'table-striped table-hover');
 
     $tdIcon = '<i class="rex-icon rex-icon-userrole"></i>';
