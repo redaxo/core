@@ -35,6 +35,36 @@ final class MarkdownTest extends TestCase
                     ```
                     MD,
             ],
+            [
+                <<<'HTML'
+                    <pre><code class="language-html">&lt;button onclick&#61;&#34;showBox();&#34;&gt;Foo&lt;/button&gt;</code></pre>
+                    <p>Events: <code>box-onshow</code>, box-onclose</p>
+                    HTML,
+                <<<'MD'
+                    ```html
+                    <button onclick="showBox();">Foo</button>
+                    ```
+
+                    Events: `box-onshow`, box-onclose
+                    MD,
+            ],
+            [
+                <<<'HTML'
+                    <table>
+                    <thead>
+                    <tr>
+                    <th style="text-align: right;">Foo</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                    <td style="text-align: right;">Bar</td>
+                    </tr>
+                    </tbody>
+                    </table>
+                    HTML,
+                "| Foo |\n| --: |\n| Bar |",
+            ],
         ];
     }
 
