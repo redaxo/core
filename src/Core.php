@@ -5,6 +5,7 @@ namespace Redaxo\Core;
 use Composer\InstalledVersions;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
+use Redaxo\Core\Mailer\Mailer;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Util\Formatter;
@@ -32,6 +33,7 @@ final class Core
     private static ?Request $request = null;
     private static ?User $user = null;
     private static ?HttpClientInterface $httpClient = null;
+    private static ?Mailer $mailer = null;
 
     private static bool $invalidModeReported = false;
 
@@ -214,6 +216,12 @@ final class Core
             // Neutral User-Agent without version to avoid fingerprinting the installation
             'headers' => ['User-Agent' => 'REDAXO'],
         ]);
+    }
+
+    /** Returns the mailer, configured by the env var `MAILER_DSN` (see {@see Mailer}). */
+    public static function getMailer(): Mailer
+    {
+        return self::$mailer ??= Mailer::fromEnv();
     }
 
     /**

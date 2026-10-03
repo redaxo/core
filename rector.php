@@ -397,8 +397,6 @@ return RectorConfig::configure()
         new MethodCallRename(Content\Template::class, 'getDefaultId', 'getDefaultKey'),
         new MethodCallRename(Content\Module::class, 'forKey', 'get'),
 
-        new MethodCallRename(Mailer\Mailer::class, 'setLog', 'setArchive'),
-
         new MethodCallRename(Form\AbstractForm::class, 'addLinklistField', 'addArticleField'),
         new MethodCallRename(Form\AbstractForm::class, 'addLinkmapField', 'addArticleField'),
         new MethodCallRename(Form\AbstractForm::class, 'addMedialistField', 'addMediaField'),

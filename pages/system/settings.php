@@ -15,6 +15,7 @@ use Redaxo\Core\Form\Field\SelectField;
 use Redaxo\Core\Form\Select\Select;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Mailer\Mailer;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
@@ -22,6 +23,8 @@ use Redaxo\Core\Util\Type;
 use Redaxo\Core\Util\Version;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
+use Symfony\Component\Mailer\Exception\ExceptionInterface as MailerException;
+use Symfony\Component\Mime\Address;
 
 use function Redaxo\Core\View\escape;
 
@@ -31,6 +34,18 @@ $success = '';
 $func = Request::request('func', 'string');
 
 $csrfToken = CsrfToken::factory('system');
+
+$mailer = null;
+$mailerError = null;
+if (null === Env::get('MAILER_DSN')) {
+    $mailerError = I18n::msg('mailer_not_configured');
+} else {
+    try {
+        $mailer = Core::getMailer();
+    } catch (MailerException|InvalidArgumentException $exception) {
+        $mailerError = $exception->getMessage();
+    }
+}
 
 if ($func && !$csrfToken->isValid()) {
     $error[] = I18n::msg('csrf_token_invalid');
@@ -204,6 +219,43 @@ $content = '
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('database'));
 $fragment->setVar('content', $content, false);
+$sideContent[] = $fragment->parse('core/page/section.php');
+
+$addresses = static fn (array $addresses): string => escape(implode(', ', array_map(static fn (Address $address) => $address->toString(), $addresses)));
+
+if ($mailer instanceof Mailer) {
+    $content = '
+        <table class="table">
+            <tr>
+                <th class="rex-table-width-3">' . I18n::msg('mailer_transport') . '</th>
+                <td><span class="rex-word-break">' . escape((string) $mailer->transport) . '</span></td>
+            </tr>
+            <tr>
+                <th>' . I18n::msg('mailer_from') . '</th>
+                <td><span class="rex-word-break">' . (null === $mailer->defaultFrom ? '-' : $addresses([$mailer->defaultFrom])) . '</span></td>
+            </tr>
+            <tr>
+                <th>' . I18n::msg('mailer_detour') . '</th>
+                <td><span class="rex-word-break">' . ($mailer->detourRecipients ? '<span class="text-danger">' . $addresses($mailer->detourRecipients) . '</span>' : I18n::msg('deactivated')) . '</span></td>
+            </tr>
+            <tr>
+                <th>' . I18n::msg('mailer_log') . '</th>
+                <td>' . $mailer->logMode->value . '</td>
+            </tr>
+            <tr>
+                <th>' . I18n::msg('mailer_archive') . '</th>
+                <td>' . I18n::msg($mailer->archive ? 'activated' : 'deactivated') . '</td>
+            </tr>
+        </table>';
+
+    $fragment = new Fragment();
+    $fragment->setVar('title', I18n::msg('mailer'));
+    $fragment->setVar('content', $content, false);
+} else {
+    $fragment = new Fragment();
+    $fragment->setVar('title', I18n::msg('mailer'));
+    $fragment->setVar('body', Message::error(escape((string) $mailerError)), false);
+}
 $sideContent[] = $fragment->parse('core/page/section.php');
 
 $content = '';

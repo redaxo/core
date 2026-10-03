@@ -5,12 +5,14 @@ namespace Redaxo\Core\Backend;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Util;
+use Redaxo\Core\Env;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Mailer\MailArchive;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Markdown;
@@ -155,7 +157,10 @@ final class Controller
         if ('' != ini_get('error_log') && @is_readable(ini_get('error_log'))) {
             $logsPage->addSubpage(new Page('php', I18n::msg('syslog_phperrors'))->setSubPath(Path::core('pages/system/log.external.php')));
         }
-        $logsPage->addSubpage(new Page('phpmailer', I18n::msg('phpmailer_title'))->setSubPath(Path::core('pages/mailer/log.php')));
+        $logsPage->addSubpage(new Page('mailer', I18n::msg('mailer_log'))->setSubPath(Path::core('pages/system/log.mailer.php')));
+        if (Env::getBool('REX_MAILER_ARCHIVE') || is_dir(MailArchive::folder())) {
+            $logsPage->addSubpage(new Page('mailer_archive', I18n::msg('mailer_archive'))->setSubPath(Path::core('pages/system/log.mailer_archive.php')));
+        }
 
         if ('system' === self::getCurrentPagePart(1) && 'log' === self::getCurrentPagePart(2)) {
             $slowQueryLogPath = Util::slowQueryLogPath();
@@ -266,19 +271,6 @@ final class Controller
             ->addSubpage(new Page('upload', I18n::msg('pool_file_insert'))->setSubPath(Path::core('pages/mediapool/upload.php')))
             ->addSubpage(new Page('structure', I18n::msg('pool_cat_list'))->setRequiredPermissions('media/hasAll')->setSubPath(Path::core('pages/mediapool/structure.php')))
             ->addSubpage(new Page('sync', I18n::msg('pool_sync_files'))->setRequiredPermissions('media[sync]')->setSubPath(Path::core('pages/mediapool/sync.php')))
-        ;
-
-        self::$pages['phpmailer'] = new MainPage('system', 'phpmailer', I18n::msg('phpmailer_title'))
-            ->setPath(Path::core('pages/mailer/index.php'))
-            ->setRequiredPermissions('phpmailer[]')
-            ->setPrio(90)
-            ->setPjax()
-            ->setIcon('rex-icon rex-icon-envelope' . (Core::getConfig('phpmailer_detour_mode') ? ' text-danger' : ''))
-            ->addSubpage(new Page('config', I18n::msg('phpmailer_configuration'))->setSubPath(Path::core('pages/mailer/config.php')))
-            ->addSubpage(new Page('log', I18n::msg('phpmailer_logging'))->setSubPath(Path::core('pages/mailer/log.php')))
-            ->addSubpage(new Page('archive', I18n::msg('phpmailer_archive'))->setSubPath(Path::core('pages/mailer/archive.php')))
-            ->addSubpage(new Page('help', I18n::msg('phpmailer_help'))->setSubPath(Path::core('pages/mailer/help.md'))->setItemAttr('class', 'pull-right'))
-            ->addSubpage(new Page('checkmail', I18n::msg('phpmailer_checkmail'))->setSubPath(Path::core('pages/mailer/checkmail.php'))->setHidden(true))
         ;
 
         self::$pages['backup'] = $backup = new MainPage('system', 'backup', I18n::msg('backup_title'))

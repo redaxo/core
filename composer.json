@@ -35,7 +35,6 @@
         "intervention/image": "^4.3.2",
         "lbuchs/webauthn": "^2.2.0",
         "nyholm/psr7": "^1.8.2",
-        "phpmailer/phpmailer": "^7.1.1",
         "psr/log": "^3.0.2",
         "ramsey/http-range": "^2.0.0",
         "splitbrain/php-archive": "^1.5.1",
@@ -43,6 +42,7 @@
         "symfony/dotenv": "^8.1.6",
         "symfony/http-client": "^8.1.6",
         "symfony/http-foundation": "^8.1.6",
+        "symfony/mailer": "^8.1.7",
         "symfony/runtime": "^8.1.0",
         "symfony/var-dumper": "^8.1.6",
         "voku/anti-xss": "^4.1.44"
