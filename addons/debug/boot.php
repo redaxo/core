@@ -11,6 +11,7 @@ use Redaxo\Core\Console\ExtensionPoint\ConsoleShutdown;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Environment;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Request;
@@ -113,7 +114,7 @@ $shutdownFn = static function () {
 
     if (Core::isFrontend()) {
         $req->controller = 'article: ' . Article::getCurrentId() . '; language: ' . Language::getCurrent()->code;
-    } elseif (!Core::getConsole()) {
+    } elseif (Environment::Backend === Core::getEnvironment()) {
         $req->controller = 'page: ' . Controller::getCurrentPage();
     }
 

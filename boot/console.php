@@ -13,7 +13,6 @@ I18n::$defaultLocale = 'en_gb';
 I18n::setLocale('en_gb');
 
 $application = new Application($project);
-Core::setProperty('console', $application);
 
 Addon::initialize();
 
