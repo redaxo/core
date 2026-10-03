@@ -12,13 +12,13 @@ use Symfony\Component\HttpFoundation\Request;
 /** @internal */
 final class CsrfTokenTest extends TestCase
 {
-    private mixed $previousRequest;
+    private ?Request $previousRequest;
 
     #[Override]
     protected function setUp(): void
     {
-        $this->previousRequest = Core::getProperty('request');
-        Core::setProperty('request', Request::create('/'));
+        $this->previousRequest = Core::hasRequest() ? Core::getRequest() : null;
+        Core::setRequest(Request::create('/'));
         CsrfToken::removeAll();
     }
 
@@ -27,7 +27,7 @@ final class CsrfTokenTest extends TestCase
     {
         CsrfToken::removeAll();
         unset($_REQUEST[CsrfToken::PARAM]);
-        Core::setProperty('request', $this->previousRequest);
+        Core::setRequest($this->previousRequest);
     }
 
     public function testValueIsMaskedOnEveryOutput(): void
