@@ -138,15 +138,15 @@ class DataList implements UrlProviderInterface
 
     /**
      * @param string $query SELECT Statement
-     * @param positive-int|self::DISABLE_PAGINATION|null $rowsPerPage Defaults to {@see Pager::$defaultRowsPerPage}
      * @param string|null $listName Name der Liste
+     * @param positive-int|self::DISABLE_PAGINATION|null $rowsPerPage Defaults to {@see Pager::$defaultRowsPerPage}
      * @param positive-int $db
      * @param array<string, 'asc'|'desc'> $defaultSort
      */
     protected function __construct(
         private readonly string $query,
-        ?int $rowsPerPage = null,
         ?string $listName = null,
+        ?int $rowsPerPage = null,
         private readonly bool $debug = false,
         private readonly int $db = 1,
         private readonly array $defaultSort = [],
@@ -202,14 +202,15 @@ class DataList implements UrlProviderInterface
     }
 
     /**
+     * @param string|null $listName Name der Liste
      * @param positive-int|self::DISABLE_PAGINATION|null $rowsPerPage Defaults to {@see Pager::$defaultRowsPerPage}
      * @param positive-int $db DB connection ID
      * @param array<string, 'asc'|'desc'> $defaultSort
      */
-    public static function factory(string $query, ?int $rowsPerPage = null, ?string $listName = null, bool $debug = false, int $db = 1, array $defaultSort = []): static
+    public static function factory(string $query, ?string $listName = null, ?int $rowsPerPage = null, bool $debug = false, int $db = 1, array $defaultSort = []): static
     {
         $class = static::getFactoryClass();
-        return new $class($query, $rowsPerPage, $listName, $debug, $db, $defaultSort);
+        return new $class($query, $listName, $rowsPerPage, $debug, $db, $defaultSort);
     }
 
     public function init(): void
