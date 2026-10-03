@@ -10,17 +10,29 @@ use Redaxo\Core\Http\Request;
  */
 final class Pager
 {
+    /**
+     * Rows per page for all pagers created without an explicit count (structure, media pool, backend lists).
+     *
+     * @var positive-int
+     */
+    public static int $defaultRowsPerPage = 50;
+
+    /** @var positive-int */
+    private readonly int $rowsPerPage;
     private ?int $rowCount = null;
     private ?int $cursor = null;
 
     /**
-     * @param int $rowsPerPage The number of rows which should be displayed on one page
+     * @param positive-int|null $rowsPerPage The number of rows which should be displayed on one page,
+     *     defaults to {@see self::$defaultRowsPerPage}
      * @param string $cursorName The name of the parameter used for pagination
      */
     public function __construct(
-        private readonly int $rowsPerPage = 30,
+        ?int $rowsPerPage = null,
         private readonly string $cursorName = 'start',
-    ) {}
+    ) {
+        $this->rowsPerPage = $rowsPerPage ?? self::$defaultRowsPerPage;
+    }
 
     /** Sets the row count. */
     public function setRowCount(int $rowCount): void

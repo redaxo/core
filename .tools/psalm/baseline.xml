@@ -848,10 +848,6 @@
     <PossiblyNullOperand>
       <code><![CDATA[$media->getValue('updatedate')]]></code>
     </PossiblyNullOperand>
-    <RedundantCondition>
-      <code><![CDATA[int]]></code>
-      <code><![CDATA[int]]></code>
-    </RedundantCondition>
   </file>
   <file src="pages/mediapool/structure.php">
     <MixedArgument>

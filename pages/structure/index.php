@@ -41,7 +41,6 @@ $structureContext = new StructureContext(
     catStart: Request::request('catstart', 'int'),
     editId: Request::request('edit_id', 'int'),
     function: Request::request('function', 'string'),
-    rowsPerPage: (int) Core::getProperty('rows_per_page', 50),
 );
 
 $user = Core::requireUser();
@@ -111,7 +110,7 @@ if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->c
 
 // --------------------- ADD PAGINATION
 
-$catPager = new Pager($structureContext->rowsPerPage, 'catstart');
+$catPager = new Pager(cursorName: 'catstart');
 $catPager->setRowCount((int) $KAT->getValue('rowCount'));
 $catFragment = new Fragment();
 $catFragment->setVar('urlprovider', $structureContext->getContext());
@@ -387,7 +386,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
     // --------------------- ADD PAGINATION
 
-    $artPager = new Pager($structureContext->rowsPerPage, 'artstart');
+    $artPager = new Pager(cursorName: 'artstart');
     $artPager->setRowCount((int) $sql->getValue('artCount'));
     $artFragment = new Fragment();
     $artFragment->setVar('urlprovider', $structureContext->getContext());

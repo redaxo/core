@@ -26,7 +26,6 @@ final readonly class StructureContext
         public int $catStart = 0,
         public int $editId = 0,
         public string $function = '',
-        public int $rowsPerPage = 30,
     ) {
         if (!Category::get($categoryId)) {
             $categoryId = 0;

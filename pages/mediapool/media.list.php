@@ -21,7 +21,6 @@ use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
-use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
 
@@ -197,7 +196,7 @@ $context = new Context([
     'media_name' => $mediaName,
     ...$argUrl,
 ]);
-$pager = new Pager(Type::int(Core::getProperty('rows_per_page', 100)));
+$pager = new Pager();
 
 $items = MediaHandler::getList($filter, [], $pager);
 

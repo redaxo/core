@@ -81,7 +81,7 @@ final class DataListTest extends TestCase
         try {
             // setColumnSortable() is called after the constructor already executed the query,
             // the requested sort order must still be applied (https://github.com/redaxo/core/issues/6585)
-            $list = DataList::factory('SELECT id, name FROM ' . self::TABLE, DataList::DISABLE_PAGINATION, 'sortlist');
+            $list = DataList::factory('SELECT id, name FROM ' . self::TABLE, 'sortlist', DataList::DISABLE_PAGINATION);
             $list->setColumnSortable('name');
 
             $html = $list->get();
@@ -108,7 +108,7 @@ final class DataListTest extends TestCase
 
         try {
             // "name" is never marked as sortable, so the requested sort must be ignored
-            $list = DataList::factory('SELECT id, name FROM ' . self::TABLE, DataList::DISABLE_PAGINATION, 'sortlist', defaultSort: ['id' => 'asc']);
+            $list = DataList::factory('SELECT id, name FROM ' . self::TABLE, 'sortlist', DataList::DISABLE_PAGINATION, defaultSort: ['id' => 'asc']);
 
             $html = $list->get();
 

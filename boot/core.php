@@ -137,7 +137,6 @@ if (0 !== $nexttime && time() >= $nexttime) {
 
 Core::setProperty('start_article_id', Core::getConfig('start_article_id', 1));
 Core::setProperty('notfound_article_id', Core::getConfig('notfound_article_id', 1));
-Core::setProperty('rows_per_page', 50);
 
 if (0 == Request::request('article_id', 'int')) {
     Core::setProperty('article_id', Article::getSiteStartArticleId());
