@@ -17,6 +17,7 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Context;
+use Redaxo\Core\Http\Exception\HttpException;
 use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
@@ -44,6 +45,15 @@ header('X-Frame-Options: SAMEORIGIN');
 header("Content-Security-Policy: frame-ancestors 'self'");
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: no-referrer');
+
+// Defense in depth on top of the csrf tokens: browsers tell via Fetch Metadata whether a request comes from another
+// site. Requests without the header (older browsers, non-browser clients) are left to the tokens.
+if (
+    !in_array(Request::requestMethod(), ['get', 'head', 'options'], true)
+    && !in_array(Core::getRequest()->headers->get('Sec-Fetch-Site', 'same-origin'), ['same-origin', 'none'], true)
+) {
+    throw new HttpException('Cross-site requests are not allowed.', Response::HTTP_FORBIDDEN);
+}
 
 // Deliberately before anything that expects a usable database or a booted addon: this is the entry point for
 // instances that are deployed without shell access, and its whole job is to get the schema in shape.
