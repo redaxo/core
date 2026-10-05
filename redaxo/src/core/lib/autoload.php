@@ -52,6 +52,11 @@ class rex_autoload
         ini_set('unserialize_callback_func', 'spl_autoload_call');
 
         if (!self::$composerLoader) {
+            // Keep voku/portable-utf8 from changing global encoding settings (REDAXO sets them in boot.php)
+            if (!defined('PORTABLE_UTF8__DISABLE_AUTO_ENCODING')) {
+                define('PORTABLE_UTF8__DISABLE_AUTO_ENCODING', true);
+            }
+
             self::$composerLoader = require rex_path::core('vendor/autoload.php');
             // Unregister Composer Autoloader because we call self::$composerLoader->loadClass() manually
             self::$composerLoader->unregister();

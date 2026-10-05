@@ -67,6 +67,7 @@ rex_autoload::addDirectory(rex_path::core('lib'));
 
 // must be called after `rex_autoload::register()` to support symfony/polyfill-mbstring
 mb_internal_encoding('UTF-8');
+ini_set('default_charset', 'UTF-8');
 
 if (isset($REX['URL_PROVIDER']) && is_object($REX['URL_PROVIDER'])) {
     /** @var rex_path_default_provider */
