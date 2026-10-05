@@ -2,9 +2,6 @@
 
 declare(strict_types=1);
 
-use PhpParser\Node\ArrayItem;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Name;
 use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Arguments\Rector\ClassMethod\ReplaceArgumentDefaultValueRector;
 use Rector\Arguments\ValueObject\ArgumentAdder;
@@ -702,9 +699,6 @@ return RectorConfig::configure()
         new ArgumentRemover(View\DataList::class, 'getParsedUrl', 1, null),
         new ArgumentRemover(Content\StructureElement::class, 'getUrl', 1, null),
         new ArgumentRemover(MediaManager\MediaManager::class, 'getUrl', 3, null),
-
-        new ArgumentRemover(Util\Markdown::class, 'parse', 1, [true]),
-        new ArgumentRemover(Util\Markdown::class, 'parseWithToc', 3, [true]),
     ])
     ->withConfiguredRule(ReplaceArgumentDefaultValueRector::class, [
         new ReplaceArgumentDefaultValue(Content\ArticleContentBase::class, 'renderContent', 0, -1, null),
@@ -728,11 +722,6 @@ return RectorConfig::configure()
         new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_FORM_EDIT', '\\' . Language\ExtensionPoint\LanguageFormEdit::class . '::class'),
 
         new ReplaceArgumentDefaultValue(Form\Select\CategorySelect::class, '__construct', 1, false, null),
-
-        new ReplaceArgumentDefaultValue(Util\Markdown::class, 'parse', 1, false, $options = [
-            new ArrayItem(new Expr\ConstFetch(new Name('false')), new Expr\ClassConstFetch(new Name(Util\Markdown::class), 'SOFT_LINE_BREAKS')),
-        ]),
-        new ReplaceArgumentDefaultValue(Util\Markdown::class, 'parseWithToc', 3, false, $options),
     ])
     ->withConfiguredRule(ConstFetchToClassConstFetchRector::class, [
         new ConstFetchToClassConstFetch('REX_FORM_ERROR_VIOLATE_UNIQUE_KEY', Form\Form::class, 'ERROR_VIOLATE_UNIQUE_KEY'),
