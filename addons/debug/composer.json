@@ -4,7 +4,6 @@
     "description": "REDAXO debug addon",
     "keywords": ["redaxo", "redaxo-addon", "debug", "clockwork", "profiler", "dev"],
     "license": "MIT",
-    "homepage": "https://github.com/redaxo/core",
     "authors": [
         {
             "name": "Yakamara Media GmbH & Co. KG",
@@ -15,6 +14,11 @@
             "homepage": "https://redaxo.org"
         }
     ],
+    "homepage": "https://redaxo.org",
+    "support": {
+        "issues": "https://github.com/redaxo/core/issues",
+        "security": "https://github.com/redaxo/core/security/policy"
+    },
 
     "require": {
         "php": "^8.5",

@@ -41,7 +41,7 @@ final class ScriptHandler
         $manipulator = new JsonManipulator((string) file_get_contents($file));
 
         // Strip the skeleton's own package identity.
-        foreach (['name', 'description', 'keywords', 'homepage', 'authors'] as $key) {
+        foreach (['name', 'description', 'keywords', 'homepage', 'authors', 'support'] as $key) {
             $manipulator->removeMainKey($key);
         }
 

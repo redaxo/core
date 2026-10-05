@@ -3,7 +3,7 @@
     "type": "project",
     "description": "REDAXO project skeleton for `composer create-project`",
     "keywords": ["redaxo", "cms", "skeleton", "project"],
-    "homepage": "https://redaxo.org",
+    "license": "MIT",
     "authors": [
         {
             "name": "Yakamara Media GmbH & Co. KG",
@@ -14,7 +14,11 @@
             "homepage": "https://redaxo.org"
         }
     ],
-    "license": "MIT",
+    "homepage": "https://redaxo.org",
+    "support": {
+        "issues": "https://github.com/redaxo/core/issues",
+        "security": "https://github.com/redaxo/core/security/policy"
+    },
 
     "require": {
         "php": "^8.5",
