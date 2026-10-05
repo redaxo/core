@@ -9,9 +9,10 @@ use Redaxo\Core\Backup\FileCompressor;
 use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
-use Redaxo\Core\Mailer\Mailer;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mime\Email;
 
 use const GLOB_NOSORT;
 use const SORT_NUMERIC;
@@ -131,19 +132,22 @@ final class ExportType extends AbstractType
             }
 
             if ($this->getParam('sendmail')) {
-                $mail = new Mailer();
-                $mail->addAddress($this->getParam('mailaddress'));
-                $mail->Subject = I18n::rawMsg('backup_mail_subject');
-                $mail->Body = I18n::rawMsg('backup_mail_body', Core::getProject()->instanceName);
-                $mail->addAttachment($exportFilePath, $filename);
-                if ($mail->send()) {
-                    $this->message = $message . ', mail sent';
+                $email = new Email()
+                    ->to($this->getParam('mailaddress'))
+                    ->subject(I18n::rawMsg('backup_mail_subject'))
+                    ->text(I18n::rawMsg('backup_mail_body', Core::getProject()->instanceName))
+                    ->attachFromPath($exportFilePath, $filename);
 
-                    return true;
+                try {
+                    Core::getMailer()->send($email);
+                } catch (TransportExceptionInterface) {
+                    $this->message = $message . ', mail not sent';
+
+                    return false;
                 }
-                $this->message = $message . ', mail not sent';
+                $this->message = $message . ', mail sent';
 
-                return false;
+                return true;
             }
 
             $this->message = $message;

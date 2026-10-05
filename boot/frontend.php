@@ -19,7 +19,7 @@ use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
-use Redaxo\Core\Mailer\Mailer;
+use Redaxo\Core\Log\ErrorReport;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\UserSession;
 use Redaxo\Core\Util\Type;
@@ -31,7 +31,7 @@ if (Core::isDevMode()) {
 
 if (Env::get('REX_ERROR_EMAIL')) {
     Extension::register('RESPONSE_SHUTDOWN', static function () {
-        Mailer::errorMail();
+        ErrorReport::send();
     });
 }
 

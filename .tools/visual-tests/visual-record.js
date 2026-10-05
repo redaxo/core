@@ -84,8 +84,6 @@ const allPages = {
 
     'cronjob_cronjobs.png': START_URL + '?page=cronjob/cronjobs',
     'cronjob_cronjobs_add.png': START_URL + '?page=cronjob/cronjobs&func=add',
-
-    'phpmailer_config.png': START_URL + '?page=phpmailer/config',
 };
 
 function countDiffPixels(img1path, img2path ) {

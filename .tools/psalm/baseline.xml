@@ -726,67 +726,6 @@
       <code><![CDATA[preg_replace('/[^a-zA-Z0-9\-]*/', '', str_replace('_', '-', $p))]]></code>
     </PossiblyNullArgument>
   </file>
-  <file src="pages/mailer/checkmail.php">
-    <MixedArgument>
-      <code><![CDATA[Core::getConfig('phpmailer_test_address')]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$securityMode]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[Core::getConfig('phpmailer_mailer')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_smtpsecure')]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_host'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_port'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_test_address'))]]></code>
-    </MixedOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[Core::getConfig('phpmailer_test_address')]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand>
-      <code><![CDATA[$_SERVER['HTTP_HOST']]]></code>
-    </PossiblyNullOperand>
-    <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$_SERVER['HTTP_HOST']]]></code>
-    </PossiblyUndefinedArrayOffset>
-  </file>
-  <file src="pages/mailer/config.php">
-    <MixedArgument>
-      <code><![CDATA[Core::getConfig('phpmailer_detour_mode') ?: 0]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_encoding')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_logging')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_mailer')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_priority')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_security_mode')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_smtp_debug')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_smtpauth')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_smtpsecure')]]></code>
-    </MixedArgument>
-    <MixedOperand>
-      <code><![CDATA[Core::getConfig('phpmailer_msgraph_client_id')]]></code>
-      <code><![CDATA[Core::getConfig('phpmailer_msgraph_tenant_id')]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_bcc'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_charset'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_confirmto'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_from'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_fromname'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_host'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_msgraph_client_id'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_msgraph_client_secret'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_msgraph_tenant_id'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_password'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_port'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_returnto'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_test_address'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_username'))]]></code>
-      <code><![CDATA[escape(Core::getConfig('phpmailer_wordwrap'))]]></code>
-    </MixedOperand>
-  </file>
-  <file src="pages/mailer/log.php">
-    <PossiblyNullReference>
-      <code><![CDATA[getData]]></code>
-    </PossiblyNullReference>
-  </file>
   <file src="pages/mediapool/index.php">
     <PossiblyNullArgument>
       <code><![CDATA[$error]]></code>
@@ -1971,49 +1910,6 @@
       <code><![CDATA[$replace['{' . $key . '}']]]></code>
       <code><![CDATA[$val]]></code>
     </MixedAssignment>
-  </file>
-  <file src="src/Mailer/Mailer.php">
-    <MixedArgument>
-      <code><![CDATA[$address]]></code>
-      <code><![CDATA[$bcc]]></code>
-      <code><![CDATA[$exceptions]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[array_column($this->getReplyToAddresses(), 0)]]></code>
-      <code><![CDATA[array_column($this->getToAddresses(), 0)]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$address]]></code>
-      <code><![CDATA[$bcc]]></code>
-      <code><![CDATA[$detourAddress]]></code>
-      <code><![CDATA[$this->CharSet]]></code>
-      <code><![CDATA[$this->ConfirmReadingTo]]></code>
-      <code><![CDATA[$this->Encoding]]></code>
-      <code><![CDATA[$this->From]]></code>
-      <code><![CDATA[$this->FromName]]></code>
-      <code><![CDATA[$this->Host]]></code>
-      <code><![CDATA[$this->Mailer]]></code>
-      <code><![CDATA[$this->Password]]></code>
-      <code><![CDATA[$this->Port]]></code>
-      <code><![CDATA[$this->Priority]]></code>
-      <code><![CDATA[$this->SMTPAuth]]></code>
-      <code><![CDATA[$this->SMTPAutoTLS]]></code>
-      <code><![CDATA[$this->SMTPDebug]]></code>
-      <code><![CDATA[$this->SMTPSecure]]></code>
-      <code><![CDATA[$this->Sender]]></code>
-      <code><![CDATA[$this->Username]]></code>
-      <code><![CDATA[$this->WordWrap]]></code>
-      <code><![CDATA[$this->archive]]></code>
-      <code><![CDATA[$this->graphClientId]]></code>
-      <code><![CDATA[$this->graphClientSecret]]></code>
-      <code><![CDATA[$this->graphTenantId]]></code>
-    </MixedAssignment>
-    <PossiblyFalseArgument>
-      <code><![CDATA[json_encode($mailData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyNullArgument>
-      <code><![CDATA[$address]]></code>
-    </PossiblyNullArgument>
   </file>
   <file src="src/MediaPool/MediaHandler.php">
     <MixedArgumentTypeCoercion>
