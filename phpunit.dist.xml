@@ -25,10 +25,14 @@
         <testsuite name="core">
             <directory>tests</directory>
         </testsuite>
+        <testsuite name="composer-plugin">
+            <directory>composer-plugin/tests</directory>
+        </testsuite>
     </testsuites>
     <source ignoreIndirectDeprecations="true">
         <include>
             <directory>addons</directory>
+            <directory>composer-plugin/src</directory>
             <directory>src</directory>
             <directory>tests</directory>
         </include>

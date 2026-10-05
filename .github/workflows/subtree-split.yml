@@ -7,6 +7,7 @@ on:
         paths:
             - project/**
             - addons/debug/**
+            - composer-plugin/**
             - .github/subtree-splits.json
             - .github/workflows/subtree-split.yml
 

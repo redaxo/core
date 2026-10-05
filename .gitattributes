@@ -13,6 +13,7 @@
 /.* export-ignore
 /.phpstorm.meta.php -export-ignore
 /addons/ export-ignore
+/composer-plugin/ export-ignore
 /project/ export-ignore
 /assets/scss/ export-ignore
 /tests/ export-ignore

@@ -7,6 +7,12 @@
             "target-branch": "6.x"
         },
         {
+            "name": "composer-plugin",
+            "directory": "composer-plugin",
+            "target": "git@github.com:redaxo/composer-plugin.git",
+            "target-branch": "1.x"
+        },
+        {
             "name": "debug",
             "directory": "addons/debug",
             "target": "git@github.com:redaxo/debug.git",
