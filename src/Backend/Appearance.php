@@ -13,6 +13,9 @@ final class Appearance
     /** Theme (`light` or `dark`) forced for all users, overriding their personal setting. */
     public static ?string $forcedTheme = null;
 
+    /** URL the dev mode marker next to the logo links to (e.g. a debug tool); without it, the marker is no link. */
+    public static ?string $devModeMarkerUrl = null;
+
     private function __construct() {}
 
     /**

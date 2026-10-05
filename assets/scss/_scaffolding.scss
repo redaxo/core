@@ -113,8 +113,8 @@ html {
     padding: 5px;
     color: lighten(#f90, 3%); // a tad brighter since on dark background
 
-    &:hover,
-    &:focus {
+    &:is(a):hover,
+    &:is(a):focus {
         color: darken(#f90, 3%);
     }
 }
@@ -223,8 +223,8 @@ html {
     .rex-marker-devmode {
         color: #e68a00;
 
-        &:hover,
-        &:focus {
+        &:is(a):hover,
+        &:is(a):focus {
             color: lighten(#e68a00, 4%);
         }
     }

@@ -1,3 +1,0 @@
-debug = Debug
-debug_requires_dev_mode = The debug addon can only be used in the dev mode (env var <code>REX_MODE=dev</code>).
-debug_error_unzip = An error occurred during unpacking the assets from the Clockwork frontend archive!
