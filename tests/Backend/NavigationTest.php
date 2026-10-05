@@ -28,10 +28,10 @@ final class NavigationTest extends TestCase
         $user = Core::getUser();
 
         try {
-            Core::setProperty('user', new ReflectionClass(User::class)->newInstanceWithoutConstructor());
+            Core::setUser(new ReflectionClass(User::class)->newInstanceWithoutConstructor());
             $navi = $navi->getNavigation();
         } finally {
-            Core::setProperty('user', $user);
+            Core::setUser($user);
         }
 
         self::assertSame('System', $navi[0]['headline']['title']);

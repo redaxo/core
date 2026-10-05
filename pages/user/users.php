@@ -192,7 +192,7 @@ if ($warnings) {
     $user = User::require($userId);
 
     if (null !== $passwordHash && $userId == $currentUser->id) {
-        Core::getProperty('login')->changedPassword($passwordHash);
+        BackendLogin::requireCurrent()->changedPassword($passwordHash);
     }
 
     Extension::dispatch(new ExtensionPoint('USER_UPDATED', '', [

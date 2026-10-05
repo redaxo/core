@@ -2,9 +2,9 @@
 
 namespace Redaxo\Core\Content;
 
-use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\InvalidArgumentException;
+use Redaxo\Core\Security\BackendLogin;
 
 use function is_array;
 use function sprintf;
@@ -74,7 +74,7 @@ final class ArticleRevision
     /** @param self::LIVE|self::WORK $revision */
     public static function setSessionArticleRevision(int $articleId, int $revision): void
     {
-        $login = Core::getProperty('login');
+        $login = BackendLogin::requireCurrent();
         /** @var array<int, self::LIVE|self::WORK>|null $revisions */
         $revisions = $login->getSessionVar('rex_version_article', []);
         $revisions = is_array($revisions) ? $revisions : [];
@@ -87,7 +87,7 @@ final class ArticleRevision
     public static function getSessionArticleRevision(int $articleId): int
     {
         /** @var array<int, self::LIVE|self::WORK> $revisions */
-        $revisions = Core::getProperty('login')->getSessionVar('rex_version_article', []);
+        $revisions = BackendLogin::requireCurrent()->getSessionVar('rex_version_article', []);
 
         return (int) ($revisions[$articleId] ?? self::WORK);
     }

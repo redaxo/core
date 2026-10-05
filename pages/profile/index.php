@@ -30,7 +30,7 @@ $success = '';
 $user = Core::requireUser();
 $userId = $user->id;
 
-$login = Core::getProperty('login');
+$login = BackendLogin::requireCurrent();
 $passwordChangeRequired = $login->requiresPasswordChange();
 
 // Allgemeine Infos

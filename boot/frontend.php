@@ -68,7 +68,7 @@ if (Core::getConfig('article_history', false)) {
 
                 if ($login->checkTempSession($historyLogin, $historySession, $historyValidtime)) {
                     $user = $login->getUser();
-                    Core::setProperty('user', $user);
+                    Core::setUser($user);
 
                     // A shutdown function (not an OUTPUT_FILTER) so cleanup runs even when the request aborts
                     // before output — e.g. a bogus rex-api-call — which would otherwise leave a usable session.
