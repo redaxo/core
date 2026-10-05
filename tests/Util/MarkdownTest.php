@@ -5,6 +5,7 @@ namespace Redaxo\Core\Tests\Util;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Util\Markdown;
+use Redaxo\Core\Util\Str;
 
 /** @internal */
 final class MarkdownTest extends TestCase
@@ -35,7 +36,47 @@ final class MarkdownTest extends TestCase
                     ```
                     MD,
             ],
+            [
+                <<<'HTML'
+                    <pre><code class="language-html">&lt;button onclick&#61;&#34;showBox();&#34;&gt;Foo&lt;/button&gt;</code></pre>
+                    <p>Events: <code>box-onshow</code>, box-onclose</p>
+                    HTML,
+                <<<'MD'
+                    ```html
+                    <button onclick="showBox();">Foo</button>
+                    ```
+
+                    Events: `box-onshow`, box-onclose
+                    MD,
+            ],
+            [
+                <<<'HTML'
+                    <table>
+                    <thead>
+                    <tr>
+                    <th style="text-align: right;">Foo</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                    <td style="text-align: right;">Bar</td>
+                    </tr>
+                    </tbody>
+                    </table>
+                    HTML,
+                "| Foo |\n| --: |\n| Bar |",
+            ],
         ];
+    }
+
+    public function testParseWithSanitizerConfig(): void
+    {
+        $code = '<form><input name="foo"></form>';
+
+        self::assertSame('', Markdown::factory()->parse($code));
+
+        $config = Str::htmlSanitizerConfig()->allowElement('form')->allowElement('input', ['name']);
+        self::assertSame('<form><input name="foo" /></form>', Markdown::factory()->parse($code, sanitizerConfig: $config));
     }
 
     public function testParseWithToc(): void

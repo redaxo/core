@@ -40,12 +40,12 @@
         "splitbrain/php-archive": "^1.5.1",
         "symfony/console": "^8.1.6",
         "symfony/dotenv": "^8.1.6",
+        "symfony/html-sanitizer": "^8.1.8",
         "symfony/http-client": "^8.1.6",
         "symfony/http-foundation": "^8.1.6",
         "symfony/mailer": "^8.1.7",
         "symfony/runtime": "^8.1.0",
-        "symfony/var-dumper": "^8.1.6",
-        "voku/anti-xss": "^4.1.44"
+        "symfony/var-dumper": "^8.1.6"
     },
     "require-dev": {
         "jetbrains/phpstorm-attributes": "^1.3",

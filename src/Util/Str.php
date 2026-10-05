@@ -4,7 +4,8 @@ namespace Redaxo\Core\Util;
 
 use Normalizer;
 use Redaxo\Core\Exception\InvalidArgumentException;
-use voku\helper\AntiXSS;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 use function is_array;
 use function is_int;
@@ -171,20 +172,32 @@ final class Str
         return '<pre class="rex-code">' . $text . '</pre>';
     }
 
-    /** Cleanup the given html string and removes possible malicious codes/markup. */
-    public static function sanitizeHtml(string $html): string
+    /**
+     * Removes possibly malicious markup (scripts, event handlers, unsafe urls etc.) from the given html string.
+     *
+     * @param HtmlSanitizerConfig|null $config Allowlist to use instead of the default one; extend the default by
+     *     starting from {@see self::htmlSanitizerConfig()}
+     */
+    public static function sanitizeHtml(string $html, ?HtmlSanitizerConfig $config = null): string
     {
-        /** @var AntiXSS|null $antiXss */
-        static $antiXss;
+        /** @var HtmlSanitizer|null $defaultSanitizer */
+        static $defaultSanitizer;
 
-        if (!$antiXss) {
-            $antiXss = new AntiXSS();
-            $antiXss->removeEvilAttributes(['style']);
-            $antiXss->removeNeverAllowedRegex(['(\(?:?document\)?|\(?:?window\)?(?:\.document)?)\.(?:location|on\w*)' => '']);
-            $antiXss->removeNeverAllowedStrAfterwards(['&lt;script&gt;', '&lt;/script&gt;']);
-        }
+        $sanitizer = $config ? new HtmlSanitizer($config) : $defaultSanitizer ??= new HtmlSanitizer(self::htmlSanitizerConfig());
 
         /** @psalm-taint-escape html */
-        return $antiXss->xss_clean($html);
+        return $sanitizer->sanitize($html);
+    }
+
+    /** Default allowlist of {@see self::sanitizeHtml()}. */
+    public static function htmlSanitizerConfig(): HtmlSanitizerConfig
+    {
+        return new HtmlSanitizerConfig()
+            ->allowSafeElements()
+            ->allowAttribute('class', '*')
+            ->allowAttribute('style', '*')
+            ->allowRelativeLinks()
+            ->allowRelativeMedias()
+            ->withMaxInputLength(-1);
     }
 }

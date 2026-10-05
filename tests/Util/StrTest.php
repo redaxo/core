@@ -91,45 +91,46 @@ final class StrTest extends TestCase
         );
     }
 
-    public function testSanitizeHtml(): void
+    #[DataProvider('provideSanitizeHtml')]
+    public function testSanitizeHtml(string $expected, string $input): void
     {
-        $input = <<<'INPUT'
-            <p align=center><img src="foo.jpg" style="width: 200px"></p>
-            <a name="test"></a>
-
-            <script>
-                alert(1);
-                window.location.replace(my_link);
-            </script>
-            <a href="javascript:alert(1)">Foo</a>
-            <a href="index.php" onclick="alert(1)">Foo</a>
-            <img src="foo.jpg" onmouseover="alert(1)"/>
-
-            <pre><code>
-                &lt;script&gt;
-                    foo();
-                    window.location.replace(my_link);
-                &lt;/script&gt;
-            </code></pre>
-            INPUT;
-
-        $expected = <<<'EXPECTED'
-            <p align=center><img src="foo.jpg" style="width: 200px"></p>
-            <a name="test"></a>
-
-
-            <a href="(1)">Foo</a>
-            <a href="index.php">Foo</a>
-            <img src="foo.jpg" />
-
-            <pre><code>
-                &lt;script&gt;
-                    foo();
-                    window.location.replace(my_link);
-                &lt;/script&gt;
-            </code></pre>
-            EXPECTED;
-
         self::assertSame($expected, Str::sanitizeHtml($input));
+    }
+
+    /** @return iterable<string, array{string, string}> */
+    public static function provideSanitizeHtml(): iterable
+    {
+        yield 'safe markup' => [
+            '<p align="center" class="lead"><img src="foo.jpg" style="width: 200px" alt="Foo" /></p><a name="test" id="test"></a>',
+            '<p align=center class="lead"><img src="foo.jpg" style="width: 200px" alt="Foo"></p><a name="test" id="test"></a>',
+        ];
+        yield 'external urls' => [
+            '<a href="https://example.org/foo">Foo</a><img src="https://example.org/foo.png" /><img src="//example.org/bar.png" />',
+            '<a href="https://example.org/foo">Foo</a><img src="https://example.org/foo.png"><img src="//example.org/bar.png">',
+        ];
+        yield 'script element' => [
+            '<p>Foo</p>',
+            '<p>Foo</p><script>alert(1);</script>',
+        ];
+        yield 'event handler' => [
+            '<a href="index.php">Foo</a><img src="foo.jpg" />',
+            '<a href="index.php" onclick="alert(1)">Foo</a><img src="foo.jpg" onmouseover="alert(1)">',
+        ];
+        yield 'javascript url' => [
+            '<a>Foo</a><a>Bar</a>',
+            '<a href="javascript:alert(1)">Foo</a><a href="jav&#x09;ascript:alert(1)">Bar</a>',
+        ];
+        yield 'unsafe elements' => [
+            '<p>Foo</p>',
+            '<iframe src="https://example.org"></iframe><form action="/"><input name="foo"></form><p>Foo</p>',
+        ];
+        yield 'code with event handler' => [
+            '<pre><code>&lt;button onclick&#61;&#34;window.location.replace(url)&#34;&gt;Foo&lt;/button&gt;</code></pre>',
+            '<pre><code>&lt;button onclick="window.location.replace(url)"&gt;Foo&lt;/button&gt;</code></pre>',
+        ];
+        yield 'text resembling event handlers' => [
+            '<p>The events <code>consent-onshow</code> and consent-onclose are triggered via document.location.</p>',
+            '<p>The events <code>consent-onshow</code> and consent-onclose are triggered via document.location.</p>',
+        ];
     }
 }
