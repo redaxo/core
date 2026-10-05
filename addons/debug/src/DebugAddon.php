@@ -7,7 +7,6 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\LoadOrder;
 use Redaxo\Core\Backend\Page;
 use Redaxo\Core\Core;
-use Redaxo\Core\Translation\I18n;
 
 final class DebugAddon extends Addon
 {
@@ -27,7 +26,7 @@ final class DebugAddon extends Addon
         }
 
         // reachable via the dev mode marker next to the logo
-        yield new Page($this->name, I18n::msg('debug'))
+        yield new Page($this->name, 'Debug')
             ->setRequiredPermissions('admin')
             ->setHasLayout(false);
     }

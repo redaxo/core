@@ -2,7 +2,6 @@
 
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Exception\UserMessageException;
-use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 
 $addon = Addon::require('debug');
@@ -10,30 +9,23 @@ $addon = Addon::require('debug');
 // extract clockwork frontend
 $zipArchive = new ZipArchive();
 
-// use path relative to __DIR__ to get correct path in update temp dir
 $path = __DIR__ . '/frontend/frontend.zip';
 
-$message = '';
+$error = 'Unable to extract the Clockwork frontend archive ' . $path;
 try {
-    if (
-        true === $zipArchive->open($path)
-        && $zipArchive->extractTo($addon->getAssetsPath('clockwork'))
-    ) {
-        $zipArchive->close();
-
-        $indexPath = $addon->getAssetsPath('clockwork/index.html');
-
-        $index = Type::string(file_get_contents($indexPath));
-        $index = Type::string(preg_replace('/(href|src)=("?)([^>\s]+)/', '$1=$2' . $addon->getAssetsUrl('clockwork/$3'), $index));
-        file_put_contents($indexPath, $index);
-    } else {
-        $message = I18n::msg('debug_error_unzip') . '<br>' . $path;
-    }
+    $extracted = true === $zipArchive->open($path) && $zipArchive->extractTo($addon->getAssetsPath('clockwork'));
 } catch (Exception $e) {
-    $message = I18n::msg('debug_error_unzip') . '<br>' . $path;
-    $message .= '<br>' . $e->getMessage();
+    throw new UserMessageException($error . ': ' . $e->getMessage(), $e);
 }
 
-if ('' != $message) {
-    throw new UserMessageException($message);
+if (!$extracted) {
+    throw new UserMessageException($error);
 }
+
+$zipArchive->close();
+
+$indexPath = $addon->getAssetsPath('clockwork/index.html');
+
+$index = Type::string(file_get_contents($indexPath));
+$index = Type::string(preg_replace('/(href|src)=("?)([^>\s]+)/', '$1=$2' . $addon->getAssetsUrl('clockwork/$3'), $index));
+file_put_contents($indexPath, $index);
