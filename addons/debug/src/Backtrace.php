@@ -1,22 +1,31 @@
 <?php
 
+namespace Redaxo\Debug;
+
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ErrorHandler;
 use Redaxo\Core\Log\Logger;
+use Redaxo\Debug\ApiFunction\ClockworkMetadata;
+
+use function array_slice;
+use function count;
+use function in_array;
+
+use const DEBUG_BACKTRACE_IGNORE_ARGS;
 
 /**
  * @internal
  */
-final class rex_debug
+final class Backtrace
 {
     /** @var list<class-string> */
     private static array $ignoreClasses = [
-        rex_extension_debug::class,
-        rex_api_function_debug::class,
+        DebugExtension::class,
+        DebugApiFunction::class,
         self::class,
-        rex_api_debug::class,
-        rex_logger_debug::class,
-        rex_sql_debug::class,
+        ClockworkMetadata::class,
+        DebugLogger::class,
+        DebugSql::class,
         Sql::class,
         Logger::class,
         ErrorHandler::class,
@@ -26,7 +35,7 @@ final class rex_debug
      * @param list<class-string> $ignoredClasses
      * @return array{file: string|null, line: int|null, trace: list<array{function: string, line?: int, file?: string, class?: class-string, type?: string, args?: list<mixed>, object?: object}>}
      */
-    public static function getTrace(array $ignoredClasses = []): array
+    public static function capture(array $ignoredClasses = []): array
     {
         $ignoredClasses = array_merge(self::$ignoreClasses, $ignoredClasses);
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);

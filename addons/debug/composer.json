@@ -26,10 +26,7 @@
     "autoload": {
         "psr-4": {
             "Redaxo\\Debug\\": "src/"
-        },
-        "classmap": [
-            "lib/"
-        ]
+        }
     },
 
     "extra": {

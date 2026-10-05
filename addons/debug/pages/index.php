@@ -6,6 +6,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Type;
+use Redaxo\Debug\ApiFunction\ClockworkMetadata;
 
 use function Redaxo\Core\View\escape;
 
@@ -15,7 +16,7 @@ $editor = Editor::factory();
 $curEditor = $editor->getName();
 $editorBasepath = $editor->getBasepath();
 
-$siteKey = rex_debug_clockwork::getFullClockworkApiUrl();
+$siteKey = ClockworkMetadata::getFullUrl();
 $localPath = null;
 $realPath = null;
 
@@ -25,7 +26,7 @@ if ($editorBasepath) {
 }
 
 // prepend backend folder
-$apiUrl = dirname(Type::string($_SERVER['REQUEST_URI'] ?? null)) . '/' . rex_debug_clockwork::getClockworkApiUrl();
+$apiUrl = dirname(Type::string($_SERVER['REQUEST_URI'] ?? null)) . '/' . ClockworkMetadata::getUrl();
 $appearance = Appearance::getTheme();
 if (!$appearance) {
     $appearance = 'auto';
