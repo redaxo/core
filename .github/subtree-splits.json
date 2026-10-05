@@ -1,6 +1,12 @@
 {
     "sub-splits": [
         {
+            "name": "composer-plugin",
+            "directory": "composer-plugin",
+            "target": "git@github.com:redaxo/composer-plugin.git",
+            "target-branch": "1.x"
+        },
+        {
             "name": "project",
             "directory": "project",
             "target": "git@github.com:redaxo/project.git",

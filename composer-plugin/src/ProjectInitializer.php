@@ -1,43 +1,49 @@
 <?php
 
-namespace Redaxo\Core\Composer;
+namespace Redaxo\ComposerPlugin;
 
 use Composer\Json\JsonManipulator;
 
 use function basename;
+use function bin2hex;
 use function file_get_contents;
 use function file_put_contents;
-use function getcwd;
-use function getenv;
+use function preg_match;
+use function preg_replace;
+use function preg_replace_callback;
+use function random_bytes;
+use function str_replace;
+use function strtolower;
+use function trim;
 
 /**
- * Handlers for Composer script events of a REDAXO project, referenced from the project skeleton's composer.json
- * `scripts`.
+ * Turns a freshly created `redaxo/project` skeleton into a clean project.
  *
  * @internal
- *
- * This relies on Composer's runtime API (`JsonManipulator`, used so the file's formatting and blank lines are
- * preserved). Those classes are available while Composer executes the script, but are not part of this package's
- * dependency tree — hence this file is excluded from static analysis.
  */
-final class ScriptHandler
+final readonly class ProjectInitializer
 {
-    /**
-     * Runs after `composer create-project redaxo/project`: turns the freshly cloned skeleton into a clean project
-     * (resets composer.json, writes a project README).
-     */
-    public static function postCreateProject(): void
-    {
-        self::cleanUpComposerJson();
-        self::initEnv();
-        self::writeReadme();
+    private string $name;
 
-        echo "Initialized composer.json, .env and README.md for the new project.\n";
+    /** @param string $dir Absolute path with native directory separators */
+    public function __construct(
+        private string $dir,
+    ) {
+        /** @psalm-suppress ForbiddenCode */
+        $this->name = basename($dir);
     }
 
-    private static function cleanUpComposerJson(): void
+    public function initialize(): void
     {
-        $file = getenv('COMPOSER') ?: getcwd() . '/composer.json';
+        $this->cleanUpComposerJson();
+        $this->initEnv();
+        $this->writeReadme();
+    }
+
+    private function cleanUpComposerJson(): void
+    {
+        $file = $this->dir . '/composer.json';
+        // JsonManipulator preserves the formatting and blank lines of the file.
         $manipulator = new JsonManipulator((string) file_get_contents($file));
 
         // Strip the skeleton's own package identity.
@@ -48,22 +54,18 @@ final class ScriptHandler
         // A project created from this skeleton is private by default.
         $manipulator->addMainKey('license', 'proprietary');
 
-        // Drop the skeleton's scripts block (its only entry is this create-project hook).
-        $manipulator->removeMainKey('scripts');
-
         file_put_contents($file, $manipulator->getContents());
     }
 
-    private static function initEnv(): void
+    private function initEnv(): void
     {
-        $file = getcwd() . '/.env';
-        $dir = basename((string) getcwd());
+        $file = $this->dir . '/.env';
 
-        $slug = trim(strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $dir)), '-');
+        $slug = trim(strtolower((string) preg_replace('/[^a-z0-9]+/i', '-', $this->name)), '-');
         $id = ($slug ?: 'redaxo') . '-' . bin2hex(random_bytes(4));
 
         // single quotes keep dotenv from interpreting spaces, `#` or `$`, but cannot be escaped themselves
-        $name = str_replace("'", '', $dir);
+        $name = str_replace("'", '', $this->name);
         if (!preg_match('/^[\w.-]+$/', $name)) {
             $name = "'" . $name . "'";
         }
@@ -75,11 +77,9 @@ final class ScriptHandler
         file_put_contents($file, $content);
     }
 
-    private static function writeReadme(): void
+    private function writeReadme(): void
     {
-        $name = basename((string) getcwd());
-
-        $readme = "# {$name}\n\n" . <<<'MARKDOWN'
+        $readme = "# {$this->name}\n\n" . <<<'MARKDOWN'
             A website project based on [REDAXO](https://redaxo.org).
 
             ## Setup
@@ -104,6 +104,6 @@ final class ScriptHandler
 
             MARKDOWN;
 
-        file_put_contents(getcwd() . '/README.md', $readme);
+        file_put_contents($this->dir . '/README.md', $readme);
     }
 }

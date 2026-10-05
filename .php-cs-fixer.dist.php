@@ -8,6 +8,7 @@ $finder = Finder::create()
         __DIR__ . '/.tools',
         __DIR__ . '/addons',
         __DIR__ . '/boot',
+        __DIR__ . '/composer-plugin',
         __DIR__ . '/fragments',
         __DIR__ . '/pages',
         __DIR__ . '/project',

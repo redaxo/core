@@ -37,6 +37,7 @@
         "nyholm/psr7": "^1.8.2",
         "psr/log": "^3.0.2",
         "ramsey/http-range": "^2.0.0",
+        "redaxo/composer-plugin": "^1.0@dev",
         "splitbrain/php-archive": "^1.5.1",
         "symfony/console": "^8.1.6",
         "symfony/dotenv": "^8.1.6",
@@ -48,6 +49,7 @@
         "symfony/var-dumper": "^8.1.6"
     },
     "require-dev": {
+        "composer/composer": "^2.9",
         "jetbrains/phpstorm-attributes": "^1.3",
         "phpstan/extension-installer": "1.4.3",
         "phpstan/phpstan": "2.2.13",
@@ -98,6 +100,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Redaxo\\ComposerPlugin\\Tests\\": "composer-plugin/tests",
             "Redaxo\\Core\\Fixtures\\": ".tools/fixtures",
             "Redaxo\\Core\\Tests\\": "tests",
             "Redaxo\\Rector\\": ".tools/rector"
@@ -197,17 +200,19 @@
         "sort-packages": true,
         "allow-plugins": {
             "phpstan/extension-installer": true,
+            "redaxo/composer-plugin": true,
             "symfony/runtime": true
         }
     },
 
-    "extra": {
-        "runtime": {
-            "class": "Redaxo\\Core\\Runtime"
-        }
-    },
-
     "repositories": [
+        {
+            "type": "path",
+            "url": "composer-plugin",
+            "options": {
+                "versions": {"redaxo/composer-plugin": "1.x-dev"}
+            }
+        },
         {
             "type": "path",
             "url": "addons/debug",

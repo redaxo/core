@@ -15,6 +15,7 @@
         <directory name=".tools/fixtures"/>
         <directory name="addons"/>
         <directory name="boot"/>
+        <directory name="composer-plugin"/>
         <directory name="fragments"/>
         <directory name="pages"/>
         <directory name="project/public"/>
@@ -27,8 +28,6 @@
         <file name="rector.php"/>
         <ignoreFiles>
             <directory name="vendor"/>
-            <!-- Composer script handler — uses Composer's runtime API (not in the dependency tree). -->
-            <file name="src/Composer/ScriptHandler.php" />
             <file name=".phpstorm.meta.php" />
         </ignoreFiles>
     </projectFiles>

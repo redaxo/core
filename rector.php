@@ -85,6 +85,7 @@ return RectorConfig::configure()
         '.tools/fixtures/',
         'addons',
         'boot/',
+        'composer-plugin/',
         'fragments/',
         'pages/',
         'project/bin/console',
@@ -136,9 +137,6 @@ return RectorConfig::configure()
         Php81\FuncCall\NullToStrictStringFuncCallArgRector::class,
         TypeDeclaration\ArrowFunction\AddArrowFunctionReturnTypeRector::class,
         TypeDeclaration\Closure\AddClosureVoidReturnTypeWhereNoReturnRector::class,
-
-        // Composer script handler — uses Composer's runtime API (not in the dependency tree).
-        __DIR__ . '/src/Composer/ScriptHandler.php',
     ])
 
     // Upgrade REDAXO 5 to 6

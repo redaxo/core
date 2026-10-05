@@ -14,6 +14,7 @@ parameters:
         - .tools/fixtures
         - addons
         - boot
+        - composer-plugin
         - fragments
         - pages
         - project/bin/console
@@ -23,9 +24,6 @@ parameters:
         - setup
         - src
         - tests
-    excludePaths:
-        # Composer script handler — uses Composer's runtime API (not in the dependency tree).
-        - src/Composer/ScriptHandler.php
     # https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         - Redaxo\Core\View\Fragment

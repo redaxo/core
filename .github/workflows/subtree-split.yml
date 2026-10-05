@@ -5,6 +5,7 @@ on:
         branches:
             - 6.x
         paths:
+            - composer-plugin/**
             - project/**
             - addons/debug/**
             - .github/subtree-splits.json

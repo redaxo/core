@@ -1,0 +1,3 @@
+# Exclude non-essential files from dist
+/.gitattributes export-ignore
+/tests/ export-ignore

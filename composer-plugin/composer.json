@@ -1,8 +1,8 @@
 {
-    "name": "redaxo/project",
-    "type": "project",
-    "description": "REDAXO project skeleton for `composer create-project`",
-    "keywords": ["redaxo", "cms", "skeleton", "project"],
+    "name": "redaxo/composer-plugin",
+    "type": "composer-plugin",
+    "description": "Composer integration of REDAXO projects",
+    "keywords": ["redaxo", "composer-plugin"],
     "license": "MIT",
     "authors": [
         {
@@ -22,23 +22,16 @@
 
     "require": {
         "php": "^8.5",
-        "redaxo/core": "^6.0"
+        "composer-plugin-api": "^2.9"
     },
 
     "autoload": {
         "psr-4": {
-            "Project\\": "src/"
+            "Redaxo\\ComposerPlugin\\": "src/"
         }
     },
 
-    "config": {
-        "allow-plugins": {
-            "redaxo/composer-plugin": true,
-            "symfony/runtime": true
-        },
-        "sort-packages": true
-    },
-
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "extra": {
+        "class": "Redaxo\\ComposerPlugin\\Plugin"
+    }
 }
