@@ -20,6 +20,8 @@ final class rex_debug_clockwork
     {
         /** @var VanillaClockwork $clockwork */
         $clockwork = VanillaClockwork::init([
+            // access is already restricted to admins in dev mode, so don't limit it to local hosts like Clockwork does by default
+            'enable' => true,
             'storage_files_path' => self::getStoragePath(),
             'storage_files_compress' => true,
 
