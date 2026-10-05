@@ -1,15 +1,20 @@
 <?php
 
+namespace Redaxo\Debug;
+
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Timer;
 
+use function count;
+use function is_array;
+
 /**
  * @internal
  */
-final class rex_extension_debug extends Extension
+final class DebugExtension extends Extension
 {
     /** @var list<array<string, mixed>> */
     public static array $extensionPoints = [];
@@ -42,10 +47,10 @@ final class rex_extension_debug extends Extension
             'result' => $res,
         ];
 
-        $data = rex_debug::getTrace([Extension::class]);
+        $data = Backtrace::capture([Extension::class]);
         $data['listeners'] = self::$listeners[$extensionPoint->name] ?? [];
 
-        rex_debug_clockwork::getInstance()
+        DebugAddon::instance()->clockwork
             ->event('EP: ' . $extensionPoint->name, [
                 'subject' => $extensionPoint->subject,
                 'params' => $extensionPoint->getParams(),
@@ -62,7 +67,7 @@ final class rex_extension_debug extends Extension
     {
         parent::register($extensionPoint, $extension, $level);
 
-        $trace = rex_debug::getTrace([Extension::class]);
+        $trace = Backtrace::capture([Extension::class]);
         if (!is_array($extensionPoint)) {
             $extensionPoint = [$extensionPoint];
         }

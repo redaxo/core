@@ -1,16 +1,23 @@
 <?php
 
+namespace Redaxo\Debug\ApiFunction;
+
 use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Core;
+use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Util\Type;
+use Redaxo\Debug\DebugAddon;
+
+use function dirname;
 
 /**
  * @internal
  */
 #[AsApiFunction('debug')]
-final class rex_api_debug extends ApiFunction
+final class ClockworkMetadata extends ApiFunction
 {
     protected bool $requiresCsrfProtection = false;
 
@@ -20,9 +27,7 @@ final class rex_api_debug extends ApiFunction
             return new Result(false);
         }
 
-        $debug = rex_debug_clockwork::getHelper();
-
-        Response::sendJson($debug->getMetadata());
+        Response::sendJson(DebugAddon::instance()->clockworkHelper->getMetadata());
         exit;
     }
 
@@ -32,5 +37,23 @@ final class rex_api_debug extends ApiFunction
             self::REQ_CALL_PARAM => 'debug',
             'request' => '',
         ];
+    }
+
+    public static function getUrl(): string
+    {
+        return Url::backendPage('debug', self::getUrlParams());
+    }
+
+    public static function getFullUrl(): string
+    {
+        $https = isset($_SERVER['HTTPS']) && 'on' == $_SERVER['HTTPS'];
+        $host = Type::string($_SERVER['HTTP_HOST'] ?? null);
+        $port = $_SERVER['SERVER_PORT'] ?? null;
+        $uri = dirname(Type::string($_SERVER['REQUEST_URI'] ?? null)) . '/' . self::getUrl();
+
+        $scheme = $https ? 'https' : 'http';
+        $port = (!$https && 80 != $port || $https && 443 != $port) ? ":{$port}" : '';
+
+        return "{$scheme}://{$host}{$port}{$uri}";
     }
 }

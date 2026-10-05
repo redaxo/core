@@ -1,13 +1,22 @@
 <?php
 
+namespace Redaxo\Debug;
+
+use Override;
+use PDOStatement;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\Exception;
 use Redaxo\Core\Util\Timer;
 
+use function assert;
+use function count;
+
+use const DEBUG_BACKTRACE_IGNORE_ARGS;
+
 /**
  * @internal
  */
-final class rex_sql_debug extends Sql
+final class DebugSql extends Sql
 {
     #[Override]
     public function setQuery(string $query, array $params = [], array $options = []): static
@@ -18,8 +27,8 @@ final class rex_sql_debug extends Sql
 
             // to prevent double entries, log only if no params are passed
             if (empty($params)) {
-                rex_debug_clockwork::getRequest()
-                    ->addDatabaseQuery($query, $params, $timer->getDelta(), ['connection' => $this->DBID] + rex_debug::getTrace());
+                DebugAddon::instance()->clockworkRequest
+                    ->addDatabaseQuery($query, $params, $timer->getDelta(), ['connection' => $this->DBID] + Backtrace::capture());
             }
         } catch (Exception $e) {
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
@@ -33,7 +42,7 @@ final class rex_sql_debug extends Sql
                     break;
                 }
             }
-            rex_debug_clockwork::getInstance()
+            DebugAddon::instance()->clockwork
                 ->log('error', $e->getMessage(), ['file' => $file, 'line' => $line]);
             throw $e; // re-throw exception after logging
         }
@@ -50,8 +59,8 @@ final class rex_sql_debug extends Sql
         $timer = new Timer();
         parent::execute($params, $options);
 
-        rex_debug_clockwork::getRequest()
-            ->addDatabaseQuery($qry, $params, $timer->getDelta(), ['connection' => $this->DBID] + rex_debug::getTrace());
+        DebugAddon::instance()->clockworkRequest
+            ->addDatabaseQuery($qry, $params, $timer->getDelta(), ['connection' => $this->DBID] + Backtrace::capture());
 
         return $this;
     }

@@ -1,12 +1,17 @@
 <?php
 
+namespace Redaxo\Debug;
+
 use Clockwork\Helpers\StackTrace;
 use Redaxo\Core\Log\Logger;
+use Stringable;
+
+use function is_int;
 
 /**
  * @internal
  */
-final class rex_logger_debug extends Logger
+final class DebugLogger extends Logger
 {
     public function log($level, string|Stringable $message, array $context = [], ?string $file = null, ?int $line = null, ?string $url = null): void
     {
@@ -14,8 +19,8 @@ final class rex_logger_debug extends Logger
         $levelType = is_int($level) ? self::getLogLevel($level) : $level;
 
         /** @var StackTrace $trace */
-        $trace = StackTrace::from(rex_debug::getTrace()['trace']);
-        rex_debug_clockwork::getInstance()->log($levelType, $message, ['trace' => $trace]);
+        $trace = StackTrace::from(Backtrace::capture()['trace']);
+        DebugAddon::instance()->clockwork->log($levelType, $message, ['trace' => $trace]);
 
         parent::log($level, $message, $context, $file, $line);
     }
