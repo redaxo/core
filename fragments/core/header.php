@@ -43,9 +43,15 @@ $instanceColor = Appearance::getInstanceColor();
                             <a class="navbar-brand" href="<?= Url::backendController() ?>"><?= File::get(Path::coreAssets('redaxo-logo.svg')) ?></a>
                         <?php endif ?>
                         <?php if (!$isPopup && Core::getUser()?->admin && Core::isDevMode()): ?>
-                            <a class="rex-marker-devmode" href="<?= Url::backendPage('system/settings') ?>" title="<?= I18n::msg('dev_mode_marker') ?>">
-                                <i class="rex-icon rex-icon-heartbeat rex-pulse"></i>
-                            </a>
+                            <?php if (null !== $devModeMarkerUrl = Appearance::$devModeMarkerUrl): ?>
+                                <a class="rex-marker-devmode" href="<?= escape($devModeMarkerUrl) ?>" target="_blank" title="<?= I18n::msg('dev_mode_marker') ?>">
+                                    <i class="rex-icon rex-icon-heartbeat rex-pulse"></i>
+                                </a>
+                            <?php else: ?>
+                                <span class="rex-marker-devmode" title="<?= I18n::msg('dev_mode_marker') ?>">
+                                    <i class="rex-icon rex-icon-heartbeat rex-pulse"></i>
+                                </span>
+                            <?php endif ?>
                         <?php endif ?>
                         <?php if (!$isPopup && Core::getUser()): ?>
                             <h1 class="rex-nav-top-title"><a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-nav-top-title-name"><?= escape(Core::getProject()->instanceName) ?></span><i class="rex-icon rex-icon-external-link"></i></a></h1>

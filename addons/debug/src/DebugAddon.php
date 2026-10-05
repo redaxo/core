@@ -5,7 +5,7 @@ namespace Redaxo\Debug;
 use Override;
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\LoadOrder;
-use Redaxo\Core\Backend\MainPage;
+use Redaxo\Core\Backend\Page;
 use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
 
@@ -22,14 +22,14 @@ final class DebugAddon extends Addon
     #[Override]
     public function getPages(): iterable
     {
-        if (Core::isHardenedMode()) {
+        if (!Core::isDevMode()) {
             return;
         }
 
-        yield new MainPage('system', $this->name, I18n::msg('debug'))
+        // reachable via the dev mode marker next to the logo
+        yield new Page($this->name, I18n::msg('debug'))
             ->setRequiredPermissions('admin')
-            ->setIcon('rex-icon rex-icon-heartbeat')
-            ->setLinkAttr('target', '_blank');
+            ->setHasLayout(false);
     }
 
     #[Override]

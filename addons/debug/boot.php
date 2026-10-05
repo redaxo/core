@@ -3,7 +3,6 @@
 use Clockwork\Clockwork;
 use Clockwork\Request\Timeline\Timeline;
 use Clockwork\Request\UserData;
-use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\ApiFunction\ApiFunction;
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
@@ -14,75 +13,27 @@ use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Environment;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Log\Logger;
-use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 
-use function Redaxo\Core\View\escape;
-
 if (!Core::isDevMode() || 'debug' === Request::get(ApiFunction::REQ_CALL_PARAM)) {
     return;
 }
 
-if (Core::isBackend() && 'debug' === Request::get('page') && Core::getUser()?->admin) {
-    $index = Type::string(file_get_contents(Addon::require('debug')->getAssetsPath('clockwork/index.html')));
-
-    $editor = Editor::factory();
-    $curEditor = $editor->getName();
-    $editorBasepath = $editor->getBasepath();
-
-    $siteKey = rex_debug_clockwork::getFullClockworkApiUrl();
-    $localPath = null;
-    $realPath = null;
-
-    if ($editorBasepath) {
-        $localPath = escape($editorBasepath, 'js');
-        $realPath = escape(Path::base(), 'js');
+if (Core::isBackend()) {
+    // the Clockwork frontend itself should not be profiled
+    if ('debug' === Request::get('page')) {
+        return;
     }
 
-    // prepend backend folder
-    $apiUrl = dirname(Type::string($_SERVER['REQUEST_URI'] ?? null)) . '/' . rex_debug_clockwork::getClockworkApiUrl();
-    $appearance = Appearance::getTheme();
-    if (!$appearance) {
-        $appearance = 'auto';
-    }
-
-    $nonce = Response::getNonce();
-
-    $injectedScript = <<<EOF
-        <script nonce="$nonce">
-            let store;
-            try {
-                store = JSON.parse(localStorage.getItem('clockwork'));
-            } catch (e) {
-                store = {};
-            }
-
-            if (!store) store = {};
-            if (!store.settings) store.settings = {};
-            if (!store.settings.global) store.settings.global = {};
-
-            store.settings.global.editor = '$curEditor';
-            store.settings.global.metadataPath = '$apiUrl';
-            store.settings.global.appearance = '$appearance';
-
-            if (!store.settings.site) store.settings.site = {};
-
-            store.settings.site['$siteKey'] = {localPathMap: {local: "$localPath", real: "$realPath"}};
-
-            localStorage.setItem('clockwork', JSON.stringify(store))
-        </script>
-        EOF;
-
-    $index = str_replace('<body>', '<body>' . $injectedScript, $index);
-    Response::sendPage($index);
-    exit;
+    Appearance::$devModeMarkerUrl = Url::backendPage('debug');
 }
 
 Sql::setFactoryClass(rex_sql_debug::class);
