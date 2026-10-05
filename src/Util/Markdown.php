@@ -4,6 +4,7 @@ namespace Redaxo\Core\Util;
 
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Exception\RuntimeException;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
 use function Redaxo\Core\View\escape;
 
@@ -13,9 +14,6 @@ use function Redaxo\Core\View\escape;
 class Markdown
 {
     use FactoryTrait;
-
-    public const string SOFT_LINE_BREAKS = 'soft_line_breaks';
-    public const string HIGHLIGHT_PHP = 'highlight_php';
 
     final private function __construct() {}
 
@@ -29,17 +27,19 @@ class Markdown
      * Parses markdown code.
      *
      * @param string $code Markdown code
-     * @param array<self::*, bool> $options
+     * @param HtmlSanitizerConfig|null $sanitizerConfig Allowlist for the resulting html, see {@see Str::sanitizeHtml()}
      *
      * @return string HTML code
      */
-    public function parse(string $code, array $options = []): string
-    {
-        $parser = new Parsedown();
-        $parser->setBreaksEnabled($options[self::SOFT_LINE_BREAKS] ?? true);
-        $parser->highlightPhp = $options[self::HIGHLIGHT_PHP] ?? false;
+    public function parse(
+        string $code,
+        bool $softLineBreaks = true,
+        bool $highlightPhp = false,
+        ?HtmlSanitizerConfig $sanitizerConfig = null,
+    ): string {
+        $parser = $this->createParser($softLineBreaks, $highlightPhp);
 
-        return Str::sanitizeHtml($parser->text($code));
+        return Str::sanitizeHtml($parser->text($code), $sanitizerConfig);
     }
 
     /**
@@ -48,21 +48,24 @@ class Markdown
      * @param string $code Markdown code
      * @param int $topLevel Top included headline level for TOC, e.g. `1` for `<h1>`
      * @param int $bottomLevel Bottom included headline level for TOC, e.g. `6` for `<h6>`
-     * @param array<self::*, bool> $options
+     * @param HtmlSanitizerConfig|null $sanitizerConfig Allowlist for the resulting html, see {@see Str::sanitizeHtml()}
      *
      * @return list{string, string} tupel of table-of-content and content
      */
-    public function parseWithToc(string $code, int $topLevel = 2, int $bottomLevel = 3, array $options = []): array
-    {
-        $parser = new Parsedown();
-        $parser->setBreaksEnabled($options[self::SOFT_LINE_BREAKS] ?? true);
-        $parser->highlightPhp = $options[self::HIGHLIGHT_PHP] ?? false;
-
+    public function parseWithToc(
+        string $code,
+        int $topLevel = 2,
+        int $bottomLevel = 3,
+        bool $softLineBreaks = true,
+        bool $highlightPhp = false,
+        ?HtmlSanitizerConfig $sanitizerConfig = null,
+    ): array {
+        $parser = $this->createParser($softLineBreaks, $highlightPhp);
         $parser->generateToc = true;
         $parser->topLevel = $topLevel;
         $parser->bottomLevel = $bottomLevel;
 
-        $content = Str::sanitizeHtml($parser->text($code));
+        $content = Str::sanitizeHtml($parser->text($code), $sanitizerConfig);
         $headers = $parser->headers;
 
         $previous = $topLevel - 1;
@@ -104,5 +107,14 @@ class Markdown
         }
 
         return [$toc, $content];
+    }
+
+    private function createParser(bool $softLineBreaks, bool $highlightPhp): Parsedown
+    {
+        $parser = new Parsedown();
+        $parser->setBreaksEnabled($softLineBreaks);
+        $parser->highlightPhp = $highlightPhp;
+
+        return $parser;
     }
 }

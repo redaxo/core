@@ -431,10 +431,7 @@ final class Controller
             $path = $languagePath;
         }
 
-        [$toc, $content] = Markdown::factory()->parseWithToc(File::require($path), 2, 3, [
-            Markdown::SOFT_LINE_BREAKS => false,
-            Markdown::HIGHLIGHT_PHP => true,
-        ]);
+        [$toc, $content] = Markdown::factory()->parseWithToc(File::require($path), softLineBreaks: false, highlightPhp: true);
         $fragment = new Fragment();
         $fragment->setVar('content', $content, false);
         $fragment->setVar('toc', $toc, false);

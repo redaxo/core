@@ -5,6 +5,7 @@ namespace Redaxo\Core\Tests\Util;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Util\Markdown;
+use Redaxo\Core\Util\Str;
 
 /** @internal */
 final class MarkdownTest extends TestCase
@@ -66,6 +67,16 @@ final class MarkdownTest extends TestCase
                 "| Foo |\n| --: |\n| Bar |",
             ],
         ];
+    }
+
+    public function testParseWithSanitizerConfig(): void
+    {
+        $code = '<form><input name="foo"></form>';
+
+        self::assertSame('', Markdown::factory()->parse($code));
+
+        $config = Str::htmlSanitizerConfig()->allowElement('form')->allowElement('input', ['name']);
+        self::assertSame('<form><input name="foo" /></form>', Markdown::factory()->parse($code, sanitizerConfig: $config));
     }
 
     public function testParseWithToc(): void
