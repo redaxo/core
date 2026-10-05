@@ -4,7 +4,12 @@ if (!isset($userId) || 1 > $userId) {
     $userId = rex::requireUser()->getId();
 }
 
-$list = rex_list::factory('Select session_id, cookie_key, ip, useragent, starttime, last_activity from ' . rex::getTablePrefix() . 'user_session where user_id = ' . (int) $userId . ' ORDER BY last_activity DESC');
+$list = rex_list::factory('
+    SELECT session_id, cookie_key, ip, useragent, starttime, last_activity
+    FROM ' . rex::getTable('user_session') . '
+    WHERE user_id = ' . (int) $userId . '
+    ORDER BY session_id = ' . rex_sql::factory()->escape((string) session_id()) . ' DESC, last_activity DESC
+');
 $list->addTableAttribute('class', 'table-hover');
 
 $list->addColumn('remove_session', '<i class="rex-icon rex-icon-delete"></i>', 0, ['<th class="rex-table-icon"></th>', '<td class="rex-table-icon">###VALUE###</td>']);
