@@ -23,6 +23,7 @@ use Redaxo\Core\View\Fragment;
 use function array_flip;
 use function array_keys;
 use function array_merge;
+use function assert;
 use function filemtime;
 use function filesize;
 use function function_exists;
@@ -47,6 +48,9 @@ abstract class Addon
      * @var array<non-empty-string, self>
      */
     private static array $addons = [];
+
+    /** @var array<class-string<self>, self> */
+    private static array $instances = [];
 
     /** @var list<non-empty-string> */
     private static array $bootOrder = [];
@@ -104,6 +108,15 @@ abstract class Addon
         }
 
         return self::$addons[$addon];
+    }
+
+    /** Returns the addon registered with the called class as its addon class. */
+    final public static function instance(): static
+    {
+        $addon = self::$instances[static::class] ?? throw new RuntimeException(sprintf('Class "%s" is not registered as an addon class.', static::class));
+        assert($addon instanceof static);
+
+        return $addon;
     }
 
     /**
@@ -377,6 +390,7 @@ abstract class Addon
 
         $addons = self::$addons;
         self::$addons = [];
+        self::$instances = [];
         foreach (AddonManager::getComposerPackages() as $addonName => $package) {
             if (!isset($classes[$addonName])) {
                 throw new RuntimeException(sprintf('Addon "%s" must declare its addon class via composer.json `extra.redaxo.addon-class`.', $addonName));
@@ -385,7 +399,11 @@ abstract class Addon
             $class = $classes[$addonName];
             $addon = $addons[$addonName] ?? null;
 
-            self::$addons[$addonName] = $addon instanceof $class ? $addon : new $class($package, $addonName);
+            if (isset(self::$instances[$class])) {
+                throw new RuntimeException(sprintf('Addon class "%s" is used by both "%s" and "%s".', $class, self::$instances[$class]->name, $addonName));
+            }
+
+            self::$addons[$addonName] = self::$instances[$class] = $addon instanceof $class ? $addon : new $class($package, $addonName);
         }
 
         self::$bootOrder = $cache['order'] ?? self::generateBootOrder();
