@@ -49,7 +49,7 @@
         "symfony/var-dumper": "^8.1.6"
     },
     "require-dev": {
-        "composer/composer": "2.10.3",
+        "composer/composer": "^2.9",
         "jetbrains/phpstorm-attributes": "^1.3",
         "phpstan/extension-installer": "1.4.3",
         "phpstan/phpstan": "2.2.13",

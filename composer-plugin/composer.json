@@ -22,7 +22,7 @@
 
     "require": {
         "php": "^8.5",
-        "composer-plugin-api": "^2.0"
+        "composer-plugin-api": "^2.9"
     },
 
     "autoload": {
