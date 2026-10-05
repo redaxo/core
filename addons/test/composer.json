@@ -4,7 +4,6 @@
     "description": "REDAXO test addon",
     "keywords": ["redaxo", "redaxo-addon", "testing"],
     "license": "MIT",
-    "homepage": "https://github.com/redaxo/core",
     "authors": [
         {
             "name": "Yakamara Media GmbH & Co. KG",
@@ -15,6 +14,7 @@
             "homepage": "https://redaxo.org"
         }
     ],
+    "homepage": "https://redaxo.org",
 
     "require": {
         "php": "^8.5",
