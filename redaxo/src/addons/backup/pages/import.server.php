@@ -137,7 +137,7 @@ foreach ($folder as $file) {
 
     $content .= '<tr>
                     <td class="rex-table-icon"><i class="rex-icon rex-icon-database"></i></td>
-                    <td data-title="' . rex_i18n::msg('backup_filename') . '">' . $file . '</td>
+                    <td data-title="' . rex_i18n::msg('backup_filename') . '">' . rex_escape($file) . '</td>
                     <td data-title="' . rex_i18n::msg('backup_filesize') . '">' . $filesize . '</td>
                     <td data-title="' . rex_i18n::msg('backup_createdate') . '">' . $filec . '</td>
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . rex_url::currentBackendPage(['function' => 'dbimport', 'impname' => $file] + $csrfToken->getUrlParams()) . '" title="' . rex_i18n::msg('backup_import_file') . '" data-confirm="' . rex_i18n::msg('backup_proceed_db_import') . '"><i class="rex-icon rex-icon-import"></i> ' . rex_i18n::msg('backup_to_import') . '</a></td>
@@ -180,7 +180,7 @@ foreach ($folder as $file) {
 
     $content .= '<tr>
                     <td class="rex-table-icon"><i class="rex-icon rex-icon-file-archive"></i></td>
-                    <td data-title="' . rex_i18n::msg('backup_filename') . '">' . $file . '</td>
+                    <td data-title="' . rex_i18n::msg('backup_filename') . '">' . rex_escape($file) . '</td>
                     <td data-title="' . rex_i18n::msg('backup_filesize') . '">' . $filesize . '</td>
                     <td data-title="' . rex_i18n::msg('backup_createdate') . '">' . $filec . '</td>
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . rex_url::currentBackendPage(['function' => 'fileimport', 'impname' => $file] + $csrfToken->getUrlParams()) . '" title="' . rex_i18n::msg('backup_import_file') . '" data-confirm="' . rex_i18n::msg('backup_proceed_file_import') . '"><i class="rex-icon rex-icon-import"></i> ' . rex_i18n::msg('backup_to_import') . '</a></td>
