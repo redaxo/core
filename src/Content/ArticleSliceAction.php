@@ -2,8 +2,6 @@
 
 namespace Redaxo\Core\Content;
 
-use Redaxo\Core\Database\Sql;
-
 final class ArticleSliceAction
 {
     public const string ADD = 'add';
@@ -16,6 +14,14 @@ final class ArticleSliceAction
     public private(set) array $messages = [];
 
     /**
+     * Slice column values (`value1`, `media1`, …) to be saved.
+     *
+     * @var array<string, string|null>
+     * @internal
+     */
+    public private(set) array $columnValues = [];
+
+    /**
      * @param self::ADD|self::EDIT|self::DELETE $mode
      * @internal
      */
@@ -25,7 +31,6 @@ final class ArticleSliceAction
         public readonly int $languageId,
         public readonly int $ctypeId,
         public readonly int $sliceId,
-        private readonly Sql $sql,
     ) {}
 
     /** @internal */
@@ -33,7 +38,7 @@ final class ArticleSliceAction
     {
         foreach (ArticleSlice::readRequestValues() as $key => $list) {
             foreach ($list as $index => $value) {
-                $this->sql->setValue($key . ($index + 1), $value);
+                $this->columnValues[$key . ($index + 1)] = $value;
             }
         }
     }
@@ -46,60 +51,62 @@ final class ArticleSliceAction
     /** @param int<1, 20> $index */
     public function setValue(int $index, ?string $value): void
     {
-        $this->sql->setValue('value' . $index, $value);
+        $this->columnValues['value' . $index] = $value;
     }
 
     /** @param int<1, 10> $index */
     public function setMedia(int $index, ?string $value): void
     {
-        $this->sql->setValue('media' . $index, $value);
+        $this->columnValues['media' . $index] = $value;
     }
 
     /** @param int<1, 10> $index */
     public function setMediaList(int $index, ?string $value): void
     {
-        $this->sql->setValue('medialist' . $index, $value);
+        $this->columnValues['medialist' . $index] = $value;
     }
 
     /** @param int<1, 10> $index */
     public function setLink(int $index, ?int $value): void
     {
-        $this->sql->setValue('link' . $index, $value);
+        $this->columnValues['link' . $index] = null === $value ? null : (string) $value;
     }
 
     /** @param int<1, 10> $index */
     public function setLinkList(int $index, ?string $value): void
     {
-        $this->sql->setValue('linklist' . $index, $value);
+        $this->columnValues['linklist' . $index] = $value;
     }
 
     /** @param int<1, 20> $index */
     public function getValue(int $index): ?string
     {
-        return $this->sql->getValue('value' . $index);
+        return $this->columnValues['value' . $index] ?? null;
     }
 
     /** @param int<1, 10> $index */
     public function getMedia(int $index): ?string
     {
-        return $this->sql->getValue('media' . $index);
+        return $this->columnValues['media' . $index] ?? null;
     }
 
     /** @param int<1, 10> $index */
     public function getMediaList(int $index): ?string
     {
-        return $this->sql->getValue('medialist' . $index);
+        return $this->columnValues['medialist' . $index] ?? null;
     }
 
     /** @param int<1, 10> $index */
     public function getLink(int $index): ?int
     {
-        return $this->sql->getValue('link' . $index);
+        $link = $this->columnValues['link' . $index] ?? null;
+
+        return null === $link || '' === $link ? null : (int) $link;
     }
 
     /** @param int<1, 10> $index */
     public function getLinkList(int $index): ?string
     {
-        return $this->sql->getValue('linklist' . $index);
+        return $this->columnValues['linklist' . $index] ?? null;
     }
 }

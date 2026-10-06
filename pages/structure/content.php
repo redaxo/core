@@ -174,16 +174,13 @@ if (
 
                 // ***********************  daten einlesen
 
-                $newsql = Sql::factory();
-                // $newsql->setDebug();
-
                 // ----- PRE SAVE ACTION [ADD/EDIT/DELETE]
                 $mode = match ($function) {
                     'edit' => ArticleSliceAction::EDIT,
                     'delete' => ArticleSliceAction::DELETE,
                     default => ArticleSliceAction::ADD,
                 };
-                $action = new ArticleSliceAction($mode, $articleId, $languageId, $ctype, $sliceId, $newsql);
+                $action = new ArticleSliceAction($mode, $articleId, $languageId, $ctype, $sliceId);
 
                 $action->setRequestValues();
 
@@ -206,14 +203,12 @@ if (
                         $actionMessage .= '<br />';
                     }
 
-                    // clone sql object to preserve values in sql object given to ArticleSliceAction
-                    // otherwise the postsave hook did not have access to values
-                    $newsql = clone $newsql;
-
                     // ----- SAVE/UPDATE SLICE
                     if ('add' == $function || 'edit' == $function) {
                         $sliceTable = 'rex_article_slice';
+                        $newsql = Sql::factory();
                         $newsql->setTable($sliceTable);
+                        $newsql->setValues($action->columnValues);
 
                         if ('edit' == $function) {
                             $newsql->setWhere(['id' => $sliceId]);

@@ -202,49 +202,71 @@ final class SqlTest extends TestCase
         ];
     }
 
-    public function testSetGetValue(): void
+    public function testGetValueIgnoresSetValues(): void
     {
         $sql = Sql::factory();
         $sql->setTable(self::TABLE);
         $sql->setValue('col_str', 'abc');
-        $sql->setValue('col_int', 5);
 
-        self::assertTrue($sql->hasValue('col_str'), 'set value string exists');
-        self::assertTrue($sql->hasValue('col_int'), 'set value int exists');
+        self::assertFalse($sql->hasValue('col_str'));
 
-        self::assertEquals('abc', $sql->getValue('col_str'), 'get a previous set string');
-        self::assertEquals(5, $sql->getValue('col_int'), 'get a previous set int ');
+        $sql->setQuery('SELECT "def" AS col_str');
+        $sql->setValue('col_str', 'abc');
+
+        self::assertTrue($sql->hasValue('col_str'));
+        self::assertSame('def', $sql->getValue('col_str'));
     }
 
     public function testSetGetArrayValue(): void
     {
         $sql = Sql::factory();
-        $sql->setArrayValue('col_empty_array', []);
-        $sql->setArrayValue('col_array', [1, 2, 3]);
+        $sql->setTable(self::TABLE);
+        $sql->setArrayValue('col_text', [1, 2, 3]);
+        $sql->insert();
 
-        self::assertTrue($sql->hasValue('col_empty_array'), 'set value exists');
-        self::assertTrue($sql->hasValue('col_array'), 'set value exists');
+        $sql->setQuery('SELECT col_text FROM ' . self::TABLE);
 
-        self::assertEquals([], $sql->getArrayValue('col_empty_array'), 'get a previous set empty array');
-        self::assertEquals([1, 2, 3], $sql->getArrayValue('col_array'), 'get a previous set array');
+        self::assertSame([1, 2, 3], $sql->getArrayValue('col_text'));
     }
 
-    public function testNullInSetGetArrayValue(): void
+    /** @param array<mixed> $expected */
+    #[DataProvider('provideGetArrayValue')]
+    public function testGetArrayValue(array $expected, string $sqlValue): void
     {
         $sql = Sql::factory();
-        $sql->setValue('col_array', null);
-        self::assertEquals([], $sql->getArrayValue('col_array'), 'get a previous set array');
+        $sql->setQuery('SELECT ' . $sqlValue . ' AS col_array');
+
+        self::assertSame($expected, $sql->getArrayValue('col_array'));
     }
 
-    public function testInvalidJsonInSetGetArrayValue(): void
+    /** @return list<array{array<mixed>, string}> */
+    public static function provideGetArrayValue(): array
+    {
+        return [
+            [[], 'NULL'],
+            [[], "'[]'"],
+            [[1, 2, 3], "'[1,2,3]'"],
+            [['foo' => 'bar'], '\'{"foo":"bar"}\''],
+        ];
+    }
+
+    #[DataProvider('provideGetArrayValueWithInvalidJson')]
+    public function testGetArrayValueWithInvalidJson(string $sqlValue): void
     {
         $sql = Sql::factory();
-        $sql->setValue('col_array', 'not-a valid json string');
+        $sql->setQuery('SELECT ' . $sqlValue . ' AS col_array');
 
-        self::assertTrue($sql->hasValue('col_array'), 'set value exists');
-
-        self::expectException(SqlException::class);
+        $this->expectException(SqlException::class);
         $sql->getArrayValue('col_array');
+    }
+
+    /** @return list<array{string}> */
+    public static function provideGetArrayValueWithInvalidJson(): array
+    {
+        return [
+            ["'not-a valid json string'"],
+            ["'5'"],
+        ];
     }
 
     public function testInsertRow(): void
@@ -257,9 +279,6 @@ final class SqlTest extends TestCase
 
         $sql->insert();
         self::assertEquals(1, $sql->getRows());
-        // failing at the moment
-        // $this->assertEquals('abc', $sql->getValue('col_str'));
-        // $this->assertEquals(5, $sql->getValue('col_int'));
     }
 
     public function testInsertRawValue(): void
