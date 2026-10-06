@@ -131,12 +131,12 @@ if ($addonkey && isset($addons[$addonkey])) {
             $("#rex-js-install-packages-upload-upload-file").change(function(){
                 if($(this).is(":checked"))
                 {
-                    ' . ($newVersion != $file['version'] ? '$("#rex-js-install-packages-upload-version").html(\'<del class="rex-package-old-version">' . $file['version'] . '</del> <ins class="rex-package-new-version">' . rex_escape($newVersion, 'js') . '</ins>\');' : '') . '
+                    ' . ($newVersion != $file['version'] ? '$("#rex-js-install-packages-upload-version").html(\'<del class="rex-package-old-version">' . rex_escape(rex_escape($file['version']), 'js') . '</del> <ins class="rex-package-new-version">' . rex_escape(rex_escape($newVersion), 'js') . '</ins>\');' : '') . '
                     $("#rex-js-install-packages-upload-replace-assets, #rex-js-install-packages-upload-ignore-tests").removeAttr("disabled");
                 }
                 else
                 {
-                    $("#rex-js-install-packages-upload-version").html("' . rex_escape($file['version'], 'js') . '");
+                    $("#rex-js-install-packages-upload-version").html("' . rex_escape(rex_escape($file['version']), 'js') . '");
                     $("#rex-js-install-packages-upload-replace-assets, #rex-js-install-packages-upload-ignore-tests").attr("disabled", "disabled");
                 }
             });

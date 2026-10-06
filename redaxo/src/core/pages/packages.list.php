@@ -78,7 +78,7 @@ $getTableRow = static function (rex_package $package) use ($getLink) {
 
     $version = '';
     if ('' !== trim($package->getVersion())) {
-        $version = ' <span class="rex-' . $type . '-version">' . trim($package->getVersion()) . '</span>';
+        $version = ' <span class="rex-' . $type . '-version">' . rex_escape(trim($package->getVersion())) . '</span>';
 
         if (rex_version::isUnstable($package->getVersion())) {
             $version = '<i class="rex-icon rex-icon-unstable-version" title="' . rex_i18n::msg('unstable_version') . '"></i> ' . $version;

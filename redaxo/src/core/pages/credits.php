@@ -101,14 +101,14 @@ foreach (rex_package::getAvailablePackages() as $package) {
     $content .= '
             <tr class="rex-package-is-' . $package->getType() . '">
                 <td class="rex-table-icon"><i class="rex-icon rex-icon-package-' . $package->getType() . '"></i></td>
-                <td data-title="' . rex_i18n::msg('credits_name') . '">' . $package->getName() . ' </td>
+                <td data-title="' . rex_i18n::msg('credits_name') . '">' . rex_escape($package->getName()) . ' </td>
                 <td data-title="' . rex_i18n::msg('credits_version') . '">' . $packageVersion . '</td>
                 <td class="rex-table-slimmer" data-title="' . rex_i18n::msg('credits_help') . '">
                     <a href="' . $helpUrl . '" title="' . rex_i18n::msg('credits_open_help_file') . ' ' . rex_escape($package->getName()) . '"><i class="rex-icon rex-icon-help"></i> ' . rex_i18n::msg('credits_help') . ' <span class="sr-only">' . rex_escape($package->getName()) . '</span></a>
                 </td>
                 <td class="rex-table-slim" data-title="' . rex_i18n::msg('credits_supportpage') . '">';
     if ($supportpage = $package->getSupportPage()) {
-        $content .= '<a href="' . $supportpage . '" onclick="window.open(this.href); return false;"><i class="rex-icon rex-icon-external-link"></i> ' . rex_i18n::msg('credits_supportpage') . '</a>';
+        $content .= '<a href="' . rex_escape($supportpage) . '" onclick="window.open(this.href); return false;"><i class="rex-icon rex-icon-external-link"></i> ' . rex_i18n::msg('credits_supportpage') . '</a>';
     }
     $content .= '
                 </td>
