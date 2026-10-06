@@ -23,12 +23,12 @@ final readonly class Util
     {
         $db = Sql::factory();
         $db->setQuery("show variables like 'slow_query_log_file'");
-        $slowQueryLogPath = (string) $db->getValue('Value');
+        $slowQueryLogPath = $db->getStringValue('Value');
 
         if ('' !== $slowQueryLogPath) {
             if ('.' === dirname($slowQueryLogPath)) {
                 $db->setQuery('select @@datadir as default_data_dir');
-                $defaultDataDir = (string) $db->getValue('default_data_dir');
+                $defaultDataDir = $db->getStringValue('default_data_dir');
 
                 return $defaultDataDir . $slowQueryLogPath;
             }

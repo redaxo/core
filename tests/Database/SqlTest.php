@@ -229,6 +229,65 @@ final class SqlTest extends TestCase
         self::assertSame([1, 2, 3], $sql->getArrayValue('col_text'));
     }
 
+    /** @param 'getIntValue'|'getNullableIntValue'|'getStringValue'|'getNullableStringValue'|'getBoolValue' $method */
+    #[DataProvider('provideGetTypedValue')]
+    public function testGetTypedValue(int|string|bool|null $expected, string $method, string $sqlValue): void
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT ' . $sqlValue . ' AS col');
+
+        self::assertSame($expected, $sql->$method('col'));
+    }
+
+    /** @return list<array{int|string|bool|null, 'getIntValue'|'getNullableIntValue'|'getStringValue'|'getNullableStringValue'|'getBoolValue', string}> */
+    public static function provideGetTypedValue(): array
+    {
+        return [
+            [5, 'getIntValue', '5'],
+            [0, 'getIntValue', '0'],
+            [5, 'getNullableIntValue', '5'],
+            [null, 'getNullableIntValue', 'NULL'],
+            ['foo', 'getStringValue', "'foo'"],
+            ['', 'getStringValue', "''"],
+            ['1.50', 'getStringValue', 'CAST(1.5 AS DECIMAL(4,2))'],
+            ['2026-01-01 12:00:00', 'getStringValue', "CAST('2026-01-01 12:00:00' AS DATETIME)"],
+            ['foo', 'getNullableStringValue', "'foo'"],
+            [null, 'getNullableStringValue', 'NULL'],
+            [true, 'getBoolValue', '1'],
+            [false, 'getBoolValue', '0'],
+            [true, 'getBoolValue', 'TRUE'],
+        ];
+    }
+
+    /** @param 'getIntValue'|'getNullableIntValue'|'getStringValue'|'getNullableStringValue'|'getBoolValue' $method */
+    #[DataProvider('provideGetTypedValueWithUnexpectedType')]
+    public function testGetTypedValueWithUnexpectedType(string $expectedMessage, string $method, string $sqlValue): void
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT ' . $sqlValue . ' AS col');
+
+        $this->expectException(SqlException::class);
+        $this->expectExceptionMessage($expectedMessage);
+
+        $sql->$method('col');
+    }
+
+    /** @return list<array{string, 'getIntValue'|'getNullableIntValue'|'getStringValue'|'getNullableStringValue'|'getBoolValue', string}> */
+    public static function provideGetTypedValueWithUnexpectedType(): array
+    {
+        return [
+            ['Expected value of column "col" to be int, but got null.', 'getIntValue', 'NULL'],
+            ['Expected value of column "col" to be int, but got string.', 'getIntValue', "'5'"],
+            ['Expected value of column "col" to be ?int, but got string.', 'getNullableIntValue', "'5'"],
+            ['Expected value of column "col" to be string, but got null.', 'getStringValue', 'NULL'],
+            ['Expected value of column "col" to be string, but got int 5.', 'getStringValue', '5'],
+            ['Expected value of column "col" to be ?string, but got int 5.', 'getNullableStringValue', '5'],
+            ['Expected value of column "col" to be 0|1, but got int 2.', 'getBoolValue', '2'],
+            ['Expected value of column "col" to be 0|1, but got null.', 'getBoolValue', 'NULL'],
+            ['Expected value of column "col" to be 0|1, but got string.', 'getBoolValue', "'1'"],
+        ];
+    }
+
     /** @param array<mixed> $expected */
     #[DataProvider('provideGetArrayValue')]
     public function testGetArrayValue(array $expected, string $sqlValue): void

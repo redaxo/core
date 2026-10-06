@@ -204,8 +204,8 @@ final class ContentHandler
             throw new RuntimeException(sprintf('Slice with id=%d not found.', $sliceId));
         }
 
-        $article = Article::require((int) $sql->getValue('article_id'), (int) $sql->getValue('language_id'));
-        $revision = (int) $sql->getValue('revision');
+        $article = Article::require($sql->getIntValue('article_id'), $sql->getIntValue('language_id'));
+        $revision = $sql->getIntValue('revision');
 
         $sql->setTable('rex_article_slice');
         $sql->setWhere(['id' => $sliceId]);
@@ -276,21 +276,21 @@ final class ContentHandler
 
         foreach ($gc as $slice) {
             foreach ($cols as $col) {
-                $colname = $col->getValue('Field');
+                $colname = $col->getStringValue('Field');
                 if ('language_id' == $colname) {
                     $value = $toLanguageId;
                 } elseif ('article_id' == $colname) {
                     $value = $toId;
                 } elseif ('priority' == $colname) {
-                    $ctypeId = $slice->getValue('ctype_id');
-                    $value = (int) $slice->getValue($colname) + ($maxPriority[$ctypeId][(int) $slice->getValue('revision')] ?? 0);
+                    $ctypeId = $slice->getIntValue('ctype_id');
+                    $value = $slice->getIntValue($colname) + ($maxPriority[$ctypeId][$slice->getIntValue('revision')] ?? 0);
                 } else {
                     $value = $slice->getValue($colname);
                 }
 
                 // collect all affected ctypes
                 if ('ctype_id' == $colname) {
-                    $ctypes[$value][(int) $slice->getValue('revision')] = true;
+                    $ctypes[$value][$slice->getIntValue('revision')] = true;
                 }
 
                 if ('id' != $colname) {

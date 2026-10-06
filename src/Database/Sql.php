@@ -724,15 +724,93 @@ class Sql implements Iterator
     }
 
     /**
-     * Returns the integer value of a column, or `null` if the column is `NULL`.
+     * Returns the value of an integer column.
+     *
+     * @param string $column Name of the column
+     */
+    public function getIntValue(string $column): int
+    {
+        $value = $this->getValue($column);
+        if (!is_int($value)) {
+            throw $this->createUnexpectedTypeException($column, 'int', $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns the value of a nullable integer column.
      *
      * @param string $column Name of the column
      */
     public function getNullableIntValue(string $column): ?int
     {
         $value = $this->getValue($column);
+        if (null !== $value && !is_int($value)) {
+            throw $this->createUnexpectedTypeException($column, '?int', $value);
+        }
 
-        return null === $value ? null : (int) $value;
+        return $value;
+    }
+
+    /**
+     * Returns the value of a string column.
+     *
+     * @param string $column Name of the column
+     *
+     * @psalm-taint-source input
+     */
+    public function getStringValue(string $column): string
+    {
+        $value = $this->getValue($column);
+        if (!is_string($value)) {
+            throw $this->createUnexpectedTypeException($column, 'string', $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns the value of a nullable string column.
+     *
+     * @param string $column Name of the column
+     *
+     * @psalm-taint-source input
+     */
+    public function getNullableStringValue(string $column): ?string
+    {
+        $value = $this->getValue($column);
+        if (null !== $value && !is_string($value)) {
+            throw $this->createUnexpectedTypeException($column, '?string', $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Returns the value of a boolean column, i.e. a `TINYINT(1)` containing `0` or `1`.
+     *
+     * @param string $column Name of the column
+     */
+    public function getBoolValue(string $column): bool
+    {
+        $value = $this->getValue($column);
+
+        return match ($value) {
+            0 => false,
+            1 => true,
+            default => throw $this->createUnexpectedTypeException($column, '0|1', $value),
+        };
+    }
+
+    private function createUnexpectedTypeException(string $column, string $expected, string|int|float|bool|null $value): SqlException
+    {
+        return new SqlException(sprintf(
+            'Expected value of column "%s" to be %s, but got %s.',
+            $column,
+            $expected,
+            is_int($value) ? 'int ' . $value : get_debug_type($value),
+        ), sql: $this);
     }
 
     /**
@@ -1332,7 +1410,7 @@ class Sql implements Iterator
         if (0 == $sql->getRows()) {
             $id = $startId;
         } else {
-            $id = (int) $sql->getValue($column);
+            $id = $sql->getIntValue($column);
         }
         ++$id;
         $this->setValue($column, $id);
@@ -1765,18 +1843,18 @@ class Sql implements Iterator
 
         $columns = [];
         foreach ($sql as $col) {
-            $null = (string) $col->getValue('Null');
+            $null = $col->getStringValue('Null');
             assert('YES' === $null || 'NO' === $null);
 
             /** @psalm-taint-escape sql */
             $column = [
-                'name' => (string) $col->getValue('Field'),
-                'type' => (string) $col->getValue('Type'),
+                'name' => $col->getStringValue('Field'),
+                'type' => $col->getStringValue('Type'),
                 'null' => $null,
-                'key' => (string) $col->getValue('Key'),
-                'default' => null === $col->getValue('Default') ? null : (string) $col->getValue('Default'),
-                'extra' => (string) $col->getValue('Extra'),
-                'comment' => null === $col->getValue('Comment') ? null : (string) $col->getValue('Comment'),
+                'key' => $col->getStringValue('Key'),
+                'default' => $col->getNullableStringValue('Default'),
+                'extra' => $col->getStringValue('Extra'),
+                'comment' => $col->getNullableStringValue('Comment'),
             ];
 
             $columns[] = $column;
