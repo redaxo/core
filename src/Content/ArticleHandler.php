@@ -146,7 +146,7 @@ final class ArticleHandler
 
         // complete remaining optional aprams
         $data['path'] = $thisArt->getValue('path');
-        $data['priority'] ??= (int) $thisArt->getValue('priority');
+        $data['priority'] ??= $thisArt->getIntValue('priority');
 
         Sql::factory()
             ->setTable('rex_article_translation')
@@ -165,7 +165,7 @@ final class ArticleHandler
         $message = I18n::msg('article_updated');
 
         // ----- PRIOR
-        $oldPrio = (int) $thisArt->getValue('priority');
+        $oldPrio = $thisArt->getIntValue('priority');
 
         if ($oldPrio != $data['priority']) {
             self::newArtPrio($data['category_id'], $data['priority'], $oldPrio);
@@ -265,12 +265,12 @@ final class ArticleHandler
                 'path' => $ART->getValue('path'),
             ]));
 
-            if (1 == $ART->getValue('startarticle')) {
+            if ($ART->getBoolValue('startarticle')) {
                 $message = I18n::msg('category_deleted');
                 $SART = Sql::factory();
                 $SART->setQuery('SELECT id FROM rex_article WHERE parent_id = ?', [$id]);
                 foreach ($SART as $child) {
-                    self::_deleteArticle((int) $child->getValue('id'));
+                    self::_deleteArticle($child->getIntValue('id'));
                 }
             } else {
                 $message = I18n::msg('article_deleted');
@@ -304,7 +304,7 @@ final class ArticleHandler
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
             if (null === $status) {
-                $newstatus = self::nextStatus((int) $GA->getValue('status'));
+                $newstatus = self::nextStatus($GA->getIntValue('status'));
             } else {
                 $newstatus = $status;
             }
@@ -567,11 +567,11 @@ final class ArticleHandler
         $ia = Sql::factory();
         $articles->setQuery('SELECT id, path FROM rex_article WHERE path LIKE ?', ['%|' . $altId . '|%']);
         foreach ($articles as $article) {
-            $iid = (int) $article->getValue('id');
+            $iid = $article->getIntValue('id');
 
             $ia->setTable('rex_article');
             $ia->setWhere(['id' => $iid]);
-            $ia->setValue('path', str_replace("|$altId|", "|$neuId|", (string) $article->getValue('path')));
+            $ia->setValue('path', str_replace("|$altId|", "|$neuId|", $article->getStringValue('path')));
             $ia->update();
             $GAID[$iid] = $iid;
         }
@@ -729,7 +729,7 @@ final class ArticleHandler
             $translation->setTable('rex_article_translation');
             $translation->setValue('article_id', $newId);
             $translation->setValue('language_id', $languageId);
-            $translation->setValue('name', (string) $fromTranslation->getValue('name') . ' ' . I18n::msg('structure_copy'));
+            $translation->setValue('name', $fromTranslation->getStringValue('name') . ' ' . I18n::msg('structure_copy'));
             $translation->setValue('status', 0); // Kopierter Artikel offline setzen
 
             $dontCopy = ['article_id', 'language_id', 'name', 'status'];
@@ -744,7 +744,7 @@ final class ArticleHandler
             foreach ($revisions as $rev) {
                 // FIXME this dependency is very ugly!
                 // ArticleSlices kopieren
-                ContentHandler::copyContent($id, $newId, $languageId, $languageId, (int) $rev->getValue('revision'));
+                ContentHandler::copyContent($id, $newId, $languageId, $languageId, $rev->getIntValue('revision'));
             }
         }
 

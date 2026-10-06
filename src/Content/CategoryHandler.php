@@ -66,9 +66,9 @@ final class CategoryHandler
             $sql = Sql::factory();
             $sql->setQuery('SELECT language_id, template FROM rex_article_translation WHERE article_id = ?', [$categoryId]);
             foreach ($sql as $row) {
-                $template = (string) $row->getValue('template');
+                $template = $row->getNullableStringValue('template') ?? '';
                 if ('' !== $template) {
-                    $startpageTemplates[(int) $row->getValue('language_id')] = $template;
+                    $startpageTemplates[$row->getIntValue('language_id')] = $template;
                 }
             }
         }
@@ -187,7 +187,7 @@ final class CategoryHandler
 
         // ----- PRIOR
         if (isset($data['catpriority'])) {
-            $oldPrio = (int) $thisCat->getValue('catpriority');
+            $oldPrio = $thisCat->getIntValue('catpriority');
 
             if ($oldPrio != $data['catpriority']) {
                 self::newCatPrio($thisCat->getNullableIntValue('parent_id'), $data['catpriority'], $oldPrio);
@@ -284,7 +284,7 @@ final class CategoryHandler
             // Status wurde nicht von außen vorgegeben,
             // => zyklisch auf den nächsten Weiterschalten
             if (null === $status) {
-                $newstatus = self::nextStatus((int) $KAT->getValue('status'));
+                $newstatus = self::nextStatus($KAT->getIntValue('status'));
             } else {
                 $newstatus = $status;
             }
@@ -424,7 +424,7 @@ final class CategoryHandler
             return false;
         }
         if (null !== $toCat) {
-            $tcats = explode('|', (string) $tcat->getValue('path'));
+            $tcats = explode('|', $tcat->getStringValue('path'));
             if (in_array($fromCat, $tcats)) {
                 // zielkategorie ist in quellkategorie -> nicht verschiebbar
                 return false;
@@ -442,12 +442,12 @@ final class CategoryHandler
         }
 
         if (null !== $toCat) {
-            $toPath = $tcat->getValue('path') . $toCat . '|';
+            $toPath = $tcat->getStringValue('path') . $toCat . '|';
         } else {
             $toPath = '|';
         }
 
-        $fromPath = $fcat->getValue('path') . $fromCat . '|';
+        $fromPath = $fcat->getStringValue('path') . $fromCat . '|';
 
         $gcats = Sql::factory();
         $gcats->setQuery('SELECT id, path FROM rex_article WHERE path LIKE ?', [$fromPath . '%']);
@@ -455,8 +455,8 @@ final class CategoryHandler
         $up = Sql::factory();
         foreach ($gcats as $gcat) {
             // make update
-            $newPath = $toPath . $fromCat . '|' . str_replace($fromPath, '', (string) $gcat->getValue('path'));
-            $icid = (int) $gcat->getValue('id');
+            $newPath = $toPath . $fromCat . '|' . str_replace($fromPath, '', $gcat->getStringValue('path'));
+            $icid = $gcat->getIntValue('id');
 
             // path aendern und speichern
             $up->setTable('rex_article');
@@ -470,7 +470,7 @@ final class CategoryHandler
 
         $gmax = Sql::factory();
         $gmax->setQuery('SELECT MAX(c.priority) AS priority FROM rex_category c JOIN rex_article a ON a.id = c.id WHERE a.parent_id <=> ?', [$toCat]);
-        $priority = (int) $gmax->getValue('priority');
+        $priority = $gmax->getNullableIntValue('priority') ?? 0;
 
         $user = self::getUser();
 
