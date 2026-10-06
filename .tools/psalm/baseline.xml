@@ -1223,22 +1223,6 @@
       <code><![CDATA[$data['value']]]></code>
     </PossiblyUndefinedArrayOffset>
   </file>
-  <file src="src/Content/ArticleSliceAction.php">
-    <LessSpecificReturnStatement>
-      <code><![CDATA[$this->sql->getValue('link' . $index)]]></code>
-      <code><![CDATA[$this->sql->getValue('linklist' . $index)]]></code>
-      <code><![CDATA[$this->sql->getValue('media' . $index)]]></code>
-      <code><![CDATA[$this->sql->getValue('medialist' . $index)]]></code>
-      <code><![CDATA[$this->sql->getValue('value' . $index)]]></code>
-    </LessSpecificReturnStatement>
-    <MoreSpecificReturnType>
-      <code><![CDATA[?int]]></code>
-      <code><![CDATA[?string]]></code>
-      <code><![CDATA[?string]]></code>
-      <code><![CDATA[?string]]></code>
-      <code><![CDATA[?string]]></code>
-    </MoreSpecificReturnType>
-  </file>
   <file src="src/Content/CategoryHandler.php">
     <InvalidOperand>
       <code><![CDATA[$fcat->getValue('path')]]></code>
