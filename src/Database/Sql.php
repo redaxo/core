@@ -781,11 +781,6 @@ class Sql implements Iterator
      */
     protected function fetchValue(string $column): string|int|float|bool|null
     {
-        // value already set manually?
-        if (isset($this->values[$column])) {
-            return $this->values[$column];
-        }
-
         // no query was executed before
         if (null === $this->stmt) {
             return null;
@@ -866,11 +861,6 @@ class Sql implements Iterator
      */
     public function hasValue(string $column): bool
     {
-        // fast fail,... value already set manually?
-        if (isset($this->values[$column])) {
-            return true;
-        }
-
         $this->fetchMeta();
 
         return isset($this->columnIndexes[$column]);
