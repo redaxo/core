@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.18.4 – 06.10.2026
+---------------------------
+
+### Bugfixes
+
+* WebP- und AVIF-Dateien, die GD nicht lesen kann (z.B. animierte WebP), führten zu einem TypeError statt zur regulären Not-found-Behandlung (@tyrant88)
+
+
 Version 2.18.3 – 31.07.2026
 ---------------------------
 

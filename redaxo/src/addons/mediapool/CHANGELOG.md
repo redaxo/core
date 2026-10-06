@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.18.5 – 06.10.2026
+---------------------------
+
+### Bugfixes
+
+* EPS-Dateien werden auch mit dem MIME-Type `image/x-eps` akzeptiert, den neuere `libmagic`-Versionen liefern (@gharlan)
+
+
 Version 2.18.4 – 03.08.2026
 ---------------------------
 

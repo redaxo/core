@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 2.10.4 – 06.10.2026
+---------------------------
+
+### Security
+
+* Benutzer mit der Berechtigung `backup[export]`, aber ohne Admin-Rechte, können nur noch die REDAXO-Tabellen (mit Tabellenprefix) exportieren, ausgenommen `rex_user`, `rex_user_passkey` und `rex_user_session`; vorher waren alle Tabellen der Datenbank exportierbar, inklusive Passwort-Hashes und Eingeloggt-bleiben-Keys ([GHSA-phjc-vx3j-58r3](https://github.com/redaxo/core/security/advisories/GHSA-phjc-vx3j-58r3)) (gemeldet von @alham-rizvi, @AlpetGexha) (@gharlan)
+
+### Bugfixes
+
+* Dateinamen in der Import-Liste werden escaped ausgegeben (@gharlan)
+
+
 Version 2.10.0 – 09.04.2026
 ---------------------------
 

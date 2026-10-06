@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.12.2 – 06.10.2026
+---------------------------
+
+### Bugfixes
+
+* Englische Übersetzung korrigiert (@gharlan)
+
+
 Version 2.12.1 – 31.07.2026
 ---------------------------
 

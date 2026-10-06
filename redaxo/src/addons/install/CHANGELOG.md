@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.14.3 – 06.10.2026
+---------------------------
+
+### Bugfixes
+
+* Versionen aus der `package.yml` werden auf der Upload-Seite escaped ausgegeben (@gharlan)
+
+
 Version 2.14.2 – 31.07.2026
 ---------------------------
 

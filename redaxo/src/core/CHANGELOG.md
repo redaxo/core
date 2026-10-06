@@ -1,6 +1,31 @@
 Changelog
 =========
 
+Version 5.21.5 – 06.10.2026
+---------------------------
+
+### Security
+
+* Package-API (`rex_api_package`) prüfte nicht, ob der Benutzer Admin ist; dadurch konnten Benutzer, denen in der laufenden Session die Admin-Rechte entzogen wurden, weiterhin Addons installieren, deinstallieren, aktivieren, deaktivieren und löschen ([GHSA-fw98-549m-whxx](https://github.com/redaxo/core/security/advisories/GHSA-fw98-549m-whxx)) (gemeldet von @AlpetGexha) (@gharlan)
+* Safe Mode: Aktivieren und Deaktivieren über den Parameter `safemode` erfordert ein gültiges CSRF-Token, vorher ließ sich der Safe Mode per präpariertem Link umschalten ([GHSA-423v-8x3h-gxr3](https://github.com/redaxo/core/security/advisories/GHSA-423v-8x3h-gxr3)) (gemeldet von @manus-pi, @AlpetGexha) (@gharlan)
+* Bei Passwortänderung werden auch Session-ID und Eingeloggt-bleiben-Key der aktuellen Session erneuert, sodass zuvor ausgegebene Werte nicht mehr gültig sind ([GHSA-mjjv-vffq-g5h6](https://github.com/redaxo/core/security/advisories/GHSA-mjjv-vffq-g5h6)) (gemeldet von @AlpetGexha) (@gharlan)
+
+### Bugfixes
+
+* Verzeichnisschutz-Check: 
+  - Pro Tag wird nur noch ein Verzeichnis geprüft, da die Requests Tools wie fail2ban auslösen und so Backend-Benutzer aussperren konnten (@gharlan)
+  - Neue Config-Option `use_directory_protection_check`, um den täglichen Check abzuschalten (@gharlan)
+* Sporadischer Fehler „No clang found“, wenn der Cache parallel von einem anderen Request gelöscht wurde (@gharlan)
+* `rex_sql_table`:
+  - Spaltentypen und Default-Werte werden zwischen MySQL und MariaDB einheitlich normalisiert, sodass `ensure` nicht bei jedem Aufruf erneut Spalten ändert (@gharlan)
+  - Bei mehreren Datenbanken auf dem Server wurden Fremdschlüssel teils mit Spalten gleichnamiger Constraints aus anderen Datenbanken ausgelesen (@tyrant88)
+* Instance-Pool: Nicht gefundene Instanzen (z.B. `rex_article::get` mit nicht existierender ID) wurden nicht gecacht, sodass jeder Aufruf erneut DB bzw. Cache abfragte (@gharlan)
+* `rex_file::mimeType`: Der unter PHP 8.6 gelieferte MIME-Type `text/javascript` wird auf `application/javascript` normalisiert (@gharlan)
+* Die Library `voku/portable-utf8` ändert nicht mehr global die Encoding-Einstellungen, unter PHP 8.6 kam es dadurch zu Deprecated-Meldungen (@gharlan)
+* Session-Übersicht im Profil: Die aktuelle Session wird immer zuerst gelistet (@gharlan)
+* Metadaten aus der `package.yml` (Version, Supportpage, Name) werden in Addon-Liste, Hilfe- und Credits-Seite escaped ausgegeben (@gharlan)
+
+
 Version 5.21.4 – 03.08.2026
 ---------------------------
 

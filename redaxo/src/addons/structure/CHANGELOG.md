@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.20.5 – 06.10.2026
+---------------------------
+
+### Bugfixes
+
+* History: Die Spalte `status` fehlte in der Install-Definition der History-Tabelle, sie wurde erst nachträglich am Tabellenende ergänzt; nun wird sie direkt an der richtigen Position angelegt (@gharlan)
+
+
 Version 2.20.4 – 03.08.2026
 ---------------------------
 
