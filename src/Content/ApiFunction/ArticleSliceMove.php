@@ -45,7 +45,7 @@ final class ArticleSliceMove extends ApiFunction
             throw new ApiFunctionException(I18n::msg('module_not_found'));
         }
 
-        $moduleKey = (string) $CM->getValue('rex_article_slice.module');
+        $moduleKey = $CM->getStringValue('rex_article_slice.module');
         if (!Module::exists($moduleKey)) {
             throw new ApiFunctionException(I18n::msg('module_not_found'));
         }

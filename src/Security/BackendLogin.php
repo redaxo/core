@@ -230,7 +230,7 @@ class BackendLogin extends Login
                 $this->message = I18n::msg('login_session_expired');
                 CsrfToken::removeAll();
             } else {
-                $this->passkey = null === $sql->getValue('passkey_id') ? null : (string) $sql->getValue('passkey_id');
+                $this->passkey = $sql->getNullableStringValue('passkey_id');
                 if ($this->passkey) {
                     $this->setSessionVar(self::SESSION_PASSWORD_CHANGE_REQUIRED, false);
                 }

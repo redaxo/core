@@ -83,24 +83,24 @@ final readonly class ArticleSlice
         $data = [];
         foreach (['value' => 20, 'media' => 10, 'medialist' => 10, 'link' => 10, 'linklist' => 10] as $list => $count) {
             for ($k = 1; $k <= $count; ++$k) {
-                $value = $sql->getValue($table . '.' . $list . $k);
-                $data[$list][] = null == $value ? null : (string) $value;
+                $value = $sql->getNullableStringValue($table . '.' . $list . $k);
+                $data[$list][] = '' === $value ? null : $value;
             }
         }
 
         return new self(
-            (int) $sql->getValue($table . '.id'),
-            (int) $sql->getValue($table . '.article_id'),
-            (int) $sql->getValue($table . '.language_id'),
-            (int) $sql->getValue($table . '.ctype_id'),
-            (string) $sql->getValue($table . '.module'),
-            (int) $sql->getValue($table . '.priority'),
-            (int) $sql->getValue($table . '.status'),
+            $sql->getIntValue($table . '.id'),
+            $sql->getIntValue($table . '.article_id'),
+            $sql->getIntValue($table . '.language_id'),
+            $sql->getIntValue($table . '.ctype_id'),
+            $sql->getStringValue($table . '.module'),
+            $sql->getIntValue($table . '.priority'),
+            $sql->getIntValue($table . '.status'),
             (int) $sql->getDateTimeValue($table . '.createdate'),
             (int) $sql->getDateTimeValue($table . '.updatedate'),
-            (string) $sql->getValue($table . '.createuser'),
-            (string) $sql->getValue($table . '.updateuser'),
-            (int) $sql->getValue($table . '.revision'),
+            $sql->getStringValue($table . '.createuser'),
+            $sql->getStringValue($table . '.updateuser'),
+            $sql->getIntValue($table . '.revision'),
             $data['value'],
             $data['media'],
             $data['medialist'],

@@ -42,7 +42,7 @@ final class ArticleRevision
             $ins->setTable('rex_article_slice');
 
             foreach ($cols as $col) {
-                $colname = (string) $col->getValue('Field');
+                $colname = $col->getStringValue('Field');
                 $ins->setValue($colname, $slice->getValue($colname));
             }
 

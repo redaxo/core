@@ -45,12 +45,12 @@ final class ArticleContentEditor extends ArticleContentBase
                 $moduleKeyToAdd,
             );
         } else {
-            $sliceId = (int) $artDataSql->getValue('rex_article_slice.id');
-            $sliceCtype = (int) $artDataSql->getValue('rex_article_slice.ctype_id');
-            $sliceStatus = (int) $artDataSql->getValue('rex_article_slice.status');
-            $sliceRevision = (int) $artDataSql->getValue('rex_article_slice.revision');
+            $sliceId = $artDataSql->getIntValue('rex_article_slice.id');
+            $sliceCtype = $artDataSql->getIntValue('rex_article_slice.ctype_id');
+            $sliceStatus = $artDataSql->getIntValue('rex_article_slice.status');
+            $sliceRevision = $artDataSql->getIntValue('rex_article_slice.revision');
 
-            $moduleKey = (string) $artDataSql->getValue('rex_article_slice.module');
+            $moduleKey = $artDataSql->getStringValue('rex_article_slice.module');
             $module = Module::get($moduleKey);
 
             // ----- add select box einbauen
@@ -136,11 +136,11 @@ final class ArticleContentEditor extends ArticleContentBase
         // the editor always operates on a concrete content section
         assert($this->contentSectionId > 0);
 
-        $sliceId = (int) $artDataSql->getValue('rex_article_slice.id');
-        $sliceCtype = (int) $artDataSql->getValue('rex_article_slice.ctype_id');
-        $sliceStatus = (int) $artDataSql->getValue('rex_article_slice.status');
+        $sliceId = $artDataSql->getIntValue('rex_article_slice.id');
+        $sliceCtype = $artDataSql->getIntValue('rex_article_slice.ctype_id');
+        $sliceStatus = $artDataSql->getIntValue('rex_article_slice.status');
 
-        $moduleKey = (string) $artDataSql->getValue('rex_article_slice.module');
+        $moduleKey = $artDataSql->getStringValue('rex_article_slice.module');
         $moduleName = $this->getSliceHeading($moduleKey);
 
         $context = new Context([

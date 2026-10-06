@@ -326,7 +326,7 @@ final class WebRunner
         $sql = Sql::factory();
         $sql->setQuery('SELECT GET_LOCK(?, 0) AS acquired', [self::LOCK]);
 
-        return '1' === (string) $sql->getValue('acquired');
+        return 1 === $sql->getNullableIntValue('acquired');
     }
 
     private static function unlock(): void

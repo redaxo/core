@@ -63,8 +63,8 @@ if ('' != $fileName) {
     $sql = Sql::factory();
     $sql->setQuery('select * from rex_media where filename=?', [$fileName]);
     if (1 == $sql->getRows()) {
-        $fileId = (int) $sql->getValue('id');
-        $rexFileCategory = (int) $sql->getValue('category_id');
+        $fileId = $sql->getIntValue('id');
+        $rexFileCategory = $sql->getNullableIntValue('category_id') ?? 0;
     }
 }
 

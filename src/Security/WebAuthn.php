@@ -88,7 +88,7 @@ final class WebAuthn
         $challenge = Session::start()->get(self::SESSION_CHALLENGE_GET);
 
         try {
-            $this->createWebauthnBase()->processGet($clientDataJSON, $authenticatorData, $signature, Type::string($sql->getValue('public_key')), $challenge, requireUserVerification: true);
+            $this->createWebauthnBase()->processGet($clientDataJSON, $authenticatorData, $signature, $sql->getStringValue('public_key'), $challenge, requireUserVerification: true);
         } catch (WebAuthnException) {
             return null;
         }

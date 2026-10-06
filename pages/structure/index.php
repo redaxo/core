@@ -111,7 +111,7 @@ if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->c
 // --------------------- ADD PAGINATION
 
 $catPager = new Pager(cursorName: 'catstart');
-$catPager->setRowCount((int) $KAT->getValue('rowCount'));
+$catPager->setRowCount($KAT->getIntValue('rowCount'));
 $catFragment = new Fragment();
 $catFragment->setVar('urlprovider', $structureContext->getContext());
 $catFragment->setVar('pager', $catPager);
@@ -201,7 +201,7 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
 // --------------------- KATEGORIE LIST
 if ($KAT->getRows() > 0) {
     for ($i = 0; $i < $KAT->getRows(); ++$i) {
-        $iCategoryId = (int) $KAT->getValue('id');
+        $iCategoryId = $KAT->getIntValue('id');
 
         $katLink = $structureContext->getContext()->getUrl(['category_id' => $iCategoryId]);
 
@@ -212,7 +212,7 @@ if ($KAT->getRows() > 0) {
         $katIconTitle = $katHasChildElements ? I18n::msg('category_has_child_elements') : I18n::msg('category_without_child_elements');
         $katIconTd = '<td class="rex-table-icon"><a class="rex-link-expanded" href="' . $katLink . '" title="' . escape($KAT->getValue('catname')) . '"><i class="rex-icon ' . $katIconClass . '" title="' . $katIconTitle . '"></i></a></td>';
 
-        $status = (int) $KAT->getValue('status');
+        $status = $KAT->getIntValue('status');
         $katStatus = $catStatusTypes[$status][0];
         $statusClass = $catStatusTypes[$status][1];
         $statusIcon = $catStatusTypes[$status][2];
@@ -387,7 +387,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     // --------------------- ADD PAGINATION
 
     $artPager = new Pager(cursorName: 'artstart');
-    $artPager->setRowCount((int) $sql->getValue('artCount'));
+    $artPager->setRowCount($sql->getIntValue('artCount'));
     $artFragment = new Fragment();
     $artFragment->setVar('urlprovider', $structureContext->getContext());
     $artFragment->setVar('pager', $artPager);
@@ -470,28 +470,28 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     for ($i = 0; $i < $sql->getRows(); ++$i) {
         if ($sql->getValue('id') == Article::getSiteStartArticleId()) {
             $class = ' rex-icon-sitestartarticle';
-        } elseif (1 == $sql->getValue('startarticle')) {
+        } elseif ($sql->getBoolValue('startarticle')) {
             $class = ' rex-icon-startarticle';
         } else {
             $class = ' rex-icon-article';
         }
         $dataArtid = 'data-article-id="' . $sql->getValue('id') . '"';
-        $dataArtStatus = 'data-status="' . ((int) $sql->getValue('status')) . '"';
+        $dataArtStatus = 'data-status="' . $sql->getIntValue('status') . '"';
 
         $classStartarticle = '';
-        if (1 == $sql->getValue('startarticle')) {
+        if ($sql->getBoolValue('startarticle')) {
             $classStartarticle = ' rex-startarticle';
         }
 
         // --------------------- ARTIKEL EDIT FORM
 
-        if ($canEdit && 'edit_art' === $structureContext->function && (int) $sql->getValue('id') === $structureContext->articleId && $structureContext->hasCategoryPermission()) {
-            $templateSelect->setSelected((string) $sql->getValue('template'));
+        if ($canEdit && 'edit_art' === $structureContext->function && $sql->getIntValue('id') === $structureContext->articleId && $structureContext->hasCategoryPermission()) {
+            $templateSelect->setSelected($sql->getNullableStringValue('template') ?? '');
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">' . $templateSelect->get() . '</td>';
 
             $echo .= '<tr class="mark' . $classStartarticle . ' ' . $trStatusClass . '">
                             <td class="rex-table-icon"><a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $sql->getValue('id')]) . '" title="' . escape($sql->getValue('name')) . '"><i class="rex-icon' . $class . '"></i></a></td>
-                            <td class="rex-table-id" data-title="' . I18n::msg('header_id') . '">' . (int) $sql->getValue('id') . '</td>
+                            <td class="rex-table-id" data-title="' . I18n::msg('header_id') . '">' . $sql->getIntValue('id') . '</td>
                             <td class="rex-table-article-name" data-title="' . I18n::msg('header_article_name') . '"><input class="form-control" type="text" name="article-name" value="' . escape($sql->getValue('name')) . '" required maxlength="255" autofocus /></td>
                             ' . $tmplTd . '
                             <td class="rex-table-date" data-title="' . I18n::msg('header_date') . '">' . Formatter::intlDate($sql->getDateTimeValue('createdate')) . '</td>
@@ -501,7 +501,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         } elseif ($structureContext->hasCategoryPermission()) {
             // --------------------- ARTIKEL NORMAL VIEW | EDIT AND ENTER
 
-            $status = (int) $sql->getValue('status');
+            $status = $sql->getIntValue('status');
             $articleStatus = $artStatusTypes[$status][0];
             $articleClass = $artStatusTypes[$status][1];
             $articleIcon = $artStatusTypes[$status][2];
@@ -512,7 +512,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
                 $addExtra = '<td class="rex-table-action"><a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $sql->getValue('id'), 'function' => 'edit_art', 'artstart' => $structureContext->artStart]) . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('change') . '</a></td>';
             }
 
-            if (1 == $sql->getValue('startarticle')) {
+            if ($sql->getBoolValue('startarticle')) {
                 if ($canDelete) {
                     $addExtra .= '<td class="rex-table-action"><span class="text-muted"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</span></td>';
                 }
@@ -546,14 +546,14 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
             $editModeUrl = $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $sql->getValue('id'), 'mode' => 'edit']);
 
-            $tmplKey = (string) $sql->getValue('template');
+            $tmplKey = ($sql->getNullableStringValue('template') ?? '');
             $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? I18n::translate($t->name) : '');
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">
             <div class="rex-truncate rex-truncate-target" title="' . $tmpl . '" >' . $tmpl . '</div></td>';
 
             $echo .= '<tr ' . $dataArtStatus . ' ' . $dataArtid . (('' != $classStartarticle) ? ' class="' . trim($classStartarticle) . ' ' . $trStatusClass . '"' : ' class="' . $trStatusClass . '"') . '>
                             <td class="rex-table-icon"><a class="rex-link-expanded" href="' . $editModeUrl . '" title="' . escape($sql->getValue('name')) . '"><i class="rex-icon' . $class . '"></i></a></td>
-                            <td class="rex-table-id" data-title="' . I18n::msg('header_id') . '">' . (int) $sql->getValue('id') . '</td>
+                            <td class="rex-table-id" data-title="' . I18n::msg('header_id') . '">' . $sql->getIntValue('id') . '</td>
                             <td class="rex-table-article-name" data-title="' . I18n::msg('header_article_name') . '"><a class="rex-link-expanded" href="' . $editModeUrl . '">' . escape($sql->getValue('name')) . '</a></td>
                             ' . $tmplTd . '
                             <td class="rex-table-date" data-title="' . I18n::msg('header_date') . '">' . Formatter::intlDate($sql->getDateTimeValue('createdate')) . '</td>
@@ -564,19 +564,19 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         } else {
             // --------------------- ARTIKEL NORMAL VIEW | NO EDIT NO ENTER
 
-            $status = (int) $sql->getValue('status');
+            $status = $sql->getIntValue('status');
             $artStatus = $artStatusTypes[$status][0];
             $artStatusClass = $artStatusTypes[$status][1];
             $artStatusIcon = $artStatusTypes[$status][2];
 
-            $tmplKey = (string) $sql->getValue('template');
+            $tmplKey = ($sql->getNullableStringValue('template') ?? '');
             $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? I18n::translate($t->name) : '');
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">
             <div class="rex-truncate rex-truncate-target" title="' . $tmpl . '" >' . $tmpl . '</div></td>';
 
             $echo .= '<tr ' . $dataArtStatus . ' ' . $dataArtid . ' class="' . $trStatusClass . '">
                             <td class="rex-table-icon"><i class="rex-icon' . $class . '"></i></td>
-                            <td class="rex-table-id" data-title="' . I18n::msg('header_id') . '">' . (int) $sql->getValue('id') . '</td>
+                            <td class="rex-table-id" data-title="' . I18n::msg('header_id') . '">' . $sql->getIntValue('id') . '</td>
                             <td class="rex-table-article-name" data-title="' . I18n::msg('header_article_name') . '">' . escape($sql->getValue('name')) . '</td>
                             ' . $tmplTd . '
                             <td class="rex-table-date" data-title="' . I18n::msg('header_date') . '">' . Formatter::intlDate($sql->getDateTimeValue('createdate')) . '</td>

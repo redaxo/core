@@ -30,13 +30,13 @@ final class HistoryLogin extends BackendLogin
         $sessionSql->setQuery(
             'SELECT session_id FROM rex_user_session
                 WHERE user_id = :user_id AND last_activity >= IF(cookie_key IS NULL, :session, :stay_logged_in)',
-            ['user_id' => (int) $userSql->getValue($this->idColumn)] + UserSession::getExpiryCutoffs(),
+            ['user_id' => $userSql->getIntValue($this->idColumn)] + UserSession::getExpiryCutoffs(),
         );
 
         // The session id is the shared secret — only its HMAC is in the URL. A matching row also proves
         // the session is still alive: logout removes it and thereby invalidates the token.
         foreach ($sessionSql as $session) {
-            $expected = self::hashSessionKey($historyLogin, $historyValidtime, (string) $session->getValue('session_id'));
+            $expected = self::hashSessionKey($historyLogin, $historyValidtime, $session->getStringValue('session_id'));
 
             if (hash_equals($expected, $historySession)) {
                 $this->user = $userSql;

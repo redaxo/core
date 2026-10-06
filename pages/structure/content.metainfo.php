@@ -94,7 +94,7 @@ $article->setQuery('
 ', [$articleId, $languageId]);
 
 if (1 == $article->getRows()) {
-    $template = Template::get((string) $article->getValue('template'));
+    $template = Template::get($article->getNullableStringValue('template') ?? '');
 
     $ctype = Request::request('ctype', 'int', 1);
     if ($ctype < 1 || !$template?->hasContentSection($ctype)) {

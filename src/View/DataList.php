@@ -174,7 +174,7 @@ class DataList implements UrlProviderInterface
 
             $sql = Sql::factory($db);
             $sql->setQuery(self::prepareCountQuery($query));
-            $this->rows = (int) $sql->getValue('rows');
+            $this->rows = $sql->getIntValue('rows');
             $this->pager->setRowCount($this->rows);
         }
 

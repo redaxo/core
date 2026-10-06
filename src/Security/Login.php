@@ -114,7 +114,7 @@ class Login
                 $this->user = Sql::factory($this->DB);
 
                 $this->user->setQuery($this->loginQuery, [':login' => $this->userLogin]);
-                if (1 == $this->user->getRows() && static::passwordVerify($this->userPassword, (string) $this->user->getValue($this->passwordColumn))) {
+                if (1 == $this->user->getRows() && static::passwordVerify($this->userPassword, $this->user->getNullableStringValue($this->passwordColumn) ?? '')) {
                     $ok = true;
                     static::regenerateSessionId();
                     $this->setSessionVar(self::SESSION_START_TIME, time());
@@ -180,7 +180,7 @@ class Login
                     } elseif (
                         !$this->impersonator
                         && null !== ($sessionPassword = $this->getSessionVar(self::SESSION_PASSWORD, null))
-                        && (string) $this->user->getValue($this->passwordColumn) !== $sessionPassword
+                        && ($this->user->getNullableStringValue($this->passwordColumn) ?? '') !== $sessionPassword
                     ) {
                         $ok = false;
                         $this->message = I18n::msg('login_session_expired');

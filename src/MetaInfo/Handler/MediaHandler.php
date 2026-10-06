@@ -137,7 +137,7 @@ final class MediaHandler extends AbstractHandler
             $sql = Sql::factory();
             $sql->setQuery('SELECT id FROM rex_media WHERE filename=:filename', ['filename' => $params['filename']]);
             if (1 == $sql->getRows()) {
-                $params['id'] = (int) $sql->getValue('id');
+                $params['id'] = $sql->getIntValue('id');
             } else {
                 throw new RuntimeException('Error occured during file upload.');
             }

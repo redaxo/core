@@ -50,7 +50,7 @@ if (Request::post('btn_delete', 'string')) {
         $sql = Sql::factory()->setQuery('SELECT filename FROM rex_media WHERE id = ?', [$fileId]);
         $media = null;
         if (1 == $sql->getRows()) {
-            $media = Media::get((string) $sql->getValue('filename'));
+            $media = Media::get($sql->getStringValue('filename'));
         }
 
         if ($media) {
@@ -87,7 +87,7 @@ if (Request::post('btn_update', 'string')) {
         } elseif (!$perm->hasCategoryPerm($gf->getValue('category_id')) || !$perm->hasCategoryPerm($rexFileCategory)) {
             $error = I18n::msg('no_rights_to_this_function');
         } else {
-            $filename = (string) $gf->getValue('filename');
+            $filename = $gf->getStringValue('filename');
             $data = [];
             $data['category_id'] = $rexFileCategory;
             $data['title'] = Request::request('ftitle', 'string');
@@ -103,7 +103,7 @@ if (Request::post('btn_update', 'string')) {
             try {
                 MediaHandler::updateMedia($filename, $data);
 
-                if ((int) $gf->getValue('category_id') !== $rexFileCategory) {
+                if (($gf->getNullableIntValue('category_id') ?? 0) !== $rexFileCategory) {
                     Extension::dispatch(new ExtensionPoint('MEDIA_MOVED', null, [
                         'filename' => $filename,
                         'category_id' => $rexFileCategory,
@@ -132,12 +132,12 @@ if ($perm->hasCategoryPerm($gf->getValue('category_id'))) {
     $TPERM = true;
 }
 
-$ftitle = (string) $gf->getValue('title');
-$fname = (string) $gf->getValue('filename');
+$ftitle = $gf->getStringValue('title');
+$fname = $gf->getStringValue('filename');
 $ffiletype = $gf->getValue('filetype');
-$ffileSize = (int) $gf->getValue('filesize');
+$ffileSize = $gf->getIntValue('filesize');
 $ffileSize = Formatter::bytes($ffileSize);
-$rexFileCategory = (int) $gf->getValue('category_id');
+$rexFileCategory = $gf->getNullableIntValue('category_id') ?? 0;
 
 $sidebar = '';
 $addExtInfo = '';
@@ -146,8 +146,8 @@ $encodedFname = urlencode($fname);
 $fileExt = File::extension($fname);
 $isSvg = 'svg' === $fileExt;
 
-$fwidth = (int) $gf->getValue('width');
-$fheight = (int) $gf->getValue('height');
+$fwidth = $gf->getNullableIntValue('width') ?? 0;
+$fheight = $gf->getNullableIntValue('height') ?? 0;
 
 if ($fwidth > 0 && $fheight > 0) {
     $e = [];
@@ -166,7 +166,7 @@ if ($isSvg || MediaManager::canPreview($fileExt)) {
         $sidebar = '<i class="rex-mime rex-mime-error"></i><span class="sr-only">' . $fname . '</span>';
     } else {
         if ($isSvg) {
-            $rfwidth = min((int) $gf->getValue('width'), 200);
+            $rfwidth = min($fwidth, 200);
             $width = $rfwidth > 0 ? ' width="' . $rfwidth . '"' : '';
             $imgn = Url::media($fname) . '?buster=' . $gf->getDateTimeValue('updatedate');
             $imgMax = Url::media($fname);
@@ -339,12 +339,12 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape((string) $gf->getValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape((string) $gf->getValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $fragment = new Fragment();

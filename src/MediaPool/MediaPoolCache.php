@@ -106,7 +106,7 @@ final class MediaPoolCache
         $translations = Sql::factory();
         $translations->setQuery('SELECT * FROM rex_media_translation WHERE media_id = ?', [$cacheArray['id']]);
         foreach ($translations as $translation) {
-            $languageId = (int) $translation->getValue('language_id');
+            $languageId = $translation->getIntValue('language_id');
             foreach ($translation->getFieldNames() as $fieldName) {
                 if ('media_id' === $fieldName || 'language_id' === $fieldName) {
                     continue;

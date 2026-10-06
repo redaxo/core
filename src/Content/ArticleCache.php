@@ -228,7 +228,7 @@ final class ArticleCache
 
         $cacheArray = [];
         foreach ($GC as $row) {
-            $cacheArray[] = (int) $row->getValue('id');
+            $cacheArray[] = $row->getIntValue('id');
         }
 
         $articleListFile = Path::coreCache('structure/' . ($parentId ?? 0) . '.alist');
@@ -250,7 +250,7 @@ final class ArticleCache
 
         $cacheArray = [];
         foreach ($GC as $row) {
-            $cacheArray[] = (int) $row->getValue('id');
+            $cacheArray[] = $row->getIntValue('id');
         }
 
         $articleCategoriesFile = Path::coreCache('structure/' . ($parentId ?? 0) . '.clist');
