@@ -96,7 +96,8 @@ rex_extension::register('STRUCTURE_CONTENT_HEADER', static function (rex_extensi
 
     rex_article_revision::setSessionArticleRevision($articleId, $version);
 
-    $params['slice_revision'] = $version;
+    // slice_revision is passed by reference, so this sets the revision used by the content page
+    $ep->setParam('slice_revision', $version);
 });
 
 rex_extension::register('STRUCTURE_CONTENT_BEFORE_SLICES', static function (rex_extension_point $ep) {
@@ -139,7 +140,7 @@ rex_extension::register('STRUCTURE_CONTENT_BEFORE_SLICES', static function (rex_
 
                 $article = rex_type::instanceOf(rex_article::get($articleId, $clangId), rex_article::class);
                 rex_article_revision::setSessionArticleRevision($articleId, rex_article_revision::LIVE);
-                $params['slice_revision'] = rex_article_revision::LIVE;
+                $ep->setParam('slice_revision', rex_article_revision::LIVE);
                 $return = rex_extension::registerPoint(new rex_extension_point_art_content_updated($article, 'work_to_live', $return));
             }
             break;
@@ -147,7 +148,7 @@ rex_extension::register('STRUCTURE_CONTENT_BEFORE_SLICES', static function (rex_
             rex_article_revision::copyContent($articleId, $clangId, rex_article_revision::LIVE, rex_article_revision::WORK);
             $return .= rex_view::success(rex_i18n::msg('version_info_live_version_to_working'));
             rex_article_revision::setSessionArticleRevision($articleId, rex_article_revision::WORK);
-            $params['slice_revision'] = rex_article_revision::WORK;
+            $ep->setParam('slice_revision', rex_article_revision::WORK);
             break;
         case 'clear_work':
             rex_article_revision::clearContent($articleId, $clangId, rex_article_revision::WORK);

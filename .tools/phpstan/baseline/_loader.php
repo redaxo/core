@@ -7,7 +7,6 @@ return ['includes' => [
     __DIR__ . '/argument.type.php',
     __DIR__ . '/assign.propertyType.php',
     __DIR__ . '/booleanAnd.rightAlwaysFalse.php',
-    __DIR__ . '/function.alreadyNarrowedType.php',
     __DIR__ . '/if.alwaysTrue.php',
     __DIR__ . '/method.childReturnType.php',
     __DIR__ . '/missingType.generics.php',

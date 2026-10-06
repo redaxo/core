@@ -780,7 +780,7 @@ final class rex_sql_table_test extends TestCase
     public function testRenameNonExistingTable(): void
     {
         $this->expectException(rex_exception::class);
-        $this->expectExceptionMessage('Table "rex_non_existing" does not exist.');
+        $this->expectExceptionMessageMatches('/^Table "rex_non_existing" does not exist\.$/');
 
         rex_sql_table::get('rex_non_existing')
             ->setName('rex_foo')

@@ -110,107 +110,107 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_abstract::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effect_abstract.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_convert2img::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_convert2img.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_crop::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_crop.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_filter_blur::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_filter_blur.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_filter_brightness::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_filter_brightness.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_filter_colorize::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_filter_colorize.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_filter_contrast::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_filter_contrast.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_filter_greyscale::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_filter_greyscale.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_filter_sepia::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_filter_sepia.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_filter_sharpen::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_filter_sharpen.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_flip::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_flip.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_header::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_header.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_image_format::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_image_format.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_image_properties::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_image_properties.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_insert_image::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_insert_image.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_mediapath::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_mediapath.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_mirror::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_mirror.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_resize::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_resize.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_rotate::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_rotate.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_rounded_corners::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_rounded_corners.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Method rex_effect_workspace::getParams() return type has no value type specified in iterable type array.',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../redaxo/src/addons/media_manager/lib/effects/effect_workspace.php',
 ];
 $ignoreErrors[] = [

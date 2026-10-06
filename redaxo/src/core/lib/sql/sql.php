@@ -1935,7 +1935,7 @@ class rex_sql implements Iterator
         }
 
         if (str_contains($host, ':')) {
-            [$hostName, $port] = explode(':', $host, 2);
+            [$hostName] = explode(':', $host, 2);
             if (!filter_var($hostName, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
                 return rex_i18n::msg('sql_database_host_invalid', $hostName);
             }

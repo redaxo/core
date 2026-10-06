@@ -4893,7 +4893,6 @@
     </PossiblyNullReference>
     <PossiblyUndefinedArrayOffset>
       <code><![CDATA[$port]]></code>
-      <code><![CDATA[$port]]></code>
     </PossiblyUndefinedArrayOffset>
     <PropertyTypeCoercion>
       <code><![CDATA[$this->getConnection()->lastInsertId()]]></code>
@@ -5035,7 +5034,6 @@
       <code><![CDATA[non-empty-string]]></code>
     </MoreSpecificReturnType>
     <PossiblyUndefinedArrayOffset>
-      <code><![CDATA[$country]]></code>
       <code><![CDATA[$country]]></code>
     </PossiblyUndefinedArrayOffset>
     <PropertyTypeCoercion>

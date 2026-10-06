@@ -85,7 +85,6 @@ class rex_cronjob_manager
                 }
             }
 
-            $message = '';
             try {
                 $success = $cronjob->execute();
                 $message = $cronjob->getMessage();

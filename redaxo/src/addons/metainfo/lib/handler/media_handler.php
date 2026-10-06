@@ -61,7 +61,6 @@ class rex_metainfo_media_handler extends rex_metainfo_handler
             foreach ($items as $artArr) {
                 $aid = (int) $artArr['id'];
                 $clang = (int) $artArr['clang_id'];
-                $parentId = (int) $artArr['parent_id'];
                 $articles .= '<li><a href="javascript:openPage(\'' . rex_url::backendPage('content', ['article_id' => $aid, 'mode' => 'meta', 'clang' => $clang]) . '\')">' . rex_escape((string) $artArr['name']) . '</a></li>';
             }
             if ('' != $articles) {

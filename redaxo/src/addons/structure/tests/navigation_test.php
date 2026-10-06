@@ -9,7 +9,7 @@ final class rex_navigation_test extends TestCase
     public function testContruct(): void
     {
         $this->expectException(rex_exception::class);
-        $this->expectExceptionMessage('Base class rex_navigation must be instantiated via rex_navigation::factory().');
+        $this->expectExceptionMessageMatches('/^Base class rex_navigation must be instantiated via rex_navigation::factory\(\)\.$/');
 
         new rex_navigation();
     }

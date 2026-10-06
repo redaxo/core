@@ -667,7 +667,7 @@ class rex_command_setup_run extends rex_console_command implements rex_command_o
 
         $res = rex_setup::checkFilesystem();
         if (count($res) > 0) {
-            $errors = [];
+            $errors = []; // @phpstan-ignore assign.redundant
             foreach ($res as $key => $messages) {
                 if (count($messages) > 0) {
                     $affectedFiles = [];

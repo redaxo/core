@@ -367,7 +367,6 @@ abstract class rex_metainfo_handler
                     break;
                 case 'legend':
                     $tag = '';
-                    $tagAttr = '';
                     $labelIt = false;
 
                     // tabindex entfernen, macht bei einer legend wenig sinn

@@ -46,7 +46,7 @@ final class rex_timer_test extends TestCase
         self::assertSame('result2', $result);
         self::assertGreaterThan($timing['sum'], rex_timer::$serverTimings['test']['sum']);
 
-        $exception = null;
+        $exception = null; // @phpstan-ignore assign.overwritten
         try {
             rex_timer::measure('test2', static function () {
                 throw new RuntimeException();

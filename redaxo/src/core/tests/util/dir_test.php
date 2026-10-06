@@ -29,7 +29,7 @@ final class rex_dir_test extends TestCase
         $path = $this->getPath('create');
         self::assertTrue(rex_dir::create($path), 'create() returns true on success');
         self::assertDirectoryExists($path, 'dir exists after create()');
-        self::assertTrue(rex_dir::create($path), 'create() on existing dirs returns also true');
+        self::assertTrue(rex_dir::create($path), 'create() on existing dirs returns also true'); // @phpstan-ignore staticMethod.alreadyNarrowedType
     }
 
     public function testCreateRecursive(): void

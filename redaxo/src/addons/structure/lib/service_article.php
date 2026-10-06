@@ -285,10 +285,9 @@ class rex_article_service
         $ART = rex_sql::factory();
         $ART->setQuery('select * from ' . rex::getTablePrefix() . 'article where id=? and clang_id=?', [$id, rex_clang::getStartId()]);
 
-        $message = '';
         if ($ART->getRows() > 0) {
             $parentId = (int) $ART->getValue('parent_id');
-            $message = rex_extension::registerPoint(new rex_extension_point('ART_PRE_DELETED', $message, [
+            rex_extension::registerPoint(new rex_extension_point('ART_PRE_DELETED', '', [
                 'id' => $id,
                 'parent_id' => $parentId,
                 'name' => $ART->getValue('name'),

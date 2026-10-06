@@ -78,7 +78,7 @@ class rex_i18n
      */
     public static function getLanguage()
     {
-        [$lang, $country] = explode('_', self::getLocale(), 2);
+        [$lang] = explode('_', self::getLocale(), 2);
         return $lang;
     }
 
