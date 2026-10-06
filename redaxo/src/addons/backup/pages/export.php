@@ -19,7 +19,14 @@ if ('' == $exportfilename) {
     $exportfilename = rex_string::normalize(rex::getServerName()) . '_' . date('Ymd_Hi') . '_rex' . rex::getVersion();
 }
 
-$tables = rex_sql::factory()->getTables();
+$authTables = [rex::getTable('user'), rex::getTable('user_passkey'), rex::getTable('user_session')];
+
+if (rex::requireUser()->isAdmin()) {
+    $tables = rex_sql::factory()->getTables();
+} else {
+    // tables of other applications and tables containing credentials or session keys are reserved for admins
+    $tables = array_values(array_diff(rex_backup::getTables(), $authTables));
+}
 $EXPTABLES = array_intersect($EXPTABLES, $tables);
 
 $dir = rex_path::frontend();
@@ -156,7 +163,7 @@ $tableSelect->setName('EXPTABLES[]');
 $tableSelect->setAttribute('class', 'form-control');
 foreach ($tables as $table) {
     $tableSelect->addOption($table, $table);
-    if (in_array($table, [rex::getTable('user'), rex::getTable('user_passkey'), rex::getTable('user_session')], true)) {
+    if (in_array($table, $authTables, true)) {
         continue;
     }
     // skip non rex_ tables
