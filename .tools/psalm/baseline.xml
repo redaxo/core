@@ -1223,39 +1223,19 @@
       <code><![CDATA[$data['value']]]></code>
     </PossiblyUndefinedArrayOffset>
   </file>
-  <file src="src/Content/CategoryHandler.php">
-    <InvalidOperand>
-      <code><![CDATA[$fcat->getValue('path')]]></code>
-      <code><![CDATA[$tcat->getValue('path')]]></code>
-    </InvalidOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$fcat->getValue('path')]]></code>
-      <code><![CDATA[$tcat->getValue('path')]]></code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/Content/ContentHandler.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$articleId]]></code>
-      <code><![CDATA[$colname]]></code>
-      <code><![CDATA[$colname]]></code>
-      <code><![CDATA[$colname]]></code>
     </ArgumentTypeCoercion>
-    <InvalidArrayOffset>
-      <code><![CDATA[$maxPriority[$ctypeId]]]></code>
-    </InvalidArrayOffset>
     <InvalidOperand>
       <code><![CDATA[$CM->getValue('priority')]]></code>
       <code><![CDATA[$CM->getValue('priority')]]></code>
     </InvalidOperand>
     <PossiblyNullArgument>
       <code><![CDATA[$articleId]]></code>
-      <code><![CDATA[$colname]]></code>
-      <code><![CDATA[$colname]]></code>
-      <code><![CDATA[$colname]]></code>
     </PossiblyNullArgument>
     <PossiblyNullArrayOffset>
       <code><![CDATA[$ctypes]]></code>
-      <code><![CDATA[$maxPriority]]></code>
     </PossiblyNullArrayOffset>
     <PossiblyNullOperand>
       <code><![CDATA[$CM->getValue('priority')]]></code>
