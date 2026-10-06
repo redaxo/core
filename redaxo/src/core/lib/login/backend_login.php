@@ -231,9 +231,23 @@ class rex_backend_login extends rex_login
 
         parent::changedPassword($passwordHash);
 
-        if (null !== $user = $this->getUser()) {
-            rex_user_session::getInstance()->removeSessionsExceptCurrent($user->getId());
+        $user = $this->getUser();
+        if (null === $user) {
+            return;
         }
+
+        // the current session id and stay-logged-in key could be compromised as well, so they are renewed
+        $previousSessionId = (string) session_id();
+        self::regenerateSessionId();
+        rex_user_session::updateSessionId($previousSessionId, (string) session_id());
+
+        if ($this->getSessionVar(self::SESSION_STAY_LOGGED_IN, false)) {
+            $cookieKey = base64_encode(random_bytes(64));
+            rex_user_session::updateCookieKey((string) session_id(), $cookieKey);
+            self::setStayLoggedInCookie($cookieKey);
+        }
+
+        rex_user_session::getInstance()->removeSessionsExceptCurrent($user->getId());
     }
 
     public function getPasskey(): ?string

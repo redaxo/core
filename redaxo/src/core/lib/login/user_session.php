@@ -106,6 +106,15 @@ class rex_user_session
             ->update();
     }
 
+    public static function updateCookieKey(string $sessionId, string $cookieKey): void
+    {
+        rex_sql::factory()
+            ->setTable(rex::getTable('user_session'))
+            ->setWhere(['session_id' => $sessionId])
+            ->setValue('cookie_key', $cookieKey)
+            ->update();
+    }
+
     public static function clearExpiredSessions(): void
     {
         rex_sql::factory()

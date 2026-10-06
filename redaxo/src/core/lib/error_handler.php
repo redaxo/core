@@ -231,8 +231,8 @@ abstract class rex_error_handler
                 </style>';
 
         $saveModeLink = '';
-        if (!rex::isSetup() && rex::isBackend() && !rex::isSafeMode()) {
-            $saveModeLink = '<a class="rex-safemode" href="' . rex_url::backendPage('packages', ['safemode' => 1]) . '">activate safe mode</a>';
+        if (!rex::isSetup() && rex::isBackend() && !rex::isSafeMode() && PHP_SESSION_ACTIVE === session_status()) {
+            $saveModeLink = '<a class="rex-safemode" href="' . rex_url::backendPage('packages', ['safemode' => 1] + rex_csrf_token::factory('safemode')->getUrlParams()) . '">activate safe mode</a>';
         }
 
         try {

@@ -46,13 +46,13 @@ $credits .= '<dl class="dl-horizontal">';
 $credits .= '<dt>' . rex_i18n::msg('credits_name') . '</dt><dd>' . rex_escape($name) . '</dd>';
 
 if ($version) {
-    $credits .= '<dt>' . rex_i18n::msg('credits_version') . '</dt><dd>' . $version . '</dd>';
+    $credits .= '<dt>' . rex_i18n::msg('credits_version') . '</dt><dd>' . rex_escape($version) . '</dd>';
 }
 if ($author) {
     $credits .= '<dt>' . rex_i18n::msg('credits_author') . '</dt><dd>' . rex_escape($author) . '</dd>';
 }
 if ($supportPage) {
-    $credits .= '<dt>' . rex_i18n::msg('credits_supportpage') . '</dt><dd><a href="' . $supportPage . '" onclick="window.open(this.href); return false;">' . $supportPage . ' <i class="fa fa-external-link"></i></a></a></dd>';
+    $credits .= '<dt>' . rex_i18n::msg('credits_supportpage') . '</dt><dd><a href="' . rex_escape($supportPage) . '" onclick="window.open(this.href); return false;">' . rex_escape($supportPage) . ' <i class="fa fa-external-link"></i></a></dd>';
 }
 
 $credits .= '</dl>';

@@ -177,10 +177,7 @@ if (!rex::isLiveMode()) {
         <h3>' . rex_i18n::msg('safemode') . '</h3>
         <p>' . rex_i18n::msg('safemode_text') . '</p>';
 
-    $safemodeUrl = rex_url::currentBackendPage(['safemode' => '1'] + $csrfToken->getUrlParams());
-    if (rex::isSafeMode()) {
-        $safemodeUrl = rex_url::currentBackendPage(['safemode' => '0'] + $csrfToken->getUrlParams());
-    }
+    $safemodeUrl = rex_url::currentBackendPage(['safemode' => rex::isSafeMode() ? '0' : '1'] + rex_csrf_token::factory('safemode')->getUrlParams());
 
     $content .= '
         <p><a class="btn btn-safemode-activate" href="' . $safemodeUrl . '" data-pjax="false">' . (rex::isSafeMode() ? rex_i18n::msg('safemode_deactivate') : rex_i18n::msg('safemode_activate')) . '</a></p>
