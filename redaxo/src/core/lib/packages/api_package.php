@@ -12,6 +12,9 @@ class rex_api_package extends rex_api_function
         if (rex::isLiveMode()) {
             throw new rex_api_exception('Package management is not available in live mode!');
         }
+        if (!rex::getUser()?->isAdmin()) {
+            throw new rex_api_exception('You do not have the permission!');
+        }
 
         $function = rex_request('function', 'string');
         if (!in_array($function, ['install', 'uninstall', 'activate', 'deactivate', 'delete'])) {
