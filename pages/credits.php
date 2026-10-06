@@ -88,7 +88,7 @@ foreach (Addon::getAll() as $package) {
                 <td data-title="' . I18n::msg('credits_version') . '">' . $packageVersion . '</td>
                 <td class="rex-table-slim" data-title="' . I18n::msg('credits_supportpage') . '">';
     if ($supportpage = $package->getSupportPage()) {
-        $content .= '<a href="' . $supportpage . '" onclick="window.open(this.href); return false;"><i class="rex-icon rex-icon-external-link"></i> ' . I18n::msg('credits_supportpage') . '</a>';
+        $content .= '<a href="' . escape($supportpage) . '" onclick="window.open(this.href); return false;"><i class="rex-icon rex-icon-external-link"></i> ' . I18n::msg('credits_supportpage') . '</a>';
     }
     $content .= '
                 </td>

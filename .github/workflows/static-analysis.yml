@@ -23,7 +23,7 @@ jobs:
     psalm:
         runs-on: ubuntu-latest
         timeout-minutes: 30
-        if: github.event_name != 'repository_dispatch' || github.event.client_payload.slash_command.args.unnamed.all == '' || contains(github.event.client_payload.slash_command.args.unnamed.all, 'psalm')
+        if: github.event_name != 'repository_dispatch' || github.event.client_payload.pull_request.head.repo.full_name == github.repository && (github.event.client_payload.slash_command.args.unnamed.all == '' || contains(github.event.client_payload.slash_command.args.unnamed.all, 'psalm'))
         permissions:
             contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
 
@@ -93,7 +93,7 @@ jobs:
     psalm-taint:
         runs-on: ubuntu-latest
         timeout-minutes: 30
-        if: github.event.pull_request.draft == false && (github.event_name != 'repository_dispatch' || github.event.client_payload.slash_command.args.unnamed.all == '' || contains(github.event.client_payload.slash_command.args.unnamed.all, 'taint'))
+        if: github.event.pull_request.draft == false && (github.event_name != 'repository_dispatch' || github.event.client_payload.pull_request.head.repo.full_name == github.repository && (github.event.client_payload.slash_command.args.unnamed.all == '' || contains(github.event.client_payload.slash_command.args.unnamed.all, 'taint')))
         permissions:
             contents: write  # for stefanzweifel/git-auto-commit-action to push code in repo
 
@@ -163,7 +163,7 @@ jobs:
     phpstan:
         runs-on: ubuntu-latest
         timeout-minutes: 30
-        if: github.event_name != 'repository_dispatch' || github.event.client_payload.slash_command.args.unnamed.all == '' || contains(github.event.client_payload.slash_command.args.unnamed.all, 'phpstan')
+        if: github.event_name != 'repository_dispatch' || github.event.client_payload.pull_request.head.repo.full_name == github.repository && (github.event.client_payload.slash_command.args.unnamed.all == '' || contains(github.event.client_payload.slash_command.args.unnamed.all, 'phpstan'))
         permissions:
             contents: write  # for Git to git apply
 

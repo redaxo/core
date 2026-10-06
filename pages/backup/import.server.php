@@ -11,6 +11,8 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
 
+use function Redaxo\Core\View\escape;
+
 $success = '';
 $error = '';
 
@@ -148,7 +150,7 @@ foreach ($folder as $file) {
 
     $content .= '<tr>
                     <td class="rex-table-icon"><i class="rex-icon rex-icon-database"></i></td>
-                    <td data-title="' . I18n::msg('backup_filename') . '">' . $file . '</td>
+                    <td data-title="' . I18n::msg('backup_filename') . '">' . escape($file) . '</td>
                     <td data-title="' . I18n::msg('backup_filesize') . '">' . $filesize . '</td>
                     <td data-title="' . I18n::msg('backup_createdate') . '">' . $filec . '</td>
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . Url::currentBackendPage(['function' => 'dbimport', 'impname' => $file] + $csrfToken->getUrlParams()) . '" title="' . I18n::msg('backup_import_file') . '" data-confirm="' . I18n::msg('backup_proceed_db_import') . '"><i class="rex-icon rex-icon-import"></i> ' . I18n::msg('backup_to_import') . '</a></td>
@@ -191,7 +193,7 @@ foreach ($folder as $file) {
 
     $content .= '<tr>
                     <td class="rex-table-icon"><i class="rex-icon rex-icon-file-archive"></i></td>
-                    <td data-title="' . I18n::msg('backup_filename') . '">' . $file . '</td>
+                    <td data-title="' . I18n::msg('backup_filename') . '">' . escape($file) . '</td>
                     <td data-title="' . I18n::msg('backup_filesize') . '">' . $filesize . '</td>
                     <td data-title="' . I18n::msg('backup_createdate') . '">' . $filec . '</td>
                     <td class="rex-table-action"><a class="rex-link-expanded" href="' . Url::currentBackendPage(['function' => 'fileimport', 'impname' => $file] + $csrfToken->getUrlParams()) . '" title="' . I18n::msg('backup_import_file') . '" data-confirm="' . I18n::msg('backup_proceed_file_import') . '"><i class="rex-icon rex-icon-import"></i> ' . I18n::msg('backup_to_import') . '</a></td>

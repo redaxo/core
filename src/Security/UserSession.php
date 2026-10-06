@@ -112,6 +112,15 @@ final class UserSession
             ->update();
     }
 
+    public static function updateCookieKey(string $sessionId, string $cookieKey): void
+    {
+        Sql::factory()
+            ->setTable('rex_user_session')
+            ->setWhere(['session_id' => $sessionId])
+            ->setValue('cookie_key', $cookieKey)
+            ->update();
+    }
+
     public static function clearExpiredSessions(): void
     {
         // split into one branch per cutoff instead of comparing against an `IF()` over `cookie_key`, so that

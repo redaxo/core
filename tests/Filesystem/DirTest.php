@@ -37,7 +37,7 @@ final class DirTest extends TestCase
         $path = $this->getPath('create');
         self::assertTrue(Dir::create($path), 'create() returns true on success');
         self::assertDirectoryExists($path, 'dir exists after create()');
-        self::assertTrue(Dir::create($path), 'create() on existing dirs returns also true');
+        self::assertTrue(Dir::create($path), 'create() on existing dirs returns also true'); // @phpstan-ignore staticMethod.alreadyNarrowedType
     }
 
     public function testCreateRecursive(): void

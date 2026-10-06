@@ -108,7 +108,7 @@ final class I18n
      */
     public static function getLanguage(): string
     {
-        [$lang, $country] = explode('_', self::getLocale(), 2);
+        [$lang] = explode('_', self::getLocale(), 2);
         return $lang;
     }
 

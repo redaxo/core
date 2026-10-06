@@ -199,7 +199,7 @@ final class Media
     }
 
     /** Returns whether the element is permitted. */
-    public function isPermitted(): bool
+    public function isPermitted(): bool // @phpstan-ignore return.tooWideBool
     {
         return (bool) Extension::dispatch(new ExtensionPoint('MEDIA_IS_PERMITTED', true, ['element' => $this]));
     }

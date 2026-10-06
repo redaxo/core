@@ -53,7 +53,7 @@ function escape(mixed $value, string $strategy = 'html'): mixed
             $clone = clone $value;
             foreach (get_object_vars($value) as $k => $v) { // @phpstan-ignore impure.functionCall
                 // assignment on the local clone, so the function stays pure
-                $clone->$k = escape($v, $strategy); // @phpstan-ignore impure.propertyAssign, impure.propertyAssign
+                $clone->$k = escape($v, $strategy); // @phpstan-ignore impure.propertyAssign
             }
 
             return $clone;

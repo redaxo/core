@@ -640,7 +640,7 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
 
         $res = Setup::checkFilesystem();
         if (count($res) > 0) {
-            $errors = [];
+            $errors = []; // @phpstan-ignore assign.redundant
             foreach ($res as $key => $messages) {
                 if (count($messages) > 0) {
                     $affectedFiles = [];

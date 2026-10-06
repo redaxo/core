@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Security\ApiFunction\UserRemoveSession;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
@@ -15,7 +16,12 @@ if (!isset($userId) || 1 > $userId) {
 }
 Type::int($userId);
 
-$list = DataList::factory('Select session_id, cookie_key, ip, useragent, starttime, last_activity from rex_user_session where user_id = ' . $userId . ' ORDER BY last_activity DESC');
+$list = DataList::factory('
+    SELECT session_id, cookie_key, ip, useragent, starttime, last_activity
+    FROM rex_user_session
+    WHERE user_id = ' . $userId . '
+    ORDER BY session_id = ' . Sql::factory()->escape((string) session_id()) . ' DESC, last_activity DESC
+');
 $list->addTableAttribute('class', 'table-hover');
 
 $list->addColumn('remove_session', '<i class="rex-icon rex-icon-delete"></i>', 0, ['<th class="rex-table-icon"></th>', '<td class="rex-table-icon">###VALUE###</td>']);

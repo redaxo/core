@@ -256,10 +256,9 @@ final class ArticleHandler
         $ART = Sql::factory();
         $ART->setQuery('SELECT a.*, c.id IS NOT NULL AS startarticle FROM rex_article a LEFT JOIN rex_category c ON c.id = a.id WHERE a.id = ?', [$id]);
 
-        $message = '';
         if ($ART->getRows() > 0) {
             $parentId = $ART->getNullableIntValue('parent_id');
-            $message = Extension::dispatch(new ExtensionPoint('ART_PRE_DELETED', $message, [
+            Extension::dispatch(new ExtensionPoint('ART_PRE_DELETED', '', [
                 'id' => $id,
                 'parent_id' => $parentId,
                 'priority' => $ART->getValue('priority'),

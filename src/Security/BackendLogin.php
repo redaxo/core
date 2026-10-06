@@ -267,9 +267,23 @@ class BackendLogin extends Login
 
         parent::changedPassword($passwordHash);
 
-        if (null !== $user = $this->getUser()) {
-            UserSession::getInstance()->removeSessionsExceptCurrent($user->id);
+        $user = $this->getUser();
+        if (null === $user) {
+            return;
         }
+
+        // the current session id and stay-logged-in key could be compromised as well, so they are renewed
+        $previousSessionId = (string) session_id();
+        self::regenerateSessionId();
+        UserSession::updateSessionId($previousSessionId, (string) session_id());
+
+        if ($this->getSessionVar(self::SESSION_STAY_LOGGED_IN, false)) {
+            $cookieKey = base64_encode(random_bytes(64));
+            UserSession::updateCookieKey((string) session_id(), $cookieKey);
+            self::setStayLoggedInCookie($cookieKey);
+        }
+
+        UserSession::getInstance()->removeSessionsExceptCurrent($user->id);
     }
 
     public function getPasskey(): ?string

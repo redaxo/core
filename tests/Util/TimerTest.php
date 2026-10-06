@@ -57,7 +57,7 @@ final class TimerTest extends TestCase
         self::assertSame('result2', $result);
         self::assertGreaterThan($timing['sum'], Timer::$serverTimings['test']['sum']);
 
-        $exception = null;
+        $exception = null; // @phpstan-ignore assign.overwritten
         try {
             Timer::measure('test2', static function (): never {
                 throw new RuntimeException('test');

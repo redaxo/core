@@ -393,7 +393,8 @@ if (Core::getConfig('article_work_version', false)) {
 
         ArticleRevision::setSessionArticleRevision($articleId, $version);
 
-        $params['slice_revision'] = $version;
+        // slice_revision is passed by reference, so this sets the revision used by the content page
+        $ep->setParam('slice_revision', $version);
     });
 
     Extension::register('STRUCTURE_CONTENT_BEFORE_SLICES', static function (ExtensionPoint $ep) {
@@ -444,7 +445,7 @@ if (Core::getConfig('article_work_version', false)) {
 
                     $article = Type::instanceOf(Article::get($articleId, $languageId), Article::class);
                     ArticleRevision::setSessionArticleRevision($articleId, ArticleRevision::LIVE);
-                    $params['slice_revision'] = ArticleRevision::LIVE;
+                    $ep->setParam('slice_revision', ArticleRevision::LIVE);
                     $return = Extension::dispatch(
                         new ArticleContentUpdated($article, 'work_to_live', subject: $return),
                     );
@@ -459,7 +460,7 @@ if (Core::getConfig('article_work_version', false)) {
                 );
                 $return .= Message::success(I18n::msg('version_info_live_version_to_working'));
                 ArticleRevision::setSessionArticleRevision($articleId, ArticleRevision::WORK);
-                $params['slice_revision'] = ArticleRevision::WORK;
+                $ep->setParam('slice_revision', ArticleRevision::WORK);
                 break;
             case 'clear_work':
                 ArticleRevision::clearContent($articleId, $languageId, ArticleRevision::WORK);
