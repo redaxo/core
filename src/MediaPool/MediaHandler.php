@@ -405,7 +405,7 @@ final class MediaHandler
             assert(is_array($countQueryParams)); // @phpstan-ignore function.alreadyNarrowedType
 
             $sql->setQuery($countQuery, $countQueryParams);
-            $pager->setRowCount((int) $sql->getValue('count(*)'));
+            $pager->setRowCount($sql->getIntValue('count(*)'));
         }
 
         $query .= ' ORDER BY ' . implode(', ', $orderbys);

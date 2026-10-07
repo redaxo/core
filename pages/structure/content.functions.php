@@ -37,7 +37,7 @@ $onclickApiFields = static function ($hiddenFields) {
     return 'onclick="$(this.form).append(\'' . escape($hiddenFields) . '\')"';
 };
 
-$isStartpage = 1 == $article->getValue('startarticle');
+$isStartpage = $article->getBoolValue('startarticle');
 // --------------------------------------------------- ZUM STARTARTICLE MACHEN START
 if ($user->hasPerm('article2startarticle[]')) {
     $panel = '<fieldset>';

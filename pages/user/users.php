@@ -363,7 +363,7 @@ if ('' != $fUNCADD || $user) {
             $sql->setQuery('select * from rex_user where id=' . $userId);
 
             if (1 == $sql->getRows()) {
-                $passwordChangeRequired = (bool) $sql->getValue('password_change_required');
+                $passwordChangeRequired = $sql->getBoolValue('password_change_required');
                 $useradmin = $sql->getValue('admin');
                 $userstatus = $sql->getValue('rex_user.status');
                 $userrole = UserRole::getIdsForUser($userId);

@@ -77,7 +77,7 @@ class ArticleContentBase
      */
     protected function outputSlice(Sql $artDataSql, string $moduleKeyToAdd): string
     {
-        $moduleKey = (string) $artDataSql->getValue('rex_article_slice.module');
+        $moduleKey = $artDataSql->getStringValue('rex_article_slice.module');
         $slice = ArticleSlice::fromSql($artDataSql);
 
         $module = Module::get($moduleKey);
@@ -263,14 +263,14 @@ class ArticleContentBase
         $artDataSql->reset();
         $rows = $artDataSql->getRows();
         for ($i = 0; $i < $rows; ++$i) {
-            $sliceId = (int) $artDataSql->getValue('rex_article_slice.id');
-            $sliceCtypeId = (int) $artDataSql->getValue('rex_article_slice.ctype_id');
+            $sliceId = $artDataSql->getIntValue('rex_article_slice.id');
+            $sliceCtypeId = $artDataSql->getIntValue('rex_article_slice.ctype_id');
             /**
              * Module key from internal DB table, safe to embed in generated cache code.
              * @psalm-taint-escape html
              * @psalm-taint-escape has_quotes
              */
-            $sliceModuleKey = (string) $artDataSql->getValue('rex_article_slice.module');
+            $sliceModuleKey = $artDataSql->getStringValue('rex_article_slice.module');
 
             // ----- ctype unterscheidung
             if ('edit' !== $this->mode && !$this->eval) {

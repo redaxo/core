@@ -127,7 +127,7 @@ final class LanguageHandler
 
         $languages = [];
         foreach ($lg as $lang) {
-            $id = (int) $lang->getValue('id');
+            $id = $lang->getIntValue('id');
             foreach ($lg->getFieldnames() as $field) {
                 $languages[$id][$field] = $lang->getValue($field);
             }

@@ -65,7 +65,7 @@ final class ArticleStatusType extends AbstractType
                 $status = $to['after'];
             }
 
-            ArticleHandler::articleStatus((int) $sql->getValue('id'), (int) $sql->getValue('language_id'), $status);
+            ArticleHandler::articleStatus($sql->getIntValue('id'), $sql->getIntValue('language_id'), $status);
             $sql->next();
         }
         $this->message = 'Updated articles: ' . $rows;

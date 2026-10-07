@@ -62,7 +62,7 @@ if (1 !== $article->getRows()) {
     return;
 }
 
-$templateKey = (string) $article->getValue('template');
+$templateKey = $article->getNullableStringValue('template') ?? '';
 $template = Template::get($templateKey);
 $contentSections = $template?->getContentSections() ?? [];
 
@@ -141,7 +141,7 @@ if (
             // other articles (possibly in categories the user has no permission for) must not be addressable here
             $CM->setQuery('SELECT * FROM rex_article_slice WHERE id=? AND article_id=? AND language_id=?', [$sliceId, $articleId, $languageId]);
             if (1 == $CM->getRows()) {
-                $moduleKey = (string) $CM->getValue('module');
+                $moduleKey = $CM->getStringValue('module');
             }
         } else {
             // add

@@ -22,39 +22,39 @@ final class User
     }
 
     public int $id {
-        get => $this->sql->getValue('id');
+        get => $this->sql->getIntValue('id');
     }
 
     public string $login {
-        get => $this->sql->getValue('login');
+        get => $this->sql->getStringValue('login');
     }
 
     public ?string $name {
-        get => $this->sql->getValue('name');
+        get => $this->sql->getNullableStringValue('name');
     }
 
     public ?string $email {
-        get => $this->sql->getValue('email');
+        get => $this->sql->getNullableStringValue('email');
     }
 
     public bool $admin {
-        get => (bool) $this->sql->getValue('admin');
+        get => $this->sql->getBoolValue('admin');
     }
 
     public ?string $password {
-        get => $this->sql->getValue('password');
+        get => $this->sql->getNullableStringValue('password');
     }
 
     public ?string $language {
-        get => $this->sql->getValue('language');
+        get => $this->sql->getNullableStringValue('language');
     }
 
     public ?string $startPage {
-        get => $this->sql->getValue('startpage');
+        get => $this->sql->getNullableStringValue('startpage');
     }
 
     public ?string $theme {
-        get => $this->sql->getValue('theme');
+        get => $this->sql->getNullableStringValue('theme');
     }
 
     private ?UserRole $role = null;

@@ -38,8 +38,8 @@ final class UserSession
                 ->setWhere(['cookie_key' => $cookieKey])
                 ->select();
             if ($sql->getRows()) {
-                if ($userId !== (int) $sql->getValue('user_id')) {
-                    throw new RuntimeException('Cookie key "' . $cookieKey . '" does not belong to current user "' . $userId . '", it belongs to user "' . (string) $sql->getValue('user_id') . '"');
+                if ($userId !== $sql->getIntValue('user_id')) {
+                    throw new RuntimeException('Cookie key "' . $cookieKey . '" does not belong to current user "' . $userId . '", it belongs to user "' . $sql->getIntValue('user_id') . '"');
                 }
 
                 $updateByCookieKey = true;

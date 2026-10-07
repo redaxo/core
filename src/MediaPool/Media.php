@@ -112,7 +112,7 @@ final class Media
         if (1 != $media->getRows()) {
             return null;
         }
-        return self::get((string) $media->getValue('filename'), $languageId);
+        return self::get($media->getStringValue('filename'), $languageId);
     }
 
     /** @return list<self> */

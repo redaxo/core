@@ -146,7 +146,7 @@ if ('add' == $func) {
 
 $sql = Sql::factory()->setQuery('SELECT * FROM rex_language ORDER BY priority');
 foreach ($sql as $row) {
-    $langId = (int) $sql->getValue('id');
+    $langId = $sql->getIntValue('id');
     $addTd = '<td class="rex-table-id" data-title="' . I18n::msg('id') . '">' . $langId . '</td>';
 
     $delLink = I18n::msg('delete');
