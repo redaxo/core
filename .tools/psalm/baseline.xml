@@ -736,10 +736,6 @@
     </PossiblyNullReference>
   </file>
   <file src="pages/mediapool/media.detail.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$gf->getValue('category_id')]]></code>
-      <code><![CDATA[$gf->getValue('category_id')]]></code>
-    </ArgumentTypeCoercion>
     <InvalidOperand>
       <code><![CDATA[$gf->getDateTimeValue('updatedate')]]></code>
     </InvalidOperand>
@@ -755,11 +751,6 @@
       <code><![CDATA[$fileId]]></code>
       <code><![CDATA[$fileId]]></code>
     </MixedOperand>
-    <NullOperand>
-      <code><![CDATA[escape($gf->getValue('createuser'))]]></code>
-      <code><![CDATA[escape($gf->getValue('title'), 'js')]]></code>
-      <code><![CDATA[escape($gf->getValue('updateuser'))]]></code>
-    </NullOperand>
     <PossiblyNullOperand>
       <code><![CDATA[$gf->getDateTimeValue('updatedate')]]></code>
     </PossiblyNullOperand>
@@ -864,49 +855,6 @@
       <code><![CDATA[getSubpages]]></code>
     </PossiblyNullReference>
   </file>
-  <file src="pages/structure/index.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart, 'art_status' => $artStatusKey] + ArticleStatusChange::getUrlParams()]]></code>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart] + ArticleDelete::getUrlParams()]]></code>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'artstart' => $structureContext->artStart] + ArticleStatusChange::getUrlParams()]]></code>
-      <code><![CDATA[['article_id' => $sql->getValue('id'), 'function' => 'edit_art', 'artstart' => $structureContext->artStart]]]></code>
-      <code><![CDATA[['page' => 'content/edit', 'article_id' => $sql->getValue('id'), 'mode' => 'edit']]]></code>
-      <code><![CDATA[['page' => 'content/edit', 'article_id' => $sql->getValue('id')]]]></code>
-    </ArgumentTypeCoercion>
-    <InvalidOperand>
-      <code><![CDATA[$sql->getValue('id')]]></code>
-    </InvalidOperand>
-    <NullOperand>
-      <code><![CDATA[escape($KAT->getValue('catname'))]]></code>
-      <code><![CDATA[escape($KAT->getValue('catname'))]]></code>
-      <code><![CDATA[escape($KAT->getValue('catname'))]]></code>
-      <code><![CDATA[escape($KAT->getValue('catname'))]]></code>
-      <code><![CDATA[escape($KAT->getValue('catpriority'))]]></code>
-      <code><![CDATA[escape($KAT->getValue('catpriority'))]]></code>
-      <code><![CDATA[escape($KAT->getValue('catpriority'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('priority'))]]></code>
-      <code><![CDATA[escape($sql->getValue('priority'))]]></code>
-      <code><![CDATA[escape($sql->getValue('priority'))]]></code>
-    </NullOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$sql->getValue('id')]]></code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="pages/system/languages.php">
-    <NullOperand>
-      <code><![CDATA[escape($sql->getValue('code'))]]></code>
-      <code><![CDATA[escape($sql->getValue('code'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('name'))]]></code>
-      <code><![CDATA[escape($sql->getValue('priority'))]]></code>
-      <code><![CDATA[escape($sql->getValue('priority'))]]></code>
-    </NullOperand>
-  </file>
   <file src="pages/system/log.external.php">
     <MixedArgument>
       <code><![CDATA[$logFile]]></code>
@@ -979,10 +927,6 @@
   </file>
   <file src="pages/user/users.php">
     <ArgumentTypeCoercion>
-      <code><![CDATA[$role->getValue('id')]]></code>
-      <code><![CDATA[$role->getValue('name')]]></code>
-      <code><![CDATA[$userpermBeSprache]]></code>
-      <code><![CDATA[$userpermStartpage]]></code>
       <code><![CDATA[['_impersonate' => $list->getValue('id')] + UserImpersonate::getUrlParams()]]></code>
     </ArgumentTypeCoercion>
     <NullArgument>
@@ -990,17 +934,7 @@
     </NullArgument>
     <NullOperand>
       <code><![CDATA[$login]]></code>
-      <code><![CDATA[escape($userdesc)]]></code>
-      <code><![CDATA[escape($useremail)]]></code>
-      <code><![CDATA[escape($username)]]></code>
     </NullOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$role->getValue('id')]]></code>
-      <code><![CDATA[$role->getValue('name')]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayOffset>
-      <code><![CDATA[$roles]]></code>
-    </PossiblyNullArrayOffset>
     <PossiblyNullReference>
       <code><![CDATA[getValue]]></code>
     </PossiblyNullReference>
@@ -1053,9 +987,6 @@
     </PossiblyFalseOperand>
   </file>
   <file src="src/Config.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$cfg->getValue('value')]]></code>
-    </ArgumentTypeCoercion>
     <InvalidOperand>
       <code><![CDATA[File::putCache(self::$cacheFile, self::$data) <= 0]]></code>
     </InvalidOperand>
@@ -1064,7 +995,7 @@
       <code><![CDATA[$value]]></code>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[self::$changedData[$namespace][$key]]]></code>
-      <code><![CDATA[self::$data[$cfg->getValue('namespace')][$cfg->getValue('key')]]]></code>
+      <code><![CDATA[self::$data[$cfg->getStringValue('namespace')][$cfg->getStringValue('key')]]]></code>
       <code><![CDATA[self::$data[$namespace][$key]]]></code>
     </MixedAssignment>
     <MixedPropertyTypeCoercion>
@@ -1073,16 +1004,6 @@
     <MixedReturnStatement>
       <code><![CDATA[self::$data[$namespace][$key] ?? $default]]></code>
     </MixedReturnStatement>
-    <PossiblyNullArgument>
-      <code><![CDATA[$cfg->getValue('value')]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayOffset>
-      <code><![CDATA[self::$data]]></code>
-      <code><![CDATA[self::$data[$cfg->getValue('namespace')]]]></code>
-    </PossiblyNullArrayOffset>
-    <PropertyTypeCoercion>
-      <code><![CDATA[self::$data]]></code>
-    </PropertyTypeCoercion>
   </file>
   <file src="src/Console/Application.php">
     <PossiblyFalseArgument>
@@ -1192,16 +1113,6 @@
       <code><![CDATA[$CONTENT]]></code>
     </PossiblyFalseArgument>
   </file>
-  <file src="src/Content/ArticleHandler.php">
-    <InvalidOperand>
-      <code><![CDATA[$toSql->getValue('path')]]></code>
-      <code><![CDATA[$toSql->getValue('path')]]></code>
-    </InvalidOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$toSql->getValue('path')]]></code>
-      <code><![CDATA[$toSql->getValue('path')]]></code>
-    </PossiblyNullOperand>
-  </file>
   <file src="src/Content/ArticleRevision.php">
     <NoValue>
       <code><![CDATA[$fromRevisionId]]></code>
@@ -1224,23 +1135,9 @@
     </PossiblyUndefinedArrayOffset>
   </file>
   <file src="src/Content/ContentHandler.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$articleId]]></code>
-    </ArgumentTypeCoercion>
-    <InvalidOperand>
-      <code><![CDATA[$CM->getValue('priority')]]></code>
-      <code><![CDATA[$CM->getValue('priority')]]></code>
-    </InvalidOperand>
-    <PossiblyNullArgument>
-      <code><![CDATA[$articleId]]></code>
-    </PossiblyNullArgument>
     <PossiblyNullArrayOffset>
       <code><![CDATA[$ctypes]]></code>
     </PossiblyNullArrayOffset>
-    <PossiblyNullOperand>
-      <code><![CDATA[$CM->getValue('priority')]]></code>
-      <code><![CDATA[$CM->getValue('priority')]]></code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Content/Linkmap/ArticleListRenderer.php">
     <PossiblyNullReference>
@@ -1287,19 +1184,10 @@
       <code><![CDATA[$job]]></code>
       <code><![CDATA[$jobs[0]]]></code>
     </InvalidArgument>
-    <LessSpecificReturnStatement>
-      <code><![CDATA[$this->sql->getValue('name')]]></code>
-    </LessSpecificReturnStatement>
     <MixedArgument>
       <code><![CDATA[$value]]></code>
       <code><![CDATA[json_decode($interval, true)]]></code>
     </MixedArgument>
-    <MoreSpecificReturnType>
-      <code><![CDATA[string]]></code>
-    </MoreSpecificReturnType>
-    <NullableReturnStatement>
-      <code><![CDATA[$this->sql->getValue('name')]]></code>
-    </NullableReturnStatement>
     <PossiblyNullArgument>
       <code><![CDATA[$job['id']]]></code>
       <code><![CDATA[$job['id']]]></code>
@@ -1413,7 +1301,6 @@
       <code><![CDATA[int|null]]></code>
     </InvalidFalsableReturnType>
     <LessSpecificReturnStatement>
-      <code><![CDATA[$sql->getValue('Create Table')]]></code>
       <code><![CDATA[$this]]></code>
       <code><![CDATA[$this->getConnection()->quote($value)]]></code>
     </LessSpecificReturnStatement>
@@ -1448,11 +1335,7 @@
     </MixedReturnTypeCoercion>
     <MoreSpecificReturnType>
       <code><![CDATA[non-falsy-string]]></code>
-      <code><![CDATA[string]]></code>
     </MoreSpecificReturnType>
-    <NullableReturnStatement>
-      <code><![CDATA[$sql->getValue('Create Table')]]></code>
-    </NullableReturnStatement>
     <PossiblyFalseOperand>
       <code><![CDATA[json_encode($params)]]></code>
     </PossiblyFalseOperand>

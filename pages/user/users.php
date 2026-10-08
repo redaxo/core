@@ -68,8 +68,9 @@ $roles = [];
 $sqlRole = Sql::factory();
 $sqlRole->setQuery('SELECT id, name FROM rex_user_role ORDER BY name');
 foreach ($sqlRole as $role) {
-    $roles[$role->getValue('id')] = $role->getValue('name');
-    $selRole->addOption($role->getValue('name'), $role->getValue('id'));
+    $roleName = $role->getNullableStringValue('name') ?? '';
+    $roles[$role->getIntValue('id')] = $roleName;
+    $selRole->addOption($roleName, $role->getIntValue('id'));
 }
 $userrole = array_values(Request::request('userrole', 'array[int]'));
 
@@ -364,14 +365,14 @@ if ('' != $fUNCADD || $user) {
 
             if (1 == $sql->getRows()) {
                 $passwordChangeRequired = $sql->getBoolValue('password_change_required');
-                $useradmin = $sql->getValue('admin');
-                $userstatus = $sql->getValue('rex_user.status');
+                $useradmin = $sql->getIntValue('admin');
+                $userstatus = $sql->getIntValue('rex_user.status');
                 $userrole = UserRole::getIdsForUser($userId);
-                $userpermBeSprache = $sql->getValue('language');
-                $userpermStartpage = $sql->getValue('startpage');
-                $username = $sql->getValue('rex_user.name');
-                $userdesc = $sql->getValue('rex_user.description');
-                $useremail = $sql->getValue('rex_user.email');
+                $userpermBeSprache = $sql->getNullableStringValue('language') ?? '';
+                $userpermStartpage = $sql->getNullableStringValue('startpage') ?? '';
+                $username = $sql->getNullableStringValue('rex_user.name') ?? '';
+                $userdesc = $sql->getNullableStringValue('rex_user.description') ?? '';
+                $useremail = $sql->getNullableStringValue('rex_user.email') ?? '';
             }
         }
 

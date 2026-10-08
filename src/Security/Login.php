@@ -118,8 +118,8 @@ class Login
                     $ok = true;
                     static::regenerateSessionId();
                     $this->setSessionVar(self::SESSION_START_TIME, time());
-                    $this->setSessionVar(self::SESSION_USER_ID, $this->user->getValue($this->idColumn));
-                    $this->setSessionVar(self::SESSION_PASSWORD, $this->user->getValue($this->passwordColumn));
+                    $this->setSessionVar(self::SESSION_USER_ID, $this->user->getIntValue($this->idColumn));
+                    $this->setSessionVar(self::SESSION_PASSWORD, $this->user->getNullableStringValue($this->passwordColumn));
                 } else {
                     $this->message = I18n::msg('login_error');
                 }
@@ -162,7 +162,7 @@ class Login
                         $this->message = I18n::msg('login_user_not_found');
                     } elseif (
                         null !== ($sessionPassword = $this->getSessionVar(self::SESSION_PASSWORD, null))
-                        && $this->impersonator->getValue($this->passwordColumn) !== $sessionPassword
+                        && $this->impersonator->getNullableStringValue($this->passwordColumn) !== $sessionPassword
                     ) {
                         $ok = false;
                         $this->message = I18n::msg('login_session_expired');

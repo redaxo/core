@@ -58,7 +58,7 @@ final class CronjobManager
             LIMIT   1
         ', [$id]);
         if (1 == $this->sql->getRows()) {
-            return $this->sql->getValue('name');
+            return $this->sql->getStringValue('name');
         }
         throw new RuntimeException(sprintf('No cronjob found with id %s.', $id));
     }

@@ -1729,7 +1729,7 @@ class Sql implements Iterator
             throw new SqlException(sprintf('Table "%s" does not exist, it is a view instead.', $table));
         }
 
-        return $sql->getValue('Create Table');
+        return $sql->getStringValue('Create Table');
     }
 
     /**

@@ -173,7 +173,7 @@ final class MediaPoolCache
 
         $cacheArray = [];
         for ($i = 0; $i < $sql->getRows(); ++$i) {
-            $cacheArray[] = $sql->getValue('filename');
+            $cacheArray[] = $sql->getStringValue('filename');
             $sql->next();
         }
 
@@ -201,7 +201,7 @@ final class MediaPoolCache
 
         $cacheArray = [];
         for ($i = 0; $i < $sql->getRows(); ++$i) {
-            $cacheArray[] = $sql->getValue('id');
+            $cacheArray[] = $sql->getIntValue('id');
             $sql->next();
         }
 

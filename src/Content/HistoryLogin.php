@@ -41,8 +41,8 @@ final class HistoryLogin extends BackendLogin
             if (hash_equals($expected, $historySession)) {
                 $this->user = $userSql;
                 $this->setSessionVar(Login::SESSION_LAST_ACTIVITY, time());
-                $this->setSessionVar(Login::SESSION_USER_ID, $this->user->getValue($this->idColumn));
-                $this->setSessionVar(Login::SESSION_PASSWORD, $this->user->getValue($this->passwordColumn));
+                $this->setSessionVar(Login::SESSION_USER_ID, $this->user->getIntValue($this->idColumn));
+                $this->setSessionVar(Login::SESSION_PASSWORD, $this->user->getNullableStringValue($this->passwordColumn));
                 return parent::checkLogin();
             }
         }

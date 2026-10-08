@@ -165,9 +165,9 @@ foreach ($sql as $row) {
                     <tr class="mark">
                         <td class="rex-table-icon"><i class="rex-icon rex-icon-language"></i></td>
                         ' . $addTd . '
-                        <td data-title="' . I18n::msg('language_code') . '"><input class="form-control" type="text" id="rex-form-language-code" name="language_code" value="' . escape($sql->getValue('code')) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus /></td>
-                        <td data-title="' . I18n::msg('language_name') . '"><input class="form-control" type="text" id="rex-form-language-name" name="language_name" value="' . escape($sql->getValue('name')) . '" required maxlength="255" /></td>
-                        <td class="rex-table-priority" data-title="' . I18n::msg('language_priority') . '"><input class="form-control" type="number" id="rex-form-language-prio" name="language_prio" value="' . escape($sql->getValue('priority')) . '" required min="1" inputmode="numeric" /></td>
+                        <td data-title="' . I18n::msg('language_code') . '"><input class="form-control" type="text" id="rex-form-language-code" name="language_code" value="' . escape($sql->getStringValue('code')) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus /></td>
+                        <td data-title="' . I18n::msg('language_name') . '"><input class="form-control" type="text" id="rex-form-language-name" name="language_name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" /></td>
+                        <td class="rex-table-priority" data-title="' . I18n::msg('language_priority') . '"><input class="form-control" type="number" id="rex-form-language-prio" name="language_prio" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" /></td>
                         <td class="rex-table-action">' . $metaButtons . '</td>
                         <td class="rex-table-action" colspan="2"><button class="btn btn-save" type="submit" name="edit_language_save"' . Accesskey::attributes(I18n::msg('language_update'), 'save') . ' value="1">' . I18n::msg('language_update') . '</button></td>
                     </tr>';
@@ -177,18 +177,18 @@ foreach ($sql as $row) {
     } else {
         $editLink = Url::currentBackendPage(['func' => 'edit', 'language_id' => $langId]) . '#rex-form-system-language';
 
-        $status = $sql->getValue('status') ? 'online' : 'offline';
+        $status = $sql->getBoolValue('status') ? 'online' : 'offline';
 
         $content .= '
                     <tr>
                         <td class="rex-table-icon"><a class="rex-link-expanded" href="' . $editLink . '" title="' . escape($languageName) . '"><i class="rex-icon rex-icon-language"></i></a></td>
                         ' . $addTd . '
-                        <td data-title="' . I18n::msg('language_code') . '">' . escape($sql->getValue('code')) . '</td>
-                        <td data-title="' . I18n::msg('language_name') . '">' . escape($sql->getValue('name')) . '</td>
-                        <td class="rex-table-priority" data-title="' . I18n::msg('language_priority') . '">' . escape($sql->getValue('priority')) . '</td>
+                        <td data-title="' . I18n::msg('language_code') . '">' . escape($sql->getStringValue('code')) . '</td>
+                        <td data-title="' . I18n::msg('language_name') . '">' . escape($sql->getStringValue('name')) . '</td>
+                        <td class="rex-table-priority" data-title="' . I18n::msg('language_priority') . '">' . $sql->getIntValue('priority') . '</td>
                         <td class="rex-table-action"><a class="rex-link-expanded" href="' . $editLink . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit') . '</a></td>
                         <td class="rex-table-action">' . $delLink . '</td>
-                        <td class="rex-table-action"><a class="rex-link-expanded rex-' . $status . '" href="' . Url::currentBackendPage(['language_id' => $langId, 'func' => 'editstatus', 'language_status' => $sql->getValue('status') ? 0 : 1] + $csrfToken->getUrlParams()) . '"><i class="rex-icon rex-icon-' . $status . '"></i> ' . I18n::msg('language_' . $status) . '</a></td>
+                        <td class="rex-table-action"><a class="rex-link-expanded rex-' . $status . '" href="' . Url::currentBackendPage(['language_id' => $langId, 'func' => 'editstatus', 'language_status' => $sql->getBoolValue('status') ? 0 : 1] + $csrfToken->getUrlParams()) . '"><i class="rex-icon rex-icon-' . $status . '"></i> ' . I18n::msg('language_' . $status) . '</a></td>
                     </tr>';
     }
 }
