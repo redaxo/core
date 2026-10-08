@@ -217,12 +217,12 @@ if (
                             $prevSlice = Sql::factory();
                             // $prevSlice->setDebug();
                             if (-1 == $sliceId) {
-                                $prevSlice->setQuery('SELECT IFNULL(MAX(priority),0)+1 as priority FROM ' . $sliceTable . ' WHERE article_id=? AND language_id=? AND ctype_id=? AND revision=?', [$articleId, $languageId, $ctype, $sliceRevision]);
+                                $prevSlice->setQuery('SELECT MAX(priority) as priority FROM ' . $sliceTable . ' WHERE article_id=? AND language_id=? AND ctype_id=? AND revision=?', [$articleId, $languageId, $ctype, $sliceRevision]);
+                                $priority = ($prevSlice->getNullableIntValue('priority') ?? 0) + 1;
                             } else {
-                                $prevSlice->setQuery('SELECT * FROM ' . $sliceTable . ' WHERE id=?', [$sliceId]);
+                                $prevSlice->setQuery('SELECT priority FROM ' . $sliceTable . ' WHERE id=?', [$sliceId]);
+                                $priority = $prevSlice->getIntValue('priority');
                             }
-
-                            $priority = $prevSlice->getValue('priority');
 
                             $newsql->setValue('article_id', $articleId);
                             $newsql->setValue('module', $moduleKey);

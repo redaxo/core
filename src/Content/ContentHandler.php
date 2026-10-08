@@ -36,9 +36,9 @@ final class ContentHandler
 
         if (!isset($data['priority'])) {
             $prevSlice = Sql::factory();
-            $prevSlice->setQuery('SELECT IFNULL(MAX(priority),0)+1 as priority FROM rex_article_slice WHERE ' . $where);
+            $prevSlice->setQuery('SELECT MAX(priority) as priority FROM rex_article_slice WHERE ' . $where);
 
-            $data['priority'] = $prevSlice->getValue('priority');
+            $data['priority'] = ($prevSlice->getNullableIntValue('priority') ?? 0) + 1;
         } elseif ($data['priority'] <= 0) {
             $data['priority'] = 1;
         }
@@ -93,7 +93,7 @@ final class ContentHandler
         $CM->setQuery('select * from rex_article_slice where id=? and language_id=?', [$sliceId, $languageId]);
         if (1 == $CM->getRows()) {
             // origin value for later success-check
-            $oldPriority = $CM->getValue('priority');
+            $oldPriority = $CM->getIntValue('priority');
 
             // prepare sql for later saving
             $upd = Sql::factory();
@@ -103,9 +103,9 @@ final class ContentHandler
             ]);
 
             // some vars for later use
-            $articleId = $CM->getValue('article_id');
-            $ctype = $CM->getValue('ctype_id');
-            $sliceRevision = $CM->getValue('revision');
+            $articleId = $CM->getIntValue('article_id');
+            $ctype = $CM->getIntValue('ctype_id');
+            $sliceRevision = $CM->getIntValue('revision');
 
             Extension::dispatch(new ExtensionPoint('SLICE_MOVE', '', [
                 'direction' => $direction,
@@ -117,10 +117,10 @@ final class ContentHandler
 
             if ('moveup' == $direction || 'movedown' == $direction) {
                 if ('moveup' == $direction) {
-                    $upd->setValue('priority', $CM->getValue('priority') - 1);
+                    $upd->setValue('priority', $oldPriority - 1);
                     $updSort = 'DESC';
                 } else {
-                    $upd->setValue('priority', $CM->getValue('priority') + 1);
+                    $upd->setValue('priority', $oldPriority + 1);
                     $updSort = 'ASC';
                 }
                 $upd->addGlobalUpdateFields(self::getUser());
@@ -129,21 +129,21 @@ final class ContentHandler
                 Util::organizePriorities(
                     'rex_article_slice',
                     'priority',
-                    'article_id=' . (int) $articleId . ' AND language_id=' . $languageId . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . (int) $sliceRevision,
+                    'article_id=' . $articleId . ' AND language_id=' . $languageId . ' AND ctype_id=' . $ctype . ' AND revision=' . $sliceRevision,
                     'priority, updatedate ' . $updSort,
                 );
 
                 // check if the slice moved at all (first cannot be moved up, last not down)
                 $CM->setQuery('select * from rex_article_slice where id=? and language_id=?', [$sliceId, $languageId]);
-                $newPriority = $CM->getValue('priority');
-                if ($oldPriority == $newPriority) {
+                $newPriority = $CM->getIntValue('priority');
+                if ($oldPriority === $newPriority) {
                     throw new ApiFunctionException(I18n::msg('slice_moved_error'));
                 }
 
                 ArticleCache::deleteContent($articleId, $languageId);
 
-                $article = Article::require((int) $articleId, $languageId);
-                $slice = ArticleSlice::getArticleSliceById($sliceId, $languageId, (int) $sliceRevision);
+                $article = Article::require($articleId, $languageId);
+                $slice = ArticleSlice::getArticleSliceById($sliceId, $languageId, $sliceRevision);
                 $info = Extension::dispatch(new ArticleContentUpdated($article, 'slice_moved', $slice, I18n::msg('slice_moved')));
             } else {
                 throw new InvalidArgumentException('Unsupported move direction "' . $direction . '".');

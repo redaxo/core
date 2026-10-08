@@ -84,7 +84,7 @@ if (Request::post('btn_update', 'string')) {
         if (1 != $gf->getRows()) {
             $error = I18n::msg('pool_file_not_found');
             $fileId = 0;
-        } elseif (!$perm->hasCategoryPerm($gf->getValue('category_id')) || !$perm->hasCategoryPerm($rexFileCategory)) {
+        } elseif (!$perm->hasCategoryPerm($gf->getNullableIntValue('category_id')) || !$perm->hasCategoryPerm($rexFileCategory)) {
             $error = I18n::msg('no_rights_to_this_function');
         } else {
             $filename = $gf->getStringValue('filename');
@@ -128,13 +128,13 @@ if (1 != $gf->getRows()) {
 }
 
 $TPERM = false;
-if ($perm->hasCategoryPerm($gf->getValue('category_id'))) {
+if ($perm->hasCategoryPerm($gf->getNullableIntValue('category_id'))) {
     $TPERM = true;
 }
 
 $ftitle = $gf->getStringValue('title');
 $fname = $gf->getStringValue('filename');
-$ffiletype = $gf->getValue('filetype');
+$ffiletype = $gf->getNullableStringValue('filetype');
 $ffileSize = $gf->getIntValue('filesize');
 $ffileSize = Formatter::bytes($ffileSize);
 $rexFileCategory = $gf->getNullableIntValue('category_id') ?? 0;
@@ -194,7 +194,7 @@ if ('' != $success) {
 
 $openerLink = '';
 if ('' != $openerInputField) {
-    $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $encodedFname . '\', \'' . escape($gf->getValue('title'), 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
+    $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $encodedFname . '\', \'' . escape($gf->getStringValue('title'), 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
     if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
         $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $encodedFname . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
     }
@@ -254,12 +254,12 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];

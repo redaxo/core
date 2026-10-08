@@ -80,7 +80,7 @@ if (1 != $gc->getRows()) {
     $rexFileCategory = 0;
     $rexFileCategoryName = I18n::msg('pool_kats_no');
 } else {
-    $rexFileCategoryName = $gc->getValue('name');
+    $rexFileCategoryName = $gc->getStringValue('name');
 }
 
 $session->set('media[rex_file_category]', $rexFileCategory);

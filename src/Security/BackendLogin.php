@@ -120,8 +120,8 @@ class BackendLogin extends Login
                     LIMIT 1
                 ', [$cookiekey]);
                 if (1 == $sql->getRows()) {
-                    $this->setSessionVar(Login::SESSION_USER_ID, $sql->getValue('id'));
-                    $this->setSessionVar(Login::SESSION_PASSWORD, $sql->getValue('password'));
+                    $this->setSessionVar(Login::SESSION_USER_ID, $sql->getIntValue('id'));
+                    $this->setSessionVar(Login::SESSION_PASSWORD, $sql->getNullableStringValue('password'));
                     self::setStayLoggedInCookie($cookiekey);
                     $loggedInViaCookie = true;
                 } else {
@@ -208,7 +208,7 @@ class BackendLogin extends Login
                 if ($sql->getRows() > 0) {
                     $loginPolicy = self::getLoginPolicy();
 
-                    $loginTries = $sql->getValue('login_tries');
+                    $loginTries = $sql->getIntValue('login_tries');
                     $this->increaseLoginTries();
                     if ($loginTries >= $loginPolicy->maxTriesUntilDelay - 1) {
                         $time = $loginPolicy->reloginDelay;

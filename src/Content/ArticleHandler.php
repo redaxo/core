@@ -698,7 +698,7 @@ final class ArticleHandler
             if (1 != $toSql->getRows()) {
                 return false;
             }
-            $path = $toSql->getValue('path') . $toCatId . '|';
+            $path = $toSql->getStringValue('path') . $toCatId . '|';
         }
 
         $artSql = Sql::factory();
@@ -795,7 +795,7 @@ final class ArticleHandler
             if (1 != $toSql->getRows()) {
                 return false;
             }
-            $path = $toSql->getValue('path') . $toCatId . '|';
+            $path = $toSql->getStringValue('path') . $toCatId . '|';
         }
 
         $artSql = Sql::factory();

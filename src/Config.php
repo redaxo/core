@@ -294,7 +294,7 @@ final class Config
 
         self::$data = [];
         foreach ($sql as $cfg) {
-            self::$data[$cfg->getValue('namespace')][$cfg->getValue('key')] = json_decode($cfg->getValue('value'), true);
+            self::$data[$cfg->getStringValue('namespace')][$cfg->getStringValue('key')] = json_decode($cfg->getStringValue('value'), true);
         }
     }
 

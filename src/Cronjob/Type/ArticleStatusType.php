@@ -59,7 +59,7 @@ final class ArticleStatusType extends AbstractType
         $rows = $sql->getRows();
 
         for ($i = 0; $i < $rows; ++$i) {
-            if ($sql->getValue('status') == $from['before']) {
+            if ($sql->getIntValue('status') === $from['before']) {
                 $status = $from['after'];
             } else {
                 $status = $to['after'];
