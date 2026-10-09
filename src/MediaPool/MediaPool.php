@@ -85,6 +85,8 @@ final class MediaPool
         'zip' => ['application/x-zip-compressed', 'application/zip'],
 
         // audio/video
+        'm4a' => ['audio/mp4', 'audio/x-m4a'],
+        'm4v' => ['video/mp4', 'video/x-m4v'],
         'mov' => ['video/quicktime'],
         'movie' => ['video/quicktime'],
         'mp3' => ['audio/mpeg'],
@@ -92,6 +94,12 @@ final class MediaPool
         'mpe' => ['video/mpeg'],
         'mpeg' => ['video/mpeg'],
         'mpg' => ['video/mpeg'],
+        'oga' => ['audio/ogg', 'application/ogg'],
+        'ogg' => ['audio/ogg', 'video/ogg', 'application/ogg'],
+        'ogv' => ['video/ogg', 'application/ogg'],
+        'wav' => ['audio/x-wav', 'audio/wav', 'audio/vnd.wave'],
+        'weba' => ['audio/webm'],
+        'webm' => ['video/webm'],
     ];
 
     /** Erstellt einen Filename der eindeutig ist für den Medienpool. */

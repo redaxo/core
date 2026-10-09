@@ -32,6 +32,7 @@ use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
 use Redaxo\Core\Security\Permission;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Asset;
 use Redaxo\Core\View\Fragment;
@@ -207,6 +208,12 @@ if (Core::getUser()) {
 
     if ('profile' !== Controller::getCurrentPage() && BackendLogin::requireCurrent()->requiresPasswordChange()) {
         Response::sendRedirect(Url::backendPage('profile'));
+    }
+
+    if (Request::isPostMaxSizeExceeded()) {
+        Extension::register('PAGE_TITLE_SHOWN', static function (ExtensionPoint $ep) {
+            return Message::error(I18n::msg('post_max_size_exceeded', Formatter::bytes(Type::string(ini_get('post_max_size'))))) . Type::string($ep->subject);
+        });
     }
 }
 

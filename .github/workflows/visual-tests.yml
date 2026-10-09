@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
     visual-tests:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04 # pinned because screenshots depend on the runner image
         timeout-minutes: 30
         if: github.event_name != 'repository_dispatch' || github.event.client_payload.pull_request.head.repo.full_name == github.repository
         permissions:
@@ -88,7 +88,7 @@ jobs:
 
             -   name: Configure instance
                 run: |
-                    sudo /etc/init.d/mysql start
+                    sudo systemctl start mysql.service
                     # setup writes the connection to .env.local and copies the core assets, both needed by the
                     # recording of a fresh installation; the database it fills on the way is emptied again there
                     php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=yes --db-setup=normal --admin-username=admin --admin-password=adminpassword --ansi -v

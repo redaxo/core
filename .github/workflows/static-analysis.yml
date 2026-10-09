@@ -203,7 +203,7 @@ jobs:
 
             -   name: Setup REDAXO
                 run: |
-                    sudo /etc/init.d/mysql start
+                    sudo systemctl start mysql.service
                     mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo6;'
                     php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --ansi -v
 

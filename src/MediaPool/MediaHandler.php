@@ -10,6 +10,7 @@ use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
+use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
@@ -19,7 +20,6 @@ use Redaxo\Core\Util\Type;
 use function assert;
 use function count;
 use function in_array;
-use function ini_get;
 use function is_array;
 use function is_int;
 use function is_string;
@@ -55,7 +55,7 @@ final class MediaHandler
         $error = $data['file']['error'] ?? null;
 
         if (UPLOAD_ERR_INI_SIZE === $error) {
-            throw new ApiFunctionException(I18n::msg('pool_file_upload_error_size', Formatter::bytes(ini_get('upload_max_filesize'))));
+            throw new ApiFunctionException(I18n::msg('pool_file_upload_error_size', Formatter::bytes(Request::getMaxUploadSize())));
         }
         if ($error) {
             throw new ApiFunctionException(I18n::msg('pool_file_upload_error'));
@@ -221,7 +221,7 @@ final class MediaHandler
             $error = $file['error'] ?? null;
 
             if (UPLOAD_ERR_INI_SIZE === $error) {
-                throw new ApiFunctionException(I18n::msg('pool_file_upload_error_size', Formatter::bytes(ini_get('upload_max_filesize'))));
+                throw new ApiFunctionException(I18n::msg('pool_file_upload_error_size', Formatter::bytes(Request::getMaxUploadSize())));
             }
             if ($error) {
                 throw new ApiFunctionException(I18n::msg('pool_file_upload_error'));

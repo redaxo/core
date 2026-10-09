@@ -7,6 +7,8 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Util\Type;
 
 use function array_key_exists;
+use function ini_get;
+use function ini_parse_quantity;
 use function is_array;
 use function is_scalar;
 
@@ -135,6 +137,42 @@ final class Request
     public static function requestMethod(): string
     {
         return strtolower(Core::getRequest()->getMethod());
+    }
+
+    /**
+     * Returns the effective upload size limit in bytes, considering both `upload_max_filesize` and `post_max_size`.
+     *
+     * @internal
+     */
+    public static function getMaxUploadSize(): int
+    {
+        $limits = array_filter([self::iniBytes('upload_max_filesize'), self::iniBytes('post_max_size')], static fn (int $limit) => $limit > 0);
+
+        return $limits ? min($limits) : 0;
+    }
+
+    /**
+     * Returns whether PHP discarded the request body ($_POST and $_FILES) because it exceeded `post_max_size`.
+     *
+     * @internal
+     */
+    public static function isPostMaxSizeExceeded(): bool
+    {
+        if ('post' !== self::requestMethod() || $_POST || $_FILES) {
+            return false;
+        }
+
+        $postMaxSize = self::iniBytes('post_max_size');
+
+        return $postMaxSize > 0 && self::server('CONTENT_LENGTH', 'int', 0) > $postMaxSize;
+    }
+
+    /** Returns the value of a php.ini size option (e.g. `8M`) in bytes. */
+    private static function iniBytes(string $option): int
+    {
+        $value = ini_get($option);
+
+        return $value ? ini_parse_quantity($value) : 0;
     }
 
     /**
