@@ -33,8 +33,8 @@ final class Setup
     /** @var string */
     public const MIN_PHP_VERSION = REX_MIN_PHP_VERSION;
     public const MIN_PHP_EXTENSIONS = ['ctype', 'fileinfo', 'iconv', 'intl', 'mbstring', 'pdo_mysql', 'session', 'tokenizer'];
-    public const MIN_MYSQL_VERSION = '8.0';
-    public const MIN_MARIADB_VERSION = '10.4';
+    public const MIN_MYSQL_VERSION = '8.4';
+    public const MIN_MARIADB_VERSION = '10.11';
 
     /** no-password placeholder required to support empty passwords/clearing the password. */
     public const DEFAULT_DUMMY_PASSWORD = '-REDAXO-DEFAULT-DUMMY-PASSWORD-';
@@ -209,16 +209,6 @@ final class Setup
             // Deprecated versions and dates
             // Source: https://endoflife.date/mariadb, set to 1st of month
             $deprecatedVersions = [
-                '10.1' => '2020-10-01',
-                '10.2' => '2022-05-01',
-                '10.3' => '2023-05-01',
-                '10.4' => '2024-06-01',
-                '10.5' => '2025-06-01',
-                '10.6' => '2026-07-01', // LTS
-                '10.7' => '2023-02-01',
-                '10.8' => '2023-05-01',
-                '10.9' => '2023-08-01',
-                '10.10' => '2023-11-01',
                 '10.11' => '2028-02-01', // LTS
                 '11.0' => '2024-06-01',
                 '11.1' => '2024-08-01',
@@ -244,12 +234,6 @@ final class Setup
             // Deprecated versions and dates
             // Source: https://en.wikipedia.org/wiki/MySQL#Release_history, set to 1st of month
             $deprecatedVersions = [
-                '5.6' => '2021-12-01',
-                '5.7' => '2023-10-01',
-                '8.0' => '2026-04-01',
-                '8.1' => '2023-10-01',
-                '8.2' => '2024-01-01',
-                '8.3' => '2024-04-01',
                 '8.4' => '2032-04-01',
                 '9.0' => '2024-10-01',
                 '9.1' => '2025-01-01',
