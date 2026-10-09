@@ -1249,11 +1249,6 @@
       <code><![CDATA[$oldName]]></code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Database/Util.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$fileContent]]></code>
-    </PossiblyFalseArgument>
-  </file>
   <file src="src/ErrorHandler.php">
     <InvalidScalarArgument>
       <code><![CDATA[$line]]></code>

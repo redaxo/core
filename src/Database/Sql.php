@@ -1707,32 +1707,6 @@ class Sql implements Iterator
     // ----------------- /iterator interface
 
     /**
-     * Erstellt das CREATE TABLE Statement um die Tabelle $table
-     * der Datenbankverbindung $DBID zu erstellen.
-     *
-     * @param string $table Name der Tabelle
-     * @param positive-int $db Id der Datenbankverbindung
-     *
-     * @throws SqlException
-     *
-     * @return string CREATE TABLE Sql-Statement zu erstellung der Tabelle
-     */
-    public static function showCreateTable(string $table, int $db = 1): string
-    {
-        $sql = self::factory($db);
-        $sql->setQuery('SHOW CREATE TABLE ' . $sql->escapeIdentifier($table));
-
-        if (!$sql->getRows()) {
-            throw new SqlException(sprintf('Table "%s" does not exist.', $table));
-        }
-        if (!$sql->hasValue('Create Table')) {
-            throw new SqlException(sprintf('Table "%s" does not exist, it is a view instead.', $table));
-        }
-
-        return $sql->getStringValue('Create Table');
-    }
-
-    /**
      * Sucht alle Tabellen/Views der Datenbankverbindung $DBID.
      * Falls $tablePrefix gesetzt ist, werden nur dem Prefix entsprechende Tabellen gesucht.
      *
