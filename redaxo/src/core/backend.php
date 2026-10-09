@@ -191,6 +191,12 @@ if (rex::getUser()) {
     if ('profile' !== rex_be_controller::getCurrentPage() && rex::getProperty('login')->requiresPasswordChange()) {
         rex_response::sendRedirect(rex_url::backendPage('profile'));
     }
+
+    if (rex_request::isPostMaxSizeExceeded()) {
+        rex_extension::register('PAGE_TITLE_SHOWN', static function (rex_extension_point $ep) {
+            return rex_view::error(rex_i18n::msg('post_max_size_exceeded', rex_formatter::bytes(rex_ini_get('post_max_size')))) . rex_type::string($ep->getSubject());
+        });
+    }
 }
 
 rex_view::addJsFile(rex_url::coreAssets('jquery.min.js'), [rex_view::JS_IMMUTABLE => true]);

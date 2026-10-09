@@ -59,7 +59,6 @@ const allPages = {
 
     'mediapool_media.png': START_URL + '?page=mediapool/media',
     'mediapool_media_file.png': START_URL + '?page=mediapool/media&file_id=1&rex_file_category=0',
-    'mediapool_upload.png': START_URL + '?page=mediapool/upload',
     'mediapool_structure.png': START_URL + '?page=mediapool/structure',
     'mediapool_sync.png': START_URL + '?page=mediapool/sync',
 
@@ -358,6 +357,20 @@ async function main() {
 
             await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
             await createScreenshots(page, 'users_edit.png');
+
+            // upload exceeding post_max_size (8M by default), so PHP discards the whole request body
+            await goToUrlOrThrow(page, START_URL + '?page=mediapool/upload', { waitUntil: 'load' });
+            await page.setInputFiles('#rex-mediapool-choose-file', {
+                name: 'too-large.jpg',
+                mimeType: 'image/jpeg',
+                buffer: Buffer.alloc(10 * 1024 * 1024),
+            });
+            await Promise.all([
+                page.waitForNavigation({ waitUntil: 'load' }),
+                page.click('button[name="save"]'),
+            ]);
+            await page.waitForSelector('.alert-danger');
+            await createScreenshots(page, 'mediapool_upload.png');
 
             // test safe mode
             await goToUrlOrThrow(page, START_URL + '?page=system/settings', { waitUntil: 'load' });
