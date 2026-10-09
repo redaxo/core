@@ -1,14 +1,21 @@
-structure_history = 
-structure_history_title_info = 
-structure_history_snapshot_reactivate = 
-structure_history_snapshot_reactivated = 
-structure_history_overview_versions = 
-structure_history_current_version = 
-structure_history_info_content = 
+structure_history =
+structure_history_title_info =
+structure_history_snapshot_reactivate =
+structure_history_snapshot_live_reactivate =
+structure_history_snapshot_draft_reactivate =
+structure_history_draft_warning =
+structure_history_snapshot_reactivated =
+structure_history_overview_versions =
+structure_history_current_version =
+structure_history_current_live_version =
+structure_history_info_content =
+structure_history_todos =
+structure_history_todos_content =
 
-perm_options_history[article_rollback] = 
-
-structure_history_button_delete_history = 
-structure_history_deleted = 
-structure_history_savedby = 
-structure_history_close = 
+perm_options_history[read] = Visualizza cronologia articolo
+perm_options_history[article_rollback] =
+perm_options_history[article_draft_rollback] =
+structure_history_button_delete_history =
+structure_history_deleted =
+structure_history_savedby =
+structure_history_close =

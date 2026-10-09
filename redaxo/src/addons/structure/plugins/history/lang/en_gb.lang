@@ -1,12 +1,18 @@
 structure_history = History
 structure_history_title_info = Short explanation
 structure_history_snapshot_reactivate = Revert to this version
+structure_history_snapshot_live_reactivate = Revert live version to this version
+structure_history_snapshot_draft_reactivate = Revert draft version to this version
+structure_history_draft_warning = Warning: The draft version is not versioned. Restoring the selected version to the draft will permanently overwrite the current draft content. Are you sure?
 structure_history_snapshot_reactivated = Version has been revertet
 structure_history_overview_versions = History overview
 structure_history_current_version = Current version
+structure_history_current_live_version = Current live version
 structure_history_info_content = <p>The History PlugIn records all changes made to an article and creates snapshots which can later be used to restore a specific article to a previous state.</p>
 
-perm_options_history[article_rollback] = Restore article (History)
+perm_options_history[read] = View article history
+perm_options_history[article_rollback] = Restore previous article snapshots (History)
+perm_options_history[article_draft_rollback] = Restore previous article snapshots to draft version (History)
 
 structure_history_button_delete_history = Delete all snapshots from History
 structure_history_deleted = All snapshots have been deleted.

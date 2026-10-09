@@ -1,12 +1,18 @@
 structure_history = História
 structure_history_title_info = Explicação curta
 structure_history_snapshot_reactivate = Reverter para essa versão
+structure_history_snapshot_live_reactivate = Reverter versão ao vivo para esta versão
+structure_history_snapshot_draft_reactivate = Reverter versão de rascunho para esta versão
+structure_history_draft_warning = Atenção: A versão de rascunho não é versionada. Restaurar a versão selecionada para o rascunho irá substituir permanentemente o conteúdo atual do rascunho. Tem certeza?
 structure_history_snapshot_reactivated = Versão foi revertida
 structure_history_overview_versions = Panorama da história
 structure_history_current_version = Versão atual
+structure_history_current_live_version = Versão ao vivo atual
 structure_history_info_content = <p> O PlugIn história grava todas as alterações feitas em um produto e cria snapshots que podem ser utilizados posteriormente para restaurar um status anterior de produto específico. <p>
 
-perm_options_history[article_rollback] = Restaurar produto (história)
+perm_options_history[read] = Ver histórico do artigo
+perm_options_history[article_rollback] = Restaurar snapshots anteriores do artigo (história)
+perm_options_history[article_draft_rollback] = Restaurar snapshots anteriores do artigo para versão de rascunho (história)
 
 structure_history_button_delete_history = Deletar todos os snapshots do História
 structure_history_deleted = Todos os snapshots foram deletados
