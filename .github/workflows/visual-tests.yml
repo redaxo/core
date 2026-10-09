@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
     visual-tests:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-26.04 # pinned because screenshots depend on the runner image (fonts, MySQL version)
         timeout-minutes: 30
         if: github.event_name != 'repository_dispatch' || github.event.client_payload.pull_request.head.repo.full_name == github.repository
         permissions:
@@ -84,7 +84,7 @@ jobs:
 
             -   name: Init database
                 run: |
-                    sudo /etc/init.d/mysql start
+                    sudo systemctl start mysql.service
                     mysql -uroot -h127.0.0.1 -proot -e 'create database redaxo5;'
                     php redaxo/bin/console setup:run -n --lang=de_de --db-host=127.0.0.1 --db-name=redaxo5 --db-password=root --db-createdb=no --db-setup=normal --admin-username=admin --admin-password=adminpassword --error-email=test@redaxo.invalid --ansi -v
                     php redaxo/bin/console config:set --type boolean debug.enabled true -v
