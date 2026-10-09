@@ -3,7 +3,6 @@
 namespace Redaxo\Core\Console\Command;
 
 use PDOException;
-use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\ConnectionConfig;
 use Redaxo\Core\Database\Sql;
@@ -62,8 +61,7 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
         #[Option('Path to SSL certificate file')] ?string $dbSslCert = null,
         #[Option('Verify SSL server certificate (yes/no)', suggestedValues: ['yes', 'no'])] ?string $dbSslVerifyServerCert = null,
         #[Option('Creates the database "yes" or "no"', suggestedValues: ['yes', 'no'])] ?string $dbCreatedb = null,
-        #[Option('Database setup mode e.g. "normal", "override" or "import"', suggestedValues: ['normal', 'override', 'import'])] ?string $dbSetup = null,
-        #[Option('Database import filename if "import" is used as --db-setup')] ?string $dbImport = null,
+        #[Option('Database setup mode e.g. "normal", "override" or "existing"', suggestedValues: ['normal', 'override', 'existing'])] ?string $dbSetup = null,
         #[Option('Creates a redaxo admin user with the given username')] ?string $adminUsername = null,
         #[Option('Sets the password for the admin user account')] ?string $adminPassword = null,
     ): int {
@@ -250,16 +248,6 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
             $io->block('Database version: ' . $sql->getDbType() . ' ' . $sql->getDbVersion());
         }
 
-        // Search for exports
-        $backups = [];
-
-        foreach (Backup::getBackupFiles('') as $file) {
-            $file = preg_replace('/\.sql(?:\.gz)?$/', '', $file, -1, $count);
-            if ($count) {
-                $backups[] = $file;
-            }
-        }
-
         $tablesComplete = '' == Importer::verifyDbSchema();
 
         // spaces before/after to make sf-console render the array-key instead of
@@ -268,17 +256,13 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
         $createdbOptions = [
             'normal' => 'Setup database',
             'override' => 'Setup database and overwrite it if it exitsts already (Caution - All existing data will be deleted!)',
-            'existing' => 'Database already exists (Continue without database import)',
-            'import' => 'Import existing database export',
+            'existing' => 'Database already exists (Continue with the existing data)',
         ];
 
         if ($tablesComplete) {
             $defaultDbMode = ' existing ';
         } else {
             unset($createdbOptions['existing']);
-        }
-        if (0 === count($backups)) {
-            unset($createdbOptions['import']);
         }
 
         $createdb = $this->getOptionOrAsk(
@@ -295,15 +279,7 @@ final class SetupCommand extends AbstractCommand implements StandaloneInterface
         );
         $io->success('Using "' . $createdb . '" database setup');
 
-        if ('import' == $createdb) {
-            $importName = $input->getOption('db-import') ?? $io->askQuestion(new ChoiceQuestion('Please choose a database export', $backups));
-            $importName = Type::string($importName);
-            if (!in_array($importName, $backups, true)) {
-                throw new InvalidArgumentException('Unknown import file "' . $importName . '" specified');
-            }
-            $error = Importer::loadExistingImport($importName);
-            $io->success('Database successfully imported using file "' . $importName . '"');
-        } elseif ('existing' == $createdb && $tablesComplete) {
+        if ('existing' == $createdb && $tablesComplete) {
             $error = Importer::databaseAlreadyExists();
             $io->success('Skipping database setup');
         } elseif ('override' == $createdb) {

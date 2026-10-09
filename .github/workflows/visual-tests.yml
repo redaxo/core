@@ -98,7 +98,6 @@ jobs:
                     echo "REX_INSTANCE_COLOR='#3bb594'" >> project/.env.local
                     echo "REX_MIGRATE_TOKEN=visual-test-token" >> project/.env.local
                     echo "MAILER_DSN=smtp://mail.example.org:587" >> project/.env.local
-                    mkdir -p $GITHUB_WORKSPACE/project/var/data/core/backup && cp -r .tools/visual-tests/fixtures/initial-content.sql $GITHUB_WORKSPACE/project/var/data/core/backup/
                     cp -r .tools/visual-tests/fixtures/media/* $GITHUB_WORKSPACE/project/public/media/
 
             -   name: Start php server
@@ -118,7 +117,8 @@ jobs:
                     php project/bin/console cache:clear --ansi -v
                     node .tools/visual-tests/visual-record.js migrate-install
 
-                    php project/bin/console setup -n --lang=de_de --db-host=127.0.0.1 --db-login=root --db-password=root --db-name=redaxo6 --db-setup=import --db-import=initial-content --admin-username=myusername --admin-password=mypassword --ansi -v
+                    mysql -uroot -h127.0.0.1 -proot redaxo6 < .tools/visual-tests/fixtures/initial-content.sql
+                    php project/bin/console cache:clear --ansi -v
 
                     node .tools/visual-tests/visual-record.js migrate-update
                     node .tools/visual-tests/visual-record.js

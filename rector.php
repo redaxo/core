@@ -44,7 +44,6 @@ use Rector\ValueObject\PhpVersion;
 use Redaxo\Core\Addon;
 use Redaxo\Core\ApiFunction;
 use Redaxo\Core\Backend;
-use Redaxo\Core\Backup;
 use Redaxo\Core\Base;
 use Redaxo\Core\Cache;
 use Redaxo\Core\Config;
@@ -178,9 +177,6 @@ return RectorConfig::configure()
         'rex_api_user_remove_auth_method' => Security\ApiFunction\UserRemoveAuthMethod::class,
         'rex_api_user_remove_session' => Security\ApiFunction\UserRemoveSession::class,
         'rex_api_user_session_status' => Security\ApiFunction\UserSessionStatus::class,
-        'rex_backup' => Backup\Backup::class,
-        'rex_backup_file_compressor' => Backup\FileCompressor::class,
-        'rex_backup_tar' => Backup\Tar::class,
         'rex_be_controller' => Backend\Controller::class,
         'rex_be_navigation' => Backend\Navigation::class,
         'rex_be_page' => Backend\Page::class,
@@ -218,7 +214,6 @@ return RectorConfig::configure()
         'rex_cronjob_urlrequest' => Cronjob\Type\UrlRequestType::class,
         'rex_cronjob_article_status' => Cronjob\Type\ArticleStatusType::class,
         'rex_cronjob_optimize_tables' => Cronjob\Type\OptimizeTableType::class,
-        'rex_cronjob_export' => Cronjob\Type\ExportType::class,
         'rex_cronjob_structure_history' => Cronjob\Type\ClearArticleHistoryType::class,
         'rex_cronjob_mailer_purge' => Cronjob\Type\PurgeMailerArchiveType::class,
         'rex_cronjob_manager' => Cronjob\CronjobExecutor::class,

@@ -70,7 +70,7 @@ abstract class AbstractProject implements RunnerInterface
     }
 
     /**
-     * Name of this installation, shown in the backend and used e.g. in mail subjects and backup file names.
+     * Name of this installation, shown in the backend and used e.g. in mail subjects.
      * Defaults to the env var `REX_INSTANCE_NAME`.
      */
     public string $instanceName {

@@ -4,7 +4,6 @@ namespace Redaxo\Core\Setup;
 
 use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Addon\AddonManager;
-use Redaxo\Core\Backup\Backup;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
@@ -21,34 +20,6 @@ use function Redaxo\Core\View\escape;
 final class Importer
 {
     private function __construct() {}
-
-    public static function loadExistingImport(string $importName): string
-    {
-        if ('' == $importName || '/' === $importName) {
-            return '<p>' . I18n::msg('setup_408') . '</p>';
-        }
-
-        // ----- vorhandenen Export importieren
-        $errMsg = '';
-        $importName = Path::basename($importName);
-
-        $importSql = Backup::getDir() . '/' . $importName . '.sql';
-        $importSql .= is_file($importSql) ? '' : '.gz';
-        $importArchiv = Backup::getDir() . '/' . $importName . '.tar.gz';
-
-        // Nur hier zuerst die Addons installieren
-        // Da sonst Daten aus dem eingespielten Export
-        // Überschrieben würden
-        // Da für das Installieren der Addons die rex_config benötigt wird,
-        // mit overrideExisting() eine saubere, komplette Basis schaffen
-        $errMsg .= self::overrideExisting();
-
-        if ('' == $errMsg) {
-            $errMsg .= self::import($importSql, $importArchiv);
-        }
-
-        return $errMsg;
-    }
 
     public static function databaseAlreadyExists(): string
     {
@@ -143,36 +114,6 @@ final class Importer
         ];
     }
 
-    private static function import(string $importSql, ?string $importArchive = null): string
-    {
-        $errMsg = '';
-
-        if (is_file($importSql)) {
-            I18n::addDirectory(Path::core('backup/lang/'));
-
-            // DB Import
-            $stateDb = Backup::importDb($importSql);
-            if (!$stateDb['state']) {
-                $errMsg .= nl2br($stateDb['message']) . '<br />';
-            }
-
-            // Archiv optional importieren
-            if ($stateDb['state'] && null !== $importArchive && is_file($importArchive)) {
-                $stateArchiv = Backup::importFiles($importArchive);
-                if (!$stateArchiv['state']) {
-                    $errMsg .= $stateArchiv['message'] . '<br />';
-                }
-            }
-        } else {
-            $errMsg .= I18n::msg('setup_409') . '<br />';
-        }
-
-        // Reload config from imported data
-        Config::refresh();
-
-        return $errMsg;
-    }
-
     private static function reinstallPackages(): string
     {
         $error = '';
@@ -201,7 +142,6 @@ final class Importer
         }
 
         // force to save config at this point
-        // otherwise it would be saved in shutdown function and maybe would replace config changes made by db import in between
         Config::save();
 
         return $error;

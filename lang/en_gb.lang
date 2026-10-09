@@ -156,8 +156,6 @@ setup_208 = PHP version <b>{0}</b> ok
 setup_211 = The following files/folder are editable by all users on this server ("Others"-Mode-Bit 7). Permissions should be more restrictive:
 
 setup_402 = Table {0} could not be found!
-setup_408 = Please choose a database export!
-setup_409 = No exported files found!
 
 setup_security_no_https = The connection is not encrypted. It is recommended to use SSL encryption for each call to the front- and backend in order to ensure privacy and data protection.
 setup_security_warn_mod_security = The Apache module "mod_security" is loaded. This can cause problems if not configured correctly.
@@ -268,101 +266,6 @@ created_on = Created
 updated_by = Updated by
 updated_on = Updated
 status = Status
-
-
-# Backup
-backup_information = Information
-backup_title = Backup
-backup_file_deleted = File has been deleted
-backup_file_error_while_delete = File could not be deleted
-backup_no_import_file_chosen_or_wrong_version = No import file chosen or wrong version
-backup_no_valid_import_file = Not a valid import file
-backup_database_imported = Database imported
-backup_entry_count = ({0} entries)
-backup_file_could_not_be_uploaded = File could not be uploaded.
-backup_you_have_no_write_permission_in = No write permissions for folder {0}.
-backup_no_import_file_chosen = Please choose an import file.
-backup_file_imported = File has been imported.
-backup_import = Import
-backup_to_import = import
-backup_export = Export
-backup_to_export = export
-backup_download = download
-backup_db_import = Import
-backup_db_export = Export
-backup_filename_updated = Filname updated due to invalid characters. Please click on export again
-backup_please_choose_folder = Please choose the folders you'd like to export
-backup_intro_import = Please take not that the current database <b>will be deleted</b> when importing a new one. To be safe create a backup of the existing database by exporting it first.
-backup_intro_import_files = When importing files existing files with the same filename will be replaced, files inside subfolders will not be changed.
-backup_version_warning = Backups from older REDAXO versions and/or AddOns may not be fully compatible and may lead to problems after importing.
-backup_database = Database import
-backup_filename = Filename
-backup_filename_notice = Variables: <code>%REX_SERVER</code>, <code>%REX_VERSION</code> and date variables, just like with strftime(); file extension: <code>.cronjob.sql</code> (added automatically)
-backup_filesize = File size
-backup_delete = Delete
-backup_files = File import
-backup_intro_export = Here you can backup the database and files of your current REDAXO installation. To create a full backup of everything you need to export <b>both the database AND files</b> separately. If you are planning to reimport this backup, it's useful to save the backed up files directly on the server so they can easily be imported later.
-backup_database_export = Create database backup
-backup_file_export = Create file backup
-backup_save_on_server = Save on server
-backup_download_as_file = Download as file
-backup_createdate = Create date
-
-backup_import_file = Import file
-backup_delete_file = Delete file
-backup_download_file = Download file
-backup_check_rights_in_directory = Backup was unable to read the folder/s or none were selected.
-backup_file_could_not_be_generated = File could not be created.
-backup_file_generated_in = File has been saved in
-
-backup_proceed_db_import = Existing data (articles, templates, modules,...) will be deleted. Would you like to proceed?
-backup_proceed_file_import = Current files will be deleted. Would you like to proceed?
-
-backup_export_db_caption = Restore database backup
-backup_export_file_caption = Restore file backup
-
-backup_function = Function
-
-backup_send_mail = Send by e-mail
-backup_mailaddress = E-mail address
-backup_mail_subject = New database backup
-backup_mail_body = Attached you'll find the latest database backup from the website "{0}".
-
-backup_compress = Compress backup
-
-backup_delete_interval = Delete old backups
-backup_delete_interval_off = Off
-backup_delete_interval_weekly = Keep one backup per week
-backup_delete_interval_monthly = Keep one backup per month
-backup_delete_interval_notice = Only backups older than one month will be deleted, and file name must end with <code>.cronjob.sql</code>.
-backup_delete_max_age = Delete backups permanently after
-backup_delete_max_age_off = Off
-backup_delete_max_age_3months = 3 months
-backup_delete_max_age_6months = 6 months
-backup_delete_max_age_12months = 12 months
-backup_delete_max_age_24months = 24 months
-backup_delete_max_age_notice = Backups older than the selected period will be permanently deleted – including those kept weekly/monthly.
-
-backup_exclude_tables = Exclude from backup
-backup_exclude_tables_notice = The selected tables will not be backed up. Tables with a prefix of <code>rex_tmp_*</code> will be excluded automatically.
-
-perm_general_backup[export] = Webseite exportieren
-
-backup_export_select = Type of export
-backup_export_select_tables = Select tables
-backup_export_select_dir = Select directories
-backup_export_select_location = Select save location
-backup_export_select_filename = Select filename
-
-backup_file = File
-backup_note = Notice
-backup_upload = Upload
-backup_load_from_server = Download from server
-
-backup_warning = Warning
-backup_upload_disabled = Uploads are not permitted
-backup_max_uploadsize = Max. upload size
-backup_max_uploadtime = Max. upload time
 
 
 # Users

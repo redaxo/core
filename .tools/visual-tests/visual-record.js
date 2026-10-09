@@ -78,10 +78,6 @@ const allPages = {
     'system_log.png': START_URL + '?page=system/log/redaxo',
     'system_report.png': START_URL + '?page=system/report/html',
 
-    'backup_export.png': START_URL + '?page=backup/export',
-    'backup_import.png': START_URL + '?page=backup/import',
-    'backup_import_server.png': START_URL + '?page=backup/import/server',
-
     'cronjob_cronjobs.png': START_URL + '?page=cronjob/cronjobs',
     'cronjob_cronjobs_add.png': START_URL + '?page=cronjob/cronjobs&func=add',
 };

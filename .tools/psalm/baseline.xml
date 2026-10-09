@@ -599,61 +599,6 @@
       <code><![CDATA[$this->jsProperties]]></code>
     </MixedOperand>
   </file>
-  <file src="pages/backup/export.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$EXPDIR]]></code>
-    </ArgumentTypeCoercion>
-    <NullOperand>
-      <code><![CDATA[escape($exportfilename)]]></code>
-    </NullOperand>
-    <PossiblyNullOperand>
-      <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$filename]]></code>
-    </PossiblyNullOperand>
-  </file>
-  <file src="pages/backup/import.server.php">
-    <InvalidArrayAccess>
-      <code><![CDATA[$_FILES['FORM']['size']['importfile']]]></code>
-      <code><![CDATA[$_FILES['FORM']['size']['importfile']]]></code>
-    </InvalidArrayAccess>
-    <InvalidArrayOffset>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-    </InvalidArrayOffset>
-    <MixedArgument>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-    </MixedArgument>
-    <PossiblyFalseArgument>
-      <code><![CDATA[filemtime($filepath)]]></code>
-      <code><![CDATA[filemtime($filepath)]]></code>
-    </PossiblyFalseArgument>
-  </file>
-  <file src="pages/backup/import.upload.php">
-    <InvalidArrayAccess>
-      <code><![CDATA[$_FILES['FORM']['size']['importfile']]]></code>
-      <code><![CDATA[$_FILES['FORM']['size']['importfile']]]></code>
-    </InvalidArrayAccess>
-    <InvalidArrayOffset>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-    </InvalidArrayOffset>
-    <MixedArgument>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-      <code><![CDATA[$_FILES['FORM']['tmp_name']['importfile']]]></code>
-    </MixedArgument>
-    <PossiblyFalseArgument>
-      <code><![CDATA[ini_get('upload_max_filesize')]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand>
-      <code><![CDATA[ini_get('max_input_time')]]></code>
-    </PossiblyFalseOperand>
-  </file>
   <file src="pages/cronjob/cronjobs.php">
     <ArgumentTypeCoercion>
       <code><![CDATA[$list->getValue('environment')]]></code>
@@ -966,26 +911,6 @@
       <code><![CDATA[preg_replace('/\b' . preg_quote($class, '/') . '\b/', '', $this->getLinkAttr('class'))]]></code>
     </PossiblyNullArgument>
   </file>
-  <file src="src/Backup/Backup.php">
-    <InvalidOperand>
-      <code><![CDATA[$column]]></code>
-    </InvalidOperand>
-    <PossiblyFalseArgument>
-      <code><![CDATA[$tmpArchivePath]]></code>
-      <code><![CDATA[$tmpArchivePath]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand>
-      <code><![CDATA[realpath($path . $dir)]]></code>
-    </PossiblyFalseOperand>
-  </file>
-  <file src="src/Backup/FileCompressor.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[fread($fpIn, 1024 * 512)]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyFalseOperand>
-      <code><![CDATA[gzgets($fpIn, 1024 * 512)]]></code>
-    </PossiblyFalseOperand>
-  </file>
   <file src="src/Config.php">
     <InvalidOperand>
       <code><![CDATA[File::putCache(self::$cacheFile, self::$data) <= 0]]></code>
@@ -1056,9 +981,6 @@
     <ArgumentTypeCoercion>
       <code><![CDATA[$login]]></code>
     </ArgumentTypeCoercion>
-    <InvalidArgument>
-      <code><![CDATA[$backups]]></code>
-    </InvalidArgument>
     <MixedArgument>
       <code><![CDATA[$dbCreate]]></code>
       <code><![CDATA[$login]]></code>
@@ -1246,30 +1168,6 @@
       <code><![CDATA[$period]]></code>
     </MixedOperand>
   </file>
-  <file src="src/Cronjob/Type/ExportType.php">
-    <MixedArgument>
-      <code><![CDATA[$excludedTables]]></code>
-      <code><![CDATA[$filename]]></code>
-      <code><![CDATA[$this->getParam('delete_interval')]]></code>
-      <code><![CDATA[$this->getParam('mailaddress')]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$excludedTables]]></code>
-      <code><![CDATA[$filename]]></code>
-    </MixedAssignment>
-    <PossiblyFalseArgument>
-      <code><![CDATA[glob(Path::coreData('backup/*' . $ext . '.gz'), GLOB_NOSORT)]]></code>
-      <code><![CDATA[glob(Path::coreData('backup/*' . $ext), GLOB_NOSORT)]]></code>
-    </PossiblyFalseArgument>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[$file]]></code>
-      <code><![CDATA[$filename]]></code>
-    </PossiblyInvalidOperand>
-  </file>
   <file src="src/Cronjob/Type/PurgeMailerArchiveType.php">
     <PossiblyFalseOperand>
       <code><![CDATA[filemtime($file)]]></code>
@@ -1350,11 +1248,6 @@
     <PossiblyNullArgument>
       <code><![CDATA[$oldName]]></code>
     </PossiblyNullArgument>
-  </file>
-  <file src="src/Database/Util.php">
-    <PossiblyFalseArgument>
-      <code><![CDATA[$fileContent]]></code>
-    </PossiblyFalseArgument>
   </file>
   <file src="src/ErrorHandler.php">
     <InvalidScalarArgument>

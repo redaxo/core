@@ -21,7 +21,7 @@ enum Mode: string
 
     /**
      * Like `Live`, but additionally hardens the backend against compromised admin accounts: even admins get no
-     * error details, and features that could alter the instance (e.g. backup import) are disabled.
+     * error details, and features that could alter the instance (e.g. the web migrate endpoint) are disabled.
      */
     case Hardened = 'hardened';
 }
