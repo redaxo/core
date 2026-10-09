@@ -157,8 +157,6 @@ setup_208 = PHP-Version <b>{0}</b> ok
 setup_211 = Die folgenden Dateien/Verzeichnisse sind für alle Anwender auf dem Server veränderbar (Others-Mode-Bit 7). Die Berechtigungen sollten restriktiver sein:
 
 setup_402 = Tabelle {0} wurde nicht gefunden!
-setup_408 = Bitte wählen Sie einen Export aus!
-setup_409 = Export-Dateien konnten nicht gefunden werden!
 
 setup_security_no_https = Die Verbindung ist unverschlüsselt. Frontend und Backend sollten grundsätzlich durch HTTPS verschlüsselt aufgerufen werden, um die Privatsphäre zu schützen und den Datenschutz zu gewährleisten.
 setup_security_warn_mod_security = Das Apache Modul "mod_security" ist geladen. Dies kann bei falscher Konfiguration zu Problemen führen.
@@ -299,101 +297,6 @@ created_on = Erstellt am
 updated_by = Aktualisiert von
 updated_on = Aktualisiert am
 status = Status
-
-
-# Backup
-backup_information = Information
-backup_title = Backup
-backup_file_deleted = Datei wurde gelöscht
-backup_file_error_while_delete = Datei konnte nicht gelöscht werden
-backup_no_import_file_chosen_or_wrong_version = Keine Importdatei ausgewählt oder Version falsch
-backup_no_valid_import_file = Das ist keine korrekte Importdatei
-backup_database_imported = Datenbank erfolgreich importiert
-backup_entry_count = ({0} Eintraege)
-backup_file_could_not_be_uploaded = Datei konnte nicht hochgeladen werden.
-backup_you_have_no_write_permission_in = Sie haben keine Schreibrechte auf diesen Ordner {0}.
-backup_no_import_file_chosen = Keine Importdatei ausgewählt.
-backup_file_imported = Die Datei wurde erfolgreich importiert.
-backup_import = Import
-backup_to_import = importieren
-backup_export = Export
-backup_to_export = exportieren
-backup_download = herunterladen
-backup_db_import = Import
-backup_db_export = Export
-backup_filename_updated = Der gewählte Dateiname wurde angepasst, da er unkorrekte Zeichen enthielt. Sofern dieser stimmig ist, bitte nochmal auf Export klicken.
-backup_please_choose_folder = Bitte die Verzeichnisse auswählen, die exportiert werden sollen.
-backup_intro_import = Bitte beachten, dass beim Importieren einer Datenbank <b>die alte Datenbank gelöscht</b> wird. Im Zweifel vor dem Import die aktuelle Datenbank sichern.
-backup_intro_import_files = Beim Import von Dateien werden gleichnamig vorhandene Dateien überschrieben, zusätzlich vorhandene Dateien innerhalb der Ordner bleiben jedoch erhalten.
-backup_version_warning = Backups von älteren REDAXO-Versionen oder AddOns sind nicht immer vollständig kompatibel und können nach dem Import zu Problemen führen.
-backup_database = Datenbank-Import
-backup_filename = Dateiname
-backup_filename_notice = Variablen: <code>%REX_SERVER</code>, <code>%REX_VERSION</code> und Datumsvariablen wie bei strftime(); Dateiendung: <code>.cronjob.sql</code> (wird automatisch ergänzt)
-backup_filesize = Dateigröße
-backup_delete = löschen
-backup_files = Dateienimport
-backup_intro_export = Hier können Sie Ihre jetzigen Eingaben und Dateien von REDAXO sichern. Um eine vollständige Sicherung zu erhalten, müssen Sie <b>die Datenbank UND die Dateien exportieren</b>. Wenn Sie die Sicherung wiederverwenden wollen, dann kann es Sinn machen diese direkt auf dem Server abzulegen und bei Bedarf direkt wieder zu importieren.
-backup_database_export = Datenbank-Backup erstellen
-backup_file_export = Datei-Backup erstellen
-backup_save_on_server = Auf dem Server speichern
-backup_download_as_file = Als Datei herunterladen
-backup_createdate = Erstellt am
-
-backup_import_file = Datei importieren
-backup_delete_file = Datei löschen
-backup_download_file = Datei herunterladen
-backup_check_rights_in_directory = Backup konnte auf den/die Ordner nicht zugreifen oder es wurde keiner ausgewählt.
-backup_file_could_not_be_generated = Datei konnte nicht erstellt werden.
-backup_file_generated_in = Daten wurden gesichert in
-
-backup_proceed_db_import = Bestehende Daten (Artikel, Templates, Module,...) gehen verloren. Fortfahren ?
-backup_proceed_file_import = Bestehende Dateien werden gelöscht. Fortfahren ?
-
-backup_export_db_caption = Datenbank-Backup wiederherstellen
-backup_export_file_caption = Datei-Backup wiederherstellen
-
-backup_function = Funktion
-
-backup_send_mail = Per Mail versenden
-backup_mailaddress = Mailadresse
-backup_mail_subject = Neue Datenbank-Sicherung
-backup_mail_body = Im Anhang befindet sich eine neue Datenbank-Sicherung der Website "{0}".
-
-backup_compress = Backup komprimieren
-
-backup_delete_interval = Alte Backups löschen
-backup_delete_interval_off = Aus
-backup_delete_interval_weekly = Ein Backup pro Woche behalten
-backup_delete_interval_monthly = Ein Backup pro Monat behalten
-backup_delete_interval_notice = Es werden nur Backups gelöscht, die älter als ein Monat sind und deren Dateinamen auf <code>.cronjob.sql</code> enden.
-backup_delete_max_age = Backups endgültig löschen nach
-backup_delete_max_age_off = Aus
-backup_delete_max_age_3months = 3 Monaten
-backup_delete_max_age_6months = 6 Monaten
-backup_delete_max_age_12months = 12 Monaten
-backup_delete_max_age_24months = 24 Monaten
-backup_delete_max_age_notice = Backups, die älter als der gewählte Zeitraum sind, werden vollständig gelöscht – auch die wöchentlich/monatlich aufbewahrten.
-
-backup_exclude_tables = Von Backup ausschließen
-backup_exclude_tables_notice = Wenn ausgewählt, werden diese Tabellen nicht gesichert. Tabellen mit dem Präfix <code>rex_tmp_*</code> werden automatisch ausgeschlossen.
-
-perm_general_backup[export] = Webseite exportieren
-
-backup_export_select = Exportvariante
-backup_export_select_tables = Tabellen auswählen
-backup_export_select_dir = Ordner auswählen
-backup_export_select_location = Speicherort wählen
-backup_export_select_filename = Dateiname wählen
-
-backup_file = Datei
-backup_note = Hinweis
-backup_upload = Upload
-backup_load_from_server = Vom Server laden
-
-backup_warning = Warnung
-backup_upload_disabled = Uploads sind nicht gestattet
-backup_max_uploadsize = Max. Uploadgröße
-backup_max_uploadtime = Max. Uploadzeit
 
 
 # Users

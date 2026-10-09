@@ -156,7 +156,7 @@ class Finder implements IteratorAggregate, Countable
      * Default is `false`: an unreadable sub-directory throws `UnexpectedValueException`
      * mid-iteration. Enable only when partial loss is acceptable — typically for
      * cleanup loops over a tree that other workers may modify in parallel.
-     * Don't enable for backup/copy paths where read errors must surface.
+     * Don't enable for copy paths where read errors must surface.
      *
      * @return $this
      */

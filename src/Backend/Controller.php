@@ -272,28 +272,6 @@ final class Controller
             ->addSubpage(new Page('structure', I18n::msg('pool_cat_list'))->setRequiredPermissions('media/hasAll')->setSubPath(Path::core('pages/mediapool/structure.php')))
             ->addSubpage(new Page('sync', I18n::msg('pool_sync_files'))->setRequiredPermissions('media[sync]')->setSubPath(Path::core('pages/mediapool/sync.php')))
         ;
-
-        self::$pages['backup'] = $backup = new MainPage('system', 'backup', I18n::msg('backup_title'))
-            ->setPath(Path::core('pages/backup/index.php'))
-            ->setRequiredPermissions('isAdmin')
-            ->setPrio(110)
-            ->setPjax()
-            ->setIcon('rex-icon rex-icon-backup')
-            ->addSubpage(
-                new Page('export', I18n::msg('backup_export'))
-                    ->setSubPath(Path::core('pages/backup/export.php'))
-                    ->setRequiredPermissions('backup[export]'),
-            )
-        ;
-
-        if (Core::isHardenedMode()) {
-            return;
-        }
-
-        $backup->addSubpage(new Page('import', I18n::msg('backup_import'))
-            ->addSubpage(new Page('upload', I18n::msg('backup_upload'))->setSubPath(Path::core('pages/backup/import.upload.php')))
-            ->addSubpage(new Page('server', I18n::msg('backup_load_from_server'))->setSubPath(Path::core('pages/backup/import.server.php'))),
-        );
     }
 
     public static function appendPackagePages(): void

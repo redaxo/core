@@ -1,5 +1,3 @@
-## Redaxo Database Dump Version 6
-
 INSERT IGNORE INTO `rex_language` VALUES
 (1,'de','deutsch',1,1),
 (2,'en','english',2,0);
@@ -27,6 +25,7 @@ INSERT IGNORE INTO `rex_article_slice` VALUES
 (3,1,1,1,'testmodule1',1,1,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
 
 REPLACE INTO `rex_config` VALUES
+('core','lang','"de_de"'),
 ('core','article_history','true'),
 ('core','article_work_version','true'),
 ('core','default_template','"default"');

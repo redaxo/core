@@ -129,7 +129,7 @@ final class FinderTest extends TestCase
     public function testRecursiveThrowsOnVanishingSubdirByDefault(): void
     {
         // Default semantics: an unreadable/vanishing sub-directory surfaces as
-        // UnexpectedValueException. Callers like backup/copy rely on this so
+        // UnexpectedValueException. Callers like copy rely on this so
         // partial reads can't pass for success.
         $sub = $this->getPath('dir2/dir');
 
