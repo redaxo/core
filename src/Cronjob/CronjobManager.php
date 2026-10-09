@@ -102,7 +102,7 @@ final class CronjobManager
             SELECT    id, name, type, parameters, `interval`, execution_moment
             FROM      rex_cronjob
             WHERE     status = 1
-                AND   execution_start IS NULL OR execution_start < ?
+                AND   (execution_start IS NULL OR execution_start < ?)
                 AND   environment LIKE ?
                 AND   nexttime <= ?
             ORDER BY  nexttime ASC, execution_moment DESC, name ASC
