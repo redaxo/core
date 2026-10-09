@@ -235,6 +235,34 @@ class rex_request
     }
 
     /**
+     * Returns the effective upload size limit in bytes, considering both `upload_max_filesize` and `post_max_size`.
+     *
+     * @internal
+     */
+    public static function getMaxUploadSize(): int
+    {
+        $limits = array_filter([rex_ini_get('upload_max_filesize'), rex_ini_get('post_max_size')], static fn (int $limit) => $limit > 0);
+
+        return $limits ? min($limits) : 0;
+    }
+
+    /**
+     * Returns whether PHP discarded the request body ($_POST and $_FILES) because it exceeded `post_max_size`.
+     *
+     * @internal
+     */
+    public static function isPostMaxSizeExceeded(): bool
+    {
+        if ('post' !== self::requestMethod() || $_POST || $_FILES) {
+            return false;
+        }
+
+        $postMaxSize = rex_ini_get('post_max_size');
+
+        return $postMaxSize > 0 && self::server('CONTENT_LENGTH', 'int', 0) > $postMaxSize;
+    }
+
+    /**
      * Returns true if the request is a XMLHttpRequest.
      *
      * This only works if your javaScript library sets an X-Requested-With HTTP header.
