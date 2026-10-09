@@ -23,47 +23,56 @@ blocked_extensions: [asp, aspx, bat, cfm, cgi, flv, hh, html, htaccess, htpasswd
 
 # mime type allowlist. the list is checked after the blocked_extensions check from above has passed.
 allowed_mime_types:
+    # images
     avif: [image/avif]
-    gif: [image/gif]
-    jpg: [image/jpeg, image/pjpeg]
-    jpeg: [image/jpeg, image/pjpeg]
-    png: [image/png]
-    webp: [image/webp]
     eps: [application/postscript, image/x-eps]
+    gif: [image/gif]
+    jpeg: [image/jpeg, image/pjpeg]
+    jpg: [image/jpeg, image/pjpeg]
+    png: [image/png]
+    svg: [image/svg+xml]
     tif: [image/tiff]
     tiff: [image/tiff]
-    svg: [image/svg+xml]
-    pdf: [application/pdf]
-    xls: [application/vnd.ms-excel, application/octet-stream, application/encrypted]
-    xlsx: [application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, application/encrypted]
+    webp: [image/webp]
+
+    # documents
     doc: [application/msword, application/octet-stream, application/encrypted]
     docx: [application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/octet-stream, application/encrypted]
     dot: [application/msword, application/octet-stream, application/encrypted]
     dotx: [application/vnd.openxmlformats-officedocument.wordprocessingml.template, application/octet-stream, application/encrypted]
-    ppt: [application/vnd.ms-powerpoint]
-    pptx: [application/vnd.openxmlformats-officedocument.presentationml.presentation]
+    pdf: [application/pdf]
     pot: [application/vnd.ms-powerpoint]
     potx: [application/vnd.openxmlformats-officedocument.presentationml.template]
     pps: [application/vnd.ms-powerpoint]
     ppsx: [application/vnd.openxmlformats-officedocument.presentationml.slideshow]
+    ppt: [application/vnd.ms-powerpoint]
+    pptx: [application/vnd.openxmlformats-officedocument.presentationml.presentation]
     rtf: [application/rtf]
-    txt: [text/plain, application/octet-stream]
-    md: [text/markdown]
+    xls: [application/vnd.ms-excel, application/octet-stream, application/encrypted]
+    xlsx: [application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/octet-stream, application/encrypted]
+
+    # text
     csv: [text/csv, application/octet-stream]
     ics: [text/calendar]
-    vcf: [text/vcard]
+    md: [text/markdown]
     srt: [text/plain]
+    txt: [text/plain, application/octet-stream]
+    vcf: [text/vcard]
     vtt: [text/vtt]
-    zip: [application/x-zip-compressed, application/zip]
+
+    # archives
     gz: [application/x-gzip]
     tar: [application/x-tar]
+    zip: [application/x-zip-compressed, application/zip]
+
+    # audio/video
     mov: [video/quicktime]
     movie: [video/quicktime]
     mp3: [audio/mpeg]
+    mp4: [video/mp4]
     mpe: [video/mpeg]
     mpeg: [video/mpeg]
     mpg: [video/mpeg]
-    mp4: [video/mp4]
 
 allowed_doctypes: [avif, bmp, css, csv, doc, docx, eps, gif, gz, jpeg, jpg, mov, mp3, mp4, ogg, pdf, png, ppt, pptx, pps, ppsx, rar, rtf, srt, svg, swf, tar, tif, tiff, txt, vtt, webp, wma, xls, xlsx, zip]
 image_extensions: [avif, bmp, gif, jpeg, jpg, png, svg, tif, tiff, webp]
