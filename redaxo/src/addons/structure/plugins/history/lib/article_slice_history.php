@@ -118,6 +118,52 @@ class rex_article_slice_history
         return true;
     }
 
+    /**
+     * Restore a snapshot from history into the draft revision (revision=1) if the 'version' addon is enabled.
+     *
+     * @param string $historyDate
+     * @param int $articleId
+     * @param int $clangId
+     *
+     * @return bool
+     */
+    public static function restoreDraftSnapshot($historyDate, $articleId, $clangId)
+    {
+        self::checkTables();
+
+        $sql = rex_sql::factory();
+        $slices = $sql->getArray('select id from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and clang_id=? and revision=? and history_date=?', [$articleId, $clangId, 0, $historyDate]);
+
+        if (0 == count($slices)) {
+            return false;
+        }
+
+        $articleSlicesTable = rex_sql_table::get(rex::getTable('article_slice'));
+
+        $sql = rex_sql::factory();
+        $sql->setQuery('delete from ' . $sql->escapeIdentifier(rex::getTable('article_slice')) . ' where article_id=? and clang_id=? and revision=?', [$articleId, $clangId, 1]);
+
+        $slices = rex_sql::factory();
+        $slices = $slices->getArray('select * from ' . $slices->escapeIdentifier(self::getTable()) . ' where article_id=? and clang_id=? and revision=? and history_date=?', [$articleId, $clangId, 0, $historyDate]);
+
+        foreach ($slices as $slice) {
+            $sql = rex_sql::factory();
+            $sql->setTable(rex::getTable('article_slice'));
+
+            $ignoreFields = ['id', 'slice_id', 'history_date', 'history_type', 'history_user'];
+            foreach ($articleSlicesTable->getColumns() as $column) {
+                $columnName = $column->getName();
+                if (!in_array($columnName, $ignoreFields)) {
+                    $sql->setValue($columnName, 'revision' === $columnName ? 1 : $slice[$columnName]);
+                }
+            }
+
+            $sql->insert();
+        }
+        rex_article_cache::delete($articleId, $clangId);
+        return true;
+    }
+
     /** @return void */
     public static function clearAllHistory()
     {
