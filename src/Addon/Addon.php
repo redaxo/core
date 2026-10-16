@@ -356,11 +356,15 @@ abstract class Addon
     public function install(): void {}
 
     /**
-     * Uninstall hook — runs on uninstall. Override for cleanup.
+     * Returns the tables and columns the addon owns, so they can be removed once the addon is removed via composer.
      *
-     * @throws UserMessageException to abort the uninstallation with a message
+     * Its code is gone by then, so the declaration is recorded by `migrate` after each `install()`, and
+     * `migrate:cleanup` removes what was recorded last. Like `install()` it runs without booted addons.
      */
-    public function uninstall(): void {}
+    public function getOwnedSchema(): OwnedSchema
+    {
+        return new OwnedSchema();
+    }
 
     /**
      * Returns all addons, i.e. all composer packages of type `redaxo-addon`.

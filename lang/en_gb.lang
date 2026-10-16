@@ -167,9 +167,7 @@ sql_unable_to_open_database = Unable to open the specified database!
 
 # src\core\pages\addon.php
 addon_no_install = AddOn "{0}" <b>could not</b> be installed due to the following reasons:
-addon_no_uninstall = AddOn "{0}" <b>could not</b> be uninstalled due to the following reasons:
 addon_installed = AddOn <b>{0}</b> has been installed!
-addon_uninstalled = AddOn <b>"{0}"</b> has been uninstalled
 addon_install_cant_copy_files = An error occurred when copying the /assets folder!
 addon_install_cant_delete_files = An error occurred when deleting the /assets folder!
 

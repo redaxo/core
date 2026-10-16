@@ -7,6 +7,8 @@ use Composer\InstalledVersions;
 use Redaxo\Core\Base\FactoryTrait;
 use Redaxo\Core\Config;
 use Redaxo\Core\Core;
+use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Database\Table;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Dir;
@@ -18,14 +20,13 @@ use Redaxo\Core\Util\Type;
 
 use function array_values;
 use function class_exists;
-use function in_array;
+use function dirname;
 use function is_array;
 use function is_dir;
 use function is_file;
 use function is_string;
 use function is_subclass_of;
 use function json_decode;
-use function sort;
 use function sprintf;
 
 use const JSON_THROW_ON_ERROR;
@@ -35,11 +36,12 @@ class AddonManager
     use FactoryTrait;
 
     /**
-     * Config key listing the addons whose `install()` has already run on this instance.
+     * Config key for the addons whose `install()` has already run on this instance, with the schema they own.
      *
      * This is instance state, written by `migrate` only — never a switch. It tells an addon that is new to
      * this instance (whose schema `install()` just created in the shape the current code describes) apart
-     * from one that has been here before (whose pending migrations still have to run).
+     * from one that has been here before (whose pending migrations still have to run), and it keeps what an
+     * addon owns available after its code is gone.
      */
     private const string CONFIG_ADDONS_INSTALLED = 'addons_installed';
 
@@ -97,8 +99,9 @@ class AddonManager
             if ($firstInstall) {
                 // install() created the current schema, so the migrations leading there must not run again
                 Migrator::baseline($this->addon->name);
-                self::markInstalled($this->addon->name);
             }
+
+            self::recordInstalled($this->addon);
 
             $this->message = $this->i18n('installed', $this->addon->name);
 
@@ -112,47 +115,6 @@ class AddonManager
         return false;
     }
 
-    /**
-     * Removes the addon's data by running its `uninstall()` hook.
-     *
-     * Has to run while the addon's code is still there, so removing an addon is uninstall first, then
-     * `composer remove`. The other way round its tables stay behind for good.
-     *
-     * @return bool TRUE on success, FALSE on error
-     */
-    public function uninstall(): bool
-    {
-        try {
-            I18n::addDirectory($this->addon->getPath('lang'));
-
-            // run uninstall hook (can only abort by throwing a UserMessageException)
-            $this->addon->uninstall();
-
-            // delete assets
-            $assets = $this->addon->getAssetsPath();
-            if (is_dir($assets) && !Dir::delete($assets)) {
-                throw new UserMessageException($this->i18n('install_cant_delete_files'));
-            }
-
-            $this->addon->clearCache();
-            Config::removeNamespace($this->addon->name);
-
-            // the addon dropped its own tables, so its migration history is gone too
-            Migrator::forget($this->addon->name);
-            self::forgetInstalled($this->addon->name);
-
-            $this->message = $this->i18n('uninstalled', $this->addon->name);
-
-            return true;
-        } catch (UserMessageException $e) {
-            $this->message = $e->getMessage();
-        }
-
-        $this->message = $this->i18n('no_uninstall', $this->addon->name) . '<br />' . $this->message;
-
-        return false;
-    }
-
     /** Translates the given key, prefixed with `addon_`. */
     protected function i18n(string $key, string|int ...$replacements): string
     {
@@ -160,60 +122,173 @@ class AddonManager
     }
 
     /**
-     * Returns the addons whose `install()` has already run on this instance.
+     * Returns the addons whose `install()` has already run on this instance, with their composer package and the
+     * schema they declared on the last run.
      *
-     * @return list<non-empty-string>
+     * @return array<non-empty-string, array{package?: string, tables?: list<non-empty-string>, columns?: array<non-empty-string, list<non-empty-string>>}>
      */
     private static function getInstalledAddons(): array
     {
-        /** @var list<non-empty-string> */
-        return Type::array(Core::getConfig(self::CONFIG_ADDONS_INSTALLED, []));
+        $addons = Type::array(Core::getConfig(self::CONFIG_ADDONS_INSTALLED, []));
+
+        // instances from before the owned schema was recorded store a plain list of names
+        if (array_is_list($addons)) {
+            $addons = array_fill_keys(array_map(Type::string(...), $addons), []);
+        }
+
+        /** @var array<non-empty-string, array{package?: string, tables?: list<non-empty-string>, columns?: array<non-empty-string, list<non-empty-string>>}> */
+        return $addons;
     }
 
     /** Returns whether the addon's `install()` has already run on this instance. */
     private static function hasBeenInstalled(string $addon): bool
     {
-        return in_array($addon, self::getInstalledAddons(), true);
+        return isset(self::getInstalledAddons()[$addon]);
+    }
+
+    private static function recordInstalled(Addon $addon): void
+    {
+        $addons = self::getInstalledAddons();
+        $schema = $addon->getOwnedSchema();
+
+        $entry = ['package' => $addon->package, 'tables' => $schema->tables, 'columns' => $schema->columns];
+
+        if (($addons[$addon->name] ?? null) === $entry) {
+            return;
+        }
+
+        $addons[$addon->name] = $entry;
+        ksort($addons);
+
+        Core::setConfig(self::CONFIG_ADDONS_INSTALLED, $addons);
     }
 
     /**
      * Returns the addons that have data on this instance but are no longer installed via composer.
      *
-     * Their own uninstall hook can no longer run because their code is gone, so their tables stay behind.
-     * Nothing is cleaned up automatically: a `composer install --no-dev` makes a dev-only addon look exactly
-     * like this, and dropping its tables because of that would be fatal.
+     * {@see removeOrphan()} cleans them up, unless {@see getOrphanRemovalBlocker()} objects.
      *
      * @return list<non-empty-string>
+     *
+     * @internal
      */
     public static function getOrphans(): array
     {
         return array_values(array_filter(
-            self::getInstalledAddons(),
+            array_keys(self::getInstalledAddons()),
             static fn (string $addon): bool => !Addon::exists($addon),
         ));
     }
 
-    /** @param non-empty-string $addon */
-    private static function markInstalled(string $addon): void
+    /**
+     * Returns why the orphaned addon must not be removed, or null if it can be.
+     *
+     * An addon only counts as removed if the project's `composer.lock` does not list it any more: after a
+     * `composer install --no-dev` a dev-only addon looks exactly like an orphan, and dropping its tables because
+     * of that would be fatal.
+     *
+     * @internal
+     */
+    public static function getOrphanRemovalBlocker(string $addon): ?string
     {
-        $addons = self::getInstalledAddons();
+        $package = self::getInstalledAddons()[$addon]['package'] ?? null;
 
-        if (in_array($addon, $addons, true)) {
-            return;
+        if (null === $package) {
+            return 'its composer package is unknown';
         }
 
-        $addons[] = $addon;
-        sort($addons);
+        $locked = self::getLockedPackages();
 
-        Core::setConfig(self::CONFIG_ADDONS_INSTALLED, $addons);
+        if (null === $locked) {
+            return 'the project\'s composer.lock is missing';
+        }
+
+        if (isset($locked[$package])) {
+            return sprintf('"%s" is still in the composer.lock (a dev package after `composer install --no-dev`?)', $package);
+        }
+
+        return null;
     }
 
-    private static function forgetInstalled(string $addon): void
+    /**
+     * Removes the declared schema and all data of an addon that is no longer installed via composer.
+     *
+     * @param non-empty-string $addon
+     * @return array{tables: int, columns: int} Number of removed tables and columns
+     *
+     * @internal
+     */
+    public static function removeOrphan(string $addon): array
     {
-        Core::setConfig(self::CONFIG_ADDONS_INSTALLED, array_values(array_filter(
-            self::getInstalledAddons(),
-            static fn (string $installed): bool => $installed !== $addon,
-        )));
+        $entry = self::getInstalledAddons()[$addon] ?? [];
+        $tables = $entry['tables'] ?? [];
+        $columns = $entry['columns'] ?? [];
+
+        $sql = Sql::factory();
+        $sql->setQuery('SET FOREIGN_KEY_CHECKS = 0');
+
+        try {
+            foreach ($columns as $table => $names) {
+                $table = Table::get($table);
+
+                if (!$table->exists()) {
+                    continue;
+                }
+
+                foreach ($names as $name) {
+                    $table->removeColumn($name);
+                }
+                $table->alter();
+            }
+
+            foreach ($tables as $table) {
+                Table::get($table)->drop();
+            }
+        } finally {
+            $sql->setQuery('SET FOREIGN_KEY_CHECKS = 1');
+        }
+
+        Config::removeNamespace($addon);
+        Dir::delete(Path::addonData($addon));
+        Dir::delete(Path::addonCache($addon));
+        Dir::delete(Path::addonAssets($addon));
+        Migrator::forget($addon);
+
+        $addons = self::getInstalledAddons();
+        unset($addons[$addon]);
+        Core::setConfig(self::CONFIG_ADDONS_INSTALLED, $addons);
+
+        return ['tables' => \count($tables), 'columns' => array_sum(array_map(count(...), $columns))];
+    }
+
+    /**
+     * Returns the names of all packages in the project's `composer.lock`, or null if there is none.
+     *
+     * @return array<string, true>|null
+     */
+    private static function getLockedPackages(): ?array
+    {
+        foreach (ClassLoader::getRegisteredLoaders() as $vendorDir => $loader) {
+            // the loader of the project, not one of a dependency with a scoped vendor
+            if (false === $loader->findFile(Addon::class)) {
+                continue;
+            }
+
+            $json = File::get(dirname($vendorDir) . '/composer.lock');
+
+            if (null === $json) {
+                return null;
+            }
+
+            /** @var array{packages?: list<array{name: string}>, packages-dev?: list<array{name: string}>} $lock */
+            $lock = Type::array(json_decode($json, true, flags: JSON_THROW_ON_ERROR));
+
+            $names = array_column([...$lock['packages'] ?? [], ...$lock['packages-dev'] ?? []], 'name');
+
+            return array_fill_keys($names, true);
+        }
+
+        return null;
     }
 
     /**

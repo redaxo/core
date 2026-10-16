@@ -100,22 +100,23 @@ final class MigrateCommand extends AbstractCommand implements StandaloneInterfac
         });
     }
 
-    /**
-     * Addons that have data on this instance but are no longer installed via composer. Nothing is cleaned up
-     * automatically — see {@see AddonManager::getOrphans()}.
-     */
+    /** Addons that have data on this instance but are no longer installed via composer. */
     private function reportOrphans(SymfonyStyle $io): void
     {
-        $orphans = AddonManager::getOrphans();
+        $lines = [];
+        foreach (AddonManager::getOrphans() as $addon) {
+            $blocker = AddonManager::getOrphanRemovalBlocker($addon);
+            $lines[] = '  ' . $addon . (null === $blocker ? '' : ' (kept: ' . $blocker . ')');
+        }
 
-        if ([] === $orphans) {
+        if ([] === $lines) {
             return;
         }
 
-        $io->warning(array_merge(
-            ['These addons still have data in the database but are no longer installed via composer. Their own uninstall routine can no longer run, so their tables stay behind:'],
-            array_map(static fn (string $addon): string => '  ' . $addon, $orphans),
-        ));
+        $io->warning([
+            'These addons still have data in the database but are no longer installed via composer. `migrate:cleanup` removes it — run it once the new release is live:',
+            implode("\n", $lines),
+        ]);
     }
 
     /**

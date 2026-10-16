@@ -194,7 +194,6 @@ return RectorConfig::configure()
         'rex_command_setup_run' => Console\Command\SetupCommand::class,
         'rex_command_cronjob_run' => Console\Command\CronjobRunCommand::class,
         'rex_command_package_list' => Console\Command\AddonListCommand::class,
-        'rex_command_package_uninstall' => Console\Command\AddonUninstallCommand::class,
         'rex_command_system_report' => Console\Command\SystemReportCommand::class,
         'rex_command_user_create' => Console\Command\UserCreateCommand::class,
         'rex_command_user_delete' => Console\Command\UserDeleteCommand::class,

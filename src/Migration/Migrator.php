@@ -143,7 +143,7 @@ final class Migrator
     }
 
     /**
-     * Drops the ledger entries of the given package, e.g. because it was uninstalled and its schema is gone.
+     * Drops the ledger entries of the given package, e.g. because the package was removed and its schema with it.
      *
      * @internal
      */
