@@ -3,9 +3,11 @@
 namespace Redaxo\Core\Content;
 
 use DateTimeInterface;
+use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
+use Redaxo\Core\ExtensionPoint\Extension;
 
 use function count;
 use function in_array;
@@ -108,6 +110,9 @@ final class ArticleSliceHistory
             }
         }
         ArticleCache::delete($articleId, $languageId);
+
+        Extension::dispatch(new ArticleContentUpdated(Article::require($articleId, $languageId), 'history_restored'));
+
         return true;
     }
 
