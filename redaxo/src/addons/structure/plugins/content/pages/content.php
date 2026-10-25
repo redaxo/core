@@ -114,6 +114,7 @@ if (
 
         $CM = rex_sql::factory();
         $moduleId = null;
+        $targetRevision = (int) $sliceRevision;
         if ('edit' == $function || 'delete' == $function) {
             // edit/ delete
             // article_id must match: the permission check above is based on the requested article, so slices of
@@ -121,6 +122,7 @@ if (
             $CM->setQuery('SELECT * FROM ' . rex::getTablePrefix() . 'article_slice LEFT JOIN ' . rex::getTablePrefix() . 'module ON ' . rex::getTablePrefix() . 'article_slice.module_id=' . rex::getTablePrefix() . 'module.id WHERE ' . rex::getTablePrefix() . 'article_slice.id=? AND article_id=? AND clang_id=?', [$sliceId, $articleId, $clang]);
             if (1 == $CM->getRows()) {
                 $moduleId = $CM->getValue('' . rex::getTablePrefix() . 'article_slice.module_id');
+                $targetRevision = (int) $CM->getValue(rex::getTablePrefix() . 'article_slice.revision');
             }
         } else {
             // add
@@ -136,8 +138,12 @@ if (
         } else {
             // ------------- MODUL IST VORHANDEN
 
-            // ----- RECHTE AM MODUL ?
-            if ('delete' != $function && !rex_template::hasModule($templateAttributes, $ctype, $moduleId)) {
+            if (!rex_content_service::hasRevisionPerm($user, $targetRevision)) {
+                $globalWarning = rex_i18n::msg('no_rights_to_this_function');
+                $sliceId = 0;
+                $function = '';
+            } elseif ('delete' != $function && !rex_template::hasModule($templateAttributes, $ctype, $moduleId)) {
+                // ----- RECHTE AM MODUL ?
                 $globalWarning = rex_i18n::msg('no_rights_to_this_function');
                 $sliceId = 0;
                 $function = '';

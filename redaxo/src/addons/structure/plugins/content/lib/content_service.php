@@ -5,6 +5,22 @@
  */
 class rex_content_service
 {
+    /**
+     * Checks whether the user may change the slices of the given revision.
+     *
+     * With the version plugin, the live revision may only be changed by users with the `version[live_version]` perm.
+     *
+     * @internal
+     */
+    public static function hasRevisionPerm(rex_user $user, int $revision): bool
+    {
+        if (0 !== $revision || !rex_plugin::get('structure', 'version')->isAvailable()) {
+            return true;
+        }
+
+        return $user->hasPerm('version[live_version]');
+    }
+
     /** @throws rex_api_exception */
     public static function addSlice(int $articleId, int $clangId, int $ctypeId, int $moduleId, array $data = []): string
     {
