@@ -107,6 +107,17 @@
             background-color: darken($color-a-darker, 5%);
         }
     }
+    .btn-default {
+        background-color: transparent;
+        border-color: $color-a-dark;
+        color: $color-a-light;
+        transition: background-color 100ms ease-out;
+        &:hover,
+        &:focus {
+            background-color: $color-a-darker;
+            color: #fff;
+        }
+    }
     .btn-view {
         background-color: $btn-primary-border;
         color: $color-a;
@@ -119,7 +130,7 @@
     .rex-form-group > dd:first-child {
         padding-left: 0;
     }
-    .rex-form-panel-footer > .btn-toolbar button:first-child {
+    .rex-form-panel-footer > .btn-toolbar button {
         margin-left: 0;
     }
     .form-control {
