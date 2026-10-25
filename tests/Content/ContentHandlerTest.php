@@ -11,10 +11,14 @@ use Redaxo\Core\Content\ExtensionPoint\ArticleSlicesCopying;
 use Redaxo\Core\Content\ExtensionPoint\SliceAdding;
 use Redaxo\Core\Content\ExtensionPoint\SliceDeleting;
 use Redaxo\Core\Content\ExtensionPoint\SliceMoving;
+use Redaxo\Core\Content\ExtensionPoint\SliceUpdating;
 use Redaxo\Core\Content\SliceMoveDirection;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use ReflectionProperty;
+
+use const PHP_INT_MAX;
 
 /** @internal */
 final class ContentHandlerTest extends TestCase
@@ -135,6 +139,38 @@ final class ContentHandlerTest extends TestCase
         self::assertSame($targetId, $copying->article->id);
         self::assertSame($this->articleId, $copying->source->id);
         self::assertNull($copying->revision);
+    }
+
+    public function testEditSlice(): void
+    {
+        $slice = ContentHandler::addSlice($this->articleId, 1, 1, 'test', ['text' => 'foo']);
+
+        $updating = [];
+        Extension::register(SliceUpdating::class, static function (SliceUpdating $ep) use (&$updating): void {
+            $updating[] = $ep->slice;
+        });
+
+        $edited = ContentHandler::editSlice($slice->id, ['text' => 'bar']);
+
+        self::assertSame($slice->id, $edited->id);
+        self::assertSame(['text' => 'bar'], $edited->data);
+        self::assertSame(['text' => 'bar'], ArticleSlice::getArticleSliceById($slice->id, 1)?->data);
+
+        // the slice is passed in its state before the update
+        self::assertCount(1, $updating);
+        self::assertSame(['text' => 'foo'], $updating[0]->data);
+
+        $updated = $this->events[1] ?? null;
+        self::assertNotNull($updated);
+        self::assertSame('slice_updated', $updated->action);
+        self::assertSame(['text' => 'bar'], $updated->slice?->data);
+    }
+
+    public function testEditSliceThrowsForUnknownSlice(): void
+    {
+        $this->expectException(UserMessageException::class);
+
+        ContentHandler::editSlice(PHP_INT_MAX, []);
     }
 
     private static function createArticle(): int

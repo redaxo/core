@@ -8,6 +8,7 @@ use Redaxo\Core\Content\ExtensionPoint\ArticleSlicesCopying;
 use Redaxo\Core\Content\ExtensionPoint\SliceAdding;
 use Redaxo\Core\Content\ExtensionPoint\SliceDeleting;
 use Redaxo\Core\Content\ExtensionPoint\SliceMoving;
+use Redaxo\Core\Content\ExtensionPoint\SliceUpdating;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\DatabaseUtil;
 use Redaxo\Core\Database\Sql;
@@ -221,6 +222,42 @@ final class ContentHandler
         $slice = Type::notNull(ArticleSlice::getArticleSliceById($sliceId, $article->languageId, $revision));
 
         Extension::dispatch(new ArticleContentUpdated($article, 'slice_status', $slice));
+
+        return $slice;
+    }
+
+    /**
+     * @param array<string, mixed> $values the stored values of the module fields, keyed by storage key; replaces the previous values
+     *
+     * @throws UserMessageException
+     */
+    public static function editSlice(int $sliceId, array $values): ArticleSlice
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT * FROM rex_article_slice WHERE id = ?', [$sliceId]);
+
+        if (1 !== $sql->getRows()) {
+            throw new UserMessageException(I18n::msg('slice_not_found'));
+        }
+
+        $slice = ArticleSlice::fromSql($sql);
+
+        Extension::dispatch(new SliceUpdating($slice));
+
+        Sql::factory()
+            ->setTable('rex_article_slice')
+            ->setWhere(['id' => $sliceId])
+            ->setValue('data', ArticleSlice::encodeData($values))
+            ->addGlobalUpdateFields(self::getUser())
+            ->update();
+
+        ArticleCache::deleteContent($slice->articleId, $slice->languageId);
+
+        $article = Article::require($slice->articleId, $slice->languageId);
+        $slice = Type::notNull(ArticleSlice::getArticleSliceById($sliceId, $slice->languageId, $slice->revision));
+        ArticleSliceReference::update($slice);
+
+        Extension::dispatch(new ArticleContentUpdated($article, 'slice_updated', $slice));
 
         return $slice;
     }
