@@ -39,6 +39,16 @@ final class ArticleSliceHistory
 
         $historyDate = date(Sql::FORMAT_DATETIME);
 
+        // snapshots are identified by their date (seconds): a snapshot of this second already holds the earlier state,
+        // adding the rows of a later change would mix both states
+        $existing = Sql::factory()->getArray(
+            'select 1 from ' . Sql::factory()->escapeIdentifier(self::getTable()) . ' where article_id=? and language_id=? and revision=? and history_date=? limit 1',
+            [$articleId, $languageId, 0, $historyDate],
+        );
+        if ($existing) {
+            return;
+        }
+
         foreach ($slices as $slice) {
             $sql = Sql::factory();
             $sql->setTable(self::getTable());
