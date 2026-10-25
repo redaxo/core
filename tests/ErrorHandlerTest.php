@@ -7,6 +7,8 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\ErrorHandler;
 use Redaxo\Core\Exception\LogicException;
+use Redaxo\Core\Util\Type;
+use ReflectionMethod;
 
 use const E_ALL;
 use const E_DEPRECATED;
@@ -90,5 +92,30 @@ final class ErrorHandlerTest extends TestCase
             ['warning'],
             ['e_warning'],
         ];
+    }
+
+    public function testErrorPageHidesSecretsOfTheEnvironment(): void
+    {
+        $server = $_SERVER;
+        $env = $_ENV;
+
+        // built at runtime, the error page also shows the source code of this test
+        $secret = 'secret-' . bin2hex(random_bytes(8));
+        $_SERVER['DATABASE_URL'] = 'mysql://user:db-' . $secret . '@localhost/redaxo';
+        $_ENV['MAILER_DSN'] = 'smtp://user:mailer-' . $secret . '@localhost';
+        $_SERVER['REX_TEST_VISIBLE'] = 'visible-' . $secret;
+
+        try {
+            $method = new ReflectionMethod(ErrorHandler::class, 'renderWhoops');
+            [$page] = Type::array($method->invoke(null, new LogicException('test')));
+
+            self::assertIsString($page);
+            self::assertStringNotContainsString('db-' . $secret, $page);
+            self::assertStringNotContainsString('mailer-' . $secret, $page);
+            self::assertStringContainsString('visible-' . $secret, $page);
+        } finally {
+            $_SERVER = $server;
+            $_ENV = $env;
+        }
     }
 }
