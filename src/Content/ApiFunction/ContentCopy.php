@@ -7,6 +7,7 @@ use Redaxo\Core\ApiFunction\AsApiFunction;
 use Redaxo\Core\ApiFunction\Exception\ApiFunctionException;
 use Redaxo\Core\ApiFunction\Result;
 use Redaxo\Core\Content\Article;
+use Redaxo\Core\Content\ArticleRevision;
 use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Core;
 use Redaxo\Core\Http\Request;
@@ -43,7 +44,10 @@ final class ContentCopy extends ApiFunction
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
 
-        ContentHandler::copyContent($articleId, $articleId, $fromLanguageId, $toLanguageId, null, $overwrite);
+        // without the live perm only the working version may be changed
+        $revision = ContentHandler::hasRevisionPerm($user, ArticleRevision::LIVE) ? null : ArticleRevision::WORK;
+
+        ContentHandler::copyContent($articleId, $articleId, $fromLanguageId, $toLanguageId, $revision, $overwrite);
 
         return new Result(true, I18n::msg('content_contentcopy'));
     }

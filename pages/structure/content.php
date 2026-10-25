@@ -170,10 +170,14 @@ if (
         } else {
             // ------------- MODUL IST VORHANDEN
             $moduleKey = $module->slice->moduleKey;
-
-            // ----- RECHTE AM MODUL ?
             $category = $categoryId > 0 ? Category::get($categoryId) : null;
-            if ('delete' != $function && (!Template::checkModuleAllowed($templateKey, $ctype, $moduleKey) || !$module::isAllowedInCategory($category))) {
+
+            if (!ContentHandler::hasRevisionPerm($user, $module->slice->revision)) {
+                $globalWarning = I18n::msg('no_rights_to_this_function');
+                $sliceId = 0;
+                $function = '';
+            } elseif ('delete' != $function && (!Template::checkModuleAllowed($templateKey, $ctype, $moduleKey) || !$module::isAllowedInCategory($category))) {
+                // ----- RECHTE AM MODUL ?
                 $globalWarning = I18n::msg('no_rights_to_this_function');
                 $sliceId = 0;
                 $function = '';

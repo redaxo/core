@@ -27,9 +27,9 @@ final class UserRemoveSession extends ApiFunction
             throw new ApiFunctionException('Permission denied');
         }
 
-        $sessionId = Request::get('session_id', 'string');
+        $sessionHash = Request::get('session_hash', 'string');
 
-        if (UserSession::getInstance()->removeSession($sessionId, $userId)) {
+        if (UserSession::getInstance()->removeSessionByHash($sessionHash, $userId)) {
             return new Result(true, I18n::msg('session_removed'));
         }
 

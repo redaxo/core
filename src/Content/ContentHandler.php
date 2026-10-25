@@ -17,6 +17,7 @@ use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\Security\User;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
 
@@ -26,6 +27,22 @@ use function sprintf;
 final class ContentHandler
 {
     private function __construct() {}
+
+    /**
+     * Checks whether the user may change the slices of the given revision.
+     *
+     * With the work version enabled, the live revision may only be changed by users with the `version[live_version]` perm.
+     *
+     * @internal
+     */
+    public static function hasRevisionPerm(User $user, int $revision): bool
+    {
+        if (ArticleRevision::LIVE !== $revision || !Core::getConfig('article_work_version', false)) {
+            return true;
+        }
+
+        return $user->hasPerm('version[live_version]');
+    }
 
     /**
      * @param array<string, mixed> $values the stored values of the module fields, keyed by storage key

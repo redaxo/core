@@ -7,6 +7,7 @@ use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleRevision;
 use Redaxo\Core\Content\ArticleSliceHistory;
+use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Content\ExtensionPoint\ContentPageBeforeSlices;
 use Redaxo\Core\Content\ExtensionPoint\ContentPageHeader;
@@ -293,6 +294,8 @@ if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('hist
             !$historyArticle instanceof Article
             || !$user->getComplexPerm('language')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
+            // restoring a snapshot replaces the live revision
+            || 'snap' === $historyFunction && !ContentHandler::hasRevisionPerm($user, ArticleRevision::LIVE)
         ) {
             Response::setStatus(Response::HTTP_FORBIDDEN);
             Response::sendContent(I18n::msg('no_rights_to_this_function'), 'text/plain');

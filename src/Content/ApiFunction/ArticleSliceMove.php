@@ -58,6 +58,7 @@ final class ArticleSliceMove extends ApiFunction
             !$user->getComplexPerm('language')->hasPerm($languageId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($article->categoryId)
             || !$user->getComplexPerm('modules')->hasPerm($moduleKey)
+            || !ContentHandler::hasRevisionPerm($user, $CM->getIntValue('rex_article_slice.revision'))
         ) {
             throw new ApiFunctionException(I18n::msg('no_rights_to_this_function'));
         }
