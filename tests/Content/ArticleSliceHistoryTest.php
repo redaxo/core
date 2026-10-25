@@ -8,6 +8,7 @@ use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\Util\Type;
 use ReflectionProperty;
 
 /** @internal */
@@ -63,7 +64,7 @@ final class ArticleSliceHistoryTest extends TestCase
             ->insert()
             ->getLastId();
 
-        $extensions = new ReflectionProperty(Extension::class, 'extensions')->getValue();
+        $extensions = Type::array(new ReflectionProperty(Extension::class, 'extensions')->getValue());
 
         try {
             Sql::factory()
