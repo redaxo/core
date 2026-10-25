@@ -111,6 +111,37 @@ final class ArticleSliceHistory
         return true;
     }
 
+    /**
+     * Query for the slices of a snapshot, in the shape of the regular slices query of the article content (`ARTICLE_SLICES_QUERY`).
+     *
+     * The slices keep their original ids, so that `ArticleSlice::$id` refers to the slice and not to the history record.
+     *
+     * @internal
+     */
+    public static function getSlicesQuery(string $historyDate, int $articleId, int $languageId): string
+    {
+        self::checkTables();
+
+        $sql = Sql::factory();
+        $columns = [];
+        foreach (Table::get('rex_article_slice')->getColumns() as $column) {
+            if ('id' !== $column->name) {
+                $columns[] = $sql->escapeIdentifier($column->name);
+            }
+        }
+
+        $articleLimit = 0 !== $articleId ? ' AND article_id = ' . $articleId : '';
+
+        return 'SELECT rex_article_slice.*, rex_article.parent_id
+            FROM (
+                SELECT slice_id AS id, ' . implode(', ', $columns) . '
+                FROM ' . $sql->escapeIdentifier(self::getTable()) . '
+                WHERE history_date = ' . $sql->escape($historyDate) . ' AND language_id = ' . $languageId . ' AND revision = 0' . $articleLimit . '
+            ) AS rex_article_slice
+            LEFT JOIN rex_article ON rex_article_slice.article_id = rex_article.id
+            ORDER BY rex_article_slice.content_section_id, rex_article_slice.priority';
+    }
+
     public static function clearAllHistory(): void
     {
         $sql = Sql::factory();
