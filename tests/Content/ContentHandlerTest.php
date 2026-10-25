@@ -61,9 +61,6 @@ final class ContentHandlerTest extends TestCase
         self::assertSame(['text' => 'foo'], $first->data);
         self::assertSame(1, $first->priority);
 
-        // moveSlice() resolves equal priorities by updatedate, so the slices must not share the current second
-        Sql::factory()->setQuery('UPDATE rex_article_slice SET updatedate = updatedate - INTERVAL 1 MINUTE WHERE article_id = ?', [$this->articleId]);
-
         ContentHandler::moveSlice($first->id, 1, SliceMoveDirection::Down);
         ContentHandler::changeSliceStatus($first->id, 0);
         ContentHandler::deleteSlice($first->id);
@@ -94,9 +91,6 @@ final class ContentHandlerTest extends TestCase
 
         $first = ContentHandler::addSlice($this->articleId, 1, 1, 'test');
         ContentHandler::addSlice($this->articleId, 1, 1, 'test');
-
-        // moveSlice() resolves equal priorities by updatedate, so the slices must not share the current second
-        Sql::factory()->setQuery('UPDATE rex_article_slice SET updatedate = updatedate - INTERVAL 1 MINUTE WHERE article_id = ?', [$this->articleId]);
 
         ContentHandler::moveSlice($first->id, 1, SliceMoveDirection::Down);
         ContentHandler::deleteSlice($first->id);
@@ -135,6 +129,30 @@ final class ContentHandlerTest extends TestCase
         self::assertSame($targetId, $copying->article->id);
         self::assertSame($this->articleId, $copying->source->id);
         self::assertNull($copying->revision);
+    }
+
+    public function testSlicesAddedAndMovedWithinTheSameSecondKeepTheirOrder(): void
+    {
+        $a = ContentHandler::addSlice($this->articleId, 1, 1, 'test');
+        $b = ContentHandler::addSlice($this->articleId, 1, 1, 'test');
+        $c = ContentHandler::addSlice($this->articleId, 1, 1, 'test', priority: 2);
+        $d = ContentHandler::addSlice($this->articleId, 1, 1, 'test', priority: 1);
+        self::assertSame([$d->id, $a->id, $c->id, $b->id], $this->sliceIds());
+
+        ContentHandler::moveSlice($b->id, 1, SliceMoveDirection::Up);
+        self::assertSame([$d->id, $a->id, $b->id, $c->id], $this->sliceIds());
+
+        ContentHandler::moveSlice($d->id, 1, SliceMoveDirection::Down);
+        self::assertSame([$a->id, $d->id, $b->id, $c->id], $this->sliceIds());
+    }
+
+    /** @return list<int> */
+    private function sliceIds(): array
+    {
+        return array_map(
+            static fn (array $row): int => (int) $row['id'],
+            Sql::factory()->getArray('SELECT id FROM rex_article_slice WHERE article_id = ? ORDER BY priority', [$this->articleId]),
+        );
     }
 
     private static function createArticle(): int

@@ -81,7 +81,8 @@ final class ContentHandler
             'rex_article_slice',
             'priority',
             $where,
-            'priority, updatedate DESC',
+            // the new slice goes before an existing slice with the same priority
+            'priority, id = ' . $sliceId . ' DESC',
         );
 
         ArticleCache::delete($articleId, $languageId);
@@ -144,7 +145,8 @@ final class ContentHandler
             'rex_article_slice',
             'priority',
             'article_id=' . $articleId . ' AND language_id=' . $languageId . ' AND content_section_id=' . $ctype . ' AND revision=' . $sliceRevision,
-            'priority, updatedate ' . $updSort,
+            // the moved slice shares its new priority with its neighbour and is sorted before (up) or after (down) it
+            'priority, id = ' . $sliceId . ' ' . $updSort,
         );
 
         // check if the slice moved at all (first cannot be moved up, last not down)

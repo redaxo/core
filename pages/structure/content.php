@@ -242,7 +242,7 @@ if (
                                 'rex_article_slice',
                                 'priority',
                                 'article_id=' . $articleId . ' AND language_id=' . $languageId . ' AND content_section_id=' . $ctype . ' AND revision=' . $sliceRevision,
-                                'priority, updatedate DESC',
+                                'priority, id = ' . $sliceId . ' DESC',
                             );
 
                             $function = '';
