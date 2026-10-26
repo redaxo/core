@@ -255,8 +255,9 @@ if (Core::getUser()) {
     ]);
 }
 
-Asset::addCssFile(Url::coreAssets('css/styles.css'));
-Asset::addCssFile(Url::coreAssets('css/bootstrap-select.min.css'));
+// the Bootstrap based styles live in the lowest cascade layer until the components replace them
+Asset::addCssFile(Url::coreAssets('css/styles.css'), layer: 'legacy');
+Asset::addCssFile(Url::coreAssets('css/bootstrap-select.min.css'), layer: 'legacy');
 Asset::addJsFile(Url::coreAssets('js/bootstrap.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/bootstrap-select.min.js'), [Asset::JS_IMMUTABLE => true]);
 $bootstrapSelectLang = [
@@ -266,8 +267,8 @@ $bootstrapSelectLang = [
 Asset::addJsFile(Url::coreAssets('js/bootstrap-select-defaults-' . $bootstrapSelectLang . '.min.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/main.js'), [Asset::JS_IMMUTABLE => true]);
 
-Asset::addCssFile(Url::coreAssets('css/redaxo.css'));
-Asset::addCssFile(Url::coreAssets('css/overlay.css'));
+Asset::addCssFile(Url::coreAssets('css/redaxo.css'), layer: 'legacy');
+Asset::addCssFile(Url::coreAssets('css/backend.css'));
 Asset::addJsFile(Url::coreAssets('js/redaxo.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
 

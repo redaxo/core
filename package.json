@@ -18,8 +18,9 @@
         "sass": "1.83.4"
     },
     "scripts": {
-        "build": "npm run build:css && npm run build:js",
+        "build": "npm run build:css && npm run build:backend-css && npm run build:js",
         "build:css": "sass --quiet-deps --silence-deprecation=import,global-builtin,color-functions,mixed-decls,abs-percent --load-path=node_modules --style=compressed --no-source-map assets/scss/master.scss:assets/css/styles.css assets/scss/redaxo.scss:assets/css/redaxo.css",
+        "build:backend-css": "esbuild assets/css/src/backend.css --bundle --minify --target=chrome123,firefox120,safari17.5 --log-level=warning --outfile=assets/css/backend.css",
         "build:js": "node .tools/build/copy-vendor-assets.mjs"
     }
 }

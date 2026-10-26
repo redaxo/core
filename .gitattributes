@@ -15,6 +15,7 @@
 /addons/ export-ignore
 /composer-plugin/ export-ignore
 /project/ export-ignore
+/assets/css/src/ export-ignore
 /assets/scss/ export-ignore
 /tests/ export-ignore
 /docker-compose.yml export-ignore
