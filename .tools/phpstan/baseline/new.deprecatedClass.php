@@ -42,13 +42,13 @@ The fragment system will be removed before the 6.0 release',
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../pages/layout/bottom.php',
 ];
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 5,
+    'count' => 1,
     'path' => __DIR__ . '/../../../pages/layout/top.php',
 ];
 $ignoreErrors[] = [

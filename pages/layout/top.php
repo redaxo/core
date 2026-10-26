@@ -2,6 +2,8 @@
 
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
+use Redaxo\Core\Backend\Layout\MainNavigation;
+use Redaxo\Core\Backend\Layout\TopBar;
 use Redaxo\Core\Backend\MainPage;
 use Redaxo\Core\Backend\Navigation;
 use Redaxo\Core\Core;
@@ -15,6 +17,7 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\View\Asset;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 
 use function Redaxo\Core\View\escape;
 
@@ -30,7 +33,7 @@ if (Request::isPJAXRequest()) {
 
 if (!$curPage->hasLayout()) {
     if (Request::isPJAXRequest()) {
-        echo '<section class="rex-page-main-inner" id="rex-js-page-main" data-pjax-container="#rex-js-page-main">';
+        echo '<section class="rex-main__inner" id="rex-js-page-main" data-pjax-container="#rex-js-page-main">';
     }
 
     return;
@@ -73,6 +76,7 @@ foreach ($bodyAttr as $k => $v) {
 
 $hasNavigation = $curPage->hasNavigation();
 
+// list items of the meta navigation in the top bar
 $metaItems = [];
 if ($user && $hasNavigation) {
     $userName = $user->name ?: $user->login;
@@ -81,35 +85,23 @@ if ($user && $hasNavigation) {
         $impersonator = $impersonator->name ?: $impersonator->login;
     }
 
-    $item = [];
-    $item['title'] = '<span class="text-muted">' . I18n::msg('logged_in_as') . '</span> <a class="rex-username" href="' . Url::backendPage('profile') . '" title="' . I18n::msg('profile_title') . '"><i class="rex-icon rex-icon-user"></i> ' . escape($userName) . '</a>';
+    $item = '<li><span class="rex-topbar__muted">' . I18n::msg('logged_in_as') . '</span> <a class="rex-username" href="' . Url::backendPage('profile') . '" title="' . I18n::msg('profile_title') . '"><i class="rex-icon rex-icon-user"></i> ' . escape($userName) . '</a>';
     if ($impersonator) {
-        $item['title'] .= ' (<i class="rex-icon rex-icon-user"></i> ' . escape($impersonator) . ')';
+        $item .= ' (<i class="rex-icon rex-icon-user"></i> ' . escape($impersonator) . ')';
     }
-    $metaItems[] = $item;
-    unset($item);
+    $metaItems[] = $item . '</li>';
 
-    $item = [];
-    $item['attributes'] = 'class="rex-logout"';
     if ($impersonator) {
-        $item['title'] = '<i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('login_depersonate');
-        $item['href'] = Url::currentBackendPage(['_impersonate' => '_depersonate'] + UserImpersonate::getUrlParams());
-        $item['attributes'] .= ' data-pjax="false"';
+        $metaItems[] = '<li><a class="rex-logout" href="' . escape(Url::currentBackendPage(['_impersonate' => '_depersonate'] + UserImpersonate::getUrlParams())) . '" data-pjax="false"><i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('login_depersonate') . '</a></li>';
     } else {
-        $item['title'] = '<i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('logout');
-        $item['href'] = Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams());
+        $metaItems[] = '<li><a class="rex-logout" href="' . escape(Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams())) . '"><i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('logout') . '</a></li>';
     }
-    $metaItems[] = $item;
-    unset($item);
 } elseif ($hasNavigation) {
-    $item = [];
-    $item['title'] = I18n::msg('logged_out');
-    $metaItems[] = $item;
-    unset($item);
+    $metaItems[] = '<li>' . I18n::msg('logged_out') . '</li>';
 }
+$metaItems = Extension::dispatch(new ExtensionPoint('META_NAVI', $metaItems));
 
-// wird in bottom.php an Fragment uebergeben
-$navigation = '';
+$navigation = null;
 if ($user && $hasNavigation) {
     $n = Navigation::factory();
     foreach (Controller::getPages() as $p => $pageObj) {
@@ -131,15 +123,7 @@ if ($user && $hasNavigation) {
 
     $n = Extension::dispatch(new ExtensionPoint('PAGE_NAVIGATION', $n));
 
-    $blocks = $n->getNavigation();
-
-    $navigation = '';
-    foreach ($blocks as $block) {
-        $fragment = new Fragment();
-        $fragment->setVar('headline', $block['headline'], false);
-        $fragment->setVar('items', $block['navigation'], false);
-        $navigation .= $fragment->parse('core/navigations/main.php');
-    }
+    $navigation = new MainNavigation($n->getNavigation());
 }
 
 /* PJAX Footer Header ********************************************************** */
@@ -154,22 +138,17 @@ if (!Request::isPJAXContainer('#rex-js-page-container')) {
     $fragment->setVar('bodyAttr', $body, false);
     echo $fragment->parse('core/top.php');
 
-    $fragment = new Fragment();
-    $fragment->setVar('items', $metaItems, false);
-    $metaNavigation = $fragment->parse('core/navigations/meta.php');
-
-    $fragment = new Fragment();
-    // $fragment->setVar('pageHeader', Extension::dispatch(new ExtensionPoint('PAGE_HEADER', '')), false);
-    $fragment->setVar('meta_navigation', $metaNavigation, false);
-    echo $fragment->parse('core/header.php');
+    echo new TopBar(
+        array_map(Html::raw(...), $metaItems),
+        popup: $curPage->isPopup(),
+        login: 'login' === Controller::getCurrentPage(),
+    )->render();
 }
 
-echo '<div id="rex-js-page-container" class="rex-page-container">';
+echo '<div id="rex-js-page-container" class="rex-shell">';
 
-$fragment = new Fragment();
-$fragment->setVar('navigation', $navigation, false);
-echo $fragment->parse('core/navigation.php');
+echo $navigation?->render();
 
 $pjax = $curPage->allowsPjax() ? ' data-pjax-container="#rex-js-page-main"' : '';
 
-?><div class="rex-page-main"><section class="rex-page-main-inner" id="rex-js-page-main"<?= $pjax ?>>
+?><div class="rex-main"><section class="rex-main__inner" id="rex-js-page-main"<?= $pjax ?>>

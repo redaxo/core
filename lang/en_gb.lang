@@ -277,6 +277,7 @@ footer_doku = Read the docs
 footer_datetime = {0}
 footer_scripttime = {0} sec.
 footer_credits = Credits
+footer_top = Back to top
 
 created_by = Created by
 created_on = Created

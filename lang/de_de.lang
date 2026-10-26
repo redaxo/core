@@ -308,6 +308,7 @@ footer_doku = Dokumentation lesen
 footer_datetime = {0}
 footer_scripttime = {0} Sek.
 footer_credits = Credits
+footer_top = Nach oben
 
 created_by = Erstellt von
 created_on = Erstellt am

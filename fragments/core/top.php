@@ -104,4 +104,4 @@ use function Redaxo\Core\View\escape;
     <div class="rex-ajax-loader-backdrop"></div>
 </div>
 
-<div id="rex-start-of-page" class="rex-page">
+<div id="rex-start-of-page" class="rex-app">
