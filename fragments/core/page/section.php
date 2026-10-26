@@ -14,7 +14,18 @@ use Redaxo\Core\View\HtmlAttributes;
  * @psalm-scope-this Fragment
  */
 
-$raw = fn (string $name): Html => Html::raw((string) $this->getVar($name, ''));
+// the variables of the fragment hold markup the caller vouches for
+$raw = function (string ...$names): Html {
+    $html = '';
+    foreach ($names as $name) {
+        $html .= Type::string($this->getVar($name, ''));
+    }
+
+    /** @psalm-taint-escape html */
+    $html = $html;
+
+    return Html::raw($html);
+};
 $class = (string) $this->getVar('class', '');
 $variant = SectionVariant::tryFrom($class) ?? SectionVariant::Default;
 
@@ -22,7 +33,7 @@ echo new Section(
     title: $raw('title'),
     body: $raw('body'),
     content: $raw('content'),
-    footer: Html::raw(Type::string($this->getVar('footer', '')) . Type::string($this->getVar('buttons', ''))),
+    footer: $raw('footer', 'buttons'),
     options: $raw('options'),
     header: $raw('heading'),
     variant: $variant,

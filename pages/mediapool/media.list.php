@@ -23,6 +23,9 @@ use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
+use Redaxo\Core\View\Component\Button;
+use Redaxo\Core\View\Component\ButtonVariant;
+use Redaxo\Core\View\Component\Pagination;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
@@ -191,11 +194,7 @@ $pager = new Pager();
 
 $items = MediaHandler::getList($filter, [], $pager);
 
-$mediaFragment = new Fragment();
-$mediaFragment->setVar('pager', $pager);
-$mediaFragment->setVar('urlprovider', $context);
-
-$panel = $mediaFragment->parse('core/navigations/pagination.php');
+$panel = (string) new Pagination($pager, $context)->render();
 
 // deletefilelist und cat change
 $panel .= '
@@ -242,32 +241,16 @@ if ($hasCategoryPerm) {
         $field .= '<div class="rex-truncate-dropdown">' . $fragment->parse('core/form/input_group.php') . '</div>';
     }
 
-    $buttons = [];
-
-    $button = [];
-    $button['label'] = I18n::msg('pool_delete_selectedmedia');
-    $button['attributes']['class'][] = 'btn-delete';
-    $button['attributes']['type'][] = 'submit';
-    $button['attributes']['onclick'][] = 'if(confirm(\'' . I18n::msg('delete') . ' ?\')){var needle=new getObj(\'media_method\');needle.obj.value=\'delete_selectedmedia\';}else{return false;}';
-    $buttons[] = $button;
-
-    // $buttons = '<button class="btn btn-delete" type="submit" onclick="if(confirm(\'' . I18n::msg('delete') . ' ?\')){var needle=new getObj(\'media_method\');needle.obj.value=\'delete_selectedmedia\';}else{return false;}">' . I18n::msg('pool_delete_selectedmedia') . '</button>';
+    $buttons = [
+        new Button(I18n::msg('pool_delete_selectedmedia'), variant: ButtonVariant::Delete, type: 'submit', attributes: new HtmlAttributes([
+            'onclick' => 'if(confirm(\'' . I18n::msg('delete') . ' ?\')){var needle=new getObj(\'media_method\');needle.obj.value=\'delete_selectedmedia\';}else{return false;}',
+        ])),
+    ];
     if ('multiple' === $picker) {
-        $button = [];
-        $button['label'] = I18n::msg('pool_get_selectedmedia');
-        $button['attributes']['class'][] = 'btn-apply';
-        $button['attributes']['type'][] = 'button';
-        $button['attributes']['data-rex-pick-checked'][] = 'selectedmedia[]';
-        $buttons[] = $button;
+        $buttons[] = new Button(I18n::msg('pool_get_selectedmedia'), variant: ButtonVariant::Apply, attributes: new HtmlAttributes(['data-rex-pick-checked' => 'selectedmedia[]']));
     }
 
-    $actionButtons = '';
-    foreach ($buttons as $button) {
-        $fragment = new Fragment();
-        $fragment->setVar('buttons', [$button], false);
-        $actionButtons .= $fragment->parse('core/buttons/button.php');
-        $actionButtons .= ' ';
-    }
+    $actionButtons = implode(' ', array_map(static fn (Button $button): string => (string) $button->render(), $buttons));
 
     $field = '<div class="row"><div class="col-sm-7">' . $field . '</div><div class="col-sm-5 text-right">' . $actionButtons . '</div>';
 

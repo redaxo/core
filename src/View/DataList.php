@@ -17,6 +17,7 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
 use Redaxo\Core\Util\Str;
+use Redaxo\Core\View\Component\Pagination;
 
 use function count;
 use function define;
@@ -913,10 +914,7 @@ class DataList implements UrlProviderInterface
             return '';
         }
 
-        $fragment = new Fragment();
-        $fragment->setVar('urlprovider', $this);
-        $fragment->setVar('pager', $this->pager);
-        return $fragment->parse('core/navigations/pagination.php');
+        return (string) new Pagination($this->pager, $this)->render();
     }
 
     /** Gibt den Footer der Liste zurück. */

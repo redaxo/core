@@ -6,7 +6,7 @@ $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 2,
+    'count' => 1,
     'path' => __DIR__ . '/../../../boot/backend.php',
 ];
 $ignoreErrors[] = [
@@ -66,7 +66,7 @@ The fragment system will be removed before the 6.0 release',
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 6,
+    'count' => 4,
     'path' => __DIR__ . '/../../../pages/mediapool/media.list.php',
 ];
 $ignoreErrors[] = [
@@ -132,7 +132,7 @@ The fragment system will be removed before the 6.0 release',
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 4,
+    'count' => 2,
     'path' => __DIR__ . '/../../../pages/structure/index.php',
 ];
 $ignoreErrors[] = [
@@ -234,13 +234,7 @@ The fragment system will be removed before the 6.0 release',
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../src/View/DataList.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
-The fragment system will be removed before the 6.0 release',
-    'count' => 6,
+    'count' => 3,
     'path' => __DIR__ . '/../../../src/View/View.php',
 ];
 

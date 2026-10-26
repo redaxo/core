@@ -31,6 +31,7 @@ use Redaxo\Core\MetaInfo\MetaForm;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
+use Redaxo\Core\View\Component\Pagination;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
@@ -113,10 +114,7 @@ if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->c
 
 $catPager = new Pager(cursorName: 'catstart');
 $catPager->setRowCount($KAT->getIntValue('rowCount'));
-$catFragment = new Fragment();
-$catFragment->setVar('urlprovider', $structureContext->getContext());
-$catFragment->setVar('pager', $catPager);
-echo $catFragment->parse('core/navigations/pagination.php');
+echo new Pagination($catPager, $structureContext->getContext())->render();
 
 // --------------------- GET THE DATA
 
@@ -395,10 +393,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
     $artPager = new Pager(cursorName: 'artstart');
     $artPager->setRowCount($sql->getIntValue('artCount'));
-    $artFragment = new Fragment();
-    $artFragment->setVar('urlprovider', $structureContext->getContext());
-    $artFragment->setVar('pager', $artPager);
-    echo $artFragment->parse('core/navigations/pagination.php');
+    echo new Pagination($artPager, $structureContext->getContext())->render();
 
     // ---------- READ DATA
     $sql->setQuery('

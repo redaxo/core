@@ -35,7 +35,9 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Asset;
+use Redaxo\Core\View\Component\Dropdown;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
 
@@ -504,16 +506,13 @@ if (Core::getConfig('article_work_version', false)) {
 
         $toolbar = '';
 
-        $fragment = new Fragment();
-        $fragment->setVar('button_prefix', '<b>' . $currentRevision . '</b>', false);
-        $fragment->setVar('items', $items, false);
-        $fragment->setVar('toolbar', true);
-
-        if (!$user->hasPerm('version[live_version]')) {
-            $fragment->setVar('disabled', true);
-        }
-
-        $toolbar .= '<li class="dropdown">' . $fragment->parse('core/dropdowns/dropdown.php') . '</li>';
+        $toolbar .= '<li class="dropdown">' . (string) new Dropdown(
+            $items,
+            prefix: Html::raw('<b>' . escape($currentRevision) . '</b>'),
+            disabled: !$user->hasPerm('version[live_version]'),
+            link: true,
+            wrapped: false,
+        )->render() . '</li>';
 
         if (!$user->hasPerm('version[live_version]')) {
             if ($revision > 0) {

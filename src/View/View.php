@@ -24,10 +24,14 @@ use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\View\Component\Breadcrumb;
+use Redaxo\Core\View\Component\Button;
+use Redaxo\Core\View\Component\ButtonGroup;
+use Redaxo\Core\View\Component\Dropdown;
 use Redaxo\Core\View\Component\PageHeader;
 use Redaxo\Core\View\Component\Section;
 use Redaxo\Core\View\Component\SectionVariant;
 use Redaxo\Core\View\Component\Tabs;
+use Redaxo\Core\View\Component\Toolbar;
 
 use function count;
 use function ini_get;
@@ -41,13 +45,7 @@ final class View
     /** Returns a toolbar. */
     public static function toolbar(string $content, ?string $brand = null, ?string $cssClass = null, bool $inverse = false): string
     {
-        $fragment = new Fragment();
-        $fragment->setVar('inverse', $inverse);
-        $fragment->setVar('cssClass', $cssClass);
-        $fragment->setVar('brand', $brand);
-        $fragment->setVar('content', $content, false);
-
-        return $fragment->parse('core/toolbar.php');
+        return (string) new Toolbar(Html::raw($content), Html::raw($brand ?? ''), $cssClass ?? '', $inverse)->render();
     }
 
     /** Returns a content block. */
@@ -140,25 +138,23 @@ final class View
             return self::languageSwitchAsDropdown($context);
         }
 
-        $items = [];
+        $buttons = [];
         foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
-                $icon = $language->isOnline() ? '<i class="rex-icon rex-icon-online"></i> ' : '<i class="rex-icon rex-icon-offline"></i> ';
-                $item = [];
-                $item['label'] = $icon . I18n::translate($language->name);
-                $item['url'] = $context->getUrl(['language' => $id]);
-                $item['attributes']['class'][] = 'btn-language';
-                $item['attributes']['title'] = I18n::translate($language->name);
-                if ($id === $context->getParam('language')) {
-                    $item['attributes']['class'][] = 'active';
-                }
-                $items[] = $item;
+                $buttons[] = new Button(
+                    I18n::translate($language->name),
+                    $context->getUrl(['language' => $id]),
+                    $language->isOnline() ? 'online' : 'offline',
+                    variant: null,
+                    attributes: new HtmlAttributes([
+                        'class' => ['btn-language', 'active' => $id === $context->getParam('language')],
+                        'title' => I18n::translate($language->name),
+                    ]),
+                );
             }
         }
 
-        $fragment = new Fragment();
-        $fragment->setVar('buttons', $items, false);
-        return '<div class="rex-nav-btn rex-nav-language"><div class="btn-toolbar">' . $fragment->parse('core/buttons/button_group.php') . '</div></div>';
+        return '<div class="rex-nav-btn rex-nav-language"><div class="btn-toolbar">' . (string) new ButtonGroup($buttons)->render() . '</div></div>';
     }
 
     /** Returns a language switch. */
@@ -185,18 +181,14 @@ final class View
             }
         }
 
-        $fragment = new Fragment();
-        $fragment->setVar('class', 'rex-language');
-        $fragment->setVar('button_prefix', I18n::msg('language'));
-        $fragment->setVar('button_label', $buttonLabel);
-        $fragment->setVar('header', I18n::msg('language_select'));
-        $fragment->setVar('items', $items, false);
-
-        if ($user->admin) {
-            $fragment->setVar('footer', '<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag"></i> ' . I18n::msg('languages_edit') . '</a>', false);
-        }
-
-        return $fragment->parse('core/dropdowns/dropdown.php');
+        return (string) new Dropdown(
+            $items,
+            label: $buttonLabel,
+            prefix: I18n::msg('language'),
+            header: I18n::msg('language_select'),
+            footer: $user->admin ? Html::raw('<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag"></i> ' . I18n::msg('languages_edit') . '</a>') : '',
+            attributes: new HtmlAttributes(['class' => ['rex-language']]),
+        )->render();
     }
 
     /** @internal */

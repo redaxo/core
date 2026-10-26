@@ -16,8 +16,28 @@ use Redaxo\Core\View\Html;
 $items = $this->getVar('items', []);
 $id = Type::string($this->getVar('id', ''));
 
+// the variables of the fragment hold markup the caller vouches for
+$raw = function (string ...$names): Html {
+    $html = '';
+    foreach ($names as $name) {
+        $html .= Type::string($this->getVar($name, ''));
+    }
+
+    /** @psalm-taint-escape html */
+    $html = $html;
+
+    return Html::raw($html);
+};
+
+$crumbs = [];
+foreach ($items as $item) {
+    /** @psalm-taint-escape html */
+    $title = $item['title'] ?? '';
+    $crumbs[] = ['title' => Html::raw($title), 'href' => $item['href'] ?? ''];
+}
+
 echo new Breadcrumb(
-    array_map(static fn (array $item): array => ['title' => Html::raw($item['title'] ?? ''), 'href' => $item['href'] ?? ''], $items),
-    Html::raw((string) $this->getVar('title', '')),
+    $crumbs,
+    $raw('title'),
     '' === $id ? null : $id,
 )->render();
