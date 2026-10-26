@@ -328,7 +328,11 @@ if (
     $navigation = current($blocks);
     $contentNaviRight = $navigation['navigation'] ?? [];
 
-    $contentNaviRight[] = ['title' => '<a href="' . Url::article($articleId, $languageId) . '" onclick="window.open(this.href); return false;">' . I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link"></i></a>'];
+    $contentNaviRight[] = [
+        'title' => I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link"></i>',
+        'href' => Url::article($articleId, $languageId),
+        'linkAttr' => ['target' => '_blank', 'rel' => 'noopener'],
+    ];
 
     $fragment = new Fragment();
     $fragment->setVar('id', 'rex-js-structure-content-nav', false);

@@ -19,27 +19,27 @@ $content[] = '
     <h3>Jan Kristinus <small>jan.kristinus@redaxo.org</small></h3>
     <p>
         ' . I18n::msg('credits_inventor') . ' &amp; ' . I18n::msg('credits_developer') . '<br />
-        Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" onclick="window.open(this.href); return false;">www.yakamara.de</a>
+        Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" target="_blank" rel="noopener">www.yakamara.de</a>
     </p>
 
     <h3>Markus Staab <small>markus.staab@redaxo.org</small></h3>
     <p>' . I18n::msg('credits_developer') . '<br />
-        REDAXO, <a href="https://www.redaxo.org" onclick="window.open(this.href); return false;">www.redaxo.org</a>
+        REDAXO, <a href="https://www.redaxo.org" target="_blank" rel="noopener">www.redaxo.org</a>
     </p>
 
     <h3>Gregor Harlan <small>gregor.harlan@redaxo.org</small></h3>
     <p>' . I18n::msg('credits_developer') . '<br />
-        Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" onclick="window.open(this.href); return false;">www.yakamara.de</a>
+        Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" target="_blank" rel="noopener">www.yakamara.de</a>
     </p>';
 
 $content[] = '
     <h3>Ralph Zumkeller <small>info@redaxo.org</small></h3>
     <p>' . I18n::msg('credits_designer') . '<br />
-        Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" onclick="window.open(this.href); return false;">www.yakamara.de</a>
+        Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" target="_blank" rel="noopener">www.yakamara.de</a>
     </p>
 
     <h3>Thomas Blum <small>thomas.blum@redaxo.org</small></h3>
-    <p>Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" onclick="window.open(this.href); return false;">www.yakamara.de</a></p>';
+    <p>Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" target="_blank" rel="noopener">www.yakamara.de</a></p>';
 
 $fragment = new Fragment();
 $fragment->setVar('content', $content, false);
@@ -88,7 +88,7 @@ foreach (Addon::getAll() as $package) {
                 <td data-title="' . I18n::msg('credits_version') . '">' . $packageVersion . '</td>
                 <td class="rex-table-slim" data-title="' . I18n::msg('credits_supportpage') . '">';
     if ($supportpage = $package->getSupportPage()) {
-        $content .= '<a href="' . escape($supportpage) . '" onclick="window.open(this.href); return false;"><i class="rex-icon rex-icon-external-link"></i> ' . I18n::msg('credits_supportpage') . '</a>';
+        $content .= '<a href="' . escape($supportpage) . '" target="_blank" rel="noopener"><i class="rex-icon rex-icon-external-link"></i> ' . I18n::msg('credits_supportpage') . '</a>';
     }
     $content .= '
                 </td>

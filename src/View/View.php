@@ -23,6 +23,11 @@ use Redaxo\Core\MetaInfo\MetaForm;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Breadcrumb;
+use Redaxo\Core\View\Component\PageHeader;
+use Redaxo\Core\View\Component\Section;
+use Redaxo\Core\View\Component\SectionVariant;
+use Redaxo\Core\View\Component\Tabs;
 
 use function count;
 use function ini_get;
@@ -48,10 +53,7 @@ final class View
     /** Returns a content block. */
     public static function content(string $content, string $title = ''): string
     {
-        $fragment = new Fragment();
-        $fragment->setVar('title', $title, false);
-        $fragment->setVar('body', $content, false);
-        return $fragment->parse('core/page/section.php');
+        return (string) new Section(Html::raw($title), Html::raw($content))->render();
     }
 
     /**
@@ -86,9 +88,7 @@ final class View
             }
 
             if (!empty($navigation)) {
-                $fragment = new Fragment();
-                $fragment->setVar('left', $navigation, false);
-                $subtitle = $fragment->parse('core/navigations/content.php');
+                $subtitle = (string) new Tabs($navigation)->render();
             } else {
                 $subtitle = '';
             }
@@ -98,12 +98,7 @@ final class View
 
         $title = Extension::dispatch(new ExtensionPoint('PAGE_TITLE', $head));
 
-        $fragment = new Fragment();
-        $fragment->setVar('heading', $title, false);
-        $fragment->setVar('subtitle', $subtitle, false);
-        $return = $fragment->parse('core/page/header.php');
-
-        return $return . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
+        return (string) new PageHeader(Html::raw($title), navigation: Html::raw($subtitle))->render() . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
     }
 
     /** Returns a language switch. */
@@ -130,10 +125,8 @@ final class View
                 $items[] = $item;
             }
         }
-        $fragment = new Fragment();
-        $fragment->setVar('left', $items, false);
 
-        return $fragment->parse('core/navigations/content.php');
+        return (string) new Tabs($items)->render();
     }
 
     /** Returns a language switch. */
@@ -233,11 +226,11 @@ final class View
 
         $title = '<a class="rex-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
 
-        $fragment = new Fragment();
-        $fragment->setVar('id', 'rex-js-structure-breadcrumb', false);
-        $fragment->setVar('title', $title, false);
-        $fragment->setVar('items', $navigation, false);
-        return $fragment->parse('core/navigations/breadcrumb.php');
+        return (string) new Breadcrumb(
+            array_map(static fn (array $item): array => ['title' => Html::raw($item['title']), 'href' => $item['href'] ?? ''], $navigation),
+            Html::raw($title),
+            'rex-js-structure-breadcrumb',
+        )->render();
     }
 
     /**
@@ -325,12 +318,7 @@ final class View
         $fragment->setVar('elements', $formElements, false);
         $buttons = $fragment->parse('core/form/submit.php');
 
-        $fragment = new Fragment();
-        $fragment->setVar('class', 'edit', false);
-        $fragment->setVar('title', $formTitle, false);
-        $fragment->setVar('body', $panel, false);
-        $fragment->setVar('buttons', $buttons, false);
-        $content = $fragment->parse('core/page/section.php');
+        $content = (string) new Section(Html::raw($formTitle), Html::raw($panel), footer: Html::raw($buttons), variant: SectionVariant::Edit)->render();
 
         $s .= ' <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data" data-pjax="false">
                 ' . CsrfToken::factory('mediapool')->getHiddenField() . '

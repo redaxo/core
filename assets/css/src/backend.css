@@ -14,6 +14,8 @@
 
 @import "layout/shell.css";
 
+@import "components/page-header.css";
+@import "components/section.css";
 @import "components/overlay.css";
 
 @import "utilities.css";

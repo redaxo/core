@@ -1,0 +1,120 @@
+/* Section: titled box of content (Redaxo\Core\View\Component\Section) */
+
+@layer components {
+    .rex-section {
+        --rex-section-color: var(--rex-border);
+        --rex-section-header-text: var(--rex-text);
+        --rex-section-body-bg: transparent;
+        --rex-section-footer-bg: light-dark(var(--rex-color-a-light), var(--rex-color-grey-1));
+
+        margin: 0 0 22px;
+        background: var(--rex-surface);
+        border: 1px solid var(--rex-section-color);
+        border-radius: 0;
+        box-shadow: 0 1px 1px rgb(0 0 0 / 0.05);
+        color: var(--rex-text);
+
+        &.rex-section--edit,
+        &.rex-section--add {
+            --rex-section-color: light-dark(var(--rex-color-d), #1a3332);
+            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+            --rex-section-body-bg: light-dark(var(--rex-color-d-lighter), #1f3d3c);
+            --rex-section-footer-bg: light-dark(var(--rex-color-a-light), #1a3332);
+        }
+
+        &.rex-section--info {
+            --rex-section-color: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
+            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+        }
+
+        &.rex-section--success {
+            --rex-section-color: light-dark(var(--rex-color-d), #0d6a38);
+            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+        }
+
+        &.rex-section--warning {
+            --rex-section-color: light-dark(var(--rex-color-warning), #78641e);
+            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+        }
+
+        &.rex-section--danger {
+            --rex-section-color: light-dark(var(--rex-color-danger), #801919);
+            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+        }
+    }
+
+    .rex-section__header {
+        display: flow-root;
+        padding: 10px 15px;
+        background: var(--rex-section-color);
+        border-bottom: 1px solid var(--rex-section-color);
+        border-radius: 0;
+        color: var(--rex-section-header-text);
+        line-height: 1.25;
+
+        &[data-toggle] {
+            cursor: pointer;
+
+            &:hover {
+                background: color-mix(in srgb, var(--rex-section-color), light-dark(#000, #fff) 5%);
+            }
+        }
+    }
+
+    .rex-section__title {
+        margin: 0;
+        color: inherit;
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 1.25;
+    }
+
+    .rex-section__options {
+        margin-block: -2px;
+
+        @media (min-width: 992px) {
+            float: right;
+        }
+    }
+
+    .rex-section__body {
+        display: flow-root;
+        padding: 15px;
+        background: var(--rex-section-body-bg);
+    }
+
+    .rex-section__footer {
+        padding: 10px 15px;
+        background: var(--rex-section-footer-bg);
+        border-top: 1px solid var(--rex-section-footer-bg);
+        border-radius: 0;
+    }
+
+    /* login box */
+    #rex-page-login .rex-section {
+        position: relative;
+        z-index: 10;
+        background: rgb(50 64 80 / 0.97);
+        border: 0;
+        border-radius: 5px;
+        color: var(--rex-color-a-light);
+
+        .rex-section__header,
+        .rex-section__footer {
+            background: transparent;
+            border: 0;
+        }
+
+        .rex-section__header {
+            color: var(--rex-color-a-light);
+        }
+
+        .rex-section__body {
+            padding: 25px 25px 5px;
+        }
+
+        .rex-section__footer {
+            padding: 5px 25px 25px;
+        }
+    }
+}
