@@ -116,7 +116,7 @@ if (window.PublicKeyCredential &&
     PublicKeyCredential.isConditionalMediationAvailable) {
 
     let ready = false;
-    $(document).on('rex:ready', function () {
+    document.addEventListener('rex:ready', function () {
         ready = true;
     });
 
@@ -150,8 +150,8 @@ if (window.PublicKeyCredential &&
             init(document.body);
         }
 
-        $(document).on('rex:ready', function (event, container) {
-            init(container.get(0));
+        document.addEventListener('rex:ready', function (event) {
+            init(event.target);
         });
     });
 }

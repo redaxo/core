@@ -313,7 +313,7 @@ final class View
 
         $content = (string) new Section(Html::raw($formTitle), Html::raw($panel), footer: Html::raw($buttons), variant: SectionVariant::Edit)->render();
 
-        $s .= ' <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data" data-pjax="false">
+        $s .= ' <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data">
                 ' . CsrfToken::factory('mediapool')->getHiddenField() . '
                 <fieldset>
                     <input type="hidden" name="media_method" value="add_file" />

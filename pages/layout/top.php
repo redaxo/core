@@ -10,7 +10,6 @@ use Redaxo\Core\Core;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\Url;
-use Redaxo\Core\Http\Request;
 use Redaxo\Core\Security\ApiFunction\UserImpersonate;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
@@ -26,16 +25,7 @@ use function Redaxo\Core\View\escape;
 $curPage = Controller::requireCurrentPageObject();
 $user = Core::getUser();
 
-if (Request::isPJAXRequest()) {
-    // add title to the page, so pjax can update it. see gh#136
-    echo '<title>' . escape(Controller::getPageTitle()) . '</title>';
-}
-
 if (!$curPage->hasLayout()) {
-    if (Request::isPJAXRequest()) {
-        echo '<section class="rex-main__inner" id="rex-js-page-main" data-pjax-container="#rex-js-page-main">';
-    }
-
     return;
 }
 
@@ -92,7 +82,7 @@ if ($user && $hasNavigation) {
     $metaItems[] = $item . '</li>';
 
     if ($impersonator) {
-        $metaItems[] = '<li><a class="rex-logout" href="' . escape(Url::currentBackendPage(['_impersonate' => '_depersonate'] + UserImpersonate::getUrlParams())) . '" data-pjax="false"><i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('login_depersonate') . '</a></li>';
+        $metaItems[] = '<li><a class="rex-logout" href="' . escape(Url::currentBackendPage(['_impersonate' => '_depersonate'] + UserImpersonate::getUrlParams())) . '"><i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('login_depersonate') . '</a></li>';
     } else {
         $metaItems[] = '<li><a class="rex-logout" href="' . escape(Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams())) . '"><i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('logout') . '</a></li>';
     }
@@ -126,29 +116,24 @@ if ($user && $hasNavigation) {
     $navigation = new MainNavigation($n->getNavigation());
 }
 
-/* PJAX Footer Header ********************************************************** */
-if (!Request::isPJAXContainer('#rex-js-page-container')) {
-    $fragment = new Fragment();
-    $fragment->setVar('pageTitle', Controller::getPageTitle());
-    $fragment->setVar('cssFiles', Asset::getCssFiles());
-    $fragment->setVar('jsFiles', Asset::getJsFilesWithOptions());
-    $fragment->setVar('jsProperties', json_encode(Asset::getJsProperties()), false);
-    $fragment->setVar('favicon', Asset::getFavicon());
-    $fragment->setVar('pageHeader', Extension::dispatch(new ExtensionPoint('PAGE_HEADER', '')), false);
-    $fragment->setVar('bodyAttr', $body, false);
-    echo $fragment->parse('core/top.php');
+$fragment = new Fragment();
+$fragment->setVar('pageTitle', Controller::getPageTitle());
+$fragment->setVar('cssFiles', Asset::getCssFiles());
+$fragment->setVar('jsFiles', Asset::getJsFilesWithOptions());
+$fragment->setVar('jsProperties', json_encode(Asset::getJsProperties()), false);
+$fragment->setVar('favicon', Asset::getFavicon());
+$fragment->setVar('pageHeader', Extension::dispatch(new ExtensionPoint('PAGE_HEADER', '')), false);
+$fragment->setVar('bodyAttr', $body, false);
+echo $fragment->parse('core/top.php');
 
-    echo new TopBar(
-        array_map(Html::raw(...), $metaItems),
-        popup: $curPage->isPopup(),
-        login: 'login' === Controller::getCurrentPage(),
-    )->render();
-}
+echo new TopBar(
+    array_map(Html::raw(...), $metaItems),
+    popup: $curPage->isPopup(),
+    login: 'login' === Controller::getCurrentPage(),
+)->render();
 
 echo '<div id="rex-js-page-container" class="rex-shell">';
 
 echo $navigation?->render();
 
-$pjax = $curPage->allowsPjax() ? ' data-pjax-container="#rex-js-page-main"' : '';
-
-?><div class="rex-main"><section class="rex-main__inner" id="rex-js-page-main"<?= $pjax ?>>
+?><div class="rex-main"><section class="rex-main__inner" id="rex-js-page-main">

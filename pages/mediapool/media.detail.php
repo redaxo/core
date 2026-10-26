@@ -295,7 +295,7 @@ if ($TPERM) {
     }
 
     $body = '
-        <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data" data-pjax="false">
+        <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data">
             ' . $csrf->getHiddenField() . '
             <input type="hidden" name="file_id" value="' . $fileId . '" />
             ' . $argFields . '

@@ -469,12 +469,7 @@ smallScreen.addEventListener("change", () => {
   toggleSidebar(false);
   topbar.reset();
 });
-document.addEventListener("rex:ready", (event) => {
-  if (!event.target.closest?.(".rex-overlay")) {
-    toggleSidebar(false);
-    topbar.update();
-  }
-});
+topbar.update();
 
 // assets/js/src/widgets.js
 function setValue(input, value) {

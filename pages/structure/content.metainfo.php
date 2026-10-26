@@ -144,7 +144,7 @@ if (1 == $article->getRows()) {
     $form .= $meta->render(vertical: true);
 
     $content[] = '
-              <div id="rex-page-sidebar-metainfo" data-pjax-container="#rex-page-sidebar-metainfo">
+              <div id="rex-page-sidebar-metainfo">
                 <form class="metainfo-sidebar" action="' . $context->getUrl() . '" method="post" enctype="multipart/form-data">
                     ' . $message . '
                     <fieldset>

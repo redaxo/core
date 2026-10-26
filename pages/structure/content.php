@@ -371,7 +371,7 @@ if (
 
     $contentMain .= Extension::dispatch(new ContentPageAfterSlices($OOArt, Controller::getCurrentPage(), $ctype, $function, $sliceId, $sliceRevision));
 
-    $contentMain = '<section id="rex-js-page-main-content" data-pjax-container="#rex-js-page-main-content">' . $contentMain . '</section>';
+    $contentMain = '<section id="rex-js-page-main-content">' . $contentMain . '</section>';
 
     // own scope, the sidebar must not overwrite the variables of this page
     $metaSidebar = Type::string((static fn (int $articleId, int $languageId, int $ctype): mixed => include Path::core('pages/structure/content.metainfo.php'))($articleId, $languageId, $ctype));

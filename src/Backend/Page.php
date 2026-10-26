@@ -36,7 +36,6 @@ class Page
     private bool $hidden = false;
     private bool $hasLayout = true;
     private bool $hasNavigation = true;
-    private ?bool $pjax = null;
     private ?string $icon = null;
     /** @var list<string> */
     private array $requiredPermissions = [];
@@ -437,30 +436,6 @@ class Page
     public function hasNavigation(): bool
     {
         return $this->hasNavigation && (!$this->parent || $this->parent->hasNavigation());
-    }
-
-    /**
-     * Sets whether the page allows pjax.
-     *
-     * @return $this
-     */
-    public function setPjax(bool $pjax = true): static
-    {
-        $this->pjax = $pjax;
-
-        return $this;
-    }
-
-    /** Returns whether the page allows pjax. */
-    public function allowsPjax(): bool
-    {
-        if (null !== $this->pjax) {
-            return $this->pjax;
-        }
-        if ($this->parent) {
-            return $this->parent->allowsPjax();
-        }
-        return false;
     }
 
     /**

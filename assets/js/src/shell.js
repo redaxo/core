@@ -67,10 +67,4 @@ smallScreen.addEventListener('change', () => {
     topbar.reset();
 });
 
-// new page content (pjax) closes the navigation
-document.addEventListener('rex:ready', event => {
-    if (!event.target.closest?.('.rex-overlay')) {
-        toggleSidebar(false);
-        topbar.update();
-    }
-});
+topbar.update();

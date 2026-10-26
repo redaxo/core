@@ -99,9 +99,4 @@ use function Redaxo\Core\View\escape;
 </head>
 <body<?= $this->bodyAttr ?>>
 
-<div class="rex-ajax-loader" id="rex-js-ajax-loader">
-    <div class="rex-ajax-loader-element"></div>
-    <div class="rex-ajax-loader-backdrop"></div>
-</div>
-
 <div id="rex-start-of-page" class="rex-app">

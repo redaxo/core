@@ -9,7 +9,6 @@
 //   - assets/jquery-ui.custom.min.js  (custom jQuery UI build, core + interaction modules)
 //   - assets/clipboard-copy-element.js (@github/clipboard-copy-element ships ESM only)
 
-import { transformSync } from 'esbuild';
 import { cpSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -67,12 +66,3 @@ for (const [from, to] of dirs) {
         }
     }
 }
-
-// jquery-pjax ships unminified only, so minify it ourselves to match the other vendor .min
-// files (keeping the license banner).
-const pjax = transformSync(readFileSync(join(modules, 'jquery-pjax/jquery.pjax.js'), 'utf8'), {
-    minify: true,
-    legalComments: 'inline',
-});
-writeFileSync(join(assets, 'jquery-pjax.min.js'), pjax.code);
-console.log('minified jquery-pjax.min.js');

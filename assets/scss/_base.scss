@@ -390,25 +390,6 @@ tr.rex-state-error:hover > td {
 .rex-visible {
     display: block !important;
 }
-.rex-ajax-loader {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 2000;
-    background: rgba(#000, .5);
-
-    .rex-ajax-loader-element1,
-    .rex-ajax-loader-element2,
-    .rex-ajax-loader-element3,
-    .rex-ajax-loader-element4,
-    .rex-ajax-loader-element5 {
-        display: none;
-    }
-}
-
 .rex-nav-main-list {
     > li {
         > a {

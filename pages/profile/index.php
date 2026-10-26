@@ -202,7 +202,7 @@ if (!$passwordChangeRequired) {
                 </footer>
             </div>
         </section>
-    <?php }, ['data-pjax' => 'false']);
+    <?php });
 }
 
 $passkeyVerify = $login->getPasskey() ? $webauthn->getGetArgs($login->getPasskey()) : '';

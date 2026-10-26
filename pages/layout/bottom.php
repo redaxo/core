@@ -2,27 +2,18 @@
 
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Backend\Layout\Footer;
-use Redaxo\Core\Http\Request;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\View\Fragment;
 
 $curPage = Controller::requireCurrentPageObject();
 
 if (!$curPage->hasLayout()) {
-    if (Request::isPJAXRequest()) {
-        echo '</section>';
-    }
-
     return;
 }
 
 ?>
 
 </section></div><?php
-
-if (Request::isPJAXContainer('#rex-js-page-container')) {
-    return;
-}
 
 echo '</div>';
 
