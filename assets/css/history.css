@@ -203,3 +203,20 @@ body.rex-theme-dark .history-layer-background {
         background-color: rgba(32, 43, 53, .95);
     }
 }
+
+/* responsive visibility, as the layer markup still uses the Bootstrap 3 classes */
+@media (max-width: 767px) {
+    .history-layer .hidden-xs {
+        display: none !important;
+    }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+    .history-layer .hidden-sm {
+        display: none !important;
+    }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+    .history-layer .hidden-md {
+        display: none !important;
+    }
+}
