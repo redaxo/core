@@ -13,7 +13,11 @@ import {collapse} from './toggles.js';
 import './shell.js';
 import './widgets.js';
 import './select.js';
+import './forms.js';
 import './content-sidebar.js';
 import './session-timeout.js';
 
 Object.assign(window.rex, {ready, overlay, pick, pickers, dialog, confirm, collapse});
+
+// after all deferred scripts, so their `rex:ready` listeners see the initial page too
+document.addEventListener('DOMContentLoaded', () => ready(document.body));

@@ -18,14 +18,15 @@ echo '</div>';
 
 echo '
     <script nonce="' . Response::getNonce() . '">
-        $("#rex-system-report-markdown")
-            .on("cut paste", function (event) {
-                event.preventDefault();
-            })
-            .on("keydown", function (event) {
+        {
+            const report = document.getElementById("rex-system-report-markdown");
+            report.addEventListener("cut", event => event.preventDefault());
+            report.addEventListener("paste", event => event.preventDefault());
+            report.addEventListener("keydown", event => {
                 if (!event.metaKey) {
                     event.preventDefault();
                 }
             });
+        }
     </script>
 ';

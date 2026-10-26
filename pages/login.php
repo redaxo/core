@@ -26,27 +26,28 @@ $content .= $fragment->parse('core/login_branding.php');
 $js = '';
 if ('' != $loginMessage) {
     $content .= '<div class="rex-js-login-message">' . Message::error($loginMessage) . '</div>';
+    // the login stays disabled until the countdown of a blocked login has run out
     $js = '
-        var time_el = $(".rex-js-login-message strong[data-time]");
-        if(time_el.length == 1) {
-            function disableLogin() {
-                var time = time_el.attr("data-time");
-                time_el.attr("data-time", time - 1);
-                var hours = Math.floor(time / 3600);
-                var mins  = Math.floor((time - (hours * 3600)) / 60);
-                var secs  = time % 60;
-                var formatted = (hours ? hours + "h " : "") + (hours || mins ? mins + "min " : "") + secs + "s";
-                time_el.html(formatted);
-                if(time > 0) {
-                    setTimeout(disableLogin, 1000);
+        const output = document.querySelector(".rex-js-login-message strong[data-time]");
+        if (output) {
+            const fields = document.querySelectorAll("#rex-form-login :is(input, select, textarea, button):not([type=hidden])");
+            const countdown = () => {
+                const time = Number(output.dataset.time);
+                output.dataset.time = String(time - 1);
+                const hours = Math.floor(time / 3600);
+                const mins = Math.floor((time - hours * 3600) / 60);
+                const secs = time % 60;
+                output.textContent = (hours ? hours + "h " : "") + (hours || mins ? mins + "min " : "") + secs + "s";
+                if (time > 0) {
+                    setTimeout(countdown, 1000);
                 } else {
-                    $("div.rex-message div").html("' . I18n::msg('login_welcome') . '");
-                    $("#rex-form-login").find(":input:not(:hidden)").prop("disabled", "");
-                    $("#rex-id-login-user").focus();
+                    document.querySelector("div.rex-message div").innerHTML = "' . escape(I18n::msg('login_welcome'), 'js') . '";
+                    fields.forEach(field => field.disabled = false);
+                    document.getElementById("rex-id-login-user").focus();
                 }
             };
-            $("#rex-form-login").find(":input:not(:hidden)").prop("disabled", "disabled");
-            setTimeout(disableLogin, 1000);
+            fields.forEach(field => field.disabled = true);
+            setTimeout(countdown, 1000);
         }';
 }
 
@@ -128,12 +129,8 @@ $content = '
     ' . CsrfToken::factory('backend_login')->getHiddenField() . '
     <input type="hidden" name="rex_user_passkey" data-auth-passkey="' . escape($webauthn->getGetArgs()) . '"/>
 </form>
-<script type="text/javascript" nonce="' . Response::getNonce() . '">
-     <!--
-    jQuery(function($) {
-        ' . $js . '
-    });
-     //-->
+<script nonce="' . Response::getNonce() . '">
+    {' . $js . '}
 </script>';
 
 $fragment = new Fragment();

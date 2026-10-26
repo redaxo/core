@@ -1,27 +1,21 @@
-(function ($) {
+(function () {
 
     var DEBUGMODE = false;
 
-    $(document).on("rex:ready", function (event) {
-        var container = $(event.target);
+    document.addEventListener('rex:ready', function () {
+        DEBUGMODE = null !== document.querySelector('.rex-is-debugmode');
+    });
 
-        // set debug mode
-        if ($('.rex-is-debugmode').length) {
-            DEBUGMODE = true;
+    // the buttons of the layer have their own handlers, see bindEventHandlers()
+    document.addEventListener('click', function (e) {
+        var trigger = e.target.closest('[data-history-layer]');
+        if (!trigger) {
+            return;
         }
-
-        // trigger elements for opening and closing history layer
-        container.on("click", '[data-history-layer]', function (e) {
-            e.preventDefault();
-            switch ($(this).data('history-layer')) {
-                case 'open':
-                    var historyLayer = new HistoryLayer('#content-history-layer');
-                    break;
-                case 'close':
-                    historyLayer.close();
-                    break;
-            }
-        });
+        e.preventDefault();
+        if ('open' === trigger.dataset.historyLayer) {
+            new HistoryLayer('#content-history-layer');
+        }
     });
 
 
@@ -74,6 +68,23 @@
 
 
     /**
+     * fetch helper rejecting on HTTP errors
+     *
+     * @param url
+     * @returns {Promise<Response>}
+     */
+    function request(url) {
+        return fetch(url).then(function (response) {
+            if (!response.ok) {
+                debug.error('request failure: ' + response.status + ' ' + url);
+                throw new Error(response.statusText);
+            }
+            return response;
+        });
+    }
+
+
+    /**
      * History layer
      *
      * @constructor
@@ -96,7 +107,7 @@
 
         // init layer content
         var that = this;
-        $.when(this.load(this.articleId, this.languageId)).then(function (data) {
+        this.load(this.articleId, this.languageId).then(function (data) {
 
             // do init stuff
             that.injectToPage(el, data);
@@ -124,8 +135,8 @@
                 that.slider = new Slider({
                     dates: that.dates.getAll(),
                     gaps: that.gaps.getAll(),
-                    currentDateText: that.selector.find('option')[0].innerText,
-                    containerElement: $('.history-layer-slider', that.el)
+                    currentDateText: that.selector.options[0].innerText,
+                    containerElement: that.el.querySelector('.history-layer-slider')
                 });
                 that.sliderSelect = that.slider.noUiSlider;
             }
@@ -149,13 +160,9 @@
         load: function (articleId, languageId) {
             var url = 'index.php?rex_history_function=layer&history_article_id=' + articleId + '&history_language_id=' + languageId;
             debug.info('load: ' + url);
-            return $.ajax({
-                url: url,
-                context: document.body
-            }).done(function () {
+            return request(url).then(function (response) {
                 debug.info('load success');
-            }).fail(function (jqXHR, textStatus) {
-                debug.error('load failure: ' + textStatus);
+                return response.text();
             });
         },
 
@@ -165,10 +172,9 @@
          * requires layer to render first
          */
         calculateContentWidth: function () {
-            this.el.fadeOut(0).show();
-            var width = $('.history-layer-layout', this.el).width();
+            this.el.style.display = 'block';
+            var width = this.el.querySelector('.history-layer-layout').clientWidth;
             debug.log('calculate layer content width: ' + width);
-            this.el.hide().fadeIn(0);
             return width;
         },
 
@@ -180,11 +186,11 @@
         fetchDatesFromSelector: function () {
             debug.log('fetch dates from selector');
             var dates = [];
-            $.each(this.selector.find('option'), function (index, option) {
-                if ($(option).val()) {
+            Array.prototype.forEach.call(this.selector.options, function (option) {
+                if (option.value) {
                     dates.push({
-                        timestamp: parseInt($(option).val(), 10),
-                        historyDate: $(option).data('history-date')
+                        timestamp: parseInt(option.value, 10),
+                        historyDate: option.dataset.historyDate
                     });
                 }
                 else {
@@ -205,11 +211,12 @@
          */
         injectToPage: function (el, data) {
             debug.log('inject to page');
-            if ($(el).length) {
-                $(el).replaceWith(data);
+            var existing = document.querySelector(el);
+            if (existing) {
+                existing.outerHTML = data;
             }
             else {
-                $("body").append(data);
+                document.body.insertAdjacentHTML('beforeend', data);
             }
         },
 
@@ -219,29 +226,15 @@
          */
         initUiElements: function (el) {
             debug.log('init UI elements');
-            this.el = $(el);
-            this.selector_current = $('#content-history-select-date-1', this.el);
-            this.selector = $('#content-history-select-date-2', this.el);
-            this.selectPrev = $('[data-history-layer="prev"]', this.el);
-            this.selectNext = $('[data-history-layer="next"]', this.el);
-            this.currentFrame = $('#content-history-iframe-1', this.el);
-            this.targetFrame = $('#content-history-iframe-2', this.el);
-            this.submit = $('[data-history-layer="snap"]', this.el);
-            this.cancel = $('[data-history-layer="cancel"]', this.el);
-
-            // fix layout for browsers having flexbox issues (Safari < 11 most notably)
-            // they require a px based flex container to properly calculate childs’ height
-            // unfortunately, this results in removing the responsiveness ¯\_(ツ)_/¯
-            // see: https://github.com/philipwalton/flexbugs#14-flex-containers-with-wrapping-the-container-is-not-sized-to-contain-its-items
-            // use timeout to run late!
-            window.setTimeout(function () {
-                this.wrapper = $('.history-layer-panel-3', this.el);
-                this.target = $('.history-responsive-container', this.el);
-
-                if (this.target.height() < 1) {
-                    this.wrapper.css('height', this.wrapper.height());
-                }
-            }.bind(this), 1);
+            this.el = document.querySelector(el);
+            this.selector_current = this.el.querySelector('#content-history-select-date-1');
+            this.selector = this.el.querySelector('#content-history-select-date-2');
+            this.selectPrev = this.el.querySelector('[data-history-layer="prev"]');
+            this.selectNext = this.el.querySelector('[data-history-layer="next"]');
+            this.currentFrame = this.el.querySelector('#content-history-iframe-1');
+            this.targetFrame = this.el.querySelector('#content-history-iframe-2');
+            this.submit = this.el.querySelector('[data-history-layer="snap"]');
+            this.cancel = this.el.querySelector('[data-history-layer="cancel"]');
         },
 
         /**
@@ -252,28 +245,28 @@
             var that = this;
 
             debug.log('bind event handlers');
-            this.selector.on('change', $.proxy(this.onSelect, this));
-            this.selectPrev.on('click', $.proxy(this.onSelectPrev, this));
-            this.selectNext.on('click', $.proxy(this.onSelectNext, this));
-            this.submit.on('click', $.proxy(this.onSubmit, this));
-            this.cancel.on('click', $.proxy(this.onCancel, this));
+            this.selector.addEventListener('change', this.onSelect.bind(this));
+            this.selectPrev.addEventListener('click', this.onSelectPrev.bind(this));
+            this.selectNext.addEventListener('click', this.onSelectNext.bind(this));
+            this.submit.addEventListener('click', this.onSubmit.bind(this));
+            this.cancel.addEventListener('click', this.onCancel.bind(this));
 
             if (this.sliderSelect) {
-                this.sliderSelect.on('change', $.proxy(this.onSliderSelect, this));
+                this.sliderSelect.on('change', this.onSliderSelect.bind(this));
             }
-            this.selector_current.on('change', function () {
-                var revision = that.selector_current.val();
+            this.selector_current.addEventListener('change', function () {
+                var revision = that.selector_current.value;
                 var src = that.link + "?rex_version=" + revision;
-                that.currentFrame.attr("src", src);
-            })
+                that.currentFrame.src = src;
+            });
         },
 
         /**
          * on selector change
          */
         onSelect: function () {
-            debug.log('select ' + this.selector.val());
-            this.set(this.dates.getIndexForTimestamp(this.selector.val()));
+            debug.log('select ' + this.selector.value);
+            this.set(this.dates.getIndexForTimestamp(this.selector.value));
         },
 
         /**
@@ -307,13 +300,13 @@
             var that = this;
             var historyDate = that.dates.getCurrent().historyDate;
             debug.log('submit: ' + historyDate);
-            $.when(this.snapVersion(historyDate).then(function () {
+            this.snapVersion(historyDate).then(function () {
                 that.remove();
 
                 // reload redaxo page
                 var url = 'index.php?page=content/edit&article_id=' + that.articleId + '&language=' + that.languageId + '&content_section_id=' + that.contentSectionId;
                 window.location.href = url;
-            }));
+            });
         },
 
         /**
@@ -330,13 +323,13 @@
         updateUIelements: function () {
             debug.log('update UI elements');
             if (this.dates.getIndex() === (this.dates.getAll().length - 1)) {
-                this.selector.val(''); // option value for newest history date is empty!
+                this.selector.value = ''; // option value for newest history date is empty!
             }
             else {
-                this.selector.val(this.dates.getCurrent().timestamp);
+                this.selector.value = this.dates.getCurrent().timestamp;
             }
-            this.selectPrev.prop('disabled', this.dates.getPreviousIndex() === false);
-            this.selectNext.prop('disabled', this.dates.getNextIndex() === false);
+            this.selectPrev.disabled = this.dates.getPreviousIndex() === false;
+            this.selectNext.disabled = this.dates.getNextIndex() === false;
 
             if (this.sliderSelect) {
                 this.sliderSelect.set(this.dates.getCurrent().timestamp);
@@ -403,7 +396,7 @@
             if (historyDate) {
                 src = (src.includes("?")) ? this.link + "&rex_history_date=" + historyDate : this.link + "?rex_history_date=" + historyDate;
             }
-            el.attr("src", src);
+            el.src = src;
             debug.log('update frame content: ' + src);
         },
 
@@ -412,8 +405,8 @@
          */
         show: function () {
             debug.log('show layer');
-            $('body').css('overflow-y', 'hidden'); // fix scroll position
-            this.el.show();
+            document.body.style.overflowY = 'hidden'; // fix scroll position
+            this.el.style.display = 'block';
         },
 
         /**
@@ -421,8 +414,8 @@
          */
         hide: function () {
             debug.log('hide layer');
-            this.el.hide();
-            $('body').css('overflow-y', 'auto'); // release scroll position
+            this.el.style.display = 'none';
+            document.body.style.overflowY = 'auto'; // release scroll position
         },
 
         /**
@@ -443,13 +436,8 @@
         snapVersion: function (date) {
             var url = 'index.php?rex_history_function=snap&history_article_id=' + this.articleId + '&history_language_id=' + this.languageId + '&history_date=' + date + '&_csrf_token=' + encodeURIComponent(history_csrf_token);
             debug.info('snap version: ' + url);
-            return $.ajax({
-                url: url,
-                context: document.body
-            }).done(function () {
+            return request(url).then(function () {
                 debug.info('snap success');
-            }).fail(function (jqXHR, textStatus) {
-                debug.error('snap failure: ' + textStatus);
             });
         }
     };
@@ -553,14 +541,10 @@
          * @returns {*|false}
          */
         getIndexForTimestamp: function (timestamp) {
-            var index = this.all.length - 1; // max
-            $.each(this.all, function (i, v) {
-                if (v.timestamp == timestamp) {
-                    index = i;
-                    return false;
-                }
+            var index = this.all.findIndex(function (v) {
+                return v.timestamp == timestamp;
             });
-            return index;
+            return index < 0 ? this.all.length - 1 : index;
         }
     };
 
@@ -768,14 +752,10 @@
          * @returns {*|false}
          */
         getHistoryDate: function (timestamp) {
-            var index = false;
-            $.each(this.dates, function (i, v) {
-                if (v.timestamp == timestamp) {
-                    index = i;
-                    return false;
-                }
+            var date = this.dates.find(function (v) {
+                return v.timestamp == timestamp;
             });
-            return this.dates[index].historyDate;
+            return date.historyDate;
         },
 
         /**
@@ -841,7 +821,7 @@
          * inject markers HTML
          */
         injectMarkersHtml: function () {
-            $('.noUi-base', this.containerElement).append(this.getMarkersHtml());
+            this.containerElement.querySelector('.noUi-base').insertAdjacentHTML('beforeend', this.getMarkersHtml());
         },
 
         /**
@@ -850,9 +830,9 @@
          * @returns {*}
          */
         initSlider: function () {
-            if (this.containerElement[0]) {
+            if (this.containerElement) {
                 var that = this;
-                return noUiSlider.create(that.containerElement[0], {
+                return noUiSlider.create(that.containerElement, {
                     animationDuration: 150,
                     behaviour: 'tap',
                     tooltips: {
@@ -888,4 +868,4 @@
         }
     };
 
-}(jQuery));
+}());

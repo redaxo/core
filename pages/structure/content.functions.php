@@ -34,7 +34,7 @@ $content = '
             ';
 
 $onclickApiFields = static function ($hiddenFields) {
-    return 'onclick="$(this.form).append(\'' . escape($hiddenFields) . '\')"';
+    return 'onclick="this.form.insertAdjacentHTML(\'beforeend\', \'' . escape($hiddenFields) . '\')"';
 };
 
 $isStartpage = $article->getBoolValue('startarticle');

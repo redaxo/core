@@ -234,7 +234,7 @@ if ($hasCategoryPerm) {
         $e = [];
         $e['field'] = $catsSel->render();
         $e['left'] = I18n::msg('pool_changecat_selectedmedia_prefix');
-        $e['right'] = '<button class="btn btn-update" type="submit" onclick="var needle=new getObj(\'media_method\');needle.obj.value=\'updatecat_selectedmedia\';">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
+        $e['right'] = '<button class="btn btn-update" type="submit" onclick="this.form.elements.media_method.value=\'updatecat_selectedmedia\'">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
 
         $fragment = new Fragment();
         $fragment->setVar('elements', [$e], false);
@@ -243,7 +243,8 @@ if ($hasCategoryPerm) {
 
     $buttons = [
         new Button(I18n::msg('pool_delete_selectedmedia'), variant: ButtonVariant::Delete, type: 'submit', attributes: new HtmlAttributes([
-            'onclick' => 'if(confirm(\'' . I18n::msg('delete') . ' ?\')){var needle=new getObj(\'media_method\');needle.obj.value=\'delete_selectedmedia\';}else{return false;}',
+            'data-confirm' => I18n::msg('delete') . ' ?',
+            'onclick' => 'this.form.elements.media_method.value=\'delete_selectedmedia\'',
         ])),
     ];
     if ('multiple' === $picker) {

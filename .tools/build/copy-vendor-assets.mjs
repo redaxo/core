@@ -6,7 +6,6 @@
 //
 // Hand-maintained vendor files that cannot be consumed as plain `<script>` assets without a
 // bundler are intentionally NOT managed here and stay committed as-is:
-//   - assets/jquery-ui.custom.min.js  (custom jQuery UI build, core + interaction modules)
 //   - assets/clipboard-copy-element.js (@github/clipboard-copy-element ships ESM only)
 
 import { cpSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
@@ -32,10 +31,6 @@ function copy(from, to) {
 
 /** Single-file copies: [source relative to node_modules, target relative to assets]. */
 const files = [
-    ['jquery/dist/jquery.js', 'jquery.js'],
-    ['jquery/dist/jquery.min.js', 'jquery.min.js'],
-    ['jquery/dist/jquery.min.map', 'jquery.min.map'],
-
     ['nouislider/dist/nouislider.js', 'noUiSlider/nouislider.js'],
     ['nouislider/dist/nouislider.min.js', 'noUiSlider/nouislider.min.js'],
     ['nouislider/dist/nouislider.css', 'noUiSlider/nouislider.css'],

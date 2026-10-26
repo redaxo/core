@@ -219,9 +219,6 @@ if (Core::getUser()) {
     }
 }
 
-Asset::addJsFile(Url::coreAssets('jquery.min.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('jquery-ui.custom.min.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('standard.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('clipboard-copy-element.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => true]);
 

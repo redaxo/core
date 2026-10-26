@@ -173,15 +173,15 @@ if ($diffCount > 0) {
                 </fieldset>
             </form>
 
-            <script type="text/javascript" nonce="' . Response::getNonce() . '">
-                jQuery(document).ready(function($){
-                    $("input[name=\'sync_files[]\']").change(function() {
-                        $(this).closest(\'form\').find("[type=\'submit\']").attr("disabled", $("input[name=\'sync_files[]\']:checked").length == 0);
-                    }).change();
-                    $("#rex-js-checkie").change(function() {
-                        $("input[name=\'sync_files[]\']").change();
+            <script nonce="' . Response::getNonce() . '">
+                {
+                    const form = document.querySelector("input[name=\'sync_files[]\']")?.form;
+                    const update = () => form.querySelectorAll("[type=submit]").forEach(button => {
+                        button.disabled = !form.querySelector("input[name=\'sync_files[]\']:checked");
                     });
-                });
+                    form?.addEventListener("change", update);
+                    form && update();
+                }
             </script>';
     }
 
