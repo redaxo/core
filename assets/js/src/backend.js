@@ -8,7 +8,11 @@
 import {ready} from './ready.js';
 import {overlay} from './overlay.js';
 import {pick, pickers} from './pickers.js';
+import {dialog, confirm} from './dialog.js';
+import {collapse} from './toggles.js';
 import './shell.js';
 import './widgets.js';
+import './content-sidebar.js';
+import './session-timeout.js';
 
-Object.assign(window.rex, {ready, overlay, pick, pickers});
+Object.assign(window.rex, {ready, overlay, pick, pickers, dialog, confirm, collapse});

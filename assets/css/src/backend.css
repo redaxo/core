@@ -17,5 +17,6 @@
 @import "components/page-header.css";
 @import "components/section.css";
 @import "components/overlay.css";
+@import "components/dialog.css";
 
 @import "utilities.css";

@@ -1,0 +1,74 @@
+/* Dialogs: modal boxes for confirmations and notices, see js/src/dialog.js */
+
+@layer components {
+    .rex-dialog {
+        width: min(560px, 100vw - 32px);
+        max-height: calc(100dvh - 32px);
+        margin: auto;
+        padding: 0;
+        border: 0;
+        border-radius: var(--rex-radius);
+        background: var(--rex-surface);
+        box-shadow: 0 10px 40px rgb(0 0 0 / 0.3);
+        color: var(--rex-text);
+
+        &::backdrop {
+            background: light-dark(rgb(40 53 66 / 0.6), rgb(0 0 0 / 0.6));
+        }
+    }
+
+    .rex-dialog--confirm {
+        width: min(440px, 100vw - 32px);
+    }
+
+    .rex-dialog-inner {
+        margin: 0;
+    }
+
+    .rex-dialog-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 8px 8px 8px var(--rex-gutter);
+        border-bottom: 1px solid var(--rex-border);
+    }
+
+    .rex-dialog-title {
+        flex: 1;
+        margin: 0;
+        font-size: var(--rex-font-size-large);
+        font-weight: 400;
+    }
+
+    .rex-dialog-close {
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: var(--rex-radius);
+        background: transparent;
+        color: inherit;
+        font-size: 18px;
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            background: var(--rex-surface-muted);
+        }
+    }
+
+    .rex-dialog-body {
+        padding: var(--rex-gutter);
+
+        & > :last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .rex-dialog-footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 0 var(--rex-gutter) var(--rex-gutter);
+    }
+}

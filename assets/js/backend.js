@@ -193,9 +193,9 @@ function overlay(url, options = {}) {
 // assets/js/src/pickers.js
 function backendUrl(page, params) {
   const search = new URLSearchParams({ page });
-  for (const [key, value] of Object.entries(params)) {
+  for (const [key2, value] of Object.entries(params)) {
     if (value !== void 0 && value !== null && value !== "") {
-      search.set(key, String(value));
+      search.set(key2, String(value));
     }
   }
   return "index.php?" + search;
@@ -220,6 +220,197 @@ function pick(type, options = {}) {
   return overlay(pickers[type](options), options).closed;
 }
 
+// assets/js/src/dialog.js
+var count = 0;
+function dialog({ title = "", content, buttons = [], className = "" }) {
+  const element = document.createElement("dialog");
+  element.className = ("rex-dialog " + className).trim();
+  element.innerHTML = `
+        <form method="dialog" class="rex-dialog-inner">
+            <header class="rex-dialog-header">
+                <h2 class="rex-dialog-title"></h2>
+                <button class="rex-dialog-close" value=""><i class="rex-icon fa-solid fa-xmark" aria-hidden="true"></i></button>
+            </header>
+            <div class="rex-dialog-body"></div>
+            <footer class="rex-dialog-footer"></footer>
+        </form>`;
+  const header = element.querySelector(".rex-dialog-header");
+  if (title) {
+    element.querySelector(".rex-dialog-title").innerHTML = title;
+    element.setAttribute("aria-labelledby", element.querySelector(".rex-dialog-title").id = "rex-dialog-title-" + ++count);
+  } else {
+    header.remove();
+  }
+  element.querySelector(".rex-dialog-close")?.setAttribute("aria-label", window.rex.i18n?.overlay_close ?? "Close");
+  const body = element.querySelector(".rex-dialog-body");
+  content instanceof Node ? body.append(content) : body.innerHTML = content;
+  const footer = element.querySelector(".rex-dialog-footer");
+  for (const { label, value = "", className: className2 = "", primary = false, onClick } of buttons) {
+    const button2 = document.createElement("button");
+    button2.className = ["btn", primary ? "btn-primary" : "btn-default", className2].join(" ").trim();
+    button2.value = value;
+    button2.innerHTML = label;
+    button2.autofocus = primary;
+    if (onClick) {
+      button2.addEventListener("click", onClick);
+    }
+    footer.append(button2);
+  }
+  if (!buttons.length) {
+    footer.remove();
+  }
+  const closed = new Promise((resolve) => element.addEventListener("close", () => {
+    resolve(element.returnValue);
+    element.remove();
+  }, { once: true }));
+  document.body.append(element);
+  element.showModal();
+  return { element, body, close: (value = "") => element.close(value), closed };
+}
+async function confirm2(message) {
+  const i18n2 = window.rex.i18n ?? {};
+  const { closed } = dialog({
+    content: Object.assign(document.createElement("p"), { textContent: message }),
+    className: "rex-dialog--confirm",
+    buttons: [
+      { label: i18n2.dialog_cancel ?? "Cancel", value: "cancel" },
+      { label: i18n2.dialog_confirm ?? "OK", value: "confirm", primary: true }
+    ]
+  });
+  return "confirm" === await closed;
+}
+var confirmed = /* @__PURE__ */ new WeakSet();
+window.addEventListener("click", (event) => {
+  const element = event.target.closest?.("a[data-confirm], button[data-confirm], input[data-confirm]");
+  if (!element || confirmed.delete(element)) {
+    return;
+  }
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  confirm2(element.dataset.confirm).then((ok) => {
+    if (ok) {
+      confirmed.add(element);
+      element.click();
+    }
+  });
+}, true);
+window.addEventListener("submit", (event) => {
+  const form = event.target;
+  if (!form.matches("form[data-confirm]") || confirmed.delete(form)) {
+    return;
+  }
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  confirm2(form.dataset.confirm).then((ok) => {
+    if (ok) {
+      confirmed.add(form);
+      form.requestSubmit(event.submitter);
+    }
+  });
+}, true);
+
+// assets/js/src/toggles.js
+function openDropdowns() {
+  return document.querySelectorAll('.open:has(> [data-toggle="dropdown"])');
+}
+function closeDropdowns(except = null) {
+  for (const dropdown of openDropdowns()) {
+    if (dropdown !== except) {
+      dropdown.classList.remove("open");
+      dropdown.querySelector(':scope > [data-toggle="dropdown"]').setAttribute("aria-expanded", "false");
+    }
+  }
+}
+function toggleDropdown(toggle) {
+  const dropdown = toggle.parentElement;
+  const open = !dropdown.classList.contains("open");
+  closeDropdowns(dropdown);
+  if (open) {
+    const menu = dropdown.querySelector(":scope > .dropdown-menu");
+    const rect = dropdown.getBoundingClientRect();
+    dropdown.classList.remove("dropup");
+    dropdown.classList.add("open");
+    const height = menu?.offsetHeight ?? 0;
+    dropdown.classList.toggle("dropup", innerHeight - rect.bottom < height && rect.top > height);
+  } else {
+    dropdown.classList.remove("open");
+  }
+  toggle.setAttribute("aria-expanded", String(open));
+}
+document.addEventListener("click", (event) => {
+  const toggle = event.target.closest('[data-toggle="dropdown"]');
+  if (toggle) {
+    event.preventDefault();
+    if (!toggle.matches(".disabled, :disabled")) {
+      toggleDropdown(toggle);
+    }
+    return;
+  }
+  if (!event.target.closest(".dropdown-menu form")) {
+    closeDropdowns();
+  }
+});
+document.addEventListener("keydown", (event) => {
+  const dropdown = event.target.closest('.open:has(> [data-toggle="dropdown"])');
+  if (!dropdown) {
+    return;
+  }
+  const toggle = dropdown.querySelector(':scope > [data-toggle="dropdown"]');
+  if ("Escape" === event.key) {
+    event.preventDefault();
+    closeDropdowns();
+    toggle.focus();
+  } else if ("ArrowDown" === event.key || "ArrowUp" === event.key) {
+    event.preventDefault();
+    const items = [...dropdown.querySelectorAll(":scope > .dropdown-menu li:not(.disabled) > a")];
+    const index = items.indexOf(document.activeElement);
+    const next = "ArrowDown" === event.key ? Math.min(index + 1, items.length - 1) : Math.max(index - 1, 0);
+    items[next]?.focus();
+  }
+});
+function targetOf(toggle) {
+  const selector = toggle.dataset.target ?? toggle.getAttribute("href");
+  return selector?.startsWith("#") ? document.querySelector(selector) : null;
+}
+function collapse(target, open = !target.classList.contains("in")) {
+  if (open === target.classList.contains("in")) {
+    return;
+  }
+  target.classList.toggle("in", open);
+  for (const toggle of document.querySelectorAll('[data-toggle="collapse"]')) {
+    if (targetOf(toggle) === target) {
+      toggle.classList.toggle("collapsed", !open);
+      toggle.setAttribute("aria-expanded", String(open));
+    }
+  }
+  target.dispatchEvent(new CustomEvent("rex:collapse", { bubbles: true, detail: { open } }));
+}
+document.addEventListener("click", (event) => {
+  const toggle = event.target.closest('[data-toggle="collapse"]');
+  const target = toggle && targetOf(toggle);
+  if (target) {
+    event.preventDefault();
+    collapse(target);
+  }
+});
+document.addEventListener("click", (event) => {
+  const link = event.target.closest('[data-toggle="tab"]');
+  const pane = link && targetOf(link);
+  if (!pane) {
+    return;
+  }
+  event.preventDefault();
+  const item = link.closest("li") ?? link;
+  for (const sibling of item.parentElement.children) {
+    sibling.classList.toggle("active", sibling === item);
+    sibling.querySelector('[data-toggle="tab"]')?.setAttribute("aria-selected", String(sibling === item));
+  }
+  for (const sibling of pane.parentElement.children) {
+    sibling.classList.toggle("active", sibling === pane);
+    sibling.classList.toggle("in", sibling === pane && sibling.classList.contains("fade"));
+  }
+});
+
 // assets/js/src/shell.js
 var smallScreen = matchMedia("(max-width: 991px)");
 function toggleSidebar(open = !document.body.classList.contains("rex-sidebar-open")) {
@@ -236,19 +427,19 @@ var topbar = {
       return;
     }
     const max = document.body.scrollHeight - document.body.clientHeight;
-    const current = Math.min(Math.max(window.scrollY, 0), max);
-    this.lastToggle ??= current;
+    const current2 = Math.min(Math.max(window.scrollY, 0), max);
+    this.lastToggle ??= current2;
     if (!document.body.classList.contains("rex-sidebar-open")) {
-      if (current > this.previous && current >= this.lastToggle + 150) {
+      if (current2 > this.previous && current2 >= this.lastToggle + 150) {
         bar.classList.add("is-hidden");
-        this.lastToggle = current;
-      } else if (current < this.previous && (current <= this.lastToggle - 300 || current < 50)) {
+        this.lastToggle = current2;
+      } else if (current2 < this.previous && (current2 <= this.lastToggle - 300 || current2 < 50)) {
         bar.classList.remove("is-hidden");
-        this.lastToggle = current;
+        this.lastToggle = current2;
       }
     }
-    bar.classList.toggle("is-elevated", current > 10);
-    this.previous = current;
+    bar.classList.toggle("is-elevated", current2 > 10);
+    this.previous = current2;
   },
   reset() {
     document.querySelector(".rex-topbar--fixed")?.classList.remove("is-hidden");
@@ -370,13 +561,13 @@ var widgetActions = {
   }
 };
 document.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-rex-widget-action]");
-  const widget = button?.closest("[data-rex-widget]");
-  if (!widget || button.disabled) {
+  const button2 = event.target.closest("[data-rex-widget-action]");
+  const widget = button2?.closest("[data-rex-widget]");
+  if (!widget || button2.disabled) {
     return;
   }
   event.preventDefault();
-  const [action, argument] = button.dataset.rexWidgetAction.split(":");
+  const [action, argument] = button2.dataset.rexWidgetAction.split(":");
   const options = JSON.parse(widget.dataset.rexWidgetOptions || "{}");
   widgetActions[widget.dataset.rexWidget]?.[action]?.(widget, options, argument);
 });
@@ -417,5 +608,142 @@ document.addEventListener("click", (event) => {
   }
 });
 
+// assets/js/src/content-sidebar.js
+var key = "structure_content_sidebar_status";
+document.addEventListener("rex:ready", (event) => {
+  const sidebar = event.target.matches("#rex-page-content-edit") && event.target.querySelector("#rex-js-main-sidebar");
+  if (!sidebar) {
+    return;
+  }
+  const panels = [...sidebar.children].filter((child) => child.matches("section")).map((section) => section.querySelector("div.collapse"));
+  const store = () => {
+    try {
+      localStorage.setItem(key, JSON.stringify(panels.map((panel) => String(Boolean(panel?.classList.contains("in"))))));
+    } catch {
+    }
+  };
+  let status = null;
+  try {
+    status = JSON.parse(localStorage.getItem(key) ?? "null");
+  } catch {
+  }
+  if (Array.isArray(status) && status.length === panels.length) {
+    panels.forEach((panel, index) => panel && collapse(panel, "true" === status[index]));
+  } else {
+    store();
+  }
+  sidebar.addEventListener("rex:collapse", store);
+});
+
+// assets/js/src/session-timeout.js
+var rex = window.rex;
+var i18n = rex.i18n ?? {};
+var checkInterval = 5;
+var keepAliveInterval = 180;
+var warningTime = rex.session_warning_time + checkInterval;
+var overallWarningAt;
+var sessionWarningAt;
+var keepAliveUntil;
+var nextKeepAliveAt;
+var interval;
+var current = null;
+var now = () => Date.now();
+function setSessionWarningAt() {
+  sessionWarningAt = now() + (rex.session_duration - warningTime) * 1e3;
+}
+function setKeepAliveUntil() {
+  keepAliveUntil = now() + rex.session_keep_alive * 1e3;
+}
+function start() {
+  nextKeepAliveAt = now() + keepAliveInterval * 1e3;
+  interval = setInterval(check, checkInterval * 1e3);
+}
+function check() {
+  const time = now();
+  if (overallWarningAt < time) {
+    clearInterval(interval);
+    showOverallTimeout();
+  } else if (keepAliveUntil > time) {
+    if (nextKeepAliveAt <= time) {
+      clearInterval(interval);
+      keepAlive();
+    }
+  } else if (!rex.session_stay_logged_in && sessionWarningAt < time) {
+    clearInterval(interval);
+    showExpand();
+  }
+}
+async function keepAlive() {
+  try {
+    const response = await fetch(rex.session_keep_alive_url + "&" + now());
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const { rest_overall_time: rest } = await response.json();
+    overallWarningAt = now() + (rest - warningTime) * 1e3;
+    setSessionWarningAt();
+    start();
+  } catch {
+    showFailed();
+  }
+}
+var button = (icon, label) => `<i class="rex-icon rex-icon-${icon}"></i> ${label}`;
+var logout = { label: button("sign-out", i18n.session_timeout_logout_label), onClick: () => location.href = rex.session_logout_url };
+var counter = "<span data-rex-session-counter></span>";
+function show(message, buttons) {
+  current?.close();
+  current = dialog({ title: i18n.session_timeout_title, content: `<p>${message}</p>`, buttons, className: "rex-session-timeout-dialog" });
+  current.closed.then(() => current = null);
+  return current;
+}
+function countdown({ body, element, closed }, end) {
+  const update = () => {
+    const seconds = (end() - now()) / 1e3;
+    const output = body.querySelector("[data-rex-session-counter]");
+    if (output) {
+      output.textContent = "~" + Math.trunc(seconds / 60);
+    }
+    if (seconds <= 0) {
+      element.querySelector('[value="refresh"]')?.remove();
+      body.innerHTML = `<p>${i18n.session_timeout_message_has_expired}</p>`;
+      clearInterval(timer);
+    }
+  };
+  const timer = setInterval(update, 1e3);
+  update();
+  closed.then(() => clearInterval(timer));
+}
+function showFailed() {
+  show(i18n.session_timeout_message_has_expired, [
+    { label: button("sign-in", i18n.session_timeout_login_label), primary: true, onClick: () => location.href = rex.session_login_url }
+  ]);
+}
+function showExpand() {
+  const message = i18n.session_timeout_message_expand.replace("{0}", counter).replace("{1}", String(Math.trunc(rex.session_duration / 60)));
+  const box = show(message, [
+    logout,
+    { label: button("refresh", i18n.session_timeout_refresh_label), value: "refresh", primary: true, onClick: () => {
+      keepAlive();
+      setSessionWarningAt();
+    } }
+  ]);
+  countdown(box, () => sessionWarningAt + warningTime * 1e3);
+}
+function showOverallTimeout() {
+  const box = show(i18n.session_timeout_message_expired.replace("{0}", counter), [logout]);
+  countdown(box, () => overallWarningAt + warningTime * 1e3);
+}
+if (rex.session_keep_alive_url) {
+  const serverOffset = Math.trunc(now() / 1e3) - rex.session_server_time;
+  overallWarningAt = (rex.session_start - serverOffset + rex.session_max_overall_duration - warningTime) * 1e3;
+  setKeepAliveUntil();
+  setSessionWarningAt();
+  start();
+  document.addEventListener("rex:ready", () => {
+    setSessionWarningAt();
+    setKeepAliveUntil();
+  });
+}
+
 // assets/js/src/backend.js
-Object.assign(window.rex, { ready, overlay, pick, pickers });
+Object.assign(window.rex, { ready, overlay, pick, pickers, dialog, confirm: confirm2, collapse });

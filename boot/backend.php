@@ -229,9 +229,13 @@ Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => tru
 Asset::setJsProperty('backend', true);
 Asset::setJsProperty('accesskeys', Accesskey::$enabled);
 
-if (Core::getUser()) {
-    Asset::addJsFile(Url::coreAssets('session-timeout.js'), [Asset::JS_IMMUTABLE => true]);
+$i18n = [
+    'overlay_close' => I18n::msg('overlay_close'),
+    'dialog_confirm' => I18n::msg('dialog_confirm'),
+    'dialog_cancel' => I18n::msg('dialog_cancel'),
+];
 
+if (Core::getUser()) {
     $login = BackendLogin::requireCurrent();
     Asset::setJsProperty('session_keep_alive_url', Url::backendController(['page' => 'credits', 'rex-api-call' => 'user_session_status']));
     Asset::setJsProperty('session_logout_url', Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams()));
@@ -245,7 +249,7 @@ if (Core::getUser()) {
     Asset::setJsProperty('session_warning_time', $sessionPolicy->warningTime);
     Asset::setJsProperty('session_server_time', time());
 
-    Asset::setJsProperty('i18n', [
+    $i18n += [
         'session_timeout_title' => I18n::msg('session_timeout_title'),
         'session_timeout_message_expand' => I18n::msg('session_timeout_message_expand'),
         'session_timeout_message_expired' => I18n::msg('session_timeout_message_expired'),
@@ -253,14 +257,14 @@ if (Core::getUser()) {
         'session_timeout_logout_label' => I18n::msg('session_timeout_logout_label'),
         'session_timeout_login_label' => I18n::msg('session_timeout_login_label'),
         'session_timeout_refresh_label' => I18n::msg('session_timeout_refresh_label'),
-        'overlay_close' => I18n::msg('overlay_close'),
-    ]);
+    ];
 }
+
+Asset::setJsProperty('i18n', $i18n);
 
 // the Bootstrap based styles live in the lowest cascade layer until the components replace them
 Asset::addCssFile(Url::coreAssets('css/styles.css'), layer: 'legacy');
 Asset::addCssFile(Url::coreAssets('css/bootstrap-select.min.css'), layer: 'legacy');
-Asset::addJsFile(Url::coreAssets('js/bootstrap.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/bootstrap-select.min.js'), [Asset::JS_IMMUTABLE => true]);
 $bootstrapSelectLang = [
     'de_de' => 'de_DE',
@@ -273,10 +277,6 @@ Asset::addCssFile(Url::coreAssets('css/redaxo.css'), layer: 'legacy');
 Asset::addCssFile(Url::coreAssets('css/backend.css'));
 Asset::addJsFile(Url::coreAssets('js/redaxo.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
-
-if (Core::getUser() && 'content' == Controller::getCurrentPagePart(1)) {
-    Asset::addJsFile(Url::coreAssets('js/content.js'), [Asset::JS_IMMUTABLE => true]);
-}
 
 if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('history[article_rollback]')) {
     Asset::addCssFile(Url::coreAssets('noUiSlider/nouislider.css'));

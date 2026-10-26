@@ -248,18 +248,6 @@ jQuery(document).ready(function($) {
         $(".rex-js-autofocus").focus();
     }
 
-    confDialog = function(event) {
-        if(!confirm($(this).attr('data-confirm'))) {
-            event.stopImmediatePropagation();
-            return false;
-        }
-    };
-
-    // confirm dialog behavior for links and buttons
-    $(document).on('click', 'a[data-confirm], button[data-confirm], input[data-confirm]', confDialog);
-    // confirm dialog behavior for forms
-    $(document).on('submit', 'form[data-confirm]', confDialog);
-
     // hides the element the checkbox points to while it is checked, e.g. the item select next to an "all" checkbox
     $(document).on('change', 'input[data-rex-hides]', function () {
         $($(this).attr('data-rex-hides')).toggle(!this.checked);
@@ -467,16 +455,6 @@ jQuery(document).ready(function($) {
 
         }, 'xml');
 
-    });
-
-    $(document).on('show.bs.dropdown', '.dropdown', function () {
-        var windowHeight = $(window).height();
-        var rect = this.getBoundingClientRect();
-        if (rect.top > windowHeight) return;
-        var menuHeight = $(this).children('.dropdown-menu').height();
-        $(this).toggleClass('dropup',
-            ((windowHeight - rect.bottom) < menuHeight) &&
-            (rect.top > menuHeight));
     });
 
     document.addEventListener('keydown', handleKeyEvents, true);

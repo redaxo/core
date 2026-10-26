@@ -235,6 +235,8 @@ session_timeout_logout_label = Abmelden
 session_timeout_login_label = Erneut anmelden
 session_timeout_refresh_label = Session verlängern
 
+dialog_confirm = OK
+dialog_cancel = Abbrechen
 overlay_close = Schließen
 
 password_change_required = Das Passwort ist abgelaufen. Um fortzufahren, bitte ein neues Passwort angeben!

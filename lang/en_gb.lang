@@ -219,6 +219,8 @@ session_timeout_logout_label = Log out
 session_timeout_login_label = Log in again
 session_timeout_refresh_label = Extend session
 
+dialog_confirm = OK
+dialog_cancel = Cancel
 overlay_close = Close
 
 list_previous = previous page

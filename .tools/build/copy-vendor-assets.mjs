@@ -37,8 +37,6 @@ const files = [
     ['jquery/dist/jquery.min.js', 'jquery.min.js'],
     ['jquery/dist/jquery.min.map', 'jquery.min.map'],
 
-    ['bootstrap-sass/assets/javascripts/bootstrap.js', 'js/bootstrap.js'],
-
     ['bootstrap-select/dist/css/bootstrap-select.min.css', 'css/bootstrap-select.min.css'],
     ['bootstrap-select/dist/js/bootstrap-select.min.js', 'js/bootstrap-select.min.js'],
     ['bootstrap-select/dist/js/bootstrap-select.min.js.map', 'js/bootstrap-select.min.js.map'],
