@@ -1,0 +1,202 @@
+/*
+ Icons: `<i class="rex-icon rex-icon-…">`, mapped to Font Awesome glyphs (the Font Awesome stylesheet is loaded on its
+ own, see boot/backend.php)
+ */
+
+@layer components {
+    .rex-icon {
+        display: var(--fa-display, inline-block);
+        font-family: "Font Awesome 6 Free";
+        font-style: normal;
+        font-variant: normal;
+        font-weight: 900;
+        line-height: 1;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
+        &::before {
+            content: var(--fa);
+        }
+    }
+
+    .rex-icon-active-false,
+    .rex-icon-active-true,
+    .rex-icon-article,
+    .rex-icon-category-without-elements,
+    .rex-icon-duplicate,
+    .rex-icon-edit,
+    .rex-icon-file-archive,
+    .rex-icon-media,
+    .rex-icon-mediatype,
+    .rex-icon-metainfo,
+    .rex-icon-online,
+    .rex-icon-offline,
+    .rex-icon-template,
+    .rex-icon-user-inactive,
+    .rex-icon-view,
+    .rex-icon-view-media,
+    .rex-icon-hide {
+        font-weight: 400;
+    }
+
+    .rex-icon-active-false,
+    .rex-icon-active-true {
+        width: 1.25em;
+        text-align: center;
+    }
+
+    .rex-icon-loading {
+        animation: fa-spin 1s steps(8) infinite;
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+    }
+
+    .rex-icon-action, .rex-icon-view-list { --fa: "\f0c9"; }
+    .rex-icon-active-false { --fa: "\f0c8"; }
+    .rex-icon-active-true { --fa: "\f14a"; }
+    .rex-icon-add,
+    .rex-icon-add-action,
+    .rex-icon-add-article,
+    .rex-icon-add-category,
+    .rex-icon-add-cronjob,
+    .rex-icon-add-language,
+    .rex-icon-add-media,
+    .rex-icon-add-media-category,
+    .rex-icon-add-mediatype,
+    .rex-icon-add-mediatype-effect,
+    .rex-icon-add-metainfo,
+    .rex-icon-add-module,
+    .rex-icon-add-template,
+    .rex-icon-add-user,
+    .rex-icon-add-userrole,
+    .rex-icon-structure-category-metainfo {
+        --fa: "\2b";
+    }
+    .rex-icon-article, .rex-icon-startarticle { --fa: "\f15c"; }
+    .rex-icon-back { --fa: "\f3e5"; }
+    .rex-icon-bottom { --fa: "\f103"; }
+    .rex-icon-category, .rex-icon-category-without-elements, .rex-icon-media-category { --fa: "\f07b"; }
+    .rex-icon-clear { --fa: "\f057"; }
+    .rex-icon-cronjob { --fa: "\f1da"; }
+    .rex-icon-database, .rex-icon-module { --fa: "\f1c0"; }
+    .rex-icon-delete { --fa: "\f2ed"; }
+    .rex-icon-delete-link { --fa: "\f127"; }
+    .rex-icon-delete-media, .rex-icon-remove, .rex-icon-structure-category-metainfo { --fa: "\f068"; }
+    .rex-icon-down { --fa: "\f107"; }
+    .rex-icon-download { --fa: "\f019"; }
+    .rex-icon-duplicate { --fa: "\f24d"; }
+    .rex-icon-edit { --fa: "\f044"; }
+    .rex-icon-editmode { --fa: "\f303"; }
+    .rex-icon-envelope { --fa: "\f0e0"; }
+    .rex-icon-execute, .rex-icon-sign-in { --fa: "\f090"; }
+    .rex-icon-external-link { --fa: "\f08e"; }
+    .rex-icon-file-archive { --fa: "\f1c6"; }
+    .rex-icon-first { --fa: "\f100"; }
+    .rex-icon-help { --fa: "\3f"; }
+    .rex-icon-import { --fa: "\f093"; }
+    .rex-icon-info, .rex-icon-phpinfo { --fa: "\f05a"; }
+    .rex-icon-language, .rex-icon-language-active { --fa: "\f024"; }
+    .rex-icon-last { --fa: "\f101"; }
+    .rex-icon-license { --fa: "\f24e"; }
+    .rex-icon-linkmap, .rex-icon-open-linkmap { --fa: "\f0e8"; }
+    .rex-icon-loading { --fa: "\f110"; }
+    .rex-icon-media, .rex-icon-mediatype { --fa: "\f03e"; }
+    .rex-icon-mediatype-effect { --fa: "\f1fb"; }
+    .rex-icon-metafuncs { --fa: "\f0ad"; }
+    .rex-icon-metainfo { --fa: "\f094"; }
+    .rex-icon-next { --fa: "\f105"; }
+    .rex-icon-open-category { --fa: "\f07c"; }
+    .rex-icon-open-mediapool { --fa: "\f039"; }
+    .rex-icon-online { --fa: "\f192"; }
+    .rex-icon-offline { --fa: "\f111"; }
+    .rex-icon-package-addon { --fa: "\f02e"; }
+    .rex-icon-password { --fa: "\f023"; }
+    .rex-icon-permissions { --fa: "\f205"; }
+    .rex-icon-previous { --fa: "\f104"; }
+    .rex-icon-refresh { --fa: "\f021"; }
+    .rex-icon-search { --fa: "\f002"; }
+    .rex-icon-sign-out { --fa: "\f08b"; }
+    .rex-icon-sitestartarticle { --fa: "\f015"; }
+    .rex-icon-structure-root-level { --fa: "\f7a2"; }
+    .rex-icon-seo { --fa: "\f1fe"; }
+    .rex-icon-system { --fa: "\f085"; }
+    .rex-icon-table { --fa: "\f0ce"; }
+    .rex-icon-template { --fa: "\f1ea"; }
+    .rex-icon-top { --fa: "\f102"; }
+    .rex-icon-up { --fa: "\f106"; }
+    .rex-icon-user, .rex-icon-user-inactive { --fa: "\f007"; }
+    .rex-icon-userrole { --fa: "\e592"; }
+    .rex-icon-user-secret { --fa: "\f21b"; }
+    .rex-icon-unstable-version { --fa: "\f0c3"; }
+    .rex-icon-view, .rex-icon-view-media { --fa: "\f06e"; }
+    .rex-icon-hide { --fa: "\f070"; }
+    .rex-icon-view-icon { --fa: "\f009"; }
+    .rex-icon-heartbeat { --fa: "\f21e"; }
+
+    /* file type icon with the extension below it, `<span class="rex-mime rex-mime-pdf" data-extension="pdf">` */
+    .rex-mime {
+        position: relative;
+        display: inline-block;
+        font-family: "Font Awesome 6 Free";
+        font-size: 3em;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+
+        &::before {
+            content: "\f15b";
+        }
+
+        &::after {
+            content: attr(data-extension);
+            position: absolute;
+            top: 1.5em;
+            left: 0;
+            display: block;
+            width: 100%;
+            font-family: var(--rex-font-mono);
+            font-size: var(--rex-font-size-small);
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        &:is(.rex-mime-doc, .rex-mime-docx, .rex-mime-pdf, .rex-mime-ppt, .rex-mime-pptx, .rex-mime-txt, .rex-mime-xls, .rex-mime-xlsx)::after {
+            content: "";
+        }
+    }
+
+    .rex-mime-error {
+        color: var(--rex-danger-text);
+
+        &::after {
+            content: "!";
+            top: 0.8em;
+            font-size: var(--rex-font-size-large);
+        }
+    }
+
+    .rex-mime-doc::before, .rex-mime-docx::before {
+        content: "\f1c2";
+    }
+
+    .rex-mime-pdf::before {
+        content: "\f1c1";
+    }
+
+    .rex-mime-ppt::before, .rex-mime-pptx::before {
+        content: "\f1c4";
+    }
+
+    .rex-mime-txt::before {
+        content: "\f15c";
+    }
+
+    .rex-mime-xls::before, .rex-mime-xlsx::before {
+        content: "\f1c3";
+    }
+}

@@ -258,6 +258,8 @@ if (Core::getUser()) {
 
 Asset::setJsProperty('i18n', $i18n);
 
+Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/all.min.css'));
+Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/v4-shims.min.css'));
 // the Bootstrap based styles live in the lowest cascade layer until the components replace them
 Asset::addCssFile(Url::coreAssets('css/styles.css'), layer: 'legacy');
 
