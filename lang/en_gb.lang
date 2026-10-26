@@ -221,6 +221,9 @@ session_timeout_refresh_label = Extend session
 
 dialog_confirm = OK
 dialog_cancel = Cancel
+select_all = Select all
+select_none = Deselect all
+select_no_results = No results
 overlay_close = Close
 
 list_previous = previous page

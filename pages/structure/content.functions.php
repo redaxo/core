@@ -16,7 +16,6 @@ use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
-use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
 
@@ -254,7 +253,7 @@ $categoryInput = static fn (string $name, int $selected): SelectInput => new Sel
     new CategoryChoices(root: true)->choices(),
     (string) $selected,
     $name,
-    attributes: new HtmlAttributes(['data-live-search' => 'true']),
+    search: true,
 );
 
 // --------------------------------------------------- ARTIKEL VERSCHIEBEN START

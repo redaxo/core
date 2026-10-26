@@ -1,0 +1,186 @@
+/* Select boxes: native selects and the search/multiple widget (js/src/select.js) share the look of a default button */
+
+@layer components {
+    select.form-control:not([multiple], [size]),
+    .rex-select-toggle {
+        appearance: none;
+        margin-block: 0;
+        padding-right: 28px;
+        border-color: light-dark(#c1c9d4, rgb(21 28 34 / 0.8));
+        border-radius: var(--rex-radius);
+        background-color: light-dark(#fff, rgb(27 35 44 / 0.8));
+        box-shadow: none;
+        background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(-45deg, transparent 50%, currentColor 50%);
+        background-position: right 15px center, right 10px center;
+        background-size: 5px 5px;
+        background-repeat: no-repeat;
+        cursor: pointer;
+    }
+
+    .rex-select {
+        position: relative;
+    }
+
+    .rex-select-native {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .rex-select-toggle {
+        display: block;
+        overflow: hidden;
+        text-align: left;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    /* in input groups both behave like an add-on: as wide as their content */
+    .input-group > select.form-control,
+    .input-group > .rex-select {
+        display: table-cell;
+        width: auto;
+        vertical-align: middle;
+    }
+
+    .input-group > .rex-select > .rex-select-toggle {
+        width: auto;
+        max-width: 300px;
+    }
+
+    .input-group > .rex-select:not(:first-child) > .rex-select-toggle {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .input-group > .rex-select:not(:last-child) > .rex-select-toggle {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .rex-select-panel {
+        position: fixed;
+        inset: auto;
+        display: none;
+        flex-direction: column;
+        max-width: min(480px, 100vw - 16px);
+        margin: 0;
+        padding: 0;
+        border: 1px solid var(--rex-border-strong);
+        border-radius: var(--rex-radius);
+        background: var(--rex-surface);
+        box-shadow: 0 6px 12px rgb(0 0 0 / 0.175);
+        color: var(--rex-text);
+
+        &:popover-open {
+            display: flex;
+        }
+    }
+
+    .rex-select-search {
+        flex: none;
+        width: auto;
+        margin: 6px 6px 0;
+    }
+
+    .rex-select-actions {
+        display: flex;
+        flex: none;
+        gap: 6px;
+        padding: 6px 6px 0;
+
+        & > .btn {
+            flex: 1;
+        }
+    }
+
+    .rex-select-options {
+        flex: 1 1 auto;
+        overflow: auto;
+        overscroll-behavior: contain;
+        margin: 0;
+        padding: 5px 0;
+        list-style: none;
+    }
+
+    .rex-select-group {
+        padding: 6px 12px 3px;
+        color: var(--rex-text-muted);
+        font-size: var(--rex-font-size-small);
+        font-weight: 700;
+    }
+
+    .rex-select-options > [role="option"] {
+        position: relative;
+        padding: 3px 20px 3px 12px;
+        white-space: nowrap;
+        cursor: pointer;
+        outline: none;
+
+        &.is-grouped {
+            padding-left: 20px;
+        }
+
+        &:hover,
+        &:focus {
+            background: var(--rex-surface-muted);
+        }
+
+        &[aria-selected="true"] {
+            font-weight: 700;
+        }
+
+        &[aria-disabled="true"] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        [aria-multiselectable="true"] > & {
+            padding-left: 30px;
+
+            &.is-grouped {
+                padding-left: 38px;
+            }
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 10px;
+                width: 12px;
+                height: 12px;
+                margin-top: -6px;
+                border: 1px solid var(--rex-border-strong);
+                border-radius: 2px;
+                background: var(--rex-surface);
+            }
+
+            &.is-grouped::before {
+                left: 18px;
+            }
+
+            &[aria-selected="true"] {
+                font-weight: inherit;
+
+                &::before {
+                    border-color: var(--rex-link);
+                    background: var(--rex-link) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.5l2.5 2.5 4.5-5' fill='none' stroke='%23fff' stroke-width='1.8'/%3E%3C/svg%3E") center / 10px no-repeat;
+                }
+            }
+        }
+    }
+
+    .rex-select-empty {
+        margin: 0;
+        padding: 6px 12px 10px;
+        color: var(--rex-text-muted);
+    }
+}

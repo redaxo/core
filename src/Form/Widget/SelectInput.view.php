@@ -8,12 +8,14 @@ use function Redaxo\Core\View\escape;
 
 return static function (SelectInput $select): void { ?>
     <select <?= $select->attributes->with([
-        'class' => ['form-control', 'selectpicker'],
+        'class' => ['form-control'],
         'name' => $select->multiple ? $select->name . '[]' : $select->name,
         'id' => $select->id,
         'multiple' => $select->multiple,
         'required' => $select->required,
         'disabled' => $select->disabled,
+        'data-rex-select' => $select->multiple || $select->search,
+        'data-rex-select-search' => $select->search,
     ]) ?>>
         <?php if (null !== $select->placeholder && !$select->multiple): ?>
             <option value=""><?= escape(Translatable::text($select->placeholder)) ?></option>

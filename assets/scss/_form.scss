@@ -182,20 +182,11 @@ input[type=range] {
     @include input-type-range();
 }
 
-.input-group {
-    .bootstrap-select {
-        .btn {
-            border-color: $input-group-addon-border-color;
-        }
-    }
-}
-
 .rex-panel-options {
     .form-group:last-child {
         margin-bottom: 0;
     }
-    .form-control,
-    .input-group .bootstrap-select .btn {
+    .form-control {
         border-color: darken($color-a-light, 10%);
     }
     .input-group .form-control {

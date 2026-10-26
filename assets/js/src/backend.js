@@ -12,6 +12,7 @@ import {dialog, confirm} from './dialog.js';
 import {collapse} from './toggles.js';
 import './shell.js';
 import './widgets.js';
+import './select.js';
 import './content-sidebar.js';
 import './session-timeout.js';
 

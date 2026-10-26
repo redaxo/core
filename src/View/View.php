@@ -239,7 +239,8 @@ final class View
             new MediaCategoryChoices(root: true)->choices(),
             (string) $rexFileCategory,
             'rex-mediapool-category',
-            attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit()', 'data-live-search' => 'true']),
+            search: true,
+            attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit()']),
         );
 
         $argFields = '';

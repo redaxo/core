@@ -233,6 +233,9 @@ $i18n = [
     'overlay_close' => I18n::msg('overlay_close'),
     'dialog_confirm' => I18n::msg('dialog_confirm'),
     'dialog_cancel' => I18n::msg('dialog_cancel'),
+    'select_all' => I18n::msg('select_all'),
+    'select_none' => I18n::msg('select_none'),
+    'select_no_results' => I18n::msg('select_no_results'),
 ];
 
 if (Core::getUser()) {
@@ -264,14 +267,6 @@ Asset::setJsProperty('i18n', $i18n);
 
 // the Bootstrap based styles live in the lowest cascade layer until the components replace them
 Asset::addCssFile(Url::coreAssets('css/styles.css'), layer: 'legacy');
-Asset::addCssFile(Url::coreAssets('css/bootstrap-select.min.css'), layer: 'legacy');
-Asset::addJsFile(Url::coreAssets('js/bootstrap-select.min.js'), [Asset::JS_IMMUTABLE => true]);
-$bootstrapSelectLang = [
-    'de_de' => 'de_DE',
-    'en_gb' => 'en_US',
-][I18n::getLocale()] ?? 'en_US';
-Asset::addJsFile(Url::coreAssets('js/bootstrap-select-defaults-' . $bootstrapSelectLang . '.min.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('js/main.js'), [Asset::JS_IMMUTABLE => true]);
 
 Asset::addCssFile(Url::coreAssets('css/redaxo.css'), layer: 'legacy');
 Asset::addCssFile(Url::coreAssets('css/backend.css'));

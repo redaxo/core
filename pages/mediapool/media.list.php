@@ -141,7 +141,7 @@ $catsSel = new SelectInput(
     new MediaCategoryChoices(root: true)->choices(),
     (string) $rexFileCategory,
     'rex_file_category',
-    attributes: new HtmlAttributes(['data-live-search' => 'true']),
+    search: true,
 );
 
 if ($error) {

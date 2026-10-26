@@ -29,20 +29,6 @@
     background-color: $color-d-lighter;
 }
 
-// bootstrap-select: checkmarks links statt rechts anzeigen
-.bootstrap-select.show-tick .dropdown-menu {
-    .selected span.check-mark {
-        right: auto;
-        left: 8px;
-        top: 7px;
-    }
-
-    li a span.text {
-        margin-right: 0;
-        margin-left: 12px;
-    }
-}
-
 // ----------------------------------------------------------------------------
 
 @mixin _dark-dropdowns {
@@ -68,53 +54,6 @@
                 color: $color-text-light;
             }
         }
-    }
-
-    // select: align colors with input fields
-    .bootstrap-select,
-    .input-group .bootstrap-select {
-        .dropdown-toggle {
-            color: $color-text-light;
-            background-color: rgba($color-grey-2, 0.8);
-            border-color: rgba($color-grey-1, 0.8);
-            @include form-control-focus($color-blue-2);
-
-            &:hover {
-                color: $color-text-light;
-                background-color: rgba($color-grey-2, 0.8);
-                border-color: rgba($color-grey-1, 0.8);
-            }
-            &:focus {
-                background-color: $color-grey-1;
-                border-color: $color-blue-2;
-                color: $color-text-light;
-            }
-        }
-        &.open > .dropdown-toggle {
-            background-color: $color-grey-1;
-        }
-    }
-
-    // select inside of input-group
-    .input-group .bootstrap-select {
-        .dropdown-toggle {
-            border-color: darken($color-grey-5, 5%);
-
-            &:hover {
-                border-color: darken($color-grey-5, 5%);
-            }
-            &:focus {
-                background-color: $color-grey-5;
-            }
-        }
-
-        &.open > .dropdown-toggle {
-            background-color: $color-grey-5;
-        }
-    }
-
-    .bootstrap-select .no-results {
-        background-color: transparent;
     }
 }
 

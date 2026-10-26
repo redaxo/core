@@ -268,13 +268,13 @@ function dialog({ title = "", content, buttons = [], className = "" }) {
   return { element, body, close: (value = "") => element.close(value), closed };
 }
 async function confirm2(message) {
-  const i18n2 = window.rex.i18n ?? {};
+  const i18n3 = window.rex.i18n ?? {};
   const { closed } = dialog({
     content: Object.assign(document.createElement("p"), { textContent: message }),
     className: "rex-dialog--confirm",
     buttons: [
-      { label: i18n2.dialog_cancel ?? "Cancel", value: "cancel" },
-      { label: i18n2.dialog_confirm ?? "OK", value: "confirm", primary: true }
+      { label: i18n3.dialog_cancel ?? "Cancel", value: "cancel" },
+      { label: i18n3.dialog_confirm ?? "OK", value: "confirm", primary: true }
     ]
   });
   return "confirm" === await closed;
@@ -608,6 +608,221 @@ document.addEventListener("click", (event) => {
   }
 });
 
+// assets/js/src/select.js
+var i18n = () => window.rex.i18n ?? {};
+var count2 = 0;
+var Select = class {
+  /** @param {HTMLSelectElement} select */
+  constructor(select) {
+    this.select = select;
+    this.search = select.hasAttribute("data-rex-select-search");
+    this.id = "rex-select-" + ++count2;
+    this.element = document.createElement("div");
+    this.element.className = "rex-select";
+    this.element.innerHTML = `
+            <button type="button" class="form-control rex-select-toggle" aria-haspopup="listbox" aria-expanded="false" popovertarget="${this.id}">
+                <span class="rex-select-value"></span>
+            </button>
+            <div class="rex-select-panel" id="${this.id}" popover>
+                ${this.search ? '<input type="search" class="form-control rex-select-search" autocomplete="off">' : ""}
+                ${this.search && select.multiple ? `<div class="rex-select-actions">
+                    <button type="button" class="btn btn-default btn-xs" data-rex-select-all></button>
+                    <button type="button" class="btn btn-default btn-xs" data-rex-select-none></button>
+                </div>` : ""}
+                <ul class="rex-select-options" role="listbox"></ul>
+                <p class="rex-select-empty" hidden></p>
+            </div>`;
+    this.toggle = this.element.querySelector(".rex-select-toggle");
+    this.panel = this.element.querySelector(".rex-select-panel");
+    this.list = this.element.querySelector(".rex-select-options");
+    this.input = this.element.querySelector(".rex-select-search");
+    this.empty = this.element.querySelector(".rex-select-empty");
+    this.list.setAttribute("aria-multiselectable", String(select.multiple));
+    this.empty.textContent = i18n().select_no_results ?? "No results";
+    this.element.querySelector("[data-rex-select-all]")?.append(i18n().select_all ?? "All");
+    this.element.querySelector("[data-rex-select-none]")?.append(i18n().select_none ?? "None");
+    if (select.labels[0]) {
+      this.toggle.setAttribute("aria-labelledby", select.labels[0].id ||= this.id + "-label");
+    }
+    select.before(this.element);
+    this.element.append(select);
+    select.classList.add("rex-select-native");
+    select.tabIndex = -1;
+    this.toggle.addEventListener("keydown", (event) => {
+      if ("ArrowDown" === event.key || "ArrowUp" === event.key) {
+        event.preventDefault();
+        this.panel.showPopover();
+      }
+    });
+    select.addEventListener("focus", () => this.toggle.focus());
+    select.addEventListener("change", () => this.update());
+    this.panel.addEventListener("beforetoggle", (event) => this.beforeToggle("open" === event.newState));
+    this.panel.addEventListener("toggle", (event) => {
+      if ("open" === event.newState) {
+        (this.input ?? this.list.querySelector('[aria-selected="true"]') ?? this.options()[0])?.focus();
+      }
+    });
+    this.list.addEventListener("click", (event) => {
+      const item = event.target.closest('[role="option"]');
+      if (item) {
+        this.choose(item);
+      }
+    });
+    this.panel.addEventListener("keydown", (event) => this.keydown(event));
+    this.input?.addEventListener("input", () => this.filter());
+    this.element.querySelector("[data-rex-select-all]")?.addEventListener("click", () => this.selectAll(true));
+    this.element.querySelector("[data-rex-select-none]")?.addEventListener("click", () => this.selectAll(false));
+    new MutationObserver(() => this.update()).observe(select, { attributes: true, attributeFilter: ["disabled"], childList: true, subtree: true });
+    this.position = this.position.bind(this);
+    this.update();
+  }
+  /** Visible, enabled option items of the list. */
+  options() {
+    return [...this.list.querySelectorAll('[role="option"]:not([hidden], [aria-disabled="true"])')];
+  }
+  update() {
+    const selected = [...this.select.selectedOptions].filter((option) => "" !== option.value || !this.select.multiple);
+    const label = selected.map((option) => option.label).join(", ");
+    this.element.querySelector(".rex-select-value").textContent = label || (this.select.dataset.rexSelectPlaceholder ?? "\u2014");
+    this.toggle.title = label;
+    this.toggle.disabled = this.select.disabled;
+    this.element.classList.toggle("is-disabled", this.select.disabled);
+    if (this.panel.matches(":popover-open")) {
+      this.render();
+    }
+  }
+  render() {
+    this.list.replaceChildren();
+    for (const [index, option] of [...this.select.options].entries()) {
+      const group = option.parentElement instanceof HTMLOptGroupElement ? option.parentElement : null;
+      if (group && option === group.querySelector("option")) {
+        const header = document.createElement("li");
+        header.className = "rex-select-group";
+        header.setAttribute("role", "presentation");
+        header.textContent = group.label;
+        this.list.append(header);
+      }
+      const item = document.createElement("li");
+      item.setAttribute("role", "option");
+      item.tabIndex = -1;
+      item.dataset.index = String(index);
+      item.textContent = option.label || "\xA0";
+      item.setAttribute("aria-selected", String(option.selected));
+      if (option.disabled || group?.disabled) {
+        item.setAttribute("aria-disabled", "true");
+      }
+      item.classList.toggle("is-grouped", null !== group);
+      this.list.append(item);
+    }
+    this.filter();
+  }
+  filter() {
+    const term = this.input?.value.trim().toLocaleLowerCase() ?? "";
+    let visible = 0;
+    for (const item of this.list.querySelectorAll('[role="option"]')) {
+      item.hidden = "" !== term && !item.textContent.toLocaleLowerCase().includes(term);
+      visible += item.hidden ? 0 : 1;
+    }
+    for (const header of this.list.querySelectorAll(".rex-select-group")) {
+      let next = header.nextElementSibling;
+      let hasVisible = false;
+      for (; next && !next.matches(".rex-select-group"); next = next.nextElementSibling) {
+        hasVisible ||= !next.hidden;
+      }
+      header.hidden = !hasVisible;
+    }
+    this.empty.hidden = visible > 0;
+  }
+  choose(item) {
+    if ("true" === item.getAttribute("aria-disabled")) {
+      return;
+    }
+    const option = this.select.options[Number(item.dataset.index)];
+    if (this.select.multiple) {
+      option.selected = !option.selected;
+      item.setAttribute("aria-selected", String(option.selected));
+    } else {
+      option.selected = true;
+      this.panel.hidePopover();
+      this.toggle.focus();
+    }
+    this.changed();
+  }
+  selectAll(selected) {
+    for (const item of this.options()) {
+      this.select.options[Number(item.dataset.index)].selected = selected;
+      item.setAttribute("aria-selected", String(selected));
+    }
+    this.changed();
+  }
+  changed() {
+    this.select.dispatchEvent(new Event("input", { bubbles: true }));
+    this.select.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+  keydown(event) {
+    const options = this.options();
+    const index = options.indexOf(document.activeElement);
+    if ("ArrowDown" === event.key || "ArrowUp" === event.key) {
+      event.preventDefault();
+      const next = "ArrowDown" === event.key ? Math.min(index + 1, options.length - 1) : index - 1;
+      (next < 0 ? this.input ?? options[0] : options[next])?.focus();
+    } else if (("Enter" === event.key || " " === event.key) && index >= 0) {
+      event.preventDefault();
+      this.choose(options[index]);
+    } else if ("Enter" === event.key && document.activeElement === this.input) {
+      event.preventDefault();
+      if (options[0]) {
+        this.choose(options[0]);
+      }
+    } else if ("Escape" === event.key) {
+      event.preventDefault();
+      this.panel.hidePopover();
+      this.toggle.focus();
+    } else if ("Tab" === event.key) {
+      this.panel.hidePopover();
+    }
+  }
+  beforeToggle(open) {
+    this.toggle.setAttribute("aria-expanded", String(open));
+    this.element.classList.toggle("is-open", open);
+    if (open) {
+      if (this.input) {
+        this.input.value = "";
+      }
+      this.render();
+      this.position();
+      addEventListener("scroll", this.position, true);
+      addEventListener("resize", this.position);
+    } else {
+      removeEventListener("scroll", this.position, true);
+      removeEventListener("resize", this.position);
+    }
+  }
+  /** Places the panel below the toggle, or above when there is more room there. */
+  position(event) {
+    if (event?.target instanceof Node && this.panel.contains(event.target)) {
+      return;
+    }
+    const rect = this.toggle.getBoundingClientRect();
+    const below = innerHeight - rect.bottom;
+    const above = rect.top > below;
+    Object.assign(this.panel.style, {
+      left: Math.max(0, Math.min(rect.left, innerWidth - Math.max(rect.width, 220))) + "px",
+      minWidth: rect.width + "px",
+      top: above ? "" : rect.bottom + 2 + "px",
+      bottom: above ? innerHeight - rect.top + 2 + "px" : "",
+      maxHeight: Math.max(150, (above ? rect.top : below) - 16) + "px"
+    });
+  }
+};
+document.addEventListener("rex:ready", (event) => {
+  for (const select of event.target.querySelectorAll("select[data-rex-select]")) {
+    if (!select.closest(".rex-select")) {
+      new Select(select);
+    }
+  }
+});
+
 // assets/js/src/content-sidebar.js
 var key = "structure_content_sidebar_status";
 document.addEventListener("rex:ready", (event) => {
@@ -637,7 +852,7 @@ document.addEventListener("rex:ready", (event) => {
 
 // assets/js/src/session-timeout.js
 var rex = window.rex;
-var i18n = rex.i18n ?? {};
+var i18n2 = rex.i18n ?? {};
 var checkInterval = 5;
 var keepAliveInterval = 180;
 var warningTime = rex.session_warning_time + checkInterval;
@@ -688,11 +903,11 @@ async function keepAlive() {
   }
 }
 var button = (icon, label) => `<i class="rex-icon rex-icon-${icon}"></i> ${label}`;
-var logout = { label: button("sign-out", i18n.session_timeout_logout_label), onClick: () => location.href = rex.session_logout_url };
+var logout = { label: button("sign-out", i18n2.session_timeout_logout_label), onClick: () => location.href = rex.session_logout_url };
 var counter = "<span data-rex-session-counter></span>";
 function show(message, buttons) {
   current?.close();
-  current = dialog({ title: i18n.session_timeout_title, content: `<p>${message}</p>`, buttons, className: "rex-session-timeout-dialog" });
+  current = dialog({ title: i18n2.session_timeout_title, content: `<p>${message}</p>`, buttons, className: "rex-session-timeout-dialog" });
   current.closed.then(() => current = null);
   return current;
 }
@@ -705,7 +920,7 @@ function countdown({ body, element, closed }, end) {
     }
     if (seconds <= 0) {
       element.querySelector('[value="refresh"]')?.remove();
-      body.innerHTML = `<p>${i18n.session_timeout_message_has_expired}</p>`;
+      body.innerHTML = `<p>${i18n2.session_timeout_message_has_expired}</p>`;
       clearInterval(timer);
     }
   };
@@ -714,15 +929,15 @@ function countdown({ body, element, closed }, end) {
   closed.then(() => clearInterval(timer));
 }
 function showFailed() {
-  show(i18n.session_timeout_message_has_expired, [
-    { label: button("sign-in", i18n.session_timeout_login_label), primary: true, onClick: () => location.href = rex.session_login_url }
+  show(i18n2.session_timeout_message_has_expired, [
+    { label: button("sign-in", i18n2.session_timeout_login_label), primary: true, onClick: () => location.href = rex.session_login_url }
   ]);
 }
 function showExpand() {
-  const message = i18n.session_timeout_message_expand.replace("{0}", counter).replace("{1}", String(Math.trunc(rex.session_duration / 60)));
+  const message = i18n2.session_timeout_message_expand.replace("{0}", counter).replace("{1}", String(Math.trunc(rex.session_duration / 60)));
   const box = show(message, [
     logout,
-    { label: button("refresh", i18n.session_timeout_refresh_label), value: "refresh", primary: true, onClick: () => {
+    { label: button("refresh", i18n2.session_timeout_refresh_label), value: "refresh", primary: true, onClick: () => {
       keepAlive();
       setSessionWarningAt();
     } }
@@ -730,7 +945,7 @@ function showExpand() {
   countdown(box, () => sessionWarningAt + warningTime * 1e3);
 }
 function showOverallTimeout() {
-  const box = show(i18n.session_timeout_message_expired.replace("{0}", counter), [logout]);
+  const box = show(i18n2.session_timeout_message_expired.replace("{0}", counter), [logout]);
   countdown(box, () => overallWarningAt + warningTime * 1e3);
 }
 if (rex.session_keep_alive_url) {

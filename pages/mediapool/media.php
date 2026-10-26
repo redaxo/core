@@ -42,7 +42,8 @@ $selMedia = new SelectInput(
     $categoryChoices->choices(),
     (string) $rexFileCategory,
     'rex_file_category',
-    attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit();', 'data-live-search' => 'true']),
+    search: true,
+    attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit();']),
 );
 
 $formElements = [];

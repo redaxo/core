@@ -90,7 +90,7 @@ final class PermissionsTest extends TestCase
 
         self::assertMatchesRegularExpression('/<input [^>]*name="role\[perms\]\[\]" id="role-perms-structure-all" value="structure" checked data-rex-hides="#role-perms-structure-items">/', $html);
         self::assertMatchesRegularExpression('/<input type="checkbox" name="role\[perms\]\[\]" id="role-perms-general-general_test_perm__" value="general:test_perm\[\]">/', $html);
-        self::assertStringContainsString('<select class="form-control selectpicker" name="role[perms][]" id="role-perms-structure" multiple>', $html);
+        self::assertStringContainsString('<select class="form-control" name="role[perms][]" id="role-perms-structure" multiple data-rex-select>', $html);
         self::assertStringNotContainsString('id="role-perms-general-all"', $html);
     }
 }

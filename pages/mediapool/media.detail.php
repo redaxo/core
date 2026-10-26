@@ -223,7 +223,7 @@ if ($TPERM) {
         new MediaCategoryChoices(root: true)->choices(),
         (string) $rexFileCategory,
         'rex-mediapool-category',
-        attributes: new HtmlAttributes(['data-live-search' => 'true']),
+        search: true,
     );
 
     $formElements = [];

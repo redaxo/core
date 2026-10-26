@@ -37,12 +37,6 @@ const files = [
     ['jquery/dist/jquery.min.js', 'jquery.min.js'],
     ['jquery/dist/jquery.min.map', 'jquery.min.map'],
 
-    ['bootstrap-select/dist/css/bootstrap-select.min.css', 'css/bootstrap-select.min.css'],
-    ['bootstrap-select/dist/js/bootstrap-select.min.js', 'js/bootstrap-select.min.js'],
-    ['bootstrap-select/dist/js/bootstrap-select.min.js.map', 'js/bootstrap-select.min.js.map'],
-    ['bootstrap-select/dist/js/i18n/defaults-de_DE.min.js', 'js/bootstrap-select-defaults-de_DE.min.js'],
-    ['bootstrap-select/dist/js/i18n/defaults-en_US.min.js', 'js/bootstrap-select-defaults-en_US.min.js'],
-
     ['nouislider/dist/nouislider.js', 'noUiSlider/nouislider.js'],
     ['nouislider/dist/nouislider.min.js', 'noUiSlider/nouislider.min.js'],
     ['nouislider/dist/nouislider.css', 'noUiSlider/nouislider.css'],

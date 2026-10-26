@@ -578,23 +578,6 @@ tr.rex-state-error:hover > td {
     }
 }
 
-// selectpicker - bootstrap-select
-.input-group {
-    > .bootstrap-select > .btn {
-        border-radius: 0;
-    }
-    > .selectpicker:first-child + .bootstrap-select > .btn {
-        border-right: 0;
-        border-top-left-radius: $btn-border-radius-base;
-        border-bottom-left-radius: $btn-border-radius-base;
-    }
-    .bootstrap-select:last-child > .btn {
-        border-left: 0;
-        border-top-right-radius: $btn-border-radius-base;
-        border-bottom-right-radius: $btn-border-radius-base;
-    }
-}
-
 // correcting bootstrap vendor regarding Quick fix for badges in buttons
 // https://github.com/redaxo/core/blob/120950020f35e9158030513744835c936e527bc6/assets_src/vendor/bootstrap/assets/stylesheets/bootstrap/_badges.scss#L26
 .badge {

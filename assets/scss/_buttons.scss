@@ -96,12 +96,6 @@
     .input-group > .input-group-btn {
         width: auto;
     }
-    // bootstrap-select copies `form-control` onto its wrapper, which would stretch it like a text input
-    .input-group > .bootstrap-select.form-control {
-        display: table-cell;
-        width: auto;
-        min-width: 0;
-    }
 }
 
 // highlight buttons: show animation when :active

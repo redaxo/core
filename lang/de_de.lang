@@ -237,6 +237,9 @@ session_timeout_refresh_label = Session verlängern
 
 dialog_confirm = OK
 dialog_cancel = Abbrechen
+select_all = Alle auswählen
+select_none = Keine auswählen
+select_no_results = Keine Treffer
 overlay_close = Schließen
 
 password_change_required = Das Passwort ist abgelaufen. Um fortzufahren, bitte ein neues Passwort angeben!

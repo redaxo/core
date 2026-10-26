@@ -241,11 +241,15 @@ if ('add' === $func || $user) {
     <?php });
     ?>
     <script nonce="<?= Response::getNonce() ?>">
-        jQuery(function ($) {
-            $('#user-admin').change(function () {
-                $('#user-roles').prop('disabled', $(this).is(':checked')).selectpicker('refresh');
-            }).change();
-        });
+        (() => {
+            const admin = document.getElementById('user-admin');
+            if (!admin) {
+                return;
+            }
+            const update = () => document.getElementById('user-roles').disabled = admin.checked;
+            admin.addEventListener('change', update);
+            update();
+        })();
     </script>
     <?php
 
