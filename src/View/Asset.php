@@ -12,6 +12,8 @@ final class Asset
     public const JS_DEFERED = 'defer';
     public const JS_ASYNC = 'async';
     public const JS_IMMUTABLE = 'immutable';
+    /** Loads the file as an ES module (with `JS_IMMUTABLE` its URL is rewritten, so it can't import siblings relatively). */
+    public const JS_MODULE = 'module';
 
     /** @var array<string, list<string>> */
     private static array $cssFiles = [];

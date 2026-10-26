@@ -7,7 +7,6 @@ use Redaxo\Core\Content\Linkmap\CategoryTree;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
-use Redaxo\Core\Http\Response;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
@@ -17,93 +16,22 @@ use function Redaxo\Core\View\escape;
 
 // ------- Default Values
 
-$openerInputField = Request::request('opener_input_field', 'string');
-$openerInputFieldName = Request::request('opener_input_field_name', 'string');
+$picker = Request::request('picker', 'string');
 $categoryId = Request::request('category_id', 'int');
 $categoryId = Category::get($categoryId) ? $categoryId : 0;
 $languageId = Request::request('language', 'int');
 $languageId = Language::exists($languageId) ? $languageId : Language::getStartId();
 
-$pattern = '/[^a-z0-9_-]/i';
-if (preg_match($pattern, $openerInputField, $match)) {
-    throw new InvalidArgumentException(sprintf('Invalid character "%s" in opener_input_field.', $match[0]));
-}
-if (preg_match($pattern, $openerInputFieldName, $match)) {
-    throw new InvalidArgumentException(sprintf('Invalid character "%s" in opener_input_field_name.', $match[0]));
+if (!in_array($picker, ['', 'single', 'multiple'], true)) {
+    throw new InvalidArgumentException(sprintf('Invalid picker mode "%s".', $picker));
 }
 
 $context = new Context([
     'page' => Controller::getCurrentPage(),
-    'opener_input_field' => $openerInputField,
-    'opener_input_field_name' => $openerInputFieldName,
+    'picker' => $picker,
     'category_id' => $categoryId,
     'language' => $languageId,
 ]);
-
-// ------- Build JS Functions
-
-$funcBody = '';
-
-if ('' != $openerInputField && '' == $openerInputFieldName) {
-    $openerInputFieldName = $openerInputField . '_NAME';
-}
-if (str_starts_with($openerInputField, 'REX_LINKLIST_')) {
-    $id = escape((string) substr($openerInputField, 13, strlen($openerInputField)), 'js');
-    $funcBody .= 'var linklist = "REX_LINKLIST_SELECT_' . $id . '";
-                             var linkid = link.replace("redaxo://","");
-                 var source = opener.document.getElementById(linklist);
-                 var sourcelength = source.options.length;
-
-                             option = opener.document.createElement("OPTION");
-                             option.text = name;
-                             option.value = linkid;
-
-                 source.options.add(option, sourcelength);
-                 opener.writeREXLinklist(\'' . $id . '\');';
-} else {
-    $escapedOpenerInputField = escape($openerInputField, 'js');
-    $escapedOpenerInputFieldName = escape($openerInputFieldName, 'js');
-    $funcBody .= <<<JS
-        var event = opener.jQuery.Event("rex:selectLink");
-        opener.jQuery(window).trigger(event, [link, name]);
-        if (!event.isDefaultPrevented()) {
-            var linkid = link.replace("redaxo://","");
-            window.opener.document.getElementById("$escapedOpenerInputField").value = linkid;
-            window.opener.document.getElementById("$escapedOpenerInputFieldName").value = name;
-            self.close();
-        }
-        JS;
-}
-
-// ------------------------ Print JS Functions
-
-$retainEventHandlers = '';
-if (!Request::isXmlHttpRequest()) {
-    $retainEventHandlers = 'rex_retain_popup_event_handlers("rex:selectLink");';
-}
-
-?>
-<script type="text/javascript" nonce="<?= Response::getNonce() ?>">
-    <?= $retainEventHandlers ?>
-
-    // This function adds a Font Awesome check icon to a list item (link) when the user clicks on it.
-    $(document).on('rex:ready', function (event, container) {
-        container.get(0).querySelectorAll('.rex-linkmap-list-item-article').forEach(function (item) {
-            item.querySelector('a').addEventListener('click', function (e) {
-                if (item.querySelector('.fa-check')) return;
-                item.insertAdjacentHTML(
-                    'beforeend',
-                    '<i class="fa-solid fa-check" style="padding-left:5px"></i>'
-                );
-            });
-        });
-    });
-
-    function insertLink(link,name){
-        <?= $funcBody, "\n" ?>
-    }
-</script>
-<?php
 
 $isRoot = 0 === $categoryId;
 $category = Category::get($categoryId);

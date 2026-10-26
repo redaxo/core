@@ -30,7 +30,7 @@ use Redaxo\Core\View\Message;
 use function Redaxo\Core\View\escape;
 
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
-assert(isset($openerInputField) && is_string($openerInputField));
+assert(isset($picker) && is_string($picker));
 assert(isset($argFields) && is_string($argFields));
 assert(isset($toolbar) && is_string($toolbar));
 assert(isset($rexFileCategoryName) && is_string($rexFileCategoryName));
@@ -45,7 +45,7 @@ if (!isset($error)) {
     $error = '';
 }
 
-/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
+/** @var array{types?: string, picker?: string, language?: int} $argUrl */
 $argUrl ??= [];
 
 $mediaMethod = Request::request('media_method', 'string');
@@ -252,12 +252,12 @@ if ($hasCategoryPerm) {
     $buttons[] = $button;
 
     // $buttons = '<button class="btn btn-delete" type="submit" onclick="if(confirm(\'' . I18n::msg('delete') . ' ?\')){var needle=new getObj(\'media_method\');needle.obj.value=\'delete_selectedmedia\';}else{return false;}">' . I18n::msg('pool_delete_selectedmedia') . '</button>';
-    if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
+    if ('multiple' === $picker) {
         $button = [];
         $button['label'] = I18n::msg('pool_get_selectedmedia');
         $button['attributes']['class'][] = 'btn-apply';
-        $button['attributes']['type'][] = 'submit';
-        $button['attributes']['onclick'][] = 'selectMediaListArray(\'selectedmedia[]\');return false;';
+        $button['attributes']['type'][] = 'button';
+        $button['attributes']['data-rex-pick-checked'][] = 'selectedmedia[]';
         $buttons[] = $button;
     }
 
@@ -321,11 +321,13 @@ foreach ($items as $media) {
     }
 
     $openerLink = '';
-    if ('' != $openerInputField) {
-        $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $media->fileName . '\', \'' . escape($media->title, 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
-        if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-            $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $media->fileName . '\', this);return false;">' . I18n::msg('pool_file_get') . '</a>';
-        }
+    if ('' !== $picker) {
+        $openerLink = '<button ' . new HtmlAttributes([
+            'type' => 'button',
+            'class' => ['btn', 'btn-xs', 'btn-select', 'btn-highlight' => 'multiple' === $picker],
+            'data-rex-pick' => $media->fileName,
+            'data-rex-pick-label' => $media->title,
+        ])->toString() . '>' . I18n::msg('pool_file_get') . '</button>';
     }
 
     $ilink = Url::currentBackendPage(array_merge(['file_id' => $media->id, 'rex_file_category' => $rexFileCategory], $argUrl));

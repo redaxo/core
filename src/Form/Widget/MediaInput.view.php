@@ -5,32 +5,28 @@ use Redaxo\Core\Form\Widget\MediaInput;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\HtmlAttributes;
 
-use function Redaxo\Core\View\escape;
-
 return static function (MediaInput $input): void {
-    $id = escape($input->id, 'js');
-    $params = escape(
-        (null === $input->categoryId ? '' : '&rex_file_category=' . $input->categoryId)
-        . ($input->types ? '&types=' . urlencode(implode(',', $input->types)) : ''),
-        'js',
-    );
     $allowed = !$input->disabled && Core::requireUser()->getComplexPerm('media')->hasMediaPerm();
 
-    $button = static fn (string $onclick, string $title, string $icon): string => '<a ' . new HtmlAttributes([
-        'href' => '#',
+    $button = static fn (string $action, string $title, string $icon): string => '<button ' . new HtmlAttributes([
+        'type' => 'button',
         'class' => ['btn', 'btn-popup'],
-        'onclick' => ($allowed ? $onclick : '') . 'return false;',
+        'data-rex-widget-action' => $action,
         'title' => I18n::rawMsg($title),
         'disabled' => !$allowed,
-    ])->toString() . '><i class="rex-icon ' . $icon . '"></i></a>' ?>
-    <div <?= new HtmlAttributes(['class' => ['rex-js-widget', 'rex-js-widget-media', 'rex-js-widget-preview' => $input->preview, 'rex-js-widget-preview-media-manager' => $input->preview]]) ?>>
+    ])->toString() . '><i class="rex-icon ' . $icon . '"></i></button>' ?>
+    <div <?= new HtmlAttributes([
+        'class' => ['rex-js-widget', 'rex-js-widget-media', 'rex-js-widget-preview' => $input->preview, 'rex-js-widget-preview-media-manager' => $input->preview],
+        'data-rex-widget' => 'media',
+        'data-rex-widget-options' => json_encode(['types' => $input->types, 'category' => $input->categoryId], JSON_THROW_ON_ERROR),
+    ]) ?>>
         <div class="input-group">
-            <input <?= new HtmlAttributes(['class' => ['form-control'], 'type' => 'text', 'name' => $input->name, 'value' => (string) $input->fileName, 'id' => $input->labelTarget(), 'readonly' => true, 'disabled' => $input->disabled]) ?>>
+            <input <?= new HtmlAttributes(['class' => ['form-control'], 'type' => 'text', 'name' => $input->name, 'value' => (string) $input->fileName, 'id' => $input->labelTarget(), 'readonly' => true, 'disabled' => $input->disabled, 'data-rex-widget-value' => true]) ?>>
             <span class="input-group-btn">
-                <?= $button("openREXMedia('$id', '$params');", 'form_media_open', 'rex-icon-open-mediapool') ?>
-                <?= $button("addREXMedia('$id', '$params');", 'form_media_new', 'rex-icon-add-media') ?>
-                <?= $button("deleteREXMedia('$id');", 'form_media_remove', 'rex-icon-delete-media') ?>
-                <?= $button("viewREXMedia('$id', '$params');", 'form_media_view', 'rex-icon-view-media') ?>
+                <?= $button('open', 'form_media_open', 'rex-icon-open-mediapool') ?>
+                <?= $button('add', 'form_media_new', 'rex-icon-add-media') ?>
+                <?= $button('remove', 'form_media_remove', 'rex-icon-delete-media') ?>
+                <?= $button('view', 'form_media_view', 'rex-icon-view-media') ?>
             </span>
         </div>
         <div class="rex-js-media-preview"></div>

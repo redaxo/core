@@ -2,7 +2,8 @@
 
     var DEBUGMODE = false;
 
-    $(document).on("rex:ready", function (event, container) {
+    $(document).on("rex:ready", function (event) {
+        var container = $(event.target);
 
         // set debug mode
         if ($('.rex-is-debugmode').length) {

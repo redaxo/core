@@ -48,7 +48,7 @@ foreach ($report as $title => $group) {
     $fragment->setVar('title', $title);
 
     if (SystemReport::TITLE_PHP === $title) {
-        $phpinfo = '<a href="' . Url::backendPage('system/phpinfo') . '" class="btn btn-primary btn-xs" onclick="newWindow(\'phpinfo\', this.href, 1000,800,\',status=yes,resizable=yes\');return false;">phpinfo</a>';
+        $phpinfo = '<a href="' . Url::backendPage('system/phpinfo') . '" class="btn btn-primary btn-xs" target="_blank" rel="noopener">phpinfo</a>';
         $fragment->setVar('options', $phpinfo, false);
     }
 

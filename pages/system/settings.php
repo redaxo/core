@@ -146,7 +146,7 @@ $content = '
         </tr>
         <tr>
             <th>PHP</th>
-            <td>' . PHP_VERSION . ' <a class="rex-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" onclick="newWindow(\'phpinfo\', this.href, 1000,800,\',status=yes,resizable=yes\');return false;"><i class="rex-icon rex-icon-phpinfo"></i></a></td>
+            <td>' . PHP_VERSION . ' <a class="rex-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" target="_blank" rel="noopener"><i class="rex-icon rex-icon-phpinfo"></i></a></td>
         </tr>
         <tr>
             <th>' . I18n::msg('base_url') . '</th>

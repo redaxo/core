@@ -254,7 +254,7 @@ final class View
             new MediaCategoryChoices(root: true)->choices(),
             (string) $rexFileCategory,
             'rex-mediapool-category',
-            attributes: new HtmlAttributes(['onchange' => 'this.form.submit()', 'data-live-search' => 'true']),
+            attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit()', 'data-live-search' => 'true']),
         );
 
         $argFields = '';
@@ -263,13 +263,13 @@ final class View
             $argFields .= '<input type="hidden" name="types" value="' . escape($types) . '" />' . "\n";
         }
 
-        $openerInputField = Request::request('opener_input_field', 'string');
-        if ('' != $openerInputField) {
-            $argFields .= '<input type="hidden" name="opener_input_field" value="' . escape($openerInputField) . '" />' . "\n";
+        $picker = Request::request('picker', 'string');
+        if ('' !== $picker) {
+            $argFields .= '<input type="hidden" name="picker" value="' . escape($picker) . '" />' . "\n";
         }
 
         $addSubmit = '';
-        if ($closeForm && '' != $openerInputField) {
+        if ($closeForm && '' !== $picker) {
             $addSubmit = '<button class="btn btn-save" type="submit" name="saveandexit" value="' . I18n::msg('pool_file_upload_get') . '"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('pool_file_upload_get') . '</button>';
         }
 

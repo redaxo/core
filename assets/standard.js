@@ -3,12 +3,6 @@
  */
 
 // -------------------------------------------------------------------------------------------------------------------
-window.addEventListener("unload", (event) => {
-    closeAll();
-});
-
-// -------------------------------------------------------------------------------------------------------------------
-
 function getObj(name)
 {
     if (document.getElementById)
@@ -57,301 +51,12 @@ function init()
 
 // -------------------------------------------------------------------------------------------------------------------
 
-function makeWinObj(name,url,posx,posy,width,height,extra)
-{
-    if (extra == 'toolbar') extra = 'scrollbars=yes,toolbar=yes';
-    else if (extra == 'empty') extra = 'scrollbars=no,toolbar=no';
-    else extra = 'scrollbars=yes,toolbar=no' + extra;
-
-    this.name=name;
-    this.url=url;
-    this.obj=window.open(url,name,'left='+posx+',top='+posy+',width='+width+',height='+height+', ' + extra);
-
-    // alert("x: "+posx+" | posy: "+posy);
-
-    // this.obj.moveTo(posx,posy);
-    this.obj.focus();
-
-    return this;
-}
-
-function closeAll()
-{
-    for( var i=0;i<=winObjCounter;i++)
-    {
-        if(winObj[i]) winObj[i].obj.close();
-    }
-}
-
-function newWindow(name,link,width,height,type)
-{
-    if (width==0) width=550;
-    if (height==0) height=400;
-
-    if (type == 'scrollbars')
-    {
-        extra = 'toolbar';
-    }else if (type == 'empty')
-    {
-        extra = 'empty';
-    }else
-    {
-        extra = type;
-    }
-
-    if (type=="nav")
-    {
-        posx = parseInt(screen.width/2)-390;
-        posy = parseInt(screen.height/2) - 24 - 290;
-        width= 320;
-        height=580;
-    }else if (type=="content")
-    {
-        posx = parseInt(screen.width/2) - 390 + 330;
-        posy = parseInt(screen.height/2) - 24 - 290;
-        width= 470;
-        height=580;
-    }else
-    {
-        posx = parseInt((screen.width-width)/2);
-        posy = parseInt((screen.height-height)/2) - 24;
-    }
-
-    winObjCounter++;
-    winObj[winObjCounter] = new makeWinObj(name,link,posx,posy,width,height,extra);
-
-    if (rex.popupEvents && rex.popupEvents[name]) {
-        rex.popupEvents[name] = {};
-    }
-
-    return winObj[winObjCounter].obj;
-}
-
-var winObj = new Array();
-if (opener != null)
-{
-    try{
-        if (typeof(opener.winObjCounter) == "number")
-        {
-            var winObjCounter = opener.winObjCounter;
-        }
-    } catch(e) {
-        // in x-origin cases opener.winObjCounter would not be readable
-        var winObjCounter = -1;
-    }
-}else
-{
-    var winObjCounter = -1;
-}
-
-function rex_retain_popup_event_handlers(eventName) {
-    if (!opener || !opener.rex || !window.name) {
-        return;
-    }
-
-    var events = opener.rex.popupEvents || {};
-
-    if (events[window.name] && events[window.name][eventName]) {
-        $.each(events[window.name][eventName], function (i, event) {
-            opener.jQuery(window).on(eventName, event);
-        });
-
-        return;
-    }
-
-    var events = opener.jQuery._data(window, 'events');
-
-    if (!events || !events[eventName]) {
-        return;
-    }
-
-    var handlers = [];
-    $.each(events[eventName], function (i, event) {
-        handlers.push(event.handler);
-    });
-
-    if (!opener.rex.popupEvents) {
-        opener.rex.popupEvents = {};
-    }
-    if (!opener.rex.popupEvents[window.name]) {
-        opener.rex.popupEvents[window.name] = {};
-    }
-
-    opener.rex.popupEvents[window.name][eventName] = handlers;
-}
-
 function setValue(id,value)
 {
     var field = new getObj(id);
     field.obj.value = value;
 }
 
-function deleteREX(id, i_list, i_select)
-{
-    var medialist = i_select+id;
-    var needle = new getObj(medialist);
-    var source = needle.obj;
-    var sourcelength = source.options.length;
-    var position = null;
-
-    for (ii = 0; ii < sourcelength; ii++) {
-        if (source.options[ii].selected) {
-            position = ii;
-            break;
-        }
-    }
-
-    if(position != null)
-    {
-        source.options[position] = null;
-        sourcelength--;
-
-        // Wenn das erste geloescht wurde
-        if(position == 0)
-        {
-            // Und es gibt noch weitere,
-            // -> selektiere das "neue" erste
-            if(sourcelength > 0)
-                source.options[0].selected = "selected";
-        }
-        else
-        {
-            // -> selektiere das neue an der stelle >position<
-            if(sourcelength > position)
-                source.options[position].selected= "selected";
-            else
-                source.options[position-1].selected= "selected";
-        }
-        writeREX(id, i_list, i_select);
-    }
-}
-
-function moveREX(id, i_list, i_select, direction)
-{
-    var medialist = i_select+id;
-    var needle = new getObj(medialist);
-    var source = needle.obj;
-    var sourcelength = source.options.length;
-    var elements = new Array();
-    var was_selected = new Array();
-
-    for (ii = 0; ii < sourcelength; ii++) {
-
-        elements[ii] = new Array();
-        elements[ii]['value'] = source.options[ii].value;
-        elements[ii]['title'] = source.options[ii].text;
-        was_selected[ii] = false;
-
-    }
-
-    var inserted = 0;
-    var was_moved = new Array();
-    was_moved[-1] = true;
-    was_moved[sourcelength] = true;
-
-    if (direction == 'top') {
-        for (ii = 0; ii < sourcelength; ii++) {
-            if (source.options[ii].selected) {
-                elements = moveItem(elements, ii, inserted);
-                was_selected[inserted] = true;
-                inserted++;
-            }
-        }
-    }
-
-    if (direction == 'up') {
-        for (ii = 0; ii < sourcelength; ii++) {
-            was_moved[ii] = false;
-            if (source.options[ii].selected) {
-                to = ii-1;
-                if (was_moved[to]) {
-                    to = ii;
-                }
-                elements = moveItem(elements, ii, to);
-                was_selected[to] = true;
-                was_moved[to] = true;
-            }
-        }
-    }
-
-    if (direction == 'down') {
-        for (ii = sourcelength-1; ii >= 0; ii--) {
-            was_moved[ii] = false;
-            if (source.options[ii].selected) {
-                to = ii+1;
-                if (was_moved[to]) {
-                    to = ii;
-                }
-                elements = moveItem(elements, ii, to);
-                was_selected[to] = true;
-                was_moved[to] = true;
-            }
-        }
-    }
-
-    if (direction == 'bottom') {
-        inserted = 0;
-        for (ii = sourcelength-1; ii >= 0; ii--) {
-            if (source.options[ii].selected) {
-                to = sourcelength - inserted-1;
-                if (to > sourcelength) {
-                    to = sourcelength;
-                }
-
-                elements = moveItem(elements, ii, to);
-                was_selected[to] = true;
-                inserted++;
-            }
-        }
-    }
-
-    for (ii = 0; ii < sourcelength; ii++) {
-        source.options[ii] = new Option(elements[ii]['title'], elements[ii]['value']);
-        source.options[ii].selected = was_selected[ii];
-    }
-    writeREX(id, i_list, i_select);
-}
-
-function writeREX(id, i_list, i_select)
-{
-
-    var v_list = i_list+id;
-    var v_select = i_select+id;
-    var source = document.getElementById(v_select);
-    var sourcelength = source.options.length;
-    var target = document.getElementById(v_list);
-
-    target.value = "";
-
-    for (i=0; i < sourcelength; i++) {
-        target.value += (source[i].value);
-        if (sourcelength > (i+1))  target.value += ',';
-    }
-}
-
-function moveItem(arr, from, to)
-{
-    if (from == to || to < 0)
-    {
-        return arr;
-    }
-
-    tmp = arr[from];
-    if (from > to)
-    {
-        for (index = from; index > to; index--) {
-            arr[index] = arr[index-1];
-        }
-    } else {
-        for (index = from; index < to; index++) {
-            arr[index] = arr[index+1];
-        }
-    }
-    arr[to] = tmp;
-    return arr;
-}
-
-// Checkbox mit der ID <id> anhaken
 function checkInput(id)
 {
     if(id)
@@ -559,8 +264,8 @@ jQuery(document).ready(function($) {
     $(document).on('change', 'input[data-rex-hides]', function () {
         $($(this).attr('data-rex-hides')).toggle(!this.checked);
     });
-    $(document).on('rex:ready', function (event, viewRoot) {
-        $(viewRoot).find('input[data-rex-hides]').each(function () {
+    $(document).on('rex:ready', function (event) {
+        $(event.target).find('input[data-rex-hides]').each(function () {
             $($(this).attr('data-rex-hides')).toggle(!this.checked);
         });
     });
@@ -579,7 +284,7 @@ jQuery(document).ready(function($) {
         $collection.attr('data-rex-collection-next', index + 1);
         $collection.children('.rex-form-collection-items').append($item);
         updateCollection($collection);
-        $item.trigger('rex:ready', [$item]);
+        rex.ready($item[0]);
     });
     $(document).on('click', '[data-rex-collection-remove]', function () {
         var $collection = $(this).closest('[data-rex-collection]');
@@ -594,15 +299,15 @@ jQuery(document).ready(function($) {
             $item.next().after($item);
         }
     });
-    $(document).on('rex:ready', function (event, viewRoot) {
-        $(viewRoot).find('[data-rex-collection]').each(function () {
+    $(document).on('rex:ready', function (event) {
+        $(event.target).find('[data-rex-collection]').each(function () {
             updateCollection($(this));
         });
     });
 
     // add eye-toggle to each password input
-    $(document).on('rex:ready', function (event, viewRoot) {
-        $(viewRoot).find('input[type="password"]').each(function() {
+    $(document).on('rex:ready', function (event) {
+        $(event.target).find('input[type="password"]').each(function() {
             var $el = $(this);
             var $eye = jQuery('<i class="rex-icon rex-icon-view" aria-hidden="true"></i>');
 
@@ -726,11 +431,11 @@ jQuery(document).ready(function($) {
 
                 rex_loader.hideAfterDelay();
 
-                options.context.trigger('rex:ready', [options.context]);
+                rex.ready(options.context[0]);
             });
     }
 
-    $('body').trigger('rex:ready', [$('body')]);
+    rex.ready(document.body);
 
     /*
      * Replace all SVG images with inline SVG

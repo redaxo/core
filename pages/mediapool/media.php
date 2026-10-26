@@ -22,7 +22,7 @@ assert(isset($rexFileCategory) && is_int($rexFileCategory));
 assert(isset($argFields) && is_string($argFields));
 assert(isset($fileId) && is_int($fileId));
 
-/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
+/** @var array{types?: string, picker?: string, language?: int} $argUrl */
 $argUrl ??= [];
 
 $subpage = Controller::getCurrentPagePart(2);
@@ -42,7 +42,7 @@ $selMedia = new SelectInput(
     $categoryChoices->choices(),
     (string) $rexFileCategory,
     'rex_file_category',
-    attributes: new HtmlAttributes(['onchange' => 'this.form.submit();', 'data-live-search' => 'true']),
+    attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit();', 'data-live-search' => 'true']),
 );
 
 $formElements = [];

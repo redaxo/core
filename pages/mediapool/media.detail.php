@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use function Redaxo\Core\View\escape;
 
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
-assert(isset($openerInputField) && is_string($openerInputField));
+assert(isset($picker) && is_string($picker));
 assert(isset($argFields) && is_string($argFields));
 assert(isset($toolbar) && is_string($toolbar));
 /** @psalm-suppress RedundantCondition */
@@ -202,11 +202,13 @@ if ('' != $success) {
 }
 
 $openerLink = '';
-if ('' != $openerInputField) {
-    $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $encodedFname . '\', \'' . escape($gf->getStringValue('title'), 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
-    if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-        $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $encodedFname . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
-    }
+if ('' !== $picker) {
+    $openerLink = '<button ' . new HtmlAttributes([
+        'type' => 'button',
+        'class' => ['btn', 'btn-xs', 'btn-select', 'btn-highlight' => 'multiple' === $picker],
+        'data-rex-pick' => $fname,
+        'data-rex-pick-label' => $gf->getStringValue('title'),
+    ])->toString() . '>' . I18n::msg('pool_file_get') . '</button>';
 
     $openerLink = ' | ' . $openerLink;
 }

@@ -256,7 +256,7 @@ final class Controller
             ->setPrio(20)
             ->setPjax()
             ->setIcon('rex-icon rex-icon-media')
-            ->setPopup('openMediaPool(); return false;')
+            ->setPopup(true)
             ->addSubpage(new Page('media', I18n::msg('pool_file_list'))->setSubPath(Path::core('pages/mediapool/media.php')))
             ->addSubpage(new Page('upload', I18n::msg('pool_file_insert'))->setSubPath(Path::core('pages/mediapool/upload.php')))
             ->addSubpage(new Page('structure', I18n::msg('pool_cat_list'))->setRequiredPermissions('media/hasAll')->setSubPath(Path::core('pages/mediapool/structure.php')))

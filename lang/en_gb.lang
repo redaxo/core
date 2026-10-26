@@ -219,6 +219,8 @@ session_timeout_logout_label = Log out
 session_timeout_login_label = Log in again
 session_timeout_refresh_label = Extend session
 
+overlay_close = Close
+
 list_previous = previous page
 list_next = next page
 list_rows_found = {0} entries found

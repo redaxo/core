@@ -1,4 +1,5 @@
-$(document).on('rex:ready', function (event, container) {
+$(document).on('rex:ready', function (event) {
+    var container = $(event.target);
     var selects = container.find('.selectpicker');
     selects.selectpicker({
         noneSelectedText: '—'

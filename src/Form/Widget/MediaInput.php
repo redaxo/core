@@ -5,10 +5,9 @@ namespace Redaxo\Core\Form\Widget;
 use Redaxo\Core\View\RendersView;
 
 /**
- * Picker for one medium via the media pool popup.
+ * Picker for one medium via the media pool overlay.
  *
- * The file name is submitted by the (read-only) text input. The element id follows the `REX_MEDIA_*` convention the
- * media pool scripts rely on.
+ * The file name is submitted by the (read-only) text input.
  */
 final class MediaInput implements Widget
 {
@@ -16,7 +15,6 @@ final class MediaInput implements Widget
 
     public function __construct(
         public string $name,
-        /** Only `a-z`, `0-9`, `_` and `-`, as the media pool addresses the input by id. */
         public string $id,
         public ?string $fileName = null,
         /** Media category the media pool opens in. */
@@ -30,6 +28,6 @@ final class MediaInput implements Widget
 
     public function labelTarget(): string
     {
-        return 'REX_MEDIA_' . $this->id;
+        return $this->id;
     }
 }

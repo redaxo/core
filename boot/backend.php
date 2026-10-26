@@ -251,6 +251,7 @@ if (Core::getUser()) {
         'session_timeout_logout_label' => I18n::msg('session_timeout_logout_label'),
         'session_timeout_login_label' => I18n::msg('session_timeout_login_label'),
         'session_timeout_refresh_label' => I18n::msg('session_timeout_refresh_label'),
+        'overlay_close' => I18n::msg('overlay_close'),
     ]);
 }
 
@@ -266,14 +267,12 @@ Asset::addJsFile(Url::coreAssets('js/bootstrap-select-defaults-' . $bootstrapSel
 Asset::addJsFile(Url::coreAssets('js/main.js'), [Asset::JS_IMMUTABLE => true]);
 
 Asset::addCssFile(Url::coreAssets('css/redaxo.css'));
+Asset::addCssFile(Url::coreAssets('css/overlay.css'));
 Asset::addJsFile(Url::coreAssets('js/redaxo.js'), [Asset::JS_IMMUTABLE => true]);
+Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
 
-if (Core::getUser()) {
-    Asset::addJsFile(Url::coreAssets('js/linkmap.js'), [Asset::JS_IMMUTABLE => true]);
-
-    if ('content' == Controller::getCurrentPagePart(1)) {
-        Asset::addJsFile(Url::coreAssets('js/content.js'), [Asset::JS_IMMUTABLE => true]);
-    }
+if (Core::getUser() && 'content' == Controller::getCurrentPagePart(1)) {
+    Asset::addJsFile(Url::coreAssets('js/content.js'), [Asset::JS_IMMUTABLE => true]);
 }
 
 if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('history[article_rollback]')) {

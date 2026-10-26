@@ -5,6 +5,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Asset;
 use Redaxo\Core\View\Fragment;
 
@@ -74,7 +75,9 @@ use function Redaxo\Core\View\escape;
             $attributes[] = 'defer="defer"';
         }
 
-        echo "\n" . '    <script type="text/javascript" src="' . $file . '" ' . implode(' ', $attributes) . ' nonce="' . Response::getNonce() . '"></script>';
+        $type = true === (Type::array($options)[Asset::JS_MODULE] ?? false) ? 'module' : 'text/javascript';
+
+        echo "\n" . '    <script type="' . $type . '" src="' . $file . '" ' . implode(' ', $attributes) . ' nonce="' . Response::getNonce() . '"></script>';
     }
 ?>
 
