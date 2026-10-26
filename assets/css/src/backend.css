@@ -1,22 +1,24 @@
 /*
  REDAXO backend styles.
 
- The Bootstrap based styles of the `legacy` layer (assets/scss, imported by Asset::addCssFile) stay below every
- layer defined here until the components have replaced them. Element styles (base, typography) therefore follow
- only once the legacy layer is gone; until then the components style their own classes only.
+ The Bootstrap based styles of the `legacy` layer (assets/scss, imported by Asset::addCssFile) sit between the
+ element styles of `base` and the components, until the components have replaced them. This file is loaded first,
+ so this statement fixes the order of the layers.
 
  Build: npm run build:backend-css
  */
 
-@layer legacy, tokens, components, utilities;
+@layer base, legacy, tokens, components, utilities;
 
 @import "tokens.css";
+@import "base.css";
 
 @import "layout/shell.css";
 
 @import "components/icons.css";
 @import "components/page-header.css";
 @import "components/section.css";
+@import "components/table.css";
 @import "components/overlay.css";
 @import "components/dialog.css";
 @import "components/select.css";

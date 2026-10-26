@@ -83,6 +83,20 @@
         background: var(--rex-section-body-bg);
     }
 
+    .rex-page-section h3 {
+        font-size: 17px;
+        font-weight: 700;
+
+        .rex-slice & {
+            font-size: 24px;
+            font-weight: 500;
+        }
+    }
+
+    :is(.rex-section--add, .rex-section--edit) > .rex-section__header mark {
+        background-color: light-dark(hsl(148 37.8% 39.6%), rgb(64 155 228 / 0.2));
+    }
+
     .rex-section__footer {
         padding: 10px 15px;
         background: var(--rex-section-footer-bg);

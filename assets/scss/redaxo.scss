@@ -5,15 +5,12 @@
 @import "mixins/helper";
 
 
-@import "reset";
-
 @import "variables";
 @import "variables-dark"; // variables for dark mode
 @import "bootstrap-dark-overrides"; // bootstrap for dark mode
 @import "scaffolding";
 @import "alerts";
 @import "buttons";
-@import "code";
 @import "collapse";
 @import "docs";
 @import "dropdowns";
@@ -25,7 +22,5 @@
 @import "panels";
 @import "sticky";
 @import "tables";
-@import "typo";
-@import "utilities";
 
 @import "impersonate";

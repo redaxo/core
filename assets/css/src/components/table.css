@@ -1,0 +1,13 @@
+/* Tables (`.table`) */
+
+@layer components {
+    .table > tbody > tr > td > h3 {
+        font-size: var(--rex-font-size);
+        font-weight: 700;
+        line-height: var(--rex-line-height);
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}

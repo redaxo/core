@@ -1,0 +1,341 @@
+/*
+ Base: element defaults (reset, typography, code). Classes belong to the components and utilities.
+ */
+
+@layer base {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        height: 100%;
+        overflow-y: scroll;
+        /* rem based sizes of addon styles still expect the Bootstrap 3 root size */
+        font-size: 10px;
+        scroll-padding-top: calc(var(--rex-topbar-height) + 15px);
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        height: 100%;
+        margin: 0;
+        background-color: var(--rex-bg);
+        color: var(--rex-text);
+        font-family: var(--rex-font-sans);
+        font-size: var(--rex-font-size);
+        line-height: var(--rex-line-height);
+    }
+
+    [hidden],
+    template {
+        display: none;
+    }
+
+    /* links */
+
+    a {
+        color: var(--rex-link);
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            color: var(--rex-link-hover);
+            text-decoration: underline;
+        }
+
+        &:focus {
+            outline: 5px auto -webkit-focus-ring-color;
+            outline-offset: -2px;
+        }
+    }
+
+    [role="button"] {
+        cursor: pointer;
+    }
+
+    /* text */
+
+    h1, h2, h3, h4, h5, h6 {
+        color: inherit;
+        font-family: inherit;
+        font-weight: 500;
+        line-height: 1.1;
+
+        & small {
+            color: light-dark(#777, var(--rex-color-text-light-inactive));
+            font-weight: 400;
+            line-height: 1;
+        }
+    }
+
+    h1, h2, h3 {
+        margin-top: 22px;
+        margin-bottom: 11px;
+
+        & small {
+            font-size: 65%;
+        }
+    }
+
+    h4, h5, h6 {
+        margin-top: 11px;
+        margin-bottom: 11px;
+
+        & small {
+            font-size: 75%;
+        }
+    }
+
+    h1 { font-size: 36px; }
+    h2 { font-size: 30px; }
+    h3 { font-size: 24px; }
+    h4 { font-size: 18px; }
+    h5 { font-size: 15px; }
+    h6 { font-size: 12px; }
+
+    p {
+        margin: 0 0 11px;
+    }
+
+    b,
+    strong {
+        font-weight: 700;
+    }
+
+    small {
+        font-size: 80%;
+    }
+
+    sub,
+    sup {
+        position: relative;
+        font-size: 75%;
+        line-height: 0;
+        vertical-align: baseline;
+    }
+
+    sup {
+        top: -0.5em;
+    }
+
+    sub {
+        bottom: -0.25em;
+    }
+
+    mark {
+        padding: 0.1em 0.3em;
+        background-color: light-dark(hsl(216 18.5% 74.4%), rgb(64 155 228 / 0.2));
+        color: inherit;
+        font-weight: 700;
+    }
+
+    abbr[title] {
+        text-decoration: underline dotted;
+        cursor: help;
+    }
+
+    hr {
+        height: 0;
+        margin: 22px 0;
+        border: 0;
+        border-top: 1px solid light-dark(#eee, var(--rex-color-grey-2));
+    }
+
+    /* lists */
+
+    ul,
+    ol {
+        margin-top: 0;
+        margin-bottom: 11px;
+
+        & :is(ul, ol) {
+            margin-bottom: 0;
+        }
+    }
+
+    dl {
+        margin-top: 0;
+        margin-bottom: 22px;
+    }
+
+    dt,
+    dd {
+        line-height: var(--rex-line-height);
+    }
+
+    dt {
+        font-weight: 700;
+    }
+
+    dd {
+        margin-left: 0;
+    }
+
+    /* code */
+
+    code,
+    kbd,
+    pre,
+    samp {
+        font-family: var(--rex-font-mono);
+    }
+
+    code {
+        padding: 2px 4px;
+        background-color: light-dark(#f9f2f4, rgb(21 28 34 / 0.8));
+        color: light-dark(#c7254e, var(--rex-color-blue-5));
+        font-size: 90%;
+    }
+
+    kbd {
+        padding: 2px 4px;
+        background-color: light-dark(#333, var(--rex-color-blue-2));
+        color: light-dark(#fff, var(--rex-color-text-light));
+        font-size: 90%;
+
+        & kbd {
+            padding: 0;
+            background-color: transparent;
+            font-size: 100%;
+            font-weight: 700;
+        }
+    }
+
+    pre {
+        display: block;
+        overflow: auto;
+        margin: 0 0 11px;
+        padding: 10.5px;
+        border: 1px solid light-dark(#ccc, var(--rex-color-grey-1));
+        background-color: light-dark(#f5f5f5, rgb(21 28 34 / 0.8));
+        color: light-dark(#333, var(--rex-color-blue-5));
+        font-size: 14px;
+        line-height: var(--rex-line-height);
+        word-break: break-all;
+        overflow-wrap: break-word;
+
+        & code {
+            padding: 0;
+            background-color: transparent;
+            color: inherit;
+            font-size: inherit;
+            white-space: pre-wrap;
+        }
+    }
+
+    /* colors of PHP's `highlight_string()` are made for light backgrounds */
+    @media (prefers-color-scheme: dark) {
+        body:not(.rex-theme-light) code {
+            span[style*="#DD0000"] { color: #d9c16c !important; }
+            span[style*="#FF8000"] { color: #7e85e6 !important; }
+            span[style*="#007700"] { color: #57d993 !important; }
+            span[style*="#0000BB"],
+            span[style*="#000000"] { color: var(--rex-color-blue-5) !important; }
+        }
+    }
+
+    body.rex-theme-dark code {
+        span[style*="#DD0000"] { color: #d9c16c !important; }
+        span[style*="#FF8000"] { color: #7e85e6 !important; }
+        span[style*="#007700"] { color: #57d993 !important; }
+        span[style*="#0000BB"],
+        span[style*="#000000"] { color: var(--rex-color-blue-5) !important; }
+    }
+
+    /* embedded content */
+
+    img {
+        border: 0;
+        vertical-align: middle;
+    }
+
+    svg:not(:root) {
+        overflow: hidden;
+    }
+
+    /* tables */
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    td,
+    th {
+        padding: 0;
+    }
+
+    th {
+        text-align: left;
+    }
+
+    /* form elements */
+
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+        margin: 0;
+        color: inherit;
+        font: inherit;
+        line-height: inherit;
+    }
+
+    button {
+        overflow: visible;
+    }
+
+    button,
+    select {
+        text-transform: none;
+    }
+
+    button,
+    input:is([type="button"], [type="reset"], [type="submit"]) {
+        cursor: pointer;
+        -webkit-appearance: button;
+    }
+
+    :is(button, input)[disabled] {
+        cursor: default;
+    }
+
+    :is(input[type="button"], input[type="submit"], input[type="reset"], button, select, optgroup, option):disabled,
+    select[disabled] > option {
+        color: graytext;
+    }
+
+    input {
+        line-height: normal;
+    }
+
+    input:is([type="checkbox"], [type="radio"]) {
+        padding: 0;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        height: auto;
+    }
+
+    input[type="search"] {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    input[type="search"]::-webkit-search-decoration,
+    input[type="search"]::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+    }
+
+    textarea {
+        overflow: auto;
+    }
+}
