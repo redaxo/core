@@ -219,9 +219,6 @@ if (Core::getUser()) {
     }
 }
 
-Asset::addJsFile(Url::coreAssets('clipboard-copy-element.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => true]);
-
 Asset::setJsProperty('backend', true);
 Asset::setJsProperty('accesskeys', Accesskey::$enabled);
 
@@ -266,14 +263,12 @@ Asset::addCssFile(Url::coreAssets('css/styles.css'), layer: 'legacy');
 
 Asset::addCssFile(Url::coreAssets('css/redaxo.css'), layer: 'legacy');
 Asset::addCssFile(Url::coreAssets('css/backend.css'));
-Asset::addJsFile(Url::coreAssets('js/redaxo.js'), [Asset::JS_IMMUTABLE => true]);
 Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
 
 if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('history[article_rollback]')) {
     Asset::addCssFile(Url::coreAssets('noUiSlider/nouislider.css'));
     Asset::addJsFile(Url::coreAssets('noUiSlider/nouislider.js'), [Asset::JS_IMMUTABLE => true]);
     Asset::addCssFile(Url::coreAssets('css/history.css'));
-    Asset::addJsFile(Url::coreAssets('js/history.js'), [Asset::JS_IMMUTABLE => true]);
 
     $historyFunction = Request::request('rex_history_function', 'string');
     $articleId = Request::request('history_article_id', 'int');
@@ -595,10 +590,6 @@ if ('content' == Controller::getCurrentPagePart(1)) {
 // ----- EXTENSION POINT
 // page variable validated
 Extension::dispatch(new ExtensionPoint('PAGE_CHECKED', $page, ['pages' => $pages], true));
-
-if (in_array($page, ['profile', 'login'], true)) {
-    Asset::addJsFile(Url::coreAssets('webauthn.js'), [Asset::JS_IMMUTABLE => true]);
-}
 
 if ($page) {
     // trigger api functions after PAGE_CHECKED, if page param is set

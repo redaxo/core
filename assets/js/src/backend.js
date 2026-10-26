@@ -16,6 +16,10 @@ import './select.js';
 import './forms.js';
 import './content-sidebar.js';
 import './session-timeout.js';
+import './theme.js';
+import './webauthn.js';
+import './history.js';
+import '@github/clipboard-copy-element';
 
 Object.assign(window.rex, {ready, overlay, pick, pickers, dialog, confirm, collapse});
 

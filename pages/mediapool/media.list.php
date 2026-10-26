@@ -223,7 +223,7 @@ if ($hasCategoryPerm) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_select_all') . '</label>';
-    $e['field'] = '<input type="checkbox" name="checkie" value="0" onclick="setAllCheckBoxes(\'selectedmedia[]\',this)" />';
+    $e['field'] = '<input type="checkbox" name="checkie" value="0" data-rex-check-all="selectedmedia[]" />';
     $e['class'] = 'rex-form-group-no-margin';
     $fragment = new Fragment();
     $fragment->setVar('elements', [$e], false);

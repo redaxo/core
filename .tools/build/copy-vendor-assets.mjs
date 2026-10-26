@@ -3,10 +3,6 @@
 // REDAXO is consumed via Composer, so end users never run npm/sass. The compiled CSS (built
 // by the `build:css` script) and the vendor JS/fonts copied here are committed to the repo;
 // this script only needs to run when bumping a dependency in package.json.
-//
-// Hand-maintained vendor files that cannot be consumed as plain `<script>` assets without a
-// bundler are intentionally NOT managed here and stay committed as-is:
-//   - assets/clipboard-copy-element.js (@github/clipboard-copy-element ships ESM only)
 
 import { cpSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';

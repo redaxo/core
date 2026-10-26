@@ -1,3 +1,5 @@
+/* Article history: the layer comparing the current article with former versions (requires noUiSlider) */
+
 (function () {
 
     var DEBUGMODE = false;

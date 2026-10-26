@@ -150,7 +150,7 @@ if ($diffCount > 0) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_select_all') . '</label>';
-    $e['field'] = '<input type="checkbox" name="checkie" id="rex-js-checkie" value="0" onchange="setAllCheckBoxes(\'sync_files[]\',this)" />';
+    $e['field'] = '<input type="checkbox" name="checkie" id="rex-js-checkie" value="0" data-rex-check-all="sync_files[]" />';
     $writable[] = $e;
 
     $fragment = new Fragment();

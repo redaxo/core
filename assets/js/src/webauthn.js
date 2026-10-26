@@ -1,3 +1,5 @@
+/* Passkeys (WebAuthn): login, adding a passkey and confirming changes in the profile with a passkey */
+
 const authAddPasskey = function (form) {
     form.classList.remove('hidden');
 

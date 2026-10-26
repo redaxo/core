@@ -1,5 +1,5 @@
 /*
- Form helpers: accesskeys, `data-rex-hides`, collection fields, the visibility toggle of password fields and
+ Form helpers: accesskeys, `data-rex-check-all`, `data-rex-hides`, collection fields, the visibility toggle of password fields and
  submitting with Cmd/Ctrl + Enter
  */
 
@@ -27,6 +27,20 @@ document.addEventListener('keydown', event => {
     const form = event.target.closest?.('form');
     (form?.querySelector('.btn-apply') ?? form?.querySelector('[type="submit"]'))?.click();
 }, true);
+
+// a checkbox with `data-rex-check-all="name[]"` checks or unchecks all checkboxes of that name in its form
+document.addEventListener('change', event => {
+    const all = event.target;
+    if (!all.matches('input[data-rex-check-all]')) {
+        return;
+    }
+    for (const checkbox of all.form.querySelectorAll(`input[name="${CSS.escape(all.dataset.rexCheckAll)}"]`)) {
+        if (checkbox.checked !== all.checked) {
+            checkbox.checked = all.checked;
+            checkbox.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+    }
+});
 
 // a checkbox with `data-rex-hides="#selector"` hides the target while it is checked, e.g. the item select next to an
 // "all" checkbox
