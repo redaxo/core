@@ -115,6 +115,12 @@ class rex_article_slice_history
             $sql->insert();
         }
         rex_article_cache::delete($articleId, $clangId);
+
+        $article = rex_article::get($articleId, $clangId);
+        if ($article) {
+            rex_extension::registerPoint(new rex_extension_point_art_content_updated($article, 'history_restored'));
+        }
+
         return true;
     }
 
