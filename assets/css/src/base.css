@@ -229,23 +229,13 @@
         }
     }
 
-    /* colors of PHP's `highlight_string()` are made for light backgrounds */
-    @media (prefers-color-scheme: dark) {
-        body:not(.rex-theme-light) code {
-            span[style*="#DD0000"] { color: #d9c16c !important; }
-            span[style*="#FF8000"] { color: #7e85e6 !important; }
-            span[style*="#007700"] { color: #57d993 !important; }
-            span[style*="#0000BB"],
-            span[style*="#000000"] { color: var(--rex-color-blue-5) !important; }
-        }
-    }
-
-    body.rex-theme-dark code {
-        span[style*="#DD0000"] { color: #d9c16c !important; }
-        span[style*="#FF8000"] { color: #7e85e6 !important; }
-        span[style*="#007700"] { color: #57d993 !important; }
-        span[style*="#0000BB"],
-        span[style*="#000000"] { color: var(--rex-color-blue-5) !important; }
+    /* highlighted PHP code (`Str::highlight()`), PHP's default colors with lighter ones for the dark theme */
+    code {
+        .rex-code-string { color: light-dark(#dd0000, #d9c16c); }
+        .rex-code-comment { color: light-dark(#ff8000, #7e85e6); }
+        .rex-code-keyword { color: light-dark(#007700, #57d993); }
+        .rex-code-default { color: light-dark(#0000bb, var(--rex-color-blue-5)); }
+        .rex-code-html { color: light-dark(#000, var(--rex-color-blue-5)); }
     }
 
     /* embedded content */

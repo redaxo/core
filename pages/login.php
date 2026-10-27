@@ -41,7 +41,10 @@ if ('' != $loginMessage) {
                 if (time > 0) {
                     setTimeout(countdown, 1000);
                 } else {
-                    document.querySelector("div.rex-message div").innerHTML = "' . escape(I18n::msg('login_welcome'), 'js') . '";
+                    const message = document.querySelector(".rex-js-login-message .alert");
+                    if (message) {
+                        message.textContent = "' . escape(I18n::msg('login_welcome'), 'js') . '";
+                    }
                     fields.forEach(field => field.disabled = false);
                     document.getElementById("rex-id-login-user").focus();
                 }

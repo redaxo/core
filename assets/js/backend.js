@@ -8,6 +8,7 @@ function ready(root2 = document.body) {
 // assets/js/src/overlay.js
 var stack = [];
 var skipPopstate = 0;
+var overlayCount = 0;
 function pageOf(url) {
   return new URL(url, location.href).searchParams.get("page") ?? "";
 }
@@ -28,9 +29,10 @@ var Overlay = class {
     this.closed = new Promise((resolve) => this.resolveClosed = resolve);
     this.dialog = document.createElement("dialog");
     this.dialog.className = "rex-overlay";
+    this.dialog.setAttribute("aria-labelledby", `rex-overlay-title-${++overlayCount}`);
     this.dialog.innerHTML = `
             <header class="rex-overlay-header">
-                <h2 class="rex-overlay-title"></h2>
+                <h2 class="rex-overlay-title" id="rex-overlay-title-${overlayCount}"></h2>
                 <button type="button" class="rex-overlay-close" data-rex-overlay-close></button>
             </header>
             <div class="rex-overlay-body"></div>`;
@@ -61,10 +63,12 @@ var Overlay = class {
         location.href = response.url;
         return;
       }
-      const doc = new DOMParser().parseFromString(await response.text(), "text/html");
-      const main = doc.getElementById("rex-js-page-main") ?? doc.body;
+      const template = document.createElement("template");
+      template.innerHTML = await response.text();
+      const doc = template.content;
+      const main = doc.getElementById("rex-js-page-main") ?? doc;
       const heading = main.querySelector(".rex-pageheader__title");
-      this.title.textContent = heading?.textContent.trim() || doc.title.split(" \xB7 ")[0];
+      this.title.textContent = heading?.textContent.trim() || (doc.querySelector("title")?.textContent ?? "").split(" \xB7 ")[0];
       heading?.remove();
       this.url = response.url;
       this.body.replaceChildren(...main.childNodes);
@@ -105,14 +109,13 @@ var Overlay = class {
       return;
     }
     event.stopPropagation();
-    if (link.dataset.confirm && !confirm(link.dataset.confirm)) {
-      event.preventDefault();
-      return;
-    }
     const url = new URL(href, this.url);
     if (this.keeps(url)) {
       event.preventDefault();
       this.load(url);
+    } else if (url.origin === location.origin && url.pathname !== new URL(this.url).pathname) {
+      event.preventDefault();
+      window.open(url, "_blank", "noopener");
     } else if (url.origin === location.origin) {
       event.preventDefault();
       closeAll(true);
@@ -126,10 +129,6 @@ var Overlay = class {
       return;
     }
     event.stopPropagation();
-    if (form.dataset.confirm && !confirm(form.dataset.confirm)) {
-      event.preventDefault();
-      return;
-    }
     event.preventDefault();
     const data = new FormData(form, event.submitter);
     const method = (event.submitter?.getAttribute("formmethod") || form.getAttribute("method") || "get").toUpperCase();
@@ -267,7 +266,7 @@ function dialog({ title = "", content, buttons = [], className = "" }) {
   element.showModal();
   return { element, body, close: (value = "") => element.close(value), closed };
 }
-async function confirm2(message) {
+async function confirm(message) {
   const i18n3 = window.rex.i18n ?? {};
   const { closed } = dialog({
     content: Object.assign(document.createElement("p"), { textContent: message }),
@@ -287,7 +286,7 @@ window.addEventListener("click", (event) => {
   }
   event.preventDefault();
   event.stopImmediatePropagation();
-  confirm2(element.dataset.confirm).then((ok) => {
+  confirm(element.dataset.confirm).then((ok) => {
     if (ok) {
       confirmed.add(element);
       element.click();
@@ -301,7 +300,7 @@ window.addEventListener("submit", (event) => {
   }
   event.preventDefault();
   event.stopImmediatePropagation();
-  confirm2(form.dataset.confirm).then((ok) => {
+  confirm(form.dataset.confirm).then((ok) => {
     if (ok) {
       confirmed.add(form);
       form.requestSubmit(event.submitter);
@@ -480,6 +479,9 @@ function syncList(widget) {
   const options = [...widget.querySelector("[data-rex-widget-list]").options];
   setValue(widget.querySelector("[data-rex-widget-value]"), options.map((option) => option.value).join(","));
 }
+function byFilename(items) {
+  return items.map(({ value }) => ({ value, label: value }));
+}
 function addToList(widget, items) {
   const list = widget.querySelector("[data-rex-widget-list]");
   for (const { value, label } of items) {
@@ -525,8 +527,8 @@ var widgetActions = {
     remove: (widget) => setValue(widget.querySelector("[data-rex-widget-value]"), "")
   },
   medialist: {
-    open: (widget, options) => pick("media", { ...options, file: selectedValue(widget), multiple: true, onPick: (items) => addToList(widget, items) }),
-    add: (widget, options) => pick("media", { ...options, upload: true, multiple: true, onPick: (items) => addToList(widget, items) }),
+    open: (widget, options) => pick("media", { ...options, file: selectedValue(widget), multiple: true, onPick: (items) => addToList(widget, byFilename(items)) }),
+    add: (widget, options) => pick("media", { ...options, upload: true, multiple: true, onPick: (items) => addToList(widget, byFilename(items)) }),
     view: (widget, options) => {
       const file = selectedValue(widget);
       if (file) {
@@ -826,7 +828,8 @@ document.addEventListener("keydown", (event) => {
   if (event.target.closest?.('input, button, textarea, select, option, [contenteditable="true"]')) {
     return;
   }
-  const target = document.querySelector(`input[accesskey="${event.key}"], button[accesskey="${event.key}"]`) ?? document.querySelector(`a[accesskey="${event.key}"]:is([onclick], [href]:not([href="#"]))`);
+  const scope = [...document.querySelectorAll("dialog.rex-overlay[open]")].at(-1) ?? document;
+  const target = scope.querySelector(`input[accesskey="${event.key}"], button[accesskey="${event.key}"]`) ?? scope.querySelector(`a[accesskey="${event.key}"][href]:not([href="#"])`);
   if (target) {
     event.preventDefault();
     target.click();
@@ -849,6 +852,38 @@ document.addEventListener("change", (event) => {
       checkbox.checked = all.checked;
       checkbox.dispatchEvent(new Event("change", { bubbles: true }));
     }
+  }
+});
+document.addEventListener("change", (event) => {
+  if (event.target.matches("[data-rex-autosubmit]")) {
+    event.target.form?.requestSubmit();
+  }
+});
+document.addEventListener("submit", (event) => {
+  const form = event.target;
+  form.querySelectorAll(":scope > input[data-rex-submit-param]").forEach((input) => input.remove());
+  const params = event.submitter?.dataset.rexSubmitParams;
+  if (!params) {
+    return;
+  }
+  for (const [name, value] of Object.entries(JSON.parse(params))) {
+    const input = document.createElement("input");
+    Object.assign(input, { type: "hidden", name, value });
+    input.dataset.rexSubmitParam = "";
+    form.append(input);
+  }
+});
+function applyRequiresChecked(element) {
+  const form = element.form ?? element.closest("form") ?? element;
+  const name = CSS.escape(element.dataset.rexRequiresChecked);
+  const disabled = !form.querySelector(`input[name="${name}"]:checked`);
+  form.querySelectorAll('[type="submit"]').forEach((button2) => button2.disabled = disabled);
+}
+document.addEventListener("change", (event) => {
+  const form = event.target.form;
+  form?.querySelectorAll("[data-rex-requires-checked]").forEach(applyRequiresChecked);
+  if (form?.matches("[data-rex-requires-checked]")) {
+    applyRequiresChecked(form);
   }
 });
 function applyHides(checkbox) {
@@ -920,6 +955,7 @@ function addPasswordToggle(input) {
 document.addEventListener("rex:ready", (event) => {
   const root2 = event.target;
   root2.querySelectorAll("input[data-rex-hides]").forEach(applyHides);
+  root2.querySelectorAll("[data-rex-requires-checked]").forEach(applyRequiresChecked);
   root2.querySelectorAll("[data-rex-collection]").forEach(updateCollection);
   root2.querySelectorAll('input[type="password"]').forEach(addPasswordToggle);
   if (root2 !== document.body) {
@@ -1465,5 +1501,5 @@ try {
 }
 
 // assets/js/src/backend.js
-Object.assign(window.rex, { ready, overlay, pick, pickers, dialog, confirm: confirm2, collapse });
+Object.assign(window.rex, { ready, overlay, pick, pickers, dialog, confirm, collapse });
 document.addEventListener("DOMContentLoaded", () => ready(document.body));

@@ -13,6 +13,11 @@ function syncList(widget) {
     setValue(widget.querySelector('[data-rex-widget-value]'), options.map(option => option.value).join(','));
 }
 
+// media lists show the filenames, like the saved entries
+function byFilename(items) {
+    return items.map(({value}) => ({value, label: value}));
+}
+
 function addToList(widget, items) {
     const list = widget.querySelector('[data-rex-widget-list]');
     for (const {value, label} of items) {
@@ -53,8 +58,8 @@ const widgetActions = {
         remove: widget => setValue(widget.querySelector('[data-rex-widget-value]'), ''),
     },
     medialist: {
-        open: (widget, options) => pick('media', {...options, file: selectedValue(widget), multiple: true, onPick: items => addToList(widget, items)}),
-        add: (widget, options) => pick('media', {...options, upload: true, multiple: true, onPick: items => addToList(widget, items)}),
+        open: (widget, options) => pick('media', {...options, file: selectedValue(widget), multiple: true, onPick: items => addToList(widget, byFilename(items))}),
+        add: (widget, options) => pick('media', {...options, upload: true, multiple: true, onPick: items => addToList(widget, byFilename(items))}),
         view: (widget, options) => {
             const file = selectedValue(widget);
             if (file) {

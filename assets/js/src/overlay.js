@@ -7,6 +7,7 @@ import {ready} from './ready.js';
 
 const stack = [];
 let skipPopstate = 0;
+let overlayCount = 0;
 
 function pageOf(url) {
     return new URL(url, location.href).searchParams.get('page') ?? '';
@@ -32,9 +33,10 @@ class Overlay {
 
         this.dialog = document.createElement('dialog');
         this.dialog.className = 'rex-overlay';
+        this.dialog.setAttribute('aria-labelledby', `rex-overlay-title-${++overlayCount}`);
         this.dialog.innerHTML = `
             <header class="rex-overlay-header">
-                <h2 class="rex-overlay-title"></h2>
+                <h2 class="rex-overlay-title" id="rex-overlay-title-${overlayCount}"></h2>
                 <button type="button" class="rex-overlay-close" data-rex-overlay-close></button>
             </header>
             <div class="rex-overlay-body"></div>`;
@@ -70,12 +72,15 @@ class Overlay {
                 location.href = response.url;
                 return;
             }
-            const doc = new DOMParser().parseFromString(await response.text(), 'text/html');
-            const main = doc.getElementById('rex-js-page-main') ?? doc.body;
+            // parsed in an inert template, as DOMParser checks the loaded page's styles against this page's CSP nonce
+            const template = document.createElement('template');
+            template.innerHTML = await response.text();
+            const doc = template.content;
+            const main = doc.getElementById('rex-js-page-main') ?? doc;
 
             // the page heading moves into the overlay header
             const heading = main.querySelector('.rex-pageheader__title');
-            this.title.textContent = heading?.textContent.trim() || doc.title.split(' · ')[0];
+            this.title.textContent = heading?.textContent.trim() || (doc.querySelector('title')?.textContent ?? '').split(' · ')[0];
             heading?.remove();
 
             this.url = response.url;
@@ -128,17 +133,16 @@ class Overlay {
             return;
         }
 
-        // confirmation is asked here, as this handler runs before the delegated one on the document
         event.stopPropagation();
-        if (link.dataset.confirm && !confirm(link.dataset.confirm)) {
-            event.preventDefault();
-            return;
-        }
 
         const url = new URL(href, this.url);
         if (this.keeps(url)) {
             event.preventDefault();
             this.load(url);
+        } else if (url.origin === location.origin && url.pathname !== new URL(this.url).pathname) {
+            // files like media open beside the backend, so the page underneath keeps its unsaved input
+            event.preventDefault();
+            window.open(url, '_blank', 'noopener');
         } else if (url.origin === location.origin) {
             event.preventDefault();
             closeAll(true);
@@ -154,10 +158,6 @@ class Overlay {
         }
 
         event.stopPropagation();
-        if (form.dataset.confirm && !confirm(form.dataset.confirm)) {
-            event.preventDefault();
-            return;
-        }
         event.preventDefault();
 
         const data = new FormData(form, event.submitter);

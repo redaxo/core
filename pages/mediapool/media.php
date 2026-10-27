@@ -43,12 +43,12 @@ $selMedia = new SelectInput(
     (string) $rexFileCategory,
     'rex_file_category',
     search: true,
-    attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit();']),
+    attributes: new HtmlAttributes(['data-rex-autosubmit' => true]),
 );
 
 $formElements = [];
 $n = [];
-$n['field'] = '<input class="form-control" style="border-left: 0;" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" />';
+$n['field'] = '<input class="form-control" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" />';
 $n['right'] = '<button class="btn btn-search" type="submit"><i class="rex-icon rex-icon-search"></i></button>';
 $formElements[] = $n;
 $fragment = new Fragment();

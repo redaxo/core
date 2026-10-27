@@ -207,7 +207,6 @@ $panel .= '
 <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data">
     <fieldset>
         ' . $csrf->getHiddenField() . '
-        <input type="hidden" id="media_method" name="media_method" value="" />
         ' . $argFields;
 
 // ----- move, delete and get selected items
@@ -230,7 +229,7 @@ if ($hasCategoryPerm) {
         $e = [];
         $e['field'] = $catsSel->render();
         $e['left'] = I18n::msg('pool_changecat_selectedmedia_prefix');
-        $e['right'] = '<button class="btn btn-update" type="submit" onclick="this.form.elements.media_method.value=\'updatecat_selectedmedia\'">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
+        $e['right'] = '<button class="btn btn-update" type="submit" name="media_method" value="updatecat_selectedmedia">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
 
         $fragment = new Fragment();
         $fragment->setVar('elements', [$e], false);
@@ -240,7 +239,8 @@ if ($hasCategoryPerm) {
     $buttons = [
         new Button(I18n::msg('pool_delete_selectedmedia'), variant: ButtonVariant::Delete, type: 'submit', attributes: new HtmlAttributes([
             'data-confirm' => I18n::msg('delete') . ' ?',
-            'onclick' => 'this.form.elements.media_method.value=\'delete_selectedmedia\'',
+            'name' => 'media_method',
+            'value' => 'delete_selectedmedia',
         ])),
     ];
     if ('multiple' === $picker) {

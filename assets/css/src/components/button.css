@@ -113,7 +113,7 @@
 
     /* variants */
 
-    :is(.btn-default, .btn-abort, .btn-back, .btn-move, .btn-popup, .btn-reset, .btn-search) {
+    :is(.btn-default, .btn-abort, .btn-move, .btn-popup, .btn-search) {
         --btn-l-bg-hover: #dbdee4;
     }
 
@@ -137,7 +137,7 @@
         --btn-d-border-hover: rgb(21 28 34 / 0.8);
     }
 
-    :is(.btn-save, .btn-apply, .btn-edit, .btn-success) {
+    :is(.btn-save, .btn-apply, .btn-edit) {
         --btn-l-color: #fff;
         --btn-l-bg: var(--rex-color-d);
         --btn-l-border: var(--rex-color-d);
@@ -164,22 +164,6 @@
         --btn-l-border: hsl(1.7 64.6% 53.1%);
         --btn-d-bg: #801919;
         --btn-d-border: hsl(0 67.3% 15%);
-    }
-
-    .btn-info {
-        --btn-l-color: #fff;
-        --btn-l-bg: var(--rex-color-b);
-        --btn-l-border: hsl(206.6 65.1% 52.3%);
-        --btn-d-bg: var(--rex-color-blue-3);
-        --btn-d-border: hsl(206.6 74.7% 17.3%);
-    }
-
-    .btn-warning {
-        --btn-l-color: #fff;
-        --btn-l-bg: var(--rex-color-warning);
-        --btn-l-border: hsl(47.7 57% 51.3%);
-        --btn-d-bg: #78641e;
-        --btn-d-border: hsl(46.7 60% 14.4%);
     }
 
     /* language switch: blue when active */
@@ -239,8 +223,7 @@
 
     /* sizes */
 
-    .btn-sm,
-    .btn-group-sm > .btn {
+    .btn-sm {
         padding: 5px 10px;
         border-radius: 2px;
         font-size: var(--rex-font-size-small);

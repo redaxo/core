@@ -6,7 +6,6 @@ use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Request;
-use Redaxo\Core\Http\Response;
 use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MediaPool\MediaHandler;
 use Redaxo\Core\MediaPool\MediaPoolCache;
@@ -160,7 +159,7 @@ if ($diffCount > 0) {
     $count = count($writable) - 1;
     if ($count) {
         $content .= View::mediaPoolMediaForm(I18n::msg('pool_sync_title'), I18n::msg('pool_sync_button'), $rexFileCategory, false, false, $meta);
-        $content .= '<fieldset>';
+        $content .= '<fieldset data-rex-requires-checked="sync_files[]">';
 
         $title = I18n::msg('pool_sync_affected_files') . ' (' . $count . ')';
 
@@ -172,17 +171,7 @@ if ($diffCount > 0) {
         $content .= '
                 </fieldset>
             </form>
-
-            <script nonce="' . Response::getNonce() . '">
-                {
-                    const form = document.querySelector("input[name=\'sync_files[]\']")?.form;
-                    const update = () => form.querySelectorAll("[type=submit]").forEach(button => {
-                        button.disabled = !form.querySelector("input[name=\'sync_files[]\']:checked");
-                    });
-                    form?.addEventListener("change", update);
-                    form && update();
-                }
-            </script>';
+';
     }
 
     $count = count($notWritable);

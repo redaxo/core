@@ -26,18 +26,13 @@
             margin-top: 5px;
         }
 
-        & a,
-        & .alert-link {
+        & a {
             color: light-dark(#fff, var(--rex-color-text-light-inactive));
             text-decoration: underline;
 
             &:hover {
                 color: light-dark(var(--rex-color-a-light), var(--rex-color-text-light));
             }
-        }
-
-        & .alert-link {
-            font-weight: 700;
         }
 
         .rex-section__options & {

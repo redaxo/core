@@ -348,23 +348,11 @@
       <code><![CDATA[$this->getVar('toc')]]></code>
     </MixedArgument>
   </file>
-  <file src="fragments/core/page/header.php">
-    <MixedArgument>
-      <code><![CDATA[$this->heading]]></code>
-      <code><![CDATA[$this->subheading]]></code>
-      <code><![CDATA[$this->subtitle]]></code>
-    </MixedArgument>
-  </file>
   <file src="fragments/core/page/main_content.php">
     <MixedArgument>
       <code><![CDATA[$this->content]]></code>
       <code><![CDATA[$this->content]]></code>
       <code><![CDATA[$this->sidebar]]></code>
-    </MixedArgument>
-  </file>
-  <file src="fragments/core/page/readme.php">
-    <MixedArgument>
-      <code><![CDATA[$this->getVar('content')]]></code>
     </MixedArgument>
   </file>
   <file src="fragments/core/page/section.php">

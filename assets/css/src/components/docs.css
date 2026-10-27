@@ -4,7 +4,7 @@
  */
 
 @layer components {
-    :is(.rex-docs, .rex-readme-content) {
+    .rex-docs {
         --docs-text: light-dark(#24292f, var(--rex-color-text-light));
         --docs-border: light-dark(hsl(0 0% 93.5%), var(--rex-color-grey-5));
         --docs-code-bg: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-1));

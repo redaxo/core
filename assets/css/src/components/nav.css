@@ -75,11 +75,6 @@
             }
         }
 
-        & > li.pull-right > a {
-            margin-right: 0;
-            margin-left: 2px;
-        }
-
         .rex-slice-input & {
             margin-bottom: 22px;
         }
@@ -128,5 +123,10 @@
                 }
             }
         }
+    }
+
+    /* only the active pane of tabs (`data-toggle="tab"`) shows */
+    .tab-content > .tab-pane:not(.active) {
+        display: none;
     }
 }

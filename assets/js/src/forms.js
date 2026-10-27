@@ -1,6 +1,6 @@
 /*
- Form helpers: accesskeys, `data-rex-check-all`, `data-rex-hides`, collection fields, the visibility toggle of password fields and
- submitting with Cmd/Ctrl + Enter
+ Form helpers: accesskeys, `data-rex-check-all`, `data-rex-hides`, `data-rex-autosubmit`, `data-rex-submit-params`,
+ `data-rex-requires-checked`, collection fields, the visibility toggle of password fields and submitting with Cmd/Ctrl + Enter
  */
 
 // accesskeys work without modifier keys as long as no form field has the focus
@@ -11,8 +11,10 @@ document.addEventListener('keydown', event => {
     if (event.target.closest?.('input, button, textarea, select, option, [contenteditable="true"]')) {
         return;
     }
-    const target = document.querySelector(`input[accesskey="${event.key}"], button[accesskey="${event.key}"]`)
-        ?? document.querySelector(`a[accesskey="${event.key}"]:is([onclick], [href]:not([href="#"]))`);
+    // an open overlay covers the page, so only its accesskeys count
+    const scope = [...document.querySelectorAll('dialog.rex-overlay[open]')].at(-1) ?? document;
+    const target = scope.querySelector(`input[accesskey="${event.key}"], button[accesskey="${event.key}"]`)
+        ?? scope.querySelector(`a[accesskey="${event.key}"][href]:not([href="#"])`);
     if (target) {
         event.preventDefault();
         target.click();
@@ -39,6 +41,47 @@ document.addEventListener('change', event => {
             checkbox.checked = all.checked;
             checkbox.dispatchEvent(new Event('change', {bubbles: true}));
         }
+    }
+});
+
+// a field with `data-rex-autosubmit` submits its form when it changes, e.g. a filter select
+document.addEventListener('change', event => {
+    if (event.target.matches('[data-rex-autosubmit]')) {
+        event.target.form?.requestSubmit();
+    }
+});
+
+// a submit button with `data-rex-submit-params='{"name": "value"}'` sends these fields along, e.g. an API call with its
+// CSRF token
+document.addEventListener('submit', event => {
+    const form = event.target;
+    form.querySelectorAll(':scope > input[data-rex-submit-param]').forEach(input => input.remove());
+    const params = event.submitter?.dataset.rexSubmitParams;
+    if (!params) {
+        return;
+    }
+    for (const [name, value] of Object.entries(JSON.parse(params))) {
+        const input = document.createElement('input');
+        Object.assign(input, {type: 'hidden', name, value});
+        input.dataset.rexSubmitParam = '';
+        form.append(input);
+    }
+});
+
+// `data-rex-requires-checked="name[]"` on a form or fieldset disables its submit buttons until a checkbox of that name
+// is checked
+function applyRequiresChecked(element) {
+    const form = element.form ?? element.closest('form') ?? element;
+    const name = CSS.escape(element.dataset.rexRequiresChecked);
+    const disabled = !form.querySelector(`input[name="${name}"]:checked`);
+    form.querySelectorAll('[type="submit"]').forEach(button => button.disabled = disabled);
+}
+
+document.addEventListener('change', event => {
+    const form = event.target.form;
+    form?.querySelectorAll('[data-rex-requires-checked]').forEach(applyRequiresChecked);
+    if (form?.matches('[data-rex-requires-checked]')) {
+        applyRequiresChecked(form);
     }
 });
 
@@ -124,6 +167,7 @@ function addPasswordToggle(input) {
 document.addEventListener('rex:ready', event => {
     const root = event.target;
     root.querySelectorAll('input[data-rex-hides]').forEach(applyHides);
+    root.querySelectorAll('[data-rex-requires-checked]').forEach(applyRequiresChecked);
     root.querySelectorAll('[data-rex-collection]').forEach(updateCollection);
     root.querySelectorAll('input[type="password"]').forEach(addPasswordToggle);
     if (root !== document.body) {

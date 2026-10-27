@@ -240,7 +240,7 @@ final class View
             (string) $rexFileCategory,
             'rex-mediapool-category',
             search: true,
-            attributes: new HtmlAttributes(['onchange' => 'this.form.requestSubmit()']),
+            attributes: new HtmlAttributes(['data-rex-autosubmit' => true]),
         );
 
         $argFields = '';

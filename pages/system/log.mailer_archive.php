@@ -47,7 +47,7 @@ $content = '';
 $formElements = [];
 $n = [];
 $n['label'] = '<label>' . I18n::msg('mailer_archive_path') . '</label>';
-$n['field'] = '<span style="word-break: break-all; font-family: monospace; font-size: 0.9em;">' . escape($archiveFolder) . '</span>';
+$n['field'] = '<code class="rex-word-break">' . escape($archiveFolder) . '</code>';
 $formElements[] = $n;
 
 if ($archiveExists) {

@@ -61,10 +61,6 @@
         }
     }
 
-    .table-condensed > :is(thead, tbody, tfoot) > tr > :is(th, td) {
-        padding: 5px;
-    }
-
     .table-bordered {
         border: 1px solid var(--table-border);
 
@@ -90,8 +86,13 @@
         }
     }
 
+    /* message column of the system log */
+    .rex-log-message {
+        font-weight: 500;
+    }
+
     /* row states, e.g. of the log tables */
-    :is(.rex-state-success, .rex-state-danger, .rex-state-error) {
+    :is(.rex-state-success, .rex-state-error) {
         &,
         & a {
             color: light-dark(#fff, var(--rex-color-a-lighter));
@@ -110,7 +111,7 @@
         }
     }
 
-    :is(.rex-state-danger, .rex-state-error) {
+    .rex-state-error {
         background-color: light-dark(var(--rex-color-danger), #801919);
 
         tr&:hover > :is(th, td) {
@@ -163,16 +164,12 @@
                 min-width: 150px;
             }
 
-            &:is(.rex-table-date, .rex-table-sort) {
+            &.rex-table-date {
                 white-space: nowrap;
             }
 
             &.rex-table-tabular-nums {
                 font-variant-numeric: tabular-nums;
-            }
-
-            &.rex-table-slimmer {
-                width: 80px;
             }
 
             &:is(.rex-table-slim, .rex-table-thumbnail) {
@@ -223,7 +220,7 @@
                 display: none;
             }
 
-            & > :is(thead, tbody) > tr:is(.collapsing, .collapse.in) > :is(th, td) {
+            & > :is(thead, tbody) > tr.collapse.in > :is(th, td) {
                 display: block;
             }
 
@@ -275,11 +272,7 @@
                 }
             }
 
-            &.table-condensed > tbody > tr > :is(th[data-title], td)::before {
-                padding: 5px;
-            }
-
-            & > tbody > tr:is(.collapsing, .collapse.in) > :is(th[data-title], td) {
+            & > tbody > tr.collapse.in > :is(th[data-title], td) {
                 padding-left: 8px;
             }
 

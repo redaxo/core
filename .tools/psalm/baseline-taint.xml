@@ -36,14 +36,6 @@
       <code><![CDATA[$this->getVar('toc')]]></code>
     </TaintedTextWithQuotes>
   </file>
-  <file src="fragments/core/page/readme.php">
-    <TaintedHtml>
-      <code><![CDATA[$this->getVar('content')]]></code>
-    </TaintedHtml>
-    <TaintedTextWithQuotes>
-      <code><![CDATA[$this->getVar('content')]]></code>
-    </TaintedTextWithQuotes>
-  </file>
   <file src="fragments/core/structure/history/layer.php">
     <TaintedHtml>
       <code><![CDATA[$this->getVar('content1iframe')]]></code>

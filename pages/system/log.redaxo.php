@@ -98,7 +98,7 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
     $rows[] = [
         'time' => Html::raw('<small>' . Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</small><br>
                         <span class="label label-' . $class . '">' . escape($type) . '</span>'),
-        'message' => Html::raw('<div class="rex-word-break"><b style="font-weight: 500">' . nl2br(escape($message)) . '</b></div>
+        'message' => Html::raw('<div class="rex-word-break rex-log-message">' . nl2br(escape($message)) . '</div>
                         ' . $path . '
                         ' . $url),
     ];

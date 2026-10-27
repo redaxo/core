@@ -6,6 +6,7 @@ use Redaxo\Core\Core;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
+use Redaxo\Core\Http\Response;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
@@ -18,8 +19,10 @@ return static function (TopBar $bar): void {
     <header <?= new HtmlAttributes([
         'id' => 'rex-js-nav-top',
         'class' => ['rex-topbar', 'rex-topbar--fixed' => !$bar->popup, 'rex-topbar--popup' => $bar->popup, 'rex-topbar--colored' => null !== $instanceColor],
-        'style' => null === $instanceColor ? null : '--rex-instance-color: ' . $instanceColor,
     ]) ?>>
+        <?php if (null !== $instanceColor): ?>
+            <style nonce="<?= Response::getNonce() ?>">.rex-topbar { --rex-instance-color: <?= escape($instanceColor) ?>; }</style>
+        <?php endif ?>
         <?php if (!$bar->login && !$bar->popup): ?>
             <button type="button" class="rex-topbar__toggle" id="rex-js-nav-main-toggle" aria-controls="rex-js-nav-main" aria-expanded="false">
                 <span class="rex-visually-hidden">Toggle navigation</span>
