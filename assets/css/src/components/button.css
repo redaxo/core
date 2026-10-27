@@ -148,7 +148,7 @@
     }
 
     /* inverted on the green header of edit sections */
-    :is(.panel-edit, .rex-section--edit) .btn-edit {
+    .rex-section--edit .btn-edit {
         --btn-l-color: var(--rex-color-d);
         --btn-l-bg: #fff;
         --btn-l-border: #fff;

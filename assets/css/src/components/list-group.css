@@ -5,7 +5,7 @@
         margin-bottom: 20px;
         padding-left: 0;
 
-        :is(.panel, .rex-section) > & {
+        .rex-section > & {
             margin-bottom: 0;
 
             & .list-group-item {
@@ -13,12 +13,29 @@
                 border-radius: 0;
             }
 
+            &:first-child .list-group-item:first-child {
+                border-top: 0;
+            }
+
             &:last-child .list-group-item:last-child {
                 border-bottom: 0;
             }
+
+            /* nested list, e.g. the subcategories of the linkmap */
+            & .list-group {
+                margin: 10px -15px -10px 0;
+
+                & > .list-group-item {
+                    padding-left: 20px;
+
+                    &:first-child {
+                        border-top-width: 1px;
+                    }
+                }
+            }
         }
 
-        :is(.panel-heading, .rex-section__header) + & .list-group-item:first-child {
+        .rex-section__header + & .list-group-item:first-child {
             border-top-width: 0;
         }
     }
@@ -30,6 +47,11 @@
         padding: 10px 15px;
         border: 1px solid light-dark(#ddd, var(--rex-color-grey-1));
         background-color: light-dark(#fff, var(--rex-color-grey-3));
+
+        /* current category of the linkmap */
+        & > .rex-active {
+            color: rgb(37.6 115.7 177.9);
+        }
 
         &:last-child {
             margin-bottom: 0;

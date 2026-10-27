@@ -1,0 +1,116 @@
+/* Content editor: the frame around the slices, the slices with their add buttons and the sidebar */
+
+@layer components {
+    .rex-main-frame {
+        margin-inline: -15px;
+        padding: 30px 15px;
+        background-color: light-dark(var(--rex-color-a), rgb(13.2 17.6 21.4));
+
+        @media (min-width: 1200px) {
+            margin-inline: -30px;
+            padding: 45px 30px;
+        }
+
+        .rex-is-logged-in & {
+            @media (min-width: 992px) {
+                margin-bottom: -30px;
+            }
+        }
+    }
+
+    @media (min-width: 992px) {
+        .rex-main-sidebar {
+            opacity: 0.5;
+            transition: opacity 0.2s;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .rex-collapse-content {
+        width: 100%;
+    }
+
+    .rex-slices {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    .rex-slice {
+        margin-block: 22px;
+
+        & :is(iframe, img, svg, video, object, embed) {
+            max-width: 100%;
+            height: auto;
+        }
+
+        & .rex-section__options {
+            float: right;
+        }
+
+        /* the buttons stay in reach while editing a long slice */
+        & .rex-section__footer {
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+    }
+
+    .rex-slice-output {
+        & .container {
+            width: 100%;
+        }
+
+        & .rex-section__body {
+            position: relative;
+            overflow: auto;
+        }
+    }
+
+    .rex-slice-offline {
+        opacity: 0.8;
+
+        & .rex-section {
+            --rex-section-color: light-dark(#707d8f, var(--rex-color-grey-3));
+            --rex-section-header-text: light-dark(rgb(255 255 255 / 0.9), var(--rex-color-text-light-inactive));
+        }
+
+        /* a veil keeps the output of an offline slice from being used */
+        & .rex-section__body {
+            pointer-events: none;
+
+            &::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: 100;
+                display: block;
+                background: light-dark(rgb(107 124 148 / 0.5), rgb(46 59 74 / 0.7));
+            }
+        }
+    }
+
+    /* "add block" button between the slices */
+    .rex-slice-select > .dropdown > .btn-default {
+        border-color: light-dark(var(--rex-color-b-lighter), rgb(25.5 46.2 62.5));
+        border-radius: 0;
+        background-color: light-dark(var(--rex-color-b-lighter), rgb(32.9 59.6 80.6));
+        color: light-dark(var(--rex-color-b), var(--rex-color-text-light));
+
+        &:hover {
+            border-color: light-dark(rgb(206.5 230.7 244.2), rgb(19.8 46.9 68.2));
+            background-color: light-dark(rgb(206.5 230.7 244.2), rgb(27.8 66 95.9));
+            color: light-dark(var(--rex-color-b), var(--rex-color-text-light));
+        }
+
+        &:is(:focus, .focus, :active, .active),
+        .open > & {
+            border-color: light-dark(var(--rex-color-b), rgb(20.8 89.2 143.7));
+            background-color: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
+            color: light-dark(#fff, var(--rex-color-text-light));
+        }
+    }
+}

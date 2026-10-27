@@ -1,8 +1,7 @@
 // Copies the third-party assets installed via npm into the committed `assets/` directory.
 //
-// REDAXO is consumed via Composer, so end users never run npm/sass. The compiled CSS (built
-// by the `build:css` script) and the vendor JS/fonts copied here are committed to the repo;
-// this script only needs to run when bumping a dependency in package.json.
+// REDAXO is consumed via Composer, so end users never run npm. The vendor files copied here are
+// committed to the repo; this script only needs to run when bumping a dependency in package.json.
 
 import { cpSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, extname, join } from 'node:path';
@@ -49,7 +48,6 @@ const transformed = [
 
 /** Whole-directory copies: [source dir relative to node_modules, target dir relative to assets]. */
 const dirs = [
-    ['bootstrap-sass/assets/fonts/bootstrap', 'fonts/bootstrap'],
     ['@fortawesome/fontawesome-free/webfonts', 'fonts/font-awesome/webfonts'],
 ];
 

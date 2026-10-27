@@ -1,0 +1,284 @@
+/*
+ Rendered Markdown of the docs pages (fragment core/page/docs.php, with a sticky table of contents from 1200px) and
+ of readmes (core/page/readme.php), styled like GitHub
+ */
+
+@layer components {
+    :is(.rex-docs, .rex-readme-content) {
+        --docs-text: light-dark(#24292f, var(--rex-color-text-light));
+        --docs-border: light-dark(hsl(0 0% 93.5%), var(--rex-color-grey-5));
+        --docs-code-bg: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-1));
+        --docs-table-border: light-dark(hsl(0 0% 93.5%), var(--rex-color-grey-1));
+
+        color: var(--docs-text);
+        font-size: 16px;
+        line-height: 1.5;
+        overflow-wrap: break-word;
+
+        & > :first-child {
+            margin-top: 0 !important;
+        }
+
+        & :is(h1, h2, h3, h4, h5, h6) {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+
+        & :is(p, blockquote, pre, details, dl, ol, ul, table) {
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+
+        & table :is(p, blockquote, pre, details, dl, ol, ul, table):last-child {
+            margin-bottom: 0;
+        }
+
+        & :is(h1, h2) {
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid var(--docs-border);
+        }
+
+        & h1 {
+            font-size: 2em;
+        }
+
+        & h2 {
+            position: relative;
+            font-size: 1.5em;
+
+            & a {
+                &,
+                &:hover {
+                    color: var(--docs-text);
+                    text-decoration: none;
+                }
+
+                &::before {
+                    content: "#";
+                    position: absolute;
+                    top: 5px;
+                    margin-left: -25px;
+                    color: var(--rex-color-b);
+                    font-size: 1.5em;
+                    opacity: 0.6;
+                }
+            }
+        }
+
+        .rex-section & h3,
+        & h3 {
+            font-size: 1.25em;
+            font-weight: 600;
+        }
+
+        & h4 {
+            font-size: 1em;
+        }
+
+        & h5 {
+            font-size: 0.875em;
+        }
+
+        & h6 {
+            font-size: 0.85em;
+        }
+
+        & blockquote {
+            padding: 1em;
+            border-left: 0.25em solid light-dark(var(--rex-color-a-dark), var(--rex-color-grey-1));
+            background-color: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-2));
+        }
+
+        & img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        & :is(pre, code) {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+            &::selection,
+            & ::selection {
+                background: light-dark(#b3d4fc, #0b304d);
+            }
+        }
+
+        & code {
+            margin: 0;
+            padding: 0.2em 0.4em;
+            border-radius: 6px;
+            background-color: var(--docs-code-bg);
+            color: inherit;
+            font-size: 85%;
+        }
+
+        & pre {
+            display: block;
+            overflow: auto;
+            padding: 16px;
+            border: 0;
+            border-radius: 6px;
+            background-color: var(--docs-code-bg);
+            font-size: 85%;
+            line-height: 1.45;
+            white-space: pre;
+            overflow-wrap: normal;
+            tab-size: 4;
+            hyphens: none;
+
+            & code {
+                display: inline;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                font-size: 100%;
+                line-height: inherit;
+                overflow-wrap: normal;
+            }
+
+            & > code {
+                white-space: pre;
+                word-break: normal;
+            }
+        }
+
+        & :is(ul, ol) {
+            padding-left: 2em;
+        }
+
+        & table :is(ul, ol) {
+            padding-left: 1.25em;
+        }
+
+        & table {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            overflow: auto;
+
+            & tr {
+                border-top: 1px solid var(--docs-table-border);
+                background-color: light-dark(#fff, transparent);
+
+                &:nth-child(2n) {
+                    background-color: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-2));
+                }
+            }
+
+            & thead tr {
+                background-color: light-dark(#fff, transparent);
+            }
+
+            & :is(th, td) {
+                padding: 8px;
+                border: 1px solid var(--docs-table-border);
+            }
+
+            & th {
+                font-weight: 600;
+            }
+
+            & thead th {
+                border-bottom-width: 2px;
+            }
+        }
+    }
+
+    .rex-docs {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .rex-docs-sidebar {
+        flex: 0 0 230px;
+        order: 1;
+        padding-left: 30px;
+
+        @media (max-width: 1199px) {
+            display: none;
+        }
+    }
+
+    .rex-docs-content {
+        flex-grow: 1;
+        min-width: 0;
+        max-width: 1012px;
+        margin-inline: auto;
+    }
+
+    /* table of contents */
+    .rex-nav-toc {
+        position: sticky;
+        top: var(--rex-topbar-height);
+        bottom: 20px;
+        max-height: 100vh;
+        overflow-y: auto;
+        margin-inline: -15px;
+        padding-top: 26px;
+        font-size: var(--rex-font-size);
+
+        @media (max-width: 991px) {
+            top: var(--rex-topbar-height-mobile);
+        }
+
+        & ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        & a {
+            display: block;
+            padding: 1rem 15px;
+            text-decoration: none;
+        }
+
+        & > ul > li {
+            & + li {
+                margin-top: 22px;
+            }
+
+            & > a {
+                background-color: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-2));
+            }
+
+            & > ul {
+                padding-top: 0.5rem;
+            }
+
+            & ul > li > a {
+                padding-block: 0.5rem;
+                padding-left: 30px;
+
+                &::before {
+                    content: "\f061";
+                    float: left;
+                    margin-top: 0.25em;
+                    margin-left: -15px;
+                    color: var(--rex-color-a-light);
+                    font-family: FontAwesome;
+                    font-size: 10px;
+                }
+            }
+
+            /* levels 3 to 6 */
+            & > ul > li > ul > li > a {
+                padding-left: 45px;
+            }
+
+            & > ul > li > ul > li > ul > li > a {
+                padding-left: 90px;
+            }
+
+            & > ul > li > ul > li > ul > li > ul > li > a {
+                padding-left: 135px;
+            }
+
+            & > ul > li > ul > li > ul > li > ul > li > ul > li > a {
+                padding-left: 180px;
+            }
+        }
+    }
+}

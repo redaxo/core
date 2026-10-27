@@ -4,7 +4,6 @@
     "dependencies": {
         "@fortawesome/fontawesome-free": "6.7.2",
         "@github/clipboard-copy-element": "1.3.2",
-        "bootstrap-sass": "3.4.1",
         "nouislider": "15.8.1"
     },
     "devDependencies": {
@@ -12,12 +11,10 @@
         "mkdirp": "3.0.1",
         "pixelmatch": "8.0.0",
         "playwright": "1.64.1",
-        "pngjs": "7.0.0",
-        "sass": "1.83.4"
+        "pngjs": "7.0.0"
     },
     "scripts": {
-        "build": "npm run build:css && npm run build:backend-css && npm run build:backend-js && npm run build:js",
-        "build:css": "sass --quiet-deps --silence-deprecation=import,global-builtin,color-functions,mixed-decls,abs-percent --load-path=node_modules --style=compressed --no-source-map assets/scss/master.scss:assets/css/styles.css assets/scss/redaxo.scss:assets/css/redaxo.css",
+        "build": "npm run build:backend-css && npm run build:backend-js && npm run build:js",
         "build:backend-css": "esbuild assets/css/src/backend.css --bundle --minify --target=chrome123,firefox120,safari17.5 --log-level=warning --outfile=assets/css/backend.css",
         "build:backend-js": "esbuild assets/js/src/backend.js --bundle --format=esm --target=chrome123,firefox120,safari17.5 --banner:js='/* Built from assets/js/src/ with `npm run build:backend-js`, do not edit. */' --log-level=warning --outfile=assets/js/backend.js",
         "build:js": "node .tools/build/copy-vendor-assets.mjs"

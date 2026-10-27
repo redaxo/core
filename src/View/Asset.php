@@ -17,8 +17,6 @@ final class Asset
 
     /** @var array<string, list<string>> */
     private static array $cssFiles = [];
-    /** @var array<string, string> */
-    private static array $cssLayers = [];
     /** @var list<array{string, array<self::JS_*, bool>}> */
     private static array $jsFiles = [];
     /** @var array<string, mixed> */
@@ -28,28 +26,14 @@ final class Asset
 
     private function __construct() {}
 
-    /**
-     * Adds a CSS file.
-     *
-     * With a `$layer` the file is imported into that cascade layer, e.g. to let other styles override it regardless
-     * of specificity.
-     */
-    public static function addCssFile(string $file, string $media = 'all', ?string $layer = null): void
+    /** Adds a CSS file. */
+    public static function addCssFile(string $file, string $media = 'all'): void
     {
         if (isset(self::$cssFiles[$media]) && in_array($file, self::$cssFiles[$media])) {
             throw new RuntimeException(sprintf('The CSS file "%s" is already added to media "%s".', $file, $media));
         }
 
         self::$cssFiles[$media][] = $file;
-        if (null !== $layer) {
-            self::$cssLayers[$file] = $layer;
-        }
-    }
-
-    /** Returns the cascade layer a CSS file is imported into, if any. */
-    public static function getCssLayer(string $file): ?string
-    {
-        return self::$cssLayers[$file] ?? null;
     }
 
     /**

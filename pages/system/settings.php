@@ -234,29 +234,27 @@ $mainContent[] = $systemForm->render();
 $viaCookie = array_key_exists('editor', $_COOKIE);
 
 $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCookie): void { ?>
-    <section class="rex-page-section">
-        <div class="panel panel-edit">
-            <header class="panel-heading"><div class="panel-title"><?= Html::from($form->title ?? '') ?></div></header>
-            <div class="panel-body">
-                <p><?= I18n::msg('system_editor_note') ?></p>
-                <?php if ($viaCookie): ?>
-                    <?= Message::info(I18n::msg('system_editor_note_cookie')) ?>
-                <?php elseif (Env::get('REX_EDITOR')): ?>
-                    <?= Message::info(I18n::msg('system_editor_note_env')) ?>
-                <?php endif ?>
-                <?= $form->rest() ?>
-            </div>
-            <footer class="panel-footer">
-                <div class="rex-form-panel-footer">
-                    <div class="btn-toolbar">
-                        <?= $form->button('save', ['class' => ['rex-form-aligned']]) ?>
-                        <?php if ($viaCookie): ?>
-                            <?= $form->button('delete_cookie') ?>
-                        <?php endif ?>
-                    </div>
-                </div>
-            </footer>
+    <section class="rex-section rex-section--edit">
+        <header class="rex-section__header"><div class="rex-section__title"><?= Html::from($form->title ?? '') ?></div></header>
+        <div class="rex-section__body">
+            <p><?= I18n::msg('system_editor_note') ?></p>
+            <?php if ($viaCookie): ?>
+                <?= Message::info(I18n::msg('system_editor_note_cookie')) ?>
+            <?php elseif (Env::get('REX_EDITOR')): ?>
+                <?= Message::info(I18n::msg('system_editor_note_env')) ?>
+            <?php endif ?>
+            <?= $form->rest() ?>
         </div>
+        <footer class="rex-section__footer">
+            <div class="rex-form-panel-footer">
+                <div class="btn-toolbar">
+                    <?= $form->button('save', ['class' => ['rex-form-aligned']]) ?>
+                    <?php if ($viaCookie): ?>
+                        <?= $form->button('delete_cookie') ?>
+                    <?php endif ?>
+                </div>
+            </div>
+        </footer>
     </section>
 <?php });
 

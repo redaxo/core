@@ -269,7 +269,7 @@
         cursor: pointer;
         pointer-events: auto;
 
-        :is(.panel-heading, .rex-section__header) & {
+        .rex-section__header & {
             color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
         }
     }
@@ -397,7 +397,7 @@
     }
 
     /* forms in the options area of a section header */
-    .rex-panel-options {
+    .rex-section__options {
         & .form-group:last-child {
             margin-bottom: 0;
         }
@@ -413,7 +413,7 @@
         }
     }
 
-    :is(.panel, .rex-section) > form {
+    .rex-section > form {
         margin-bottom: 0;
     }
 }
@@ -438,7 +438,7 @@
         }
     }
 
-    .table + .panel-footer .rex-form-aligned {
+    .table + .rex-section__footer .rex-form-aligned {
         margin-left: 0;
     }
 }

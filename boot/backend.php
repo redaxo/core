@@ -258,13 +258,9 @@ if (Core::getUser()) {
 
 Asset::setJsProperty('i18n', $i18n);
 
-// first, as it declares the order of the cascade layers
-Asset::addCssFile(Url::coreAssets('css/backend.css'));
 Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/all.min.css'));
 Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/v4-shims.min.css'));
-// the Bootstrap based styles live in a low cascade layer until the components replace them
-Asset::addCssFile(Url::coreAssets('css/styles.css'), layer: 'legacy');
-Asset::addCssFile(Url::coreAssets('css/redaxo.css'), layer: 'legacy');
+Asset::addCssFile(Url::coreAssets('css/backend.css'));
 Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
 
 if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('history[article_rollback]')) {

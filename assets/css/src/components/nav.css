@@ -86,7 +86,7 @@
     }
 
     /* tabs in the header of a section */
-    :is(.panel-heading, .rex-section__header) .nav-tabs {
+    .rex-section__header .nav-tabs {
         --tab-bg: light-dark(hsl(216 18.5% 94.4%), var(--rex-color-grey-2));
         --tab-bg-hover: light-dark(hsl(216 18.5% 97.4%), hsl(211.8 23.9% 12.9%));
         --tab-active-bg: light-dark(#fff, var(--rex-color-grey-3));
@@ -95,7 +95,7 @@
         margin-bottom: -10px;
         border-bottom: 0;
 
-        :is(.panel-edit, .rex-section--edit) & {
+        .rex-section--edit & {
             --tab-bg: light-dark(var(--rex-color-d-light), rgb(21 28 34 / 0.4));
             --tab-bg-hover: light-dark(hsl(148.4 54.4% 80.3%), rgb(21 28 34 / 0.4));
             --tab-active-bg: light-dark(var(--rex-color-d-lighter), #1f3d3c);

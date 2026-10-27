@@ -72,7 +72,7 @@
             line-height: var(--rex-line-height);
         }
 
-        :is(.panel, .rex-section) > & {
+        .rex-section > & {
             padding: 10px 15px;
             background-color: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-2));
         }

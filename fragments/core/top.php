@@ -33,18 +33,14 @@ use function Redaxo\Core\View\escape;
 
     foreach ($this->cssFiles as $media => $files) {
         foreach ($files as $file) {
-            $file = $originalFile = (string) $file;
+            $file = (string) $file;
             $path = Path::frontend(Path::absolute($file));
             if (!Core::isDevMode() && str_starts_with($path, $assetDir) && $mtime = @filemtime($path)) {
                 $file = Url::backendController(['asset' => ltrim($file, '.'), 'buster' => $mtime]);
             } elseif ($mtime = @filemtime($path)) {
                 $file .= '?buster=' . $mtime;
             }
-            if (null !== $layer = Asset::getCssLayer($originalFile)) {
-                echo "\n" . '    <style nonce="' . Response::getNonce() . '">@import url("' . $file . '") layer(' . $layer . ')' . ('all' === $media ? '' : ' ' . Type::string($media)) . ';</style>';
-            } else {
-                echo "\n" . '    <link rel="stylesheet" type="text/css" media="' . $media . '" href="' . $file . '" />';
-            }
+            echo "\n" . '    <link rel="stylesheet" type="text/css" media="' . $media . '" href="' . $file . '" />';
         }
     }
     echo "\n";

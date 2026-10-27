@@ -39,7 +39,7 @@ $url3500Webp = Url::coreAssets('images/' . $pictureName . '-3500.webp');
     #rex-page-login {
         background-color: #000000;
     }
-    #rex-page-login .panel-default {
+    #rex-page-login .rex-section {
         background-color: rgba(33, 38, 41, 0.9);
     }
 

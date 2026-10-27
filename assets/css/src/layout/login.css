@@ -1,0 +1,162 @@
+/*
+ Login page: dark box with the logo above it on a background picture (fragments core/login_branding.php and
+ core/login_background.php, which also sets the colors that match the picture). Same colors in both schemes.
+ */
+
+@layer components {
+    #rex-page-login {
+        background: var(--rex-color-a-darker);
+
+        & .rex-branding {
+            margin: 10px 0 30px;
+        }
+
+        & .rex-redaxo-logo {
+            height: 24px;
+            vertical-align: middle;
+
+            & :is(.rex-redaxo-logo-r, .rex-redaxo-logo-e, .rex-redaxo-logo-d, .rex-redaxo-logo-cms) {
+                fill: var(--rex-color-b);
+            }
+
+            & :is(.rex-redaxo-logo-a, .rex-redaxo-logo-x, .rex-redaxo-logo-o, .rex-redaxo-logo-reg) {
+                fill: #fff;
+            }
+        }
+
+        & .rex-js-login-message {
+            margin: 0 -25px;
+
+            & .alert {
+                padding-left: 25px;
+            }
+        }
+
+        /* fields */
+
+        & .rex-form-group > dd:first-child {
+            padding-left: 0;
+        }
+
+        & .form-control {
+            border-color: var(--rex-color-a-dark);
+            background-color: var(--rex-color-a);
+            box-shadow: none;
+            color: var(--rex-color-a-darker);
+            appearance: none;
+
+            &:last-child {
+                border-radius: 0 4px 4px 0;
+            }
+        }
+
+        & .input-group-addon {
+            border-color: var(--rex-color-a-dark);
+            background-color: var(--rex-color-a);
+            color: var(--rex-color-a-dark);
+        }
+
+        & .input-group {
+            & :is(.form-control, .input-group-addon) {
+                transition: background-color 100ms ease-out;
+            }
+
+            &:focus-within :is(.form-control, .input-group-addon) {
+                background-color: var(--rex-color-a-light);
+            }
+        }
+
+        /* buttons */
+
+        & .rex-form-panel-footer > .btn-toolbar button:first-child {
+            margin-left: 0;
+        }
+
+        & .btn-primary {
+            border-color: var(--rex-color-a-dark);
+            background-color: var(--rex-color-a-darker);
+            color: #fff;
+            transition: background-color 100ms ease-out;
+
+            &:hover {
+                background-color: rgb(30.4 40.3 50.1);
+            }
+        }
+
+        & .btn-view {
+            background-color: hsl(212 23.1% 30.5%);
+            color: var(--rex-color-a);
+
+            &:hover {
+                background-color: var(--rex-color-a-darker);
+                color: var(--rex-color-a-light);
+            }
+        }
+
+        /* password toggle next to the field */
+        & .input-group-btn .btn-view {
+            border-color: var(--rex-color-a-dark);
+            border-left: none;
+            background-color: var(--rex-color-a);
+            color: var(--rex-color-a-darker);
+            transition: background-color 100ms ease-out;
+
+            &:hover {
+                background-color: var(--rex-color-a-light);
+            }
+        }
+
+        /* footer and background picture */
+
+        & .rex-global-footer {
+            position: fixed;
+            right: 0;
+            bottom: 5px;
+            left: 0;
+            padding-inline: 15px;
+            font-size: var(--rex-font-size-small);
+            text-align: center;
+        }
+
+        & .rex-nav-footer {
+            margin-inline: 5vw;
+
+            &,
+            & a {
+                color: var(--rex-color-a);
+            }
+        }
+
+        & .rex-background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            align-items: center;
+            justify-content: center;
+            background-position: center;
+            background-size: cover;
+
+            & :is(source, img) {
+                min-height: 100%;
+                overflow: hidden;
+                object-fit: cover;
+            }
+        }
+
+        /* shown once the picture is loaded */
+        & .rex-background--process {
+            display: none;
+        }
+
+        & .rex-background--ready {
+            display: flex;
+            animation: rex-fade-in 800ms ease-out;
+        }
+    }
+
+    @keyframes rex-fade-in {
+        from {
+            opacity: 0;
+        }
+    }
+}

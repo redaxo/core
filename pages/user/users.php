@@ -208,35 +208,33 @@ if ('add' === $func || $user) {
     echo $message;
 
     echo $form->capture(static function (Form $form) use ($user, $loginTries): void { ?>
-        <section class="rex-page-section">
-            <div class="panel panel-edit">
-                <header class="panel-heading"><div class="panel-title"><?= Html::from($form->title ?? '') ?></div></header>
-                <div class="panel-body">
-                    <?php foreach ($form->getFormErrors() as $error): ?>
-                        <?= Message::error((string) Html::from($error)) ?>
-                    <?php endforeach ?>
-                    <?php if ($user): ?>
-                        <?= new FieldRow(Html::raw('<p class="form-control-static">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
-                    <?php endif ?>
-                    <?php foreach (['login', 'password', 'passwordChangeRequired', 'name', 'description', 'email', 'admin', 'status'] as $name): ?>
-                        <?php if ($form->has($name)): ?>
-                            <?= $form->row($name) ?>
-                        <?php endif ?>
-                    <?php endforeach ?>
-                    <?php if ($form->has('resetLoginTries')): ?>
-                        <?php $field = $form->field('resetLoginTries') ?>
-                        <?= new FieldRow(new CheckboxInput($field->inputName, new Translatable('user_reset_tries', $loginTries), '1' === $field->raw, id: $field->id))->render() ?>
-                    <?php endif ?>
-                    <?php foreach (['roles', 'startPage', 'language'] as $name): ?>
+        <section class="rex-section rex-section--edit">
+            <header class="rex-section__header"><div class="rex-section__title"><?= Html::from($form->title ?? '') ?></div></header>
+            <div class="rex-section__body">
+                <?php foreach ($form->getFormErrors() as $error): ?>
+                    <?= Message::error((string) Html::from($error)) ?>
+                <?php endforeach ?>
+                <?php if ($user): ?>
+                    <?= new FieldRow(Html::raw('<p class="form-control-static">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
+                <?php endif ?>
+                <?php foreach (['login', 'password', 'passwordChangeRequired', 'name', 'description', 'email', 'admin', 'status'] as $name): ?>
+                    <?php if ($form->has($name)): ?>
                         <?= $form->row($name) ?>
-                    <?php endforeach ?>
-                </div>
-                <footer class="panel-footer">
-                    <div class="rex-form-panel-footer">
-                        <?= $form->buttons() ?>
-                    </div>
-                </footer>
+                    <?php endif ?>
+                <?php endforeach ?>
+                <?php if ($form->has('resetLoginTries')): ?>
+                    <?php $field = $form->field('resetLoginTries') ?>
+                    <?= new FieldRow(new CheckboxInput($field->inputName, new Translatable('user_reset_tries', $loginTries), '1' === $field->raw, id: $field->id))->render() ?>
+                <?php endif ?>
+                <?php foreach (['roles', 'startPage', 'language'] as $name): ?>
+                    <?= $form->row($name) ?>
+                <?php endforeach ?>
             </div>
+            <footer class="rex-section__footer">
+                <div class="rex-form-panel-footer">
+                    <?= $form->buttons() ?>
+                </div>
+            </footer>
         </section>
     <?php });
     ?>

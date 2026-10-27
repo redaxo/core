@@ -203,4 +203,20 @@
         padding: 4px 7px;
         border-radius: 20px;
     }
+
+    /* language switch of the content and mediapool pages, right of the page header from 992px */
+    .rex-language {
+        margin-bottom: 22px;
+
+        @media (min-width: 992px) {
+            float: right;
+            margin-left: 30px;
+            padding-top: 2px;
+
+            & .dropdown-menu {
+                right: 0;
+                left: auto;
+            }
+        }
+    }
 }

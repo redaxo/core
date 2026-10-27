@@ -83,7 +83,7 @@
         background: var(--rex-section-body-bg);
     }
 
-    .rex-page-section h3 {
+    .rex-section h3 {
         font-size: 17px;
         font-weight: 700;
 
@@ -102,6 +102,74 @@
         background: var(--rex-section-footer-bg);
         border-top: 1px solid var(--rex-section-footer-bg);
         border-radius: 0;
+    }
+
+    .rex-section__header {
+        & .badge {
+            background-color: var(--rex-section-header-text);
+            color: var(--rex-section-color);
+        }
+
+        & > .dropdown .dropdown-toggle {
+            color: inherit;
+        }
+    }
+
+    .rex-section__title :is(a, small) {
+        color: inherit;
+    }
+
+    .rex-section__options .navbar-form {
+        margin: 0 0 6px;
+        padding: 0;
+
+        @media (min-width: 992px) {
+            margin-block: -6px;
+        }
+    }
+
+    /* buttons of a form at the end of the body, stretched to the edges like the footer */
+    .rex-section__body .rex-form-panel-footer {
+        margin: 0 -15px -15px;
+        padding: 10px 15px;
+        background: var(--rex-section-footer-bg);
+        border-top: 1px solid var(--rex-section-footer-bg);
+    }
+
+    /* tables and lists without padding (Section::$content) run to the edges */
+    :is(.rex-section, .rex-section__collapse, .rex-section > form, .rex-section > form > fieldset) > .table {
+        margin-bottom: 0;
+    }
+
+    .rex-section > .table {
+        & caption {
+            padding-inline: 15px;
+        }
+
+        & > tbody:first-child > tr:first-child > :is(th, td) {
+            border-top: 0;
+        }
+
+        &.table-bordered {
+            border: 0;
+
+            & > :is(thead, tbody, tfoot) > tr > :first-child {
+                border-left: 0;
+            }
+
+            & > :is(thead, tbody, tfoot) > tr > :last-child {
+                border-right: 0;
+            }
+
+            & > :is(tbody, tfoot) > tr:last-child > * {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    .rex-section__body + .table,
+    .rex-section > .table + .rex-section__body {
+        border-top: 1px solid var(--rex-border);
     }
 
     /* login box */

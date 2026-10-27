@@ -3,25 +3,28 @@
 
  Layers, lowest first:
  - base: element styles
- - bootstrap: the components for the Bootstrap 3 compatible markup (`.btn`, `.dropdown-menu`, `.label` …)
- - legacy: what is left of the Sass build (assets/scss, imported by Asset::addCssFile) until it is replaced; it
-   still refines the bootstrap components in places
- - components: the REDAXO components (`.rex-…`), utilities: single purpose classes
- This file is loaded first, so this statement fixes the order of the layers.
+ - bootstrap: the components for the Bootstrap 3 compatible markup (`.btn`, `.form-control`, `.table` …)
+ - tokens: the design tokens
+ - components: the REDAXO components (`.rex-…`), they may refine the bootstrap ones
+ - utilities: single purpose classes
+ Addon styles are unlayered and therefore win over all of them.
 
  Build: npm run build:backend-css
  */
 
-@layer base, bootstrap, legacy, tokens, components, utilities;
+@layer base, bootstrap, tokens, components, utilities;
 
 @import "tokens.css";
 @import "base.css";
 
 @import "layout/shell.css";
+@import "layout/login.css";
 
 @import "components/icons.css";
 @import "components/page-header.css";
 @import "components/section.css";
+@import "components/slice.css";
+@import "components/docs.css";
 @import "components/grid.css";
 @import "components/forms.css";
 @import "components/input-group.css";

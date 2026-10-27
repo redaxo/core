@@ -5,7 +5,6 @@ use Redaxo\Core\View\Component\Section;
 use Redaxo\Core\View\Component\SectionVariant;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
-use Redaxo\Core\View\HtmlAttributes;
 
 /**
  * Wrapper of the {@see Section} component for callers of the fragment.
@@ -26,8 +25,7 @@ $raw = function (string ...$names): Html {
 
     return Html::raw($html);
 };
-$class = (string) $this->getVar('class', '');
-$variant = SectionVariant::tryFrom($class) ?? SectionVariant::Default;
+$variant = SectionVariant::tryFrom((string) $this->getVar('class', '')) ?? SectionVariant::Default;
 
 echo new Section(
     title: $raw('title'),
@@ -39,5 +37,4 @@ echo new Section(
     variant: $variant,
     collapsible: (bool) $this->getVar('collapse', false),
     collapsed: (bool) $this->getVar('collapsed', false),
-    attributes: new HtmlAttributes(['class' => '' === $class || $variant->value === $class ? [] : ['panel-' . $class]]),
 )->render();

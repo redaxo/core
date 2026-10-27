@@ -17,7 +17,6 @@
 /project/ export-ignore
 /assets/css/src/ export-ignore
 /assets/js/src/ export-ignore
-/assets/scss/ export-ignore
 /tests/ export-ignore
 /docker-compose.yml export-ignore
 /package.json export-ignore

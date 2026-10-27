@@ -40,7 +40,7 @@
             font-weight: 700;
         }
 
-        .rex-panel-options & {
+        .rex-section__options & {
             padding: 5px 10px;
             font-size: var(--rex-font-size-small);
 
@@ -50,7 +50,7 @@
             }
         }
 
-        :is(.panel, .rex-section) > & {
+        .rex-section > & {
             margin-bottom: 0;
             border: 0;
             border-radius: 0;
