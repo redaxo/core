@@ -106,6 +106,7 @@
             "redaxo/src/addons/mediapool/tests/",
             "redaxo/src/addons/structure/tests/",
             "redaxo/src/addons/structure/plugins/content/tests/",
+            "redaxo/src/addons/structure/plugins/history/tests/",
             "redaxo/src/core/tests/"
         ]
     },
