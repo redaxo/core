@@ -40,6 +40,19 @@ class rex_article_slice_history
 
         $historyDate = date(rex_sql::FORMAT_DATETIME);
 
+        // Snapshots are identified by their date (in seconds). If this second already has a snapshot with rows,
+        // it is kept: adding the rows of a later change would mix both states. A snapshot of an article without
+        // slices has no rows, so it does not count here.
+        $sql = rex_sql::factory();
+        $existing = $sql->getArray(
+            'select 1 from ' . $sql->escapeIdentifier(self::getTable()) . '
+                where article_id=? and clang_id=? and revision=? and history_date=? limit 1',
+            [$articleId, $clangId, 0, $historyDate],
+        );
+        if ($existing) {
+            return;
+        }
+
         foreach ($slices as $slice) {
             $sql = rex_sql::factory();
             $sql->setTable(self::getTable());
