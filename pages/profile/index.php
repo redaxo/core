@@ -212,7 +212,7 @@ $confirmField = static function (string $id) use ($login, $passkeyVerify): strin
         $n['label'] = '<label for="' . $id . '">' . I18n::msg('passkey_current') . '</label>';
         $n['field'] = '<div data-auth-passkey-verify="' . escape($passkeyVerify) . '">
         <button type="button" class="btn btn-primary" id="' . $id . '">' . I18n::msg('passkey_current_verify') . '</button>
-        <i class="fa fa-check-circle-o text-success hidden"></i>
+        <i class="fa-regular fa-circle-check text-success hidden"></i>
         <input type="hidden" name="passkey_verify"/>
     </div>';
     } else {

@@ -30,18 +30,6 @@ const files = [
     ['@fortawesome/fontawesome-free/css/all.min.css', 'fonts/font-awesome/css/all.min.css'],
 ];
 
-/**
- * Copies with a transformation of the content: [source relative to node_modules, target relative to assets, transform].
- */
-const transformed = [
-    // icons with Font Awesome 4 names (e.g. stored in addon settings) work with `.rex-icon` just like with `.fa`
-    [
-        '@fortawesome/fontawesome-free/css/v4-shims.min.css',
-        'fonts/font-awesome/css/v4-shims.min.css',
-        css => css.replaceAll('.fa.', ':is(.fa,.rex-icon).'),
-    ],
-];
-
 /** Whole-directory copies: [source dir relative to node_modules, target dir relative to assets]. */
 const dirs = [
     ['@fortawesome/fontawesome-free/webfonts', 'fonts/font-awesome/webfonts'],
@@ -51,13 +39,6 @@ for (const [from, to] of files) {
     const target = join(assets, to);
     mkdirSync(dirname(target), { recursive: true });
     copy(join(modules, from), target);
-    console.log(`copied ${to}`);
-}
-
-for (const [from, to, transform] of transformed) {
-    const target = join(assets, to);
-    mkdirSync(dirname(target), { recursive: true });
-    writeFileSync(target, transform(readFileSync(join(modules, from), 'utf8').replace(/\r\n/g, '\n')));
     console.log(`copied ${to}`);
 }
 

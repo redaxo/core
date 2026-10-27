@@ -255,7 +255,6 @@ if (Core::getUser()) {
 Asset::setJsProperty('i18n', $i18n);
 
 Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/all.min.css'));
-Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/v4-shims.min.css'));
 Asset::addCssFile(Url::coreAssets('css/backend.css'));
 Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
 
