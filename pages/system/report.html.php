@@ -5,7 +5,12 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\SystemReport;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
 
@@ -18,8 +23,7 @@ foreach ($report as $title => $group) {
         echo '</div><div class="col-sm-6">';
     }
 
-    $content = '';
-
+    $rows = [];
     foreach ($group as $label => $value) {
         if (SystemReport::TITLE_PACKAGES === $title || SystemReport::TITLE_REDAXO === $title) {
             if (null === $value) {
@@ -34,15 +38,13 @@ foreach ($report as $title => $group) {
             $value = escape($value);
         }
 
-        $content .= '
-            <tr>
-                <th width="120">' . escape($label) . '</th>
-                <td data-title="' . escape($label) . '">' . $value . '</td>
-            </tr>
-        ';
+        $rows[] = [(string) $label, new TableCell(Html::raw((string) $value), attributes: new HtmlAttributes(['data-title' => (string) $label]))];
     }
 
-    $content = '<table class="table table-hover table-bordered"><tbody>' . $content . '</tbody></table>';
+    $content = (string) new Table([
+        TableColumn::forKey('', 0, attributes: new HtmlAttributes(['width' => '120']), rowHeader: true),
+        TableColumn::forKey('', 1),
+    ], $rows, attributes: new HtmlAttributes(['class' => ['table-hover', 'table-bordered']]))->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', $title);
