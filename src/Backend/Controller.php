@@ -12,6 +12,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Mailer\MailArchive;
+use Redaxo\Core\Security\ContentSecurityPolicy;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Markdown\Markdown;
@@ -388,6 +389,8 @@ final class Controller
         }
 
         [$toc, $content] = Markdown::factory()->parseWithToc(File::require($path), softLineBreaks: false, highlightPhp: true);
+        // docs of addons often show images of their repository, e.g. screenshots or badges
+        ContentSecurityPolicy::backend()->add('img-src', 'https:');
         $fragment = new Fragment();
         $fragment->setVar('content', $content, false);
         $fragment->setVar('toc', $toc, false);

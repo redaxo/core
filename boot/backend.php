@@ -25,6 +25,7 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Http\Session;
 use Redaxo\Core\Migration\WebRunner;
 use Redaxo\Core\Security\BackendLogin;
+use Redaxo\Core\Security\ContentSecurityPolicy;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
 use Redaxo\Core\Security\Permission;
@@ -496,4 +497,5 @@ Controller::includeCurrentPage();
 $CONTENT = ob_get_clean();
 
 // ----- inhalt ausgeben
+Response::setHeader('Content-Security-Policy', ContentSecurityPolicy::backend()->toString());
 Response::sendPage($CONTENT);
