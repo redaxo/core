@@ -259,7 +259,7 @@ if (
                                 rex::getTable('article_slice'),
                                 'priority',
                                 'article_id=' . $articleId . ' AND clang_id=' . $clang . ' AND ctype_id=' . $ctype . ' AND revision=' . (int) $sliceRevision,
-                                'priority, updatedate DESC',
+                                'priority, id = ' . $sliceId . ' DESC',
                             );
 
                             $info = $actionMessage . rex_i18n::msg('block_added');

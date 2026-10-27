@@ -87,7 +87,7 @@ class rex_article_service
 
             $AART->insert();
             // ----- PRIOR
-            self::newArtPrio($data['category_id'], $key, 0, $data['priority']);
+            self::newArtPrio($data['category_id'], $key, 0, $data['priority'], (int) $id);
 
             rex_article_cache::delete($id, $key);
 
@@ -184,7 +184,7 @@ class rex_article_service
                 ->update();
 
             foreach (rex_clang::getAllIds() as $clangId) {
-                self::newArtPrio($data['category_id'], $clangId, $data['priority'], $oldPrio);
+                self::newArtPrio($data['category_id'], $clangId, $data['priority'], $oldPrio, $articleId);
             }
         }
 
@@ -417,9 +417,10 @@ class rex_article_service
      * @param int $clang ClangId der Kategorie, die erneuert werden soll
      * @param int $newPrio Neue PrioNr der Kategorie
      * @param int $oldPrio Alte PrioNr der Kategorie
+     * @param int|null $id Id of the added or moved article, used to place it in front of or behind an article with the same priority
      * @return void
      */
-    public static function newArtPrio($parentId, $clang, $newPrio, $oldPrio)
+    public static function newArtPrio($parentId, $clang, $newPrio, $oldPrio, $id = null)
     {
         $parentId = (int) $parentId;
 
@@ -434,7 +435,7 @@ class rex_article_service
                 rex::getTable('article'),
                 'priority',
                 'clang_id=' . (int) $clang . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
-                'priority,updatedate ' . $addsql,
+                null === $id ? 'priority,updatedate ' . $addsql : 'priority, id = ' . (int) $id . ' ' . $addsql,
             );
 
             rex_article_cache::deleteLists($parentId);
