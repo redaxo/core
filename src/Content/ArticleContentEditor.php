@@ -332,7 +332,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 foreach (Module::getAll() as $key => $module) {
                     if (Core::requireUser()->getComplexPerm('modules')->hasPerm($key)) {
                         if ((!$template || $template->isModuleAllowed($section, $module)) && $module::isAllowedInCategory($category)) {
-                            $this->moduleSelect[$section->id][] = ['name' => I18n::translate($module::name()), 'key' => $key];
+                            $this->moduleSelect[$section->id][] = ['name' => I18n::translate($module::name(), false), 'key' => $key];
                         }
                     }
                 }
