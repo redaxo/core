@@ -3,12 +3,13 @@
 namespace Redaxo\Core\Content;
 
 use Attribute;
+use Redaxo\Core\Translation\Translatable;
 
 #[Attribute(Attribute::TARGET_CLASS)]
 final readonly class AsModule
 {
     public function __construct(
         public string $key,
-        public string $name,
+        public string|Translatable $name,
     ) {}
 }

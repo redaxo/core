@@ -15,6 +15,7 @@ use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Fixtures\TestModule1;
 use Redaxo\Core\Tests\Content\Fixtures\TestFieldsModule;
 use Redaxo\Core\Tests\Content\Fixtures\TestNoFieldsModule;
+use Redaxo\Core\Translation\I18n;
 
 /** @internal */
 final class ModuleTest extends TestCase
@@ -60,6 +61,7 @@ final class ModuleTest extends TestCase
 
         self::assertSame('testmodule1', TestModule1::key());
         self::assertSame('Test Module 1', TestModule1::name());
+        self::assertSame(I18n::rawMsg('module'), TestNoFieldsModule::name());
     }
 
     public function testKeyOfUnregisteredClass(): void

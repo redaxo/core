@@ -121,7 +121,7 @@ final class ArticleContentEditor extends ArticleContentBase
     private function getSliceHeading(string $moduleKey): string
     {
         $module = Module::getClass($moduleKey);
-        return null !== $module ? I18n::translate($module::name()) : $moduleKey;
+        return escape(null !== $module ? $module::name() : $moduleKey);
     }
 
     /** Returns the slice menu. */
@@ -332,7 +332,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 foreach (Module::getAll() as $key => $module) {
                     if (Core::requireUser()->getComplexPerm('modules')->hasPerm($key)) {
                         if ((!$template || $template->isModuleAllowed($section, $module)) && $module::isAllowedInCategory($category)) {
-                            $this->moduleSelect[$section->id][] = ['name' => I18n::translate($module::name()), 'key' => $key];
+                            $this->moduleSelect[$section->id][] = ['name' => $module::name(), 'key' => $key];
                         }
                     }
                 }
@@ -417,7 +417,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $fragment = new Fragment();
         $fragment->setVar('before', $msg, false);
         $fragment->setVar('class', 'add', false);
-        $fragment->setVar('title', I18n::msg('module') . ': ' . I18n::translate($module::name()), false);
+        $fragment->setVar('title', I18n::msg('module') . ': ' . escape($module::name()), false);
         $fragment->setVar('body', $panel, false);
         $fragment->setVar('footer', $sliceFooter, false);
         $sliceContent = $fragment->parse('core/page/section.php');

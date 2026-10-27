@@ -364,7 +364,7 @@ $echo = '';
 // --------------------- READ TEMPLATES
 
 $templates = Template::getTemplatesForCategory($structureContext->categoryId);
-$templateChoices = array_map(static fn (Template $template) => I18n::translate($template->name), $templates);
+$templateChoices = array_map(static fn (Template $template) => $template->name, $templates);
 new Collator(Locale::getDefault())->asort($templateChoices);
 /** @var array<string, string> $templateChoices */
 $templateChoices = $templateChoices ?: ['' => I18n::msg('option_no_template')];
@@ -555,7 +555,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             $editModeUrl = $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $sql->getIntValue('id'), 'mode' => 'edit']);
 
             $tmplKey = ($sql->getNullableStringValue('template') ?? '');
-            $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? I18n::translate($t->name) : '');
+            $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? $t->name : '');
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">
             <div class="rex-truncate rex-truncate-target" title="' . $tmpl . '" >' . $tmpl . '</div></td>';
 
@@ -578,7 +578,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             $artStatusIcon = $statusTypes[$status][2];
 
             $tmplKey = ($sql->getNullableStringValue('template') ?? '');
-            $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? I18n::translate($t->name) : '');
+            $tmpl = escape(null !== ($t = Template::get($tmplKey)) ? $t->name : '');
             $tmplTd = '<td class="rex-table-template" data-title="' . I18n::msg('header_template') . '">
             <div class="rex-truncate rex-truncate-target" title="' . $tmpl . '" >' . $tmpl . '</div></td>';
 
