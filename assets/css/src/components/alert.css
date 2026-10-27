@@ -1,0 +1,74 @@
+/* Alerts (`.alert`, Redaxo\Core\View\Component\Alert, Redaxo\Core\View\Message) */
+
+@layer bootstrap {
+    .alert {
+        --alert-bg: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
+        --alert-border: light-dark(hsl(206.6 65.1% 47.3%), hsl(206.2 74.7% 32.3%));
+
+        margin-bottom: 22px;
+        padding: 15px;
+        border: 1px solid var(--alert-border);
+        border-radius: 0;
+        background-color: var(--alert-bg);
+        color: light-dark(#fff, var(--rex-color-text-light));
+        word-break: break-word;
+
+        & h4 {
+            margin-top: 0;
+            color: inherit;
+        }
+
+        & > :is(p, ul) {
+            margin-bottom: 0;
+        }
+
+        & > p + p {
+            margin-top: 5px;
+        }
+
+        & a,
+        & .alert-link {
+            color: light-dark(#fff, var(--rex-color-text-light-inactive));
+            text-decoration: underline;
+
+            &:hover {
+                color: light-dark(var(--rex-color-a-light), var(--rex-color-text-light));
+            }
+        }
+
+        & .alert-link {
+            font-weight: 700;
+        }
+
+        .rex-panel-options & {
+            padding: 5px 10px;
+            font-size: var(--rex-font-size-small);
+
+            &:last-child {
+                margin-right: -10px;
+                margin-bottom: 0;
+            }
+        }
+
+        :is(.panel, .rex-section) > & {
+            margin-bottom: 0;
+            border: 0;
+            border-radius: 0;
+        }
+    }
+
+    .alert-success {
+        --alert-bg: light-dark(var(--rex-color-d), #0d6a38);
+        --alert-border: light-dark(hsl(148 37.8% 43.3%), hsl(147.7 78.2% 18.3%));
+    }
+
+    .alert-warning {
+        --alert-bg: light-dark(var(--rex-color-warning), #78641e);
+        --alert-border: light-dark(hsl(47.7 57% 46.3%), hsl(46.6 60% 24.4%));
+    }
+
+    .alert-danger {
+        --alert-bg: light-dark(var(--rex-color-danger), #801919);
+        --alert-border: light-dark(hsl(1.7 64.6% 48%), hsl(0 67.3% 25%));
+    }
+}

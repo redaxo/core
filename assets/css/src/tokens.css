@@ -67,7 +67,7 @@
 
         --rex-footer-text: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light-inactive));
 
-        --rex-danger-text: light-dark(#a94442, #e36d6a);
+        --rex-danger-text: light-dark(#c9302c, hsl(0 67.3% 50%));
 
         /* typography */
         --rex-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,

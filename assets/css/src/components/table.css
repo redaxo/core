@@ -1,6 +1,6 @@
 /* Tables (`.table`) */
 
-@layer components {
+@layer bootstrap {
     .table > tbody > tr > td > h3 {
         font-size: var(--rex-font-size);
         font-weight: 700;

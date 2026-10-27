@@ -98,79 +98,6 @@
 }
 
 
-// Alternate buttons
-// --------------------------------------------------
-
-.nav-tabs > li > .btn-default {
-    @include button-variant($btn-default-color, $btn-default-bg, $btn-default-border);
-}
-.nav-tabs > li > .btn-primary {
-    @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-border);
-}
-.nav-tabs > li > .btn-success {
-    @include button-variant($btn-success-color, $btn-success-bg, $btn-success-border);
-}
-.nav-tabs > li > .btn-info {
-    @include button-variant($btn-info-color, $btn-info-bg, $btn-info-border);
-}
-.nav-tabs > li > .btn-warning {
-    @include button-variant($btn-warning-color, $btn-warning-bg, $btn-warning-border);
-}
-.nav-tabs > li > .btn-danger {
-    @include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-border);
-}
-.btn-abort {
-    @extend .btn-default;
-}
-// save and continue a form with data
-.btn-apply {
-    @extend .btn-primary;
-}
-.btn-back {
-    @extend .btn-default;
-}
-.btn-language {
-    @extend .btn-default;
-}
-.btn-delete {
-    @extend .btn-danger;
-}
-// e.g. Slice edit
-.btn-edit {
-    @extend .btn-primary;
-}
-// e.g. Slice move
-.btn-move {
-    @extend .btn-default;
-}
-// e.g. Widget
-.btn-popup {
-    @extend .btn-default;
-}
-.btn-reset {
-    @extend .btn-default;
-}
-// save and quit a form with data
-.btn-save {
-    @extend .btn-primary;
-}
-.btn-search {
-    @extend .btn-default;
-}
-.btn-select {
-    @extend .btn-primary;
-}
-// send a form, e.g. content functions
-.btn-send {
-    @extend .btn-primary;
-}
-.btn-update {
-    @extend .btn-primary;
-}
-.btn-view {
-    @extend .btn-primary;
-}
-
 .rex-nav-btn {
     margin-bottom: $line-height-computed;
 }
@@ -238,30 +165,11 @@
 }
 
 
-.panel > .alert {
-    margin-bottom: 0;
-    border: 0;
-    border-radius: 0;
-}
-
 .panel > form > .table,
 .panel > form > fieldset > .table {
     margin-bottom: 0;
 }
 
-.panel > .rex-nav-pagination {
-    padding: $panel-heading-padding;
-}
-.rex-nav-pagination {
-    > .pagination {
-        display: inline;
-    }
-    > .rex-pagination-count {
-        display: inline-block;
-        padding: ($padding-base-vertical + 1) $padding-base-horizontal; // 1px border
-        line-height: $line-height-base;
-    }
-}
 
 .panel-heading > .rex-heading {
     margin: 0;

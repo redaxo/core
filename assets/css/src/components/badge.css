@@ -1,0 +1,71 @@
+/*
+ Labels (`.label`, Redaxo\Core\View\Component\Badge) and counters (`.badge`)
+ */
+
+@layer bootstrap {
+    .label {
+        --label-bg: light-dark(#777, var(--rex-color-grey-5));
+
+        display: inline;
+        padding: 0.2em 0.6em 0.3em;
+        border-radius: 0.25em;
+        background-color: var(--label-bg);
+        color: light-dark(#fff, var(--rex-color-text-light));
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+
+        &:empty {
+            display: none;
+        }
+
+        a&:is(:hover, :focus) {
+            color: light-dark(#fff, var(--rex-color-text-light));
+            text-decoration: none;
+            cursor: pointer;
+        }
+    }
+
+    .label-primary,
+    .label-info {
+        --label-bg: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
+    }
+
+    .label-success {
+        --label-bg: light-dark(var(--rex-color-d), #0d6a38);
+    }
+
+    .label-warning {
+        --label-bg: light-dark(var(--rex-color-warning), #78641e);
+    }
+
+    .label-danger {
+        --label-bg: light-dark(var(--rex-color-danger), #801919);
+    }
+
+    .badge {
+        display: inline-block;
+        min-width: 10px;
+        padding: 3px 7px;
+        border-radius: 10px;
+        background-color: light-dark(#777, rgb(0 0 0 / 0.45));
+        color: light-dark(#fff, var(--rex-color-text-light));
+        font-size: var(--rex-font-size-small);
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+
+        &:empty {
+            display: none;
+        }
+
+        .list-group-item > & {
+            float: right;
+        }
+    }
+}

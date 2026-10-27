@@ -87,15 +87,15 @@
     }
 
     .text-success {
-        color: light-dark(#3c763d, hsl(147.7 78.2% 43.3%));
+        color: light-dark(hsl(148 37.8% 43.3%), hsl(147.7 78.2% 43.3%));
     }
 
     .text-warning {
-        color: light-dark(#8a6d3b, hsl(46.7 60% 49.4%));
+        color: light-dark(hsl(47.7 57% 46.3%), hsl(46.7 60% 49.4%));
     }
 
     .text-danger {
-        color: light-dark(#a94442, hsl(0 67.3% 50%));
+        color: light-dark(#c9302c, hsl(0 67.3% 50%));
     }
 
     .rex-online {

@@ -1,14 +1,18 @@
 /*
  REDAXO backend styles.
 
- The Bootstrap based styles of the `legacy` layer (assets/scss, imported by Asset::addCssFile) sit between the
- element styles of `base` and the components, until the components have replaced them. This file is loaded first,
- so this statement fixes the order of the layers.
+ Layers, lowest first:
+ - base: element styles
+ - bootstrap: the components for the Bootstrap 3 compatible markup (`.btn`, `.dropdown-menu`, `.label` …)
+ - legacy: what is left of the Sass build (assets/scss, imported by Asset::addCssFile) until it is replaced; it
+   still refines the bootstrap components in places
+ - components: the REDAXO components (`.rex-…`), utilities: single purpose classes
+ This file is loaded first, so this statement fixes the order of the layers.
 
  Build: npm run build:backend-css
  */
 
-@layer base, legacy, tokens, components, utilities;
+@layer base, bootstrap, legacy, tokens, components, utilities;
 
 @import "tokens.css";
 @import "base.css";
@@ -18,6 +22,12 @@
 @import "components/icons.css";
 @import "components/page-header.css";
 @import "components/section.css";
+@import "components/button.css";
+@import "components/dropdown.css";
+@import "components/badge.css";
+@import "components/alert.css";
+@import "components/pagination.css";
+@import "components/list-group.css";
 @import "components/table.css";
 @import "components/overlay.css";
 @import "components/dialog.css";
