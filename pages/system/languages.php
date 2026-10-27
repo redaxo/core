@@ -16,7 +16,14 @@ use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\MetaInfo\MetaForm;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
@@ -120,111 +127,88 @@ if ('' != $error) {
 $metaToggle = static fn (MetaForm $meta): string => $meta->hasFields()
     ? '<a class="btn btn-default' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" href="#rex-language-metainfo"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>'
     : '';
-$metaRow = static fn (MetaForm $meta): string => $meta->hasFields()
-    ? '
-                <tr id="rex-language-metainfo" class="collapse' . ($meta->hasErrors() ? ' in' : '') . ' mark">
-                    <td colspan="2"></td>
-                    <td colspan="6"><div class="rex-collapse-content">' . $meta->render() . '</div></td>
-                </tr>'
-    : '';
+$metaRow = static fn (MetaForm $meta): ?TableRow => $meta->hasFields()
+    ? new TableRow([
+        new TableCell(null, 2),
+        new TableCell(Html::raw('<div class="rex-collapse-content">' . $meta->render() . '</div>'), 6),
+    ], new HtmlAttributes(['id' => 'rex-language-metainfo', 'class' => ['collapse', 'in' => $meta->hasErrors(), 'mark']]))
+    : null;
 
-$content .= '
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th class="rex-table-icon"><a class="rex-link-expanded" href="' . Url::currentBackendPage(['func' => 'add']) . '#language"' . Accesskey::attributes(I18n::msg('language_add'), 'add') . '><i class="rex-icon rex-icon-add-language"></i></a></th>
-                    <th class="rex-table-id">' . I18n::msg('id') . '</th>
-                    <th>' . I18n::msg('language_code') . '</th>
-                    <th>' . I18n::msg('language_name') . '</th>
-                    <th class="rex-table-priority">' . I18n::msg('language_priority') . '</th>
-                    <th class="rex-table-action" colspan="3">' . I18n::msg('language_function') . '</th>
-                </tr>
-            </thead>
-            <tbody>
-    ';
+$icon = Html::raw('<i class="rex-icon rex-icon-language"></i>');
+// cells of the language being added or edited
+$formCells = static fn (string $form, string $code, string $name, int $priority, string $buttons): array => [
+    'mark' => true,
+    'icon' => $icon,
+    'code' => Html::raw('<input class="form-control" type="text" id="rex-form-language-code" name="language_code" value="' . escape($code) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus />'),
+    'name' => Html::raw('<input class="form-control" type="text" id="rex-form-language-name" name="language_name" value="' . escape($name) . '" required maxlength="255" />'),
+    'priority' => Html::raw('<input class="form-control" type="number" id="rex-form-language-prio" name="language_prio" value="' . $priority . '" required min="1" inputmode="numeric" />'),
+    'edit' => Html::raw($buttons),
+    'delete' => new TableCell(Html::raw('add' === $form
+        ? '<button class="btn btn-save" type="submit" name="add_language_save"' . Accesskey::attributes(I18n::msg('language_add'), 'save') . ' value="1">' . I18n::msg('language_add') . '</button>'
+        : '<button class="btn btn-save" type="submit" name="edit_language_save"' . Accesskey::attributes(I18n::msg('language_update'), 'save') . ' value="1">' . I18n::msg('language_update') . '</button>'), 2),
+];
 
-// Add form
+$rows = [];
+
 if ('add' == $func) {
     $meta ??= new MetaForm(new MetaContext(MetaEntity::Language));
 
     // ----- EXTENSION POINT
-    $metaButtons = $metaToggle($meta) . Extension::dispatch(new LanguageFormButtons());
-
-    // ggf wiederanzeige des add forms, falls ungueltige id uebermittelt
-    $content .= '
-                <tr class="mark">
-                    <td class="rex-table-icon"><i class="rex-icon rex-icon-language"></i></td>
-                    <td class="rex-table-id" data-title="' . I18n::msg('id') . '">–</td>
-                    <td data-title="' . I18n::msg('language_code') . '"><input class="form-control" type="text" id="rex-form-language-code" name="language_code" value="' . escape($languageCode) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus /></td>
-                    <td data-title="' . I18n::msg('language_name') . '"><input class="form-control" type="text" id="rex-form-language-name" name="language_name" value="' . escape($languageName) . '" required maxlength="255" /></td>
-                    <td class="rex-table-priority" data-title="' . I18n::msg('language_priority') . '"><input class="form-control" type="number" id="rex-form-language-prio" name="language_prio" value="' . ($languagePrio ?: Language::count() + 1) . '" required min="1" inputmode="numeric" /></td>
-                    <td class="rex-table-action">' . $metaButtons . '</td>
-                    <td class="rex-table-action" colspan="2"><button class="btn btn-save" type="submit" name="add_language_save"' . Accesskey::attributes(I18n::msg('language_add'), 'save') . ' value="1">' . I18n::msg('language_add') . '</button></td>
-                </tr>
-            ';
-
-    $content .= $metaRow($meta);
-
+    $rows[] = ['id' => '–'] + $formCells('add', $languageCode, $languageName, $languagePrio ?: Language::count() + 1, $metaToggle($meta) . Extension::dispatch(new LanguageFormButtons()));
+    $rows[] = $metaRow($meta);
     // ----- EXTENSION POINT
-    $content .= Extension::dispatch(new LanguageFormAdd());
+    $rows[] = Html::raw(Extension::dispatch(new LanguageFormAdd()));
 }
 
 $sql = Sql::factory()->setQuery('SELECT * FROM rex_language ORDER BY priority');
 foreach ($sql as $row) {
     $langId = $sql->getIntValue('id');
-    $addTd = '<td class="rex-table-id" data-title="' . I18n::msg('id') . '">' . $langId . '</td>';
 
-    $delLink = I18n::msg('delete');
-    if ($langId == Language::getStartId()) {
-        $delLink = '<span class="text-muted"><i class="rex-icon rex-icon-delete"></i> ' . $delLink . '</span>';
-    } else {
-        $delLink = '<a class="rex-link-expanded" href="' . Url::currentBackendPage(['func' => 'delete', 'language_id' => $langId] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . $delLink . '</a>';
-    }
-
-    // Edit form
     if ('edit' == $func && $languageId == $langId) {
-        $meta ??= new MetaForm(new MetaContext(MetaEntity::Language, Language::require($langId)));
+        $language = Language::require($langId);
+        $meta ??= new MetaForm(new MetaContext(MetaEntity::Language, $language));
 
         // ----- EXTENSION POINT
-        $metaButtons = $metaToggle($meta) . Extension::dispatch(new LanguageFormButtons(Language::require($langId)));
-
-        $content .= '
-                    <tr class="mark">
-                        <td class="rex-table-icon"><i class="rex-icon rex-icon-language"></i></td>
-                        ' . $addTd . '
-                        <td data-title="' . I18n::msg('language_code') . '"><input class="form-control" type="text" id="rex-form-language-code" name="language_code" value="' . escape($sql->getStringValue('code')) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus /></td>
-                        <td data-title="' . I18n::msg('language_name') . '"><input class="form-control" type="text" id="rex-form-language-name" name="language_name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" /></td>
-                        <td class="rex-table-priority" data-title="' . I18n::msg('language_priority') . '"><input class="form-control" type="number" id="rex-form-language-prio" name="language_prio" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" /></td>
-                        <td class="rex-table-action">' . $metaButtons . '</td>
-                        <td class="rex-table-action" colspan="2"><button class="btn btn-save" type="submit" name="edit_language_save"' . Accesskey::attributes(I18n::msg('language_update'), 'save') . ' value="1">' . I18n::msg('language_update') . '</button></td>
-                    </tr>';
-
-        $content .= $metaRow($meta);
-
+        $rows[] = ['id' => $langId] + $formCells('edit', $sql->getStringValue('code'), $sql->getStringValue('name'), $sql->getIntValue('priority'), $metaToggle($meta) . Extension::dispatch(new LanguageFormButtons($language)));
+        $rows[] = $metaRow($meta);
         // ----- EXTENSION POINT
-        $content .= Extension::dispatch(new LanguageFormEdit(Language::require($langId)));
-    } else {
-        $editLink = Url::currentBackendPage(['func' => 'edit', 'language_id' => $langId]) . '#rex-form-system-language';
-
-        $status = $sql->getBoolValue('status') ? 'online' : 'offline';
-
-        $content .= '
-                    <tr>
-                        <td class="rex-table-icon"><a class="rex-link-expanded" href="' . $editLink . '" title="' . escape($languageName) . '"><i class="rex-icon rex-icon-language"></i></a></td>
-                        ' . $addTd . '
-                        <td data-title="' . I18n::msg('language_code') . '">' . escape($sql->getStringValue('code')) . '</td>
-                        <td data-title="' . I18n::msg('language_name') . '">' . escape($sql->getStringValue('name')) . '</td>
-                        <td class="rex-table-priority" data-title="' . I18n::msg('language_priority') . '">' . $sql->getIntValue('priority') . '</td>
-                        <td class="rex-table-action"><a class="rex-link-expanded" href="' . $editLink . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit') . '</a></td>
-                        <td class="rex-table-action">' . $delLink . '</td>
-                        <td class="rex-table-action"><a class="rex-link-expanded rex-' . $status . '" href="' . Url::currentBackendPage(['language_id' => $langId, 'func' => 'editstatus', 'language_status' => $sql->getBoolValue('status') ? 0 : 1] + $csrfToken->getUrlParams()) . '"><i class="rex-icon rex-icon-' . $status . '"></i> ' . I18n::msg('language_' . $status) . '</a></td>
-                    </tr>';
+        $rows[] = Html::raw(Extension::dispatch(new LanguageFormEdit($language)));
+        continue;
     }
+
+    $editLink = Url::currentBackendPage(['func' => 'edit', 'language_id' => $langId]) . '#rex-form-system-language';
+    $status = $sql->getBoolValue('status') ? 'online' : 'offline';
+
+    $rows[] = [
+        'mark' => false,
+        'icon' => Html::raw('<a class="rex-link-expanded" href="' . $editLink . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon rex-icon-language"></i></a>'),
+        'id' => $langId,
+        'code' => $sql->getStringValue('code'),
+        'name' => $sql->getStringValue('name'),
+        'priority' => $sql->getIntValue('priority'),
+        'edit' => Html::raw('<a class="rex-link-expanded" href="' . $editLink . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit') . '</a>'),
+        'delete' => Html::raw($langId == Language::getStartId()
+            ? '<span class="text-muted"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</span>'
+            : '<a class="rex-link-expanded" href="' . Url::currentBackendPage(['func' => 'delete', 'language_id' => $langId] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a>'),
+        'status' => Html::raw('<a class="rex-link-expanded rex-' . $status . '" href="' . Url::currentBackendPage(['language_id' => $langId, 'func' => 'editstatus', 'language_status' => $sql->getBoolValue('status') ? 0 : 1] + $csrfToken->getUrlParams()) . '"><i class="rex-icon rex-icon-' . $status . '"></i> ' . I18n::msg('language_' . $status) . '</a>'),
+    ];
 }
 
-$content .= '
-        </tbody>
-    </table>';
+$content .= (string) new Table(
+    [
+        TableColumn::forKey(Html::raw('<a class="rex-link-expanded" href="' . Url::currentBackendPage(['func' => 'add']) . '#language"' . Accesskey::attributes(I18n::msg('language_add'), 'add') . '><i class="rex-icon rex-icon-add-language"></i></a>'), 'icon', ColumnType::Icon),
+        TableColumn::forKey(I18n::msg('id'), 'id', ColumnType::Id),
+        TableColumn::forKey(I18n::msg('language_code'), 'code'),
+        TableColumn::forKey(I18n::msg('language_name'), 'name'),
+        TableColumn::forKey(I18n::msg('language_priority'), 'priority', ColumnType::Priority),
+        TableColumn::forKey(I18n::msg('language_function'), 'edit', ColumnType::Action),
+        TableColumn::forKey(null, 'delete', ColumnType::Action),
+        TableColumn::forKey(null, 'status', ColumnType::Action),
+    ],
+    array_filter($rows),
+    rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes(['class' => ['mark' => (bool) ($row['mark'] ?? false)]]),
+    attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+)->render();
 
 echo $message;
 

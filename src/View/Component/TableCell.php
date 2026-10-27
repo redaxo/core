@@ -13,5 +13,7 @@ final class TableCell
         /** Number of columns the cell spans, the following cells of the row are left out */
         public int $colspan = 1,
         public HtmlAttributes $attributes = new HtmlAttributes(),
+        /** Whether the cell is the header of its row (`<th>`) */
+        public bool $header = false,
     ) {}
 }

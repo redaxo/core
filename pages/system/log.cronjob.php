@@ -1,5 +1,6 @@
 <?php
 
+use Redaxo\Core\Cronjob\Cronjob;
 use Redaxo\Core\Cronjob\CronjobManager;
 use Redaxo\Core\Cronjob\CronjobRegistry;
 use Redaxo\Core\Exception\InvalidArgumentException;
@@ -12,7 +13,13 @@ use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\Util\Type;
+use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
@@ -42,37 +49,34 @@ if ('' != $error) {
 }
 $content = '';
 
-$content .= '
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th class="rex-table-icon"></th>
-                        <th>' . I18n::msg('cronjob_log_date') . '</th>
-                        <th>' . I18n::msg('cronjob_name') . '</th>
-                        <th>' . I18n::msg('cronjob_log_message') . '</th>
-                        <th>' . I18n::msg('cronjob_trigger') . '</th>
-                    </tr>
-                </thead>
-                <tbody>';
-
-$formElements = [];
-
+$rows = [];
 $file = LogFile::factory($logFile);
 
 /** @var LogEntry $entry */
 foreach (new LimitIterator($file, 0, 100) as $entry) {
     $data = $entry->getData();
-    $class = 'ERROR' == trim($data[0]) ? 'rex-state-error' : 'rex-state-success';
-    $trigger = $data[3] ?? '';
-    $content .= '
-        <tr class="' . $class . '">
-            <td class="rex-table-icon"><i class="rex-icon rex-icon-cronjob"></i></td>
-            <td data-title="' . I18n::msg('cronjob_log_date') . '" class="rex-table-tabular-nums">' . Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</td>
-            <td data-title="' . I18n::msg('cronjob_name') . '">' . escape($data[1] ?? '') . '</td>
-            <td data-title="' . I18n::msg('cronjob_log_message') . '">' . nl2br(escape($data[2] ?? '')) . '</td>
-            <td data-title="' . I18n::msg('cronjob_trigger') . '">' . ('schedule' === $trigger || 'manual' === $trigger ? I18n::msg('cronjob_trigger_' . $trigger) : escape($trigger)) . '</td>
-        </tr>';
+    $trigger = Type::string($data[3] ?? '');
+    $rows[] = [
+        'error' => 'ERROR' == trim($data[0] ?? ''),
+        'icon' => Html::raw('<i class="rex-icon rex-icon-cronjob"></i>'),
+        'date' => Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]),
+        'name' => Type::string($data[1] ?? ''),
+        'message' => Html::raw(nl2br(escape(Type::string($data[2] ?? '')))),
+        'trigger' => 'schedule' === $trigger || 'manual' === $trigger ? I18n::msg('cronjob_trigger_' . $trigger) : $trigger,
+    ];
 }
+
+$content .= (string) new Table([
+    TableColumn::forKey('', 'icon', ColumnType::Icon),
+    TableColumn::forKey(I18n::msg('cronjob_log_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    TableColumn::forKey(I18n::msg('cronjob_name'), 'name'),
+    TableColumn::forKey(I18n::msg('cronjob_log_message'), 'message'),
+    TableColumn::forKey(I18n::msg('cronjob_trigger'), 'trigger'),
+], $rows, rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes([
+    'class' => $row['error'] ? 'rex-state-error' : 'rex-state-success',
+]), attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
+
+$formElements = [];
 
 // XXX calc last line and use it instead
 if ($url = Editor::factory()->getUrl($logFile, 1)) {
@@ -88,10 +92,6 @@ $formElements[] = $n;
 $fragment = new Fragment();
 $fragment->setVar('elements', $formElements, false);
 $buttons = $fragment->parse('core/form/submit.php');
-
-$content .= '
-                </tbody>
-            </table>';
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('cronjob_log'), false);
@@ -132,57 +132,39 @@ $overviewBody = '';
 if (!$cronjobs) {
     $overviewBody = I18n::msg('cronjob_no_cronjobs');
 } else {
-    $overview .= '
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th class="rex-table-icon"></th>
-                    <th>' . I18n::msg('cronjob_name') . '</th>
-                    <th>' . I18n::msg('cronjob_schedule') . '</th>
-                    <th>' . I18n::msg('cronjob_lastrun') . '</th>
-                    <th>' . I18n::msg('cronjob_nexttime') . '</th>
-                </tr>
-            </thead>
-            <tbody>';
-
-    foreach ($cronjobs as $cronjob) {
-        $state = $states[$cronjob->name] ?? null;
-        $lastRun = $state['lastRun'] ?? null;
-
-        if (null === $state || null === $lastRun) {
-            $lastRunText = '–';
-        } else {
-            $lastRunText = Formatter::intlDateTime($lastRun);
-            if ($state['running']) {
-                $lastRunText .= ' <span class="text-muted">(' . I18n::msg('cronjob_running') . ')</span>';
-            } elseif (true === $state['lastSuccess']) {
-                $lastRunText = '<span class="rex-online"><i class="rex-icon rex-icon-active-true"></i> ' . $lastRunText . '</span>';
-            } elseif (false === $state['lastSuccess']) {
-                $lastRunText = '<span class="rex-offline"><i class="rex-icon rex-icon-active-false"></i> ' . $lastRunText . '</span>';
+    $overview = (string) new Table([
+        new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob"></i>'), ColumnType::Icon),
+        new TableColumn(I18n::msg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
+        new TableColumn(I18n::msg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="text-nowrap">' . escape($cronjob->schedule) . '</code>')),
+        new TableColumn(I18n::msg('cronjob_lastrun'), static function (Cronjob $cronjob) use ($states): Html {
+            $state = $states[$cronjob->name] ?? null;
+            $lastRun = $state['lastRun'] ?? null;
+            if (null === $state || null === $lastRun) {
+                return Html::raw('–');
             }
-        }
 
-        if (null === $setting) {
-            $nextRunText = '–';
-        } elseif (!CronjobManager::isEnabled($cronjob->name)) {
-            $nextRunText = '<span class="text-muted">' . I18n::msg('cronjob_not_enabled') . '</span>';
-        } else {
-            $nextRunText = Formatter::intlDateTime($cronjob->getNextRunDate($lastRun ?? $now));
-        }
-
-        $overview .= '
-            <tr>
-                <td class="rex-table-icon"><i class="rex-icon rex-icon-cronjob"></i></td>
-                <td data-title="' . I18n::msg('cronjob_name') . '">' . escape($cronjob->name) . '<br /><small class="text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small></td>
-                <td data-title="' . I18n::msg('cronjob_schedule') . '"><code class="text-nowrap">' . escape($cronjob->schedule) . '</code></td>
-                <td data-title="' . I18n::msg('cronjob_lastrun') . '" class="rex-table-tabular-nums">' . $lastRunText . '</td>
-                <td data-title="' . I18n::msg('cronjob_nexttime') . '" class="rex-table-tabular-nums">' . $nextRunText . '</td>
-            </tr>';
-    }
-
-    $overview .= '
-            </tbody>
-        </table>';
+            $text = Formatter::intlDateTime($lastRun);
+            if ($state['running']) {
+                return Html::raw($text . ' <span class="text-muted">(' . I18n::msg('cronjob_running') . ')</span>');
+            }
+            if (true === $state['lastSuccess']) {
+                return Html::raw('<span class="rex-online"><i class="rex-icon rex-icon-active-true"></i> ' . $text . '</span>');
+            }
+            if (false === $state['lastSuccess']) {
+                return Html::raw('<span class="rex-offline"><i class="rex-icon rex-icon-active-false"></i> ' . $text . '</span>');
+            }
+            return Html::raw($text);
+        }, attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+        new TableColumn(I18n::msg('cronjob_nexttime'), static function (Cronjob $cronjob) use ($states, $setting, $now): Html|string {
+            if (null === $setting) {
+                return '–';
+            }
+            if (!CronjobManager::isEnabled($cronjob->name)) {
+                return Html::raw('<span class="text-muted">' . I18n::msg('cronjob_not_enabled') . '</span>');
+            }
+            return Formatter::intlDateTime($cronjob->getNextRunDate($states[$cronjob->name]['lastRun'] ?? $now));
+        }, attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    ], $cronjobs, attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]))->render();
 }
 
 $fragment = new Fragment();

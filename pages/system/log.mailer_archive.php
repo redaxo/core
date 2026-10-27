@@ -7,7 +7,12 @@ use Redaxo\Core\Mailer\MailArchive;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
@@ -111,37 +116,26 @@ echo '</div>';
 
 // Recent Archived Emails Panel
 if ($archiveExists) {
-    $content = '';
-    $content .= '<table class="table table-hover">';
-    $content .= '<thead>';
-    $content .= '<tr>';
-    $content .= '<th>' . I18n::msg('mailer_archive_date') . '</th>';
-    $content .= '<th>' . I18n::msg('mailer_archive_subject') . '</th>';
-    $content .= '<th>' . I18n::msg('mailer_archive_to') . '</th>';
-    $content .= '<th>' . I18n::msg('mailer_archive_size') . '</th>';
-    $content .= '</tr>';
-    $content .= '</thead>';
-    $content .= '<tbody>';
-
     $recentFiles = MailArchive::getRecentFiles(10);
 
-    if ($recentFiles) {
-        foreach ($recentFiles as $file) {
-            $emailData = MailArchive::parseHeaders($file);
-
-            $content .= '<tr>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_date') . '" class="rex-table-tabular-nums">' . Formatter::intlDateTime($emailData['mtime'], [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</td>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_subject') . '">' . escape($emailData['subject']) . '</td>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_to') . '">' . escape($emailData['recipient']) . '</td>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_size') . '" class="rex-table-tabular-nums">' . Formatter::bytes($emailData['size']) . '</td>';
-            $content .= '</tr>';
-        }
-    } else {
-        $content .= '<tr><td colspan="4" class="text-muted text-center">' . I18n::msg('mailer_archive_no_files') . '</td></tr>';
+    $rows = [];
+    foreach ($recentFiles as $file) {
+        $mail = MailArchive::parseHeaders($file);
+        $rows[] = [
+            'date' => Formatter::intlDateTime($mail['mtime'], [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]),
+            'subject' => $mail['subject'],
+            'to' => $mail['recipient'],
+            'size' => Formatter::bytes($mail['size']),
+        ];
     }
 
-    $content .= '</tbody>';
-    $content .= '</table>';
+    $content = (string) new Table([
+        TableColumn::forKey(I18n::msg('mailer_archive_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+        TableColumn::forKey(I18n::msg('mailer_archive_subject'), 'subject'),
+        TableColumn::forKey(I18n::msg('mailer_archive_to'), 'to'),
+        TableColumn::forKey(I18n::msg('mailer_archive_size'), 'size', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    ], $rows ?: [new TableRow([new TableCell(I18n::msg('mailer_archive_no_files'), 4, new HtmlAttributes(['class' => ['text-muted', 'text-center']]))])],
+        attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', I18n::msg('mailer_archive_recent_mails'), false);

@@ -12,7 +12,12 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
+use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
@@ -50,18 +55,9 @@ if ('' != $error) {
     echo Message::error($error);
 }
 
-$content = '
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>' . I18n::msg('syslog_timestamp') . '</th>
-                        <th>' . I18n::msg('syslog_message') . '</th>
-                    </tr>
-                </thead>
-                <tbody>';
-
 $editor = Editor::factory();
 
+$rows = [];
 $file = LogFile::factory($logFile);
 foreach (new LimitIterator($file, 0, 100) as $entry) {
     /** @var LogEntry $entry */
@@ -99,23 +95,19 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
         $url = '';
     }
 
-    $content .= '
-                <tr>
-                    <td data-title="' . I18n::msg('syslog_timestamp') . '" class="rex-table-tabular-nums rex-table-date">
-                        <small>' . Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</small><br>
-                        <span class="label label-' . $class . '">' . escape($type) . '</span>
-                    </td>
-                    <td data-title="' . I18n::msg('syslog_message') . '">
-                        <div class="rex-word-break"><b style="font-weight: 500">' . nl2br(escape($message)) . '</b></div>
+    $rows[] = [
+        'time' => Html::raw('<small>' . Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</small><br>
+                        <span class="label label-' . $class . '">' . escape($type) . '</span>'),
+        'message' => Html::raw('<div class="rex-word-break"><b style="font-weight: 500">' . nl2br(escape($message)) . '</b></div>
                         ' . $path . '
-                        ' . $url . '
-                    </td>
-                </tr>';
+                        ' . $url),
+    ];
 }
 
-$content .= '
-                </tbody>
-            </table>';
+$content = (string) new Table([
+    TableColumn::forKey(I18n::msg('syslog_timestamp'), 'time', ColumnType::Date, new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    TableColumn::forKey(I18n::msg('syslog_message'), 'message'),
+], $rows, attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
 
 $formElements = [];
 

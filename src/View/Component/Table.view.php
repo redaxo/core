@@ -51,9 +51,12 @@ return static function (Table $table): void {
         return new TableCell(Html::raw($html), $cell->colspan, $column->attributes->merge($cell->attributes)->with([
             'class' => $typeClass($column->type),
             'data-title' => $title,
-        ]));
+        ]), $column->rowHeader || $cell->header);
     };
-    $td = static fn (TableCell $cell): string => '<td ' . $cell->attributes->with(['colspan' => $cell->colspan > 1 ? $cell->colspan : null])->toString() . '>' . $content($cell->content) . '</td>';
+    $td = static function (TableCell $cell) use ($content): string {
+        $tag = $cell->header ? 'th' : 'td';
+        return '<' . $tag . ' ' . $cell->attributes->with(['colspan' => $cell->colspan > 1 ? $cell->colspan : null])->toString() . '>' . $content($cell->content) . '</' . $tag . '>';
+    };
     ?>
     <table <?= $table->attributes->with(['class' => ['table']]) ?>>
         <?php if ($filled($table->caption)): ?>
@@ -87,6 +90,10 @@ return static function (Table $table): void {
         <tbody>
             <?php $empty = true ?>
             <?php /** @var mixed $row */ foreach ($table->rows as $row): $empty = false ?>
+                <?php if ($row instanceof Html): ?>
+                    <?= $row ?>
+                    <?php continue ?>
+                <?php endif ?>
                 <?php if ($row instanceof TableRow): ?>
                     <tr <?= $row->attributes ?>><?= Html::raw(implode('', array_map($td, $row->cells))) ?></tr>
                     <?php continue ?>

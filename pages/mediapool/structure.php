@@ -8,7 +8,13 @@ use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MediaPool\MediaCategoryHandler;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
@@ -100,61 +106,38 @@ if ($PERMALL) {
         $success = '';
     }
 
-    $table = '
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'add') . '><i class="rex-icon rex-icon-add-media-category"></i></a></th>
-                    <th class="rex-table-id">' . I18n::msg('id') . '</th>
-                    <th>' . I18n::msg('pool_kat_name') . '</th>
-                    <th class="rex-table-action" colspan="2">' . I18n::msg('pool_kat_function') . '</th>
-                </tr>
-            </thead>
-            <tbody>';
+    // the category being added or edited is a form
+    $form = static fn (?MediaCategory $category): bool => null === $category ? 'add_cat' == $mediaMethod : 'update_file_cat' == $mediaMethod && $editId == $category->id;
 
-    if ('add_cat' == $mediaMethod) {
-        $table .= '
-            <tr class="mark">
-                <td class="rex-table-icon"><i class="rex-icon rex-icon-media-category"></i></td>
-                <td class="rex-table-id" data-title="' . I18n::msg('id') . '">-</td>
-                <td data-title="' . I18n::msg('pool_kat_name') . '"><input class="form-control" type="text" name="catname" value="" autofocus /></td>
-                <td class="rex-table-action" colspan="2">
-                    <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_create') . '"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'save') . '>' . I18n::msg('pool_kat_create') . '</button>
-                </td>
-            </tr>
-        ';
-    }
-
-    foreach ($OOCats as $category) {
-        $iid = $category->id;
-        $iname = $category->name;
-
-        if ('update_file_cat' == $mediaMethod && $editId == $iid) {
-            $table .= '
-                <tr class="mark">
-                    <td class="rex-table-icon"><i class="rex-icon rex-icon-media-category"></i></td>
-                    <td class="rex-table-id" data-title="' . I18n::msg('id') . '">' . $iid . '</td>
-                    <td data-title="' . I18n::msg('pool_kat_name') . '"><input class="form-control" type="text" name="cat_name" value="' . escape($iname) . '" autofocus /></td>
-                    <td class="rex-table-action" colspan="2">
-                        <input type="hidden" name="edit_id" value="' . $editId . '" />
-                        <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Accesskey::attributes(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>
-                    </td>
-                </tr>
-            ';
-        } else {
-            $table .= '
-                <tr>
-                    <td class="rex-table-icon"><a class="rex-link-expanded" href="' . $link . $iid . '" title="' . escape($category->name) . '"><i class="rex-icon rex-icon-media-category"></i></a></td>
-                    <td class="rex-table-id" data-title="' . I18n::msg('id') . '">' . $iid . '</td>
-                    <td data-title="' . I18n::msg('pool_kat_name') . '"><a class="rex-link-expanded" href="' . $link . $iid . '">' . escape($category->name) . '</a></td>
-                    <td class="rex-table-action"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $iid . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('pool_kat_edit') . '</a></td>
-                    <td class="rex-table-action"><a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $iid . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('pool_kat_delete') . '</a></td>
-                </tr>';
-        }
-    }
-    $table .= '
-            </tbody>
-        </table>';
+    $table = (string) new Table([
+        new TableColumn(
+            Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'add') . '><i class="rex-icon rex-icon-add-media-category"></i></a>'),
+            static fn (?MediaCategory $category): Html => null === $category || $form($category)
+                ? Html::raw('<i class="rex-icon rex-icon-media-category"></i>')
+                : Html::raw('<a class="rex-link-expanded" href="' . $link . $category->id . '" title="' . escape($category->name) . '"><i class="rex-icon rex-icon-media-category"></i></a>'),
+            ColumnType::Icon,
+        ),
+        new TableColumn(I18n::msg('id'), static fn (?MediaCategory $category): int|string => $category->id ?? '-', ColumnType::Id),
+        new TableColumn(I18n::msg('pool_kat_name'), static fn (?MediaCategory $category): Html => match (true) {
+            null === $category => Html::raw('<input class="form-control" type="text" name="catname" value="" autofocus />'),
+            $form($category) => Html::raw('<input class="form-control" type="text" name="cat_name" value="' . escape($category->name) . '" autofocus />'),
+            default => Html::raw('<a class="rex-link-expanded" href="' . $link . $category->id . '">' . escape($category->name) . '</a>'),
+        }),
+        new TableColumn(I18n::msg('pool_kat_function'), static function (?MediaCategory $category) use ($form, $link, $catId, $editId): Html|TableCell {
+            if (null === $category) {
+                return new TableCell(Html::raw('<button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_create') . '"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'save') . '>' . I18n::msg('pool_kat_create') . '</button>'), 2);
+            }
+            if ($form($category)) {
+                return new TableCell(Html::raw('<input type="hidden" name="edit_id" value="' . $editId . '" />
+                        <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Accesskey::attributes(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>'), 2);
+            }
+            return Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $category->id . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('pool_kat_edit') . '</a>');
+        }, ColumnType::Action),
+        new TableColumn(null, static fn (MediaCategory $category): Html => Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), ColumnType::Action),
+    ], [...('add_cat' == $mediaMethod ? [null] : []), ...$OOCats],
+        rowAttributes: static fn (?MediaCategory $category): HtmlAttributes => new HtmlAttributes(['class' => ['mark' => null === $category || $form($category)]]),
+        attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+    )->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', I18n::msg('pool_kat_caption'), false);

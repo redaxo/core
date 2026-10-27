@@ -574,9 +574,6 @@
     <MixedAssignment>
       <code><![CDATA[$logLine]]></code>
     </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[escape($logLine)]]></code>
-    </MixedOperand>
     <PossiblyFalseArgument>
       <code><![CDATA[$lines]]></code>
       <code><![CDATA[$logFile]]></code>

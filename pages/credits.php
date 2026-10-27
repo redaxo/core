@@ -4,7 +4,13 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
+use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\View;
 
 use function Redaxo\Core\View\escape;
@@ -55,51 +61,22 @@ $fragment->setVar('title', 'REDAXO <small>' . $coreVersion . ' &ndash; ' . I18n:
 $fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');
 
-$content = '';
-
-$content .= '
-
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th class="rex-table-icon">&nbsp;</th>
-            <th>' . I18n::msg('credits_name') . '</th>
-            <th class="rex-table-slim">' . I18n::msg('credits_version') . '</th>
-            <th>' . I18n::msg('credits_supportpage') . '</th>
-            <th>' . I18n::msg('credits_license') . '</th>
-            <th>' . I18n::msg('credits_author') . '</th>
-        </tr>
-        </thead>
-
-        <tbody>';
-
-foreach (Addon::getAll() as $package) {
-    $license = escape((string) $package->getLicense());
-
-    $packageVersion = escape($package->getVersion());
-    if (Version::isUnstable($packageVersion)) {
-        $packageVersion = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . $packageVersion;
-    }
-
-    $content .= '
-            <tr class="rex-package-is-addon">
-                <td class="rex-table-icon"><i class="rex-icon rex-icon-package-addon"></i></td>
-                <td data-title="' . I18n::msg('credits_name') . '">' . escape($package->name) . ' </td>
-                <td data-title="' . I18n::msg('credits_version') . '">' . $packageVersion . '</td>
-                <td class="rex-table-slim" data-title="' . I18n::msg('credits_supportpage') . '">';
-    if ($supportpage = $package->getSupportPage()) {
-        $content .= '<a href="' . escape($supportpage) . '" target="_blank" rel="noopener"><i class="rex-icon rex-icon-external-link"></i> ' . I18n::msg('credits_supportpage') . '</a>';
-    }
-    $content .= '
-                </td>
-                <td class="rex-table-width-6" data-title="' . I18n::msg('credits_license') . '">' . $license . '</td>
-                <td data-title="' . I18n::msg('credits_author') . '">' . escape((string) $package->getAuthor()) . '</td>
-            </tr>';
-}
-
-$content .= '
-        </tbody>
-    </table>';
+$content = (string) new Table([
+    new TableColumn(Html::raw('&nbsp;'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-package-addon"></i>'), ColumnType::Icon),
+    new TableColumn(I18n::msg('credits_name'), static fn (Addon $package): string => $package->name),
+    new TableColumn(I18n::msg('credits_version'), static function (Addon $package): Html {
+        $version = escape($package->getVersion());
+        return Html::raw(Version::isUnstable($package->getVersion()) ? '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . $version : $version);
+    }, attributes: new HtmlAttributes(['class' => ['rex-table-slim']])),
+    new TableColumn(I18n::msg('credits_supportpage'), static fn (Addon $package): TableCell => new TableCell(
+        ($supportpage = $package->getSupportPage())
+            ? Html::raw('<a href="' . escape($supportpage) . '" target="_blank" rel="noopener"><i class="rex-icon rex-icon-external-link"></i> ' . I18n::msg('credits_supportpage') . '</a>')
+            : null,
+        attributes: new HtmlAttributes(['class' => ['rex-table-slim']]),
+    )),
+    new TableColumn(I18n::msg('credits_license'), static fn (Addon $package): TableCell => new TableCell((string) $package->getLicense(), attributes: new HtmlAttributes(['class' => ['rex-table-width-6']]))),
+    new TableColumn(I18n::msg('credits_author'), static fn (Addon $package): string => (string) $package->getAuthor()),
+], Addon::getAll(), rowAttributes: static fn (): HtmlAttributes => new HtmlAttributes(['class' => ['rex-package-is-addon']]), attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('credits_caption'), false);

@@ -3,8 +3,15 @@
 namespace Redaxo\Core\View\Component;
 
 use Closure;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Renderable;
+
+use function get_debug_type;
+use function is_array;
+use function is_float;
+use function is_int;
+use function is_string;
 
 /**
  * Column of a {@see Table}: the header and how the cell of each row is rendered.
@@ -29,5 +36,31 @@ final class TableColumn
         public ?string $sorted = null,
         /** Attributes of the header and the cells, e.g. a class */
         public HtmlAttributes $attributes = new HtmlAttributes(),
+        /** Whether the cells are the headers of their rows, e.g. the labels of a table of properties */
+        public bool $rowHeader = false,
     ) {}
+
+    /**
+     * Column showing the entry `$key` of rows given as arrays of prepared cells.
+     *
+     * @throws InvalidArgumentException for a row whose entry is no cell content
+     */
+    public static function forKey(
+        string|Renderable|null $label,
+        string|int $key,
+        ColumnType $type = ColumnType::Text,
+        HtmlAttributes $attributes = new HtmlAttributes(),
+        bool $rowHeader = false,
+    ): self {
+        $cell = static function (mixed $row) use ($key): string|int|float|Renderable|TableCell|null {
+            /** @var mixed $value */
+            $value = is_array($row) ? $row[$key] ?? null : null;
+            if (null === $value || is_string($value) || is_int($value) || is_float($value) || $value instanceof Renderable || $value instanceof TableCell) {
+                return $value;
+            }
+            throw new InvalidArgumentException('The entry "' . $key . '" of the row is no cell content, ' . get_debug_type($value) . ' given.');
+        };
+
+        return new self($label, $cell, $type, attributes: $attributes, rowHeader: $rowHeader);
+    }
 }

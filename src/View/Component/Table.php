@@ -3,6 +3,7 @@
 namespace Redaxo\Core\View\Component;
 
 use Closure;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Renderable;
 use Redaxo\Core\View\RendersView;
@@ -19,7 +20,10 @@ final class Table implements Renderable
     public function __construct(
         /** @var list<TableColumn> */
         public array $columns,
-        /** @var iterable<mixed> rows handed to the cell closures; a {@see TableRow} brings its own cells */
+        /**
+         * @var iterable<mixed> rows handed to the cell closures; a {@see TableRow} brings its own cells, {@see Html} is
+         *     output as is, e.g. the rows of an extension point
+         */
         public iterable $rows,
         public string|Renderable $caption = '',
         /** Shown in a single row when there are no rows */
