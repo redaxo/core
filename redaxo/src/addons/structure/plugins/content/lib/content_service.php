@@ -42,7 +42,7 @@ class rex_content_service
             rex::getTable('article_slice'),
             'priority',
             $where,
-            'priority, updatedate DESC',
+            'priority, id = ' . (int) $sliceId . ' DESC',
         );
 
         rex_article_cache::delete($articleId, $clangId);
@@ -128,7 +128,7 @@ class rex_content_service
                     rex::getTable('article_slice'),
                     'priority',
                     'article_id=' . (int) $articleId . ' AND clang_id=' . (int) $clang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . (int) $sliceRevision,
-                    'priority, updatedate ' . $updSort,
+                    'priority, id = ' . (int) $sliceId . ' ' . $updSort,
                 );
 
                 // check if the slice moved at all (first cannot be moved up, last not down)
@@ -312,7 +312,7 @@ class rex_content_service
                     rex::getTable('article_slice'),
                     'priority',
                     'article_id=' . (int) $toId . ' AND clang_id=' . (int) $toClang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . $revision,
-                    'priority, updatedate',
+                    'priority, id',
                 );
             }
         }

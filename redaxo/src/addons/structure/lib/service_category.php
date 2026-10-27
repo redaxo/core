@@ -115,7 +115,7 @@ class rex_category_service
 
             // ----- PRIOR
             if (isset($data['catpriority'])) {
-                self::newCatPrio($categoryId, $key, 0, $data['catpriority']);
+                self::newCatPrio($categoryId, $key, 0, $data['catpriority'], $id);
             }
 
             $message = rex_i18n::msg('category_added_and_startarticle_created');
@@ -213,7 +213,7 @@ class rex_category_service
                     ->update();
 
                 foreach (rex_clang::getAllIds() as $clangId) {
-                    self::newCatPrio($parentId, $clangId, $data['catpriority'], $oldPrio);
+                    self::newCatPrio($parentId, $clangId, $data['catpriority'], $oldPrio, $categoryId);
                 }
             }
         }
@@ -415,9 +415,10 @@ class rex_category_service
      * @param int $clang ClangId der Kategorie, die erneuert werden soll
      * @param int $newPrio Neue PrioNr der Kategorie
      * @param int $oldPrio Alte PrioNr der Kategorie
+     * @param int|null $id Id of the added or moved category, used to place it in front of or behind a category with the same priority
      * @return void
      */
-    public static function newCatPrio($parentId, $clang, $newPrio, $oldPrio)
+    public static function newCatPrio($parentId, $clang, $newPrio, $oldPrio, $id = null)
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -430,7 +431,7 @@ class rex_category_service
                 rex::getTable('article'),
                 'catpriority',
                 'clang_id=' . (int) $clang . ' AND parent_id=' . (int) $parentId . ' AND startarticle=1',
-                'catpriority,updatedate ' . $addsql,
+                null === $id ? 'catpriority,updatedate ' . $addsql : 'catpriority, id = ' . (int) $id . ' ' . $addsql,
             );
 
             rex_article_cache::deleteLists($parentId);
