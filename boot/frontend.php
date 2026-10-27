@@ -128,11 +128,10 @@ if (Core::getConfig('article_history', false)) {
                     LEFT JOIN rex_article ON rex_article_slice.article_id=rex_article.id
                     WHERE
                         rex_article_slice.language_id=' . $article->languageId . ' AND
-                        rex_article.language_id=' . $article->languageId . ' AND
                         rex_article_slice.revision=0
                         ' . $articleLimit . '
                         ' . $sliceDate . '
-                        ORDER BY rex_article_slice.priority';
+                        ORDER BY rex_article_slice.content_section_id, rex_article_slice.priority';
             }
 
             return null;
