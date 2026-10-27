@@ -121,6 +121,8 @@
     .rex-icon-search { --fa: "\f002"; }
     .rex-icon-sign-out { --fa: "\f08b"; }
     .rex-icon-sitestartarticle { --fa: "\f015"; }
+    .rex-icon-sort-asc { --fa: "\f0de"; }
+    .rex-icon-sort-desc { --fa: "\f0dd"; }
     .rex-icon-structure-root-level { --fa: "\f7a2"; }
     .rex-icon-seo { --fa: "\f1fe"; }
     .rex-icon-system { --fa: "\f085"; }

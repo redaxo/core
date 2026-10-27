@@ -12,9 +12,14 @@ use Redaxo\Core\Http\Response;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Translation\Translatable;
+use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\DataList;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
+
+use function Redaxo\Core\View\escape;
 
 $func = Request::request('func', 'string');
 $id = Request::request('id', 'int');
@@ -42,37 +47,37 @@ if ('delete' == $func) {
 if ('' == $func) {
     $title = I18n::msg('user_role_caption');
 
-    $list = DataList::factory('SELECT id, name FROM rex_user_role ORDER BY name');
-    $list->addTableAttribute('class', 'table-striped table-hover');
+    $list = new DataList('SELECT id, name FROM rex_user_role ORDER BY name');
+    $list->attributes = new HtmlAttributes(['class' => ['table-striped', 'table-hover']]);
+    $editUrl = static fn (array $row): string => $list->getUrl(['func' => 'edit', 'id' => (int) $row['id']]);
 
-    $tdIcon = '<i class="rex-icon rex-icon-userrole"></i>';
-    $thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['func' => 'add']) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . '><i class="rex-icon rex-icon-add-userrole"></i></a>';
-    $list->addColumn($thIcon, $tdIcon, 0, ['<th class="rex-table-icon">###VALUE###</th>', '<td class="rex-table-icon">###VALUE###</td>']);
-    $list->setColumnParams($thIcon, ['func' => 'edit', 'id' => '###id###']);
+    $list->column(
+        'icon',
+        Html::raw('<a class="rex-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . '><i class="rex-icon rex-icon-add-userrole"></i></a>'),
+        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-userrole"></i>'),
+        type: ColumnType::Icon,
+        link: $editUrl,
+    );
+    $list->column('id', I18n::msg('id'), type: ColumnType::Id);
+    $list->column('name', I18n::msg('name'), link: $editUrl);
+    $list->column('edit', I18n::msg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
+    $list->column(
+        'duplicate',
+        null,
+        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-duplicate"></i> ' . I18n::msg('user_role_duplicate')),
+        type: ColumnType::Action,
+        link: static fn (array $row): string => $list->getUrl(['func' => 'duplicate', 'id' => (int) $row['id']]),
+    );
+    $list->column(
+        'delete',
+        null,
+        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_role_delete')),
+        type: ColumnType::Action,
+        link: static fn (array $row): string => $list->getUrl(['func' => 'delete', 'id' => (int) $row['id']] + CsrfToken::factory('user_role_delete')->getUrlParams()),
+        linkAttributes: ['data-confirm' => I18n::msg('delete') . ' ?'],
+    );
 
-    $list->setColumnLabel('id', I18n::msg('id'));
-    $list->setColumnLayout('id', ['<th class="rex-table-id">###VALUE###</th>', '<td class="rex-table-id">###VALUE###</td>']);
-
-    $list->setColumnLabel('name', I18n::msg('name'));
-    $list->setColumnParams('name', ['func' => 'edit', 'id' => '###id###']);
-
-    $list->addColumn('edit', '<i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit'));
-    $list->setColumnLabel('edit', I18n::msg('user_functions'));
-    $list->setColumnLayout('edit', ['<th class="rex-table-action" colspan="3">###VALUE###</th>', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('edit', ['func' => 'edit', 'id' => '###id###']);
-
-    $list->addColumn('duplicate', '<i class="rex-icon rex-icon-duplicate"></i> ' . I18n::msg('user_role_duplicate'));
-    $list->setColumnLabel('duplicate', I18n::msg('user_functions'));
-    $list->setColumnLayout('duplicate', ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('duplicate', ['func' => 'duplicate', 'id' => '###id###']);
-
-    $list->addColumn('funcs', '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_role_delete'));
-    $list->setColumnLabel('funcs', I18n::msg('user_functions'));
-    $list->setColumnLayout('funcs', ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnParams('funcs', ['func' => 'delete', 'id' => '###id###'] + CsrfToken::factory('user_role_delete')->getUrlParams());
-    $list->addLinkAttribute('funcs', 'data-confirm', I18n::msg('delete') . ' ?');
-
-    $content .= $list->get();
+    $content .= (string) $list->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', $title);

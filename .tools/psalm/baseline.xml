@@ -1239,30 +1239,6 @@
       <code><![CDATA[self::$jsProperties[$key]]]></code>
     </MixedAssignment>
   </file>
-  <file src="src/View/DataList.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$this->getValue($column)]]></code>
-    </ArgumentTypeCoercion>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$params]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedAssignment>
-      <code><![CDATA[$columnSortType]]></code>
-    </MixedAssignment>
-    <MixedReturnStatement>
-      <code><![CDATA[json_decode($this->getValue($column), true)]]></code>
-    </MixedReturnStatement>
-    <PossiblyNullArgument>
-      <code><![CDATA[$sortColumn]]></code>
-      <code><![CDATA[$this->getValue($column)]]></code>
-    </PossiblyNullArgument>
-    <PossiblyNullOperand>
-      <code><![CDATA[$sortType]]></code>
-    </PossiblyNullOperand>
-    <PropertyTypeCoercion>
-      <code><![CDATA[$this->tableColumnGroups]]></code>
-    </PropertyTypeCoercion>
-  </file>
   <file src="src/View/Fragment.php">
     <MixedArgument>
       <code><![CDATA[$this->decorator->filename]]></code>

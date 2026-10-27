@@ -2,11 +2,12 @@
 
 namespace Redaxo\Core\Tests\View;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\View\DataList;
-use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
 
@@ -19,11 +20,22 @@ final class DataListTest extends TestCase
     {
         // the console environment counts as backend, so DataList expects a current backend page
         Controller::setCurrentPage('tests');
+
+        $sql = Sql::factory();
+        $sql->setQuery('DROP TABLE IF EXISTS `' . self::TABLE . '`');
+        $sql->setQuery('CREATE TABLE `' . self::TABLE . '` (
+                `id` INT NOT NULL AUTO_INCREMENT,
+                `name` VARCHAR(255) NOT NULL,
+                PRIMARY KEY (`id`)
+            ) ENGINE = InnoDB');
+        $sql->setQuery('INSERT INTO `' . self::TABLE . '` (`name`) VALUES ("aaa"), ("zzz"), ("<b>bold</b>")');
     }
 
     protected function tearDown(): void
     {
         unset($_REQUEST['list'], $_REQUEST['sort'], $_REQUEST['sorttype']);
+
+        Sql::factory()->setQuery('DROP TABLE IF EXISTS `' . self::TABLE . '`');
 
         new ReflectionProperty(Controller::class, 'page')->setValue(null, null);
         new ReflectionProperty(Controller::class, 'pageParts')->setValue(null, []);
@@ -39,117 +51,85 @@ final class DataListTest extends TestCase
         self::assertSame($expected, $method->invoke(null, $query));
     }
 
-    public function testGetSortColumnOnlyAllowsSortableColumns(): void
+    /** @param array<string, string> $request */
+    #[DataProvider('provideSortColumn')]
+    public function testSortColumn(array $request, ?string $expected): void
     {
-        $list = $this->createListWithSortableColumn('mylist', 'name');
+        $_REQUEST = $request + $_REQUEST;
 
+        self::assertSame($expected, $this->createList()->getSortColumn());
+    }
+
+    /** @return iterable<string, array{array<string, string>, ?string}> */
+    public static function provideSortColumn(): iterable
+    {
+        yield 'sortable column' => [['list' => 'mylist', 'sort' => 'name'], 'name'];
+        yield 'column not sortable' => [['list' => 'mylist', 'sort' => 'id'], null];
+        // error-based enumeration of other fields must not reach the query
+        yield 'unknown column' => [['list' => 'mylist', 'sort' => 'password'], null];
+        yield 'other list' => [['list' => 'otherlist', 'sort' => 'name'], null];
+    }
+
+    public function testRequestedSortIsApplied(): void
+    {
         $_REQUEST['list'] = 'mylist';
-
-        // sortable column is accepted
-        $_REQUEST['sort'] = 'name';
-        self::assertSame('name', $list->getSortColumn());
-
-        // non-sortable / unselected column is rejected and falls back to default
-        $_REQUEST['sort'] = 'password';
-        self::assertNull($list->getSortColumn());
-        self::assertSame('id', $list->getSortColumn('id'));
-
-        // non-existent column (error-based enumeration attempt) is rejected
-        $_REQUEST['sort'] = 'nonexistent_col';
-        self::assertNull($list->getSortColumn());
-    }
-
-    public function testGetSortColumnIgnoredForOtherList(): void
-    {
-        $list = $this->createListWithSortableColumn('mylist', 'name');
-
-        $_REQUEST['list'] = 'otherlist';
-        $_REQUEST['sort'] = 'name';
-
-        self::assertNull($list->getSortColumn());
-        self::assertSame('id', $list->getSortColumn('id'));
-    }
-
-    public function testSortableColumnRegisteredAfterConstructionIsApplied(): void
-    {
-        $this->createTable();
-
-        $_REQUEST['list'] = 'sortlist';
         $_REQUEST['sort'] = 'name';
         $_REQUEST['sorttype'] = 'desc';
 
-        try {
-            // setColumnSortable() is called after the constructor already executed the query,
-            // the requested sort order must still be applied (https://github.com/redaxo/core/issues/6585)
-            $list = DataList::factory('SELECT id, name FROM ' . self::TABLE, 'sortlist', DataList::DISABLE_PAGINATION);
-            $list->setColumnSortable('name');
+        $html = (string) $this->createList()->render();
 
-            $html = $list->get();
-
-            $posZzz = strpos($html, 'zzz');
-            $posAaa = strpos($html, 'aaa');
-            self::assertNotFalse($posZzz);
-            self::assertNotFalse($posAaa);
-            self::assertLessThan($posAaa, $posZzz, 'rows must be sorted desc by name');
-            self::assertSame(2, $list->getRows());
-            self::assertSame(['id', 'name'], $list->getColumnNames());
-        } finally {
-            $this->dropTable();
-        }
+        self::assertLessThan(strpos($html, 'aaa'), strpos($html, 'zzz'), 'rows must be sorted desc by name');
+        self::assertStringContainsString('aria-sort="descending"', $html);
     }
 
-    public function testNonSortableSortParamFallsBackToDefaultOrder(): void
+    public function testSortOfColumnNotSortableKeepsDefaultOrder(): void
     {
-        $this->createTable();
-
-        $_REQUEST['list'] = 'sortlist';
-        $_REQUEST['sort'] = 'name';
+        $_REQUEST['list'] = 'mylist';
+        $_REQUEST['sort'] = 'id';
         $_REQUEST['sorttype'] = 'desc';
 
-        try {
-            // "name" is never marked as sortable, so the requested sort must be ignored
-            $list = DataList::factory('SELECT id, name FROM ' . self::TABLE, 'sortlist', DataList::DISABLE_PAGINATION, defaultSort: ['id' => 'asc']);
+        $html = (string) $this->createList()->render();
 
-            $html = $list->get();
-
-            $posZzz = strpos($html, 'zzz');
-            $posAaa = strpos($html, 'aaa');
-            self::assertNotFalse($posZzz);
-            self::assertNotFalse($posAaa);
-            self::assertLessThan($posZzz, $posAaa, 'rows must keep the default sort order');
-        } finally {
-            $this->dropTable();
-        }
+        self::assertLessThan(strpos($html, 'zzz'), strpos($html, 'aaa'), 'rows must keep the default sort order');
     }
 
-    private function createTable(): void
+    public function testCellsAreEscapedAndLinked(): void
     {
-        $sql = Sql::factory();
-        $sql->setQuery('DROP TABLE IF EXISTS `' . self::TABLE . '`');
-        $sql->setQuery('CREATE TABLE `' . self::TABLE . '` (
-                `id` INT NOT NULL AUTO_INCREMENT,
-                `name` VARCHAR(255) NOT NULL,
-                PRIMARY KEY (`id`)
-            ) ENGINE = InnoDB');
-        $sql->setQuery('INSERT INTO `' . self::TABLE . '` (`name`) VALUES ("aaa"), ("zzz")');
+        $list = $this->createList();
+        $list->column('edit', null, static fn (array $row): string => 'edit ' . (int) $row['id'], link: static fn (array $row): ?string => 'zzz' === $row['name'] ? null : 'url-' . (int) $row['id']);
+
+        $html = (string) $list->render();
+
+        self::assertStringContainsString('&lt;b&gt;bold&lt;/b&gt;', $html);
+        self::assertStringNotContainsString('<b>bold</b>', $html);
+        self::assertStringContainsString('<a href="url-1" class="rex-link-expanded">edit 1</a>', $html);
+        self::assertStringNotContainsString('url-2', $html);
+        // the column without label joins the header of the previous one
+        self::assertStringContainsString('<th colspan="2">', $html);
     }
 
-    private function dropTable(): void
+    public function testEmptyListShowsMessage(): void
     {
-        Sql::factory()->setQuery('DROP TABLE IF EXISTS `' . self::TABLE . '`');
+        $list = new DataList('SELECT id FROM ' . self::TABLE . ' WHERE 0', 'mylist');
+        $list->column('id', 'Id');
+        $list->empty = 'nothing here';
+
+        self::assertStringContainsString('<td colspan="1">nothing here</td>', (string) $list->render());
     }
 
-    private function createListWithSortableColumn(string $name, string $sortableColumn): DataList
+    public function testInvalidDefaultSortIsRejected(): void
     {
-        $list = new ReflectionClass(DataList::class)->newInstanceWithoutConstructor();
+        $this->expectException(InvalidArgumentException::class);
 
-        $nameProp = new ReflectionProperty(DataList::class, 'name');
-        $nameProp->setValue($list, $name);
+        /** @psalm-suppress InvalidArgument */
+        new DataList('SELECT id FROM ' . self::TABLE, defaultSort: ['id' => 'asc; DROP TABLE x']); // @phpstan-ignore argument.type
+    }
 
-        $optionsProp = new ReflectionProperty(DataList::class, 'columnOptions');
-        $optionsProp->setValue($list, []);
-
-        $list->setColumnSortable($sortableColumn);
+    private function createList(): DataList
+    {
+        $list = new DataList('SELECT id, name FROM ' . self::TABLE, 'mylist', DataList::DISABLE_PAGINATION, ['id' => 'asc']);
+        $list->column('id', 'Id');
+        $list->column('name', 'Name', sortable: true);
 
         return $list;
     }
