@@ -7,15 +7,9 @@ $helper-factor-spacing: 40px;
 // only the parts of Bootstrap the backend still uses
 @import "bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "bootstrap-sass/assets/stylesheets/bootstrap/mixins";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/grid";
 @import "bootstrap-sass/assets/stylesheets/bootstrap/tables";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/forms";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/input-groups";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/navs";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/navbar";
 @import "bootstrap-sass/assets/stylesheets/bootstrap/panels";
 
-@import "mixins/form";
 @import "mixins/helper";
 
 @import "base";

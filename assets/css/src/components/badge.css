@@ -67,5 +67,14 @@
         .list-group-item > & {
             float: right;
         }
+
+        .btn & {
+            position: relative;
+            top: 0;
+        }
+
+        :is(.btn-xs, .btn-group-xs > .btn) & {
+            padding: 1px 5px;
+        }
     }
 }

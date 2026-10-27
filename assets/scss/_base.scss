@@ -5,74 +5,10 @@
   }
 }
 
-
-.nav-tabs > li.pull-right > a {
-    margin-left: 2px;
-    margin-right: 0;
-}
-
-
-
 @media(min-width: $grid-float-breakpoint) {
-    html {
-        height: 100%;
+    .rex-is-logged-in .rex-main-frame {
+        margin-bottom: -$grid-gutter-width;
     }
-    body, .rex-page {
-        min-height: 100%;
-    }
-
-
-    .rex-is-logged-in {
-        .rex-page {
-            position: relative;
-        }
-
-        .rex-nav-top {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            border: 0;
-        }
-
-        .rex-page-container {
-            display: table;
-            width: 100%;
-            height: 100%;
-            //margin-top: -$navbar-height;
-            padding-top: $top-navbar-height;
-            table-layout: fixed;
-        }
-
-        &.rex-is-popup .rex-page-container {
-            padding-top: $top-popup-navbar-height;
-        }
-
-        .rex-nav-main {
-            display: table-cell;
-            width: 250px;
-            padding-bottom: $grid-gutter-width;
-            vertical-align: top;
-        }
-
-        .rex-page-main {
-            display: table-cell;
-            padding-bottom: $grid-gutter-width;
-            vertical-align: top;
-        }
-
-        .rex-main-frame {
-            margin-bottom: -$grid-gutter-width;
-        }
-
-        .rex-global-footer {
-            clear: both;
-            height: $grid-gutter-width;
-            margin-left: 250px;
-            margin-top: -$grid-gutter-width;
-        }
-    }
-
 }
 
 .rex-global-footer {
@@ -82,64 +18,6 @@
 
     .rex-is-popup & {
         display: none;
-    }
-}
-
-@media(max-width: $grid-float-breakpoint-max) {
-
-    .rex-page-main {
-        @include clearfix();
-    }
-
-}
-.rex-page-main-inner {
-    padding-left: floor($grid-gutter-width / 2);
-    padding-right: floor($grid-gutter-width / 2);
-}
-
-
-.rex-nav-btn {
-    margin-bottom: $line-height-computed;
-}
-.rex-nav-top .container-fluid .navbar-brand {
-    margin-left: floor($grid-gutter-width / 2);
-    padding: 0;
-    line-height: $navbar-height;
-    @media (max-width: $grid-float-breakpoint-max) {
-        height: $line-height-computed;
-        line-height: $line-height-computed;
-    }
-
-    .rex-is-popup & {
-        height: $top-popup-navbar-height;
-        line-height: $top-popup-navbar-height;
-    }
-
-    @media (min-width: $grid-float-breakpoint) {
-        margin-left: 0;
-    }
-    #rex-page-login & {
-        margin-left: 0;
-    }
-}
-.rex-nav-top {
-
-    .navbar-toggle {
-        display: none;
-    }
-
-    .rex-is-popup & {
-        min-height: $top-popup-navbar-height;
-    }
-
-}
-
-.rex-nav-meta {
-
-    li {
-        > a {
-            display: inline-block;
-        }
     }
 }
 
@@ -156,20 +34,10 @@
     }
 }
 
-
-// Wird bei den Kategorie-Metainfos gesetzt
-.form-legend {
-    @extend legend;
-    margin-top: 0;
-    font-weight: 400;
-}
-
-
 .panel > form > .table,
 .panel > form > fieldset > .table {
     margin-bottom: 0;
 }
-
 
 .panel-heading > .rex-heading {
     margin: 0;
@@ -252,70 +120,15 @@ tr.rex-state-error:hover > td {
     background-color: darken($alert-danger-bg, 10%);
 }
 
-.rex-nav-main-list {
-    > li {
-        > a {
-            padding-left: 30px;
-            padding-top: 8px;
-            padding-bottom: 8px;
-        }
-
-        &.rex-has-icon {
-            > a {
-                > .rex-icon {
-                    margin-left: -25px;
-                    width: 20px;
-                }
-            }
-        }
-    }
-}
-.rex-page-nav {
-    margin-bottom: $line-height-computed;
-
-    .navbar {
-        min-height: 0;
-    }
-    .navbar-default {
-        margin-bottom: 0;
-        background-color: transparent;
-        border-top: 0;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-    .navbar-default .navbar-nav > li > a {
-        color: $link-color;
-    }
-    .navbar-default .navbar-nav > .active > a,
-    .navbar-default .navbar-nav > .active > a:hover,
-    .navbar-default .navbar-nav > .active > a:focus {
-        color: $navbar-default-link-active-color;
-        background-color: transparent;
-    }
-}
-
-.rex-navbar-form-flexible {
-    .form-group {
-        display: inline;
-
-        > .input-group {
-            display: table;
-
-            > .input-group-addon,
-            > .input-group-btn {
-                width: 1%;
-            }
-        }
-    }
-}
-
 .rex-slices {
     @include list-unstyled();
 }
+
 .rex-slice {
     margin-top: $line-height-computed;
     margin-bottom: $line-height-computed;
 }
+
 .rex-slice-output {
     .container {
         width: 100%;
@@ -360,26 +173,14 @@ tr.rex-state-error:hover > td {
         }
     }
 }
+
 .panel-body .rex-form-panel-footer {
     @extend .panel-footer;
     margin-right: -(ceil($grid-gutter-width / 2));
     margin-bottom: -(ceil($grid-gutter-width / 2));
     margin-left: -(ceil($grid-gutter-width / 2));
 }
-.rex-range-input-group {
-    .input-group-addon:first-child {
-        width: 60%;
-    }
-    @media (min-width: $screen-md-min) {
-        .input-group-addon:first-child {
-            width: 80%;
-        }
-    }
-}
 
-.list-group-item .breadcrumb {
-    margin-bottom: 0;
-}
 .panel > .list-group .list-group {
     margin-top: 10px;
     margin-bottom: -10px;
@@ -391,16 +192,10 @@ tr.rex-state-error:hover > td {
         }
     }
 }
+
 .list-group-item > .rex-active {
     color: $link-hover-color;
 }
-
-.dl-horizontal.text-left {
-    > dt {
-        text-align: left;
-    }
-}
-
 
 .table > thead > tr.mark,
 .table > tfoot > tr.mark,
@@ -413,25 +208,4 @@ tr.rex-state-error:hover > td {
 .table > tbody > tr.mark > th,
 .table > tbody > tr.mark > td {
     vertical-align: middle;
-}
-
-.input-group-addon {
-    > .btn-group-vertical + .btn-group-vertical {
-        margin-left: ceil($padding-base-horizontal / 2);
-    }
-}
-
-// correcting bootstrap vendor regarding Quick fix for badges in buttons
-// https://github.com/redaxo/core/blob/120950020f35e9158030513744835c936e527bc6/assets_src/vendor/bootstrap/assets/stylesheets/bootstrap/_badges.scss#L26
-.badge {
-    .btn & {
-        position: relative;
-        top: 0px;
-    }
-
-    .btn-xs &,
-    .btn-group-xs > .btn & {
-        top: 0;
-        padding: 1px 5px;
-    }
 }

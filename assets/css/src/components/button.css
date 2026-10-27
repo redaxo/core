@@ -124,7 +124,7 @@
         --btn-l-bg-hover: var(--rex-color-a-darker);
         --btn-l-border-hover: var(--rex-color-a-darker);
         --btn-d-bg: var(--rex-color-blue-3);
-        --btn-d-border: hsl(206.2 74.7% 17.3%);
+        --btn-d-border: hsl(206.6 74.7% 17.3%);
     }
 
     /* aligned with the input fields in dark mode */
@@ -171,7 +171,7 @@
         --btn-l-bg: var(--rex-color-b);
         --btn-l-border: hsl(206.6 65.1% 52.3%);
         --btn-d-bg: var(--rex-color-blue-3);
-        --btn-d-border: hsl(206.2 74.7% 17.3%);
+        --btn-d-border: hsl(206.6 74.7% 17.3%);
     }
 
     .btn-warning {
@@ -199,7 +199,7 @@
             --btn-l-bg: var(--rex-color-b);
             --btn-l-border: var(--rex-color-b);
             --btn-d-bg: var(--rex-color-blue-3);
-            --btn-d-border: hsl(206.2 74.7% 13.3%);
+            --btn-d-border: hsl(206.6 74.7% 13.3%);
 
             box-shadow: none;
         }

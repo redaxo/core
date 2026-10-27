@@ -1,0 +1,132 @@
+/* Navs and tabs (`.nav`, `.nav-tabs`), e.g. the tabs of YForm forms and of the designer */
+
+@layer bootstrap {
+    .nav {
+        display: flow-root;
+        margin-bottom: 0;
+        padding-left: 0;
+        list-style: none;
+
+        & > li {
+            position: relative;
+            display: block;
+
+            & > a {
+                position: relative;
+                display: block;
+                padding: 10px 15px;
+
+                &:hover,
+                &:focus {
+                    background-color: light-dark(#eee, var(--rex-color-grey-3));
+                    text-decoration: none;
+                }
+            }
+
+            &.disabled > a {
+                &,
+                &:hover,
+                &:focus {
+                    background-color: transparent;
+                    color: light-dark(#777, var(--rex-color-text-light-inactive));
+                    cursor: not-allowed;
+                }
+            }
+        }
+
+        & .open > a {
+            &,
+            &:hover,
+            &:focus {
+                border-color: light-dark(var(--rex-color-b), var(--rex-color-grey-3));
+                background-color: light-dark(#eee, var(--rex-color-grey-3));
+            }
+        }
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid var(--rex-color-a);
+
+        & > li {
+            float: left;
+            margin-bottom: -1px;
+
+            & > a {
+                margin-right: 2px;
+                border: 1px solid transparent;
+                border-radius: 0;
+                line-height: var(--rex-line-height);
+
+                &:hover {
+                    border-color: #eee #eee var(--rex-color-a);
+                }
+            }
+
+            &.active > a {
+                &,
+                &:hover,
+                &:focus {
+                    border: 1px solid var(--rex-color-a);
+                    border-bottom-color: transparent;
+                    background-color: #fff;
+                    color: #555;
+                    cursor: default;
+                }
+            }
+        }
+
+        & > li.pull-right > a {
+            margin-right: 0;
+            margin-left: 2px;
+        }
+
+        .rex-slice-input & {
+            margin-bottom: 22px;
+        }
+    }
+
+    /* tabs in the header of a section */
+    :is(.panel-heading, .rex-section__header) .nav-tabs {
+        --tab-bg: light-dark(hsl(216 18.5% 94.4%), var(--rex-color-grey-2));
+        --tab-bg-hover: light-dark(hsl(216 18.5% 97.4%), hsl(211.8 23.9% 12.9%));
+        --tab-active-bg: light-dark(#fff, var(--rex-color-grey-3));
+
+        display: flex;
+        margin-bottom: -10px;
+        border-bottom: 0;
+
+        :is(.panel-edit, .rex-section--edit) & {
+            --tab-bg: light-dark(var(--rex-color-d-light), rgb(21 28 34 / 0.4));
+            --tab-bg-hover: light-dark(hsl(148.4 54.4% 80.3%), rgb(21 28 34 / 0.4));
+            --tab-active-bg: light-dark(var(--rex-color-d-lighter), #1f3d3c);
+        }
+
+        & > li {
+            & > a:not(.btn) {
+                padding-top: 5px;
+                padding-bottom: 4px;
+                border-color: transparent;
+                border-radius: 4px 4px 0 0;
+                background-color: var(--tab-bg);
+                color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light-inactive));
+
+                &:hover,
+                &:focus {
+                    background-color: var(--tab-bg-hover);
+                    color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
+                }
+            }
+
+            &.active > a:not(.btn) {
+                &,
+                &:hover,
+                &:focus {
+                    padding-bottom: 5px;
+                    border-color: transparent;
+                    background-color: var(--tab-active-bg);
+                    color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
+                }
+            }
+        }
+    }
+}

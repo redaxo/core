@@ -1,0 +1,444 @@
+/*
+ Form controls (`.form-control`, checkboxes, labels, help texts, validation states) and the label/field layout of
+ REDAXO forms (`dl.rex-form-group`: label left, field right from 992px)
+ */
+
+@layer bootstrap {
+    fieldset {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    legend {
+        display: block;
+        width: 100%;
+        margin-bottom: 22px;
+        padding: 0 0 3px;
+        border: 0;
+        border-bottom: 1px solid light-dark(hsl(216 18.5% 79.4%), var(--rex-color-grey-1));
+        color: light-dark(#333, var(--rex-color-text-light-inactive));
+        font-size: var(--rex-font-size-large);
+        font-weight: 700;
+        line-height: inherit;
+
+        .rex-slice-input & {
+            font-size: var(--rex-font-size);
+        }
+    }
+
+    label {
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 700;
+
+        &.required::after {
+            content: "*";
+            color: var(--rex-color-danger);
+        }
+    }
+
+    input:is([type="radio"], [type="checkbox"]) {
+        margin: 4px 0 0;
+        line-height: normal;
+
+        &:is([disabled], .disabled),
+        fieldset[disabled] & {
+            cursor: not-allowed;
+        }
+    }
+
+    input[type="file"] {
+        display: block;
+    }
+
+    select:is([multiple], [size]) {
+        height: auto;
+    }
+
+    input:is([type="file"], [type="radio"], [type="checkbox"]):focus {
+        outline: 5px auto -webkit-focus-ring-color;
+        outline-offset: -2px;
+    }
+
+    input[type="range"] {
+        display: block;
+        width: 100%;
+        background: transparent;
+        -webkit-appearance: none;
+        appearance: none;
+
+        &:focus {
+            outline: none;
+        }
+
+        &::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 5px;
+            border: 0;
+            border-radius: 3px;
+            background: var(--rex-color-a);
+            cursor: pointer;
+        }
+
+        &::-webkit-slider-thumb {
+            width: 16px;
+            height: 16px;
+            margin-top: -5.5px;
+            border: 0;
+            border-radius: 50%;
+            background: var(--rex-color-b);
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        &::-moz-range-track {
+            width: 100%;
+            height: 5px;
+            border: 0;
+            border-radius: 3px;
+            background: var(--rex-color-a);
+            cursor: pointer;
+        }
+
+        &::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border: 0;
+            border-radius: 50%;
+            background: var(--rex-color-b);
+            cursor: pointer;
+        }
+    }
+
+    /* text fields, selects and text areas */
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 6px 12px;
+        border: 1px solid light-dark(hsl(216 18.5% 79.4%), rgb(21 28 34 / 0.8));
+        border-radius: 0;
+        background-color: light-dark(var(--rex-color-a-lighter), rgb(27 35 44 / 0.8));
+        background-image: none;
+        box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.075);
+        color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
+        font-size: var(--rex-font-size);
+        line-height: var(--rex-line-height);
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+        &:focus {
+            outline: 0;
+            border-color: light-dark(#66afe9, var(--rex-color-blue-2));
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.075), 0 0 8px light-dark(rgb(102 175 233 / 0.6), rgb(17 75 122 / 0.6));
+        }
+
+        &:focus:not([readonly]) {
+            background-color: light-dark(#fff, var(--rex-color-grey-1));
+        }
+
+        &::placeholder {
+            color: light-dark(#999, var(--rex-color-text-light-inactive));
+            opacity: 1;
+        }
+
+        &:is([disabled], [readonly]),
+        fieldset[disabled] & {
+            border-color: light-dark(hsl(216 18.5% 79.4%), rgb(27 35 44 / 0.6));
+            background-color: light-dark(#e9ecf2, rgb(32 43 53 / 0.6));
+            opacity: 1;
+        }
+
+        &[disabled],
+        fieldset[disabled] & {
+            cursor: not-allowed;
+        }
+
+        /* date and time fields are as high as the other fields in WebKit */
+        &:is([type="date"], [type="time"], [type="datetime-local"], [type="month"]) {
+            display: inline-flex;
+            height: 36px;
+            padding-left: 10px;
+            line-height: inherit;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .rex-form-group-no-margin {
+        margin-bottom: 0;
+    }
+
+    .checkbox,
+    .radio {
+        position: relative;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        & label {
+            min-height: 22px;
+            margin-bottom: 0;
+            padding-left: 20px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        & input:is([type="checkbox"], [type="radio"]) {
+            position: absolute;
+            margin-left: -20px;
+        }
+
+        &.disabled label,
+        fieldset[disabled] & label {
+            cursor: not-allowed;
+        }
+    }
+
+    .checkbox + .checkbox,
+    .radio + .radio {
+        margin-top: -5px;
+    }
+
+    .form-control-static {
+        min-height: 37px;
+        margin-bottom: 0;
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+
+    .help-block {
+        display: block;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        color: light-dark(hsl(212 23.1% 50.5%), var(--rex-color-text-light-inactive));
+    }
+
+    /* sizes */
+
+    .input-sm {
+        height: 30px;
+        padding: 5px 10px;
+        border-radius: 0;
+        font-size: var(--rex-font-size-small);
+        line-height: 1.5;
+    }
+
+    :is(.input-xs, .input-group-xs > .form-control, .input-group-xs > .input-group-addon, .input-group-xs > .input-group-btn > .btn) {
+        height: 24px;
+        padding: 3px 8px;
+        border-radius: 0;
+        font-size: var(--rex-font-size-small);
+        line-height: 1.3334;
+    }
+
+    :is(textarea, select[multiple]):is(.input-sm, .input-xs) {
+        height: auto;
+    }
+
+    /* icon inside of a field, e.g. the clear button of search fields */
+    .has-feedback {
+        position: relative;
+
+        & .form-control {
+            padding-right: 45px;
+        }
+    }
+
+    .form-control-feedback {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
+        display: block;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        text-align: center;
+        pointer-events: none;
+    }
+
+    .form-control-clear {
+        z-index: 22;
+        padding: 0.3em;
+        font-size: 16px;
+        opacity: 0.6;
+        cursor: pointer;
+        pointer-events: auto;
+
+        :is(.panel-heading, .rex-section__header) & {
+            color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
+        }
+    }
+
+    .form-clear-button input.form-control {
+        padding-right: 25px;
+    }
+
+    /* validation */
+    .has-error {
+        --state-text: light-dark(#c9302c, hsl(0 67.3% 50%));
+        --state-border: light-dark(#c9302c, #801919);
+        --state-bg: light-dark(var(--rex-color-danger), #801919);
+
+        & :is(.help-block, .control-label, .radio, .checkbox, .radio label, .checkbox label) {
+            color: var(--state-text);
+        }
+
+        & .form-control {
+            border-color: var(--state-border);
+            box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.075);
+
+            &:focus {
+                border-color: light-dark(hsl(1.5 64% 38%), hsl(0 67.3% 20%));
+                box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.075), 0 0 6px light-dark(hsl(1.5 64% 68%), hsl(0 67.3% 50%));
+            }
+        }
+
+        & .input-group-addon {
+            border-color: var(--state-border);
+            background-color: var(--state-bg);
+            color: var(--state-text);
+        }
+
+        & .form-control-feedback {
+            color: var(--state-text);
+        }
+    }
+
+    /* REDAXO form layout: label (dt) and field (dd) side by side */
+    @media (min-width: 992px) {
+        .rex-form-group:not(.rex-form-group-vertical) {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+
+            .table & {
+                table-layout: auto;
+            }
+
+            & > :is(dt, dd) {
+                display: table-cell;
+                vertical-align: top;
+            }
+
+            & > dt {
+                width: 180px;
+                padding-top: 7px;
+                padding-right: 15px;
+            }
+
+            & > dd {
+                & :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                    margin-top: 7px;
+                    margin-bottom: 7px;
+                }
+
+                & .input-group :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+
+                &:first-child {
+                    padding-left: 180px;
+                }
+            }
+
+            & textarea:not([rows]) {
+                min-height: 25em;
+            }
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .rex-form-group:not(.rex-form-group-vertical) {
+            & > dt {
+                width: 210px;
+                padding-right: 30px;
+            }
+
+            & > dd:first-child {
+                padding-left: 210px;
+            }
+
+            & textarea:not([rows]) {
+                min-height: 35em;
+            }
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .rex-form-group:not(.rex-form-group-vertical) {
+            & > dt {
+                width: 300px;
+            }
+
+            & > dd:first-child {
+                padding-left: 300px;
+            }
+        }
+    }
+
+    .rex-form-group:not(.rex-form-group-vertical) > dd {
+        & > .rex-form-group {
+            margin-bottom: 0;
+
+            & > dd {
+                padding-left: 0;
+            }
+        }
+
+        .table tr:not(.collapse, .collapsing) & {
+            padding-left: 0;
+        }
+    }
+
+    /* forms in the options area of a section header */
+    .rex-panel-options {
+        & .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        & .form-control,
+        & .input-group .input-group-btn .btn {
+            border-color: light-dark(hsl(216 18.5% 79.4%), hsl(212.2 23.4% 18.5%));
+        }
+
+        & .input-group .form-control {
+            width: 100%;
+            min-width: 160px;
+        }
+    }
+
+    :is(.panel, .rex-section) > form {
+        margin-bottom: 0;
+    }
+}
+
+@layer utilities {
+    /* aligns buttons with the fields of a REDAXO form; the toolbar is moved 5px to the left */
+    @media (min-width: 992px) {
+        .rex-form-aligned {
+            margin-left: 185px;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .rex-form-aligned {
+            margin-left: 215px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .rex-form-aligned {
+            margin-left: 305px;
+        }
+    }
+
+    .table + .panel-footer .rex-form-aligned {
+        margin-left: 0;
+    }
+}

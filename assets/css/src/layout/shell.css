@@ -27,6 +27,11 @@
         color: var(--rex-topbar-text);
         transition: transform var(--rex-duration) var(--rex-ease-out), box-shadow var(--rex-duration) var(--rex-ease-out);
 
+        /* signed in as another user */
+        .rex-is-impersonated & {
+            --rex-topbar-bg: light-dark(#f0bd4b, hsl(46.6 100% 19.4%));
+        }
+
         @media (min-width: 1200px) {
             padding-right: var(--rex-gutter);
         }

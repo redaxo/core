@@ -220,3 +220,78 @@ body.rex-theme-dark .history-layer-background {
         display: none !important;
     }
 }
+
+/* select with an own arrow, used for the version selects */
+.rex-select-style {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid hsl(216 18.5% 79.4%);
+}
+.rex-select-style::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    right: 0;
+    bottom: 1px;
+    display: block;
+    width: 2em;
+    background: #fff url("data:image/png;base64,R0lGODlhDwAUAIABAAAAAP///yH5BAEAAAEALAAAAAAPABQAAAIXjI+py+0Po5wH2HsXzmw//lHiSJZmUAAAOw==") no-repeat 50% 50%;
+}
+.rex-select-style select {
+    width: 100%;
+    margin: 0;
+    padding: 7px 8px;
+    border: none;
+    background: transparent none;
+    box-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+.rex-select-style select:not([multiple]) {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    padding-right: 2em;
+    text-overflow: ellipsis;
+}
+.rex-select-style select[multiple],
+.rex-select-style select[multiple]:focus {
+    background-color: #fff;
+}
+.rex-select-style select:focus {
+    background-color: transparent;
+    outline: none;
+}
+.rex-select-style select:hover {
+    cursor: pointer;
+}
+@media (prefers-color-scheme: dark) {
+    body:not(.rex-theme-light) .rex-select-style {
+        color: rgba(255, 255, 255, 0.75);
+        background-color: #1b232c;
+        border-color: #151c22;
+    }
+    body:not(.rex-theme-light) .rex-select-style::after {
+        background-color: #e4dcd3;
+        filter: invert(100%);
+    }
+    body:not(.rex-theme-light) .rex-select-style select[multiple],
+    body:not(.rex-theme-light) .rex-select-style select[multiple]:focus {
+        background-color: #1b232c;
+    }
+}
+body.rex-theme-dark .rex-select-style {
+    color: rgba(255, 255, 255, 0.75);
+    background-color: #1b232c;
+    border-color: #151c22;
+}
+body.rex-theme-dark .rex-select-style::after {
+    background-color: #e4dcd3;
+    filter: invert(100%);
+}
+body.rex-theme-dark .rex-select-style select[multiple],
+body.rex-theme-dark .rex-select-style select[multiple]:focus {
+    background-color: #1b232c;
+}
