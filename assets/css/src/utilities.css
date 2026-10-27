@@ -14,8 +14,23 @@
         border: 0 !important;
     }
 
-    .hidden {
+    .sr-only-focusable:is(:active, :focus) {
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        clip-path: none !important;
+        white-space: normal !important;
+    }
+
+    .hidden,
+    .rex-hidden {
         display: none !important;
+    }
+
+    .rex-visible {
+        display: block !important;
     }
 
     .collapse:not(.in) {
@@ -24,6 +39,10 @@
 
     .pull-left {
         float: left !important;
+    }
+
+    .pull-right {
+        float: right !important;
     }
 
     .clearfix::after {
@@ -92,6 +111,22 @@
         overflow-wrap: anywhere;
     }
 
+    .rex-text-hyphen {
+        hyphens: auto;
+    }
+
+    .vertical-top {
+        vertical-align: top !important;
+    }
+
+    .vertical-middle {
+        vertical-align: middle !important;
+    }
+
+    .vertical-bottom {
+        vertical-align: bottom !important;
+    }
+
     /* images shrinking to the width of their container */
     .img-responsive {
         display: block;
@@ -99,13 +134,18 @@
         height: auto;
     }
 
-    /* truncated text */
+    /* truncated text, `.rex-truncate-expandable` shows it in full on hover */
     .rex-truncate-target {
         display: inline-block;
         max-width: 150px;
         overflow: hidden;
         vertical-align: top;
         white-space: nowrap;
+
+        &.rex-truncate-expandable:hover,
+        .rex-truncate-expandable > &:hover {
+            max-width: 10000px !important;
+        }
     }
 
     .rex-truncate:is(.rex-truncate-target),
@@ -113,7 +153,28 @@
         text-overflow: ellipsis;
     }
 
+    .rex-truncate-left {
+        position: relative;
+
+        & .rex-truncate-target {
+            margin-left: 15px;
+            direction: rtl;
+            text-align: right;
+
+            &::after {
+                content: "...";
+                position: absolute;
+                left: 0;
+            }
+        }
+    }
+
     /* lists */
+
+    .list-unstyled {
+        padding-left: 0;
+        list-style: none;
+    }
 
     .list-inline {
         margin-left: -5px;
@@ -155,10 +216,28 @@
         }
     }
 
-    /* fixed column widths */
+    /* fixed column widths in steps of 40px, `.rex-table-width-1` to `-10` (centered for the narrowest) */
     @media (min-width: 992px) {
+        .rex-table-width-1 { width: 40px !important; text-align: center !important; }
+        .rex-table-width-2 { width: 80px !important; }
         .rex-table-width-3 { width: 120px !important; }
+        .rex-table-width-4 { width: 160px !important; }
+        .rex-table-width-5 { width: 200px !important; }
         .rex-table-width-6 { width: 240px !important; }
+        .rex-table-width-7 { width: 280px !important; }
+        .rex-table-width-8 { width: 320px !important; }
+        .rex-table-width-9 { width: 360px !important; }
+        .rex-table-width-10 { width: 400px !important; }
+        .rex-table-min-width-1 { min-width: 40px !important; }
+        .rex-table-min-width-2 { min-width: 80px !important; }
+        .rex-table-min-width-3 { min-width: 120px !important; }
+        .rex-table-min-width-4 { min-width: 160px !important; }
+        .rex-table-min-width-5 { min-width: 200px !important; }
+        .rex-table-min-width-6 { min-width: 240px !important; }
+        .rex-table-min-width-7 { min-width: 280px !important; }
+        .rex-table-min-width-8 { min-width: 320px !important; }
+        .rex-table-min-width-9 { min-width: 360px !important; }
+        .rex-table-min-width-10 { min-width: 400px !important; }
     }
 
     /* links */
@@ -181,6 +260,25 @@
     .rex-pulse {
         animation: rex-pulse 5s ease infinite;
     }
+
+    /* highlights the row a link points to, e.g. a required package */
+    .rex-targeted-rows :target {
+        animation: rex-fade-in-highlight 3s 3s backwards;
+    }
+
+    .rex-scrollable {
+        max-height: 500px;
+        overflow-y: scroll;
+
+        .rex-section > & {
+            padding: 15px;
+        }
+
+        .rex-section__body > & {
+            margin: -15px;
+            padding: 15px;
+        }
+    }
 }
 
 @keyframes rex-pulse {
@@ -192,3 +290,8 @@
     }
 }
 
+@keyframes rex-fade-in-highlight {
+    from {
+        background-color: #fbffd6;
+    }
+}

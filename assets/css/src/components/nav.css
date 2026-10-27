@@ -75,6 +75,11 @@
             }
         }
 
+        & > li.pull-right > a {
+            margin-right: 0;
+            margin-left: 2px;
+        }
+
         .rex-slice-input & {
             margin-bottom: 22px;
         }

@@ -227,7 +227,7 @@
         line-height: 1.5;
     }
 
-    :is(.input-group-xs > .form-control, .input-group-xs > .input-group-addon, .input-group-xs > .input-group-btn > .btn) {
+    :is(.input-xs, .input-group-xs > .form-control, .input-group-xs > .input-group-addon, .input-group-xs > .input-group-btn > .btn) {
         height: 24px;
         padding: 3px 8px;
         border-radius: 0;
@@ -235,7 +235,7 @@
         line-height: 1.3334;
     }
 
-    :is(textarea, select[multiple]).input-sm {
+    :is(textarea, select[multiple]):is(.input-sm, .input-xs) {
         height: auto;
     }
 
@@ -391,7 +391,7 @@
             }
         }
 
-        .table tr:not(.collapse) & {
+        .table tr:not(.collapse, .collapsing) & {
             padding-left: 0;
         }
     }
