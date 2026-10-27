@@ -10,7 +10,6 @@ use Redaxo\Core\Content\ExtensionPoint\ArticleContentRendering;
 use Redaxo\Core\Content\ExtensionPoint\ArticleSlicesQuery;
 use Redaxo\Core\Content\HistoryLogin;
 use Redaxo\Core\Core;
-use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Env;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
@@ -111,28 +110,7 @@ if (Core::getConfig('article_history', false)) {
                     throw new HttpException('No permission for the history of this article.', Response::HTTP_FORBIDDEN);
                 }
 
-                $articleLimit = '';
-                if (0 != $article->articleId) {
-                    $articleLimit = ' AND rex_article_slice.article_id=' . $article->articleId;
-                }
-
-                ArticleSliceHistory::checkTables();
-
-                $escapeSql = Sql::factory();
-
-                $sliceDate = ' AND rex_article_slice.history_date = ' . $escapeSql->escape($historyDate);
-
-                return 'SELECT rex_article_slice.*, rex_article.parent_id
-                    FROM
-                        ' . ArticleSliceHistory::getTable() . ' as rex_article_slice
-                    LEFT JOIN rex_article ON rex_article_slice.article_id=rex_article.id
-                    WHERE
-                        rex_article_slice.language_id=' . $article->languageId . ' AND
-                        rex_article.language_id=' . $article->languageId . ' AND
-                        rex_article_slice.revision=0
-                        ' . $articleLimit . '
-                        ' . $sliceDate . '
-                        ORDER BY rex_article_slice.priority';
+                return ArticleSliceHistory::getSlicesQuery($historyDate, $article->articleId, $article->languageId);
             }
 
             return null;
