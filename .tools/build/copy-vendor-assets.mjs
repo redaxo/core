@@ -26,10 +26,6 @@ function copy(from, to) {
 
 /** Single-file copies: [source relative to node_modules, target relative to assets]. */
 const files = [
-    ['nouislider/dist/nouislider.js', 'noUiSlider/nouislider.js'],
-    ['nouislider/dist/nouislider.min.js', 'noUiSlider/nouislider.min.js'],
-    ['nouislider/dist/nouislider.css', 'noUiSlider/nouislider.css'],
-    ['nouislider/dist/nouislider.min.css', 'noUiSlider/nouislider.min.css'],
     // keeps the package layout, so the stylesheet finds the fonts in ../webfonts
     ['@fortawesome/fontawesome-free/css/all.min.css', 'fonts/font-awesome/css/all.min.css'],
 ];

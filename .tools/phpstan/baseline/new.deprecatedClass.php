@@ -6,12 +6,6 @@ $ignoreErrors = [];
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../boot/backend.php',
-];
-$ignoreErrors[] = [
-    'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
-The fragment system will be removed before the 6.0 release',
     'count' => 2,
     'path' => __DIR__ . '/../../../boot/frontend.php',
 ];

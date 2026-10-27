@@ -84,6 +84,12 @@ $OOArt = Article::require($articleId, $languageId);
 // Top level articles have no category, default to 0 (root) — backend pages expect an int category id.
 $categoryId = $OOArt->categoryId ?? 0;
 
+// the history is a popup page of its own, without the editor around it
+if ('history' === Controller::getCurrentPagePart(2)) {
+    Controller::includeCurrentPageSubPath(compact('OOArt', 'articleId', 'languageId', 'categoryId'));
+    return;
+}
+
 // ----- Request Parameter
 $subpage = Controller::getCurrentPagePart(2);
 $function = Request::request('function', 'string');

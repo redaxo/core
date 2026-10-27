@@ -690,8 +690,12 @@ structure_history = History
 structure_history_title_info = Short explanation
 structure_history_snapshot_reactivate = Revert to this version
 structure_history_snapshot_reactivated = Version has been revertet
-structure_history_overview_versions = History overview
 structure_history_current_version = Current version
+structure_history_version = Version
+structure_history_older = Older version
+structure_history_newer = Newer version
+structure_history_no_versions = There are no former versions of this article yet. They are created as soon as blocks are saved, moved or deleted.
+structure_history_snapshot_not_found = This version does not exist anymore.
 structure_history_info_content = <p>The History extension records all changes made to an article and creates snapshots which can later be used to restore a specific article to a previous state.</p>
 
 perm_options_history[article_rollback] = Restore article (History)
@@ -699,7 +703,6 @@ perm_options_history[article_rollback] = Restore article (History)
 structure_history_button_delete_history = Delete all snapshots from History
 structure_history_deleted = All snapshots have been deleted.
 structure_history_savedby = Saved by
-structure_history_close = Close
 
 
 version = Version

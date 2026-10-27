@@ -219,10 +219,12 @@ final class Controller
         if (Core::getConfig('article_history', false)) {
             self::$pages['content']->addSubpage(new Page('history', '')
                 ->setRequiredPermissions('history[article_rollback]')
-                ->setIcon('fa fa-history')
-                ->setHref('#')
+                ->setSubPath(Path::core('pages/structure/content.history.php'))
+                ->setIcon('rex-icon rex-icon-history')
+                ->setPopup(true)
                 ->setItemAttr('left', 'true')
-                ->setLinkAttr('data-history-layer', 'open'),
+                ->setLinkAttr('title', I18n::msg('structure_history'))
+                ->setLinkAttr('aria-label', I18n::msg('structure_history')),
             );
             self::$pages['system']->addSubpage(new Page('history', I18n::msg('structure_history'))->setSubPath(Path::core('pages/system/history.php')));
         }

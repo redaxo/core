@@ -724,8 +724,12 @@ structure_history = Historie
 structure_history_title_info = Kurzerklärung
 structure_history_snapshot_reactivate = Diese Version übernehmen
 structure_history_snapshot_reactivated = Version wurde übernommen
-structure_history_overview_versions = history_overview_versions
 structure_history_current_version = Aktuelle Version
+structure_history_version = Version
+structure_history_older = Ältere Version
+structure_history_newer = Neuere Version
+structure_history_no_versions = Es gibt noch keine früheren Versionen dieses Artikels. Sie entstehen, sobald Blöcke gespeichert, verschoben oder gelöscht werden.
+structure_history_snapshot_not_found = Diese Version gibt es nicht mehr.
 structure_history_info_content = <p>Eine History Erweiterung mit welchem man Änderungen in den Artikelinhalten aufnehmen kann. Es wird jeweils ein Snapshot der Version erstellt und mit einem Datum versehen. Nachträglich können dann ältere Versionen wieder aktiviert werden.</p>
 
 perm_options_history[article_rollback] = Artikel wiederherstellen (Historie)
@@ -733,7 +737,6 @@ perm_options_history[article_rollback] = Artikel wiederherstellen (Historie)
 structure_history_button_delete_history = Historie komplett löschen
 structure_history_deleted = Historie wurde komplett gelöscht.
 structure_history_savedby = gesichert durch
-structure_history_close = Abbrechen
 
 
 version = Version

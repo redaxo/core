@@ -1,0 +1,207 @@
+/* Article history (Redaxo\Core\Backend\ArticleHistory): timeline of the versions and the two previews */
+
+@layer components {
+    /* the previews need the room of two pages side by side */
+    .rex-overlay:has(.rex-history) {
+        width: min(1600px, 100vw - 32px);
+    }
+
+    .rex-history {
+        --rex-history-thumb: 22px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: 100%;
+        min-height: 500px;
+
+        & > .alert {
+            margin: 0;
+        }
+    }
+
+    /* the track is inset by half a thumb, so the thumb's center meets the ticks */
+    .rex-history__timeline {
+        position: relative;
+        padding-top: 10px;
+    }
+
+    .rex-history__track {
+        position: relative;
+        height: 16px;
+        margin-inline: calc(var(--rex-history-thumb) / 2);
+        border-radius: 2px;
+        background: var(--rex-surface-muted);
+    }
+
+    .rex-history__segment {
+        position: absolute;
+        inset-block: 0;
+        left: calc(var(--from) * 100%);
+        width: calc((var(--to) - var(--from)) * 100%);
+        background: var(--rex-color-blue-5);
+
+        &:nth-child(even) {
+            background: color-mix(in srgb, var(--rex-color-blue-5), #fff 15%);
+        }
+
+        &.is-past {
+            background: var(--rex-color-blue-4);
+
+            &:nth-child(even) {
+                background: color-mix(in srgb, var(--rex-color-blue-4), #fff 12%);
+            }
+        }
+    }
+
+    .rex-history__tick {
+        position: absolute;
+        top: -9px;
+        left: calc(var(--at) * 100%);
+        width: 1px;
+        height: 5px;
+        background: var(--rex-text-muted);
+
+        &.is-selected {
+            top: -10px;
+            width: 3px;
+            height: 7px;
+            margin-left: -1px;
+            background: var(--rex-text);
+        }
+    }
+
+    .rex-history__range {
+        position: absolute;
+        inset: 6px 0 auto;
+        width: 100%;
+        height: 24px;
+        margin: 0;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+
+        &::-webkit-slider-runnable-track {
+            height: 24px;
+            background: transparent;
+        }
+
+        &::-moz-range-track {
+            height: 24px;
+            background: transparent;
+        }
+
+        &::-webkit-slider-thumb {
+            width: var(--rex-history-thumb);
+            height: 24px;
+            appearance: none;
+            border: 1px solid var(--rex-border-strong);
+            border-radius: 3px;
+            background: #fff linear-gradient(to right, transparent 9px, #c5cbd3 9px 10px, transparent 10px 12px, #c5cbd3 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+        }
+
+        &::-moz-range-thumb {
+            width: var(--rex-history-thumb);
+            height: 24px;
+            box-sizing: border-box;
+            border: 1px solid var(--rex-border-strong);
+            border-radius: 3px;
+            background: #fff linear-gradient(to right, transparent 9px, #c5cbd3 9px 10px, transparent 10px 12px, #c5cbd3 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+        }
+
+        &:focus {
+            outline: none;
+        }
+
+        &:focus-visible::-webkit-slider-thumb {
+            outline: 2px solid var(--rex-link);
+            outline-offset: 1px;
+        }
+
+        &:focus-visible::-moz-range-thumb {
+            outline: 2px solid var(--rex-link);
+            outline-offset: 1px;
+        }
+    }
+
+    .rex-history__scale {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        color: var(--rex-text-muted);
+        font-size: var(--rex-font-size-small);
+    }
+
+    /* both previews share the rows of the grid, so the frames are equally high with or without a footer */
+    .rex-history__previews {
+        display: grid;
+        flex: 1;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 0 20px;
+        min-height: 0;
+
+        @media (max-width: 1199px) {
+            grid-template-columns: 1fr;
+
+            & > .rex-history__preview--base {
+                display: none;
+            }
+        }
+    }
+
+    .rex-history__preview {
+        display: grid;
+        grid-row: span 3;
+        grid-template-rows: subgrid;
+        min-height: 0;
+        margin: 0;
+
+        & > .rex-section__header {
+            display: flex;
+            align-items: center;
+            min-height: 55px;
+        }
+
+        & .rex-section__title {
+            flex: 1;
+        }
+
+        & > .rex-section__footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+
+    .rex-history__switch {
+        display: flex;
+        gap: 6px;
+    }
+
+    .rex-history__select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* the previews show the page at desktop width, scaled down by half */
+    .rex-history__frame {
+        position: relative;
+        min-height: 300px;
+        overflow: hidden;
+        background: var(--rex-surface-muted);
+
+        & iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            border: 0;
+            background: #fff;
+            transform: scale(0.5);
+            transform-origin: 0 0;
+        }
+    }
+}

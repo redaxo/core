@@ -10,11 +10,12 @@ use function Redaxo\Core\View\escape;
 
 return static function (Tabs $tabs): void {
     $item = static function (array $item, string $block, bool $end = false): Html {
-        $attributes = static function (mixed $attributes): array {
+        // empty link attributes stay, e.g. the valueless `data-rex-overlay` of popup pages
+        $attributes = static function (mixed $attributes, bool $keepEmpty = false): array {
             $result = [];
             /** @var mixed $value */
             foreach ((array) $attributes as $name => $value) {
-                if (is_string($name) && (is_string($value) || is_int($value)) && '' !== $value) {
+                if (is_string($name) && (is_string($value) || is_int($value)) && ($keepEmpty || '' !== $value)) {
                     $result[$name] = $value;
                 }
             }
@@ -39,7 +40,7 @@ return static function (Tabs $tabs): void {
             return Html::raw('<li' . Str::buildAttributes($itemAttr) . '><span class="' . $block . '__link">' . $label . '</span></li>');
         }
 
-        $linkAttr = $attributes($item['linkAttr'] ?? []);
+        $linkAttr = $attributes($item['linkAttr'] ?? [], true);
         $linkAttr['class'] = [$block . '__link', ...$classes($item['linkClasses'] ?? [])];
 
         return Html::raw('<li' . Str::buildAttributes($itemAttr) . '><a ' . new HtmlAttributes(['href' => $href])->toString() . Str::buildAttributes($linkAttr) . '>' . $label . '</a></li>');

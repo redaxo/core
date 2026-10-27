@@ -7,11 +7,9 @@ use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleRevision;
 use Redaxo\Core\Content\ArticleSliceHistory;
-use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Content\ExtensionPoint\ContentPageBeforeSlices;
 use Redaxo\Core\Content\ExtensionPoint\ContentPageHeader;
-use Redaxo\Core\Content\HistoryLogin;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
@@ -25,7 +23,6 @@ use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Http\Session;
-use Redaxo\Core\Language\Language;
 use Redaxo\Core\Migration\WebRunner;
 use Redaxo\Core\Security\BackendLogin;
 use Redaxo\Core\Security\CsrfToken;
@@ -36,7 +33,6 @@ use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Asset;
 use Redaxo\Core\View\Component\Dropdown;
-use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
@@ -262,107 +258,6 @@ Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/all.min.css'));
 Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/v4-shims.min.css'));
 Asset::addCssFile(Url::coreAssets('css/backend.css'));
 Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
-
-if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('history[article_rollback]')) {
-    Asset::addCssFile(Url::coreAssets('noUiSlider/nouislider.css'));
-    Asset::addJsFile(Url::coreAssets('noUiSlider/nouislider.js'), [Asset::JS_IMMUTABLE => true]);
-    Asset::addCssFile(Url::coreAssets('css/history.css'));
-
-    $historyFunction = Request::request('rex_history_function', 'string');
-    $articleId = Request::request('history_article_id', 'int');
-    $languageId = Request::request('history_language_id', 'int');
-
-    if (in_array($historyFunction, ['snap', 'layer'], true)) {
-        $historyArticle = Article::get($articleId, $languageId);
-        $user = Core::requireUser();
-
-        if (
-            !$historyArticle instanceof Article
-            || !$user->getComplexPerm('language')->hasPerm($languageId)
-            || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
-            // restoring a snapshot replaces the live revision
-            || 'snap' === $historyFunction && !ContentHandler::hasRevisionPerm($user, ArticleRevision::LIVE)
-        ) {
-            Response::setStatus(Response::HTTP_FORBIDDEN);
-            Response::sendContent(I18n::msg('no_rights_to_this_function'), 'text/plain');
-            exit;
-        }
-    }
-
-    switch ($historyFunction) {
-        case 'snap':
-            if (!CsrfToken::factory('structure_history')->isValid()) {
-                Response::setStatus(Response::HTTP_FORBIDDEN);
-                Response::sendContent(I18n::msg('csrf_token_invalid'), 'text/plain');
-                exit;
-            }
-
-            $historyDate = Request::request('history_date', 'string');
-            ArticleSliceHistory::restoreSnapshot($historyDate, $articleId, $languageId);
-
-            // no break
-        case 'layer':
-            $versions = ArticleSliceHistory::getSnapshots($articleId, $languageId);
-
-            $select1 = [];
-            $select1[] = '<option value="0" selected="selected" data-revision="0">' . I18n::msg('structure_history_current_version') . '</option>';
-            if (true === Core::getConfig('article_work_version', false)) {
-                $select1[] = '<option value="1" data-revision="1">' . I18n::msg('version_workingversion') . '</option>';
-            }
-
-            $select2 = [];
-            $select2[] = '<option value="" selected="selected">' . I18n::msg('structure_history_current_version') . '</option>';
-            foreach ($versions as $version) {
-                $historyInfo = $version['history_date'];
-                if ('' != $version['history_user']) {
-                    $historyInfo = $version['history_date'] . ' [' . $version['history_user'] . ']';
-                }
-                $select2[] = '<option value="' . strtotime($version['history_date']) . '" data-history-date="' . escape($version['history_date']) . '">' . escape($historyInfo) . '</option>';
-            }
-
-            $content1select = '<select id="content-history-select-date-1" class="content-history-select" data-iframe="content-history-iframe-1" style="">' . implode('', $select1) . '</select>';
-            $content1iframe = '<iframe id="content-history-iframe-1" class="history-iframe"></iframe>';
-            $content2select = '<select id="content-history-select-date-2" class="content-history-select" data-iframe="content-history-iframe-2">' . implode('', $select2) . '</select>';
-            $content2iframe = '<iframe id="content-history-iframe-2" class="history-iframe"></iframe>';
-
-            // fragment holen und ausgeben
-            $fragment = new Fragment();
-            $fragment->setVar('title', I18n::msg('structure_history_overview_versions'));
-            $fragment->setVar('content1select', $content1select, false);
-            $fragment->setVar('content1iframe', $content1iframe, false);
-            $fragment->setVar('content2select', $content2select, false);
-            $fragment->setVar('content2iframe', $content2iframe, false);
-
-            echo $fragment->parse('core/structure/history/layer.php');
-            exit;
-    }
-
-    Extension::register(ContentPageHeader::class, static function (ContentPageHeader $ep): void {
-        if ('content/edit' == $ep->page) {
-            $articleLink = Url::article(Article::getCurrentId(), Language::getCurrentId());
-            if (str_starts_with($articleLink, 'http')) {
-                $user = Core::requireUser();
-                $userLogin = $user->login;
-                $historyValidTime = new DateTime();
-                $historyValidTime = $historyValidTime->modify('+10 Minutes')->format('YmdHis'); // 10 minutes valid key
-                $userHistorySession = HistoryLogin::createSessionKey($userLogin, $historyValidTime);
-                $articleLink = Url::article(Article::getCurrentId(), Language::getCurrentId(), [
-                    'rex_history_login' => $userLogin,
-                    'rex_history_session' => $userHistorySession,
-                    'rex_history_validtime' => $historyValidTime,
-                ]);
-            }
-
-            echo '<script nonce="' . Response::getNonce() . '">
-                    var history_article_id = ' . Article::getCurrentId() . ';
-                    var history_language_id = ' . Language::getCurrentId() . ';
-                    var history_content_section_id = ' . Request::request('content_section_id', 'int', 0) . ';
-                    var history_article_link = "' . escape($articleLink, 'js') . '";
-                    var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";
-                </script>';
-        }
-    });
-}
 
 if (Core::getConfig('article_work_version', false)) {
     Extension::register(ContentPageHeader::class, static function (ContentPageHeader $ep): void {
