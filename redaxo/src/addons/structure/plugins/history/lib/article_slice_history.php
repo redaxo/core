@@ -118,6 +118,51 @@ class rex_article_slice_history
         return true;
     }
 
+    /**
+     * Query for the slices of a snapshot, in the shape of the regular slices query of the article content
+     * (`ART_SLICES_QUERY`) in the frontend.
+     *
+     * The slices keep their original ids, so that the id refers to the slice and not to the history record.
+     * Like in the frontend, offline slices are left out.
+     *
+     * @internal
+     */
+    public static function getSlicesQuery(string $historyDate, int $articleId, int $clangId): string
+    {
+        self::checkTables();
+
+        $sql = rex_sql::factory();
+        $columns = [];
+        foreach (rex_sql_table::get(rex::getTable('article_slice'))->getColumns() as $column) {
+            if ('id' !== $column->getName()) {
+                $columns[] = $sql->escapeIdentifier($column->getName());
+            }
+        }
+
+        $prefix = rex::getTablePrefix();
+        $historyTable = $sql->escapeIdentifier(self::getTable());
+        $columns = implode(', ', $columns);
+        $historyDate = $sql->escape($historyDate);
+        $articleLimit = 0 !== $articleId ? 'AND article_id = ' . $articleId : '';
+
+        return <<<SQL
+            SELECT
+                {$prefix}module.id, {$prefix}module.key, {$prefix}module.name, {$prefix}module.output, {$prefix}module.input,
+                {$prefix}article_slice.*,
+                {$prefix}article.parent_id
+            FROM (
+                SELECT slice_id AS id, {$columns}
+                FROM {$historyTable}
+                WHERE history_date = {$historyDate} AND clang_id = {$clangId} AND revision = 0 AND status = 1
+                    {$articleLimit}
+            ) AS {$prefix}article_slice
+            LEFT JOIN {$prefix}module ON {$prefix}article_slice.module_id = {$prefix}module.id
+            LEFT JOIN {$prefix}article ON {$prefix}article_slice.article_id = {$prefix}article.id
+            WHERE {$prefix}article.clang_id = {$clangId}
+            ORDER BY {$prefix}article_slice.priority
+            SQL;
+    }
+
     /** @return void */
     public static function clearAllHistory()
     {
