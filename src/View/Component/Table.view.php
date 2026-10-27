@@ -46,7 +46,7 @@ return static function (Table $table): void {
         }
 
         // the header labels the cell where the rows become blocks on small screens
-        $title = is_string($column->label) && '' !== $column->label && !in_array($column->type, [ColumnType::Icon, ColumnType::Action], true) ? $column->label : null;
+        $title = $column->title ?? (is_string($column->label) && '' !== $column->label && !in_array($column->type, [ColumnType::Icon, ColumnType::Action], true) ? $column->label : null);
 
         return new TableCell(Html::raw($html), $cell->colspan, $column->attributes->merge($cell->attributes)->with([
             'class' => $typeClass($column->type),
@@ -85,7 +85,7 @@ return static function (Table $table): void {
             </thead>
         <?php endif ?>
         <?php if ($filled($table->footer)): ?>
-            <tfoot><?= Html::from($table->footer) ?></tfoot>
+            <tfoot <?= new HtmlAttributes(['class' => ['rex-sticky-table-footer' => $table->stickyFooter]]) ?>><?= Html::from($table->footer) ?></tfoot>
         <?php endif ?>
         <tbody>
             <?php $empty = true ?>

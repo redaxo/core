@@ -32,6 +32,8 @@ final class Table implements Renderable
         public ?Closure $rowAttributes = null,
         /** Rows of the `<tfoot>`, e.g. actions for the selected rows */
         public string|Renderable $footer = '',
+        /** Whether the footer stays visible at the bottom of the viewport */
+        public bool $stickyFooter = false,
         public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 }

@@ -38,6 +38,8 @@ final class TableColumn
         public HtmlAttributes $attributes = new HtmlAttributes(),
         /** Whether the cells are the headers of their rows, e.g. the labels of a table of properties */
         public bool $rowHeader = false,
+        /** Label of the cells where the rows become blocks on small screens, defaults to a plain string label */
+        public ?string $title = null,
     ) {}
 
     /**
@@ -51,6 +53,7 @@ final class TableColumn
         ColumnType $type = ColumnType::Text,
         HtmlAttributes $attributes = new HtmlAttributes(),
         bool $rowHeader = false,
+        ?string $title = null,
     ): self {
         $cell = static function (mixed $row) use ($key): string|int|float|Renderable|TableCell|null {
             /** @var mixed $value */
@@ -61,6 +64,6 @@ final class TableColumn
             throw new InvalidArgumentException('The entry "' . $key . '" of the row is no cell content, ' . get_debug_type($value) . ' given.');
         };
 
-        return new self($label, $cell, $type, attributes: $attributes, rowHeader: $rowHeader);
+        return new self($label, $cell, $type, attributes: $attributes, rowHeader: $rowHeader, title: $title);
     }
 }

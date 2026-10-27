@@ -25,8 +25,14 @@ use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
 use Redaxo\Core\View\Component\Button;
 use Redaxo\Core\View\Component\ButtonVariant;
+use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Pagination;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
@@ -202,20 +208,10 @@ $panel .= '
     <fieldset>
         ' . $csrf->getHiddenField() . '
         <input type="hidden" id="media_method" name="media_method" value="" />
-        ' . $argFields . '
-
-        <table class="table table-striped table-hover">
-            <thead>
-            <tr>
-                <th class="rex-table-icon"><a class="rex-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media"></i></a></th>
-                <th class="rex-table-thumbnail">' . I18n::msg('pool_file_thumbnail') . '</th>
-                <th>' . I18n::msg('pool_file_info') . ' / ' . I18n::msg('pool_file_description') . '</th>
-                <th>' . I18n::msg('pool_last_update') . '</th>
-                <th class="rex-table-action" colspan="2">' . I18n::msg('pool_file_functions') . '</th>
-            </tr>
-            </thead>';
+        ' . $argFields;
 
 // ----- move, delete and get selected items
+$footer = '';
 if ($hasCategoryPerm) {
     $addInput = '';
     $filecat = Sql::factory();
@@ -263,8 +259,7 @@ if ($hasCategoryPerm) {
     $fragment->setVar('elements', [$e], false);
     $field = $fragment->parse('core/form/form.php');
 
-    $panel .= '
-                <tfoot class="rex-sticky-table-footer">
+    $footer = '
                 <tr>
                     <td colspan="2">
                         ' . $checkbox . '
@@ -272,13 +267,10 @@ if ($hasCategoryPerm) {
                     <td colspan="4">
                         ' . $field . '
                     </td>
-                </tr>
-                </tfoot>
-                ';
+                </tr>';
 }
 
-$panel .= '<tbody>';
-
+$rows = [];
 foreach ($items as $media) {
     $alt = escape($media->title);
     $desc = '<p>' . escape(strip_tags((string) $media->getValue('description'))) . '</p>';
@@ -316,42 +308,44 @@ foreach ($items as $media) {
 
     $ilink = Url::currentBackendPage(array_merge(['file_id' => $media->id, 'rex_file_category' => $rexFileCategory], $argUrl));
 
-    $addTd = '<td></td>';
-    // the search may list media from categories the user has no permission for
-    if ($hasCategoryPerm && $perm->hasCategoryPerm($media->categoryId)) {
-        $addTd = '<td><input type="checkbox" name="selectedmedia[]" value="' . $media->fileName . '" /></td>';
-    }
-
-    $panel .= '<tr>
-                    ' . $addTd . '
-                    <td class="rex-word-break" data-title="' . I18n::msg('pool_file_thumbnail') . '"><a href="' . $ilink . '">' . $thumbnail . '</a></td>
-                    <td class="rex-word-break" data-title="' . I18n::msg('pool_file_info') . '">
+    $rows[] = [
+        // the search may list media from categories the user has no permission for
+        'select' => $hasCategoryPerm && $perm->hasCategoryPerm($media->categoryId)
+            ? Html::raw('<input type="checkbox" name="selectedmedia[]" value="' . $media->fileName . '" />')
+            : null,
+        'thumbnail' => Html::raw('<a href="' . $ilink . '">' . $thumbnail . '</a>'),
+        'info' => Html::raw('
                         <h3><a class="rex-link-expanded" href="' . $ilink . '">' . escape($media->title) . '</a></h3>
                         ' . $desc . '
                         <p>' . escape($media->fileName) . ' <span class="rex-filesize">' . Formatter::bytes($media->size) . '</span></p>
-                    </td>
-                    <td data-title="' . I18n::msg('pool_last_update') . '"><p class="rex-date">' . Formatter::intlDateTime($media->updateDate) . '</p><p class="rex-author">' . escape($media->updateUser) . '</p></td>
-                    <td class="rex-table-action"><a class="rex-link-expanded" href="' . $ilink . '">' . I18n::msg('edit') . '</a></td>
-                    <td class="rex-table-action">';
-
-    $panel .= Extension::dispatch(new MediaListFunctions($media, $openerLink));
-
-    $panel .= '</td>
-                </tr>';
+                    '),
+        'updated' => Html::raw('<p class="rex-date">' . Formatter::intlDateTime($media->updateDate) . '</p><p class="rex-author">' . escape($media->updateUser) . '</p>'),
+        'edit' => Html::raw('<a class="rex-link-expanded" href="' . $ilink . '">' . I18n::msg('edit') . '</a>'),
+        'functions' => Html::raw(Extension::dispatch(new MediaListFunctions($media, $openerLink))),
+    ];
 }
 
-// ----- no items found
 if (0 == $pager->getRowCount()) {
-    $panel .= '
-            <tr>
-                <td></td>
-                <td colspan="5">' . I18n::msg('pool_nomediafound') . '</td>
-            </tr>';
+    $rows[] = new TableRow([new TableCell(null), new TableCell(I18n::msg('pool_nomediafound'), 5)]);
 }
+
+$wordBreak = new HtmlAttributes(['class' => ['rex-word-break']]);
+$panel .= (string) new Table(
+    [
+        TableColumn::forKey(Html::raw('<a class="rex-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media"></i></a>'), 'select', ColumnType::Icon),
+        TableColumn::forKey(I18n::msg('pool_file_thumbnail'), 'thumbnail', ColumnType::Thumbnail, $wordBreak),
+        TableColumn::forKey(I18n::msg('pool_file_info') . ' / ' . I18n::msg('pool_file_description'), 'info', attributes: $wordBreak, title: I18n::msg('pool_file_info')),
+        TableColumn::forKey(I18n::msg('pool_last_update'), 'updated'),
+        TableColumn::forKey(I18n::msg('pool_file_functions'), 'edit', ColumnType::Action),
+        TableColumn::forKey(null, 'functions', ColumnType::Action),
+    ],
+    $rows,
+    footer: Html::raw($footer),
+    stickyFooter: true,
+    attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+)->render();
 
 $panel .= '
-                </tbody>
-        </table>
     </fieldset>
 </form>';
 
