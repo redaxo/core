@@ -73,29 +73,7 @@ if ('' != $historyDate) {
                 throw new rex_http_exception(new rex_exception('no permission for the history of this article'), rex_response::HTTP_FORBIDDEN);
             }
 
-            $articleLimit = '';
-            if (0 != $article->getArticleId()) {
-                $articleLimit = ' AND ' . rex::getTablePrefix() . 'article_slice.article_id=' . $article->getArticleId();
-            }
-
-            rex_article_slice_history::checkTables();
-
-            $escapeSql = rex_sql::factory();
-
-            $sliceDate = ' AND ' . rex::getTablePrefix() . 'article_slice.history_date = ' . $escapeSql->escape($historyDate);
-
-            return 'SELECT ' . rex::getTablePrefix() . 'module.id, ' . rex::getTablePrefix() . 'module.key,' . rex::getTablePrefix() . 'module.name, ' . rex::getTablePrefix() . 'module.output, ' . rex::getTablePrefix() . 'module.input, ' . rex::getTablePrefix() . 'article_slice.*, ' . rex::getTablePrefix() . 'article.parent_id
-                FROM
-                    ' . rex_article_slice_history::getTable() . ' as ' . rex::getTablePrefix() . 'article_slice
-                LEFT JOIN ' . rex::getTablePrefix() . 'module ON ' . rex::getTablePrefix() . 'article_slice.module_id=' . rex::getTablePrefix() . 'module.id
-                LEFT JOIN ' . rex::getTablePrefix() . 'article ON ' . rex::getTablePrefix() . 'article_slice.article_id=' . rex::getTablePrefix() . 'article.id
-                WHERE
-                    ' . rex::getTablePrefix() . "article_slice.clang_id='" . $article->getClangId() . "' AND
-                    " . rex::getTablePrefix() . "article.clang_id='" . $article->getClangId() . "' AND
-                    " . rex::getTablePrefix() . 'article_slice.revision=0
-                    ' . $articleLimit . '
-                    ' . $sliceDate . '
-                    ORDER BY ' . rex::getTablePrefix() . 'article_slice.priority';
+            return rex_article_slice_history::getSlicesQuery($historyDate, $article->getArticleId(), $article->getClangId());
         }
 
         return null;
