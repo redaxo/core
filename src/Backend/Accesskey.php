@@ -50,4 +50,10 @@ final class Accesskey
 
         return ' title="' . $title . '"';
     }
+
+    /** Forgets the keys given so far, so a new page (e.g. in tests or long-running processes) gets them again. */
+    public static function reset(): void
+    {
+        self::$used = [];
+    }
 }

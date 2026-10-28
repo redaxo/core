@@ -55,12 +55,12 @@ final class MarkdownTest extends TestCase
                     <table>
                     <thead>
                     <tr>
-                    <th class="text-right">Foo</th>
+                    <th class="rex-u-align-end">Foo</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                    <td class="text-right">Bar</td>
+                    <td class="rex-u-align-end">Bar</td>
                     </tr>
                     </tbody>
                     </table>
