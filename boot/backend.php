@@ -12,6 +12,7 @@ use Redaxo\Core\Content\ExtensionPoint\ContentPageHeader;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
@@ -41,7 +42,9 @@ use function Redaxo\Core\View\escape;
 
 header('X-Robots-Tag: noindex, nofollow, noarchive');
 header('X-Frame-Options: SAMEORIGIN');
-header("Content-Security-Policy: frame-ancestors 'self'");
+// the base policy covers responses that end early (e.g. API functions); the page sends it again with what the page
+// and the extensions added, see below
+header('Content-Security-Policy: ' . ContentSecurityPolicy::backend()->toString());
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: no-referrer');
 
@@ -502,5 +505,8 @@ Controller::includeCurrentPage();
 $CONTENT = ob_get_clean();
 
 // ----- inhalt ausgeben
-Response::setHeader('Content-Security-Policy', ContentSecurityPolicy::backend()->toString());
+// the policy is read after the other OUTPUT_FILTER extensions, so they can still extend it
+Extension::register('OUTPUT_FILTER', static function (ExtensionPoint $ep): void {
+    Response::setHeader('Content-Security-Policy', ContentSecurityPolicy::backend()->toString());
+}, ExtensionLevel::Late);
 Response::sendPage($CONTENT);
