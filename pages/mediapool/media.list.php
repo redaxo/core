@@ -322,7 +322,7 @@ foreach ($items as $media) {
                         ' . $desc . '
                         <p>' . escape($media->fileName) . ' <span class="rex-u-text-muted">' . Formatter::bytes($media->size) . '</span></p>
                     '),
-        'updated' => Html::raw('<p class="rex-date">' . Formatter::intlDateTime($media->updateDate) . '</p><p class="rex-u-text-muted">' . escape($media->updateUser) . '</p>'),
+        'updated' => Html::raw('<p>' . Formatter::intlDateTime($media->updateDate) . '</p><p class="rex-u-text-muted">' . escape($media->updateUser) . '</p>'),
         'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $ilink . '">' . I18n::msg('edit') . '</a>'),
         'functions' => Html::raw(Extension::dispatch(new MediaListFunctions($media, $openerLink))),
     ];

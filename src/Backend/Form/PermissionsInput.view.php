@@ -11,7 +11,7 @@ use Redaxo\Core\View\HtmlAttributes;
 return static function (PermissionsInput $input): void { ?>
     <div <?= $input->attributes ?>>
     <?php if (null !== $input->error): ?>
-        <p class="rex-form-error"><?= Html::from($input->error) ?></p>
+        <p class="rex-field-error"><?= Html::from($input->error) ?></p>
     <?php endif ?>
     <?php foreach ($input->groups as $group): ?>
         <?php

@@ -249,8 +249,9 @@
         }
     }
 
-    /* highlighted PHP code (`Str::highlight()`), PHP's default colors with lighter ones for the dark theme */
-    code {
+    /* highlighted PHP code (`Str::highlight()`, in `pre.rex-code`), PHP's default colors with lighter ones for the dark
+       theme */
+    :is(code, .rex-code) {
         .rex-code-string { color: var(--rex-color-code-string); }
         .rex-code-comment { color: var(--rex-color-code-comment); }
         .rex-code-keyword { color: var(--rex-color-code-keyword); }

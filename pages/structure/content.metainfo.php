@@ -145,7 +145,7 @@ if (1 == $article->getRows()) {
 
     $content[] = '
               <div id="rex-page-sidebar-metainfo">
-                <form class="metainfo-sidebar" action="' . $context->getUrl() . '" method="post" enctype="multipart/form-data">
+                <form action="' . $context->getUrl() . '" method="post" enctype="multipart/form-data">
                     ' . $message . '
                     <fieldset>
                         <input type="hidden" name="save" value="1" />

@@ -667,20 +667,20 @@ function showPreview(widget) {
 }
 for (const [show2, hide] of [["mouseover", "mouseout"], ["focusin", "focusout"]]) {
   document.addEventListener(show2, (event) => {
-    const widget = event.target.closest("[data-rex-widget].rex-js-widget-preview");
+    const widget = event.target.closest("[data-rex-widget][data-rex-widget-preview]");
     if (widget && !widget.contains(event.relatedTarget)) {
       showPreview(widget);
     }
   });
   document.addEventListener(hide, (event) => {
-    const widget = event.target.closest("[data-rex-widget].rex-js-widget-preview");
+    const widget = event.target.closest("[data-rex-widget][data-rex-widget-preview]");
     if (widget && !widget.contains(event.relatedTarget)) {
       widget.querySelector(".rex-js-media-preview")?.replaceChildren();
     }
   });
 }
 document.addEventListener("change", (event) => {
-  const widget = event.target.closest('[data-rex-widget="medialist"].rex-js-widget-preview');
+  const widget = event.target.closest('[data-rex-widget="medialist"][data-rex-widget-preview]');
   if (widget) {
     showPreview(widget);
   }

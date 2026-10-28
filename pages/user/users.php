@@ -342,7 +342,7 @@ $canDelete = static fn (array $row): bool => $row['id'] != $currentUser->id
 $list->column(
     'delete',
     null,
-    static fn (array $row): Html => Html::raw(($canDelete($row) ? '' : '<span class="rex-text-disabled">') . '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_delete') . ($canDelete($row) ? '' : '</span>')),
+    static fn (array $row): Html => Html::raw(($canDelete($row) ? '' : '<span class="rex-u-text-muted">') . '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_delete') . ($canDelete($row) ? '' : '</span>')),
     type: ColumnType::Action,
     link: static fn (array $row): ?string => $canDelete($row) ? $list->getUrl(['func' => 'delete', 'user_id' => (int) $row['id']] + CsrfToken::factory('user_delete')->getUrlParams()) : null,
     linkAttributes: ['data-confirm' => I18n::msg('delete') . ' ?'],
@@ -352,7 +352,7 @@ if ($currentUser->admin) {
     $list->column('impersonate', null, static function (array $row) use ($currentUser): Html {
         $label = '<i class="rex-icon rex-icon-sign-in"></i> ' . I18n::msg('login_impersonate');
         if (Core::getImpersonator() || $row['id'] == $currentUser->id) {
-            return Html::raw('<span class="rex-text-disabled">' . $label . '</span>');
+            return Html::raw('<span class="rex-u-text-muted">' . $label . '</span>');
         }
         return Html::raw('<a class="rex-u-link-expanded" href="' . escape(Url::currentBackendPage(['_impersonate' => (int) $row['id']] + UserImpersonate::getUrlParams())) . '">' . $label . '</a>');
     }, type: ColumnType::Action);

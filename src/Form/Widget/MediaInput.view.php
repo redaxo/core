@@ -18,7 +18,7 @@ return static function (MediaInput $input): void {
         'disabled' => !$allowed,
     ])->toString() . '><i class="rex-icon ' . $icon . '" aria-hidden="true"></i></button>' ?>
     <div <?= new HtmlAttributes([
-        'class' => ['rex-js-widget', 'rex-js-widget-media', 'rex-js-widget-preview' => $input->preview, 'rex-js-widget-preview-media-manager' => $input->preview],
+        'data-rex-widget-preview' => $input->preview,
         'data-rex-widget' => 'media',
         'data-rex-widget-options' => json_encode(['types' => $input->types, 'category' => $input->categoryId], JSON_THROW_ON_ERROR),
     ]) ?>>

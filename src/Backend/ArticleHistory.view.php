@@ -94,7 +94,7 @@ return static function (ArticleHistory $history): void {
                 content: $frame($version),
                 footer: $restore,
                 variant: SectionVariant::Edit,
-                attributes: new HtmlAttributes(['class' => ['rex-history__preview', 'rex-history__preview--target']]),
+                attributes: new HtmlAttributes(['class' => ['rex-history__preview']]),
             )->render() ?>
         </div>
     </div>

@@ -146,7 +146,6 @@ if (count($structureContext->getMountpoints()) > 0 && 0 === $structureContext->c
     $KAT->setQuery($categoryListQuery . ' WHERE a.parent_id <=> ? ORDER BY c.priority LIMIT ' . $catPager->getCursor() . ',' . $catPager->getRowsPerPage(), [$structureContext->languageId, $structureContext->categoryId ?: null]);
 }
 
-$trStatusClass = 'rex-status';
 $echo = '';
 // ---------- INLINE THE EDIT/ADD FORM
 if ('add_cat' === $structureContext->function || 'edit_cat' === $structureContext->function) {
@@ -199,7 +198,7 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
         'attributes' => new HtmlAttributes(['class' => 'rex-u-mark']),
         'icon' => Html::raw('<i class="rex-icon rex-icon-category"></i>'),
         'id' => '-',
-        'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape(Request::post('category-name', 'string')) . '" class="rex-js-autofocus" required maxlength="255" autofocus />'),
+        'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape(Request::post('category-name', 'string')) . '" required maxlength="255" autofocus />'),
         'priority' => Html::raw('<input class="rex-input" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $catPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
         $firstAction => new TableCell(Html::raw($metaButtons . $addButtons), $colspan),
     ];
@@ -227,7 +226,7 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
     $statusIcon = $statusTypes[$status][2];
 
     $row = [
-        'attributes' => new HtmlAttributes(['class' => $trStatusClass, 'data-status' => $status]),
+        'attributes' => new HtmlAttributes(['data-status' => $status]),
         'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $katLink . '" title="' . escape($KAT->getStringValue('catname')) . '"><i class="rex-icon ' . $katIconClass . '" title="' . $katIconTitle . '"></i></a>'),
         'id' => $iCategoryId,
         'name' => Html::raw('<a class="rex-u-link-expanded" href="' . $katLink . '">' . escape($KAT->getStringValue('catname')) . '</a>'),
@@ -269,8 +268,8 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
                 <button class="rex-button" data-variant="success" type="submit" name="category-edit-button"' . Accesskey::attributes(I18n::msg('save_category'), 'save') . '>' . I18n::msg('save_category') . '</button>';
 
             $rows[] = [
-                'attributes' => new HtmlAttributes(['class' => ['rex-u-mark', 'rex-has-metainfo' => '' != $metaButtons], 'data-status' => $status]),
-                'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape($categoryApiFailed ? Request::post('category-name', 'string') : $KAT->getStringValue('catname')) . '" class="rex-js-autofocus" required maxlength="255" autofocus />'),
+                'attributes' => new HtmlAttributes(['class' => ['rex-u-mark'], 'data-status' => $status]),
+                'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape($categoryApiFailed ? Request::post('category-name', 'string') : $KAT->getStringValue('catname')) . '" required maxlength="255" autofocus />'),
                 'priority' => Html::raw('<input class="rex-input" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $KAT->getIntValue('catpriority')) . '" required min="1" inputmode="numeric" />'),
                 $firstAction => new TableCell(Html::raw($metaButtons . $addButtons), $colspan),
             ] + $row;
@@ -448,7 +447,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
         if ($canEdit && 'edit_art' === $structureContext->function && $articleId === $structureContext->articleId && $structureContext->hasCategoryPermission()) {
             $rows[] = [
-                'attributes' => new HtmlAttributes(['class' => ['rex-u-mark', 'rex-startarticle' => $sql->getBoolValue('startarticle'), $trStatusClass]]),
+                'attributes' => new HtmlAttributes(['class' => ['rex-u-mark']]),
                 'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $articleId]) . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon' . $class . '"></i></a>'),
                 'name' => Html::raw('<input class="rex-input" type="text" name="article-name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" autofocus />'),
                 'template' => new SelectInput('template', $templateChoices, $sql->getNullableStringValue('template')),
@@ -493,7 +492,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             $editModeUrl = $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $articleId, 'mode' => 'edit']);
 
             $rows[] = $row + [
-                'attributes' => new HtmlAttributes(['data-status' => $status, 'data-article-id' => $articleId, 'class' => ['rex-startarticle' => $sql->getBoolValue('startarticle'), $trStatusClass]]),
+                'attributes' => new HtmlAttributes(['data-status' => $status, 'data-article-id' => $articleId]),
                 'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $editModeUrl . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon' . $class . '"></i></a>'),
                 'name' => Html::raw('<a class="rex-u-link-expanded" href="' . $editModeUrl . '">' . escape($sql->getStringValue('name')) . '</a>'),
                 'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'function' => 'edit_art', 'artstart' => $structureContext->artStart]) . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('change') . '</a>'),
@@ -504,7 +503,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             // --------------------- ARTIKEL NORMAL VIEW | NO EDIT NO ENTER
 
             $rows[] = $row + [
-                'attributes' => new HtmlAttributes(['data-status' => $status, 'data-article-id' => $articleId, 'class' => $trStatusClass]),
+                'attributes' => new HtmlAttributes(['data-status' => $status, 'data-article-id' => $articleId]),
                 'icon' => Html::raw('<i class="rex-icon' . $class . '"></i>'),
                 'name' => $sql->getStringValue('name'),
                 'edit' => $muted('rex-icon-edit', I18n::msg('change')),

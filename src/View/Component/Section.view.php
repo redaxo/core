@@ -1,6 +1,7 @@
 <?php
 
 use Redaxo\Core\View\Component\Section;
+use Redaxo\Core\View\Component\SectionVariant;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Renderable;
@@ -10,7 +11,7 @@ return static function (Section $section): void {
     $variant = $section->variant->value;
     $collapseId = $section->collapsible ? 'rex-section-' . bin2hex(random_bytes(4)) : null;
     ?>
-    <section <?= $section->attributes->with(['class' => ['rex-section', 'rex-section--' . $variant]]) ?>>
+    <section <?= $section->attributes->with(['class' => ['rex-section', 'rex-section--' . $variant => SectionVariant::Default !== $section->variant]]) ?>>
         <?php if ($filled($section->title) || $filled($section->options) || $filled($section->header)): ?>
             <header class="rex-section__header">
                 <?php if ($filled($section->options)): ?>

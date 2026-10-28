@@ -18,8 +18,9 @@
         "build:backend-css": "esbuild assets/css/src/backend.css assets/css/src/bootstrap-compat.css --bundle --minify --target=chrome125,firefox128,safari18 --log-level=warning --outdir=assets/css",
         "build:backend-js": "esbuild assets/js/src/backend.js --bundle --format=esm --target=chrome125,firefox128,safari18 --banner:js='/* Built from assets/js/src/ with `npm run build:backend-js`, do not edit. */' --log-level=warning --outfile=assets/js/backend.js",
         "build:js": "node .tools/build/copy-vendor-assets.mjs",
-        "lint": "npm run lint:css && npm run check:contrast",
+        "lint": "npm run lint:css && npm run check:contrast && npm run check:classes",
         "lint:css": "stylelint \"assets/css/src/**/*.css\"",
-        "check:contrast": "node .tools/build/check-contrast.mjs"
+        "check:contrast": "node .tools/build/check-contrast.mjs",
+        "check:classes": "node .tools/build/check-classes.mjs"
     }
 }

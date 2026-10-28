@@ -20,7 +20,7 @@ return static function (Footer $footer): void {
             <?php else: ?>
                 <li><a href="https://www.redaxo.org/" target="_blank" rel="noreferrer noopener"><?= I18n::msg('footer_credits') ?><?= $newWindow ?></a></li>
             <?php endif ?>
-            <li class="rex-js-script-time"><!--DYN--><?= I18n::msg('footer_scripttime', $footer->time) ?><!--/DYN--></li>
+            <li><!--DYN--><?= I18n::msg('footer_scripttime', $footer->time) ?><!--/DYN--></li>
         </ul>
     </footer>
 <?php };

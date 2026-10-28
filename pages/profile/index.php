@@ -217,7 +217,7 @@ $confirmField = static function (string $id) use ($login, $passkeyVerify): strin
     </div>';
     } else {
         $n['label'] = '<label for="' . $id . '">' . I18n::msg('current_password') . '</label>';
-        $n['field'] = '<input class="rex-input rex-js-userpsw" type="password" id="' . $id . '" name="userpsw" autocomplete="current-password" autocorrect="off" autocapitalize="off" required />';
+        $n['field'] = '<input class="rex-input" type="password" id="' . $id . '" name="userpsw" autocomplete="current-password" autocorrect="off" autocapitalize="off" required />';
     }
 
     $formElements[] = $n;
@@ -236,13 +236,13 @@ $formElements = [];
 
 $n = [];
 $n['label'] = '<label for="rex-id-userpsw-new-1">' . I18n::msg('new_password') . '</label>';
-$n['field'] = '<input class="rex-input rex-js-userpsw-new-1" type="password" id="rex-id-userpsw-new-1" name="userpsw_new_1" autocomplete="new-password" autocorrect="off" autocapitalize="off" required ' . Str::buildAttributes($passwordPolicy->getHtmlAttributes()) . ' />';
+$n['field'] = '<input class="rex-input" type="password" id="rex-id-userpsw-new-1" name="userpsw_new_1" autocomplete="new-password" autocorrect="off" autocapitalize="off" required ' . Str::buildAttributes($passwordPolicy->getHtmlAttributes()) . ' />';
 $n['note'] = $passwordPolicy->getDescription();
 $formElements[] = $n;
 
 $n = [];
 $n['label'] = '<label for="rex-id-userpsw-new-2">' . I18n::msg('new_password_repeat') . '</label>';
-$n['field'] = '<input class="rex-input rex-js-userpsw-new-2" type="password" id="rex-id-userpsw-new-2" name="userpsw_new_2" autocomplete="new-password" autocorrect="off" autocapitalize="off" required />';
+$n['field'] = '<input class="rex-input" type="password" id="rex-id-userpsw-new-2" name="userpsw_new_2" autocomplete="new-password" autocorrect="off" autocapitalize="off" required />';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -294,7 +294,7 @@ $addPasskey = $fragment->parse('core/page/section.php');
 $content = '
     <div class="rex-grid" data-columns="6 6">
         <div>
-            <form class="rex-js-form-profile-password" action="' . Url::currentBackendPage() . '" method="post" data-auth-change-password>
+            <form action="' . Url::currentBackendPage() . '" method="post" data-auth-change-password>
                 ' . $csrfToken->getHiddenField() . '
                 ' . $changePassword . '
             </form>

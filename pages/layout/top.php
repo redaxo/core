@@ -47,7 +47,6 @@ if (Core::getImpersonator()) {
     $bodyAttr['class'][] = 'rex-is-impersonated';
 }
 
-$bodyAttr['class'][] = 'rex-has-theme';
 if ($theme = Appearance::getTheme()) {
     $bodyAttr['class'][] = 'rex-theme-' . $theme;
 }
@@ -75,16 +74,16 @@ if ($user && $hasNavigation) {
         $impersonator = $impersonator->name ?: $impersonator->login;
     }
 
-    $item = '<li><span class="rex-topbar__muted">' . I18n::msg('logged_in_as') . '</span> <a class="rex-username" href="' . Url::backendPage('profile') . '" title="' . I18n::msg('profile_title') . '"><i class="rex-icon rex-icon-user"></i> ' . escape($userName) . '</a>';
+    $item = '<li><span class="rex-topbar__muted">' . I18n::msg('logged_in_as') . '</span> <a href="' . Url::backendPage('profile') . '" title="' . I18n::msg('profile_title') . '"><i class="rex-icon rex-icon-user" aria-hidden="true"></i> ' . escape($userName) . '</a>';
     if ($impersonator) {
         $item .= ' (<i class="rex-icon rex-icon-user"></i> ' . escape($impersonator) . ')';
     }
     $metaItems[] = $item . '</li>';
 
     if ($impersonator) {
-        $metaItems[] = '<li><a class="rex-logout" href="' . escape(Url::currentBackendPage(['_impersonate' => '_depersonate'] + UserImpersonate::getUrlParams())) . '"><i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('login_depersonate') . '</a></li>';
+        $metaItems[] = '<li><a href="' . escape(Url::currentBackendPage(['_impersonate' => '_depersonate'] + UserImpersonate::getUrlParams())) . '"><i class="rex-icon rex-icon-sign-out" aria-hidden="true"></i> ' . I18n::msg('login_depersonate') . '</a></li>';
     } else {
-        $metaItems[] = '<li><a class="rex-logout" href="' . escape(Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams())) . '"><i class="rex-icon rex-icon-sign-out"></i> ' . I18n::msg('logout') . '</a></li>';
+        $metaItems[] = '<li><a href="' . escape(Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams())) . '"><i class="rex-icon rex-icon-sign-out" aria-hidden="true"></i> ' . I18n::msg('logout') . '</a></li>';
     }
 } elseif ($hasNavigation) {
     $metaItems[] = '<li>' . I18n::msg('logged_out') . '</li>';

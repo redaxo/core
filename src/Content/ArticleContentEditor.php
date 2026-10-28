@@ -418,7 +418,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $sliceContent = $fragment->parse('core/page/section.php');
 
         $fragment = new Fragment();
-        $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-add']], false);
+        $fragment->setVar('attributes', ['class' => ['rex-slice']], false);
         $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'content_section_id' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
@@ -478,7 +478,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $sliceContent = $fragment->parse('core/page/section.php');
 
         $fragment = new Fragment();
-        $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-edit'], 'id' => 'slice' . $sliceId], false);
+        $fragment->setVar('attributes', ['class' => ['rex-slice'], 'id' => 'slice' . $sliceId], false);
         $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'content_section_id' => $contentSectionId, 'language' => $this->languageId, 'function' => 'edit']) . '#slice' . $sliceId);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');

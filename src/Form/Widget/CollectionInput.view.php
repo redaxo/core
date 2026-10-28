@@ -8,7 +8,7 @@ use function Redaxo\Core\View\escape;
 
 return static function (CollectionInput $input): void {
     $item = static function (Html $fields) use ($input): void { ?>
-        <div class="rex-form-collection-item rex-section rex-section--default">
+        <div class="rex-form-collection-item rex-section">
             <?php if (!$input->disabled): ?>
             <div class="rex-section__header rex-u-align-end">
                 <div class="rex-button-group" data-size="xs">
@@ -22,7 +22,6 @@ return static function (CollectionInput $input): void {
         </div>
     <?php } ?>
     <div <?= $input->attributes->with([
-        'class' => 'rex-form-collection',
         'id' => $input->id,
         'data-rex-collection' => true,
         'data-rex-collection-placeholder' => $input->placeholder,

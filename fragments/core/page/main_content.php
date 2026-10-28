@@ -13,7 +13,7 @@ use Redaxo\Core\View\Fragment;
         <div id="rex-js-main-content">
             <?= $this->content ?>
         </div>
-        <div id="rex-js-main-sidebar" class="rex-main-sidebar">
+        <div id="rex-js-main-sidebar">
             <?= $this->sidebar ?>
         </div>
     </div>
