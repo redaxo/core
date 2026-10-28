@@ -65,7 +65,7 @@ async function keepAlive() {
     }
 }
 
-const logout = {label: i18n.session_timeout_logout_label, icon: 'sign-out', onClick: () => location.href = rex.session_logout_url};
+const logout = {label: i18n.session_timeout_logout_label, icon: 'sign-out', value: 'logout', onClick: () => location.href = rex.session_logout_url};
 
 /** Paragraph of the message, with the remaining minutes at the `{0}` placeholder. */
 function paragraph(message) {
@@ -82,10 +82,16 @@ function paragraph(message) {
 
 function show(message, buttons) {
     current?.close();
-    current = dialog({title: i18n.session_timeout_title, content: paragraph(message), buttons, className: 'rex-session-timeout-dialog', role: 'alertdialog'});
-    current.closed.then(() => current = null);
+    const box = dialog({title: i18n.session_timeout_title, content: paragraph(message), buttons, className: 'rex-session-timeout-dialog', role: 'alertdialog'});
+    current = box;
+    // a dialog replaced by the next one closes after the next one has become current
+    box.closed.then(() => {
+        if (current === box) {
+            current = null;
+        }
+    });
 
-    return current;
+    return box;
 }
 
 /** Shows the remaining minutes until `end()`, then replaces the message by the "has expired" one. */
@@ -123,6 +129,14 @@ function showExpand() {
         }},
     ]);
     countdown(box, () => sessionWarningAt + warningTime * 1000);
+    // closed by Esc or the close button, not replaced by another dialog: the user is there, so the session goes on as
+    // with the refresh button instead of expiring unnoticed without further checks
+    box.closed.then(value => {
+        if ('' === value && null === current) {
+            keepAlive();
+            setSessionWarningAt();
+        }
+    });
 }
 
 function showOverallTimeout() {

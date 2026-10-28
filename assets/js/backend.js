@@ -1183,7 +1183,7 @@ async function keepAlive() {
     showFailed();
   }
 }
-var logout = { label: i18n2.session_timeout_logout_label, icon: "sign-out", onClick: () => location.href = rex.session_logout_url };
+var logout = { label: i18n2.session_timeout_logout_label, icon: "sign-out", value: "logout", onClick: () => location.href = rex.session_logout_url };
 function paragraph(message) {
   const p = document.createElement("p");
   const [before, after = ""] = message.split("{0}");
@@ -1197,9 +1197,14 @@ function paragraph(message) {
 }
 function show(message, buttons) {
   current?.close();
-  current = dialog({ title: i18n2.session_timeout_title, content: paragraph(message), buttons, className: "rex-session-timeout-dialog", role: "alertdialog" });
-  current.closed.then(() => current = null);
-  return current;
+  const box = dialog({ title: i18n2.session_timeout_title, content: paragraph(message), buttons, className: "rex-session-timeout-dialog", role: "alertdialog" });
+  current = box;
+  box.closed.then(() => {
+    if (current === box) {
+      current = null;
+    }
+  });
+  return box;
 }
 function countdown({ body, element, closed }, end) {
   const update2 = () => {
@@ -1233,6 +1238,12 @@ function showExpand() {
     } }
   ]);
   countdown(box, () => sessionWarningAt + warningTime * 1e3);
+  box.closed.then((value) => {
+    if ("" === value && null === current) {
+      keepAlive();
+      setSessionWarningAt();
+    }
+  });
 }
 function showOverallTimeout() {
   const box = show(i18n2.session_timeout_message_expired, [logout]);
@@ -1378,6 +1389,16 @@ var arrayBufferToBase64 = function(buffer) {
   }
   return window.btoa(binary);
 };
+var initialized2 = /* @__PURE__ */ new WeakSet();
+var once = (form) => form && !initialized2.has(form) && initialized2.add(form);
+if (window.PublicKeyCredential) {
+  document.addEventListener("rex:ready", (event) => {
+    const form = event.target.querySelector("form[data-auth-change-password]");
+    if (once(form)) {
+      authPasskeyVerify(form);
+    }
+  });
+}
 if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable && PublicKeyCredential.isConditionalMediationAvailable) {
   let ready2 = false;
   document.addEventListener("rex:ready", function() {
@@ -1390,16 +1411,10 @@ if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAut
     if (!results.every((r) => r === true)) {
       return;
     }
-    const initialized3 = /* @__PURE__ */ new WeakSet();
-    const once = (form) => form && !initialized3.has(form) && initialized3.add(form);
     const init2 = function(container) {
       let form = container.querySelector("form[data-auth-add-passkey]");
       if (once(form)) {
         authAddPasskey(form);
-        authPasskeyVerify(form);
-      }
-      form = container.querySelector("form[data-auth-change-password]");
-      if (once(form)) {
         authPasskeyVerify(form);
       }
       form = container.querySelector("form[data-auth-login]");
@@ -1418,11 +1433,11 @@ if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAut
 
 // assets/js/src/history.js
 var RANGE = 1e3;
-var initialized2 = /* @__PURE__ */ new WeakSet();
+var initialized3 = /* @__PURE__ */ new WeakSet();
 document.addEventListener("rex:ready", (event) => {
   for (const root2 of event.target.querySelectorAll("[data-rex-history]")) {
-    if (!initialized2.has(root2)) {
-      initialized2.add(root2);
+    if (!initialized3.has(root2)) {
+      initialized3.add(root2);
       init(root2);
     }
   }

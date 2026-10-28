@@ -129,9 +129,23 @@ const arrayBufferToBase64 = function (buffer) {
     return window.btoa(binary);
 }
 
-// Availability of `window.PublicKeyCredential` means WebAuthn is usable.
-// `isUserVerifyingPlatformAuthenticatorAvailable` means the feature detection is usable.
-// `isConditionalMediationAvailable` means the feature detection is usable.
+// rex.ready() may run again on a part of the page, each form gets its listeners only once
+const initialized = new WeakSet();
+const once = form => form && !initialized.has(form) && initialized.add(form);
+
+// Availability of `window.PublicKeyCredential` means WebAuthn is usable. Confirming the password change with a passkey
+// works with any authenticator, so it needs nothing more.
+if (window.PublicKeyCredential) {
+    document.addEventListener('rex:ready', event => {
+        const form = event.target.querySelector('form[data-auth-change-password]');
+        if (once(form)) {
+            authPasskeyVerify(form);
+        }
+    });
+}
+
+// Adding a passkey and the login with autofill need a user verifying platform authenticator and conditional mediation,
+// `isUserVerifyingPlatformAuthenticatorAvailable` and `isConditionalMediationAvailable` tell whether they are there.
 if (window.PublicKeyCredential &&
     PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&
     PublicKeyCredential.isConditionalMediationAvailable) {
@@ -150,18 +164,10 @@ if (window.PublicKeyCredential &&
             return;
         }
 
-        // rex.ready() may run again on a part of the page, each form gets its listeners only once
-        const initialized = new WeakSet();
-        const once = form => form && !initialized.has(form) && initialized.add(form);
-
         const init = function (container) {
             let form = container.querySelector('form[data-auth-add-passkey]');
             if (once(form)) {
                 authAddPasskey(form);
-                authPasskeyVerify(form);
-            }
-            form = container.querySelector('form[data-auth-change-password]');
-            if (once(form)) {
                 authPasskeyVerify(form);
             }
 
