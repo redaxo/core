@@ -1,21 +1,23 @@
-/* Alerts (`.alert`, Redaxo\Core\View\Component\Alert, Redaxo\Core\View\Message) */
+/*
+ Alerts (`.rex-alert`, Redaxo\Core\View\Component\Alert, Redaxo\Core\View\Message): a message on a colored box,
+ `data-variant` `info` (default), `success`, `warning` or `danger`.
+ */
 
-@layer bootstrap {
-    .alert {
-        --alert-bg: var(--rex-color-accent);
-        --alert-border: var(--rex-color-accent-hover);
-        --alert-text: var(--rex-color-on-accent);
-        --rex-color-focus: var(--alert-text);
+@layer components {
+    .rex-alert {
+        --rex-alert-bg: var(--rex-color-accent);
+        --rex-alert-border: var(--rex-color-accent-hover);
+        --rex-alert-text: var(--rex-color-on-accent);
+        --rex-color-focus: var(--rex-alert-text);
 
         margin-bottom: 22px;
         padding: 15px;
-        border: 1px solid var(--alert-border);
-        border-radius: 0;
-        background-color: var(--alert-bg);
-        color: var(--alert-text);
+        border: 1px solid var(--rex-alert-border);
+        background: var(--rex-alert-bg);
+        color: var(--rex-alert-text);
         word-break: break-word;
 
-        & h4 {
+        & :is(h2, h3, h4) {
             margin-top: 0;
             color: inherit;
         }
@@ -28,9 +30,9 @@
             margin-top: 5px;
         }
 
-        & a,
-        & .alert-link {
+        & a {
             color: inherit;
+            font-weight: 700;
             text-decoration: underline;
 
             &:hover {
@@ -38,10 +40,25 @@
             }
         }
 
-        & .alert-link {
-            font-weight: 700;
+        &[data-variant="success"] {
+            --rex-alert-bg: var(--rex-color-success);
+            --rex-alert-border: var(--rex-color-success-hover);
+            --rex-alert-text: var(--rex-color-on-success);
         }
 
+        &[data-variant="warning"] {
+            --rex-alert-bg: var(--rex-color-warning);
+            --rex-alert-border: var(--rex-color-warning-hover);
+            --rex-alert-text: var(--rex-color-on-warning);
+        }
+
+        &[data-variant="danger"] {
+            --rex-alert-bg: var(--rex-color-danger);
+            --rex-alert-border: var(--rex-color-danger-hover);
+            --rex-alert-text: var(--rex-color-on-danger);
+        }
+
+        /* compact next to the options of a section header, e.g. the missing rights of a slice */
         .rex-section__options & {
             padding: 5px 10px;
             font-size: var(--rex-font-size-small);
@@ -55,25 +72,10 @@
         .rex-section > & {
             margin-bottom: 0;
             border: 0;
-            border-radius: 0;
         }
-    }
 
-    .alert-success {
-        --alert-bg: var(--rex-color-success);
-        --alert-border: var(--rex-color-success-hover);
-        --alert-text: var(--rex-color-on-success);
-    }
-
-    .alert-warning {
-        --alert-bg: var(--rex-color-warning);
-        --alert-border: var(--rex-color-warning-hover);
-        --alert-text: var(--rex-color-on-warning);
-    }
-
-    .alert-danger {
-        --alert-bg: var(--rex-color-danger);
-        --alert-border: var(--rex-color-danger-hover);
-        --alert-text: var(--rex-color-on-danger);
+        tr & {
+            margin: -8px;
+        }
     }
 }

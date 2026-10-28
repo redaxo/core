@@ -41,7 +41,7 @@ if ('' != $loginMessage) {
                 if (time > 0) {
                     setTimeout(countdown, 1000);
                 } else {
-                    const message = document.querySelector(".rex-js-login-message .alert");
+                    const message = document.querySelector(".rex-js-login-message .rex-alert");
                     if (message) {
                         message.textContent = "' . escape(I18n::msg('login_welcome'), 'js') . '";
                     }

@@ -11,9 +11,10 @@ function failed(form, error) {
         return;
     }
     const message = window.rex.i18n?.passkey_failed ?? 'The passkey could not be used.';
-    const alert = Object.assign(document.createElement('div'), {className: 'alert alert-danger', textContent: message});
+    const alert = Object.assign(document.createElement('div'), {className: 'rex-alert', textContent: message});
+    alert.dataset.variant = 'danger';
     alert.setAttribute('role', 'alert');
-    form.querySelector(':scope > .alert[role="alert"]')?.remove();
+    form.querySelector(':scope > .rex-alert[role="alert"]')?.remove();
     form.prepend(alert);
     announce(message, {assertive: true});
 }

@@ -29,7 +29,7 @@
         & .rex-js-login-message {
             margin: 0 -25px;
 
-            & .alert {
+            & .rex-alert {
                 padding-left: 25px;
             }
         }

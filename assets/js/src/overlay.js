@@ -104,7 +104,8 @@ class Overlay {
                 this.pick(auto, [itemOf(auto)]);
             }
         } catch (error) {
-            const alert = Object.assign(document.createElement('div'), {className: 'alert alert-danger', textContent: String(error)});
+            const alert = Object.assign(document.createElement('div'), {className: 'rex-alert', textContent: String(error)});
+            alert.dataset.variant = 'danger';
             alert.setAttribute('role', 'alert');
             this.body.replaceChildren(alert);
         } finally {

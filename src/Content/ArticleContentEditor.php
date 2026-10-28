@@ -205,7 +205,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 $menuMovedownAction = $item;
             }
         } else {
-            $headerRight .= sprintf('<div class="alert">%s %s</div>', I18n::msg('no_editing_rights'), $moduleName);
+            $headerRight .= sprintf('<div class="rex-alert">%s %s</div>', I18n::msg('no_editing_rights'), $moduleName);
         }
 
         // ----- EXTENSION POINT
