@@ -42,10 +42,10 @@ $list->column(
         : null,
     linkAttributes: ['data-confirm' => I18n::msg('confirm_remove_auth')],
 );
-$list->column('id', I18n::msg('auth_method'), static fn (array $row): Html => null === $row['id']
-    ? new Badge(I18n::msg('password'))->render()
-    : Html::raw((string) new Badge(I18n::msg('passkey'))->render() . ' ' . escape((string) $row['id'])));
-$list->column('createdate', I18n::msg('created_on'), static fn (array $row): string => Formatter::intlDateTime((string) $row['createdate'], IntlDateFormatter::SHORT));
+$list->column('id', I18n::rawMsg('auth_method'), static fn (array $row): Html => null === $row['id']
+    ? new Badge(I18n::rawMsg('password'))->render()
+    : Html::raw((string) new Badge(I18n::rawMsg('passkey'))->render() . ' ' . escape((string) $row['id'])));
+$list->column('createdate', I18n::rawMsg('created_on'), static fn (array $row): string => Formatter::intlDateTime((string) $row['createdate'], IntlDateFormatter::SHORT));
 
 $content = (string) $list->render();
 

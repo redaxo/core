@@ -319,23 +319,23 @@ $list->column(
     link: $editUrl,
 );
 $list->column('id', 'Id', type: ColumnType::Id, sortable: true);
-$list->column('name', I18n::msg('name'), sortable: true, link: $editUrl);
-$list->column('login', I18n::msg('login'), static fn (array $row): string|Html => $row['status']
+$list->column('name', I18n::rawMsg('name'), sortable: true, link: $editUrl);
+$list->column('login', I18n::rawMsg('login'), static fn (array $row): string|Html => $row['status']
     ? (string) $row['login']
     : Html::raw('<span class="rex-u-text-muted">' . escape((string) $row['login']) . '</span>'), sortable: true);
-$list->column('role', I18n::msg('user_role'), static function (array $row) use ($noRole, $separator): Renderable {
+$list->column('role', I18n::rawMsg('user_role'), static function (array $row) use ($noRole, $separator): Renderable {
     if ($noRole === $row['role']) {
-        return new Badge(I18n::msg('user_no_role'), BadgeVariant::Warning);
+        return new Badge(I18n::rawMsg('user_no_role'), BadgeVariant::Warning);
     }
     if ($row['admin']) {
-        return new Badge(I18n::msg('user_admin'), BadgeVariant::Success);
+        return new Badge(I18n::rawMsg('user_admin'), BadgeVariant::Success);
     }
 
     return Html::raw('<div class="rex-docs"><ul class="rex-u-small"><li>' . implode('</li><li>', explode($separator, escape((string) $row['role']))) . '</li></ul></div>');
 }, sortable: true);
-$list->column('lastlogin', I18n::msg('last_login'), static fn (array $row): string => Formatter::intlDateTime(null === $row['lastlogin'] ? null : (string) $row['lastlogin']), sortable: 'desc');
+$list->column('lastlogin', I18n::rawMsg('last_login'), static fn (array $row): string => Formatter::intlDateTime(null === $row['lastlogin'] ? null : (string) $row['lastlogin']), sortable: 'desc');
 
-$list->column('edit', I18n::msg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
+$list->column('edit', I18n::rawMsg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
 $canDelete = static fn (array $row): bool => $row['id'] != $currentUser->id
     && ($currentUser->admin || !$row['admin'])
     && (!($impersonator = Core::getImpersonator()) || $row['id'] != $impersonator->id);

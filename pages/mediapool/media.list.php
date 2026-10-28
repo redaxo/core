@@ -230,14 +230,14 @@ if ($hasCategoryPerm) {
     }
 
     $buttons = [
-        new Button(I18n::msg('pool_delete_selectedmedia'), variant: ButtonVariant::Danger, type: 'submit', attributes: new HtmlAttributes([
+        new Button(I18n::rawMsg('pool_delete_selectedmedia'), variant: ButtonVariant::Danger, type: 'submit', attributes: new HtmlAttributes([
             'data-confirm' => I18n::msg('delete') . ' ?',
             'name' => 'media_method',
             'value' => 'delete_selectedmedia',
         ])),
     ];
     if ('multiple' === $picker) {
-        $buttons[] = new Button(I18n::msg('pool_get_selectedmedia'), variant: ButtonVariant::Success, attributes: new HtmlAttributes(['data-rex-pick-checked' => 'selectedmedia[]']));
+        $buttons[] = new Button(I18n::rawMsg('pool_get_selectedmedia'), variant: ButtonVariant::Success, attributes: new HtmlAttributes(['data-rex-pick-checked' => 'selectedmedia[]']));
     }
 
     $actionButtons = implode(' ', array_map(static fn (Button $button): string => (string) $button->render(), $buttons));
@@ -321,17 +321,17 @@ foreach ($items as $media) {
 }
 
 if (0 == $pager->getRowCount()) {
-    $rows[] = new TableRow([new TableCell(null), new TableCell(I18n::msg('pool_nomediafound'), 5)]);
+    $rows[] = new TableRow([new TableCell(null), new TableCell(I18n::rawMsg('pool_nomediafound'), 5)]);
 }
 
 $wordBreak = new HtmlAttributes(['class' => ['rex-u-word-break']]);
 $panel .= (string) new Table(
     [
         TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_file_insert') . '</span></a>'), 'select', ColumnType::Icon),
-        TableColumn::forKey(I18n::msg('pool_file_thumbnail'), 'thumbnail', ColumnType::Thumbnail, $wordBreak),
-        TableColumn::forKey(I18n::msg('pool_file_info') . ' / ' . I18n::msg('pool_file_description'), 'info', attributes: $wordBreak, title: I18n::msg('pool_file_info')),
-        TableColumn::forKey(I18n::msg('pool_last_update'), 'updated'),
-        TableColumn::forKey(I18n::msg('pool_file_functions'), 'edit', ColumnType::Action),
+        TableColumn::forKey(I18n::rawMsg('pool_file_thumbnail'), 'thumbnail', ColumnType::Thumbnail, $wordBreak),
+        TableColumn::forKey(I18n::rawMsg('pool_file_info') . ' / ' . I18n::rawMsg('pool_file_description'), 'info', attributes: $wordBreak, title: I18n::rawMsg('pool_file_info')),
+        TableColumn::forKey(I18n::rawMsg('pool_last_update'), 'updated'),
+        TableColumn::forKey(I18n::rawMsg('pool_file_functions'), 'edit', ColumnType::Action),
         TableColumn::forKey(null, 'functions', ColumnType::Action),
     ],
     $rows,

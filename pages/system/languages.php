@@ -197,11 +197,11 @@ foreach ($sql as $row) {
 $content .= (string) new Table(
     [
         TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::currentBackendPage(['func' => 'add']) . '#language"' . Accesskey::attributes(I18n::msg('language_add'), 'add') . '><i class="rex-icon rex-icon-add-language" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('language_add') . '</span></a>'), 'icon', ColumnType::Icon),
-        TableColumn::forKey(I18n::msg('id'), 'id', ColumnType::Id),
-        TableColumn::forKey(I18n::msg('language_code'), 'code'),
-        TableColumn::forKey(I18n::msg('language_name'), 'name'),
-        TableColumn::forKey(I18n::msg('language_priority'), 'priority', ColumnType::Priority),
-        TableColumn::forKey(I18n::msg('language_function'), 'edit', ColumnType::Action),
+        TableColumn::forKey(I18n::rawMsg('id'), 'id', ColumnType::Id),
+        TableColumn::forKey(I18n::rawMsg('language_code'), 'code'),
+        TableColumn::forKey(I18n::rawMsg('language_name'), 'name'),
+        TableColumn::forKey(I18n::rawMsg('language_priority'), 'priority', ColumnType::Priority),
+        TableColumn::forKey(I18n::rawMsg('language_function'), 'edit', ColumnType::Action),
         TableColumn::forKey(null, 'delete', ColumnType::Action),
         TableColumn::forKey(null, 'status', ColumnType::Action),
     ],

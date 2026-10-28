@@ -33,7 +33,7 @@ return static function (ArticleHistory $history): void {
     // newest first like the snapshots, the current version on top; `data-time` places them on the timeline
     $target = Html::capture(static function () use ($history, $current, $version): void { ?>
         <div class="rex-history-switch">
-            <?= new Button(I18n::msg('structure_history_older'), icon: 'previous', hiddenLabel: true, attributes: new HtmlAttributes(['data-rex-history-step' => '-1']))->render() ?>
+            <?= new Button(I18n::rawMsg('structure_history_older'), icon: 'previous', hiddenLabel: true, attributes: new HtmlAttributes(['data-rex-history-step' => '-1']))->render() ?>
             <select name="history_date" form="rex-history-restore" class="rex-input rex-history-select" data-rex-history-target aria-label="<?= escape($version) ?>">
                 <option value="" data-time="<?= time() ?>"><?= escape($current) ?></option>
                 <?php foreach ($history->snapshots as $snapshot): ?>
@@ -42,7 +42,7 @@ return static function (ArticleHistory $history): void {
                     </option>
                 <?php endforeach ?>
             </select>
-            <?= new Button(I18n::msg('structure_history_newer'), icon: 'next', hiddenLabel: true, attributes: new HtmlAttributes(['data-rex-history-step' => '1']))->render() ?>
+            <?= new Button(I18n::rawMsg('structure_history_newer'), icon: 'next', hiddenLabel: true, attributes: new HtmlAttributes(['data-rex-history-step' => '1']))->render() ?>
         </div>
     <?php });
 
@@ -50,7 +50,7 @@ return static function (ArticleHistory $history): void {
     $restore = null === $history->restoreUrl ? '' : Html::capture(static function () use ($history): void { ?>
         <form id="rex-history-restore" method="post" action="<?= escape($history->restoreUrl) ?>" target="_top">
             <?= Html::raw(CsrfToken::factory('structure_history')->getHiddenField()) ?>
-            <?= new Button(I18n::msg('structure_history_snapshot_reactivate'), icon: 'refresh', variant: ButtonVariant::Success, type: 'submit', attributes: new HtmlAttributes([
+            <?= new Button(I18n::rawMsg('structure_history_snapshot_reactivate'), icon: 'refresh', variant: ButtonVariant::Success, type: 'submit', attributes: new HtmlAttributes([
                 'name' => 'func',
                 'value' => 'restore',
                 'disabled' => true,
@@ -58,7 +58,7 @@ return static function (ArticleHistory $history): void {
         </form>
     <?php });
 
-    $show = new Button(I18n::msg('article_show'), url: $history->previewUrl, icon: 'external-link', attributes: new HtmlAttributes([
+    $show = new Button(I18n::rawMsg('article_show'), url: $history->previewUrl, icon: 'external-link', attributes: new HtmlAttributes([
         'target' => '_blank',
         'rel' => 'noopener',
         'data-rex-history-show' => true,
@@ -79,7 +79,7 @@ return static function (ArticleHistory $history): void {
                 </div>
             </div>
         <?php else: ?>
-            <?= new Alert(I18n::msg('structure_history_no_versions'))->render() ?>
+            <?= new Alert(I18n::rawMsg('structure_history_no_versions'))->render() ?>
         <?php endif ?>
 
         <div class="rex-history-previews">

@@ -130,11 +130,11 @@ if ($archiveExists) {
     }
 
     $content = (string) new Table([
-        TableColumn::forKey(I18n::msg('mailer_archive_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
-        TableColumn::forKey(I18n::msg('mailer_archive_subject'), 'subject'),
-        TableColumn::forKey(I18n::msg('mailer_archive_to'), 'to'),
-        TableColumn::forKey(I18n::msg('mailer_archive_size'), 'size', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
-    ], $rows ?: [new TableRow([new TableCell(I18n::msg('mailer_archive_no_files'), 4, new HtmlAttributes(['class' => ['rex-u-text-muted', 'rex-u-align-center']]))])],
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_subject'), 'subject'),
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_to'), 'to'),
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_size'), 'size', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    ], $rows ?: [new TableRow([new TableCell(I18n::rawMsg('mailer_archive_no_files'), 4, new HtmlAttributes(['class' => ['rex-u-text-muted', 'rex-u-align-center']]))])],
         attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
     $fragment = new Fragment();

@@ -305,9 +305,9 @@ if (0 === $KAT->getRows()) {
 $echo .= (string) new Table(
     [
         TableColumn::forKey(Html::raw($addCategory), 'icon', ColumnType::Icon),
-        TableColumn::forKey(I18n::msg('header_id'), 'id', ColumnType::Id),
-        TableColumn::forKey(I18n::msg('header_category'), 'name', attributes: new HtmlAttributes(['class' => ['rex-table-category']])),
-        TableColumn::forKey(I18n::msg('header_priority'), 'priority', ColumnType::Priority),
+        TableColumn::forKey(I18n::rawMsg('header_id'), 'id', ColumnType::Id),
+        TableColumn::forKey(I18n::rawMsg('header_category'), 'name', attributes: new HtmlAttributes(['class' => ['rex-table-category']])),
+        TableColumn::forKey(I18n::rawMsg('header_priority'), 'priority', ColumnType::Priority),
         ...$actionColumns(array_keys(array_filter(['edit' => $canEdit, 'delete' => $canDelete, 'status' => true]))),
     ],
     array_filter($rows),
@@ -517,11 +517,11 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     $echo .= (string) new Table(
         [
             TableColumn::forKey(Html::raw($artAddLink), 'icon', ColumnType::Icon),
-            TableColumn::forKey(I18n::msg('header_id'), 'id', ColumnType::Id),
-            TableColumn::forKey(I18n::msg('header_article_name'), 'name', attributes: new HtmlAttributes(['class' => ['rex-table-article-name']])),
-            TableColumn::forKey(I18n::msg('header_template'), 'template', attributes: new HtmlAttributes(['class' => ['rex-table-template']])),
-            TableColumn::forKey(I18n::msg('header_date'), 'date', ColumnType::Date),
-            TableColumn::forKey(I18n::msg('header_priority'), 'priority', ColumnType::Priority),
+            TableColumn::forKey(I18n::rawMsg('header_id'), 'id', ColumnType::Id),
+            TableColumn::forKey(I18n::rawMsg('header_article_name'), 'name', attributes: new HtmlAttributes(['class' => ['rex-table-article-name']])),
+            TableColumn::forKey(I18n::rawMsg('header_template'), 'template', attributes: new HtmlAttributes(['class' => ['rex-table-template']])),
+            TableColumn::forKey(I18n::rawMsg('header_date'), 'date', ColumnType::Date),
+            TableColumn::forKey(I18n::rawMsg('header_priority'), 'priority', ColumnType::Priority),
             ...$actionColumns(array_keys(array_filter(['edit' => $canEdit, 'delete' => $canDelete, 'status' => true]))),
         ],
         $rows,

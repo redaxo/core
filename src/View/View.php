@@ -183,7 +183,7 @@ final class View
             $items,
             label: $buttonLabel,
             prefix: I18n::msg('language'),
-            header: I18n::msg('language_select'),
+            header: I18n::rawMsg('language_select'),
             footer: $user->admin ? Html::raw('<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . I18n::msg('languages_edit') . '</a>') : '',
             attributes: new HtmlAttributes(['class' => ['rex-language']]),
         )->render();

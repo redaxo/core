@@ -58,9 +58,9 @@ if ('' == $func) {
         type: ColumnType::Icon,
         link: $editUrl,
     );
-    $list->column('id', I18n::msg('id'), type: ColumnType::Id);
-    $list->column('name', I18n::msg('name'), link: $editUrl);
-    $list->column('edit', I18n::msg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
+    $list->column('id', I18n::rawMsg('id'), type: ColumnType::Id);
+    $list->column('name', I18n::rawMsg('name'), link: $editUrl);
+    $list->column('edit', I18n::rawMsg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
     $list->column(
         'duplicate',
         null,

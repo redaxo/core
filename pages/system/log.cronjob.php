@@ -68,10 +68,10 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
 
 $content .= (string) new Table([
     TableColumn::forKey('', 'icon', ColumnType::Icon),
-    TableColumn::forKey(I18n::msg('cronjob_log_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
-    TableColumn::forKey(I18n::msg('cronjob_name'), 'name'),
-    TableColumn::forKey(I18n::msg('cronjob_log_message'), 'message'),
-    TableColumn::forKey(I18n::msg('cronjob_trigger'), 'trigger'),
+    TableColumn::forKey(I18n::rawMsg('cronjob_log_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    TableColumn::forKey(I18n::rawMsg('cronjob_name'), 'name'),
+    TableColumn::forKey(I18n::rawMsg('cronjob_log_message'), 'message'),
+    TableColumn::forKey(I18n::rawMsg('cronjob_trigger'), 'trigger'),
 ], $rows, rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes([
     'class' => $row['error'] ? 'rex-state-error' : 'rex-state-success',
 ]), attributes: new HtmlAttributes(['data-hover' => true]))->render();
@@ -134,9 +134,9 @@ if (!$cronjobs) {
 } else {
     $overview = (string) new Table([
         new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob" aria-hidden="true"></i>'), ColumnType::Icon),
-        new TableColumn(I18n::msg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="rex-u-text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
-        new TableColumn(I18n::msg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="rex-u-nowrap">' . escape($cronjob->schedule) . '</code>')),
-        new TableColumn(I18n::msg('cronjob_lastrun'), static function (Cronjob $cronjob) use ($states): Html {
+        new TableColumn(I18n::rawMsg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="rex-u-text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
+        new TableColumn(I18n::rawMsg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="rex-u-nowrap">' . escape($cronjob->schedule) . '</code>')),
+        new TableColumn(I18n::rawMsg('cronjob_lastrun'), static function (Cronjob $cronjob) use ($states): Html {
             $state = $states[$cronjob->name] ?? null;
             $lastRun = $state['lastRun'] ?? null;
             if (null === $state || null === $lastRun) {
@@ -155,7 +155,7 @@ if (!$cronjobs) {
             }
             return Html::raw($text);
         }, attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
-        new TableColumn(I18n::msg('cronjob_nexttime'), static function (Cronjob $cronjob) use ($states, $setting, $now): Html|string {
+        new TableColumn(I18n::rawMsg('cronjob_nexttime'), static function (Cronjob $cronjob) use ($states, $setting, $now): Html|string {
             if (null === $setting) {
                 return '–';
             }

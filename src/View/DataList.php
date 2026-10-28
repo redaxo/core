@@ -27,8 +27,8 @@ use function is_bool;
  *
  * ```php
  * $list = new DataList('SELECT id, name FROM rex_user_role ORDER BY name');
- * $list->column('id', I18n::msg('id'), type: ColumnType::Id);
- * $list->column('name', I18n::msg('name'), sortable: true, link: fn (array $row) => $list->getUrl(['id' => $row['id']]));
+ * $list->column('id', I18n::rawMsg('id'), type: ColumnType::Id);
+ * $list->column('name', I18n::rawMsg('name'), sortable: true, link: fn (array $row) => $list->getUrl(['id' => $row['id']]));
  * echo $list->render();
  * ```
  *
@@ -75,7 +75,7 @@ final class DataList implements Renderable, UrlProviderInterface
         }
 
         $this->name = $name ?? substr(md5($query), 0, 8);
-        $this->empty = I18n::msg('list_no_rows');
+        $this->empty = I18n::rawMsg('list_no_rows');
         $this->attributes = new HtmlAttributes();
 
         if (self::DISABLE_PAGINATION === $rowsPerPage) {

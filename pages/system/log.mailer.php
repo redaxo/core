@@ -59,12 +59,12 @@ foreach (new LimitIterator($file, 0, 30) as $entry) {
 }
 
 $content = (string) new Table([
-    TableColumn::forKey(I18n::msg('mailer_log_success'), 'state'),
-    TableColumn::forKey(I18n::msg('mailer_log_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
-    TableColumn::forKey(I18n::msg('mailer_log_from'), 'from'),
-    TableColumn::forKey(I18n::msg('mailer_log_to'), 'to'),
-    TableColumn::forKey(I18n::msg('mailer_log_subject'), 'subject'),
-    TableColumn::forKey(I18n::msg('mailer_log_msg'), 'message'),
+    TableColumn::forKey(I18n::rawMsg('mailer_log_success'), 'state'),
+    TableColumn::forKey(I18n::rawMsg('mailer_log_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    TableColumn::forKey(I18n::rawMsg('mailer_log_from'), 'from'),
+    TableColumn::forKey(I18n::rawMsg('mailer_log_to'), 'to'),
+    TableColumn::forKey(I18n::rawMsg('mailer_log_subject'), 'subject'),
+    TableColumn::forKey(I18n::rawMsg('mailer_log_msg'), 'message'),
 ], $rows, rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes([
     'class' => $row['error'] ? 'rex-state-error' : 'rex-mailer-log-ok',
 ]), attributes: new HtmlAttributes(['data-hover' => true]))->render();

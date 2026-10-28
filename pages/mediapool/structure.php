@@ -117,13 +117,13 @@ if ($PERMALL) {
                 : Html::raw('<a class="rex-u-link-expanded" href="' . $link . $category->id . '" title="' . escape($category->name) . '"><i class="rex-icon rex-icon-media-category" aria-hidden="true"></i></a>'),
             ColumnType::Icon,
         ),
-        new TableColumn(I18n::msg('id'), static fn (?MediaCategory $category): int|string => $category->id ?? '-', ColumnType::Id),
-        new TableColumn(I18n::msg('pool_kat_name'), static fn (?MediaCategory $category): Html => match (true) {
+        new TableColumn(I18n::rawMsg('id'), static fn (?MediaCategory $category): int|string => $category->id ?? '-', ColumnType::Id),
+        new TableColumn(I18n::rawMsg('pool_kat_name'), static fn (?MediaCategory $category): Html => match (true) {
             null === $category => Html::raw('<input class="rex-input" type="text" name="catname" value="" autofocus />'),
             $form($category) => Html::raw('<input class="rex-input" type="text" name="cat_name" value="' . escape($category->name) . '" autofocus />'),
             default => Html::raw('<a class="rex-u-link-expanded" href="' . $link . $category->id . '">' . escape($category->name) . '</a>'),
         }),
-        new TableColumn(I18n::msg('pool_kat_function'), static function (?MediaCategory $category) use ($form, $link, $catId, $editId): Html|TableCell {
+        new TableColumn(I18n::rawMsg('pool_kat_function'), static function (?MediaCategory $category) use ($form, $link, $catId, $editId): Html|TableCell {
             if (null === $category) {
                 return new TableCell(Html::raw('<button class="rex-button" data-variant="success" type="submit" value="' . I18n::msg('pool_kat_create') . '"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'save') . '>' . I18n::msg('pool_kat_create') . '</button>'), 2);
             }

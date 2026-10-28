@@ -63,19 +63,19 @@ echo $fragment->parse('core/page/section.php');
 
 $content = (string) new Table([
     new TableColumn(Html::raw('&nbsp;'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-package-addon" aria-hidden="true"></i>'), ColumnType::Icon),
-    new TableColumn(I18n::msg('credits_name'), static fn (Addon $package): string => $package->name),
-    new TableColumn(I18n::msg('credits_version'), static function (Addon $package): Html {
+    new TableColumn(I18n::rawMsg('credits_name'), static fn (Addon $package): string => $package->name),
+    new TableColumn(I18n::rawMsg('credits_version'), static function (Addon $package): Html {
         $version = escape($package->getVersion());
         return Html::raw(Version::isUnstable($package->getVersion()) ? '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '" role="img"></i> ' . $version : $version);
     }, attributes: new HtmlAttributes(['class' => ['rex-table-slim']])),
-    new TableColumn(I18n::msg('credits_supportpage'), static fn (Addon $package): TableCell => new TableCell(
+    new TableColumn(I18n::rawMsg('credits_supportpage'), static fn (Addon $package): TableCell => new TableCell(
         ($supportpage = $package->getSupportPage())
             ? Html::raw('<a href="' . escape($supportpage) . '" target="_blank" rel="noopener"><i class="rex-icon rex-icon-external-link" aria-hidden="true"></i> ' . I18n::msg('credits_supportpage') . '</a>')
             : null,
         attributes: new HtmlAttributes(['class' => ['rex-table-slim']]),
     )),
-    new TableColumn(I18n::msg('credits_license'), static fn (Addon $package): TableCell => new TableCell((string) $package->getLicense(), attributes: new HtmlAttributes(['class' => ['rex-table-width-6']]))),
-    new TableColumn(I18n::msg('credits_author'), static fn (Addon $package): string => (string) $package->getAuthor()),
+    new TableColumn(I18n::rawMsg('credits_license'), static fn (Addon $package): TableCell => new TableCell((string) $package->getLicense(), attributes: new HtmlAttributes(['class' => ['rex-table-width-6']]))),
+    new TableColumn(I18n::rawMsg('credits_author'), static fn (Addon $package): string => (string) $package->getAuthor()),
 ], Addon::getAll(), attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $fragment = new Fragment();

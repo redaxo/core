@@ -43,14 +43,14 @@ $list->column(
     link: static fn (array $row): ?string => $isCurrent($row) ? null : $list->getUrl(['user_id' => $userId, 'session_hash' => $hash($row)] + UserRemoveSession::getUrlParams()),
     linkAttributes: ['data-confirm' => I18n::msg('confirm_remove_session')],
 );
-$list->column('session_id', I18n::msg('session_id'), static fn (array $row): Html => Html::raw(
-    escape(substr($hash($row), 0, 12)) . ($row['cookie_key'] ? ' ' . (string) new Badge(I18n::msg('stay_logged_in'), BadgeVariant::Warning)->render() : ''),
+$list->column('session_id', I18n::rawMsg('session_id'), static fn (array $row): Html => Html::raw(
+    escape(substr($hash($row), 0, 12)) . ($row['cookie_key'] ? ' ' . (string) new Badge(I18n::rawMsg('stay_logged_in'), BadgeVariant::Warning)->render() : ''),
 ));
-$list->column('ip', I18n::msg('ip'));
-$list->column('useragent', I18n::msg('user_agent'));
-$list->column('starttime', I18n::msg('starttime'), static fn (array $row): string => Formatter::intlDateTime((string) $row['starttime'], IntlDateFormatter::SHORT));
-$list->column('last_activity', I18n::msg('last_activity'), static fn (array $row): string|Badge => $isCurrent($row)
-    ? new Badge(I18n::msg('active_session'), BadgeVariant::Info)
+$list->column('ip', I18n::rawMsg('ip'));
+$list->column('useragent', I18n::rawMsg('user_agent'));
+$list->column('starttime', I18n::rawMsg('starttime'), static fn (array $row): string => Formatter::intlDateTime((string) $row['starttime'], IntlDateFormatter::SHORT));
+$list->column('last_activity', I18n::rawMsg('last_activity'), static fn (array $row): string|Badge => $isCurrent($row)
+    ? new Badge(I18n::rawMsg('active_session'), BadgeVariant::Info)
     : Formatter::intlDateTime((string) $row['last_activity'], IntlDateFormatter::SHORT));
 $content = (string) $list->render();
 
