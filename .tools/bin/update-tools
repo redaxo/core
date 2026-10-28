@@ -24,7 +24,7 @@ composer outdated --ansi
 
 printf "\nUpdate npm packages\n"
 
-for package in esbuild mkdirp pixelmatch playwright pngjs stylelint; do
+for package in @axe-core/playwright esbuild mkdirp pixelmatch playwright pngjs stylelint; do
     npm pkg set "devDependencies.$package=$(npm view "$package" version)"
 done
 

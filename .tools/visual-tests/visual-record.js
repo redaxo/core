@@ -13,6 +13,7 @@
  */
 
 import playwright from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
 import pixelmatch from 'pixelmatch';
 import {PNG} from 'pngjs';
 import fs from 'fs';
@@ -117,11 +118,11 @@ async function processScreenshot(page, screenshotName) {
     // mask dynamic content, to make it not appear like change (visual noise)
     await page.evaluate(function() {
         var changingElements = [
-            '.rex-js-script-time',
+            '.rex-footer-list li:last-child',
             'td[data-title="Letzter Login"]',
             '#rex-form-exportfilename',
-            '#rex-page-system-settings .col-lg-4 td',
-            '#rex-page-system-report-html .row td',
+            '#rex-page-system-settings .rex-grid > div:last-child td',
+            '#rex-page-system-report-html .rex-grid td',
             'td[data-title="Version"]',
             'td[data-title="Erstellt am"]',
             'td[data-title="Zeit"] small:first-child', // system log items
@@ -165,6 +166,25 @@ async function processScreenshot(page, screenshotName) {
     }
 }
 
+// every recorded page is checked with axe in both color schemes; serious and critical violations are A11Y-ERROR, the
+// workflow fails on them after all screenshots are recorded
+const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+const A11Y_LOG = WORKING_DIR + 'a11y.log';
+
+async function checkAccessibility(page, name) {
+    const results = await new AxeBuilder({ page })
+        .withTags(AXE_TAGS)
+        // the output of modules is frontend content
+        .exclude('.rex-slice-output .rex-section-body')
+        .analyze();
+    for (const violation of results.violations) {
+        const level = ['serious', 'critical'].includes(violation.impact) ? 'A11Y-ERROR' : 'A11Y-WARNING';
+        const line = `${level}: ${name}: ${violation.id} (${violation.impact}): ${violation.nodes.map(node => node.target.join(' ')).join(', ')}`;
+        console.log(line);
+        fs.appendFileSync(A11Y_LOG, line + '\n');
+    }
+}
+
 async function createScreenshots(page, screenshotName) {
     const darkName = screenshotName.replace('.png', '--dark.png');
     expectedFiles.add(screenshotName);
@@ -172,9 +192,11 @@ async function createScreenshots(page, screenshotName) {
 
     await page.emulateMedia({ colorScheme: 'light' });
     await processScreenshot(page, screenshotName);
+    await checkAccessibility(page, screenshotName);
 
     await page.emulateMedia({ colorScheme: 'dark' });
     await processScreenshot(page, darkName);
+    await checkAccessibility(page, darkName);
 }
 
 async function logIntoBackend(page, username = 'myusername', password = 'mypassword') {

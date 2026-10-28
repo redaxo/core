@@ -129,6 +129,14 @@ jobs:
                     git add .tools/visual-tests/screenshots/
                     git diff --cached --exit-code --name-only .tools/visual-tests/screenshots/
 
+            -   name: Check accessibility (axe)
+                if: always()
+                run: |
+                    if grep -q '^A11Y-ERROR' .tests-visual/a11y.log 2>/dev/null; then
+                        grep '^A11Y-' .tests-visual/a11y.log
+                        exit 1
+                    fi
+
             -   name: Commit changed files
                 uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
                 if: failure() && env.writable == 1
