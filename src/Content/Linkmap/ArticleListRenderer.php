@@ -45,7 +45,7 @@ abstract class ArticleListRenderer
             }
 
             if ('' != $list) {
-                $list = '<ul class="list-group rex-linkmap-list-group">' . $list . '</ul>';
+                $list = '<ul class="rex-list rex-linkmap-list">' . $list . '</ul>';
             }
         }
         return $list;

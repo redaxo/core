@@ -1,4 +1,4 @@
-/* List groups (`.list-group`), e.g. the categories and articles of the linkmap */
+/* Bootstrap 3 list groups (`.list-group`) and `.thumbnail` for addons; the core uses `.rex-list` (components/list.css) */
 
 @layer bootstrap {
     .list-group {
@@ -90,37 +90,6 @@
         }
     }
 
-    .rex-linkmap-list-group .list-group-item > a {
-        position: relative;
-        display: inline-block;
-        padding-left: 20px;
-
-        & > .rex-icon {
-            position: absolute;
-            top: 2px;
-            left: 0;
-        }
-    }
-
-    /* additional info after a list entry, in brackets */
-    .list-item-suffix {
-        display: inline-block;
-        margin-left: 0.5em;
-        color: var(--rex-color-text-muted);
-        font-size: var(--rex-font-size-small);
-
-        a:hover & {
-            text-decoration: none;
-        }
-
-        &::before {
-            content: "[";
-        }
-
-        &::after {
-            content: "]";
-        }
-    }
 
     .thumbnail {
         display: block;

@@ -24,17 +24,17 @@ final class ArticleList extends ArticleListRenderer
             default => 'article',
         };
 
-        return '<li class="list-group-item rex-linkmap-list-item-article">'
-            . '<a ' . new HtmlAttributes([
-                'href' => '#',
+        return '<li class="rex-list-item">'
+            . '<button ' . new HtmlAttributes([
+                'type' => 'button',
                 'class' => $linkClass,
                 'data-rex-pick' => (string) $article->id,
                 'data-rex-pick-label' => trim(sprintf('%s [%s]', $article->name, $article->id)),
             ])->toString() . '>'
-            . '<i class="rex-icon rex-icon-' . $iconType . '"></i> '
+            . '<i class="rex-icon rex-icon-' . $iconType . '" aria-hidden="true"></i> '
             . escape($label)
-            . '<span class="list-item-suffix">' . $article->id . '</span>'
-            . '</a>'
+            . '<span class="rex-list-suffix">' . $article->id . '</span>'
+            . '</button>'
             . '</li>' . "\n";
     }
 }

@@ -185,7 +185,7 @@
         border: 1px solid var(--rex-color-border);
         border-radius: 0;
 
-        .list-group-item & {
+        .rex-list-item & {
             margin-bottom: 0;
         }
 

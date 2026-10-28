@@ -51,7 +51,7 @@
             font-size: var(--rex-font-size-small);
             vertical-align: middle;
 
-            .list-group-item > & {
+            .rex-list-item > & {
                 float: right;
             }
         }

@@ -33,7 +33,9 @@ final class CategoryTree extends CategoryTreeRenderer
         $badgeCat = ($countChildren > 0) ? '<span class="rex-badge" data-shape="pill">' . $countChildren . '</span>' : '';
         $li = '';
         $li .= '<li' . $liClasses . '>';
-        $li .= '<a' . $linkClasses . ' href="' . $this->context->getUrl(['category_id' => $cat->id]) . '">' . $liIcon . escape($label) . '<span class="list-item-suffix">' . $cat->id . '</span></a>';
+        // the categories on the path to the current one
+        $current = str_contains($linkClasses, 'rex-active') ? ' aria-current="location"' : '';
+        $li .= '<a' . $linkClasses . $current . ' href="' . $this->context->getUrl(['category_id' => $cat->id]) . '">' . $liIcon . escape($label) . '<span class="rex-list-suffix">' . $cat->id . '</span></a>';
         $li .= $badgeCat;
         $li .= $subHtml;
         $li .= '</li>' . "\n";
