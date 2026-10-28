@@ -1,7 +1,7 @@
 /*
- Styles for the Bootstrap 3 markup (`.btn`, …) that addons may still output; the core itself uses the REDAXO
- components. Built into assets/css/bootstrap-compat.css, loaded after backend.css and deprecated, it goes away with
- REDAXO 7.
+ Styles for the Bootstrap 3 markup (`.btn`, `.form-control`, `.table` …) and the former utility names that addons may
+ still output; the core itself uses the REDAXO components. Built into assets/css/bootstrap-compat.css, loaded only
+ when an addon calls `Asset::requireBootstrapCompat()`; deprecated, it goes away with REDAXO 7.
 
  Build: npm run build:backend-css
  */

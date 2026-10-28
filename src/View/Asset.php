@@ -3,6 +3,7 @@
 namespace Redaxo\Core\View;
 
 use Redaxo\Core\Exception\RuntimeException;
+use Redaxo\Core\Filesystem\Url;
 
 use function in_array;
 use function sprintf;
@@ -25,6 +26,20 @@ final class Asset
     private static ?string $favicon = null;
 
     private function __construct() {}
+
+    /**
+     * Loads the styles of the Bootstrap 3 markup (`.btn`, `.form-control`, `.table` …), for addons that still output
+     * it; the core itself uses its own components. Can be called several times.
+     *
+     * @deprecated since 6.0, move the markup to the REDAXO components; the styles go away with REDAXO 7
+     */
+    public static function requireBootstrapCompat(): void
+    {
+        $file = Url::coreAssets('css/bootstrap-compat.css');
+        if (!in_array($file, self::$cssFiles['all'] ?? [], true)) {
+            self::$cssFiles['all'][] = $file;
+        }
+    }
 
     /** Adds a CSS file. */
     public static function addCssFile(string $file, string $media = 'all'): void

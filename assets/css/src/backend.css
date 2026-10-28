@@ -3,7 +3,7 @@
 
  Layers, lowest first:
  - base: element styles
- - bootstrap: styles of the Bootstrap 3 markup still used by the core (the rest is in bootstrap-compat.css)
+ - bootstrap: empty here, bootstrap-compat.css puts the styles of the Bootstrap 3 markup in it for addons
  - tokens: the design tokens
  - components: the REDAXO components (`.rex-…`), they may refine the bootstrap ones
  - utilities: single purpose classes
