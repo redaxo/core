@@ -37,10 +37,10 @@ $archiveFolder = MailArchive::folder();
 $archiveExists = is_dir($archiveFolder);
 
 // Two-column layout for Archive Information and Archive Maintenance
-echo '<div class="rex-grid" data-columns="6 6">';
+echo '<div class="rex-grid">';
 
 // Archive Information Panel (left column)
-echo '<div>';
+echo '<div data-span="md:6">';
 $content = '';
 
 // Archive Status Panel
@@ -83,7 +83,7 @@ echo $fragment->parse('core/page/section.php');
 echo '</div>';
 
 // Archive Maintenance Panel (right column)
-echo '<div>';
+echo '<div data-span="md:6">';
 $content = '';
 $content .= '<p>' . I18n::msg('mailer_archive_purge_info') . '</p>';
 

@@ -292,8 +292,8 @@ $fragment->setVar('buttons', $buttons, false);
 $addPasskey = $fragment->parse('core/page/section.php');
 
 $content = '
-    <div class="rex-grid" data-columns="6 6">
-        <div>
+    <div class="rex-grid">
+        <div data-span="md:6">
             <form action="' . Url::currentBackendPage() . '" method="post" data-auth-change-password>
                 ' . $csrfToken->getHiddenField() . '
                 ' . $changePassword . '
@@ -301,7 +301,7 @@ $content = '
         </div>';
 if (!$passwordChangeRequired) {
     $content .= '
-        <div>
+        <div data-span="md:6">
             <form class="rex-u-hidden" action="' . Url::currentBackendPage() . '" method="post" data-auth-add-passkey>
                 <input type="hidden" name="function" value="add_passkey"/>
                 ' . $csrfToken->getHiddenField() . '

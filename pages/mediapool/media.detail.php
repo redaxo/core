@@ -293,7 +293,7 @@ if ($TPERM) {
     if ('' != $sidebar) {
         $fragment = new Fragment();
         $fragment->setVar('content', [$panel, $sidebar], false);
-        $fragment->setVar('classes', ['col-sm-8', 'col-sm-4'], false);
+        $fragment->setVar('spans', ['sm:8', 'sm:4'], false);
         $panel = $fragment->parse('core/page/grid.php');
     }
 
@@ -360,7 +360,7 @@ if ($TPERM) {
     if ('' != $sidebar) {
         $fragment = new Fragment();
         $fragment->setVar('content', [$panel, $sidebar], false);
-        $fragment->setVar('classes', ['col-sm-8', 'col-sm-4'], false);
+        $fragment->setVar('spans', ['sm:8', 'sm:4'], false);
         $panel = $fragment->parse('core/page/grid.php');
     }
 

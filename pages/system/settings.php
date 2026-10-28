@@ -222,5 +222,5 @@ $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCook
 
 $fragment = new Fragment();
 $fragment->setVar('content', [implode('', $mainContent), implode('', $sideContent)], false);
-$fragment->setVar('classes', ['col-lg-8', 'col-lg-4'], false);
+$fragment->setVar('spans', ['lg:8', 'lg:4'], false);
 echo $fragment->parse('core/page/grid.php');

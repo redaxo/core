@@ -75,5 +75,5 @@ $content[] = $fragment->parse('core/page/section.php');
 
 $fragment = new Fragment();
 $fragment->setVar('content', $content, false);
-$fragment->setVar('classes', ['col-sm-6', 'col-sm-6'], false);
+$fragment->setVar('spans', ['sm:6', 'sm:6'], false);
 echo $fragment->parse('core/page/grid.php');
