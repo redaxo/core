@@ -135,7 +135,7 @@ if ($archiveExists) {
         TableColumn::forKey(I18n::msg('mailer_archive_to'), 'to'),
         TableColumn::forKey(I18n::msg('mailer_archive_size'), 'size', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
     ], $rows ?: [new TableRow([new TableCell(I18n::msg('mailer_archive_no_files'), 4, new HtmlAttributes(['class' => ['text-muted', 'text-center']]))])],
-        attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
+        attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', I18n::msg('mailer_archive_recent_mails'), false);

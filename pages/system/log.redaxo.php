@@ -107,7 +107,7 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
 $content = (string) new Table([
     TableColumn::forKey(I18n::msg('syslog_timestamp'), 'time', ColumnType::Date, new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
     TableColumn::forKey(I18n::msg('syslog_message'), 'message'),
-], $rows, attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
+], $rows, attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $formElements = [];
 

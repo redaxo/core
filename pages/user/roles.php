@@ -48,7 +48,7 @@ if ('' == $func) {
     $title = I18n::msg('user_role_caption');
 
     $list = new DataList('SELECT id, name FROM rex_user_role ORDER BY name');
-    $list->attributes = new HtmlAttributes(['class' => ['table-striped', 'table-hover']]);
+    $list->attributes = new HtmlAttributes(['data-hover' => true]);
     $editUrl = static fn (array $row): string => $list->getUrl(['func' => 'edit', 'id' => (int) $row['id']]);
 
     $list->column(

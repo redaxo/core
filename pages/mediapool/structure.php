@@ -136,7 +136,7 @@ if ($PERMALL) {
         new TableColumn(null, static fn (MediaCategory $category): Html => Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), ColumnType::Action),
     ], [...('add_cat' == $mediaMethod ? [null] : []), ...$OOCats],
         rowAttributes: static fn (?MediaCategory $category): HtmlAttributes => new HtmlAttributes(['class' => ['mark' => null === $category || $form($category)]]),
-        attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+        attributes: new HtmlAttributes(['data-hover' => true]),
     )->render();
 
     $fragment = new Fragment();

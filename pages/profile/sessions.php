@@ -28,7 +28,7 @@ $list = new DataList('
     WHERE user_id = ' . $userId . '
     ORDER BY session_id = ' . Sql::factory()->escape((string) session_id()) . ' DESC, last_activity DESC
 ');
-$list->attributes = new HtmlAttributes(['class' => ['table-hover']]);
+$list->attributes = new HtmlAttributes(['data-hover' => true]);
 
 $isCurrent = static fn (array $row): bool => $row['session_id'] === session_id();
 // the session id itself must not be exposed, a short hash is enough to tell the sessions apart

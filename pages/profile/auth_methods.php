@@ -26,7 +26,7 @@ $list = new DataList('
     union
     select id, createdate from rex_user_passkey where user_id = ' . $userId . '
 ');
-$list->attributes = new HtmlAttributes(['class' => ['table-hover']]);
+$list->attributes = new HtmlAttributes(['data-hover' => true]);
 
 $currentAuth = $userId == Core::requireUser()->id ? BackendLogin::requireCurrent()->getPasskey() : false;
 // the current auth method can not be removed

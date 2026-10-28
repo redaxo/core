@@ -55,7 +55,7 @@ if (!is_file($logFile) || !is_readable($logFile) || filesize($logFile) <= 0) {
 
 $content = (string) new Table([
     new TableColumn('', static fn (string $line): string => $line),
-], $rows, attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
+], $rows, attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('syslog_title', $logFile), false);

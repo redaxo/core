@@ -76,7 +76,7 @@ $content = (string) new Table([
     )),
     new TableColumn(I18n::msg('credits_license'), static fn (Addon $package): TableCell => new TableCell((string) $package->getLicense(), attributes: new HtmlAttributes(['class' => ['rex-table-width-6']]))),
     new TableColumn(I18n::msg('credits_author'), static fn (Addon $package): string => (string) $package->getAuthor()),
-], Addon::getAll(), rowAttributes: static fn (): HtmlAttributes => new HtmlAttributes(['class' => ['rex-package-is-addon']]), attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
+], Addon::getAll(), rowAttributes: static fn (): HtmlAttributes => new HtmlAttributes(['class' => ['rex-package-is-addon']]), attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('credits_caption'), false);

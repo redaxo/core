@@ -1,9 +1,11 @@
 /*
- Tables (`.table`): column helpers (`.rex-table-*`), highlighted rows (`tr.mark`), row states (`.rex-state-*`) and,
- below 768px, one block per row with the column titles taken from `data-title`
+ Tables (`.rex-table`, Redaxo\Core\View\Component\Table): `data-hover` highlights the row under the pointer,
+ `data-bordered` draws all cell borders, `data-density="compact"` reduces the padding. Column helpers
+ (`.rex-table-*`), highlighted rows (`tr.mark`), row states (`.rex-state-*`) and, below 768px, one block per row with
+ the column titles taken from `data-title`.
  */
 
-@layer bootstrap {
+@layer components {
     table {
         background-color: var(--rex-color-surface);
     }
@@ -14,8 +16,8 @@
         text-align: left;
     }
 
-    .table {
-        --table-border: var(--rex-color-border);
+    .rex-table {
+        --rex-table-border: var(--rex-color-border);
 
         width: 100%;
         max-width: 100%;
@@ -23,13 +25,13 @@
 
         & > :is(thead, tbody, tfoot) > tr > :is(th, td) {
             padding: 8px;
-            border-top: 1px solid var(--table-border);
+            border-top: 1px solid var(--rex-table-border);
             line-height: var(--rex-line-height);
             vertical-align: top;
         }
 
         & > thead > tr > th {
-            border-bottom: 2px solid var(--table-border);
+            border-bottom: 2px solid var(--rex-table-border);
             vertical-align: bottom;
         }
 
@@ -39,15 +41,11 @@
         }
 
         & > tbody + tbody {
-            border-top: 2px solid var(--table-border);
+            border-top: 2px solid var(--rex-table-border);
         }
 
-        & .table {
+        & .rex-table {
             background-color: var(--rex-color-surface-subtle);
-        }
-
-        & tr .alert {
-            margin: -8px;
         }
 
         & > tbody > tr > td > h3 {
@@ -61,15 +59,15 @@
         }
     }
 
-    .table-condensed > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+    .rex-table[data-density="compact"] > :is(thead, tbody, tfoot) > tr > :is(th, td) {
         padding: 5px;
     }
 
-    .table-bordered {
-        border: 1px solid var(--table-border);
+    .rex-table[data-bordered] {
+        border: 1px solid var(--rex-table-border);
 
         & > :is(thead, tbody, tfoot) > tr > :is(th, td) {
-            border: 1px solid var(--table-border);
+            border: 1px solid var(--rex-table-border);
         }
 
         & > thead > tr > :is(th, td) {
@@ -77,12 +75,12 @@
         }
     }
 
-    .table-hover > tbody > tr:hover {
+    .rex-table[data-hover] > tbody > tr:hover {
         background-color: var(--rex-color-surface-subtle);
     }
 
     /* highlighted row, e.g. the add and edit rows of the structure */
-    .table > tbody > tr.mark {
+    .rex-table > tbody > tr.mark {
         background-color: var(--rex-color-surface-muted);
 
         & > :is(th, td) {
@@ -143,7 +141,7 @@
 
     /* columns */
     @media (min-width: 992px) {
-        .table :is(th, td) {
+        .rex-table :is(th, td) {
             &.rex-table-icon {
                 width: 40px;
                 min-width: 40px;
@@ -207,14 +205,14 @@
     }
 
     @media (min-width: 1200px) {
-        .table :is(th, td).rex-table-action {
+        .rex-table :is(th, td).rex-table-action {
             padding-inline: 16px;
         }
     }
 
     /* small screens: each row becomes a block, each cell a line with its column title on the left */
     @media (max-width: 767px) {
-        .table {
+        .rex-table {
             position: relative;
 
             &,
@@ -252,7 +250,7 @@
             }
 
             & > tbody > tr {
-                border-bottom: 1px solid var(--table-border);
+                border-bottom: 1px solid var(--rex-table-border);
 
                 &:last-child {
                     border-bottom: 0;
@@ -284,7 +282,7 @@
                 }
             }
 
-            &.table-condensed > tbody > tr > :is(th[data-title], td)::before {
+            &.rex-table[data-density="compact"] > tbody > tr > :is(th[data-title], td)::before {
                 padding: 5px;
             }
 

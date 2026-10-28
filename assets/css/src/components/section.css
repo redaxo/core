@@ -149,11 +149,11 @@
     }
 
     /* tables and lists without padding (Section::$content) run to the edges */
-    :is(.rex-section, .rex-section__collapse, .rex-section > form, .rex-section > form > fieldset) > .table {
+    :is(.rex-section, .rex-section__collapse, .rex-section > form, .rex-section > form > fieldset) > :is(.table, .rex-table) {
         margin-bottom: 0;
     }
 
-    .rex-section > .table {
+    .rex-section > :is(.table, .rex-table) {
         & caption {
             padding-inline: 15px;
         }
@@ -162,7 +162,7 @@
             border-top: 0;
         }
 
-        &.table-bordered {
+        &:is(.table-bordered, [data-bordered]) {
             border: 0;
 
             & > :is(thead, tbody, tfoot) > tr > :first-child {
@@ -179,8 +179,8 @@
         }
     }
 
-    .rex-section__body + .table,
-    .rex-section > .table + .rex-section__body {
+    .rex-section__body + :is(.table, .rex-table),
+    .rex-section > :is(.table, .rex-table) + .rex-section__body {
         border-top: 1px solid var(--rex-color-border);
     }
 

@@ -46,7 +46,7 @@ final class DataList implements Renderable, UrlProviderInterface
     public string|Renderable $empty;
     /** @var (Closure(array<string, scalar|null>): HtmlAttributes)|null attributes of a row, e.g. a state class */
     public ?Closure $rowAttributes = null;
-    /** Attributes of the table, e.g. `table-hover` */
+    /** Attributes of the table, e.g. `data-hover` */
     public HtmlAttributes $attributes;
 
     /** @var array<string, string|int> */

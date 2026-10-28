@@ -58,7 +58,7 @@ return static function (Table $table): void {
         return '<' . $tag . ' ' . $cell->attributes->with(['colspan' => $cell->colspan > 1 ? $cell->colspan : null])->toString() . '>' . $content($cell->content) . '</' . $tag . '>';
     };
     ?>
-    <table <?= $table->attributes->with(['class' => ['table']]) ?>>
+    <table <?= $table->attributes->with(['class' => ['rex-table']]) ?>>
         <?php if ($filled($table->caption)): ?>
             <caption><?= Html::from($table->caption) ?></caption>
         <?php endif ?>
@@ -114,7 +114,7 @@ return static function (Table $table): void {
                 </tr>
             <?php endforeach ?>
             <?php if ($empty && $filled($table->empty)): ?>
-                <tr class="table-no-results"><td colspan="<?= count($table->columns) ?>"><?= Html::from($table->empty) ?></td></tr>
+                <tr><td colspan="<?= count($table->columns) ?>"><?= Html::from($table->empty) ?></td></tr>
             <?php endif ?>
         </tbody>
     </table>

@@ -320,7 +320,7 @@
             width: 100%;
             table-layout: fixed;
 
-            .table & {
+            :is(.table, .rex-table) & {
                 table-layout: auto;
             }
 
@@ -395,7 +395,7 @@
             }
         }
 
-        .table tr:not(.collapse, .collapsing) & {
+        :is(.table, .rex-table) tr:not(.collapse, .collapsing) & {
             padding-left: 0;
         }
     }
@@ -442,7 +442,7 @@
         }
     }
 
-    .table + .rex-section__footer .rex-form-aligned {
+    :is(.table, .rex-table) + .rex-section__footer .rex-form-aligned {
         margin-left: 0;
     }
 }

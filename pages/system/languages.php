@@ -207,7 +207,7 @@ $content .= (string) new Table(
     ],
     array_filter($rows),
     rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes(['class' => ['mark' => (bool) ($row['mark'] ?? false)]]),
-    attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+    attributes: new HtmlAttributes(['data-hover' => true]),
 )->render();
 
 echo $message;

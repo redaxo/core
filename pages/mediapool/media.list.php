@@ -345,7 +345,7 @@ $panel .= (string) new Table(
     $rows,
     footer: Html::raw($footer),
     stickyFooter: true,
-    attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+    attributes: new HtmlAttributes(['data-hover' => true]),
 )->render();
 
 $panel .= '

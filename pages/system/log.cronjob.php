@@ -74,7 +74,7 @@ $content .= (string) new Table([
     TableColumn::forKey(I18n::msg('cronjob_trigger'), 'trigger'),
 ], $rows, rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes([
     'class' => $row['error'] ? 'rex-state-error' : 'rex-state-success',
-]), attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
+]), attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $formElements = [];
 
@@ -164,7 +164,7 @@ if (!$cronjobs) {
             }
             return Formatter::intlDateTime($cronjob->getNextRunDate($states[$cronjob->name]['lastRun'] ?? $now));
         }, attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
-    ], $cronjobs, attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]))->render();
+    ], $cronjobs, attributes: new HtmlAttributes(['data-hover' => true]))->render();
 }
 
 $fragment = new Fragment();

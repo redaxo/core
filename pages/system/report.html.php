@@ -44,7 +44,7 @@ foreach ($report as $title => $group) {
     $content = (string) new Table([
         TableColumn::forKey('', 0, attributes: new HtmlAttributes(['width' => '120']), rowHeader: true),
         TableColumn::forKey('', 1),
-    ], $rows, attributes: new HtmlAttributes(['class' => ['table-hover', 'table-bordered']]))->render();
+    ], $rows, attributes: new HtmlAttributes(['data-hover' => true, 'data-bordered' => true]))->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', $title);

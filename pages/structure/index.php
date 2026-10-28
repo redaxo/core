@@ -312,7 +312,7 @@ $echo .= (string) new Table(
     ],
     array_filter($rows),
     rowAttributes: static fn (array $row): HtmlAttributes => Type::instanceOf($row['attributes'], HtmlAttributes::class),
-    attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+    attributes: new HtmlAttributes(['data-hover' => true]),
 )->render();
 
 if ('add_cat' === $structureContext->function || 'edit_cat' === $structureContext->function) {
@@ -526,7 +526,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         ],
         $rows,
         rowAttributes: static fn (array $row): HtmlAttributes => Type::instanceOf($row['attributes'], HtmlAttributes::class),
-        attributes: new HtmlAttributes(['class' => ['table-striped', 'table-hover']]),
+        attributes: new HtmlAttributes(['data-hover' => true]),
     )->render();
 
     if ('add_art' === $structureContext->function || 'edit_art' === $structureContext->function) {

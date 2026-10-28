@@ -67,7 +67,7 @@ $content = (string) new Table([
     TableColumn::forKey(I18n::msg('mailer_log_msg'), 'message'),
 ], $rows, rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes([
     'class' => $row['error'] ? 'rex-state-error' : 'rex-mailer-log-ok',
-]), attributes: new HtmlAttributes(['class' => ['table-hover']]))->render();
+]), attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $formElements = [];
 $n = [];

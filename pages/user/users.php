@@ -304,7 +304,7 @@ $list = new DataList('
     FROM rex_user u
     ' . $where . '
 ', defaultSort: ['name' => 'asc']);
-$list->attributes = new HtmlAttributes(['class' => ['table-striped', 'table-hover']]);
+$list->attributes = new HtmlAttributes(['data-hover' => true]);
 
 // only admins edit admins
 $editUrl = static fn (array $row): ?string => !$row['admin'] || $currentUser->admin ? $list->getUrl(['user_id' => (int) $row['id']]) : null;
