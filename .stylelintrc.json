@@ -2,12 +2,14 @@
     "rules": {
         "color-named": "never",
         "color-no-hex": true,
-        "function-disallowed-list": ["rgb", "rgba", "hsl", "hsla", "light-dark"],
+        "function-disallowed-list": ["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch", "color", "light-dark"],
         "declaration-property-unit-disallowed-list": {
             "font-size": ["px"]
         },
         "declaration-property-value-disallowed-list": {
-            "outline": ["none", "0"]
+            "outline": ["/(^|\\s)none(\\s|$)/", "/^0(px)?(\\s|$)/"],
+            "outline-style": ["none"],
+            "outline-width": ["/^0(px)?$/"]
         }
     },
     "overrides": [
