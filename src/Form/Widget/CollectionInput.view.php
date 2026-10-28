@@ -3,7 +3,6 @@
 use Redaxo\Core\Form\Widget\CollectionInput;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Html;
-use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
 
@@ -22,7 +21,7 @@ return static function (CollectionInput $input): void {
             <div class="rex-section__body"><?= $fields ?></div>
         </div>
     <?php } ?>
-    <div <?= new HtmlAttributes([
+    <div <?= $input->attributes->with([
         'class' => 'rex-form-collection',
         'id' => $input->id,
         'data-rex-collection' => true,

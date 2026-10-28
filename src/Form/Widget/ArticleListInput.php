@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Form\Widget;
 
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\RendersView;
 
 /**
@@ -21,6 +22,7 @@ final class ArticleListInput implements Widget
         /** Category the linkmap opens in; defaults to the current category. */
         public ?int $categoryId = null,
         public bool $disabled = false,
+        public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 
     public function labelTarget(): string

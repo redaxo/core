@@ -221,6 +221,7 @@ Asset::setJsProperty('accesskeys', Accesskey::$enabled);
 
 $i18n = [
     'overlay_close' => I18n::msg('overlay_close'),
+    'password_show' => I18n::msg('password_show'),
     'dialog_confirm' => I18n::msg('dialog_confirm'),
     'dialog_cancel' => I18n::msg('dialog_cancel'),
     'select_all' => I18n::msg('select_all'),

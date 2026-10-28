@@ -1,0 +1,101 @@
+/*
+ Form field: label, control, note and error (Redaxo\Core\Form\FieldRow, fragment core/form/form.php); from 992px the
+ label sits left of the control unless `data-layout="vertical"`. A group of controls is a fieldset with a legend.
+ */
+
+@layer components {
+    .rex-field {
+        --rex-field-label-width: 180px;
+
+        display: flow-root;
+        min-width: 0;
+        margin: 0 0 15px;
+        padding: 0;
+        border: 0;
+    }
+
+    .rex-field.rex-form-group-no-margin {
+        margin-bottom: 0;
+    }
+
+    .rex-field-label {
+        display: block;
+        margin: 0 0 5px;
+        padding: 0;
+        border: 0;
+        color: var(--rex-color-text);
+        font-size: var(--rex-font-size);
+        font-weight: 700;
+    }
+
+    .rex-field-required {
+        margin-left: 2px;
+        color: var(--rex-color-danger-text);
+    }
+
+    .rex-field-note {
+        margin: 5px 0 10px;
+        color: var(--rex-color-text-muted);
+    }
+
+    .rex-field-error {
+        margin: 5px 0 0;
+        color: var(--rex-color-danger-text);
+        font-weight: 700;
+    }
+
+    [aria-invalid="true"]:is(.form-control, .rex-select-toggle) {
+        border-color: var(--rex-color-danger-text);
+    }
+
+    @media (min-width: 992px) {
+        .rex-field:not([data-layout="vertical"]) {
+            & > .rex-field-label {
+                float: left;
+                width: var(--rex-field-label-width);
+                margin: 0;
+                padding: 7px 15px 0 0;
+            }
+
+            & > .rex-field-control {
+                margin-left: var(--rex-field-label-width);
+
+                & :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                    margin-top: 7px;
+                    margin-bottom: 7px;
+                }
+
+                & .input-group :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+            }
+
+            & textarea:not([rows]) {
+                min-height: 25em;
+            }
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .rex-field {
+            --rex-field-label-width: 210px;
+        }
+
+        .rex-field:not([data-layout="vertical"]) {
+            & > .rex-field-label {
+                padding-right: 30px;
+            }
+
+            & textarea:not([rows]) {
+                min-height: 35em;
+            }
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .rex-field {
+            --rex-field-label-width: 300px;
+        }
+    }
+}

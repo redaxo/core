@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\Form\Widget;
 
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\RendersView;
 
 /**
@@ -24,6 +25,7 @@ final class MediaInput implements Widget
         /** Whether to show a preview of the selected medium. */
         public bool $preview = false,
         public bool $disabled = false,
+        public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 
     public function labelTarget(): string

@@ -153,14 +153,20 @@ function addPasswordToggle(input) {
 
     const addon = document.createElement('span');
     addon.className = 'input-group-btn';
-    addon.innerHTML = '<button type="button" class="btn btn-view" tabindex="-1"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
+    addon.innerHTML = '<button type="button" class="btn btn-view" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
     input.after(addon);
 
-    addon.querySelector('button').addEventListener('click', event => {
+    const button = addon.querySelector('button');
+    button.setAttribute('aria-label', window.rex.i18n?.password_show ?? 'Show password');
+    if (input.id) {
+        button.setAttribute('aria-controls', input.id);
+    }
+    button.addEventListener('click', event => {
         event.preventDefault();
         const visible = 'password' === input.type;
         input.type = visible ? 'text' : 'password';
-        addon.querySelector('i').className = 'rex-icon ' + (visible ? 'rex-icon-hide' : 'rex-icon-view');
+        button.setAttribute('aria-pressed', String(visible));
+        button.querySelector('i').className = 'rex-icon ' + (visible ? 'rex-icon-hide' : 'rex-icon-view');
     });
 }
 

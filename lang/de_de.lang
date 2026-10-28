@@ -249,6 +249,7 @@ select_all = Alle auswählen
 select_none = Keine auswählen
 select_no_results = Keine Treffer
 overlay_close = Schließen
+password_show = Passwort anzeigen
 
 password_change_required = Das Passwort ist abgelaufen. Um fortzufahren, bitte ein neues Passwort angeben!
 password_not_changed = Das neue Passwort muss sich vom vorherigen unterscheiden!

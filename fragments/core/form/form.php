@@ -11,8 +11,8 @@ $out = '';
 
 foreach ($this->elements as $element) {
     $id = isset($element['id']) && '' != $element['id'] ? ' id="' . $element['id'] . '"' : '';
-    $label = isset($element['label']) && '' != $element['label'] ? '<dt>' . $element['label'] . '</dt>' : '';
-    $field = isset($element['field']) && '' != $element['field'] ? $element['field'] : '';
+    $label = $element['label'] ?? '';
+    $field = $element['field'] ?? '';
 
     $before = $element['before'] ?? '';
     $after = $element['after'] ?? '';
@@ -20,28 +20,38 @@ foreach ($this->elements as $element) {
     $header = $element['header'] ?? '';
     $footer = $element['footer'] ?? '';
 
-    $note = isset($element['note']) && '' != $element['note'] ? '<p class="help-block rex-note">' . $element['note'] . '</p>' : '';
-
-    $vertical = isset($element['vertical']) && true === $element['vertical'] ? '-vertical' : '';
-    $classes = 'rex-form-group' . $vertical . ' form-group';
+    // note and error describe the field the label points to
+    $target = preg_match('/\bfor="([^"]+)"/', $label, $match) ? $match[1] : 'rex-field-' . bin2hex(random_bytes(4));
+    $describedBy = [];
 
     $error = '';
     if (isset($element['error']) && '' != $element['error']) {
-        $classes .= ' has-error';
-        $error = '<p class="rex-form-error">' . $element['error'] . '</p>';
+        $error = '<p class="rex-field-error" id="' . $target . '-error">' . $element['error'] . '</p>';
+        $describedBy[] = $target . '-error';
     }
-    if (isset($element['required']) && $element['required']) {
-        $classes .= ' rex-is-required';
+
+    $note = '';
+    if (isset($element['note']) && '' != $element['note']) {
+        $note = '<p class="rex-field-note" id="' . $target . '-note">' . $element['note'] . '</p>';
+        $describedBy[] = $target . '-note';
     }
+
+    if ($describedBy) {
+        $attributes = ' aria-describedby="' . implode(' ', $describedBy) . '"' . ('' === $error ? '' : ' aria-invalid="true"');
+        $field = preg_replace('/(<(?:input|select|textarea)\b[^>]*\bid="' . preg_quote($target, '/') . '")/', '$1' . $attributes, $field, 1) ?? $field;
+    }
+
+    $classes = 'rex-field';
     if (isset($element['class']) && '' != $element['class']) {
         $classes .= ' ' . $element['class'];
     }
+    $layout = isset($element['vertical']) && true === $element['vertical'] ? ' data-layout="vertical"' : '';
 
     $out .= $header;
-    $out .= '<dl class="' . $classes . '"' . $id . '>';
-    $out .= $label;
-    $out .= '<dd>' . $before . $field . $after . $note . $error . '</dd>';
-    $out .= '</dl>';
+    $out .= '<div class="' . $classes . '"' . $layout . $id . '>';
+    $out .= '' == $label ? '' : '<div class="rex-field-label">' . $label . '</div>';
+    $out .= '<div class="rex-field-control">' . $before . $field . $after . $note . $error . '</div>';
+    $out .= '</div>';
     $out .= $footer;
 }
 

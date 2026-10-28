@@ -28,7 +28,7 @@ return static function (ArticleListInput $input): void {
             'language' => Language::getCurrentId(),
         ], JSON_THROW_ON_ERROR),
     ]) ?>>
-        <select <?= new HtmlAttributes(['class' => ['form-control'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
+        <select <?= $input->attributes->with(['class' => ['form-control'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
             <?php foreach ($input->articleIds as $articleId): ?>
                 <?php if ($article = Article::get($articleId)): ?>
                     <option value="<?= $article->id ?>"><?= escape($article->name . ' [' . $article->id . ']') ?></option>

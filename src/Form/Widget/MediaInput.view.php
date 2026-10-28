@@ -21,7 +21,7 @@ return static function (MediaInput $input): void {
         'data-rex-widget-options' => json_encode(['types' => $input->types, 'category' => $input->categoryId], JSON_THROW_ON_ERROR),
     ]) ?>>
         <div class="input-group">
-            <input <?= new HtmlAttributes(['class' => ['form-control'], 'type' => 'text', 'name' => $input->name, 'value' => (string) $input->fileName, 'id' => $input->labelTarget(), 'readonly' => true, 'disabled' => $input->disabled, 'data-rex-widget-value' => true]) ?>>
+            <input <?= $input->attributes->with(['class' => ['form-control'], 'type' => 'text', 'name' => $input->name, 'value' => (string) $input->fileName, 'id' => $input->labelTarget(), 'readonly' => true, 'disabled' => $input->disabled, 'data-rex-widget-value' => true]) ?>>
             <span class="input-group-btn">
                 <?= $button('open', 'form_media_open', 'rex-icon-open-mediapool') ?>
                 <?= $button('add', 'form_media_new', 'rex-icon-add-media') ?>

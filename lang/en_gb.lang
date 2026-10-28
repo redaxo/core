@@ -233,6 +233,7 @@ select_all = Select all
 select_none = Deselect all
 select_no_results = No results
 overlay_close = Close
+password_show = Show password
 
 list_previous = previous page
 list_next = next page

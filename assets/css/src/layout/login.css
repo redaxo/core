@@ -36,8 +36,8 @@
 
         /* fields */
 
-        & .rex-form-group > dd:first-child {
-            padding-left: 0;
+        & .rex-field-control {
+            margin-left: 0;
         }
 
         & .form-control {

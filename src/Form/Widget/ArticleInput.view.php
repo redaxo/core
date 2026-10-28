@@ -29,7 +29,7 @@ return static function (ArticleInput $input): void {
             'language' => Language::getCurrentId(),
         ], JSON_THROW_ON_ERROR),
     ]) ?>>
-        <input <?= new HtmlAttributes([
+        <input <?= $input->attributes->with([
             'class' => ['form-control'],
             'type' => 'text',
             'id' => $input->id,

@@ -8,7 +8,7 @@ use function Redaxo\Core\View\escape;
 
 return static function (ChoiceList $list): void {
     $type = $list->multiple ? 'checkbox' : 'radio' ?>
-    <div <?= new HtmlAttributes(['id' => $list->id, 'class' => ['rex-choice-list']]) ?>>
+    <div <?= $list->attributes->with(['id' => $list->id, 'class' => ['rex-choice-list']]) ?>>
         <?php foreach ($list->groups() as $group): ?>
             <?php if (null !== $group['label']): ?><fieldset class="rex-choice-group"><legend><?= escape($group['label']) ?></legend><?php endif ?>
             <?php foreach ($group['choices'] as $value => $label): ?>

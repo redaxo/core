@@ -23,7 +23,7 @@ return static function (MediaListInput $input): void {
         'data-rex-widget-options' => json_encode(['types' => $input->types, 'category' => $input->categoryId], JSON_THROW_ON_ERROR),
     ]) ?>>
         <div class="input-group">
-            <select <?= new HtmlAttributes(['class' => ['form-control'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
+            <select <?= $input->attributes->with(['class' => ['form-control'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
                 <?php foreach ($input->fileNames as $fileName): ?>
                     <option value="<?= escape($fileName) ?>"><?= escape($fileName) ?></option>
                 <?php endforeach ?>

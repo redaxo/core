@@ -73,7 +73,7 @@ $inputGroup = $fragment->parse('core/form/input_group.php');
 $n = [];
 $n['label'] = '<label for="rex-id-login-user">' . I18n::msg('login_name') . ':</label>';
 $n['field'] = $inputGroup;
-$n['class'] = 'rex-form-group-vertical';
+$n['vertical'] = true;
 $formElements[] = $n;
 
 $inputGroups = [];
@@ -89,7 +89,7 @@ $inputGroup = $fragment->parse('core/form/input_group.php');
 $n = [];
 $n['label'] = '<label for="rex-id-login-password">' . I18n::msg('password') . ':</label>';
 $n['field'] = $inputGroup;
-$n['class'] = 'rex-form-group-vertical';
+$n['vertical'] = true;
 $formElements[] = $n;
 
 $fragment = new Fragment();
