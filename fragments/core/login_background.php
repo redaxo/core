@@ -61,9 +61,9 @@ $url3500Webp = Url::coreAssets('images/' . $pictureName . '-3500.webp');
 
 <script nonce="<?= Response::getNonce() ?>">
     var picture = document.querySelector('.rex-background');
-    picture.classList.add('rex-background--process');
+    picture.dataset.state = 'process';
     picture.querySelector('img').onload = function() {
-        picture.classList.add('rex-background--ready');
+        picture.dataset.state = 'ready';
     }
 </script>
 

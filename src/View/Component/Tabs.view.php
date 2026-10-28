@@ -31,7 +31,6 @@ return static function (Tabs $tabs): void {
             $block . '-item',
             ...$classes($item['itemClasses'] ?? []),
             ...$classes($rawItemAttr['class'] ?? []),
-            ...(($item['active'] ?? false) ? ['is-active'] : []),
         ];
 
         if ($end) {

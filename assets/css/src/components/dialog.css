@@ -17,7 +17,7 @@
         }
     }
 
-    .rex-dialog--confirm {
+    .rex-dialog[data-size="sm"] {
         width: min(440px, 100vw - 32px);
     }
 

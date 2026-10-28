@@ -99,7 +99,7 @@
     }
 
     /* inverted on the green header of edit sections */
-    .rex-section--edit .btn-edit {
+    :is(.rex-section--edit, .rex-section[data-variant="edit"]) .btn-edit {
         --btn-color: var(--rex-color-success-text);
         --btn-bg: var(--rex-color-surface);
         --btn-border: var(--rex-color-surface);

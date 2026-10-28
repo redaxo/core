@@ -19,7 +19,9 @@ return static function (TopBar $bar): void {
     $instanceColor = Appearance::getInstanceColor() ?>
     <header <?= new HtmlAttributes([
         'id' => 'rex-js-nav-top',
-        'class' => ['rex-topbar', 'rex-topbar--fixed' => !$bar->popup, 'rex-topbar--popup' => $bar->popup, 'rex-topbar--colored' => null !== $instanceColor],
+        'class' => ['rex-topbar'],
+        'data-variant' => $bar->popup ? 'popup' : 'fixed',
+        'data-instance-color' => null !== $instanceColor,
     ]) ?>>
         <?php if (null !== $instanceColor): ?>
             <style nonce="<?= Response::getNonce() ?>">.rex-topbar { --rex-instance-color: <?= escape($instanceColor) ?>; }</style>

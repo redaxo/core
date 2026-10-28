@@ -129,7 +129,7 @@
     }
 
     /* inverted on the green header of edit sections */
-    .rex-section--edit .rex-section-header .rex-button[data-variant="success"] {
+    .rex-section[data-variant="edit"] .rex-section-header .rex-button[data-variant="success"] {
         --rex-button-color: var(--rex-color-success-text);
         --rex-button-bg: var(--rex-color-surface);
         --rex-button-border: var(--rex-color-surface);

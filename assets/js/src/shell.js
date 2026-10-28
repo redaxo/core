@@ -26,7 +26,7 @@ const topbar = {
     lastToggle: null,
 
     update() {
-        const bar = document.querySelector('.rex-topbar--fixed');
+        const bar = document.querySelector('.rex-topbar[data-variant="fixed"]');
         if (!bar) {
             return;
         }
@@ -36,19 +36,22 @@ const topbar = {
 
         if (!document.body.classList.contains('rex-sidebar-open')) {
             if (current > this.previous && current >= this.lastToggle + 150) {
-                bar.classList.add('is-hidden');
+                bar.dataset.concealed = '';
                 this.lastToggle = current;
             } else if (current < this.previous && (current <= this.lastToggle - 300 || current < 50)) {
-                bar.classList.remove('is-hidden');
+                delete bar.dataset.concealed;
                 this.lastToggle = current;
             }
         }
-        bar.classList.toggle('is-elevated', current > 10);
+        bar.toggleAttribute('data-elevated', current > 10);
         this.previous = current;
     },
 
     reset() {
-        document.querySelector('.rex-topbar--fixed')?.classList.remove('is-hidden');
+        const bar = document.querySelector('.rex-topbar[data-variant="fixed"]');
+        if (bar) {
+            delete bar.dataset.concealed;
+        }
         this.lastToggle = this.previous;
     },
 };

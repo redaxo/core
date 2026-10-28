@@ -196,7 +196,7 @@ $mainContent[] = $systemForm->render();
 $viaCookie = array_key_exists('editor', $_COOKIE);
 
 $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCookie): void { ?>
-    <section class="rex-section rex-section--edit">
+    <section class="rex-section" data-variant="edit">
         <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
         <div class="rex-section-body">
             <p><?= I18n::msg('system_editor_note') ?></p>

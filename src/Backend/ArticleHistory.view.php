@@ -87,7 +87,7 @@ return static function (ArticleHistory $history): void {
                 title: $base,
                 content: $frame($current),
                 footer: $show,
-                attributes: new HtmlAttributes(['class' => ['rex-history-preview', 'rex-history-preview--base']]),
+                attributes: new HtmlAttributes(['class' => ['rex-history-preview'], 'data-version' => 'base']),
             )->render() ?>
             <?= new Section(
                 title: $target,

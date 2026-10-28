@@ -95,7 +95,7 @@
         margin-bottom: -10px;
         border-bottom: 0;
 
-        .rex-section--edit & {
+        :is(.rex-section--edit, .rex-section[data-variant="edit"]) & {
             --tab-bg: color-mix(in srgb, var(--rex-color-success-subtle) 70%, var(--rex-color-success));
             --tab-bg-hover: color-mix(in srgb, var(--rex-color-success-subtle) 85%, var(--rex-color-success));
             --tab-active-bg: var(--rex-color-success-subtle);

@@ -77,7 +77,6 @@ var Overlay = class {
   }
   async load(url, init2 = {}) {
     const initial = !this.body.hasChildNodes();
-    this.dialog.classList.add("is-loading");
     this.dialog.setAttribute("aria-busy", "true");
     try {
       const response = await fetch(url, { credentials: "same-origin", ...init2 });
@@ -110,7 +109,6 @@ var Overlay = class {
       alert.setAttribute("role", "alert");
       this.body.replaceChildren(alert);
     } finally {
-      this.dialog.classList.remove("is-loading");
       this.dialog.removeAttribute("aria-busy");
     }
   }
@@ -180,7 +178,7 @@ var Overlay = class {
     }
     this.picked.push(...items);
     this.onPick?.(items);
-    trigger.classList.add("rex-is-picked");
+    trigger.dataset.rexPicked = "";
     if (this.multiple) {
       announce(items.map((item) => item.label).join(", ") + ": " + (window.rex.i18n?.picker_picked ?? "picked"));
     }
@@ -257,7 +255,7 @@ var count = 0;
 function contentOf(value) {
   return value instanceof Node ? value : document.createTextNode(String(value));
 }
-function dialog({ title = "", content, buttons = [], className = "", role = "dialog" }) {
+function dialog({ title = "", content, buttons = [], className = "", role = "dialog", size = null }) {
   const id = "rex-dialog-" + ++count;
   const element = document.createElement("dialog");
   element.className = ("rex-dialog " + className).trim();
@@ -270,6 +268,9 @@ function dialog({ title = "", content, buttons = [], className = "", role = "dia
             <div class="rex-dialog-body" id="${id}-body"></div>
             <footer class="rex-dialog-footer"></footer>
         </form>`;
+  if (size) {
+    element.dataset.size = size;
+  }
   if ("alertdialog" === role) {
     element.setAttribute("role", "alertdialog");
   }
@@ -317,7 +318,7 @@ async function confirm(message) {
   const i18n3 = window.rex.i18n ?? {};
   const { closed } = dialog({
     content: Object.assign(document.createElement("p"), { textContent: message }),
-    className: "rex-dialog--confirm",
+    size: "sm",
     role: "alertdialog",
     buttons: [
       { label: i18n3.dialog_cancel ?? "Cancel", value: "cancel" },
@@ -503,7 +504,7 @@ var topbar = {
   previous: 0,
   lastToggle: null,
   update() {
-    const bar = document.querySelector(".rex-topbar--fixed");
+    const bar = document.querySelector('.rex-topbar[data-variant="fixed"]');
     if (!bar) {
       return;
     }
@@ -512,18 +513,21 @@ var topbar = {
     this.lastToggle ??= current3;
     if (!document.body.classList.contains("rex-sidebar-open")) {
       if (current3 > this.previous && current3 >= this.lastToggle + 150) {
-        bar.classList.add("is-hidden");
+        bar.dataset.concealed = "";
         this.lastToggle = current3;
       } else if (current3 < this.previous && (current3 <= this.lastToggle - 300 || current3 < 50)) {
-        bar.classList.remove("is-hidden");
+        delete bar.dataset.concealed;
         this.lastToggle = current3;
       }
     }
-    bar.classList.toggle("is-elevated", current3 > 10);
+    bar.toggleAttribute("data-elevated", current3 > 10);
     this.previous = current3;
   },
   reset() {
-    document.querySelector(".rex-topbar--fixed")?.classList.remove("is-hidden");
+    const bar = document.querySelector('.rex-topbar[data-variant="fixed"]');
+    if (bar) {
+      delete bar.dataset.concealed;
+    }
     this.lastToggle = this.previous;
   }
 };
@@ -774,7 +778,6 @@ var Select = class {
     this.element.querySelector(".rex-select-value").textContent = label || (this.select.dataset.rexSelectPlaceholder ?? "\u2014");
     this.toggle.title = label;
     this.toggle.disabled = this.select.disabled;
-    this.element.classList.toggle("is-disabled", this.select.disabled);
     if (this.panel.matches(":popover-open")) {
       this.render();
     }
@@ -808,7 +811,6 @@ var Select = class {
       if (option.disabled || group?.disabled) {
         item.setAttribute("aria-disabled", "true");
       }
-      item.classList.toggle("is-grouped", null !== group);
       (groupList ?? this.list).append(item);
     }
     this.filter();
@@ -885,7 +887,6 @@ var Select = class {
   }
   beforeToggle(open) {
     this.toggle.setAttribute("aria-expanded", String(open));
-    this.element.classList.toggle("is-open", open);
     if (open) {
       if (this.input) {
         this.input.value = "";
@@ -1480,8 +1481,8 @@ function createTimeline(element, options, select) {
       current3 = index;
       range.value = points[index];
       range.setAttribute("aria-valuetext", options[index].textContent.trim());
-      segments.forEach((segment, i) => segment.classList.toggle("is-past", i < index));
-      ticks.forEach((tick, i) => tick.classList.toggle("is-selected", i === index));
+      segments.forEach((segment, i) => segment.toggleAttribute("data-past", i < index));
+      ticks.forEach((tick, i) => tick.toggleAttribute("data-selected", i === index));
     }
   };
 }

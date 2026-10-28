@@ -73,24 +73,24 @@
             min-height: var(--rex-topbar-height-mobile);
         }
 
-        &.rex-topbar--fixed {
+        &[data-variant="fixed"] {
             position: fixed;
         }
 
-        &.rex-topbar--colored {
+        &[data-instance-color] {
             border-bottom: 5px solid var(--rex-instance-color);
         }
 
-        &.is-elevated,
+        &[data-elevated],
         .rex-sidebar-open & {
             box-shadow: var(--rex-shadow-bar);
         }
 
-        &.is-hidden {
+        &[data-concealed] {
             transform: translateY(-100%);
         }
 
-        &.rex-topbar--popup {
+        &[data-variant="popup"] {
             z-index: auto;
             justify-content: flex-start;
             min-height: var(--rex-topbar-height-mobile);
@@ -119,7 +119,7 @@
             }
         }
 
-        &.rex-topbar--popup .rex-redaxo-logo {
+        &[data-variant="popup"] .rex-redaxo-logo {
             height: 22px;
         }
     }
@@ -206,7 +206,7 @@
             transform: translateY(0);
             transition: opacity calc(var(--rex-duration) * 2) var(--rex-ease-in-out) calc(var(--rex-duration) * 2), transform 0ms linear 0ms;
 
-            .rex-topbar--popup & {
+            .rex-topbar[data-variant="popup"] & {
                 margin-inline: 0;
             }
 
@@ -449,7 +449,7 @@
             }
         }
 
-        > li.is-active > a {
+        > li > a[aria-current="page"] {
             background: var(--rex-sidebar-active-bg);
             color: var(--rex-sidebar-active-text);
         }

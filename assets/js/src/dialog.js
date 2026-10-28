@@ -21,10 +21,11 @@ function contentOf(value) {
  *     buttons?: Array<{label: string|Node, icon?: string, value?: string, className?: string, primary?: boolean, onClick?: (event: MouseEvent) => void}>,
  *     className?: string,
  *     role?: 'dialog'|'alertdialog',
+ *     size?: 'sm'|null,
  * }} options
  * @returns {{element: HTMLDialogElement, body: HTMLElement, close: (value?: string) => void, closed: Promise<string>}}
  */
-export function dialog({title = '', content, buttons = [], className = '', role = 'dialog'}) {
+export function dialog({title = '', content, buttons = [], className = '', role = 'dialog', size = null}) {
     const id = 'rex-dialog-' + ++count;
     const element = document.createElement('dialog');
     element.className = ('rex-dialog ' + className).trim();
@@ -37,6 +38,9 @@ export function dialog({title = '', content, buttons = [], className = '', role 
             <div class="rex-dialog-body" id="${id}-body"></div>
             <footer class="rex-dialog-footer"></footer>
         </form>`;
+    if (size) {
+        element.dataset.size = size;
+    }
     if ('alertdialog' === role) {
         element.setAttribute('role', 'alertdialog');
     }
@@ -92,7 +96,7 @@ export async function confirm(message) {
     const i18n = window.rex.i18n ?? {};
     const {closed} = dialog({
         content: Object.assign(document.createElement('p'), {textContent: message}),
-        className: 'rex-dialog--confirm',
+        size: 'sm',
         role: 'alertdialog',
         buttons: [
             {label: i18n.dialog_cancel ?? 'Cancel', value: 'cancel'},

@@ -97,7 +97,6 @@ class Select {
         this.element.querySelector('.rex-select-value').textContent = label || (this.select.dataset.rexSelectPlaceholder ?? '—');
         this.toggle.title = label;
         this.toggle.disabled = this.select.disabled;
-        this.element.classList.toggle('is-disabled', this.select.disabled);
         if (this.panel.matches(':popover-open')) {
             this.render();
         }
@@ -133,7 +132,6 @@ class Select {
             if (option.disabled || group?.disabled) {
                 item.setAttribute('aria-disabled', 'true');
             }
-            item.classList.toggle('is-grouped', null !== group);
             (groupList ?? this.list).append(item);
         }
         this.filter();
@@ -220,7 +218,6 @@ class Select {
 
     beforeToggle(open) {
         this.toggle.setAttribute('aria-expanded', String(open));
-        this.element.classList.toggle('is-open', open);
         if (open) {
             if (this.input) {
                 this.input.value = '';

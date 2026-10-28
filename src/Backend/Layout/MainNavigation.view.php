@@ -19,8 +19,6 @@ return static function (MainNavigation $navigation): void { ?>
                         /** @var array<string, int|list<string>|string> $linkAttr */
                         $linkAttr = $item['linkAttr'] ?? [];
                         if ($item['active'] ?? false) {
-                            $class = $itemAttr['class'] ?? [];
-                            $itemAttr['class'] = [...(is_array($class) ? $class : [(string) $class]), 'is-active'];
                             $linkAttr['aria-current'] = 'page';
                         }
                         $icon = trim(Type::string($item['icon'] ?? '')) ?>

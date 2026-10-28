@@ -69,8 +69,7 @@ class Overlay {
 
     async load(url, init = {}) {
         const initial = !this.body.hasChildNodes();
-        this.dialog.classList.add('is-loading');
-        this.dialog.setAttribute('aria-busy', 'true');
+                this.dialog.setAttribute('aria-busy', 'true');
         try {
             const response = await fetch(url, {credentials: 'same-origin', ...init});
             if (401 === response.status || 'login' === pageOf(response.url)) {
@@ -109,8 +108,7 @@ class Overlay {
             alert.setAttribute('role', 'alert');
             this.body.replaceChildren(alert);
         } finally {
-            this.dialog.classList.remove('is-loading');
-            this.dialog.removeAttribute('aria-busy');
+                        this.dialog.removeAttribute('aria-busy');
         }
     }
 
@@ -197,7 +195,7 @@ class Overlay {
 
         this.picked.push(...items);
         this.onPick?.(items);
-        trigger.classList.add('rex-is-picked');
+        trigger.dataset.rexPicked = '';
         if (this.multiple) {
             announce(items.map(item => item.label).join(', ') + ': ' + (window.rex.i18n?.picker_picked ?? 'picked'));
         }

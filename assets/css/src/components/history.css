@@ -45,7 +45,7 @@
             background: color-mix(in srgb, var(--rex-color-accent) 35%, var(--rex-color-surface));
         }
 
-        &.is-past {
+        &[data-past] {
             background: color-mix(in srgb, var(--rex-color-accent) 80%, var(--rex-color-surface));
 
             &:nth-child(even) {
@@ -62,7 +62,7 @@
         height: 5px;
         background: var(--rex-color-text-muted);
 
-        &.is-selected {
+        &[data-selected] {
             top: -10px;
             width: 3px;
             height: 7px;
@@ -147,7 +147,7 @@
         @media (max-width: 1199px) {
             grid-template-columns: 1fr;
 
-            & > .rex-history-preview--base {
+            & > .rex-history-preview[data-version="base"] {
                 display: none;
             }
         }

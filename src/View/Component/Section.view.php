@@ -11,7 +11,7 @@ return static function (Section $section): void {
     $variant = $section->variant->value;
     $collapseId = $section->collapsible ? 'rex-section-' . bin2hex(random_bytes(4)) : null;
     ?>
-    <section <?= $section->attributes->with(['class' => ['rex-section', 'rex-section--' . $variant => SectionVariant::Default !== $section->variant]]) ?>>
+    <section <?= $section->attributes->with(['class' => ['rex-section'], 'data-variant' => SectionVariant::Default === $section->variant ? null : $variant]) ?>>
         <?php if ($filled($section->title) || $filled($section->options) || $filled($section->header)): ?>
             <header class="rex-section-header">
                 <?php if ($filled($section->options)): ?>

@@ -114,7 +114,7 @@
             }
         }
 
-        .rex-tabs-item.is-active > & {
+        &[aria-current="page"] {
             padding-bottom: 10px;
             background: var(--rex-tab-active-bg);
             border-color: var(--rex-tabs-border);
@@ -159,7 +159,7 @@
 
         &:is(a):hover,
         &:is(a):focus,
-        .rex-subnav-item.is-active > & {
+        &[aria-current="page"] {
             color: var(--rex-color-text);
             text-decoration: none;
         }

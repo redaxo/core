@@ -14,30 +14,30 @@
         box-shadow: var(--rex-shadow-sm);
         color: var(--rex-color-text);
 
-        &.rex-section--edit,
-        &.rex-section--add {
+        &[data-variant="edit"],
+        &[data-variant="add"] {
             --rex-section-color: var(--rex-color-success);
             --rex-section-header-text: var(--rex-color-on-success);
             --rex-section-body-bg: var(--rex-color-success-subtle);
             --rex-section-footer-bg: var(--rex-color-surface-muted);
         }
 
-        &.rex-section--info {
+        &[data-variant="info"] {
             --rex-section-color: var(--rex-color-accent);
             --rex-section-header-text: var(--rex-color-on-accent);
         }
 
-        &.rex-section--success {
+        &[data-variant="success"] {
             --rex-section-color: var(--rex-color-success);
             --rex-section-header-text: var(--rex-color-on-success);
         }
 
-        &.rex-section--warning {
+        &[data-variant="warning"] {
             --rex-section-color: var(--rex-color-warning);
             --rex-section-header-text: var(--rex-color-on-warning);
         }
 
-        &.rex-section--danger {
+        &[data-variant="danger"] {
             --rex-section-color: var(--rex-color-danger);
             --rex-section-header-text: var(--rex-color-on-danger);
         }
@@ -105,7 +105,7 @@
         }
     }
 
-    :is(.rex-section--add, .rex-section--edit) > .rex-section-header mark {
+    :is([data-variant="add"], [data-variant="edit"]) > .rex-section-header mark {
         background-color: var(--rex-color-success-hover);
     }
 

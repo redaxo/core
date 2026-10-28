@@ -130,7 +130,7 @@
         cursor: pointer;
         outline-offset: -2px;
 
-        &.is-grouped {
+        [role="group"] > & {
             padding-left: 20px;
         }
 
@@ -151,7 +151,7 @@
         [aria-multiselectable="true"] & {
             padding-left: 30px;
 
-            &.is-grouped {
+            [role="group"] > & {
                 padding-left: 38px;
             }
 
@@ -168,7 +168,7 @@
                 background: var(--rex-color-surface);
             }
 
-            &.is-grouped::before {
+            [role="group"] > &::before {
                 left: 18px;
             }
 

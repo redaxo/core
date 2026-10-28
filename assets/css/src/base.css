@@ -30,7 +30,7 @@
 
     /* states shown only by background colors, which forced colors replace */
     @media (forced-colors: active) {
-        :is([aria-selected="true"], [aria-current]:not([aria-current="false"]), .active, .is-active) {
+        :is([aria-selected="true"], [aria-current]:not([aria-current="false"]), [aria-pressed="true"]) {
             outline: 2px solid Highlight;
             outline-offset: -2px;
         }

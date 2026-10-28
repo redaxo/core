@@ -126,8 +126,8 @@ function createTimeline(element, options, select) {
             current = index;
             range.value = points[index];
             range.setAttribute('aria-valuetext', options[index].textContent.trim());
-            segments.forEach((segment, i) => segment.classList.toggle('is-past', i < index));
-            ticks.forEach((tick, i) => tick.classList.toggle('is-selected', i === index));
+            segments.forEach((segment, i) => segment.toggleAttribute('data-past', i < index));
+            ticks.forEach((tick, i) => tick.toggleAttribute('data-selected', i === index));
         },
     };
 }

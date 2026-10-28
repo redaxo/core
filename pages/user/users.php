@@ -214,7 +214,7 @@ if ('add' === $func || $user) {
     echo $message;
 
     echo $form->capture(static function (Form $form) use ($user, $loginTries): void { ?>
-        <section class="rex-section rex-section--edit">
+        <section class="rex-section" data-variant="edit">
             <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
             <div class="rex-section-body">
                 <?php foreach ($form->getFormErrors() as $error): ?>

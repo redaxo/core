@@ -130,11 +130,11 @@
         }
 
         /* shown once the picture is loaded */
-        & .rex-background--process {
+        & .rex-background[data-state="process"] {
             display: none;
         }
 
-        & .rex-background--ready {
+        & .rex-background[data-state="ready"] {
             display: flex;
             animation: rex-fade-in 800ms ease-out;
         }
