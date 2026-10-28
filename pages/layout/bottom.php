@@ -13,7 +13,7 @@ if (!$curPage->hasLayout()) {
 
 ?>
 
-</section></div><?php
+</main></div><?php
 
 echo '</div>';
 

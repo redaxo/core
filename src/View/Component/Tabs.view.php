@@ -1,5 +1,6 @@
 <?php
 
+use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Component\Tabs;
@@ -34,7 +35,7 @@ return static function (Tabs $tabs): void {
             ...($end ? [$block . '__item--end'] : []),
         ];
 
-        $label = ('' !== ($icon = Type::string($item['icon'] ?? '')) ? '<i class="' . escape($icon) . '"></i> ' : '') . Type::string($item['title']);
+        $label = ('' !== ($icon = Type::string($item['icon'] ?? '')) ? '<i class="' . escape($icon) . '" aria-hidden="true"></i> ' : '') . Type::string($item['title']);
         $href = Type::string($item['href'] ?? '');
         if ('' === $href) {
             return Html::raw('<li' . Str::buildAttributes($itemAttr) . '><span class="' . $block . '__link">' . $label . '</span></li>');
@@ -42,6 +43,9 @@ return static function (Tabs $tabs): void {
 
         $linkAttr = $attributes($item['linkAttr'] ?? [], true);
         $linkAttr['class'] = [$block . '__link', ...$classes($item['linkClasses'] ?? [])];
+        if ($item['active'] ?? false) {
+            $linkAttr['aria-current'] = 'page';
+        }
 
         return Html::raw('<li' . Str::buildAttributes($itemAttr) . '><a ' . new HtmlAttributes(['href' => $href])->toString() . Str::buildAttributes($linkAttr) . '>' . $label . '</a></li>');
     };
@@ -57,7 +61,7 @@ return static function (Tabs $tabs): void {
     if (!$tabs->items && !$tabs->endItems && !$children) {
         return;
     } ?>
-    <nav <?= new HtmlAttributes(['id' => $tabs->id, 'class' => ['rex-pagenav']]) ?>>
+    <nav <?= new HtmlAttributes(['id' => $tabs->id, 'class' => ['rex-pagenav'], 'aria-label' => I18n::msg('navigation_subpages')]) ?>>
         <?php if ($tabs->items || $tabs->endItems): ?>
             <ul class="rex-tabs">
                 <?php foreach ($tabs->items as $tab): ?>

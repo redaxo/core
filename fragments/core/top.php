@@ -95,4 +95,6 @@ use function Redaxo\Core\View\escape;
 </head>
 <body<?= $this->bodyAttr ?>>
 
+<a class="rex-skip-link" href="#rex-js-page-main"><?= I18n::msg('skip_to_content') ?></a>
+
 <div id="rex-start-of-page" class="rex-app">

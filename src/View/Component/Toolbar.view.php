@@ -1,5 +1,6 @@
 <?php
 
+use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Component\Toolbar;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
@@ -11,8 +12,8 @@ return static function (Toolbar $toolbar): void {
     <nav <?= new HtmlAttributes(['class' => ['navbar', $toolbar->inverse ? 'navbar-inverse' : 'navbar-default', 'rex-navbar-without-brand' => !$filled($toolbar->brand), $toolbar->cssClass => '' !== $toolbar->cssClass]]) ?>>
         <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#<?= $target ?>">
-                    <span class="sr-only">Toggle</span>
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#<?= $target ?>" aria-controls="<?= $target ?>" aria-expanded="false">
+                    <span class="sr-only"><?= I18n::msg('toolbar_toggle') ?></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>

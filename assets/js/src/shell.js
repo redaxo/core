@@ -2,11 +2,23 @@
 
 const smallScreen = matchMedia('(max-width: 991px)');
 
-function toggleSidebar(open = !document.body.classList.contains('rex-sidebar-open')) {
+function toggleSidebar(open = !document.body.classList.contains('rex-sidebar-open'), {returnFocus = false} = {}) {
+    const wasOpen = document.body.classList.contains('rex-sidebar-open');
     document.body.classList.toggle('rex-sidebar-open', open);
     // freeze the scroll position below the open navigation
     document.documentElement.style.overflowY = open ? 'hidden' : '';
-    document.getElementById('rex-js-nav-main-toggle')?.setAttribute('aria-expanded', String(open));
+    const toggle = document.getElementById('rex-js-nav-main-toggle');
+    toggle?.setAttribute('aria-expanded', String(open));
+
+    // the open navigation covers the page like a dialog: the rest is out of reach until it closes
+    for (const element of document.querySelectorAll('.rex-main, .rex-footer')) {
+        element.inert = open;
+    }
+    if (open && !wasOpen) {
+        document.querySelector('#rex-js-nav-main a[href]')?.focus();
+    } else if (!open && wasOpen && returnFocus) {
+        toggle?.focus();
+    }
 }
 
 const topbar = {
@@ -47,7 +59,13 @@ document.addEventListener('click', event => {
         toggleSidebar();
         topbar.reset();
     } else if (event.target.closest('#rex-js-nav-main-backdrop')) {
-        toggleSidebar(false);
+        toggleSidebar(false, {returnFocus: true});
+    }
+});
+
+document.addEventListener('keydown', event => {
+    if ('Escape' === event.key && document.body.classList.contains('rex-sidebar-open')) {
+        toggleSidebar(false, {returnFocus: true});
     }
 });
 

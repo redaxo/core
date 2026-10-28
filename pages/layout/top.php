@@ -136,4 +136,4 @@ echo '<div id="rex-js-page-container" class="rex-shell">';
 
 echo $navigation?->render();
 
-?><div class="rex-main"><section class="rex-main__inner" id="rex-js-page-main">
+?><div class="rex-main"><main class="rex-main__inner" id="rex-js-page-main" tabindex="-1">

@@ -46,6 +46,14 @@ profile = My profile
 logout = sign out
 navigation_system = Main menu
 navigation_addons = AddOns
+skip_to_content = Skip to content
+navigation_main_label = Main navigation
+navigation_toggle = Toggle navigation
+navigation_breadcrumb = Breadcrumb
+navigation_subpages = Subpages
+navigation_pagination = Pagination
+toolbar_toggle = Toggle toolbar
+link_new_window = opens in a new window
 subnavigation = Sub navigation of {0}
 
 # redaxo/include/classes/class.login.php

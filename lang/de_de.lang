@@ -46,6 +46,14 @@ profile = Mein Profil
 logout = abmelden
 navigation_system = Hauptmenü
 navigation_addons = AddOns
+skip_to_content = Zum Inhalt springen
+navigation_main_label = Hauptnavigation
+navigation_toggle = Navigation ein- und ausblenden
+navigation_breadcrumb = Pfad
+navigation_subpages = Unterseiten
+navigation_pagination = Seitenauswahl
+toolbar_toggle = Werkzeugleiste ein- und ausblenden
+link_new_window = öffnet in neuem Fenster
 subnavigation = Unternavigation von {0}
 
 # redaxo/include/classes/class.login.php

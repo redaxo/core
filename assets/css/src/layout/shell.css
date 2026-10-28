@@ -21,6 +21,22 @@
         min-height: 100%;
     }
 
+    /* first element of the page, visible once it has the focus */
+    .rex-skip-link {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2000;
+        padding: 10px 15px;
+        background: var(--rex-color-surface);
+        color: var(--rex-color-link);
+        transform: translateY(-100%);
+
+        &:focus-visible {
+            transform: none;
+        }
+    }
+
     /* top bar ------------------------------------------------------------------------------------------------- */
 
     .rex-topbar {
@@ -275,8 +291,14 @@
             transform: translate(calc(50vw - 100% - 10px), -50%);
             font-size: 1.25rem;
 
+            /* the link keeps the name for screen readers */
             .rex-topbar__title-name {
-                display: none;
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                overflow: hidden;
+                clip-path: inset(50%);
+                white-space: nowrap;
             }
 
             a {
@@ -487,6 +509,12 @@
 
     .rex-main__inner {
         padding-inline: 15px;
+
+        /* focused as the target of the skip link, the start point of the keyboard needs no ring */
+        &:focus {
+            /* stylelint-disable-next-line declaration-property-value-disallowed-list */
+            outline: none;
+        }
 
         @media (min-width: 1200px) {
             padding-inline: var(--rex-gutter);
