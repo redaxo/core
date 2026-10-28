@@ -40,21 +40,20 @@ if (
 // restoring a version replaces the live revision
 $canRestore = ContentHandler::hasRevisionPerm($user, ArticleRevision::LIVE);
 
+// the restore form targets the whole window, so its result shows on the content page, the error as well
 if ('restore' === Request::post('func', 'string')) {
-    if (!$canRestore) {
-        echo Message::error(I18n::msg('no_rights_to_this_function'));
-    } elseif (!CsrfToken::factory('structure_history')->isValid()) {
-        echo Message::error(I18n::msg('csrf_token_invalid'));
-    } elseif (!ArticleSliceHistory::restoreSnapshot(Request::post('history_date', 'string'), $articleId, $languageId)) {
-        echo Message::error(I18n::msg('structure_history_snapshot_not_found'));
-    } else {
-        Response::sendRedirect(Url::backendPage('content/edit', [
-            'article_id' => $articleId,
-            'category_id' => $categoryId,
-            'language' => $languageId,
-            'info' => I18n::msg('structure_history_snapshot_reactivated'),
-        ]));
-    }
+    $message = match (true) {
+        !$canRestore => ['warning' => I18n::rawMsg('no_rights_to_this_function')],
+        !CsrfToken::factory('structure_history')->isValid() => ['warning' => I18n::rawMsg('csrf_token_invalid')],
+        !ArticleSliceHistory::restoreSnapshot(Request::post('history_date', 'string'), $articleId, $languageId) => ['warning' => I18n::rawMsg('structure_history_snapshot_not_found')],
+        default => ['info' => I18n::rawMsg('structure_history_snapshot_reactivated')],
+    };
+    Response::sendRedirect(Url::backendPage('content/edit', [
+        'article_id' => $articleId,
+        'category_id' => $categoryId,
+        'language' => $languageId,
+        ...$message,
+    ]));
 }
 
 $previewUrl = Url::article($articleId, $languageId);
