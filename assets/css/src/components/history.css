@@ -112,6 +112,7 @@
         }
 
         &:focus-visible {
+            /* stylelint-disable-next-line declaration-property-value-disallowed-list -- the thumb shows the focus */
             outline: none;
 
             &::-webkit-slider-thumb {

@@ -10,12 +10,16 @@
         "mkdirp": "3.0.1",
         "pixelmatch": "8.0.0",
         "playwright": "1.64.1",
-        "pngjs": "7.0.0"
+        "pngjs": "7.0.0",
+        "stylelint": "17.16.0"
     },
     "scripts": {
         "build": "npm run build:backend-css && npm run build:backend-js && npm run build:js",
         "build:backend-css": "esbuild assets/css/src/backend.css --bundle --minify --target=chrome125,firefox128,safari18 --log-level=warning --outfile=assets/css/backend.css",
         "build:backend-js": "esbuild assets/js/src/backend.js --bundle --format=esm --target=chrome125,firefox128,safari18 --banner:js='/* Built from assets/js/src/ with `npm run build:backend-js`, do not edit. */' --log-level=warning --outfile=assets/js/backend.js",
-        "build:js": "node .tools/build/copy-vendor-assets.mjs"
+        "build:js": "node .tools/build/copy-vendor-assets.mjs",
+        "lint": "npm run lint:css && npm run check:contrast",
+        "lint:css": "stylelint \"assets/css/src/**/*.css\"",
+        "check:contrast": "node .tools/build/check-contrast.mjs"
     }
 }

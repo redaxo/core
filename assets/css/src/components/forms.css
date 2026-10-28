@@ -65,8 +65,8 @@
         -webkit-appearance: none;
         appearance: none;
 
-        /* the thumb shows the focus */
         &:focus-visible {
+            /* stylelint-disable-next-line declaration-property-value-disallowed-list -- the thumb shows the focus */
             outline: none;
 
             /* separate rules, a browser drops a selector list with a pseudo-element it does not know */

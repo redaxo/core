@@ -1,0 +1,22 @@
+{
+    "rules": {
+        "color-named": "never",
+        "color-no-hex": true,
+        "function-disallowed-list": ["rgb", "rgba", "hsl", "hsla", "light-dark"],
+        "declaration-property-unit-disallowed-list": {
+            "font-size": ["px"]
+        },
+        "declaration-property-value-disallowed-list": {
+            "outline": ["none", "0"]
+        }
+    },
+    "overrides": [
+        {
+            "files": ["assets/css/src/tokens.css"],
+            "rules": {
+                "color-no-hex": null,
+                "function-disallowed-list": null
+            }
+        }
+    ]
+}

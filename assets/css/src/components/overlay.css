@@ -81,6 +81,7 @@
         overflow: auto;
         overscroll-behavior: contain;
         padding: var(--rex-gutter);
+        /* stylelint-disable-next-line declaration-property-value-disallowed-list -- only focused by script, as the start point of the keyboard */
         outline: none;
 
         @media (max-width: 767px) {
