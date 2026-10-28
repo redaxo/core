@@ -32,6 +32,18 @@ final class ContentSecurityPolicyTest extends TestCase
         self::assertSame("img-src 'self' https://example.org; object-src https://example.org; frame-src https://example.org", $policy->toString());
     }
 
+    public function testAddStartsWithFallback(): void
+    {
+        $policy = new ContentSecurityPolicy(['default-src' => ["'self'"], 'script-src' => ["'self'", "'nonce-abc'"]]);
+        $policy->add('media-src', 'https://example.org');
+        $policy->add('worker-src', 'blob:');
+        $policy->add('form-action', 'https://example.org');
+
+        self::assertSame(["'self'", 'https://example.org'], $policy->get('media-src'), 'media-src falls back to default-src');
+        self::assertSame(["'self'", "'nonce-abc'", 'blob:'], $policy->get('worker-src'), 'worker-src falls back to script-src');
+        self::assertSame(['https://example.org'], $policy->get('form-action'), 'form-action has no fallback');
+    }
+
     #[DataProvider('provideAddRejectsInjection')]
     public function testAddRejectsInjection(string $directive, string $source): void
     {

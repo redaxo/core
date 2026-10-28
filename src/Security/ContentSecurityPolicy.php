@@ -18,6 +18,28 @@ use function in_array;
  */
 final class ContentSecurityPolicy
 {
+    /**
+     * Directives a fetch directive falls back to while it is not set, in order (CSP level 3); a directive added later
+     * starts with the sources it had by that fallback, so adding a source only widens the policy.
+     */
+    private const array FALLBACKS = [
+        'script-src-elem' => ['script-src', 'default-src'],
+        'script-src-attr' => ['script-src', 'default-src'],
+        'style-src-elem' => ['style-src', 'default-src'],
+        'style-src-attr' => ['style-src', 'default-src'],
+        'worker-src' => ['child-src', 'script-src', 'default-src'],
+        'frame-src' => ['child-src', 'default-src'],
+        'child-src' => ['default-src'],
+        'script-src' => ['default-src'],
+        'style-src' => ['default-src'],
+        'connect-src' => ['default-src'],
+        'font-src' => ['default-src'],
+        'img-src' => ['default-src'],
+        'manifest-src' => ['default-src'],
+        'media-src' => ['default-src'],
+        'object-src' => ['default-src'],
+    ];
+
     private static ?self $backend = null;
 
     /** @param array<string, list<string>> $directives sources per directive, e.g. `['img-src' => ["'self'"]]` */
@@ -58,6 +80,9 @@ final class ContentSecurityPolicy
         if (!preg_match('/^[a-z-]+$/', $directive)) {
             throw new InvalidArgumentException('Invalid Content-Security-Policy directive "' . $directive . '".');
         }
+        if (!isset($this->directives[$directive])) {
+            $this->directives[$directive] = $this->inherited($directive);
+        }
         foreach ($sources as $source) {
             if ('' === $source || preg_match('/[\s;,]/', $source)) {
                 throw new InvalidArgumentException('Invalid Content-Security-Policy source "' . $source . '".');
@@ -71,6 +96,22 @@ final class ContentSecurityPolicy
         }
 
         return $this;
+    }
+
+    /**
+     * Sources a directive that is not set gets by its fallback.
+     *
+     * @return list<string>
+     */
+    private function inherited(string $directive): array
+    {
+        foreach (self::FALLBACKS[$directive] ?? [] as $fallback) {
+            if (isset($this->directives[$fallback])) {
+                return $this->directives[$fallback];
+            }
+        }
+
+        return [];
     }
 
     /** @return list<string> */
