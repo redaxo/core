@@ -4,6 +4,7 @@
  */
 
 import {ready} from './ready.js';
+import {announce} from './announce.js';
 
 const stack = [];
 let skipPopstate = 0;
@@ -41,6 +42,8 @@ class Overlay {
             </header>
             <div class="rex-overlay-body"></div>`;
         this.title = this.dialog.querySelector('.rex-overlay-title');
+        // the target of the focus after loading another page into the overlay
+        this.title.tabIndex = -1;
         this.body = this.dialog.querySelector('.rex-overlay-body');
         // focus the scrollable content on open, so keys scroll it and the close button shows no focus ring
         this.body.tabIndex = -1;
@@ -65,7 +68,9 @@ class Overlay {
     }
 
     async load(url, init = {}) {
+        const initial = !this.body.hasChildNodes();
         this.dialog.classList.add('is-loading');
+        this.dialog.setAttribute('aria-busy', 'true');
         try {
             const response = await fetch(url, {credentials: 'same-origin', ...init});
             if (401 === response.status || 'login' === pageOf(response.url)) {
@@ -88,14 +93,23 @@ class Overlay {
             this.body.scrollTop = 0;
             ready(this.body);
 
+            // the clicked link or button is gone with the old page, so the focus moves to the new page's title
+            if (!initial && !this.body.contains(document.activeElement)) {
+                this.title.focus();
+                announce(this.title.textContent);
+            }
+
             const auto = this.body.querySelector('[data-rex-pick-auto]');
             if (auto) {
                 this.pick(auto, [itemOf(auto)]);
             }
         } catch (error) {
-            this.body.textContent = String(error);
+            const alert = Object.assign(document.createElement('div'), {className: 'alert alert-danger', textContent: String(error)});
+            alert.setAttribute('role', 'alert');
+            this.body.replaceChildren(alert);
         } finally {
             this.dialog.classList.remove('is-loading');
+            this.dialog.removeAttribute('aria-busy');
         }
     }
 
@@ -183,6 +197,9 @@ class Overlay {
         this.picked.push(...items);
         this.onPick?.(items);
         trigger.classList.add('rex-is-picked');
+        if (this.multiple) {
+            announce(items.map(item => item.label).join(', ') + ': ' + (window.rex.i18n?.picker_picked ?? 'picked'));
+        }
         if (!this.multiple) {
             this.close();
         }

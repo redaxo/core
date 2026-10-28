@@ -5,6 +5,25 @@ function ready(root2 = document.body) {
   root2.dispatchEvent(new CustomEvent("rex:ready", { bubbles: true }));
 }
 
+// assets/js/src/announce.js
+var regions = {};
+function region(assertive) {
+  const key2 = assertive ? "assertive" : "polite";
+  if (!regions[key2]?.isConnected) {
+    const element = document.createElement("div");
+    element.className = "rex-visually-hidden";
+    element.setAttribute("role", assertive ? "alert" : "status");
+    document.body.append(element);
+    regions[key2] = element;
+  }
+  return regions[key2];
+}
+function announce(message, { assertive = false } = {}) {
+  const element = region(assertive);
+  element.textContent = "";
+  requestAnimationFrame(() => element.textContent = message);
+}
+
 // assets/js/src/overlay.js
 var stack = [];
 var skipPopstate = 0;
@@ -37,6 +56,7 @@ var Overlay = class {
             </header>
             <div class="rex-overlay-body"></div>`;
     this.title = this.dialog.querySelector(".rex-overlay-title");
+    this.title.tabIndex = -1;
     this.body = this.dialog.querySelector(".rex-overlay-body");
     this.body.tabIndex = -1;
     this.body.autofocus = true;
@@ -56,7 +76,9 @@ var Overlay = class {
     this.load(this.url);
   }
   async load(url, init2 = {}) {
+    const initial = !this.body.hasChildNodes();
     this.dialog.classList.add("is-loading");
+    this.dialog.setAttribute("aria-busy", "true");
     try {
       const response = await fetch(url, { credentials: "same-origin", ...init2 });
       if (401 === response.status || "login" === pageOf(response.url)) {
@@ -74,14 +96,21 @@ var Overlay = class {
       this.body.replaceChildren(...main.childNodes);
       this.body.scrollTop = 0;
       ready(this.body);
+      if (!initial && !this.body.contains(document.activeElement)) {
+        this.title.focus();
+        announce(this.title.textContent);
+      }
       const auto = this.body.querySelector("[data-rex-pick-auto]");
       if (auto) {
         this.pick(auto, [itemOf(auto)]);
       }
     } catch (error) {
-      this.body.textContent = String(error);
+      const alert = Object.assign(document.createElement("div"), { className: "alert alert-danger", textContent: String(error) });
+      alert.setAttribute("role", "alert");
+      this.body.replaceChildren(alert);
     } finally {
       this.dialog.classList.remove("is-loading");
+      this.dialog.removeAttribute("aria-busy");
     }
   }
   /** Whether a URL is loaded inside this overlay (instead of leaving it for the main window). */
@@ -151,6 +180,9 @@ var Overlay = class {
     this.picked.push(...items);
     this.onPick?.(items);
     trigger.classList.add("rex-is-picked");
+    if (this.multiple) {
+      announce(items.map((item) => item.label).join(", ") + ": " + (window.rex.i18n?.picker_picked ?? "picked"));
+    }
     if (!this.multiple) {
       this.close();
     }
@@ -221,39 +253,50 @@ function pick(type, options = {}) {
 
 // assets/js/src/dialog.js
 var count = 0;
-function dialog({ title = "", content, buttons = [], className = "" }) {
+function contentOf(value) {
+  return value instanceof Node ? value : document.createTextNode(String(value));
+}
+function dialog({ title = "", content, buttons = [], className = "", role = "dialog" }) {
+  const id = "rex-dialog-" + ++count;
   const element = document.createElement("dialog");
   element.className = ("rex-dialog " + className).trim();
   element.innerHTML = `
         <form method="dialog" class="rex-dialog-inner">
             <header class="rex-dialog-header">
-                <h2 class="rex-dialog-title"></h2>
+                <h2 class="rex-dialog-title" id="${id}-title"></h2>
                 <button class="rex-dialog-close" value=""><i class="rex-icon fa-solid fa-xmark" aria-hidden="true"></i></button>
             </header>
-            <div class="rex-dialog-body"></div>
+            <div class="rex-dialog-body" id="${id}-body"></div>
             <footer class="rex-dialog-footer"></footer>
         </form>`;
-  const header = element.querySelector(".rex-dialog-header");
-  if (title) {
-    element.querySelector(".rex-dialog-title").innerHTML = title;
-    element.setAttribute("aria-labelledby", element.querySelector(".rex-dialog-title").id = "rex-dialog-title-" + ++count);
-  } else {
-    header.remove();
+  if ("alertdialog" === role) {
+    element.setAttribute("role", "alertdialog");
   }
-  element.querySelector(".rex-dialog-close")?.setAttribute("aria-label", window.rex.i18n?.overlay_close ?? "Close");
+  const heading = element.querySelector(".rex-dialog-title");
+  if (title) {
+    heading.append(contentOf(title));
+    element.setAttribute("aria-labelledby", heading.id);
+  } else {
+    heading.remove();
+    element.setAttribute("aria-labelledby", id + "-body");
+  }
+  element.querySelector(".rex-dialog-close").setAttribute("aria-label", window.rex.i18n?.overlay_close ?? "Close");
   const body = element.querySelector(".rex-dialog-body");
-  content instanceof Node ? body.append(content) : body.innerHTML = content;
+  body.append(contentOf(content));
   const footer = element.querySelector(".rex-dialog-footer");
-  for (const { label, value = "", className: className2 = "", primary = false, onClick } of buttons) {
-    const button2 = document.createElement("button");
-    button2.className = ["btn", primary ? "btn-primary" : "btn-default", className2].join(" ").trim();
-    button2.value = value;
-    button2.innerHTML = label;
-    button2.autofocus = primary;
-    if (onClick) {
-      button2.addEventListener("click", onClick);
+  for (const { label, icon, value = "", className: className2 = "", primary = false, onClick } of buttons) {
+    const button = document.createElement("button");
+    button.className = ["btn", primary ? "btn-primary" : "btn-default", className2].join(" ").trim();
+    button.value = value;
+    if (icon) {
+      button.insertAdjacentHTML("beforeend", `<i class="rex-icon rex-icon-${CSS.escape(icon)}" aria-hidden="true"></i> `);
     }
-    footer.append(button2);
+    button.append(contentOf(label));
+    button.autofocus = primary;
+    if (onClick) {
+      button.addEventListener("click", onClick);
+    }
+    footer.append(button);
   }
   if (!buttons.length) {
     footer.remove();
@@ -271,6 +314,7 @@ async function confirm(message) {
   const { closed } = dialog({
     content: Object.assign(document.createElement("p"), { textContent: message }),
     className: "rex-dialog--confirm",
+    role: "alertdialog",
     buttons: [
       { label: i18n3.dialog_cancel ?? "Cancel", value: "cancel" },
       { label: i18n3.dialog_confirm ?? "OK", value: "confirm", primary: true }
@@ -590,13 +634,13 @@ var widgetActions = {
   }
 };
 document.addEventListener("click", (event) => {
-  const button2 = event.target.closest("[data-rex-widget-action]");
-  const widget = button2?.closest("[data-rex-widget]");
-  if (!widget || button2.disabled) {
+  const button = event.target.closest("[data-rex-widget-action]");
+  const widget = button?.closest("[data-rex-widget]");
+  if (!widget || button.disabled) {
     return;
   }
   event.preventDefault();
-  const [action, argument] = button2.dataset.rexWidgetAction.split(":");
+  const [action, argument] = button.dataset.rexWidgetAction.split(":");
   const options = JSON.parse(widget.dataset.rexWidgetOptions || "{}");
   widgetActions[widget.dataset.rexWidget]?.[action]?.(widget, options, argument);
 });
@@ -610,18 +654,20 @@ function showPreview(widget) {
   const img = preview.querySelector("img") ?? preview.appendChild(document.createElement("img"));
   img.src = file.endsWith(".svg") ? "../media/" + encodeURIComponent(file) : "index.php?" + new URLSearchParams({ rex_media_type: "rex_media_small", rex_media_file: file });
 }
-document.addEventListener("mouseover", (event) => {
-  const widget = event.target.closest("[data-rex-widget].rex-js-widget-preview");
-  if (widget && !widget.contains(event.relatedTarget)) {
-    showPreview(widget);
-  }
-});
-document.addEventListener("mouseout", (event) => {
-  const widget = event.target.closest("[data-rex-widget].rex-js-widget-preview");
-  if (widget && !widget.contains(event.relatedTarget)) {
-    widget.querySelector(".rex-js-media-preview")?.replaceChildren();
-  }
-});
+for (const [show2, hide] of [["mouseover", "mouseout"], ["focusin", "focusout"]]) {
+  document.addEventListener(show2, (event) => {
+    const widget = event.target.closest("[data-rex-widget].rex-js-widget-preview");
+    if (widget && !widget.contains(event.relatedTarget)) {
+      showPreview(widget);
+    }
+  });
+  document.addEventListener(hide, (event) => {
+    const widget = event.target.closest("[data-rex-widget].rex-js-widget-preview");
+    if (widget && !widget.contains(event.relatedTarget)) {
+      widget.querySelector(".rex-js-media-preview")?.replaceChildren();
+    }
+  });
+}
 document.addEventListener("change", (event) => {
   const widget = event.target.closest('[data-rex-widget="medialist"].rex-js-widget-preview');
   if (widget) {
@@ -869,20 +915,6 @@ document.addEventListener("rex:ready", (event) => {
 
 // assets/js/src/forms.js
 document.addEventListener("keydown", (event) => {
-  if (!window.rex.accesskeys || event.altKey || event.ctrlKey || event.metaKey || !/^[0-9a-z]$/.test(event.key)) {
-    return;
-  }
-  if (event.target.closest?.('input, button, textarea, select, option, [contenteditable="true"]')) {
-    return;
-  }
-  const scope = [...document.querySelectorAll("dialog.rex-overlay[open]")].at(-1) ?? document;
-  const target = scope.querySelector(`input[accesskey="${event.key}"], button[accesskey="${event.key}"]`) ?? scope.querySelector(`a[accesskey="${event.key}"][href]:not([href="#"])`);
-  if (target) {
-    event.preventDefault();
-    target.click();
-  }
-});
-document.addEventListener("keydown", (event) => {
   if ("Enter" !== event.key || !(event.metaKey || event.ctrlKey)) {
     return;
   }
@@ -924,7 +956,7 @@ function applyRequiresChecked(element) {
   const form = element.form ?? element.closest("form") ?? element;
   const name = CSS.escape(element.dataset.rexRequiresChecked);
   const disabled = !form.querySelector(`input[name="${name}"]:checked`);
-  form.querySelectorAll('[type="submit"]').forEach((button2) => button2.disabled = disabled);
+  form.querySelectorAll('[type="submit"]').forEach((button) => button.disabled = disabled);
 }
 document.addEventListener("change", (event) => {
   const form = event.target.form;
@@ -952,12 +984,12 @@ function updateCollection(collection) {
   }
 }
 document.addEventListener("click", (event) => {
-  const button2 = event.target.closest("[data-rex-collection-add], [data-rex-collection-remove], [data-rex-collection-move]");
-  const collection = button2?.closest("[data-rex-collection]");
+  const button = event.target.closest("[data-rex-collection-add], [data-rex-collection-remove], [data-rex-collection-move]");
+  const collection = button?.closest("[data-rex-collection]");
   if (!collection) {
     return;
   }
-  if (button2.matches("[data-rex-collection-add]")) {
+  if (button.matches("[data-rex-collection-add]")) {
     const index = parseInt(collection.dataset.rexCollectionNext, 10);
     const html = collection.querySelector(":scope > template").innerHTML.split(collection.dataset.rexCollectionPlaceholder).join(String(index));
     const items = collection.querySelector(":scope > .rex-form-collection-items");
@@ -965,16 +997,23 @@ document.addEventListener("click", (event) => {
     collection.dataset.rexCollectionNext = String(index + 1);
     updateCollection(collection);
     window.rex.ready(items.lastElementChild);
-  } else if (button2.matches("[data-rex-collection-remove]")) {
-    button2.closest(".rex-form-collection-item").remove();
+    items.lastElementChild.querySelector('input:not([type="hidden"]), select, textarea, button')?.focus();
+    announce(window.rex.i18n?.collection_added ?? "Item added");
+  } else if (button.matches("[data-rex-collection-remove]")) {
+    const item = button.closest(".rex-form-collection-item");
+    const next = item.nextElementSibling ?? item.previousElementSibling;
+    item.remove();
     updateCollection(collection);
+    (next?.querySelector("[data-rex-collection-remove]") ?? collection.querySelector(":scope > [data-rex-collection-add]"))?.focus();
+    announce(window.rex.i18n?.collection_removed ?? "Item removed");
   } else {
-    const item = button2.closest(".rex-form-collection-item");
-    if ("up" === button2.dataset.rexCollectionMove) {
+    const item = button.closest(".rex-form-collection-item");
+    if ("up" === button.dataset.rexCollectionMove) {
       item.previousElementSibling?.before(item);
     } else {
       item.nextElementSibling?.after(item);
     }
+    button.focus();
   }
 });
 function addPasswordToggle(input) {
@@ -992,17 +1031,17 @@ function addPasswordToggle(input) {
   addon.className = "input-group-btn";
   addon.innerHTML = '<button type="button" class="btn btn-view" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
   input.after(addon);
-  const button2 = addon.querySelector("button");
-  button2.setAttribute("aria-label", window.rex.i18n?.password_show ?? "Show password");
+  const button = addon.querySelector("button");
+  button.setAttribute("aria-label", window.rex.i18n?.password_show ?? "Show password");
   if (input.id) {
-    button2.setAttribute("aria-controls", input.id);
+    button.setAttribute("aria-controls", input.id);
   }
-  button2.addEventListener("click", (event) => {
+  button.addEventListener("click", (event) => {
     event.preventDefault();
     const visible = "password" === input.type;
     input.type = visible ? "text" : "password";
-    button2.setAttribute("aria-pressed", String(visible));
-    button2.querySelector("i").className = "rex-icon " + (visible ? "rex-icon-hide" : "rex-icon-view");
+    button.setAttribute("aria-pressed", String(visible));
+    button.querySelector("i").className = "rex-icon " + (visible ? "rex-icon-hide" : "rex-icon-view");
   });
 }
 document.addEventListener("rex:ready", (event) => {
@@ -1095,12 +1134,21 @@ async function keepAlive() {
     showFailed();
   }
 }
-var button = (icon, label) => `<i class="rex-icon rex-icon-${icon}"></i> ${label}`;
-var logout = { label: button("sign-out", i18n2.session_timeout_logout_label), onClick: () => location.href = rex.session_logout_url };
-var counter = "<span data-rex-session-counter></span>";
+var logout = { label: i18n2.session_timeout_logout_label, icon: "sign-out", onClick: () => location.href = rex.session_logout_url };
+function paragraph(message) {
+  const p = document.createElement("p");
+  const [before, after = ""] = message.split("{0}");
+  p.append(before);
+  if (message.includes("{0}")) {
+    const counter = document.createElement("span");
+    counter.dataset.rexSessionCounter = "";
+    p.append(counter, after);
+  }
+  return p;
+}
 function show(message, buttons) {
   current?.close();
-  current = dialog({ title: i18n2.session_timeout_title, content: `<p>${message}</p>`, buttons, className: "rex-session-timeout-dialog" });
+  current = dialog({ title: i18n2.session_timeout_title, content: paragraph(message), buttons, className: "rex-session-timeout-dialog", role: "alertdialog" });
   current.closed.then(() => current = null);
   return current;
 }
@@ -1113,7 +1161,7 @@ function countdown({ body, element, closed }, end) {
     }
     if (seconds <= 0) {
       element.querySelector('[value="refresh"]')?.remove();
-      body.innerHTML = `<p>${i18n2.session_timeout_message_has_expired}</p>`;
+      body.replaceChildren(paragraph(i18n2.session_timeout_message_has_expired));
       clearInterval(timer);
     }
   };
@@ -1123,14 +1171,14 @@ function countdown({ body, element, closed }, end) {
 }
 function showFailed() {
   show(i18n2.session_timeout_message_has_expired, [
-    { label: button("sign-in", i18n2.session_timeout_login_label), primary: true, onClick: () => location.href = rex.session_login_url }
+    { label: i18n2.session_timeout_login_label, icon: "sign-in", primary: true, onClick: () => location.href = rex.session_login_url }
   ]);
 }
 function showExpand() {
-  const message = i18n2.session_timeout_message_expand.replace("{0}", counter).replace("{1}", String(Math.trunc(rex.session_duration / 60)));
+  const message = i18n2.session_timeout_message_expand.replace("{1}", String(Math.trunc(rex.session_duration / 60)));
   const box = show(message, [
     logout,
-    { label: button("refresh", i18n2.session_timeout_refresh_label), value: "refresh", primary: true, onClick: () => {
+    { label: i18n2.session_timeout_refresh_label, icon: "refresh", value: "refresh", primary: true, onClick: () => {
       keepAlive();
       setSessionWarningAt();
     } }
@@ -1138,7 +1186,7 @@ function showExpand() {
   countdown(box, () => sessionWarningAt + warningTime * 1e3);
 }
 function showOverallTimeout() {
-  const box = show(i18n2.session_timeout_message_expired.replace("{0}", counter), [logout]);
+  const box = show(i18n2.session_timeout_message_expired, [logout]);
   countdown(box, () => overallWarningAt + warningTime * 1e3);
 }
 if (rex.session_keep_alive_url) {
@@ -1180,6 +1228,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // assets/js/src/webauthn.js
+function failed(form, error) {
+  if (["NotAllowedError", "AbortError"].includes(error?.name)) {
+    return;
+  }
+  const message = window.rex.i18n?.passkey_failed ?? "The passkey could not be used.";
+  const alert = Object.assign(document.createElement("div"), { className: "alert alert-danger", textContent: message });
+  alert.setAttribute("role", "alert");
+  form.querySelector(':scope > .alert[role="alert"]')?.remove();
+  form.prepend(alert);
+  announce(message, { assertive: true });
+}
 var authAddPasskey = function(form) {
   form.classList.remove("hidden");
   const passkey = form.querySelector("[data-auth-passkey]");
@@ -1194,7 +1253,7 @@ var authAddPasskey = function(form) {
       };
       passkey.value = JSON.stringify(data);
       form.submit();
-    });
+    }).catch((error) => failed(form, error));
   });
 };
 var authPasskeyVerify = function(form) {
@@ -1204,12 +1263,12 @@ var authPasskeyVerify = function(form) {
   }
   const fields = form.querySelectorAll("input[type=password], button[type=submit]");
   fields.forEach((field) => field.disabled = true);
-  const button2 = verify.querySelector("button");
-  button2.addEventListener("click", () => {
+  const button = verify.querySelector("button");
+  button.addEventListener("click", () => {
     const passkey = verify.querySelector("input[type=hidden]");
-    authVerify(verify.dataset.authPasskeyVerify, "required", (value) => {
+    authVerify(verify.dataset.authPasskeyVerify, "required", form, (value) => {
       passkey.value = value;
-      button2.disabled = true;
+      button.disabled = true;
       verify.querySelector("i").classList.remove("hidden");
       fields.forEach((field) => field.disabled = false);
     });
@@ -1217,12 +1276,12 @@ var authPasskeyVerify = function(form) {
 };
 var authLogin = function(form) {
   const passkey = form.querySelector("[data-auth-passkey]");
-  authVerify(passkey.dataset.authPasskey, "conditional", (value) => {
+  authVerify(passkey.dataset.authPasskey, "conditional", form, (value) => {
     passkey.value = value;
     form.submit();
   });
 };
-var authVerify = function(options, mediation, onSuccess) {
+var authVerify = function(options, mediation, form, onSuccess) {
   options = JSON.parse(options);
   recursiveBase64StrToArrayBuffer(options);
   options.mediation = mediation;
@@ -1235,7 +1294,7 @@ var authVerify = function(options, mediation, onSuccess) {
       userHandle: data.response.userHandle ? arrayBufferToBase64(data.response.userHandle) : null
     };
     onSuccess(JSON.stringify(data));
-  });
+  }).catch((error) => failed(form, error));
 };
 var recursiveBase64StrToArrayBuffer = function(obj) {
   let prefix = "=?BINARY?B?";
@@ -1461,20 +1520,20 @@ function copyText(text) {
 }
 
 // node_modules/@github/clipboard-copy-element/dist/clipboard-copy-element.js
-async function copy(button2) {
-  const id = button2.getAttribute("for");
-  const text = button2.getAttribute("value");
+async function copy(button) {
+  const id = button.getAttribute("for");
+  const text = button.getAttribute("value");
   function trigger() {
-    button2.dispatchEvent(new CustomEvent("clipboard-copy", { bubbles: true }));
+    button.dispatchEvent(new CustomEvent("clipboard-copy", { bubbles: true }));
   }
-  if (button2.getAttribute("aria-disabled") === "true") {
+  if (button.getAttribute("aria-disabled") === "true") {
     return;
   }
   if (text) {
     await copyText(text);
     trigger();
   } else if (id) {
-    const root2 = "getRootNode" in Element.prototype ? button2.getRootNode() : button2.ownerDocument;
+    const root2 = "getRootNode" in Element.prototype ? button.getRootNode() : button.ownerDocument;
     if (!(root2 instanceof Document || "ShadowRoot" in window && root2 instanceof ShadowRoot))
       return;
     const node = root2.getElementById(id);
@@ -1494,17 +1553,17 @@ function copyTarget(content) {
   }
 }
 function clicked(event) {
-  const button2 = event.currentTarget;
-  if (button2 instanceof HTMLElement) {
-    copy(button2);
+  const button = event.currentTarget;
+  if (button instanceof HTMLElement) {
+    copy(button);
   }
 }
 function keydown(event) {
   if (event.key === " " || event.key === "Enter") {
-    const button2 = event.currentTarget;
-    if (button2 instanceof HTMLElement) {
+    const button = event.currentTarget;
+    if (button instanceof HTMLElement) {
       event.preventDefault();
-      copy(button2);
+      copy(button);
     }
   }
 }
@@ -1554,5 +1613,6 @@ try {
 }
 
 // assets/js/src/backend.js
-Object.assign(window.rex, { ready, overlay, pick, pickers, dialog, confirm, collapse });
+document.addEventListener("clipboard-copy", () => announce(window.rex.i18n?.clipboard_copied ?? "Copied"));
+Object.assign(window.rex, { ready, announce, overlay, pick, pickers, dialog, confirm, collapse });
 document.addEventListener("DOMContentLoaded", () => ready(document.body));

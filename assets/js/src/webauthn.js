@@ -1,5 +1,23 @@
 /* Passkeys (WebAuthn): login, adding a passkey and confirming changes in the profile with a passkey */
 
+import {announce} from './announce.js';
+
+/**
+ * Tells about a failed passkey request, unless the user canceled it or the browser aborted the conditional login
+ * (both reject with `NotAllowedError` / `AbortError`).
+ */
+function failed(form, error) {
+    if (['NotAllowedError', 'AbortError'].includes(error?.name)) {
+        return;
+    }
+    const message = window.rex.i18n?.passkey_failed ?? 'The passkey could not be used.';
+    const alert = Object.assign(document.createElement('div'), {className: 'alert alert-danger', textContent: message});
+    alert.setAttribute('role', 'alert');
+    form.querySelector(':scope > .alert[role="alert"]')?.remove();
+    form.prepend(alert);
+    announce(message, {assertive: true});
+}
+
 const authAddPasskey = function (form) {
     form.classList.remove('hidden');
 
@@ -20,7 +38,7 @@ const authAddPasskey = function (form) {
             passkey.value = JSON.stringify(data);
 
             form.submit();
-        });
+        }).catch(error => failed(form, error));
     });
 }
 
@@ -38,7 +56,7 @@ const authPasskeyVerify = function (form) {
     button.addEventListener('click', () => {
         const passkey = verify.querySelector('input[type=hidden]');
 
-        authVerify(verify.dataset.authPasskeyVerify, 'required', value => {
+        authVerify(verify.dataset.authPasskeyVerify, 'required', form, value => {
             passkey.value = value;
             button.disabled = true;
             verify.querySelector('i').classList.remove('hidden');
@@ -50,13 +68,13 @@ const authPasskeyVerify = function (form) {
 const authLogin = function (form) {
     const passkey = form.querySelector('[data-auth-passkey]');
 
-    authVerify(passkey.dataset.authPasskey, 'conditional', value => {
+    authVerify(passkey.dataset.authPasskey, 'conditional', form, value => {
         passkey.value = value;
         form.submit();
     });
 }
 
-const authVerify = function (options, mediation, onSuccess) {
+const authVerify = function (options, mediation, form, onSuccess) {
     options = JSON.parse(options);
     recursiveBase64StrToArrayBuffer(options);
 
@@ -72,7 +90,7 @@ const authVerify = function (options, mediation, onSuccess) {
         }
 
         onSuccess(JSON.stringify(data));
-    });
+    }).catch(error => failed(form, error));
 }
 
 const recursiveBase64StrToArrayBuffer = function (obj) {

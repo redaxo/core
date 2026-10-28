@@ -2,51 +2,67 @@
 
 let count = 0;
 
+/** Text as text node, nodes as they are. */
+function contentOf(value) {
+    return value instanceof Node ? value : document.createTextNode(String(value));
+}
+
 /**
  * Opens a modal dialog. Clicking a button closes it; `closed` resolves with the button's value ('' for Esc or the
  * close button).
  *
  *     const {closed} = dialog({title: 'Title', content: 'Text', buttons: [{label: 'OK', value: 'ok', primary: true}]});
  *
+ * Strings are inserted as text, markup is passed as a `Node`. Without title, the content names the dialog.
+ *
  * @param {{
- *     title?: string,
+ *     title?: string|Node,
  *     content: string|Node,
- *     buttons?: Array<{label: string, value?: string, className?: string, primary?: boolean, onClick?: (event: MouseEvent) => void}>,
+ *     buttons?: Array<{label: string|Node, icon?: string, value?: string, className?: string, primary?: boolean, onClick?: (event: MouseEvent) => void}>,
  *     className?: string,
- * }} options `content` and the button labels as strings are HTML
+ *     role?: 'dialog'|'alertdialog',
+ * }} options
  * @returns {{element: HTMLDialogElement, body: HTMLElement, close: (value?: string) => void, closed: Promise<string>}}
  */
-export function dialog({title = '', content, buttons = [], className = ''}) {
+export function dialog({title = '', content, buttons = [], className = '', role = 'dialog'}) {
+    const id = 'rex-dialog-' + ++count;
     const element = document.createElement('dialog');
     element.className = ('rex-dialog ' + className).trim();
     element.innerHTML = `
         <form method="dialog" class="rex-dialog-inner">
             <header class="rex-dialog-header">
-                <h2 class="rex-dialog-title"></h2>
+                <h2 class="rex-dialog-title" id="${id}-title"></h2>
                 <button class="rex-dialog-close" value=""><i class="rex-icon fa-solid fa-xmark" aria-hidden="true"></i></button>
             </header>
-            <div class="rex-dialog-body"></div>
+            <div class="rex-dialog-body" id="${id}-body"></div>
             <footer class="rex-dialog-footer"></footer>
         </form>`;
-
-    const header = element.querySelector('.rex-dialog-header');
-    if (title) {
-        element.querySelector('.rex-dialog-title').innerHTML = title;
-        element.setAttribute('aria-labelledby', element.querySelector('.rex-dialog-title').id = 'rex-dialog-title-' + ++count);
-    } else {
-        header.remove();
+    if ('alertdialog' === role) {
+        element.setAttribute('role', 'alertdialog');
     }
-    element.querySelector('.rex-dialog-close')?.setAttribute('aria-label', window.rex.i18n?.overlay_close ?? 'Close');
+
+    const heading = element.querySelector('.rex-dialog-title');
+    if (title) {
+        heading.append(contentOf(title));
+        element.setAttribute('aria-labelledby', heading.id);
+    } else {
+        heading.remove();
+        element.setAttribute('aria-labelledby', id + '-body');
+    }
+    element.querySelector('.rex-dialog-close').setAttribute('aria-label', window.rex.i18n?.overlay_close ?? 'Close');
 
     const body = element.querySelector('.rex-dialog-body');
-    content instanceof Node ? body.append(content) : body.innerHTML = content;
+    body.append(contentOf(content));
 
     const footer = element.querySelector('.rex-dialog-footer');
-    for (const {label, value = '', className = '', primary = false, onClick} of buttons) {
+    for (const {label, icon, value = '', className = '', primary = false, onClick} of buttons) {
         const button = document.createElement('button');
         button.className = ['btn', primary ? 'btn-primary' : 'btn-default', className].join(' ').trim();
         button.value = value;
-        button.innerHTML = label;
+        if (icon) {
+            button.insertAdjacentHTML('beforeend', `<i class="rex-icon rex-icon-${CSS.escape(icon)}" aria-hidden="true"></i> `);
+        }
+        button.append(contentOf(label));
         button.autofocus = primary;
         if (onClick) {
             button.addEventListener('click', onClick);
@@ -74,6 +90,7 @@ export async function confirm(message) {
     const {closed} = dialog({
         content: Object.assign(document.createElement('p'), {textContent: message}),
         className: 'rex-dialog--confirm',
+        role: 'alertdialog',
         buttons: [
             {label: i18n.dialog_cancel ?? 'Cancel', value: 'cancel'},
             {label: i18n.dialog_confirm ?? 'OK', value: 'confirm', primary: true},

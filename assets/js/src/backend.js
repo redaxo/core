@@ -6,6 +6,7 @@
  */
 
 import {ready} from './ready.js';
+import {announce} from './announce.js';
 import {overlay} from './overlay.js';
 import {pick, pickers} from './pickers.js';
 import {dialog, confirm} from './dialog.js';
@@ -21,7 +22,9 @@ import './webauthn.js';
 import './history.js';
 import '@github/clipboard-copy-element';
 
-Object.assign(window.rex, {ready, overlay, pick, pickers, dialog, confirm, collapse});
+document.addEventListener('clipboard-copy', () => announce(window.rex.i18n?.clipboard_copied ?? 'Copied'));
+
+Object.assign(window.rex, {ready, announce, overlay, pick, pickers, dialog, confirm, collapse});
 
 // after all deferred scripts, so their `rex:ready` listeners see the initial page too
 document.addEventListener('DOMContentLoaded', () => ready(document.body));

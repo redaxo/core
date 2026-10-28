@@ -117,18 +117,21 @@ function showPreview(widget) {
         : 'index.php?' + new URLSearchParams({rex_media_type: 'rex_media_small', rex_media_file: file});
 }
 
-document.addEventListener('mouseover', event => {
-    const widget = event.target.closest('[data-rex-widget].rex-js-widget-preview');
-    if (widget && !widget.contains(event.relatedTarget)) {
-        showPreview(widget);
-    }
-});
-document.addEventListener('mouseout', event => {
-    const widget = event.target.closest('[data-rex-widget].rex-js-widget-preview');
-    if (widget && !widget.contains(event.relatedTarget)) {
-        widget.querySelector('.rex-js-media-preview')?.replaceChildren();
-    }
-});
+// while hovering or focusing it
+for (const [show, hide] of [['mouseover', 'mouseout'], ['focusin', 'focusout']]) {
+    document.addEventListener(show, event => {
+        const widget = event.target.closest('[data-rex-widget].rex-js-widget-preview');
+        if (widget && !widget.contains(event.relatedTarget)) {
+            showPreview(widget);
+        }
+    });
+    document.addEventListener(hide, event => {
+        const widget = event.target.closest('[data-rex-widget].rex-js-widget-preview');
+        if (widget && !widget.contains(event.relatedTarget)) {
+            widget.querySelector('.rex-js-media-preview')?.replaceChildren();
+        }
+    });
+}
 document.addEventListener('change', event => {
     const widget = event.target.closest('[data-rex-widget="medialist"].rex-js-widget-preview');
     if (widget) {

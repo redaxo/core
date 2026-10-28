@@ -1,25 +1,9 @@
+import {announce} from './announce.js';
+
 /*
- Form helpers: accesskeys, `data-rex-check-all`, `data-rex-hides`, `data-rex-autosubmit`, `data-rex-submit-params`,
+ Form helpers: `data-rex-check-all`, `data-rex-hides`, `data-rex-autosubmit`, `data-rex-submit-params`,
  `data-rex-requires-checked`, collection fields, the visibility toggle of password fields and submitting with Cmd/Ctrl + Enter
  */
-
-// accesskeys work without modifier keys as long as no form field has the focus
-document.addEventListener('keydown', event => {
-    if (!window.rex.accesskeys || event.altKey || event.ctrlKey || event.metaKey || !/^[0-9a-z]$/.test(event.key)) {
-        return;
-    }
-    if (event.target.closest?.('input, button, textarea, select, option, [contenteditable="true"]')) {
-        return;
-    }
-    // an open overlay covers the page, so only its accesskeys count
-    const scope = [...document.querySelectorAll('dialog.rex-overlay[open]')].at(-1) ?? document;
-    const target = scope.querySelector(`input[accesskey="${event.key}"], button[accesskey="${event.key}"]`)
-        ?? scope.querySelector(`a[accesskey="${event.key}"][href]:not([href="#"])`);
-    if (target) {
-        event.preventDefault();
-        target.click();
-    }
-});
 
 // submit forms with Cmd/Ctrl + Enter, preferring the apply button (e.g. when editing content)
 document.addEventListener('keydown', event => {
@@ -124,9 +108,16 @@ document.addEventListener('click', event => {
         collection.dataset.rexCollectionNext = String(index + 1);
         updateCollection(collection);
         window.rex.ready(items.lastElementChild);
+        items.lastElementChild.querySelector('input:not([type="hidden"]), select, textarea, button')?.focus();
+        announce(window.rex.i18n?.collection_added ?? 'Item added');
     } else if (button.matches('[data-rex-collection-remove]')) {
-        button.closest('.rex-form-collection-item').remove();
+        // the focus moves on to the next item, or to the add button after the last one
+        const item = button.closest('.rex-form-collection-item');
+        const next = item.nextElementSibling ?? item.previousElementSibling;
+        item.remove();
         updateCollection(collection);
+        (next?.querySelector('[data-rex-collection-remove]') ?? collection.querySelector(':scope > [data-rex-collection-add]'))?.focus();
+        announce(window.rex.i18n?.collection_removed ?? 'Item removed');
     } else {
         const item = button.closest('.rex-form-collection-item');
         if ('up' === button.dataset.rexCollectionMove) {
@@ -134,6 +125,8 @@ document.addEventListener('click', event => {
         } else {
             item.nextElementSibling?.after(item);
         }
+        // moving the item takes the focus from its button
+        button.focus();
     }
 });
 

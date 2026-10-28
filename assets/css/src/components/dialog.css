@@ -28,6 +28,7 @@
     .rex-dialog-header {
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         gap: 16px;
         padding: 8px 8px 8px var(--rex-gutter);
         border-bottom: 1px solid var(--rex-color-border);

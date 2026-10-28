@@ -251,6 +251,11 @@ select_no_results = Keine Treffer
 select_search = Suchen
 overlay_close = Schließen
 password_show = Passwort anzeigen
+picker_picked = ausgewählt
+collection_added = Eintrag hinzugefügt
+collection_removed = Eintrag entfernt
+clipboard_copied = In die Zwischenablage kopiert
+passkey_failed = Der Passkey konnte nicht verwendet werden.
 
 password_change_required = Das Passwort ist abgelaufen. Um fortzufahren, bitte ein neues Passwort angeben!
 password_not_changed = Das neue Passwort muss sich vom vorherigen unterscheiden!

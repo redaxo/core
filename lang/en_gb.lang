@@ -235,6 +235,11 @@ select_no_results = No results
 select_search = Search
 overlay_close = Close
 password_show = Show password
+picker_picked = picked
+collection_added = Item added
+collection_removed = Item removed
+clipboard_copied = Copied to the clipboard
+passkey_failed = The passkey could not be used.
 
 list_previous = previous page
 list_next = next page

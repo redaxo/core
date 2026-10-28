@@ -65,13 +65,24 @@ async function keepAlive() {
     }
 }
 
-const button = (icon, label) => `<i class="rex-icon rex-icon-${icon}"></i> ${label}`;
-const logout = {label: button('sign-out', i18n.session_timeout_logout_label), onClick: () => location.href = rex.session_logout_url};
-const counter = '<span data-rex-session-counter></span>';
+const logout = {label: i18n.session_timeout_logout_label, icon: 'sign-out', onClick: () => location.href = rex.session_logout_url};
+
+/** Paragraph of the message, with the remaining minutes at the `{0}` placeholder. */
+function paragraph(message) {
+    const p = document.createElement('p');
+    const [before, after = ''] = message.split('{0}');
+    p.append(before);
+    if (message.includes('{0}')) {
+        const counter = document.createElement('span');
+        counter.dataset.rexSessionCounter = '';
+        p.append(counter, after);
+    }
+    return p;
+}
 
 function show(message, buttons) {
     current?.close();
-    current = dialog({title: i18n.session_timeout_title, content: `<p>${message}</p>`, buttons, className: 'rex-session-timeout-dialog'});
+    current = dialog({title: i18n.session_timeout_title, content: paragraph(message), buttons, className: 'rex-session-timeout-dialog', role: 'alertdialog'});
     current.closed.then(() => current = null);
 
     return current;
@@ -87,7 +98,7 @@ function countdown({body, element, closed}, end) {
         }
         if (seconds <= 0) {
             element.querySelector('[value="refresh"]')?.remove();
-            body.innerHTML = `<p>${i18n.session_timeout_message_has_expired}</p>`;
+            body.replaceChildren(paragraph(i18n.session_timeout_message_has_expired));
             clearInterval(timer);
         }
     };
@@ -98,15 +109,15 @@ function countdown({body, element, closed}, end) {
 
 function showFailed() {
     show(i18n.session_timeout_message_has_expired, [
-        {label: button('sign-in', i18n.session_timeout_login_label), primary: true, onClick: () => location.href = rex.session_login_url},
+        {label: i18n.session_timeout_login_label, icon: 'sign-in', primary: true, onClick: () => location.href = rex.session_login_url},
     ]);
 }
 
 function showExpand() {
-    const message = i18n.session_timeout_message_expand.replace('{0}', counter).replace('{1}', String(Math.trunc(rex.session_duration / 60)));
+    const message = i18n.session_timeout_message_expand.replace('{1}', String(Math.trunc(rex.session_duration / 60)));
     const box = show(message, [
         logout,
-        {label: button('refresh', i18n.session_timeout_refresh_label), value: 'refresh', primary: true, onClick: () => {
+        {label: i18n.session_timeout_refresh_label, icon: 'refresh', value: 'refresh', primary: true, onClick: () => {
             keepAlive();
             setSessionWarningAt();
         }},
@@ -115,7 +126,7 @@ function showExpand() {
 }
 
 function showOverallTimeout() {
-    const box = show(i18n.session_timeout_message_expired.replace('{0}', counter), [logout]);
+    const box = show(i18n.session_timeout_message_expired, [logout]);
     countdown(box, () => overallWarningAt + warningTime * 1000);
 }
 

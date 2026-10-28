@@ -1,7 +1,6 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
-use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\Article;
@@ -217,11 +216,15 @@ if (Core::getUser()) {
 }
 
 Asset::setJsProperty('backend', true);
-Asset::setJsProperty('accesskeys', Accesskey::$enabled);
 
 $i18n = [
     'overlay_close' => I18n::msg('overlay_close'),
     'password_show' => I18n::msg('password_show'),
+    'picker_picked' => I18n::msg('picker_picked'),
+    'collection_added' => I18n::msg('collection_added'),
+    'collection_removed' => I18n::msg('collection_removed'),
+    'clipboard_copied' => I18n::msg('clipboard_copied'),
+    'passkey_failed' => I18n::msg('passkey_failed'),
     'dialog_confirm' => I18n::msg('dialog_confirm'),
     'dialog_cancel' => I18n::msg('dialog_cancel'),
     'select_all' => I18n::msg('select_all'),
