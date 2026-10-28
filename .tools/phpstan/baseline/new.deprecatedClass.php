@@ -60,7 +60,7 @@ The fragment system will be removed before the 6.0 release',
 $ignoreErrors[] = [
     'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
 The fragment system will be removed before the 6.0 release',
-    'count' => 4,
+    'count' => 2,
     'path' => __DIR__ . '/../../../pages/mediapool/media.list.php',
 ];
 $ignoreErrors[] = [

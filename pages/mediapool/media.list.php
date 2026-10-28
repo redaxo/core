@@ -214,17 +214,8 @@ $panel .= '
 // ----- move, delete and get selected items
 $footer = '';
 if ($hasCategoryPerm) {
-    $addInput = '';
     $filecat = Sql::factory();
     $filecat->setQuery('SELECT * FROM rex_media_category ORDER BY name ASC LIMIT 1');
-
-    $e = [];
-    $e['label'] = '<label>' . I18n::msg('pool_select_all') . '</label>';
-    $e['field'] = '<input type="checkbox" name="checkie" value="0" data-rex-check-all="selectedmedia[]" />';
-    $e['class'] = 'rex-form-group-no-margin';
-    $fragment = new Fragment();
-    $fragment->setVar('elements', [$e], false);
-    $checkbox = $fragment->parse('core/form/checkbox.php');
 
     $field = '';
     if ($filecat->getRows() > 0) {
@@ -251,23 +242,22 @@ if ($hasCategoryPerm) {
 
     $actionButtons = implode(' ', array_map(static fn (Button $button): string => (string) $button->render(), $buttons));
 
-    $field = '<div class="rex-grid" data-from="sm" data-columns="7 5"><div>' . $field . '</div><div data-align="end">' . $actionButtons . '</div></div>';
-
-    $e = [];
-    $e['label'] = '<label>' . I18n::msg('pool_selectedmedia') . '</label>';
-    $e['field'] = $field;
-    $e['class'] = 'rex-form-group-no-margin';
-    $fragment = new Fragment();
-    $fragment->setVar('elements', [$e], false);
-    $field = $fragment->parse('core/form/form.php');
-
+    // the checkbox to select all sits in the column of the checkboxes of the rows, the actions for the selected media
+    // form a named group next to it
     $footer = '
                 <tr>
-                    <td colspan="2">
-                        ' . $checkbox . '
+                    <td class="rex-table-icon">
+                        <input type="checkbox" id="rex-mediapool-select-all" data-rex-check-all="selectedmedia[]" />
                     </td>
-                    <td colspan="4">
-                        ' . $field . '
+                    <td colspan="5">
+                        <div class="rex-button-toolbar" data-spacing="wide">
+                            <label for="rex-mediapool-select-all">' . I18n::msg('pool_select_all') . '</label>
+                            <div class="rex-button-toolbar" role="group" aria-labelledby="rex-mediapool-selected">
+                                <strong id="rex-mediapool-selected">' . I18n::msg('pool_selectedmedia') . '</strong>
+                                ' . $field . '
+                                <div data-align="end">' . $actionButtons . '</div>
+                            </div>
+                        </div>
                     </td>
                 </tr>';
 }
@@ -316,7 +306,7 @@ foreach ($items as $media) {
     $rows[] = [
         // the search may list media from categories the user has no permission for
         'select' => $hasCategoryPerm && $perm->hasCategoryPerm($media->categoryId)
-            ? Html::raw('<input type="checkbox" name="selectedmedia[]" value="' . $media->fileName . '" />')
+            ? Html::raw('<input type="checkbox" name="selectedmedia[]" value="' . $media->fileName . '" aria-label="' . escape($media->fileName) . '" />')
             : null,
         'thumbnail' => Html::raw('<a href="' . $ilink . '">' . $thumbnail . '</a>'),
         'info' => Html::raw('

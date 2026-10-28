@@ -35,6 +35,11 @@
             vertical-align: bottom;
         }
 
+        /* the footer holds controls, e.g. actions for the selected rows */
+        & > tfoot > tr > :is(th, td) {
+            vertical-align: middle;
+        }
+
         & > :is(caption, colgroup) + thead > tr:first-child > :is(th, td),
         & > thead:first-child > tr:first-child > :is(th, td) {
             border-top: 0;

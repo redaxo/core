@@ -9,7 +9,7 @@
  - `data-effect="flash"` flashes when clicked, e.g. picking an item of a multiple picker
 
  Groups (`.rex-button-group`, `data-orientation="vertical"`) join their buttons, a toolbar (`.rex-button-toolbar`)
- puts them in a row with `data-align="end"` items on the right.
+ puts them in a row with `data-align="end"` items on the right, `data-spacing="wide"` with more space between them.
  */
 
 @layer components {
@@ -250,6 +250,22 @@
 
         & > [data-align="end"] {
             margin-left: auto;
+        }
+
+        /* a nested toolbar, e.g. a named group of actions, takes the remaining width */
+        & > & {
+            flex: 1 1 auto;
+        }
+
+        /* a label of a field in the toolbar, e.g. of a checkbox */
+        & > label {
+            margin: 0;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        &[data-spacing="wide"] {
+            gap: 10px 20px;
         }
     }
 }

@@ -501,7 +501,6 @@ pool_changecat_selectedmedia_suffix = move
 pool_get_selectedmedia = apply
 pool_selectedmedia_error = No media selected
 pool_selectedmedia_moved = Moved selected media
-pool_select_all = Select all
 pool_nomediafound = No files in this category
 pool_image_get = Insert image
 pool_link_get = Insert link

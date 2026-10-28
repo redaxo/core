@@ -532,7 +532,6 @@ pool_changecat_selectedmedia_suffix = verschieben
 pool_get_selectedmedia = übernehmen
 pool_selectedmedia_error = Keine Medien ausgewählt
 pool_selectedmedia_moved = Selektierte Medien sind verschoben worden
-pool_select_all = Alle
 pool_nomediafound = Keine Dateien in dieser Medienkategorie gefunden
 pool_image_get = Bild einfügen
 pool_link_get = Link einsetzen
