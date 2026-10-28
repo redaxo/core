@@ -65,7 +65,7 @@ $fragment->setVar('elements', $formElements, false);
 $toolbar = '<div class="rex-truncate-dropdown">' . $fragment->parse('core/form/input_group.php') . '</div>';
 
 $toolbar = '
-<div class="navbar-form navbar-right">
+<div>
 <form action="' . Url::currentBackendPage() . '" method="post">
     ' . $argFields . '
     <div class="form-group">

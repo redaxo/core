@@ -420,7 +420,7 @@ if (Core::getConfig('article_work_version', false)) {
         $inverse = ArticleRevision::WORK == $revision;
         $cssClass = ArticleRevision::WORK == $revision ? 'rex-state-inprogress' : 'rex-state-live';
 
-        $return .= View::toolbar('<ul class="nav navbar-nav">' . $toolbar . '</ul>', null, $cssClass, $inverse);
+        $return .= View::toolbar('<ul class="rex-toolbar-nav" role="list">' . $toolbar . '</ul>', null, $cssClass, $inverse);
 
         return $return;
     });

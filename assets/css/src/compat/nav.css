@@ -1,4 +1,4 @@
-/* Navs and tabs (`.nav`, `.nav-tabs`), e.g. the tabs of YForm forms and of the designer */
+/* Bootstrap 3 navs and tabs (`.nav`, `.nav-tabs`), e.g. the tabs of YForm forms; not used by the core */
 
 @layer bootstrap {
     .nav {
