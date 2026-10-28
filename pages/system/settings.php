@@ -145,24 +145,24 @@ $properties = static fn (array $rows): string => (string) new Table([
 
 $content = $properties([
     ['REDAXO', Html::raw($rexVersion)],
-    [I18n::msg('mode'), Html::raw(Core::getMode()->value)],
+    [I18n::rawMsg('mode'), Html::raw(Core::getMode()->value)],
     ['PHP', Html::raw(PHP_VERSION . ' <a class="rex-u-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" target="_blank" rel="noopener"><i class="rex-icon rex-icon-phpinfo" aria-hidden="true"></i></a>')],
-    [I18n::msg('base_url'), Html::raw('<span class="rex-u-word-break">' . escape(Url::absoluteBase()) . '</span>')],
-    [I18n::msg('error_email'), Html::raw('<span class="rex-u-word-break">' . escape(Env::get('REX_ERROR_EMAIL') ?? I18n::msg('deactivated')) . '</span>')],
-    [I18n::msg('path'), Html::raw('<div class="rex-u-word-break">' . Path::base() . '</div>')],
+    [I18n::rawMsg('base_url'), Html::raw('<span class="rex-u-word-break">' . escape(Url::absoluteBase()) . '</span>')],
+    [I18n::rawMsg('error_email'), Html::raw('<span class="rex-u-word-break">' . escape(Env::get('REX_ERROR_EMAIL') ?? I18n::rawMsg('deactivated')) . '</span>')],
+    [I18n::rawMsg('path'), Html::raw('<div class="rex-u-word-break">' . escape(Path::base()) . '</div>')],
 ]);
 
 $fragment = new Fragment();
-$fragment->setVar('title', I18n::msg('installation'));
+$fragment->setVar('title', I18n::rawMsg('installation'));
 $fragment->setVar('content', $content, false);
 $sideContent[] = $fragment->parse('core/page/section.php');
 
 $sql = Sql::factory();
 
 $content = $properties([
-    [I18n::msg('version'), Html::raw($sql->getDbType() . ' ' . $sql->getDbVersion())],
-    [I18n::msg('name'), Html::raw('<span class="rex-u-word-break">' . $dbconfig->name . '</span>')],
-    [I18n::msg('host'), Html::raw($dbconfig->host)],
+    [I18n::rawMsg('version'), $sql->getDbType() . ' ' . $sql->getDbVersion()],
+    [I18n::rawMsg('name'), Html::raw('<span class="rex-u-word-break">' . escape($dbconfig->name) . '</span>')],
+    [I18n::rawMsg('host'), $dbconfig->host],
 ]);
 
 $fragment = new Fragment();
@@ -174,11 +174,11 @@ $addresses = static fn (array $addresses): string => escape(implode(', ', array_
 
 if ($mailer instanceof Mailer) {
     $content = $properties([
-        [I18n::msg('mailer_transport'), Html::raw('<span class="rex-u-word-break">' . escape((string) $mailer->transport) . '</span>')],
-        [I18n::msg('mailer_from'), Html::raw('<span class="rex-u-word-break">' . (null === $mailer->defaultFrom ? '-' : $addresses([$mailer->defaultFrom])) . '</span>')],
-        [I18n::msg('mailer_detour'), Html::raw('<span class="rex-u-word-break">' . ($mailer->detourRecipients ? '<span class="rex-u-text-danger">' . $addresses($mailer->detourRecipients) . '</span>' : I18n::msg('deactivated')) . '</span>')],
-        [I18n::msg('mailer_log'), Html::raw($mailer->logMode->value)],
-        [I18n::msg('mailer_archive'), Html::raw(I18n::msg($mailer->archive ? 'activated' : 'deactivated'))],
+        [I18n::rawMsg('mailer_transport'), Html::raw('<span class="rex-u-word-break">' . escape((string) $mailer->transport) . '</span>')],
+        [I18n::rawMsg('mailer_from'), Html::raw('<span class="rex-u-word-break">' . (null === $mailer->defaultFrom ? '-' : $addresses([$mailer->defaultFrom])) . '</span>')],
+        [I18n::rawMsg('mailer_detour'), Html::raw('<span class="rex-u-word-break">' . ($mailer->detourRecipients ? '<span class="rex-u-text-danger">' . $addresses($mailer->detourRecipients) . '</span>' : I18n::msg('deactivated')) . '</span>')],
+        [I18n::rawMsg('mailer_log'), Html::raw($mailer->logMode->value)],
+        [I18n::rawMsg('mailer_archive'), Html::raw(I18n::msg($mailer->archive ? 'activated' : 'deactivated'))],
     ]);
 
     $fragment = new Fragment();

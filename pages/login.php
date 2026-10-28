@@ -43,7 +43,7 @@ if ('' != $loginMessage) {
                 } else {
                     const message = document.querySelector(".rex-js-login-message .rex-alert");
                     if (message) {
-                        message.textContent = "' . escape(I18n::msg('login_welcome'), 'js') . '";
+                        message.textContent = "' . escape(I18n::rawMsg('login_welcome'), 'js') . '";
                     }
                     fields.forEach(field => field.disabled = false);
                     document.getElementById("rex-id-login-user").focus();

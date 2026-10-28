@@ -26,7 +26,7 @@ return static function (ArticleHistory $history): void {
         } ?>
         <select class="rex-input rex-history-select" data-rex-history-base aria-label="<?= escape($current) ?>">
             <option value="<?= ArticleRevision::LIVE ?>"><?= escape($current) ?></option>
-            <option value="<?= ArticleRevision::WORK ?>"><?= escape(I18n::msg('version_workingversion')) ?></option>
+            <option value="<?= ArticleRevision::WORK ?>"><?= I18n::msg('version_workingversion') ?></option>
         </select>
     <?php });
 
