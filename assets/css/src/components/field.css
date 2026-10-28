@@ -23,7 +23,7 @@
         margin: 0 0 5px;
         padding: 0;
         border: 0;
-        color: var(--rex-color-text);
+        color: inherit;
         font-size: var(--rex-font-size);
         font-weight: 700;
     }
