@@ -45,7 +45,7 @@ final class View
     /** Returns a toolbar. */
     public static function toolbar(string $content, ?string $brand = null, ?string $cssClass = null, bool $inverse = false): string
     {
-        return (string) new Toolbar(Html::raw($content), Html::raw($brand ?? ''), $cssClass ?? '', $inverse)->render();
+        return (string) new Toolbar(Html::raw($content), Html::raw($brand ?? ''), $inverse, new HtmlAttributes(['class' => array_values(array_filter(explode(' ', $cssClass ?? '')))]))->render();
     }
 
     /** Returns a content block. */

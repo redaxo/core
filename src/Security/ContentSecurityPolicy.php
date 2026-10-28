@@ -42,7 +42,11 @@ final class ContentSecurityPolicy
 
     private static ?self $backend = null;
 
-    /** @param array<string, list<string>> $directives sources per directive, e.g. `['img-src' => ["'self'"]]` */
+    /**
+     * @param array<string, list<string>> $directives sources per directive, e.g. `['img-src' => ["'self'"]]`
+     *
+     * @internal addons extend the policy of the request via {@see self::backend()}
+     */
     public function __construct(
         private array $directives = [],
     ) {}
@@ -120,12 +124,17 @@ final class ContentSecurityPolicy
         return [];
     }
 
-    /** @return list<string> */
+    /**
+     * @return list<string>
+     *
+     * @internal
+     */
     public function get(string $directive): array
     {
         return $this->directives[$directive] ?? [];
     }
 
+    /** @internal the core sends the policy as header */
     public function toString(): string
     {
         $parts = [];

@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\View\Component;
 
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Renderable;
 use Redaxo\Core\View\RendersView;
 
@@ -13,8 +14,9 @@ final class Toolbar implements Renderable
     public function __construct(
         public string|Renderable $content,
         public string|Renderable $brand = '',
-        public string $cssClass = '',
         /** Dark variant */
         public bool $inverse = false,
+        /** Further attributes of the `<nav>`, e.g. an `aria-label` when the page has several navigations */
+        public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 }

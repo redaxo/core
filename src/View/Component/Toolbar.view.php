@@ -3,13 +3,12 @@
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Component\Toolbar;
 use Redaxo\Core\View\Html;
-use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Renderable;
 
 return static function (Toolbar $toolbar): void {
     $filled = static fn (string|Renderable $value): bool => $value instanceof Html ? '' !== (string) $value : $value instanceof Renderable || '' !== $value;
     $target = 'rex-toolbar-' . bin2hex(random_bytes(4)) ?>
-    <nav <?= new HtmlAttributes(['class' => ['rex-toolbar', $toolbar->cssClass => '' !== $toolbar->cssClass], 'data-variant' => $toolbar->inverse ? 'inverse' : null]) ?>>
+    <nav <?= $toolbar->attributes->with(['class' => ['rex-toolbar'], 'data-variant' => $toolbar->inverse ? 'inverse' : null]) ?>>
         <?php if ($filled($toolbar->brand)): ?>
             <span class="rex-toolbar-brand"><?= Html::from($toolbar->brand) ?></span>
         <?php endif ?>
