@@ -111,18 +111,18 @@
             box-shadow: var(--rex-shadow-xs);
         }
 
-        &:focus {
+        &:focus-visible {
             outline: none;
-        }
 
-        &:focus-visible::-webkit-slider-thumb {
-            outline: 2px solid var(--rex-color-link);
-            outline-offset: 1px;
-        }
+            &::-webkit-slider-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 1px;
+            }
 
-        &:focus-visible::-moz-range-thumb {
-            outline: 2px solid var(--rex-color-link);
-            outline-offset: 1px;
+            &::-moz-range-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 1px;
+            }
         }
     }
 

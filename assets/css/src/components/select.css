@@ -123,7 +123,7 @@
         padding: 3px 20px 3px 12px;
         white-space: nowrap;
         cursor: pointer;
-        outline: none;
+        outline-offset: -2px;
 
         &.is-grouped {
             padding-left: 20px;

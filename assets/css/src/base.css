@@ -9,6 +9,33 @@
         box-sizing: border-box;
     }
 
+    /* the one focus indicator of the backend; components change its offset at most, never remove it */
+    :focus-visible {
+        outline: 2px solid var(--rex-color-focus);
+        outline-offset: 2px;
+    }
+
+    /* layered !important wins over all later layers and over unlayered addon styles */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            transition-delay: 0s !important;
+            scroll-behavior: auto !important;
+        }
+    }
+
+    /* states shown only by background colors, which forced colors replace */
+    @media (forced-colors: active) {
+        :is([aria-selected="true"], [aria-current]:not([aria-current="false"]), .active, .is-active) {
+            outline: 2px solid Highlight;
+            outline-offset: -2px;
+        }
+    }
+
     html {
         height: 100%;
         overflow-y: scroll;
@@ -42,14 +69,9 @@
         text-decoration: none;
 
         &:hover,
-        &:focus {
+        &:focus-visible {
             color: var(--rex-color-link-hover);
             text-decoration: underline;
-        }
-
-        &:focus {
-            outline: 5px auto -webkit-focus-ring-color;
-            outline-offset: -2px;
         }
     }
 

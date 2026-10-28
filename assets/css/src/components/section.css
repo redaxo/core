@@ -44,6 +44,8 @@
     }
 
     .rex-section__header {
+        --rex-color-focus: var(--rex-section-header-text);
+
         display: flow-root;
         padding: 10px 15px;
         background: var(--rex-section-color);

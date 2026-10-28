@@ -10,6 +10,7 @@
         --navbar-link: var(--rex-color-on-accent);
         --navbar-link-hover: var(--rex-color-on-accent);
         --navbar-active-bg: var(--rex-color-accent-hover);
+        --rex-color-focus: var(--navbar-link);
 
         position: relative;
         display: flow-root;
@@ -64,8 +65,7 @@
         cursor: pointer;
 
         &:hover,
-        &:focus {
-            outline: 0;
+        &:focus-visible {
             background-color: var(--navbar-active-bg);
         }
 

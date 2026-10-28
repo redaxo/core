@@ -28,6 +28,7 @@
         --rex-topbar-bg: var(--rex-color-accent);
         --rex-topbar-text: var(--rex-color-on-accent);
         --rex-topbar-text-muted: color-mix(in srgb, var(--rex-topbar-text) 90%, var(--rex-topbar-bg));
+        --rex-color-focus: var(--rex-topbar-text);
 
         position: absolute;
         inset: 0 0 auto;
@@ -347,6 +348,8 @@
         z-index: 1029;
         flex-shrink: 0;
         width: var(--rex-sidebar-width);
+        --rex-color-focus: var(--rex-sidebar-hover-text);
+
         padding-top: var(--rex-topbar-height);
         background: var(--rex-sidebar-bg);
 

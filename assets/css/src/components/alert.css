@@ -5,6 +5,7 @@
         --alert-bg: var(--rex-color-accent);
         --alert-border: var(--rex-color-accent-hover);
         --alert-text: var(--rex-color-on-accent);
+        --rex-color-focus: var(--alert-text);
 
         margin-bottom: 22px;
         padding: 15px;

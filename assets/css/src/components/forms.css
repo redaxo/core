@@ -58,11 +58,6 @@
         height: auto;
     }
 
-    input:is([type="file"], [type="radio"], [type="checkbox"]):focus {
-        outline: 5px auto -webkit-focus-ring-color;
-        outline-offset: -2px;
-    }
-
     input[type="range"] {
         display: block;
         width: 100%;
@@ -70,8 +65,20 @@
         -webkit-appearance: none;
         appearance: none;
 
-        &:focus {
+        /* the thumb shows the focus */
+        &:focus-visible {
             outline: none;
+
+            /* separate rules, a browser drops a selector list with a pseudo-element it does not know */
+            &::-webkit-slider-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 2px;
+            }
+
+            &::-moz-range-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 2px;
+            }
         }
 
         &::-webkit-slider-runnable-track {
@@ -129,9 +136,7 @@
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
         &:focus {
-            outline: 0;
             border-color: var(--rex-color-focus);
-            box-shadow: var(--rex-shadow-inset), 0 0 8px color-mix(in srgb, var(--rex-color-focus) 60%, transparent);
         }
 
         &:focus:not([readonly]) {
@@ -294,7 +299,6 @@
 
             &:focus {
                 border-color: var(--state-border);
-                box-shadow: var(--rex-shadow-inset), 0 0 6px color-mix(in srgb, var(--state-border) 60%, transparent);
             }
         }
 

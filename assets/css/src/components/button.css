@@ -36,10 +36,8 @@
             text-decoration: none;
         }
 
-        &:focus,
+        &:focus-visible,
         &.focus {
-            outline: 5px auto -webkit-focus-ring-color;
-            outline-offset: -2px;
             color: var(--btn-color);
             text-decoration: none;
         }
@@ -47,7 +45,6 @@
         &:active,
         &.active,
         .open > &.dropdown-toggle {
-            outline: 0;
             background-color: var(--btn-bg-hover);
             border-color: var(--btn-border-hover);
             box-shadow: var(--rex-shadow-pressed);
@@ -172,11 +169,11 @@
 
     /* flashes when clicked */
     .btn.btn-highlight {
-        outline: 25px solid transparent;
-        transition: all 1000ms ease-out 1000ms, outline 800ms ease-out 100ms;
+        box-shadow: 0 0 0 25px transparent;
+        transition: all 1000ms ease-out 1000ms, box-shadow 800ms ease-out 100ms;
 
         &:active {
-            outline: 0 solid var(--rex-color-accent-subtle);
+            box-shadow: 0 0 0 0 var(--rex-color-accent-subtle);
             background-color: var(--rex-color-accent);
             border-color: var(--rex-color-accent);
             transition: all 0ms linear 0ms;

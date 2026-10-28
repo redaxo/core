@@ -5,6 +5,8 @@
 
 @layer components {
     #rex-page-login {
+        --rex-color-focus: var(--rex-color-inverse-link);
+
         background: var(--rex-color-inverse-bg-strong);
 
         & .rex-branding {

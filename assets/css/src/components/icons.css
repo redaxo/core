@@ -48,10 +48,6 @@
 
     .rex-icon-loading {
         animation: fa-spin 1s steps(8) infinite;
-
-        @media (prefers-reduced-motion: reduce) {
-            animation: none;
-        }
     }
 
     .rex-icon-action, .rex-icon-view-list { --fa: "\f0c9"; }
