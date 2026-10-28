@@ -5,7 +5,7 @@ namespace Redaxo\Core\View\Component;
 /** Color scheme of a {@see Badge}. */
 enum BadgeVariant: string
 {
-    case Default = 'default';
+    case Neutral = 'neutral';
     case Primary = 'primary';
     case Success = 'success';
     case Info = 'info';

@@ -13,7 +13,7 @@ final class Badge implements Renderable
 
     public function __construct(
         public string|Renderable $label,
-        public BadgeVariant $variant = BadgeVariant::Default,
+        public BadgeVariant $variant = BadgeVariant::Neutral,
         public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 }

@@ -9,4 +9,5 @@
 @layer base, bootstrap, tokens, components, utilities;
 
 @import "compat/alert.css";
+@import "compat/badge.css";
 @import "compat/button.css";
