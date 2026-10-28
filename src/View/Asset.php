@@ -2,6 +2,7 @@
 
 namespace Redaxo\Core\View;
 
+use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Exception\RuntimeException;
 use Redaxo\Core\Filesystem\Url;
 
@@ -25,20 +26,30 @@ final class Asset
 
     private static ?string $favicon = null;
 
+    /** Whether the CSS files have been read for the head of the page, later added files would be missing. */
+    private static bool $cssFilesRead = false;
+
     private function __construct() {}
 
     /**
      * Loads the styles of the Bootstrap 3 markup (`.btn`, `.form-control`, `.table` …), for addons that still output
-     * it; the core itself uses its own components. Can be called several times.
+     * it; the core itself uses its own components. Can be called several times, but only before the head of the page
+     * is output, e.g. in the `boot.php` of the addon (a page or fragment is too late).
+     *
+     * @throws LogicException if the head of the page has already been output
      *
      * @deprecated since 6.0, move the markup to the REDAXO components; the styles go away with REDAXO 7
      */
     public static function requireBootstrapCompat(): void
     {
         $file = Url::coreAssets('css/bootstrap-compat.css');
-        if (!in_array($file, self::$cssFiles['all'] ?? [], true)) {
-            self::$cssFiles['all'][] = $file;
+        if (in_array($file, self::$cssFiles['all'] ?? [], true)) {
+            return;
         }
+        if (self::$cssFilesRead) {
+            throw new LogicException('Asset::requireBootstrapCompat() must be called before the head of the page is output, e.g. in the boot.php of the addon.');
+        }
+        self::$cssFiles['all'][] = $file;
     }
 
     /** Adds a CSS file. */
@@ -58,6 +69,8 @@ final class Asset
      */
     public static function getCssFiles(): array
     {
+        self::$cssFilesRead = true;
+
         return self::$cssFiles;
     }
 
