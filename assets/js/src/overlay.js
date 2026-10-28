@@ -68,10 +68,13 @@ class Overlay {
     }
 
     async load(url, init = {}) {
+        // a newer load replaces one still running, so a slow older response can't overwrite it (e.g. a filter changed twice)
+        this.loading?.abort();
+        const loading = this.loading = new AbortController();
         const initial = !this.body.hasChildNodes();
-                this.dialog.setAttribute('aria-busy', 'true');
+        this.dialog.setAttribute('aria-busy', 'true');
         try {
-            const response = await fetch(url, {credentials: 'same-origin', ...init});
+            const response = await fetch(url, {credentials: 'same-origin', ...init, signal: loading.signal});
             if (401 === response.status || 'login' === pageOf(response.url)) {
                 location.href = response.url;
                 return;
@@ -79,6 +82,9 @@ class Overlay {
             // parsed in an inert template, as DOMParser checks the loaded page's styles against this page's CSP nonce
             const template = document.createElement('template');
             template.innerHTML = await response.text();
+            if (loading.signal.aborted) {
+                return;
+            }
             const doc = template.content;
             const main = doc.getElementById('rex-js-page-main') ?? doc;
 
@@ -103,12 +109,18 @@ class Overlay {
                 this.pick(auto, [itemOf(auto)]);
             }
         } catch (error) {
+            if (loading.signal.aborted) {
+                return;
+            }
             const alert = Object.assign(document.createElement('div'), {className: 'rex-alert', textContent: String(error)});
             alert.dataset.variant = 'danger';
             alert.setAttribute('role', 'alert');
             this.body.replaceChildren(alert);
         } finally {
-                        this.dialog.removeAttribute('aria-busy');
+            if (this.loading === loading) {
+                this.loading = null;
+                this.dialog.removeAttribute('aria-busy');
+            }
         }
     }
 
@@ -210,6 +222,7 @@ class Overlay {
             return;
         }
         stack.splice(index, 1);
+        this.loading?.abort();
         this.dialog.close();
         this.dialog.remove();
         this.resolveClosed(this.picked);

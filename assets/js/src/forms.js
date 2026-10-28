@@ -11,7 +11,12 @@ document.addEventListener('keydown', event => {
         return;
     }
     const form = event.target.closest?.('form');
-    (form?.querySelector('[data-rex-submit-shortcut]') ?? form?.querySelector('[type="submit"]'))?.click();
+    const button = form?.querySelector('[data-rex-submit-shortcut]') ?? form?.querySelector('[type="submit"]');
+    if (button) {
+        // without it, Enter in a text field would submit the form a second time
+        event.preventDefault();
+        button.click();
+    }
 }, true);
 
 // a checkbox with `data-rex-check-all="name[]"` checks or unchecks all checkboxes of that name in its form
@@ -36,7 +41,7 @@ document.addEventListener('change', event => {
 });
 
 // a submit button with `data-rex-submit-params='{"name": "value"}'` sends these fields along, e.g. an API call with its
-// CSRF token
+// CSRF token; in the capture phase, so the fields are there before other listeners read the form (e.g. the overlay)
 document.addEventListener('submit', event => {
     const form = event.target;
     form.querySelectorAll(':scope > input[data-rex-submit-param]').forEach(input => input.remove());
@@ -50,7 +55,7 @@ document.addEventListener('submit', event => {
         input.dataset.rexSubmitParam = '';
         form.append(input);
     }
-});
+}, true);
 
 // `data-rex-requires-checked="name[]"` on a form or fieldset disables its submit buttons until a checkbox of that name
 // is checked
