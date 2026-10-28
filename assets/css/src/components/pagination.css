@@ -1,80 +1,71 @@
-/* Pagination (`.pagination`, Redaxo\Core\View\Component\Pagination) */
+/*
+ Pagination (`.rex-pagination`, Redaxo\Core\View\Component\Pagination): links to the pages of a list with the number
+ of entries; the current page has `aria-current`, the unavailable steps `aria-disabled`.
+ */
 
-@layer bootstrap {
-    .pagination {
-        display: inline-block;
-        margin: 22px 0;
-        padding-left: 0;
-        border-radius: 0;
-
-        & > li {
-            display: inline;
-
-            & > :is(a, span) {
-                position: relative;
-                float: left;
-                margin-left: -1px;
-                padding: 6px 12px;
-                border: 1px solid var(--rex-color-border);
-                background-color: var(--rex-color-surface);
-                color: var(--rex-color-link);
-                line-height: var(--rex-line-height);
-                text-decoration: none;
-
-                &:hover,
-                &:focus {
-                    z-index: 2;
-                    background-color: var(--rex-color-surface-subtle);
-                    color: var(--rex-color-link-hover);
-                }
-            }
-
-            &:first-child > :is(a, span) {
-                margin-left: 0;
-            }
-        }
-
-        & > .active > :is(a, span) {
-            &,
-            &:hover,
-            &:focus {
-                z-index: 3;
-                border-color: var(--rex-color-accent);
-                background-color: var(--rex-color-accent);
-                color: var(--rex-color-on-accent);
-                cursor: default;
-            }
-        }
-
-        & > .disabled > :is(a, span) {
-            &,
-            &:hover,
-            &:focus {
-                border-color: var(--rex-color-border);
-                background-color: var(--rex-color-surface);
-                color: var(--rex-color-text-muted);
-                cursor: not-allowed;
-            }
-        }
-    }
-
-    /* pagination with the number of entries, above and below lists */
-    .rex-nav-pagination {
+@layer components {
+    .rex-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0 12px;
         margin-bottom: 11px;
-
-        & > .pagination {
-            display: inline;
-        }
-
-        & > .rex-pagination-count {
-            display: inline-block;
-            padding: 7px 12px;
-            line-height: var(--rex-line-height);
-        }
 
         .rex-section > & {
             padding: 10px 15px;
-            background-color: var(--rex-color-surface-subtle);
+            background: var(--rex-color-surface-subtle);
         }
+    }
+
+    .rex-pagination-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        & > li + li {
+            margin-left: -1px;
+        }
+    }
+
+    .rex-pagination-link {
+        position: relative;
+        display: block;
+        min-width: 36px;
+        padding: 6px 12px;
+        border: 1px solid var(--rex-color-border);
+        background: var(--rex-color-surface);
+        color: var(--rex-color-link);
+        line-height: var(--rex-line-height);
+        text-align: center;
+        text-decoration: none;
+
+        &:is(a):hover {
+            z-index: 2;
+            background: var(--rex-color-surface-subtle);
+            color: var(--rex-color-link-hover);
+        }
+
+        &:focus-visible {
+            z-index: 3;
+        }
+
+        &[aria-current="page"] {
+            z-index: 2;
+            border-color: var(--rex-color-accent);
+            background: var(--rex-color-accent);
+            color: var(--rex-color-on-accent);
+        }
+
+        &:is([aria-disabled="true"], [aria-hidden="true"]) {
+            color: var(--rex-color-text-muted);
+        }
+    }
+
+    .rex-pagination-count {
+        margin: 0;
+        padding: 7px 0;
+        line-height: var(--rex-line-height);
     }
 }

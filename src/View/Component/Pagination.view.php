@@ -20,31 +20,26 @@ return static function (Pagination $pagination): void {
     $from = $firstPage + 2 == $from ? $firstPage + 1 : $from;
     $to = $lastPage - 2 == $to ? $lastPage - 1 : $to;
 
-    $page = static fn (int $page): string => $pager->isActivePage($page)
-        ? '<li class="rex-page active"><a href="' . $url($page) . '" aria-current="page">' . ($page + 1) . '</a></li>'
-        : '<li class="rex-page"><a href="' . $url($page) . '">' . ($page + 1) . '</a></li>';
+    $page = static fn (int $page): string => '<li><a class="rex-pagination-link" href="' . $url($page) . '"' . ($pager->isActivePage($page) ? ' aria-current="page"' : '') . '>' . ($page + 1) . '</a></li>';
     // at the first or last page, the step is no link
-    $step = static fn (string $class, bool $disabled, int $target, string $label, string $icon): string => '<li class="' . $class . ($disabled ? ' disabled' : '') . '">'
-        . ($disabled ? '<span aria-disabled="true">' : '<a href="' . $url($target) . '">')
-        . '<i class="rex-icon ' . $icon . '" aria-hidden="true"></i><span class="sr-only">' . I18n::msg($label) . '</span>'
+    $step = static fn (bool $disabled, int $target, string $label, string $icon): string => '<li>'
+        . ($disabled ? '<span class="rex-pagination-link" aria-disabled="true">' : '<a class="rex-pagination-link" href="' . $url($target) . '">')
+        . '<i class="rex-icon ' . $icon . '" aria-hidden="true"></i><span class="rex-visually-hidden">' . I18n::msg($label) . '</span>'
         . ($disabled ? '</span>' : '</a>')
-        . '</li>' ?>
-    <nav class="rex-nav-pagination" aria-label="<?= I18n::msg('navigation_pagination') ?>">
-        <ul class="pagination">
-            <?= $step('rex-prev', $pager->isActivePage($firstPage), $pager->getPrevPage(), 'list_previous', 'rex-icon-previous') ?>
+        . '</li>';
+    $gap = '<li><span class="rex-pagination-link" aria-hidden="true">…</span></li>' ?>
+    <nav class="rex-pagination" aria-label="<?= I18n::msg('navigation_pagination') ?>">
+        <ul class="rex-pagination-list" role="list">
+            <?= $step($pager->isActivePage($firstPage), $pager->getPrevPage(), 'list_previous', 'rex-icon-previous') ?>
             <?= $page($firstPage) ?>
-            <?php if ($from > $firstPage + 1): ?>
-                <li class="disabled"><span aria-hidden="true">…</span></li>
-            <?php endif ?>
+            <?= $from > $firstPage + 1 ? $gap : '' ?>
             <?php for ($i = $from; $i <= $to; ++$i): ?>
                 <?= $page($i) ?>
             <?php endfor ?>
-            <?php if ($to < $lastPage - 1): ?>
-                <li class="disabled"><span aria-hidden="true">…</span></li>
-            <?php endif ?>
+            <?= $to < $lastPage - 1 ? $gap : '' ?>
             <?= $page($lastPage) ?>
-            <?= $step('rex-next', $pager->isActivePage($lastPage), $pager->getNextPage(), 'list_next', 'rex-icon-next') ?>
+            <?= $step($pager->isActivePage($lastPage), $pager->getNextPage(), 'list_next', 'rex-icon-next') ?>
         </ul>
-        <div class="rex-pagination-count"><?= I18n::msg('list_rows_found', $pager->getRowCount()) ?></div>
+        <p class="rex-pagination-count"><?= I18n::msg('list_rows_found', $pager->getRowCount()) ?></p>
     </nav>
 <?php };
