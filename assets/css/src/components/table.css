@@ -100,12 +100,13 @@
 
     /* row states, e.g. of the log tables */
     :is(.rex-state-success, .rex-state-danger, .rex-state-error) {
+        /* text links, not links styled as buttons (also `.btn` of addons with the Bootstrap 3 markup) */
         &,
-        & a {
+        & a:not(.rex-button, .btn) {
             color: var(--rex-state-text);
         }
 
-        & a {
+        & a:not(.rex-button, .btn) {
             text-decoration: underline;
         }
     }

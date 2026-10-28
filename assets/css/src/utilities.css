@@ -1,34 +1,35 @@
-/* Utilities: single purpose classes that win over the components */
+/* Utilities: single purpose classes that win over the components by their layer, without !important, so the unlayered
+ CSS of addons still wins over them */
 
 @layer utilities {
     .rex-u-visually-hidden {
-        position: absolute !important;
-        width: 1px !important;
-        height: 1px !important;
-        margin: -1px !important;
-        padding: 0 !important;
-        overflow: hidden !important;
-        clip-path: inset(50%) !important;
-        white-space: nowrap !important;
-        border: 0 !important;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
     }
 
     .rex-u-visually-hidden-focusable:is(:active, :focus) {
-        position: static !important;
-        width: auto !important;
-        height: auto !important;
-        margin: 0 !important;
-        overflow: visible !important;
-        clip-path: none !important;
-        white-space: normal !important;
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        clip-path: none;
+        white-space: normal;
     }
 
     .rex-u-hidden {
-        display: none !important;
+        display: none;
     }
 
     .rex-u-visible {
-        display: block !important;
+        display: block;
     }
 
     .collapse:not(.in) {
@@ -36,11 +37,11 @@
     }
 
     .rex-u-float-start {
-        float: left !important;
+        float: left;
     }
 
     .rex-u-float-end {
-        float: right !important;
+        float: right;
     }
 
     .rex-u-clearfix::after {
@@ -63,19 +64,19 @@
     }
 
     .rex-u-align-start {
-        text-align: left !important;
+        text-align: left;
     }
 
     .rex-u-align-end {
-        text-align: right !important;
+        text-align: right;
     }
 
     .rex-u-align-center {
-        text-align: center !important;
+        text-align: center;
     }
 
     .rex-u-nowrap {
-        white-space: nowrap !important;
+        white-space: nowrap;
     }
 
     .rex-u-text-muted {
@@ -112,15 +113,15 @@
     }
 
     .rex-u-valign-top {
-        vertical-align: top !important;
+        vertical-align: top;
     }
 
     .rex-u-valign-middle {
-        vertical-align: middle !important;
+        vertical-align: middle;
     }
 
     .rex-u-valign-bottom {
-        vertical-align: bottom !important;
+        vertical-align: bottom;
     }
 
     /* images shrinking to the width of their container */
@@ -140,7 +141,7 @@
 
         &.rex-truncate-expandable:hover,
         .rex-truncate-expandable > &:hover {
-            max-width: 10000px !important;
+            max-width: 10000px;
         }
     }
 
@@ -214,26 +215,26 @@
 
     /* fixed column widths in steps of 40px, `.rex-table-width-1` to `-10` (centered for the narrowest) */
     @media (min-width: 992px) {
-        .rex-table-width-1 { width: 40px !important; text-align: center !important; }
-        .rex-table-width-2 { width: 80px !important; }
-        .rex-table-width-3 { width: 120px !important; }
-        .rex-table-width-4 { width: 160px !important; }
-        .rex-table-width-5 { width: 200px !important; }
-        .rex-table-width-6 { width: 240px !important; }
-        .rex-table-width-7 { width: 280px !important; }
-        .rex-table-width-8 { width: 320px !important; }
-        .rex-table-width-9 { width: 360px !important; }
-        .rex-table-width-10 { width: 400px !important; }
-        .rex-table-min-width-1 { min-width: 40px !important; }
-        .rex-table-min-width-2 { min-width: 80px !important; }
-        .rex-table-min-width-3 { min-width: 120px !important; }
-        .rex-table-min-width-4 { min-width: 160px !important; }
-        .rex-table-min-width-5 { min-width: 200px !important; }
-        .rex-table-min-width-6 { min-width: 240px !important; }
-        .rex-table-min-width-7 { min-width: 280px !important; }
-        .rex-table-min-width-8 { min-width: 320px !important; }
-        .rex-table-min-width-9 { min-width: 360px !important; }
-        .rex-table-min-width-10 { min-width: 400px !important; }
+        .rex-table-width-1 { width: 40px; text-align: center; }
+        .rex-table-width-2 { width: 80px; }
+        .rex-table-width-3 { width: 120px; }
+        .rex-table-width-4 { width: 160px; }
+        .rex-table-width-5 { width: 200px; }
+        .rex-table-width-6 { width: 240px; }
+        .rex-table-width-7 { width: 280px; }
+        .rex-table-width-8 { width: 320px; }
+        .rex-table-width-9 { width: 360px; }
+        .rex-table-width-10 { width: 400px; }
+        .rex-table-min-width-1 { min-width: 40px; }
+        .rex-table-min-width-2 { min-width: 80px; }
+        .rex-table-min-width-3 { min-width: 120px; }
+        .rex-table-min-width-4 { min-width: 160px; }
+        .rex-table-min-width-5 { min-width: 200px; }
+        .rex-table-min-width-6 { min-width: 240px; }
+        .rex-table-min-width-7 { min-width: 280px; }
+        .rex-table-min-width-8 { min-width: 320px; }
+        .rex-table-min-width-9 { min-width: 360px; }
+        .rex-table-min-width-10 { min-width: 400px; }
     }
 
     /* links */

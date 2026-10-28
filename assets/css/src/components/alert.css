@@ -30,7 +30,8 @@
             margin-top: 5px;
         }
 
-        & a {
+        /* text links, not links styled as buttons (also `.btn` of addons with the Bootstrap 3 markup) */
+        & a:not(.rex-button, .btn) {
             color: inherit;
             font-weight: 700;
             text-decoration: underline;
