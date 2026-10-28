@@ -70,8 +70,10 @@ return static function (Table $table): void {
                         if (null !== $column->sortUrl) {
                             $icon = null === $column->sorted ? '' : ' <i class="rex-icon rex-icon-sort-' . $column->sorted . '" aria-hidden="true"></i>';
                             $label = '<a class="rex-u-link-expanded" href="' . escape($column->sortUrl) . '">' . $label . $icon . '</a>';
-                        } ?>
-                        <th <?= $column->attributes->with([
+                        }
+                        // a header without text, e.g. above icons, is no header for screen readers
+                        $tag = '' === $label ? 'td' : 'th' ?>
+                        <<?= $tag ?> <?= $column->attributes->with([
                             'class' => $typeClass($column->type),
                             'colspan' => $colspan > 1 ? $colspan : null,
                             'aria-sort' => match ($column->sorted) {
@@ -79,7 +81,7 @@ return static function (Table $table): void {
                                 'desc' => 'descending',
                                 null => null,
                             },
-                        ]) ?>><?= Html::raw($label) ?></th>
+                        ]) ?>><?= Html::raw($label) ?></<?= $tag ?>>
                     <?php endforeach ?>
                 </tr>
             </thead>

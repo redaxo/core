@@ -19,7 +19,7 @@
         --rex-color-surface-muted: light-dark(#dfe3e9, #151c22);
         --rex-color-surface-strong: light-dark(#d0d6df, #2e3b4a);
         --rex-color-surface-raised: light-dark(#fff, #151c22);
-        --rex-color-canvas: light-dark(#9ca5b2, #0d1215);
+        --rex-color-canvas: light-dark(#a9b1bc, #0d1215);
         /* frontend previews keep the white page background of the frontend */
         --rex-color-preview-bg: #fff;
 

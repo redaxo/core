@@ -30,7 +30,7 @@
             vertical-align: top;
         }
 
-        & > thead > tr > th {
+        & > thead > tr > :is(th, td) {
             border-bottom: 2px solid var(--rex-table-border);
             vertical-align: bottom;
         }
@@ -235,7 +235,7 @@
             }
 
             /* the titles move out of sight, the first one stays as a link, e.g. to add an entry */
-            & > thead > tr > th {
+            & > thead > tr > :is(th, td) {
                 position: absolute;
                 top: -9999px;
                 left: -9999px;

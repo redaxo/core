@@ -15,7 +15,7 @@ const UI = 3;
 
 /** [foreground, backgrounds, minimum ratio] */
 const pairs = [
-    ['text', ['bg', 'surface', 'surface-subtle', 'surface-muted', 'surface-raised', 'control'], TEXT],
+    ['text', ['bg', 'surface', 'surface-subtle', 'surface-muted', 'surface-raised', 'control', 'canvas'], TEXT],
     ['text-muted', ['bg', 'surface', 'surface-subtle', 'surface-muted', 'surface-raised'], TEXT],
     ['link', ['bg', 'surface', 'surface-subtle', 'surface-raised'], TEXT],
     ['link-hover', ['bg', 'surface', 'surface-muted', 'accent-subtle', 'accent-subtle-hover'], TEXT],

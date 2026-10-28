@@ -142,12 +142,14 @@ if ($hasCategoryPerm && 'delete_selectedmedia' == $mediaMethod) {
     }
 }
 
+// the category to move the selected media to, labeled by the text in front of it
 $catsSel = new SelectInput(
     'rex_file_category',
     new MediaCategoryChoices(root: true)->choices(),
     (string) $rexFileCategory,
-    'rex_file_category',
+    'rex-mediapool-move-category',
     search: true,
+    attributes: new HtmlAttributes(['aria-label' => I18n::msg('pool_changecat_selectedmedia_prefix') . ' … ' . I18n::msg('pool_changecat_selectedmedia_suffix')]),
 );
 
 if ($error) {

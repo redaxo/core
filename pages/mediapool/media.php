@@ -44,12 +44,12 @@ $selMedia = new SelectInput(
     (string) $rexFileCategory,
     'rex_file_category',
     search: true,
-    attributes: new HtmlAttributes(['data-rex-autosubmit' => true]),
+    attributes: new HtmlAttributes(['data-rex-autosubmit' => true, 'aria-label' => I18n::msg('pool_file_category')]),
 );
 
 $formElements = [];
 $n = [];
-$n['field'] = '<input class="rex-input" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" />';
+$n['field'] = '<input class="rex-input" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" aria-label="' . I18n::msg('pool_search') . '" />';
 $n['right'] = '<button class="rex-button" type="submit"><i class="rex-icon rex-icon-search" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_search') . '</span></button>';
 $formElements[] = $n;
 $fragment = new Fragment();
