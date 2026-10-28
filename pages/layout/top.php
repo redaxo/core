@@ -76,7 +76,7 @@ if ($user && $hasNavigation) {
 
     $item = '<li><span class="rex-topbar-muted">' . I18n::msg('logged_in_as') . '</span> <a href="' . Url::backendPage('profile') . '" title="' . I18n::msg('profile_title') . '"><i class="rex-icon rex-icon-user" aria-hidden="true"></i> ' . escape($userName) . '</a>';
     if ($impersonator) {
-        $item .= ' (<i class="rex-icon rex-icon-user"></i> ' . escape($impersonator) . ')';
+        $item .= ' (<i class="rex-icon rex-icon-user" aria-hidden="true"></i> ' . escape($impersonator) . ')';
     }
     $metaItems[] = $item . '</li>';
 

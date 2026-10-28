@@ -102,7 +102,7 @@ if ($category) {
 
 $addCategory = '';
 if ($user->hasPerm('addCategory[]') && $structureContext->hasCategoryPermission()) {
-    $addCategory = '<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_cat', 'catstart' => $structureContext->catStart]) . '"' . Accesskey::attributes(I18n::msg('add_category'), 'add') . '><i class="rex-icon rex-icon-add-category"></i></a>';
+    $addCategory = '<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_cat', 'catstart' => $structureContext->catStart]) . '"' . Accesskey::attributes(I18n::msg('add_category'), 'add') . '><i class="rex-icon rex-icon-add-category" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('add_category') . '</span></a>';
 }
 
 $dataColspan = 5;
@@ -176,7 +176,7 @@ $actionColumns = static fn (array $keys): array => array_values(array_map(
     static fn (string $key): TableColumn => TableColumn::forKey($key === $keys[0] ? I18n::msg('header_status') : null, $key, ColumnType::Action),
     $keys,
 ));
-$muted = static fn (string $icon, string $label): Html => Html::raw('<span class="rex-u-text-muted"><i class="rex-icon ' . $icon . '"></i> ' . $label . '</span>');
+$muted = static fn (string $icon, string $label): Html => Html::raw('<span class="rex-u-text-muted"><i class="rex-icon ' . $icon . '" aria-hidden="true"></i> ' . $label . '</span>');
 
 /** @var list<array<string, mixed>|TableRow|Html|null> $rows */
 $rows = [];
@@ -196,7 +196,7 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
 
     $rows[] = [
         'attributes' => new HtmlAttributes(['class' => 'rex-u-mark']),
-        'icon' => Html::raw('<i class="rex-icon rex-icon-category"></i>'),
+        'icon' => Html::raw('<i class="rex-icon rex-icon-category" aria-hidden="true"></i>'),
         'id' => '-',
         'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape(Request::post('category-name', 'string')) . '" required maxlength="255" autofocus />'),
         'priority' => Html::raw('<input class="rex-input" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $catPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
@@ -227,7 +227,8 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
 
     $row = [
         'attributes' => new HtmlAttributes(['data-status' => $status]),
-        'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $katLink . '" title="' . escape($KAT->getStringValue('catname')) . '"><i class="rex-icon ' . $katIconClass . '" title="' . $katIconTitle . '"></i></a>'),
+        // the same link as the name, so it is no tab stop and hidden from screen readers
+        'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $katLink . '" title="' . escape($KAT->getStringValue('catname')) . '" tabindex="-1" aria-hidden="true"><i class="rex-icon ' . $katIconClass . '" title="' . $katIconTitle . '"></i></a>'),
         'id' => $iCategoryId,
         'name' => Html::raw('<a class="rex-u-link-expanded" href="' . $katLink . '">' . escape($KAT->getStringValue('catname')) . '</a>'),
         'priority' => $KAT->getIntValue('catpriority'),
@@ -245,10 +246,10 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
                 }
                 $katStatus .= '</ul></div>';
             } else {
-                $katStatus = '<a class="rex-u-link-expanded ' . $statusClass . '" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart] + CategoryStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $statusIcon . '"></i>&nbsp;' . $katStatus . '</a>';
+                $katStatus = '<a class="rex-u-link-expanded ' . $statusClass . '" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart] + CategoryStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $statusIcon . '" aria-hidden="true"></i>&nbsp;' . $katStatus . '</a>';
             }
         } else {
-            $katStatus = '<span class="' . $statusClass . ' rex-u-text-muted"><i class="rex-icon ' . $statusIcon . '"></i> ' . $katStatus . '</span>';
+            $katStatus = '<span class="' . $statusClass . ' rex-u-text-muted"><i class="rex-icon ' . $statusIcon . '" aria-hidden="true"></i> ' . $katStatus . '</span>';
         }
 
         if ($canEdit && $structureContext->editId === $iCategoryId && 'edit_cat' === $structureContext->function) {
@@ -281,8 +282,8 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
             // --------------------- KATEGORIE WITH WRITE
 
             $rows[] = $row + [
-                'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['edit_id' => $iCategoryId, 'function' => 'edit_cat', 'catstart' => $structureContext->catStart]) . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('change') . '</a>'),
-                'delete' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart] + CategoryDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a>'),
+                'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['edit_id' => $iCategoryId, 'function' => 'edit_cat', 'catstart' => $structureContext->catStart]) . '"><i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('change') . '</a>'),
+                'delete' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart] + CategoryDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('delete') . '</a>'),
                 'status' => new TableCell(Html::raw($katStatus), attributes: new HtmlAttributes(['class' => [$tdLayoutClass]])),
             ];
         }
@@ -292,7 +293,7 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
         $rows[] = $row + [
             'edit' => $muted('rex-icon-edit', I18n::msg('change')),
             'delete' => $muted('rex-icon-delete', I18n::msg('delete')),
-            'status' => Html::raw('<span class="' . $statusClass . ' rex-u-text-muted"><i class="rex-icon ' . $statusIcon . '"></i> ' . $katStatus . '</span>'),
+            'status' => Html::raw('<span class="' . $statusClass . ' rex-u-text-muted"><i class="rex-icon ' . $statusIcon . '" aria-hidden="true"></i> ' . $katStatus . '</span>'),
         ];
     }
 }
@@ -345,7 +346,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
     // --------------------- ARTIKEL LIST
     $artAddLink = '';
     if ($user->hasPerm('addArticle[]') && $structureContext->hasCategoryPermission()) {
-        $artAddLink = '<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_art', 'artstart' => $structureContext->artStart]) . '"' . Accesskey::attributes(I18n::msg('article_add'), 'add_2') . '><i class="rex-icon rex-icon-add-article"></i></a>';
+        $artAddLink = '<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['function' => 'add_art', 'artstart' => $structureContext->artStart]) . '"' . Accesskey::attributes(I18n::msg('article_add'), 'add_2') . '><i class="rex-icon rex-icon-add-article" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('article_add') . '</span></a>';
     }
 
     $articleOrderBy = Extension::dispatch(new ArticleListOrder($category, $structureContext->languageId));
@@ -409,7 +410,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
         $rows[] = [
             'attributes' => new HtmlAttributes(['class' => 'rex-u-mark']),
-            'icon' => Html::raw('<i class="rex-icon rex-icon-article"></i>'),
+            'icon' => Html::raw('<i class="rex-icon rex-icon-article" aria-hidden="true"></i>'),
             'id' => '-',
             'name' => Html::raw('<input class="rex-input" type="text" name="article-name" required maxlength="255" autofocus />'),
             'template' => new SelectInput('template', $templateChoices, $template),
@@ -448,7 +449,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
         if ($canEdit && 'edit_art' === $structureContext->function && $articleId === $structureContext->articleId && $structureContext->hasCategoryPermission()) {
             $rows[] = [
                 'attributes' => new HtmlAttributes(['class' => ['rex-u-mark']]),
-                'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $articleId]) . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon' . $class . '"></i></a>'),
+                'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $articleId]) . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon' . $class . '" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . escape($sql->getStringValue('name')) . '</span></a>'),
                 'name' => Html::raw('<input class="rex-input" type="text" name="article-name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" autofocus />'),
                 'template' => new SelectInput('template', $templateChoices, $sql->getNullableStringValue('template')),
                 'priority' => Html::raw('<input class="rex-input" type="number" name="article-position" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" />'),
@@ -464,9 +465,9 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             if ($sql->getBoolValue('startarticle')) {
                 // the start article is deleted and switched with its category
                 $delete = $muted('rex-icon-delete', I18n::msg('delete'));
-                $statusCell = new TableCell(Html::raw('<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '"></i> ' . $articleStatus . '</span>'));
+                $statusCell = new TableCell(Html::raw('<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i> ' . $articleStatus . '</span>'));
             } else {
-                $delete = Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'artstart' => $structureContext->artStart] + ArticleDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a>');
+                $delete = Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'artstart' => $structureContext->artStart] + ArticleDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('delete') . '</a>');
 
                 $tdLayoutClass = '';
                 if ($user->hasPerm('publishArticle[]')) {
@@ -480,10 +481,10 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
                         }
                         $articleStatus .= '</ul></div>';
                     } else {
-                        $articleStatus = '<a class="' . $articleClass . '" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'artstart' => $structureContext->artStart] + ArticleStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $articleIcon . '"></i>&nbsp;' . $articleStatus . '</a>';
+                        $articleStatus = '<a class="' . $articleClass . '" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'artstart' => $structureContext->artStart] + ArticleStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i>&nbsp;' . $articleStatus . '</a>';
                     }
                 } else {
-                    $articleStatus = '<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '"></i> ' . $articleStatus . '</span>';
+                    $articleStatus = '<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i> ' . $articleStatus . '</span>';
                 }
 
                 $statusCell = new TableCell(Html::raw($articleStatus), attributes: new HtmlAttributes(['class' => [$tdLayoutClass]]));
@@ -493,9 +494,9 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
             $rows[] = $row + [
                 'attributes' => new HtmlAttributes(['data-status' => $status, 'data-article-id' => $articleId]),
-                'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $editModeUrl . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon' . $class . '"></i></a>'),
+                'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $editModeUrl . '" title="' . escape($sql->getStringValue('name')) . '" tabindex="-1" aria-hidden="true"><i class="rex-icon' . $class . '"></i></a>'),
                 'name' => Html::raw('<a class="rex-u-link-expanded" href="' . $editModeUrl . '">' . escape($sql->getStringValue('name')) . '</a>'),
-                'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'function' => 'edit_art', 'artstart' => $structureContext->artStart]) . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('change') . '</a>'),
+                'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'function' => 'edit_art', 'artstart' => $structureContext->artStart]) . '"><i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('change') . '</a>'),
                 'delete' => $delete,
                 'status' => $statusCell,
             ];
@@ -504,11 +505,11 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
             $rows[] = $row + [
                 'attributes' => new HtmlAttributes(['data-status' => $status, 'data-article-id' => $articleId]),
-                'icon' => Html::raw('<i class="rex-icon' . $class . '"></i>'),
+                'icon' => Html::raw('<i class="rex-icon' . $class . '" aria-hidden="true"></i>'),
                 'name' => $sql->getStringValue('name'),
                 'edit' => $muted('rex-icon-edit', I18n::msg('change')),
                 'delete' => $muted('rex-icon-delete', I18n::msg('delete')),
-                'status' => Html::raw('<span class="' . $statusTypes[$status][1] . ' rex-u-text-muted"><i class="rex-icon ' . $statusTypes[$status][2] . '"></i> ' . $statusTypes[$status][0] . '</span>'),
+                'status' => Html::raw('<span class="' . $statusTypes[$status][1] . ' rex-u-text-muted"><i class="rex-icon ' . $statusTypes[$status][2] . '" aria-hidden="true"></i> ' . $statusTypes[$status][0] . '</span>'),
             ];
         }
     }

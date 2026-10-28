@@ -12,6 +12,7 @@ use Redaxo\Core\MediaPool\ExtensionPoint\MediaListToolbar;
 use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MediaPool\MediaCategoryChoices;
 use Redaxo\Core\Security\CsrfToken;
+use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\View;
@@ -49,7 +50,7 @@ $selMedia = new SelectInput(
 $formElements = [];
 $n = [];
 $n['field'] = '<input class="rex-input" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" />';
-$n['right'] = '<button class="rex-button" type="submit"><i class="rex-icon rex-icon-search"></i></button>';
+$n['right'] = '<button class="rex-button" type="submit"><i class="rex-icon rex-icon-search" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_search') . '</span></button>';
 $formElements[] = $n;
 $fragment = new Fragment();
 $fragment->setVar('elements', $formElements, false);

@@ -35,7 +35,7 @@ $removable = static fn (array $row): bool => $currentAuth !== $row['id'];
 $list->column(
     'remove_auth',
     '',
-    static fn (array $row): ?Html => $removable($row) ? Html::raw('<i class="rex-icon rex-icon-delete"></i>') : null,
+    static fn (array $row): ?Html => $removable($row) ? Html::raw('<i class="rex-icon rex-icon-delete" aria-hidden="true"></i>') : null,
     type: ColumnType::Icon,
     link: static fn (array $row): ?string => $removable($row)
         ? $list->getUrl(['user_id' => $userId] + (null === $row['id'] ? ['password' => 1] : ['passkey_id' => (string) $row['id']]) + UserRemoveAuthMethod::getUrlParams())

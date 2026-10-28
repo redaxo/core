@@ -121,7 +121,7 @@ if (str_contains($rexVersion, '-dev')) {
 }
 
 if (Version::isUnstable($rexVersion)) {
-    $rexVersion = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . escape($rexVersion);
+    $rexVersion = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '" role="img"></i> ' . escape($rexVersion);
 }
 
 $mainContent = [];
@@ -146,7 +146,7 @@ $properties = static fn (array $rows): string => (string) new Table([
 $content = $properties([
     ['REDAXO', Html::raw($rexVersion)],
     [I18n::msg('mode'), Html::raw(Core::getMode()->value)],
-    ['PHP', Html::raw(PHP_VERSION . ' <a class="rex-u-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" target="_blank" rel="noopener"><i class="rex-icon rex-icon-phpinfo"></i></a>')],
+    ['PHP', Html::raw(PHP_VERSION . ' <a class="rex-u-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" target="_blank" rel="noopener"><i class="rex-icon rex-icon-phpinfo" aria-hidden="true"></i></a>')],
     [I18n::msg('base_url'), Html::raw('<span class="rex-u-word-break">' . escape(Url::absoluteBase()) . '</span>')],
     [I18n::msg('error_email'), Html::raw('<span class="rex-u-word-break">' . escape(Env::get('REX_ERROR_EMAIL') ?? I18n::msg('deactivated')) . '</span>')],
     [I18n::msg('path'), Html::raw('<div class="rex-u-word-break">' . Path::base() . '</div>')],

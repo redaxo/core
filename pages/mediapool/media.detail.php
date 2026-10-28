@@ -172,7 +172,7 @@ if ($fwidth > 0 && $fheight > 0) {
 // image driver can actually rasterise here (images always, plus e.g. PDF with Imagick + Ghostscript)
 if ($isSvg || MediaManager::canPreview($fileExt)) {
     if (!is_file(Path::media($fname))) {
-        $sidebar = '<i class="rex-mime rex-mime-error"></i><span class="rex-u-visually-hidden">' . $fname . '</span>';
+        $sidebar = '<i class="rex-mime rex-mime-error" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . $fname . '</span>';
     } else {
         if ($isSvg) {
             $rfwidth = min($fwidth, 200);

@@ -58,7 +58,7 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
     $trigger = Type::string($data[3] ?? '');
     $rows[] = [
         'error' => 'ERROR' == trim($data[0] ?? ''),
-        'icon' => Html::raw('<i class="rex-icon rex-icon-cronjob"></i>'),
+        'icon' => Html::raw('<i class="rex-icon rex-icon-cronjob" aria-hidden="true"></i>'),
         'date' => Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]),
         'name' => Type::string($data[1] ?? ''),
         'message' => Html::raw(nl2br(escape(Type::string($data[2] ?? '')))),
@@ -133,7 +133,7 @@ if (!$cronjobs) {
     $overviewBody = I18n::msg('cronjob_no_cronjobs');
 } else {
     $overview = (string) new Table([
-        new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob"></i>'), ColumnType::Icon),
+        new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob" aria-hidden="true"></i>'), ColumnType::Icon),
         new TableColumn(I18n::msg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="rex-u-text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
         new TableColumn(I18n::msg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="rex-u-nowrap">' . escape($cronjob->schedule) . '</code>')),
         new TableColumn(I18n::msg('cronjob_lastrun'), static function (Cronjob $cronjob) use ($states): Html {
@@ -148,10 +148,10 @@ if (!$cronjobs) {
                 return Html::raw($text . ' <span class="rex-u-text-muted">(' . I18n::msg('cronjob_running') . ')</span>');
             }
             if (true === $state['lastSuccess']) {
-                return Html::raw('<span class="rex-u-online"><i class="rex-icon rex-icon-active-true"></i> ' . $text . '</span>');
+                return Html::raw('<span class="rex-u-online"><i class="rex-icon rex-icon-active-true" aria-hidden="true"></i> ' . $text . '</span>');
             }
             if (false === $state['lastSuccess']) {
-                return Html::raw('<span class="rex-u-offline"><i class="rex-icon rex-icon-active-false"></i> ' . $text . '</span>');
+                return Html::raw('<span class="rex-u-offline"><i class="rex-icon rex-icon-active-false" aria-hidden="true"></i> ' . $text . '</span>');
             }
             return Html::raw($text);
         }, attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),

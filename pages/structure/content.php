@@ -335,7 +335,7 @@ if (
     $contentNaviRight = $navigation['navigation'] ?? [];
 
     $contentNaviRight[] = [
-        'title' => I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link"></i>',
+        'title' => I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link" aria-hidden="true"></i>',
         'href' => Url::article($articleId, $languageId),
         'linkAttr' => ['target' => '_blank', 'rel' => 'noopener'],
     ];

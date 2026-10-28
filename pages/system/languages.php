@@ -134,7 +134,7 @@ $metaRow = static fn (MetaForm $meta): ?TableRow => $meta->hasFields()
     ], new HtmlAttributes(['id' => 'rex-language-metainfo', 'class' => ['collapse', 'in' => $meta->hasErrors(), 'rex-u-mark']]))
     : null;
 
-$icon = Html::raw('<i class="rex-icon rex-icon-language"></i>');
+$icon = Html::raw('<i class="rex-icon rex-icon-language" aria-hidden="true"></i>');
 // cells of the language being added or edited
 $formCells = static fn (string $form, string $code, string $name, int $priority, string $buttons): array => [
     'mark' => true,
@@ -181,22 +181,22 @@ foreach ($sql as $row) {
 
     $rows[] = [
         'mark' => false,
-        'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $editLink . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon rex-icon-language"></i></a>'),
+        'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $editLink . '" title="' . escape($sql->getStringValue('name')) . '" tabindex="-1" aria-hidden="true"><i class="rex-icon rex-icon-language"></i></a>'),
         'id' => $langId,
         'code' => $sql->getStringValue('code'),
         'name' => $sql->getStringValue('name'),
         'priority' => $sql->getIntValue('priority'),
-        'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $editLink . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit') . '</a>'),
+        'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $editLink . '"><i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit') . '</a>'),
         'delete' => Html::raw($langId == Language::getStartId()
-            ? '<span class="rex-u-text-muted"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</span>'
-            : '<a class="rex-u-link-expanded" href="' . Url::currentBackendPage(['func' => 'delete', 'language_id' => $langId] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete') . '</a>'),
-        'status' => Html::raw('<a class="rex-u-link-expanded rex-u-' . $status . '" href="' . Url::currentBackendPage(['language_id' => $langId, 'func' => 'editstatus', 'language_status' => $sql->getBoolValue('status') ? 0 : 1] + $csrfToken->getUrlParams()) . '"><i class="rex-icon rex-icon-' . $status . '"></i> ' . I18n::msg('language_' . $status) . '</a>'),
+            ? '<span class="rex-u-text-muted"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('delete') . '</span>'
+            : '<a class="rex-u-link-expanded" href="' . Url::currentBackendPage(['func' => 'delete', 'language_id' => $langId] + $csrfToken->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('delete') . '</a>'),
+        'status' => Html::raw('<a class="rex-u-link-expanded rex-u-' . $status . '" href="' . Url::currentBackendPage(['language_id' => $langId, 'func' => 'editstatus', 'language_status' => $sql->getBoolValue('status') ? 0 : 1] + $csrfToken->getUrlParams()) . '"><i class="rex-icon rex-icon-' . $status . '" aria-hidden="true"></i> ' . I18n::msg('language_' . $status) . '</a>'),
     ];
 }
 
 $content .= (string) new Table(
     [
-        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::currentBackendPage(['func' => 'add']) . '#language"' . Accesskey::attributes(I18n::msg('language_add'), 'add') . '><i class="rex-icon rex-icon-add-language"></i></a>'), 'icon', ColumnType::Icon),
+        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::currentBackendPage(['func' => 'add']) . '#language"' . Accesskey::attributes(I18n::msg('language_add'), 'add') . '><i class="rex-icon rex-icon-add-language" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('language_add') . '</span></a>'), 'icon', ColumnType::Icon),
         TableColumn::forKey(I18n::msg('id'), 'id', ColumnType::Id),
         TableColumn::forKey(I18n::msg('language_code'), 'code'),
         TableColumn::forKey(I18n::msg('language_name'), 'name'),

@@ -113,7 +113,7 @@ final class View
         $items = [];
         foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
-                $icon = $id === $context->getParam('language') ? '<i class="rex-icon rex-icon-language-active"></i> ' : '<i class="rex-icon rex-icon-language"></i> ';
+                $icon = $id === $context->getParam('language') ? '<i class="rex-icon rex-icon-language-active" aria-hidden="true"></i> ' : '<i class="rex-icon rex-icon-language" aria-hidden="true"></i> ';
                 $item = [];
                 $item['href'] = $context->getUrl(['language' => $id]);
                 $item['title'] = $icon . I18n::translate($language->name);
@@ -214,7 +214,7 @@ final class View
             }
         }
 
-        $title = '<a class="rex-u-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
+        $title = '<a class="rex-u-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level" aria-hidden="true"></i> ' . I18n::msg('root_level') . '</a>';
 
         return (string) new Breadcrumb(
             array_map(static fn (array $item): array => ['title' => Html::raw($item['title']), 'href' => $item['href'] ?? ''], $navigation),

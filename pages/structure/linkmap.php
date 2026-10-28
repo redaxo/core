@@ -46,9 +46,9 @@ if ($category) {
     }
 }
 
-echo View::title('<i class="rex-icon rex-icon-linkmap"></i> Linkmap');
+echo View::title('<i class="rex-icon rex-icon-linkmap" aria-hidden="true"></i> Linkmap');
 
-$title = '<a href="' . $context->getUrl(['category_id' => 0]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
+$title = '<a href="' . $context->getUrl(['category_id' => 0]) . '"><i class="rex-icon rex-icon-structure-root-level" aria-hidden="true"></i> ' . I18n::msg('root_level') . '</a>';
 
 $fragment = new Fragment();
 $fragment->setVar('title', $title, false);

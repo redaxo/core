@@ -30,7 +30,7 @@ foreach ($report as $title => $group) {
                 throw new RuntimeException('Package ' . $label . ' does not define a proper version in its composer.json.');
             }
             if (Version::isUnstable($value)) {
-                $value = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . escape($value);
+                $value = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '" role="img"></i> ' . escape($value);
             }
         } elseif (is_bool($value)) {
             $value = $value ? 'yes' : 'no';

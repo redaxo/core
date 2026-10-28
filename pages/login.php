@@ -63,7 +63,7 @@ $formElements = [];
 $inputGroups = [];
 $n = [];
 $n['field'] = '<input class="rex-input" type="text" value="' . escape($rexUserLogin) . '" id="rex-id-login-user" name="rex_user_login" autocomplete="username webauthn" inputmode="email" autocorrect="off" autocapitalize="off" autofocus />';
-$n['left'] = '<i class="rex-icon rex-icon-user"></i>';
+$n['left'] = '<i class="rex-icon rex-icon-user" aria-hidden="true"></i>';
 $inputGroups[] = $n;
 
 $fragment = new Fragment();
@@ -79,7 +79,7 @@ $formElements[] = $n;
 $inputGroups = [];
 $n = [];
 $n['field'] = '<input class="rex-input" type="password" name="rex_user_psw" id="rex-id-login-password" autocomplete="current-password" autocorrect="off" autocapitalize="off" />';
-$n['left'] = '<i class="rex-icon rex-icon-password"></i>';
+$n['left'] = '<i class="rex-icon rex-icon-password" aria-hidden="true"></i>';
 $inputGroups[] = $n;
 
 $fragment = new Fragment();
@@ -112,7 +112,7 @@ $content .= '</fieldset>';
 
 $formElements = [];
 $n = [];
-$n['field'] = '<button class="rex-button" data-variant="primary" data-width="full" type="submit"><i class="rex-icon rex-icon-sign-in"></i> ' . I18n::msg('login') . ' </button>';
+$n['field'] = '<button class="rex-button" data-variant="primary" data-width="full" type="submit"><i class="rex-icon rex-icon-sign-in" aria-hidden="true"></i> ' . I18n::msg('login') . ' </button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();

@@ -71,10 +71,10 @@ if (0 == $article->getValue('startarticle')) {
                 'article_id' => $articleId,
                 'page' => 'content/edit',
                 'mode' => 'edit',
-            ] + ArticleStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $articleIcon . '"></i>&nbsp;' . $articleStatus . '</a>';
+            ] + ArticleStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i>&nbsp;' . $articleStatus . '</a>';
         }
     } else {
-        $articleStatus = '<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '"></i> ' . $articleStatus . '</span>';
+        $articleStatus = '<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i> ' . $articleStatus . '</span>';
     }
 }
 
@@ -162,7 +162,7 @@ if (1 == $article->getRows()) {
 // ------------------
 
 $fragment = new Fragment();
-$fragment->setVar('title', '<i class="rex-icon rex-icon-info"></i> ' . I18n::msg('metadata'), false);
+$fragment->setVar('title', '<i class="rex-icon rex-icon-info" aria-hidden="true"></i> ' . I18n::msg('metadata'), false);
 $fragment->setVar('body', implode('', $content), false);
 $fragment->setVar('article_id', $articleId, false);
 $fragment->setVar('language', $languageId, false);

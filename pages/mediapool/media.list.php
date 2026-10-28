@@ -276,10 +276,10 @@ foreach ($items as $media) {
     $desc = '<p>' . escape(strip_tags((string) $media->getValue('description'))) . '</p>';
 
     if (!is_file(Path::media($media->fileName))) {
-        $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '"></i><span class="rex-u-visually-hidden">' . $media->fileName . '</span>';
+        $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '" role="img"></i><span class="rex-u-visually-hidden">' . $media->fileName . '</span>';
     } else {
         $fileExt = File::extension($media->fileName);
-        $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '"></i><span class="rex-u-visually-hidden">' . $media->fileName . '</span>';
+        $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '" role="img"></i><span class="rex-u-visually-hidden">' . $media->fileName . '</span>';
 
         if ('svg' === $fileExt) {
             // SVG is rendered by the browser directly, no image driver involved
@@ -335,7 +335,7 @@ if (0 == $pager->getRowCount()) {
 $wordBreak = new HtmlAttributes(['class' => ['rex-u-word-break']]);
 $panel .= (string) new Table(
     [
-        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media"></i></a>'), 'select', ColumnType::Icon),
+        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_file_insert') . '</span></a>'), 'select', ColumnType::Icon),
         TableColumn::forKey(I18n::msg('pool_file_thumbnail'), 'thumbnail', ColumnType::Thumbnail, $wordBreak),
         TableColumn::forKey(I18n::msg('pool_file_info') . ' / ' . I18n::msg('pool_file_description'), 'info', attributes: $wordBreak, title: I18n::msg('pool_file_info')),
         TableColumn::forKey(I18n::msg('pool_last_update'), 'updated'),

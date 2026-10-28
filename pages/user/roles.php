@@ -53,25 +53,25 @@ if ('' == $func) {
 
     $list->column(
         'icon',
-        Html::raw('<a class="rex-u-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . '><i class="rex-icon rex-icon-add-userrole"></i></a>'),
-        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-userrole"></i>'),
+        Html::raw('<a class="rex-u-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . '><i class="rex-icon rex-icon-add-userrole" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('create_user_role') . '</span></a>'),
+        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-userrole" aria-hidden="true"></i>'),
         type: ColumnType::Icon,
         link: $editUrl,
     );
     $list->column('id', I18n::msg('id'), type: ColumnType::Id);
     $list->column('name', I18n::msg('name'), link: $editUrl);
-    $list->column('edit', I18n::msg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
+    $list->column('edit', I18n::msg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
     $list->column(
         'duplicate',
         null,
-        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-duplicate"></i> ' . I18n::msg('user_role_duplicate')),
+        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-duplicate" aria-hidden="true"></i> ' . I18n::msg('user_role_duplicate')),
         type: ColumnType::Action,
         link: static fn (array $row): string => $list->getUrl(['func' => 'duplicate', 'id' => (int) $row['id']]),
     );
     $list->column(
         'delete',
         null,
-        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_role_delete')),
+        static fn (): Html => Html::raw('<i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('user_role_delete')),
         type: ColumnType::Action,
         link: static fn (array $row): string => $list->getUrl(['func' => 'delete', 'id' => (int) $row['id']] + CsrfToken::factory('user_role_delete')->getUrlParams()),
         linkAttributes: ['data-confirm' => I18n::msg('delete') . ' ?'],

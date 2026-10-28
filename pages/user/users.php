@@ -311,10 +311,10 @@ $editUrl = static fn (array $row): ?string => !$row['admin'] || $currentUser->ad
 
 $list->column(
     'icon',
-    Html::raw('<a class="rex-u-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user'), 'add') . '><i class="rex-icon rex-icon-add-user"></i></a>'),
+    Html::raw('<a class="rex-u-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user'), 'add') . '><i class="rex-icon rex-icon-add-user" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('create_user') . '</span></a>'),
     static fn (array $row): Html => $row['status']
-        ? Html::raw('<i class="rex-icon rex-icon-user" title="' . I18n::msg('user_status_active') . '"></i>')
-        : Html::raw('<i class="rex-icon rex-icon-user-inactive rex-u-text-muted" title="' . I18n::msg('user_status_inactive') . '"></i>'),
+        ? Html::raw('<i class="rex-icon rex-icon-user" title="' . I18n::msg('user_status_active') . '" role="img"></i>')
+        : Html::raw('<i class="rex-icon rex-icon-user-inactive rex-u-text-muted" title="' . I18n::msg('user_status_inactive') . '" role="img"></i>'),
     type: ColumnType::Icon,
     link: $editUrl,
 );
@@ -335,14 +335,14 @@ $list->column('role', I18n::msg('user_role'), static function (array $row) use (
 }, sortable: true);
 $list->column('lastlogin', I18n::msg('last_login'), static fn (array $row): string => Formatter::intlDateTime(null === $row['lastlogin'] ? null : (string) $row['lastlogin']), sortable: 'desc');
 
-$list->column('edit', I18n::msg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
+$list->column('edit', I18n::msg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
 $canDelete = static fn (array $row): bool => $row['id'] != $currentUser->id
     && ($currentUser->admin || !$row['admin'])
     && (!($impersonator = Core::getImpersonator()) || $row['id'] != $impersonator->id);
 $list->column(
     'delete',
     null,
-    static fn (array $row): Html => Html::raw(($canDelete($row) ? '' : '<span class="rex-u-text-muted">') . '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_delete') . ($canDelete($row) ? '' : '</span>')),
+    static fn (array $row): Html => Html::raw(($canDelete($row) ? '' : '<span class="rex-u-text-muted">') . '<i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('user_delete') . ($canDelete($row) ? '' : '</span>')),
     type: ColumnType::Action,
     link: static fn (array $row): ?string => $canDelete($row) ? $list->getUrl(['func' => 'delete', 'user_id' => (int) $row['id']] + CsrfToken::factory('user_delete')->getUrlParams()) : null,
     linkAttributes: ['data-confirm' => I18n::msg('delete') . ' ?'],
@@ -350,7 +350,7 @@ $list->column(
 
 if ($currentUser->admin) {
     $list->column('impersonate', null, static function (array $row) use ($currentUser): Html {
-        $label = '<i class="rex-icon rex-icon-sign-in"></i> ' . I18n::msg('login_impersonate');
+        $label = '<i class="rex-icon rex-icon-sign-in" aria-hidden="true"></i> ' . I18n::msg('login_impersonate');
         if (Core::getImpersonator() || $row['id'] == $currentUser->id) {
             return Html::raw('<span class="rex-u-text-muted">' . $label . '</span>');
         }
