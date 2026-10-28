@@ -6,17 +6,20 @@ function ready(root2 = document.body) {
 }
 
 // assets/js/src/announce.js
-var regions = {};
+var regions = /* @__PURE__ */ new WeakMap();
 function region(assertive) {
+  const container = [...document.querySelectorAll("dialog[open]")].filter((dialog2) => dialog2.matches(":modal")).at(-1) ?? document.body;
   const key2 = assertive ? "assertive" : "polite";
-  if (!regions[key2]?.isConnected) {
+  const containerRegions = regions.get(container) ?? {};
+  if (!containerRegions[key2]?.isConnected) {
     const element = document.createElement("div");
     element.className = "rex-u-visually-hidden";
     element.setAttribute("role", assertive ? "alert" : "status");
-    document.body.append(element);
-    regions[key2] = element;
+    container.append(element);
+    containerRegions[key2] = element;
+    regions.set(container, containerRegions);
   }
-  return regions[key2];
+  return containerRegions[key2];
 }
 function announce(message, { assertive = false } = {}) {
   const element = region(assertive);
@@ -76,16 +79,21 @@ var Overlay = class {
     this.load(this.url);
   }
   async load(url, init2 = {}) {
+    this.loading?.abort();
+    const loading = this.loading = new AbortController();
     const initial = !this.body.hasChildNodes();
     this.dialog.setAttribute("aria-busy", "true");
     try {
-      const response = await fetch(url, { credentials: "same-origin", ...init2 });
+      const response = await fetch(url, { credentials: "same-origin", ...init2, signal: loading.signal });
       if (401 === response.status || "login" === pageOf(response.url)) {
         location.href = response.url;
         return;
       }
       const template = document.createElement("template");
       template.innerHTML = await response.text();
+      if (loading.signal.aborted) {
+        return;
+      }
       const doc = template.content;
       const main = doc.getElementById("rex-js-page-main") ?? doc;
       const heading = main.querySelector(".rex-pageheader-title");
@@ -104,12 +112,18 @@ var Overlay = class {
         this.pick(auto, [itemOf(auto)]);
       }
     } catch (error) {
+      if (loading.signal.aborted) {
+        return;
+      }
       const alert = Object.assign(document.createElement("div"), { className: "rex-alert", textContent: String(error) });
       alert.dataset.variant = "danger";
       alert.setAttribute("role", "alert");
       this.body.replaceChildren(alert);
     } finally {
-      this.dialog.removeAttribute("aria-busy");
+      if (this.loading === loading) {
+        this.loading = null;
+        this.dialog.removeAttribute("aria-busy");
+      }
     }
   }
   /** Whether a URL is loaded inside this overlay (instead of leaving it for the main window). */
@@ -192,6 +206,7 @@ var Overlay = class {
       return;
     }
     stack.splice(index, 1);
+    this.loading?.abort();
     this.dialog.close();
     this.dialog.remove();
     this.resolveClosed(this.picked);
@@ -335,10 +350,11 @@ window.addEventListener("click", (event) => {
   }
   event.preventDefault();
   event.stopImmediatePropagation();
+  const { ctrlKey, metaKey, shiftKey, altKey, button } = event;
   confirm(element.dataset.confirm).then((ok) => {
     if (ok) {
       confirmed.add(element);
-      element.click();
+      element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window, ctrlKey, metaKey, shiftKey, altKey, button }));
     }
   });
 }, true);
@@ -406,7 +422,7 @@ document.addEventListener("click", (event) => {
   }
 });
 function dropdownItems(dropdown) {
-  return [...dropdown.querySelectorAll(`:scope > ${MENU} li:not(.disabled) > a`)];
+  return [...dropdown.querySelectorAll(`:scope > ${MENU} li:not(.disabled) :is(a[href], button:not(:disabled))`)];
 }
 document.addEventListener("keydown", (event) => {
   const closedToggle = event.target.closest(TOGGLE);
@@ -425,7 +441,7 @@ document.addEventListener("keydown", (event) => {
     event.preventDefault();
     closeDropdowns();
     toggle.focus();
-  } else if ("ArrowDown" === event.key || "ArrowUp" === event.key) {
+  } else if (("ArrowDown" === event.key || "ArrowUp" === event.key) && !event.target.matches("input, select, textarea")) {
     event.preventDefault();
     const items = dropdownItems(dropdown);
     const index = items.indexOf(document.activeElement);
@@ -440,9 +456,19 @@ document.addEventListener("focusout", (event) => {
     dropdown.querySelector(`:scope > :is(${TOGGLE})`).setAttribute("aria-expanded", "false");
   }
 });
-function targetOf(toggle) {
+function targetsOf(toggle) {
   const selector = toggle.dataset.target ?? toggle.getAttribute("href");
-  return selector?.startsWith("#") ? document.querySelector(selector) : null;
+  if (!selector || !toggle.dataset.target && !/^#[^\s]+$/.test(selector)) {
+    return [];
+  }
+  try {
+    return [...document.querySelectorAll(selector)];
+  } catch {
+    return [];
+  }
+}
+function targetOf(toggle) {
+  return targetsOf(toggle)[0] ?? null;
 }
 function collapse(target, open = !target.classList.contains("in")) {
   if (open === target.classList.contains("in")) {
@@ -450,7 +476,7 @@ function collapse(target, open = !target.classList.contains("in")) {
   }
   target.classList.toggle("in", open);
   for (const toggle of document.querySelectorAll('[data-toggle="collapse"]')) {
-    if (targetOf(toggle) === target) {
+    if (targetsOf(toggle).includes(target)) {
       toggle.classList.toggle("collapsed", !open);
       toggle.setAttribute("aria-expanded", String(open));
     }
@@ -459,10 +485,10 @@ function collapse(target, open = !target.classList.contains("in")) {
 }
 document.addEventListener("click", (event) => {
   const toggle = event.target.closest('[data-toggle="collapse"]');
-  const target = toggle && targetOf(toggle);
-  if (target) {
+  const targets = toggle ? targetsOf(toggle) : [];
+  if (targets.length) {
     event.preventDefault();
-    collapse(target);
+    targets.forEach((target) => collapse(target));
   }
 });
 document.addEventListener("click", (event) => {
@@ -902,6 +928,11 @@ var Select = class {
   }
   /** Places the panel below the toggle, or above when there is more room there. */
   position(event) {
+    if (!this.panel.isConnected) {
+      removeEventListener("scroll", this.position, true);
+      removeEventListener("resize", this.position);
+      return;
+    }
     if (event?.target instanceof Node && this.panel.contains(event.target)) {
       return;
     }
@@ -931,7 +962,11 @@ document.addEventListener("keydown", (event) => {
     return;
   }
   const form = event.target.closest?.("form");
-  (form?.querySelector("[data-rex-submit-shortcut]") ?? form?.querySelector('[type="submit"]'))?.click();
+  const button = form?.querySelector("[data-rex-submit-shortcut]") ?? form?.querySelector('[type="submit"]');
+  if (button) {
+    event.preventDefault();
+    button.click();
+  }
 }, true);
 document.addEventListener("change", (event) => {
   const all = event.target;
@@ -963,7 +998,7 @@ document.addEventListener("submit", (event) => {
     input.dataset.rexSubmitParam = "";
     form.append(input);
   }
-});
+}, true);
 function applyRequiresChecked(element) {
   const form = element.form ?? element.closest("form") ?? element;
   const name = CSS.escape(element.dataset.rexRequiresChecked);
@@ -1069,11 +1104,13 @@ document.addEventListener("rex:ready", (event) => {
 
 // assets/js/src/content-sidebar.js
 var key = "structure_content_sidebar_status";
+var initialized = /* @__PURE__ */ new WeakSet();
 document.addEventListener("rex:ready", (event) => {
   const sidebar = event.target.matches("#rex-page-content-edit") && event.target.querySelector("#rex-js-main-sidebar");
-  if (!sidebar) {
+  if (!sidebar || initialized.has(sidebar)) {
     return;
   }
+  initialized.add(sidebar);
   const panels = [...sidebar.children].filter((child) => child.matches("section")).map((section) => section.querySelector("div.collapse"));
   const store = () => {
     try {
@@ -1353,18 +1390,20 @@ if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAut
     if (!results.every((r) => r === true)) {
       return;
     }
+    const initialized3 = /* @__PURE__ */ new WeakSet();
+    const once = (form) => form && !initialized3.has(form) && initialized3.add(form);
     const init2 = function(container) {
       let form = container.querySelector("form[data-auth-add-passkey]");
-      if (form) {
+      if (once(form)) {
         authAddPasskey(form);
         authPasskeyVerify(form);
       }
       form = container.querySelector("form[data-auth-change-password]");
-      if (form) {
+      if (once(form)) {
         authPasskeyVerify(form);
       }
       form = container.querySelector("form[data-auth-login]");
-      if (form) {
+      if (once(form)) {
         authLogin(form);
       }
     };
@@ -1379,8 +1418,14 @@ if (window.PublicKeyCredential && PublicKeyCredential.isUserVerifyingPlatformAut
 
 // assets/js/src/history.js
 var RANGE = 1e3;
+var initialized2 = /* @__PURE__ */ new WeakSet();
 document.addEventListener("rex:ready", (event) => {
-  event.target.querySelectorAll("[data-rex-history]").forEach(init);
+  for (const root2 of event.target.querySelectorAll("[data-rex-history]")) {
+    if (!initialized2.has(root2)) {
+      initialized2.add(root2);
+      init(root2);
+    }
+  }
 });
 function init(root2) {
   const url = new URL(root2.dataset.rexHistory, location.href);
