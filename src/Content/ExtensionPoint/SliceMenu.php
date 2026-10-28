@@ -4,6 +4,7 @@ namespace Redaxo\Core\Content\ExtensionPoint;
 
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Http\Context;
+use Redaxo\Core\View\Component\ButtonVariant;
 
 /**
  * @extends ExtensionPoint<null>
@@ -16,7 +17,7 @@ final class SliceMenu extends ExtensionPoint
     public array $additionalActions = [];
 
     /**
-     * Each action is an item of the fragment `core/buttons/button_group.php`, `variant` a {@see \Redaxo\Core\View\Component\ButtonVariant} value.
+     * Each action is an item of the fragment `core/buttons/button_group.php`, `variant` a {@see ButtonVariant} value.
      *
      * @param array{label?: string, url?: string, variant?: string, attributes?: array{class?: list<string>, title?: string}} $menuEditAction
      * @param array{label?: string, url?: string, variant?: string, attributes?: array{class?: list<string>, title?: string, data-confirm?: string}} $menuDeleteAction
