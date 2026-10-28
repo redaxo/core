@@ -26,7 +26,7 @@ foreach ($this->elements as $element) {
 
     if ('' != $leftSide) {
         $class = 'input-group-addon';
-        if (preg_match('@class=[\'|"](?:btn|rex-button)[^"\']@', $leftSide)) {
+        if (preg_match('@class=[\'"](?:btn|rex-button)\b@', $leftSide)) {
             $class = 'input-group-btn';
         }
 
@@ -35,7 +35,7 @@ foreach ($this->elements as $element) {
 
     if ('' != $rightSide) {
         $class = 'input-group-addon';
-        if (preg_match('@class=[\'|"](?:btn|rex-button)[^"\']@', $rightSide)) {
+        if (preg_match('@class=[\'"](?:btn|rex-button)\b@', $rightSide)) {
             $class = 'input-group-btn';
         }
 
