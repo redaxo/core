@@ -174,7 +174,7 @@
     }
 
     .rex-mime-error {
-        color: var(--rex-danger-text);
+        color: var(--rex-color-danger-text);
 
         &::after {
             content: "!";

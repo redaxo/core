@@ -3,13 +3,13 @@
 @layer components {
     .rex-pageheader__title {
         margin: 36px 0 33px;
-        color: var(--rex-text);
-        font-size: 24px;
+        color: var(--rex-color-text);
+        font-size: 1.5rem;
         font-weight: 400;
         line-height: 1.1;
 
         small {
-            color: var(--rex-text-muted);
+            color: var(--rex-color-text-muted);
             font-size: 65%;
             font-weight: 400;
             line-height: 1;
@@ -21,7 +21,7 @@
             right: 15px;
             z-index: 1030;
             margin: 0;
-            color: var(--rex-topbar-text);
+            color: var(--rex-color-on-accent);
             line-height: var(--rex-topbar-height-mobile);
         }
     }
@@ -37,24 +37,24 @@
     /* tabs ---------------------------------------------------------------------------------------------------- */
 
     .rex-pagenav {
-        --rex-tabs-border: light-dark(#d0d6df, var(--rex-color-grey-5));
-        --rex-tab-bg: light-dark(var(--rex-color-a-light), var(--rex-color-grey-3));
-        --rex-tab-text: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light-inactive));
-        --rex-tab-hover-text: light-dark(var(--rex-color-b), var(--rex-color-blue-5));
-        --rex-tab-active-bg: light-dark(#fff, var(--rex-color-grey-5));
-        --rex-tab-active-text: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
-        --rex-subnav-bg: light-dark(#fff, var(--rex-color-grey-5));
-        --rex-subnav-border: light-dark(var(--rex-color-a-light), var(--rex-color-grey-5));
-        --rex-subnav-divider: light-dark(var(--rex-color-a-light), var(--rex-color-grey-1));
+        --rex-tabs-border: var(--rex-color-border-strong);
+        --rex-tab-bg: var(--rex-color-surface-muted);
+        --rex-tab-text: var(--rex-color-text);
+        --rex-tab-hover-text: var(--rex-color-link-hover);
+        --rex-tab-active-bg: var(--rex-color-surface);
+        --rex-tab-active-text: var(--rex-color-text);
+        --rex-subnav-bg: var(--rex-color-surface);
+        --rex-subnav-border: var(--rex-color-border);
+        --rex-subnav-divider: var(--rex-color-border);
 
         margin-bottom: 22px;
 
         .rex-main-frame & {
-            --rex-tabs-border: light-dark(#fff, var(--rex-color-grey-3));
-            --rex-tab-bg: light-dark(#d0d6df, var(--rex-color-grey-1));
-            --rex-tab-active-bg: light-dark(#fff, var(--rex-color-grey-3));
-            --rex-subnav-bg: light-dark(#fff, var(--rex-color-grey-3));
-            --rex-subnav-border: light-dark(#fff, var(--rex-color-grey-3));
+            --rex-tabs-border: var(--rex-color-surface);
+            --rex-tab-bg: var(--rex-color-surface-strong);
+            --rex-tab-active-bg: var(--rex-color-surface);
+            --rex-subnav-bg: var(--rex-color-surface);
+            --rex-subnav-border: var(--rex-color-surface);
         }
     }
 
@@ -149,18 +149,18 @@
 
     .rex-subnav__link {
         padding: 12px 15px;
-        color: var(--rex-link);
+        color: var(--rex-color-link);
         line-height: 22px;
         text-decoration: none;
 
         .rex-empty > & {
-            color: light-dark(var(--rex-color-a), var(--rex-color-text-light-inactive));
+            color: var(--rex-color-text-muted);
         }
 
         &:is(a):hover,
         &:is(a):focus,
         .rex-subnav__item.is-active > & {
-            color: var(--rex-text);
+            color: var(--rex-color-text);
             text-decoration: none;
         }
     }
@@ -181,8 +181,8 @@
         margin: 0 0 22px;
         padding: 6px 15px;
         list-style: none;
-        background: var(--rex-surface);
-        border: 1px solid var(--rex-border);
+        background: var(--rex-color-surface);
+        border: 1px solid var(--rex-color-border);
         border-radius: 0;
 
         .list-group-item & {
@@ -192,7 +192,7 @@
         > li + li::before {
             content: '/ ';
             padding: 0 5px;
-            color: var(--rex-text-muted);
+            color: var(--rex-color-text-muted);
         }
     }
 

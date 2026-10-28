@@ -2,44 +2,44 @@
 
 @layer components {
     .rex-section {
-        --rex-section-color: var(--rex-border);
-        --rex-section-header-text: var(--rex-text);
+        --rex-section-color: var(--rex-color-border);
+        --rex-section-header-text: var(--rex-color-text);
         --rex-section-body-bg: transparent;
-        --rex-section-footer-bg: light-dark(var(--rex-color-a-light), var(--rex-color-grey-1));
+        --rex-section-footer-bg: var(--rex-color-surface-muted);
 
         margin: 0 0 22px;
-        background: var(--rex-surface);
+        background: var(--rex-color-surface);
         border: 1px solid var(--rex-section-color);
         border-radius: 0;
-        box-shadow: 0 1px 1px rgb(0 0 0 / 0.05);
-        color: var(--rex-text);
+        box-shadow: var(--rex-shadow-sm);
+        color: var(--rex-color-text);
 
         &.rex-section--edit,
         &.rex-section--add {
-            --rex-section-color: light-dark(var(--rex-color-d), #1a3332);
-            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
-            --rex-section-body-bg: light-dark(var(--rex-color-d-lighter), #1f3d3c);
-            --rex-section-footer-bg: light-dark(var(--rex-color-a-light), #1a3332);
+            --rex-section-color: var(--rex-color-success);
+            --rex-section-header-text: var(--rex-color-on-success);
+            --rex-section-body-bg: var(--rex-color-success-subtle);
+            --rex-section-footer-bg: var(--rex-color-surface-muted);
         }
 
         &.rex-section--info {
-            --rex-section-color: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
-            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+            --rex-section-color: var(--rex-color-accent);
+            --rex-section-header-text: var(--rex-color-on-accent);
         }
 
         &.rex-section--success {
-            --rex-section-color: light-dark(var(--rex-color-d), #0d6a38);
-            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+            --rex-section-color: var(--rex-color-success);
+            --rex-section-header-text: var(--rex-color-on-success);
         }
 
         &.rex-section--warning {
-            --rex-section-color: light-dark(var(--rex-color-warning), #78641e);
-            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+            --rex-section-color: var(--rex-color-warning);
+            --rex-section-header-text: var(--rex-color-on-warning);
         }
 
         &.rex-section--danger {
-            --rex-section-color: light-dark(var(--rex-color-danger), #801919);
-            --rex-section-header-text: light-dark(#fff, var(--rex-color-text-light));
+            --rex-section-color: var(--rex-color-danger);
+            --rex-section-header-text: var(--rex-color-on-danger);
         }
     }
 
@@ -56,7 +56,7 @@
             cursor: pointer;
 
             &:hover {
-                background: color-mix(in srgb, var(--rex-section-color), light-dark(#000, #fff) 5%);
+                background: color-mix(in srgb, var(--rex-section-color), var(--rex-color-text) 8%);
             }
         }
     }
@@ -64,7 +64,7 @@
     .rex-section__title {
         margin: 0;
         color: inherit;
-        font-size: 17px;
+        font-size: 1.0625rem;
         font-weight: 400;
         line-height: 1.25;
     }
@@ -84,17 +84,17 @@
     }
 
     .rex-section h3 {
-        font-size: 17px;
+        font-size: 1.0625rem;
         font-weight: 700;
 
         .rex-slice & {
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 500;
         }
     }
 
     :is(.rex-section--add, .rex-section--edit) > .rex-section__header mark {
-        background-color: light-dark(hsl(148 37.8% 39.6%), rgb(64 155 228 / 0.2));
+        background-color: var(--rex-color-success-hover);
     }
 
     .rex-section__footer {
@@ -169,17 +169,17 @@
 
     .rex-section__body + .table,
     .rex-section > .table + .rex-section__body {
-        border-top: 1px solid var(--rex-border);
+        border-top: 1px solid var(--rex-color-border);
     }
 
     /* login box */
     #rex-page-login .rex-section {
         position: relative;
         z-index: 10;
-        background: rgb(50 64 80 / 0.97);
+        background: color-mix(in srgb, var(--rex-color-inverse-bg) 97%, transparent);
         border: 0;
         border-radius: 5px;
-        color: var(--rex-color-a-light);
+        color: var(--rex-color-inverse-text-strong);
 
         .rex-section__header,
         .rex-section__footer {
@@ -188,7 +188,7 @@
         }
 
         .rex-section__header {
-            color: var(--rex-color-a-light);
+            color: var(--rex-color-inverse-text-strong);
         }
 
         .rex-section__body {

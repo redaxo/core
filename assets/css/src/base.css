@@ -12,8 +12,6 @@
     html {
         height: 100%;
         overflow-y: scroll;
-        /* rem based sizes of addon styles still expect the Bootstrap 3 root size */
-        font-size: 10px;
         scroll-padding-top: calc(var(--rex-topbar-height) + 15px);
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
@@ -25,8 +23,8 @@
     body {
         height: 100%;
         margin: 0;
-        background-color: var(--rex-bg);
-        color: var(--rex-text);
+        background-color: var(--rex-color-bg);
+        color: var(--rex-color-text);
         font-family: var(--rex-font-sans);
         font-size: var(--rex-font-size);
         line-height: var(--rex-line-height);
@@ -40,12 +38,12 @@
     /* links */
 
     a {
-        color: var(--rex-link);
+        color: var(--rex-color-link);
         text-decoration: none;
 
         &:hover,
         &:focus {
-            color: var(--rex-link-hover);
+            color: var(--rex-color-link-hover);
             text-decoration: underline;
         }
 
@@ -68,7 +66,7 @@
         line-height: 1.1;
 
         & small {
-            color: light-dark(#777, var(--rex-color-text-light-inactive));
+            color: var(--rex-color-text-muted);
             font-weight: 400;
             line-height: 1;
         }
@@ -92,12 +90,12 @@
         }
     }
 
-    h1 { font-size: 36px; }
-    h2 { font-size: 30px; }
-    h3 { font-size: 24px; }
-    h4 { font-size: 18px; }
-    h5 { font-size: 15px; }
-    h6 { font-size: 12px; }
+    h1 { font-size: 2.25rem; }
+    h2 { font-size: 1.875rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.125rem; }
+    h5 { font-size: 0.9375rem; }
+    h6 { font-size: 0.75rem; }
 
     p {
         margin: 0 0 11px;
@@ -130,7 +128,7 @@
 
     mark {
         padding: 0.1em 0.3em;
-        background-color: light-dark(hsl(216 18.5% 74.4%), rgb(64 155 228 / 0.2));
+        background-color: var(--rex-color-mark);
         color: inherit;
         font-weight: 700;
     }
@@ -144,7 +142,7 @@
         height: 0;
         margin: 22px 0;
         border: 0;
-        border-top: 1px solid light-dark(#eee, var(--rex-color-grey-2));
+        border-top: 1px solid var(--rex-color-border);
     }
 
     /* lists */
@@ -188,15 +186,15 @@
 
     code {
         padding: 2px 4px;
-        background-color: light-dark(#f9f2f4, rgb(21 28 34 / 0.8));
-        color: light-dark(#c7254e, var(--rex-color-blue-5));
+        background-color: var(--rex-color-code-bg);
+        color: var(--rex-color-code-text);
         font-size: 90%;
     }
 
     kbd {
         padding: 2px 4px;
-        background-color: light-dark(#333, var(--rex-color-blue-2));
-        color: light-dark(#fff, var(--rex-color-text-light));
+        background-color: var(--rex-color-text);
+        color: var(--rex-color-surface);
         font-size: 90%;
 
         & kbd {
@@ -212,10 +210,10 @@
         overflow: auto;
         margin: 0 0 11px;
         padding: 10.5px;
-        border: 1px solid light-dark(#ccc, var(--rex-color-grey-1));
-        background-color: light-dark(#f5f5f5, rgb(21 28 34 / 0.8));
-        color: light-dark(#333, var(--rex-color-blue-5));
-        font-size: 14px;
+        border: 1px solid var(--rex-color-border-strong);
+        background-color: var(--rex-color-surface-subtle);
+        color: var(--rex-color-text);
+        font-size: 0.875rem;
         line-height: var(--rex-line-height);
         word-break: break-all;
         overflow-wrap: break-word;
@@ -231,11 +229,11 @@
 
     /* highlighted PHP code (`Str::highlight()`), PHP's default colors with lighter ones for the dark theme */
     code {
-        .rex-code-string { color: light-dark(#dd0000, #d9c16c); }
-        .rex-code-comment { color: light-dark(#ff8000, #7e85e6); }
-        .rex-code-keyword { color: light-dark(#007700, #57d993); }
-        .rex-code-default { color: light-dark(#0000bb, var(--rex-color-blue-5)); }
-        .rex-code-html { color: light-dark(#000, var(--rex-color-blue-5)); }
+        .rex-code-string { color: var(--rex-color-code-string); }
+        .rex-code-comment { color: var(--rex-color-code-comment); }
+        .rex-code-keyword { color: var(--rex-color-code-keyword); }
+        .rex-code-default { color: var(--rex-color-code-default); }
+        .rex-code-html { color: var(--rex-color-code-html); }
     }
 
     /* embedded content */

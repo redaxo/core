@@ -44,10 +44,10 @@
 
     .input-group-addon {
         padding: 6px 12px;
-        border: 1px solid light-dark(hsl(216 18.5% 79.4%), hsl(212.2 23.4% 18.5%));
+        border: 1px solid var(--rex-color-border-input);
         border-radius: 4px;
-        background-color: light-dark(#eee, rgb(27 35 44 / 0.8));
-        color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
+        background-color: var(--rex-color-surface-muted);
+        color: var(--rex-color-text);
         font-size: var(--rex-font-size);
         font-weight: 400;
         line-height: 1;

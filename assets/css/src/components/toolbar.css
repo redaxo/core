@@ -5,11 +5,11 @@
 
 @layer bootstrap {
     .navbar {
-        --navbar-bg: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
-        --navbar-border: light-dark(hsl(206.6 65.1% 50.8%), var(--rex-color-blue-3));
-        --navbar-link: light-dark(#fff, var(--rex-color-text-light));
-        --navbar-link-hover: light-dark(#fff, var(--rex-color-text-light));
-        --navbar-active-bg: light-dark(hsl(206.6 65.1% 50.8%), hsl(206.6 74.7% 45.3%));
+        --navbar-bg: var(--rex-color-accent);
+        --navbar-border: var(--rex-color-accent);
+        --navbar-link: var(--rex-color-on-accent);
+        --navbar-link-hover: var(--rex-color-on-accent);
+        --navbar-active-bg: var(--rex-color-accent-hover);
 
         position: relative;
         display: flow-root;
@@ -21,11 +21,11 @@
 
     .navbar-inverse,
     .rex-state-inprogress {
-        --navbar-bg: light-dark(var(--rex-color-a-dark), var(--rex-color-grey-2));
-        --navbar-border: light-dark(hsl(212 23.1% 15.5%), var(--rex-color-grey-2));
-        --navbar-link: light-dark(var(--rex-color-a), var(--rex-color-text-light));
-        --navbar-link-hover: light-dark(var(--rex-color-b), var(--rex-color-blue-5));
-        --navbar-active-bg: light-dark(hsl(212 23.1% 15.5%), var(--rex-color-grey-1));
+        --navbar-bg: var(--rex-color-inverse-bg);
+        --navbar-border: var(--rex-color-inverse-bg-strong);
+        --navbar-link: var(--rex-color-inverse-text);
+        --navbar-link-hover: var(--rex-color-inverse-link);
+        --navbar-active-bg: var(--rex-color-inverse-bg-strong);
     }
 
     .navbar > .container-fluid {
@@ -124,7 +124,7 @@
             &:hover,
             &:focus {
                 background-color: transparent;
-                color: light-dark(var(--rex-color-b-light), var(--rex-color-text-light-inactive));
+                color: color-mix(in srgb, var(--navbar-link) 60%, var(--navbar-bg));
             }
         }
 
@@ -212,7 +212,7 @@
         padding: 10px 15px;
         border-top: 1px solid transparent;
         border-bottom: 1px solid transparent;
-        box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 1px 0 rgb(255 255 255 / 0.1);
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--navbar-link) 10%, transparent), 0 1px 0 color-mix(in srgb, var(--navbar-link) 10%, transparent);
 
         @media (min-width: 768px) {
             & .form-group {

@@ -5,7 +5,7 @@
 
 @layer components {
     #rex-page-login {
-        background: var(--rex-color-a-darker);
+        background: var(--rex-color-inverse-bg-strong);
 
         & .rex-branding {
             margin: 10px 0 30px;
@@ -16,11 +16,11 @@
             vertical-align: middle;
 
             & :is(.rex-redaxo-logo-r, .rex-redaxo-logo-e, .rex-redaxo-logo-d, .rex-redaxo-logo-cms) {
-                fill: var(--rex-color-b);
+                fill: var(--rex-color-brand);
             }
 
             & :is(.rex-redaxo-logo-a, .rex-redaxo-logo-x, .rex-redaxo-logo-o, .rex-redaxo-logo-reg) {
-                fill: #fff;
+                fill: var(--rex-color-logo-primary);
             }
         }
 
@@ -39,10 +39,10 @@
         }
 
         & .form-control {
-            border-color: var(--rex-color-a-dark);
-            background-color: var(--rex-color-a);
+            border-color: var(--rex-color-inverse-bg);
+            background-color: var(--rex-color-inverse-text);
             box-shadow: none;
-            color: var(--rex-color-a-darker);
+            color: var(--rex-color-inverse-bg-strong);
             appearance: none;
 
             &:last-child {
@@ -51,9 +51,9 @@
         }
 
         & .input-group-addon {
-            border-color: var(--rex-color-a-dark);
-            background-color: var(--rex-color-a);
-            color: var(--rex-color-a-dark);
+            border-color: var(--rex-color-inverse-bg);
+            background-color: var(--rex-color-inverse-text);
+            color: var(--rex-color-inverse-bg);
         }
 
         & .input-group {
@@ -62,7 +62,7 @@
             }
 
             &:focus-within :is(.form-control, .input-group-addon) {
-                background-color: var(--rex-color-a-light);
+                background-color: var(--rex-color-inverse-text-strong);
             }
         }
 
@@ -73,36 +73,36 @@
         }
 
         & .btn-primary {
-            border-color: var(--rex-color-a-dark);
-            background-color: var(--rex-color-a-darker);
-            color: #fff;
+            border-color: var(--rex-color-inverse-bg);
+            background-color: var(--rex-color-inverse-bg-strong);
+            color: var(--rex-color-inverse-text-strong);
             transition: background-color 100ms ease-out;
 
             &:hover {
-                background-color: rgb(30.4 40.3 50.1);
+                background-color: var(--rex-color-inverse-bg);
             }
         }
 
         & .btn-view {
-            background-color: hsl(212 23.1% 30.5%);
-            color: var(--rex-color-a);
+            background-color: var(--rex-color-inverse-bg);
+            color: var(--rex-color-inverse-text);
 
             &:hover {
-                background-color: var(--rex-color-a-darker);
-                color: var(--rex-color-a-light);
+                background-color: var(--rex-color-inverse-bg-strong);
+                color: var(--rex-color-inverse-text-strong);
             }
         }
 
         /* password toggle next to the field */
         & .input-group-btn .btn-view {
-            border-color: var(--rex-color-a-dark);
+            border-color: var(--rex-color-inverse-bg);
             border-left: none;
-            background-color: var(--rex-color-a);
-            color: var(--rex-color-a-darker);
+            background-color: var(--rex-color-inverse-text);
+            color: var(--rex-color-inverse-bg-strong);
             transition: background-color 100ms ease-out;
 
             &:hover {
-                background-color: var(--rex-color-a-light);
+                background-color: var(--rex-color-inverse-text-strong);
             }
         }
 
@@ -123,7 +123,7 @@
 
             &,
             & a {
-                color: var(--rex-color-a);
+                color: var(--rex-color-inverse-text);
             }
         }
 

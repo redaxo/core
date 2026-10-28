@@ -20,11 +20,11 @@
         min-width: 160px;
         margin: 2px 0 0;
         padding: 5px 0;
-        border: 1px solid light-dark(rgb(0 0 0 / 0.15), var(--rex-color-grey-1));
+        border: 1px solid var(--rex-color-border-strong);
         border-radius: 0;
-        background-color: light-dark(#fff, var(--rex-color-grey-1));
+        background-color: var(--rex-color-surface-raised);
         background-clip: padding-box;
-        box-shadow: 0 6px 12px rgb(0 0 0 / 0.175);
+        box-shadow: var(--rex-shadow-md);
         font-size: var(--rex-font-size);
         text-align: left;
         list-style: none;
@@ -43,15 +43,15 @@
             display: block;
             clear: both;
             padding: 3px 20px;
-            color: light-dark(#333, var(--rex-color-text-light));
+            color: var(--rex-color-text);
             font-weight: 400;
             line-height: var(--rex-line-height);
             white-space: nowrap;
 
             &:hover,
             &:focus {
-                background-color: light-dark(var(--rex-color-d-lighter), var(--rex-color-grey-2));
-                color: light-dark(#262626, var(--rex-color-text-light));
+                background-color: var(--rex-color-surface-subtle);
+                color: var(--rex-color-text);
                 text-decoration: none;
             }
         }
@@ -61,8 +61,8 @@
             &:hover,
             &:focus {
                 outline: 0;
-                background-color: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
-                color: light-dark(#fff, var(--rex-color-text-light));
+                background-color: var(--rex-color-accent);
+                color: var(--rex-color-on-accent);
                 text-decoration: none;
             }
         }
@@ -72,7 +72,7 @@
             &:hover,
             &:focus {
                 background-color: transparent;
-                color: light-dark(#777, var(--rex-color-text-light-inactive));
+                color: var(--rex-color-text-muted);
                 cursor: not-allowed;
             }
         }
@@ -81,7 +81,7 @@
             height: 1px;
             margin: 10px 0;
             overflow: hidden;
-            background-color: light-dark(#e5e5e5, var(--rex-color-grey-3));
+            background-color: var(--rex-color-border);
         }
     }
 
@@ -93,7 +93,7 @@
     .dropdown-header {
         display: block;
         padding: 3px 20px;
-        color: light-dark(#777, var(--rex-color-text-light-inactive));
+        color: var(--rex-color-text-muted);
         font-size: var(--rex-font-size-small);
         line-height: var(--rex-line-height);
         white-space: nowrap;

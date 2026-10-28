@@ -8,12 +8,12 @@
         padding: 0;
         border: 0;
         border-radius: var(--rex-radius);
-        background: var(--rex-surface);
-        box-shadow: 0 10px 40px rgb(0 0 0 / 0.3);
-        color: var(--rex-text);
+        background: var(--rex-color-surface);
+        box-shadow: var(--rex-shadow-lg);
+        color: var(--rex-color-text);
 
         &::backdrop {
-            background: light-dark(rgb(40 53 66 / 0.6), rgb(0 0 0 / 0.6));
+            background: var(--rex-color-backdrop);
         }
     }
 
@@ -30,7 +30,7 @@
         align-items: center;
         gap: 16px;
         padding: 8px 8px 8px var(--rex-gutter);
-        border-bottom: 1px solid var(--rex-border);
+        border-bottom: 1px solid var(--rex-color-border);
     }
 
     .rex-dialog-title {
@@ -47,12 +47,12 @@
         border-radius: var(--rex-radius);
         background: transparent;
         color: inherit;
-        font-size: 18px;
+        font-size: 1.125rem;
         cursor: pointer;
 
         &:hover,
         &:focus-visible {
-            background: var(--rex-surface-muted);
+            background: var(--rex-color-surface-muted);
         }
     }
 

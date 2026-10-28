@@ -31,7 +31,7 @@
         height: 16px;
         margin-inline: calc(var(--rex-history-thumb) / 2);
         border-radius: 2px;
-        background: var(--rex-surface-muted);
+        background: var(--rex-color-surface-muted);
     }
 
     .rex-history__segment {
@@ -39,17 +39,17 @@
         inset-block: 0;
         left: calc(var(--from) * 100%);
         width: calc((var(--to) - var(--from)) * 100%);
-        background: var(--rex-color-blue-5);
+        background: color-mix(in srgb, var(--rex-color-accent) 45%, var(--rex-color-surface));
 
         &:nth-child(even) {
-            background: color-mix(in srgb, var(--rex-color-blue-5), #fff 15%);
+            background: color-mix(in srgb, var(--rex-color-accent) 35%, var(--rex-color-surface));
         }
 
         &.is-past {
-            background: var(--rex-color-blue-4);
+            background: color-mix(in srgb, var(--rex-color-accent) 80%, var(--rex-color-surface));
 
             &:nth-child(even) {
-                background: color-mix(in srgb, var(--rex-color-blue-4), #fff 12%);
+                background: color-mix(in srgb, var(--rex-color-accent) 68%, var(--rex-color-surface));
             }
         }
     }
@@ -60,14 +60,14 @@
         left: calc(var(--at) * 100%);
         width: 1px;
         height: 5px;
-        background: var(--rex-text-muted);
+        background: var(--rex-color-text-muted);
 
         &.is-selected {
             top: -10px;
             width: 3px;
             height: 7px;
             margin-left: -1px;
-            background: var(--rex-text);
+            background: var(--rex-color-text);
         }
     }
 
@@ -95,20 +95,20 @@
             width: var(--rex-history-thumb);
             height: 24px;
             appearance: none;
-            border: 1px solid var(--rex-border-strong);
+            border: 1px solid var(--rex-color-border-strong);
             border-radius: 3px;
-            background: #fff linear-gradient(to right, transparent 9px, #c5cbd3 9px 10px, transparent 10px 12px, #c5cbd3 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
-            box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+            background: var(--rex-color-control) linear-gradient(to right, transparent 9px, var(--rex-color-border-input) 9px 10px, transparent 10px 12px, var(--rex-color-border-input) 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
+            box-shadow: var(--rex-shadow-xs);
         }
 
         &::-moz-range-thumb {
             width: var(--rex-history-thumb);
             height: 24px;
             box-sizing: border-box;
-            border: 1px solid var(--rex-border-strong);
+            border: 1px solid var(--rex-color-border-strong);
             border-radius: 3px;
-            background: #fff linear-gradient(to right, transparent 9px, #c5cbd3 9px 10px, transparent 10px 12px, #c5cbd3 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
-            box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+            background: var(--rex-color-control) linear-gradient(to right, transparent 9px, var(--rex-color-border-input) 9px 10px, transparent 10px 12px, var(--rex-color-border-input) 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
+            box-shadow: var(--rex-shadow-xs);
         }
 
         &:focus {
@@ -116,12 +116,12 @@
         }
 
         &:focus-visible::-webkit-slider-thumb {
-            outline: 2px solid var(--rex-link);
+            outline: 2px solid var(--rex-color-link);
             outline-offset: 1px;
         }
 
         &:focus-visible::-moz-range-thumb {
-            outline: 2px solid var(--rex-link);
+            outline: 2px solid var(--rex-color-link);
             outline-offset: 1px;
         }
     }
@@ -130,7 +130,7 @@
         display: flex;
         justify-content: space-between;
         margin-top: 6px;
-        color: var(--rex-text-muted);
+        color: var(--rex-color-text-muted);
         font-size: var(--rex-font-size-small);
     }
 
@@ -190,7 +190,7 @@
         position: relative;
         min-height: 300px;
         overflow: hidden;
-        background: var(--rex-surface-muted);
+        background: var(--rex-color-surface-muted);
 
         & iframe {
             position: absolute;
@@ -199,7 +199,7 @@
             width: 200%;
             height: 200%;
             border: 0;
-            background: #fff;
+            background: var(--rex-color-preview-bg);
             transform: scale(0.5);
             transform-origin: 0 0;
         }

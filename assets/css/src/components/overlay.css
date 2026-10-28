@@ -2,8 +2,8 @@
 
 @layer components {
     .rex-overlay {
-        --rex-overlay-header-bg: var(--rex-topbar-bg);
-        --rex-overlay-header-text: var(--rex-topbar-text);
+        --rex-overlay-header-bg: var(--rex-color-accent);
+        --rex-overlay-header-text: var(--rex-color-on-accent);
 
         display: none;
         flex-direction: column;
@@ -16,16 +16,16 @@
         border: 0;
         border-radius: var(--rex-radius);
         overflow: hidden;
-        background: var(--rex-bg);
-        box-shadow: 0 10px 40px rgb(0 0 0 / 0.3);
-        color: var(--rex-text);
+        background: var(--rex-color-bg);
+        box-shadow: var(--rex-shadow-lg);
+        color: var(--rex-color-text);
 
         &[open] {
             display: flex;
         }
 
         &::backdrop {
-            background: light-dark(rgb(40 53 66 / 0.6), rgb(0 0 0 / 0.6));
+            background: var(--rex-color-backdrop);
         }
 
         &.is-loading .rex-overlay-body {
@@ -67,12 +67,12 @@
         border-radius: var(--rex-radius);
         background: transparent;
         color: inherit;
-        font-size: 20px;
+        font-size: 1.25rem;
         cursor: pointer;
 
         &:hover,
         &:focus-visible {
-            background: rgb(255 255 255 / 0.15);
+            background: color-mix(in srgb, currentColor 15%, transparent);
         }
     }
 

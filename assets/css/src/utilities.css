@@ -59,7 +59,7 @@
 
     .mark {
         padding: 0.1em 0.3em;
-        background-color: light-dark(hsl(216 18.5% 74.4%), rgb(64 155 228 / 0.2));
+        background-color: var(--rex-color-mark);
         color: inherit;
         font-weight: 700;
     }
@@ -83,27 +83,27 @@
     .text-muted,
     .rex-author,
     .rex-filesize {
-        color: light-dark(#777, var(--rex-color-text-light-inactive));
+        color: var(--rex-color-text-muted);
     }
 
     .text-success {
-        color: light-dark(hsl(148 37.8% 43.3%), hsl(147.7 78.2% 43.3%));
+        color: var(--rex-color-success-text);
     }
 
     .text-warning {
-        color: light-dark(hsl(47.7 57% 46.3%), hsl(46.7 60% 49.4%));
+        color: var(--rex-color-warning-text);
     }
 
     .text-danger {
-        color: light-dark(#c9302c, hsl(0 67.3% 50%));
+        color: var(--rex-color-danger-text);
     }
 
     .rex-online {
-        color: light-dark(var(--rex-color-online), rgb(7 166 81));
+        color: var(--rex-color-success-text);
     }
 
     .rex-offline {
-        color: light-dark(var(--rex-color-offline), rgb(224 51 46));
+        color: var(--rex-color-danger-text);
     }
 
     .rex-word-break {
@@ -292,6 +292,6 @@
 
 @keyframes rex-fade-in-highlight {
     from {
-        background-color: #fbffd6;
+        background-color: var(--rex-color-highlight);
     }
 }

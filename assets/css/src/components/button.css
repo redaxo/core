@@ -1,26 +1,24 @@
 /*
- Buttons (`.btn`, Redaxo\Core\View\Component\Button): a variant sets its colors for the light and the dark scheme,
- the states are derived from them like Bootstrap 3 does (darker in light, lighter in dark mode).
+ Buttons (`.btn`, Redaxo\Core\View\Component\Button): a variant sets its colors through the `--btn-*` properties,
+ the states use them.
  */
 
 @layer bootstrap {
     .btn {
-        /* light / dark colors of the variant */
-        --btn-l-color: var(--rex-color-a-dark);
-        --btn-l-bg: #fff;
-        --btn-l-border: hsl(216 18.5% 79.4%);
-        --btn-d-color: var(--rex-color-text-light);
-        --btn-d-bg: rgb(46 59 74 / 0.8);
-        --btn-d-border: hsl(212.2 23.4% 15.5% / 0.8);
+        --btn-color: var(--rex-color-text);
+        --btn-bg: var(--rex-color-control);
+        --btn-border: var(--rex-color-border-strong);
+        --btn-bg-hover: var(--rex-color-control-hover);
+        --btn-border-hover: var(--rex-color-border-input);
 
         display: inline-block;
         margin-bottom: 0;
         padding: 6px 12px;
-        border: 1px solid light-dark(var(--btn-l-border), var(--btn-d-border));
+        border: 1px solid var(--btn-border);
         border-radius: 4px;
-        background-color: light-dark(var(--btn-l-bg), var(--btn-d-bg));
+        background-color: var(--btn-bg);
         background-image: none;
-        color: light-dark(var(--btn-l-color), var(--btn-d-color));
+        color: var(--btn-color);
         font-size: var(--rex-font-size);
         font-weight: 400;
         line-height: var(--rex-line-height);
@@ -32,15 +30,9 @@
         user-select: none;
 
         &:hover {
-            background-color: light-dark(
-                var(--btn-l-bg-hover, hsl(from var(--btn-l-bg) h s calc(l - 10))),
-                hsl(from var(--btn-d-bg) h s calc(l + 4))
-            );
-            border-color: light-dark(
-                var(--btn-l-border-hover, hsl(from var(--btn-l-border) h s calc(l - 12))),
-                var(--btn-d-border-hover, hsl(from var(--btn-d-border) h s calc(l + 4)))
-            );
-            color: light-dark(var(--btn-l-color-hover, var(--btn-l-color)), var(--btn-d-color));
+            background-color: var(--btn-bg-hover);
+            border-color: var(--btn-border-hover);
+            color: var(--btn-color);
             text-decoration: none;
         }
 
@@ -48,15 +40,7 @@
         &.focus {
             outline: 5px auto -webkit-focus-ring-color;
             outline-offset: -2px;
-            background-color: light-dark(
-                hsl(from var(--btn-l-bg) h s calc(l - 10)),
-                hsl(from var(--btn-d-bg) h s calc(l + 8))
-            );
-            border-color: light-dark(
-                hsl(from var(--btn-l-border) h s calc(l - 25)),
-                var(--btn-d-border-hover, hsl(from var(--btn-d-border) h s calc(l + 8)))
-            );
-            color: light-dark(var(--btn-l-color), var(--btn-d-color));
+            color: var(--btn-color);
             text-decoration: none;
         }
 
@@ -64,27 +48,9 @@
         &.active,
         .open > &.dropdown-toggle {
             outline: 0;
-            background-color: light-dark(
-                hsl(from var(--btn-l-bg) h s calc(l - 10)),
-                hsl(from var(--btn-d-bg) h s calc(l + 8))
-            );
-            border-color: light-dark(
-                hsl(from var(--btn-l-border) h s calc(l - 12)),
-                hsl(from var(--btn-d-border) h s calc(l + 8))
-            );
-            box-shadow: inset 0 3px 5px rgb(0 0 0 / 0.125);
-
-            &:hover,
-            &:focus {
-                background-color: light-dark(
-                    hsl(from var(--btn-l-bg) h s calc(l - 17)),
-                    hsl(from var(--btn-d-bg) h s calc(l + 12))
-                );
-                border-color: light-dark(
-                    hsl(from var(--btn-l-border) h s calc(l - 25)),
-                    hsl(from var(--btn-d-border) h s calc(l + 12))
-                );
-            }
+            background-color: var(--btn-bg-hover);
+            border-color: var(--btn-border-hover);
+            box-shadow: var(--rex-shadow-pressed);
         }
 
         &:is(.disabled, [disabled]),
@@ -94,16 +60,16 @@
             &:focus,
             &:active {
                 opacity: 0.65;
-                background-color: light-dark(var(--btn-l-bg), var(--btn-d-bg));
-                border-color: light-dark(var(--btn-l-border), var(--btn-d-border));
+                background-color: var(--btn-bg);
+                border-color: var(--btn-border);
                 box-shadow: none;
                 cursor: not-allowed;
             }
         }
 
         & .badge {
-            background-color: light-dark(var(--btn-l-color), var(--btn-d-color));
-            color: light-dark(var(--btn-l-bg), var(--btn-d-bg));
+            background-color: var(--btn-color);
+            color: var(--btn-bg);
         }
 
         & .caret {
@@ -113,45 +79,35 @@
 
     /* variants */
 
-    :is(.btn-default, .btn-abort, .btn-back, .btn-move, .btn-popup, .btn-reset, .btn-search) {
-        --btn-l-bg-hover: #dbdee4;
+    :is(.btn-primary, .btn-select, .btn-send, .btn-update, .btn-info) {
+        --btn-color: var(--rex-color-on-accent);
+        --btn-bg: var(--rex-color-accent);
+        --btn-border: var(--rex-color-accent);
+        --btn-bg-hover: var(--rex-color-accent-hover);
+        --btn-border-hover: var(--rex-color-accent-hover);
     }
 
-    :is(.btn-primary, .btn-apply, .btn-save, .btn-select, .btn-send, .btn-update, .btn-view, .btn-edit) {
-        --btn-l-color: #fff;
-        --btn-l-bg: hsl(212 23.1% 30.5%);
-        --btn-l-border: hsl(212 23.1% 30.5%);
-        --btn-l-bg-hover: var(--rex-color-a-darker);
-        --btn-l-border-hover: var(--rex-color-a-darker);
-        --btn-d-bg: var(--rex-color-blue-3);
-        --btn-d-border: hsl(206.6 74.7% 17.3%);
-    }
-
-    /* aligned with the input fields in dark mode */
+    /* aligned with the input fields */
     :is(.btn-popup, .btn-view) {
-        --btn-d-bg: rgb(27 35 44 / 0.8);
-        --btn-d-border: rgb(21 28 34 / 0.8);
-    }
-
-    .btn-popup {
-        --btn-d-border-hover: rgb(21 28 34 / 0.8);
+        --btn-bg: var(--rex-color-surface-subtle);
+        --btn-border: var(--rex-color-border-input);
     }
 
     :is(.btn-save, .btn-apply, .btn-edit, .btn-success) {
-        --btn-l-color: #fff;
-        --btn-l-bg: var(--rex-color-d);
-        --btn-l-border: var(--rex-color-d);
-        --btn-l-bg-hover: initial;
-        --btn-l-border-hover: initial;
-        --btn-d-bg: #0d6a38;
-        --btn-d-border: hsl(147.7 78.2% 11.3%);
+        --btn-color: var(--rex-color-on-success);
+        --btn-bg: var(--rex-color-success);
+        --btn-border: var(--rex-color-success);
+        --btn-bg-hover: var(--rex-color-success-hover);
+        --btn-border-hover: var(--rex-color-success-hover);
     }
 
     /* inverted on the green header of edit sections */
     .rex-section--edit .btn-edit {
-        --btn-l-color: var(--rex-color-d);
-        --btn-l-bg: #fff;
-        --btn-l-border: #fff;
+        --btn-color: var(--rex-color-success-text);
+        --btn-bg: var(--rex-color-surface);
+        --btn-border: var(--rex-color-surface);
+        --btn-bg-hover: var(--rex-color-success-subtle);
+        --btn-border-hover: var(--rex-color-success-subtle);
     }
 
     .btn-group > .btn-edit:hover {
@@ -159,47 +115,37 @@
     }
 
     :is(.btn-delete, .btn-danger) {
-        --btn-l-color: #fff;
-        --btn-l-bg: var(--rex-color-danger);
-        --btn-l-border: hsl(1.7 64.6% 53.1%);
-        --btn-d-bg: #801919;
-        --btn-d-border: hsl(0 67.3% 15%);
-    }
-
-    .btn-info {
-        --btn-l-color: #fff;
-        --btn-l-bg: var(--rex-color-b);
-        --btn-l-border: hsl(206.6 65.1% 52.3%);
-        --btn-d-bg: var(--rex-color-blue-3);
-        --btn-d-border: hsl(206.6 74.7% 17.3%);
+        --btn-color: var(--rex-color-on-danger);
+        --btn-bg: var(--rex-color-danger);
+        --btn-border: var(--rex-color-danger);
+        --btn-bg-hover: var(--rex-color-danger-hover);
+        --btn-border-hover: var(--rex-color-danger-hover);
     }
 
     .btn-warning {
-        --btn-l-color: #fff;
-        --btn-l-bg: var(--rex-color-warning);
-        --btn-l-border: hsl(47.7 57% 51.3%);
-        --btn-d-bg: #78641e;
-        --btn-d-border: hsl(46.7 60% 14.4%);
+        --btn-color: var(--rex-color-on-warning);
+        --btn-bg: var(--rex-color-warning);
+        --btn-border: var(--rex-color-warning);
+        --btn-bg-hover: var(--rex-color-warning-hover);
+        --btn-border-hover: var(--rex-color-warning-hover);
     }
 
     /* language switch: blue when active */
     .btn-language {
-        --btn-l-color: var(--rex-color-b);
-        --btn-l-border: var(--rex-color-a-light);
-        --btn-l-bg-hover: hsl(from var(--rex-color-a-light) h s calc(l + 5));
-        --btn-l-border-hover: var(--rex-color-a-light);
-        --btn-d-bg: var(--rex-color-grey-5);
-        --btn-d-border: hsl(212.2 23.4% 13.5%);
+        --btn-color: var(--rex-color-link);
+        --btn-border: var(--rex-color-border);
+        --btn-bg-hover: var(--rex-color-surface-subtle);
+        --btn-border-hover: var(--rex-color-border);
 
         position: relative;
 
         &:active,
         &.active {
-            --btn-l-color: #fff;
-            --btn-l-bg: var(--rex-color-b);
-            --btn-l-border: var(--rex-color-b);
-            --btn-d-bg: var(--rex-color-blue-3);
-            --btn-d-border: hsl(206.6 74.7% 13.3%);
+            --btn-color: var(--rex-color-on-accent);
+            --btn-bg: var(--rex-color-accent);
+            --btn-border: var(--rex-color-accent);
+            --btn-bg-hover: var(--rex-color-accent-hover);
+            --btn-border-hover: var(--rex-color-accent-hover);
 
             box-shadow: none;
         }
@@ -210,7 +156,7 @@
         border-radius: 0;
         background-color: transparent;
         box-shadow: none;
-        color: var(--rex-link);
+        color: var(--rex-color-link);
         font-weight: 400;
 
         &:hover,
@@ -219,20 +165,20 @@
             border-color: transparent;
             background-color: transparent;
             box-shadow: none;
-            color: var(--rex-link-hover);
+            color: var(--rex-color-link-hover);
             text-decoration: underline;
         }
     }
 
     /* flashes when clicked */
     .btn.btn-highlight {
-        outline: 25px solid light-dark(rgb(193 232 240 / 0), rgb(17 75 122 / 0));
+        outline: 25px solid transparent;
         transition: all 1000ms ease-out 1000ms, outline 800ms ease-out 100ms;
 
         &:active {
-            outline: 0 solid light-dark(rgb(193 232 240 / 1), rgb(17 75 122 / 1));
-            background-color: var(--rex-color-b);
-            border-color: var(--rex-color-b);
+            outline: 0 solid var(--rex-color-accent-subtle);
+            background-color: var(--rex-color-accent);
+            border-color: var(--rex-color-accent);
             transition: all 0ms linear 0ms;
         }
     }

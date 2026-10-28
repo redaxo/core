@@ -15,17 +15,17 @@
                 float: left;
                 margin-left: -1px;
                 padding: 6px 12px;
-                border: 1px solid light-dark(#ddd, var(--rex-color-grey-1));
-                background-color: light-dark(#fff, var(--rex-color-grey-3));
-                color: var(--rex-link);
+                border: 1px solid var(--rex-color-border);
+                background-color: var(--rex-color-surface);
+                color: var(--rex-color-link);
                 line-height: var(--rex-line-height);
                 text-decoration: none;
 
                 &:hover,
                 &:focus {
                     z-index: 2;
-                    background-color: light-dark(#eee, var(--rex-color-grey-4));
-                    color: var(--rex-link-hover);
+                    background-color: var(--rex-color-surface-subtle);
+                    color: var(--rex-color-link-hover);
                 }
             }
 
@@ -39,9 +39,9 @@
             &:hover,
             &:focus {
                 z-index: 3;
-                border-color: light-dark(var(--rex-color-b), var(--rex-color-grey-1));
-                background-color: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
-                color: light-dark(#fff, var(--rex-color-text-light));
+                border-color: var(--rex-color-accent);
+                background-color: var(--rex-color-accent);
+                color: var(--rex-color-on-accent);
                 cursor: default;
             }
         }
@@ -50,9 +50,9 @@
             &,
             &:hover,
             &:focus {
-                border-color: light-dark(#ddd, var(--rex-color-grey-1));
-                background-color: light-dark(#fff, var(--rex-color-grey-3));
-                color: light-dark(#777, var(--rex-color-text-light-inactive));
+                border-color: var(--rex-color-border);
+                background-color: var(--rex-color-surface);
+                color: var(--rex-color-text-muted);
                 cursor: not-allowed;
             }
         }
@@ -74,7 +74,7 @@
 
         .rex-section > & {
             padding: 10px 15px;
-            background-color: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-2));
+            background-color: var(--rex-color-surface-subtle);
         }
     }
 }

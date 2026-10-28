@@ -18,7 +18,7 @@
 
                 &:hover,
                 &:focus {
-                    background-color: light-dark(#eee, var(--rex-color-grey-3));
+                    background-color: var(--rex-color-surface-subtle);
                     text-decoration: none;
                 }
             }
@@ -28,7 +28,7 @@
                 &:hover,
                 &:focus {
                     background-color: transparent;
-                    color: light-dark(#777, var(--rex-color-text-light-inactive));
+                    color: var(--rex-color-text-muted);
                     cursor: not-allowed;
                 }
             }
@@ -38,14 +38,14 @@
             &,
             &:hover,
             &:focus {
-                border-color: light-dark(var(--rex-color-b), var(--rex-color-grey-3));
-                background-color: light-dark(#eee, var(--rex-color-grey-3));
+                border-color: var(--rex-color-accent);
+                background-color: var(--rex-color-surface-subtle);
             }
         }
     }
 
     .nav-tabs {
-        border-bottom: 1px solid var(--rex-color-a);
+        border-bottom: 1px solid var(--rex-color-border-strong);
 
         & > li {
             float: left;
@@ -58,7 +58,7 @@
                 line-height: var(--rex-line-height);
 
                 &:hover {
-                    border-color: #eee #eee var(--rex-color-a);
+                    border-color: var(--rex-color-surface-muted) var(--rex-color-surface-muted) var(--rex-color-border-strong);
                 }
             }
 
@@ -66,10 +66,10 @@
                 &,
                 &:hover,
                 &:focus {
-                    border: 1px solid var(--rex-color-a);
+                    border: 1px solid var(--rex-color-border-strong);
                     border-bottom-color: transparent;
-                    background-color: #fff;
-                    color: #555;
+                    background-color: var(--rex-color-surface);
+                    color: var(--rex-color-text);
                     cursor: default;
                 }
             }
@@ -87,18 +87,18 @@
 
     /* tabs in the header of a section */
     .rex-section__header .nav-tabs {
-        --tab-bg: light-dark(hsl(216 18.5% 94.4%), var(--rex-color-grey-2));
-        --tab-bg-hover: light-dark(hsl(216 18.5% 97.4%), hsl(211.8 23.9% 12.9%));
-        --tab-active-bg: light-dark(#fff, var(--rex-color-grey-3));
+        --tab-bg: var(--rex-color-surface-subtle);
+        --tab-bg-hover: color-mix(in srgb, var(--rex-color-surface-subtle), var(--rex-color-surface));
+        --tab-active-bg: var(--rex-color-surface);
 
         display: flex;
         margin-bottom: -10px;
         border-bottom: 0;
 
         .rex-section--edit & {
-            --tab-bg: light-dark(var(--rex-color-d-light), rgb(21 28 34 / 0.4));
-            --tab-bg-hover: light-dark(hsl(148.4 54.4% 80.3%), rgb(21 28 34 / 0.4));
-            --tab-active-bg: light-dark(var(--rex-color-d-lighter), #1f3d3c);
+            --tab-bg: color-mix(in srgb, var(--rex-color-success-subtle) 70%, var(--rex-color-success));
+            --tab-bg-hover: color-mix(in srgb, var(--rex-color-success-subtle) 85%, var(--rex-color-success));
+            --tab-active-bg: var(--rex-color-success-subtle);
         }
 
         & > li {
@@ -108,12 +108,12 @@
                 border-color: transparent;
                 border-radius: 4px 4px 0 0;
                 background-color: var(--tab-bg);
-                color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light-inactive));
+                color: var(--rex-color-text-muted);
 
                 &:hover,
                 &:focus {
                     background-color: var(--tab-bg-hover);
-                    color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
+                    color: var(--rex-color-text);
                 }
             }
 
@@ -124,7 +124,7 @@
                     padding-bottom: 5px;
                     border-color: transparent;
                     background-color: var(--tab-active-bg);
-                    color: light-dark(var(--rex-color-a-dark), var(--rex-color-text-light));
+                    color: var(--rex-color-text);
                 }
             }
         }

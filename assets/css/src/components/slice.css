@@ -4,7 +4,7 @@
     .rex-main-frame {
         margin-inline: -15px;
         padding: 30px 15px;
-        background-color: light-dark(var(--rex-color-a), rgb(13.2 17.6 21.4));
+        background-color: var(--rex-color-canvas);
 
         @media (min-width: 1200px) {
             margin-inline: -30px;
@@ -74,8 +74,8 @@
         opacity: 0.8;
 
         & .rex-section {
-            --rex-section-color: light-dark(#707d8f, var(--rex-color-grey-3));
-            --rex-section-header-text: light-dark(rgb(255 255 255 / 0.9), var(--rex-color-text-light-inactive));
+            --rex-section-color: var(--rex-color-neutral);
+            --rex-section-header-text: var(--rex-color-on-neutral);
         }
 
         /* a veil keeps the output of an offline slice from being used */
@@ -88,29 +88,30 @@
                 inset: 0;
                 z-index: 100;
                 display: block;
-                background: light-dark(rgb(107 124 148 / 0.5), rgb(46 59 74 / 0.7));
+                background: color-mix(in srgb, var(--rex-color-neutral) 60%, transparent);
             }
         }
     }
 
     /* "add block" button between the slices */
     .rex-slice-select > .dropdown > .btn-default {
-        border-color: light-dark(var(--rex-color-b-lighter), rgb(25.5 46.2 62.5));
-        border-radius: 0;
-        background-color: light-dark(var(--rex-color-b-lighter), rgb(32.9 59.6 80.6));
-        color: light-dark(var(--rex-color-b), var(--rex-color-text-light));
+        --btn-color: var(--rex-color-link-hover);
+        --btn-bg: var(--rex-color-accent-subtle);
+        --btn-border: var(--rex-color-accent-subtle);
+        --btn-bg-hover: var(--rex-color-accent-subtle-hover);
+        --btn-border-hover: var(--rex-color-accent-subtle-hover);
 
-        &:hover {
-            border-color: light-dark(rgb(206.5 230.7 244.2), rgb(19.8 46.9 68.2));
-            background-color: light-dark(rgb(206.5 230.7 244.2), rgb(27.8 66 95.9));
-            color: light-dark(var(--rex-color-b), var(--rex-color-text-light));
-        }
+        border-radius: 0;
 
         &:is(:focus, .focus, :active, .active),
         .open > & {
-            border-color: light-dark(var(--rex-color-b), rgb(20.8 89.2 143.7));
-            background-color: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
-            color: light-dark(#fff, var(--rex-color-text-light));
+            --btn-color: var(--rex-color-on-accent);
+            --btn-bg: var(--rex-color-accent);
+            --btn-border: var(--rex-color-accent);
+            --btn-bg-hover: var(--rex-color-accent-hover);
+
+            background-color: var(--btn-bg);
+            border-color: var(--btn-border);
         }
     }
 }

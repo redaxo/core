@@ -5,17 +5,17 @@
 
 @layer bootstrap {
     table {
-        background-color: light-dark(#fff, var(--rex-color-grey-3));
+        background-color: var(--rex-color-surface);
     }
 
     caption {
         padding-block: 8px;
-        color: light-dark(#777, var(--rex-color-text-light-inactive));
+        color: var(--rex-color-text-muted);
         text-align: left;
     }
 
     .table {
-        --table-border: light-dark(var(--rex-color-a-light), var(--rex-color-grey-1));
+        --table-border: var(--rex-color-border);
 
         width: 100%;
         max-width: 100%;
@@ -43,7 +43,7 @@
         }
 
         & .table {
-            background-color: light-dark(var(--rex-color-a-lighter), var(--rex-color-grey-2));
+            background-color: var(--rex-color-surface-subtle);
         }
 
         & tr .alert {
@@ -78,12 +78,12 @@
     }
 
     .table-hover > tbody > tr:hover {
-        background-color: light-dark(var(--rex-color-d-lighter), var(--rex-color-grey-4));
+        background-color: var(--rex-color-surface-subtle);
     }
 
     /* highlighted row, e.g. the add and edit rows of the structure */
     .table > tbody > tr.mark {
-        background-color: light-dark(var(--rex-color-a-light), var(--rex-color-grey-4));
+        background-color: var(--rex-color-surface-muted);
 
         & > :is(th, td) {
             vertical-align: middle;
@@ -99,7 +99,7 @@
     :is(.rex-state-success, .rex-state-danger, .rex-state-error) {
         &,
         & a {
-            color: light-dark(#fff, var(--rex-color-a-lighter));
+            color: var(--rex-state-text);
         }
 
         & a {
@@ -108,18 +108,22 @@
     }
 
     .rex-state-success {
-        background-color: light-dark(var(--rex-color-d), #0d6a38);
+        --rex-state-text: var(--rex-color-on-success);
+
+        background-color: var(--rex-color-success);
 
         tr&:hover > :is(th, td) {
-            background-color: light-dark(hsl(148 37.8% 43.3%), hsl(147.7 78.2% 18.3%));
+            background-color: var(--rex-color-success-hover);
         }
     }
 
     :is(.rex-state-danger, .rex-state-error) {
-        background-color: light-dark(var(--rex-color-danger), #801919);
+        --rex-state-text: var(--rex-color-on-danger);
+
+        background-color: var(--rex-color-danger);
 
         tr&:hover > :is(th, td) {
-            background-color: light-dark(#c9302c, hsl(0 67.3% 25%));
+            background-color: var(--rex-color-danger-hover);
         }
     }
 
@@ -133,7 +137,7 @@
             position: sticky;
             bottom: 0;
             z-index: 1;
-            background-color: light-dark(var(--rex-color-a-light), var(--rex-color-grey-1));
+            background-color: var(--rex-color-surface-muted);
         }
     }
 
@@ -260,7 +264,7 @@
                 width: 100%;
                 padding-left: 40%;
                 border: 0 !important;
-                border-bottom: 1px solid light-dark(hsl(216 18.5% 94.4%), var(--rex-color-grey-1)) !important;
+                border-bottom: 1px solid var(--rex-color-border) !important;
                 text-align: left;
                 white-space: normal;
 

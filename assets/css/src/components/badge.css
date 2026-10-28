@@ -4,13 +4,14 @@
 
 @layer bootstrap {
     .label {
-        --label-bg: light-dark(#777, var(--rex-color-grey-5));
+        --label-bg: var(--rex-color-neutral);
+        --label-text: var(--rex-color-on-neutral);
 
         display: inline;
         padding: 0.2em 0.6em 0.3em;
         border-radius: 0.25em;
         background-color: var(--label-bg);
-        color: light-dark(#fff, var(--rex-color-text-light));
+        color: var(--label-text);
         font-size: 75%;
         font-weight: 700;
         line-height: 1;
@@ -23,7 +24,7 @@
         }
 
         a&:is(:hover, :focus) {
-            color: light-dark(#fff, var(--rex-color-text-light));
+            color: var(--label-text);
             text-decoration: none;
             cursor: pointer;
         }
@@ -31,19 +32,23 @@
 
     .label-primary,
     .label-info {
-        --label-bg: light-dark(var(--rex-color-b), var(--rex-color-blue-3));
+        --label-bg: var(--rex-color-accent);
+        --label-text: var(--rex-color-on-accent);
     }
 
     .label-success {
-        --label-bg: light-dark(var(--rex-color-d), #0d6a38);
+        --label-bg: var(--rex-color-success);
+        --label-text: var(--rex-color-on-success);
     }
 
     .label-warning {
-        --label-bg: light-dark(var(--rex-color-warning), #78641e);
+        --label-bg: var(--rex-color-warning);
+        --label-text: var(--rex-color-on-warning);
     }
 
     .label-danger {
-        --label-bg: light-dark(var(--rex-color-danger), #801919);
+        --label-bg: var(--rex-color-danger);
+        --label-text: var(--rex-color-on-danger);
     }
 
     .badge {
@@ -51,8 +56,8 @@
         min-width: 10px;
         padding: 3px 7px;
         border-radius: 10px;
-        background-color: light-dark(#777, rgb(0 0 0 / 0.45));
-        color: light-dark(#fff, var(--rex-color-text-light));
+        background-color: var(--rex-color-neutral);
+        color: var(--rex-color-on-neutral);
         font-size: var(--rex-font-size-small);
         font-weight: 700;
         line-height: 1;

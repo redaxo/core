@@ -6,6 +6,16 @@
  */
 
 @layer components {
+    :root {
+        --rex-sidebar-bg: var(--rex-color-inverse-bg);
+        --rex-sidebar-text: var(--rex-color-inverse-text);
+        --rex-sidebar-title: var(--rex-color-inverse-text-strong);
+        --rex-sidebar-hover-bg: var(--rex-color-inverse-bg-strong);
+        --rex-sidebar-hover-text: var(--rex-color-inverse-link);
+        --rex-sidebar-active-bg: var(--rex-color-accent);
+        --rex-sidebar-active-text: var(--rex-color-on-accent);
+    }
+
     .rex-app {
         position: relative;
         min-height: 100%;
@@ -14,6 +24,11 @@
     /* top bar ------------------------------------------------------------------------------------------------- */
 
     .rex-topbar {
+        /* on the element, so overrides of the colors (e.g. while impersonating) also change the muted text */
+        --rex-topbar-bg: var(--rex-color-accent);
+        --rex-topbar-text: var(--rex-color-on-accent);
+        --rex-topbar-text-muted: color-mix(in srgb, var(--rex-topbar-text) 90%, var(--rex-topbar-bg));
+
         position: absolute;
         inset: 0 0 auto;
         z-index: 1030;
@@ -29,7 +44,8 @@
 
         /* signed in as another user */
         .rex-is-impersonated & {
-            --rex-topbar-bg: light-dark(#f0bd4b, hsl(46.6 100% 19.4%));
+            --rex-topbar-bg: var(--rex-color-warning);
+            --rex-topbar-text: var(--rex-color-on-warning);
         }
 
         @media (min-width: 1200px) {
@@ -50,7 +66,7 @@
 
         &.is-elevated,
         .rex-sidebar-open & {
-            box-shadow: var(--rex-topbar-shadow);
+            box-shadow: var(--rex-shadow-bar);
         }
 
         &.is-hidden {
@@ -74,11 +90,11 @@
             width: auto;
 
             :is(.rex-redaxo-logo-r, .rex-redaxo-logo-e, .rex-redaxo-logo-d, .rex-redaxo-logo-cms) {
-                fill: var(--rex-logo-primary);
+                fill: var(--rex-color-logo-primary);
             }
 
             :is(.rex-redaxo-logo-a, .rex-redaxo-logo-x, .rex-redaxo-logo-o, .rex-redaxo-logo-reg) {
-                fill: var(--rex-logo-secondary);
+                fill: var(--rex-color-logo-secondary);
             }
 
             @media (max-width: 991px) {
@@ -126,7 +142,7 @@
             left: 50%;
             width: 22px;
             height: 2px;
-            background: #fff;
+            background: currentColor;
             transition: transform var(--rex-duration) var(--rex-ease-in), opacity var(--rex-duration) var(--rex-ease-in);
 
             &:nth-child(1) {
@@ -201,11 +217,11 @@
         padding: 5px;
         border-radius: 100px;
         line-height: 0;
-        color: var(--rex-devmode);
+        color: var(--rex-color-devmode);
 
         &:is(a):hover,
         &:is(a):focus {
-            color: var(--rex-devmode-hover);
+            color: var(--rex-color-devmode-hover);
         }
     }
 
@@ -215,7 +231,7 @@
         left: 250px;
         transform: translateY(-50%);
         margin: 0;
-        font-size: 36px;
+        font-size: 2.25rem;
         font-weight: 500;
         line-height: 0;
         white-space: nowrap;
@@ -240,7 +256,7 @@
         .rex-icon {
             display: inline-block;
             vertical-align: middle;
-            font-size: 14px;
+            font-size: 0.875rem;
             line-height: 20px;
         }
 
@@ -256,7 +272,7 @@
             left: 50%;
             /* right edge of the viewport: half of it from the centered head, minus the own width and 10px */
             transform: translate(calc(50vw - 100% - 10px), -50%);
-            font-size: 20px;
+            font-size: 1.25rem;
 
             .rex-topbar__title-name {
                 display: none;
@@ -342,7 +358,7 @@
             inset-inline: 0;
             top: -50px;
             height: 50px;
-            box-shadow: 0 -5px 20px 5px rgb(50 64 80 / 0.5);
+            box-shadow: 0 -5px 20px 5px color-mix(in srgb, var(--rex-sidebar-bg) 50%, transparent);
             clip-path: polygon(0 0, 100% 0, 100% 200%, 0 200%);
         }
 
@@ -380,7 +396,7 @@
         line-height: 1.1;
 
         .rex-sidebar__list + & {
-            border-top: 1px solid var(--rex-sidebar-divider);
+            border-top: 1px solid var(--rex-color-inverse-border);
         }
     }
 
@@ -429,14 +445,14 @@
             position: fixed;
             z-index: 1028;
             inset: 0;
-            background: var(--rex-sidebar-backdrop);
+            background: var(--rex-color-backdrop);
             cursor: pointer;
             opacity: 0;
             transform: translateX(-100%);
             transition: opacity var(--rex-duration) var(--rex-ease-in), transform 0ms calc(var(--rex-duration) + 10ms);
 
             .rex-sidebar-open & {
-                opacity: 0.3;
+                opacity: 0.5;
                 transform: translateX(0);
                 transition: opacity var(--rex-duration) var(--rex-ease-out), transform 0ms 0ms;
             }
@@ -482,7 +498,7 @@
 
     .rex-footer {
         padding-inline: 15px;
-        color: var(--rex-footer-text);
+        color: var(--rex-color-text);
         font-size: var(--rex-font-size-small);
         line-height: var(--rex-line-height);
 
