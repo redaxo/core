@@ -188,11 +188,11 @@ final class DataList implements Renderable, UrlProviderInterface
     }
 
     /**
-     * Rows of the current page.
+     * Rows of the current page (the number of all rows gives {@see Pager::getRowCount()} of `$pager`).
      *
      * @return list<array<string, scalar|null>>
      */
-    public function getRows(): array
+    public function getPageRows(): array
     {
         return Sql::factory($this->db)->getArray($this->prepareQuery());
     }
@@ -216,7 +216,7 @@ final class DataList implements Renderable, UrlProviderInterface
             $columns[] = $column;
         }
 
-        $table = new Table($columns, $this->getRows(), $this->caption, $this->empty, $this->rowAttributes, attributes: $this->attributes);
+        $table = new Table($columns, $this->getPageRows(), $this->caption, $this->empty, $this->rowAttributes, attributes: $this->attributes);
 
         return Html::raw(($this->pager ? (string) new Pagination($this->pager, $this)->render() : '') . (string) $table->render());
     }
