@@ -132,8 +132,8 @@ jobs:
             -   name: Check accessibility (axe)
                 if: always()
                 run: |
-                    if grep -q '^A11Y-ERROR' .tests-visual/a11y.log 2>/dev/null; then
-                        grep '^A11Y-' .tests-visual/a11y.log
+                    if grep -q '^A11Y-ERROR' .tests-visual/a11y*.log 2>/dev/null; then
+                        grep -h '^A11Y-' .tests-visual/a11y*.log
                         exit 1
                     fi
 

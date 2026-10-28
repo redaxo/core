@@ -167,9 +167,12 @@ async function processScreenshot(page, screenshotName) {
 }
 
 // every recorded page is checked with axe in both color schemes; serious and critical violations are A11Y-ERROR, the
-// workflow fails on them after all screenshots are recorded
+// workflow fails on them after all screenshots are recorded. Each scope writes its own log, emptied when it starts, so
+// old violations don't stay while the runs of one recording keep theirs
 const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
-const A11Y_LOG = WORKING_DIR + 'a11y.log';
+const A11Y_LOG = WORKING_DIR + (scope ? `a11y-${scope}.log` : 'a11y.log');
+fs.mkdirSync(WORKING_DIR, { recursive: true });
+fs.writeFileSync(A11Y_LOG, '');
 
 async function checkAccessibility(page, name) {
     const results = await new AxeBuilder({ page })
