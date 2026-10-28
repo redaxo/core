@@ -41,10 +41,10 @@ $isStartpage = $article->getBoolValue('startarticle');
 if ($user->hasPerm('article2startarticle[]')) {
     $panel = '<fieldset>';
 
-    $panelClass = 'default';
+    $panelVariant = 'default';
     $buttons = '';
     if (!$isStartpage && null === $article->getNullableIntValue('parent_id')) {
-        $panelClass = 'info';
+        $panelVariant = 'info';
 
         $formElements = [];
         $n = [];
@@ -55,7 +55,7 @@ if ($user->hasPerm('article2startarticle[]')) {
         $fragment->setVar('elements', $formElements, false);
         $panel .= $fragment->parse('core/form/form.php');
     } elseif ($isStartpage) {
-        $panelClass = 'info';
+        $panelVariant = 'info';
 
         $formElements = [];
         $n = [];
@@ -88,7 +88,7 @@ if ($user->hasPerm('article2startarticle[]')) {
     $panel .= '</fieldset>';
 
     $fragment = new Fragment();
-    $fragment->setVar('class', $panelClass);
+    $fragment->setVar('class', $panelVariant);
     $fragment->setVar('title', I18n::msg('content_startarticle'), false);
     $fragment->setVar('body', $panel, false);
     $fragment->setVar('buttons', $buttons, false);
@@ -137,10 +137,10 @@ if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPer
 
     $panel = '<fieldset>';
 
-    $panelClass = 'default';
+    $panelVariant = 'default';
     $buttons = '';
     if (!$emptyCategory) {
-        $panelClass = 'info';
+        $panelVariant = 'info';
 
         $formElements = [];
         $n = [];
@@ -173,7 +173,7 @@ if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPer
     $panel .= '</fieldset>';
 
     $fragment = new Fragment();
-    $fragment->setVar('class', $panelClass);
+    $fragment->setVar('class', $panelVariant);
     $fragment->setVar('title', I18n::msg('content_article'), false);
     $fragment->setVar('body', $panel, false);
     $fragment->setVar('buttons', $buttons, false);

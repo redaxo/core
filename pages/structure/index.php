@@ -235,11 +235,8 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
     ];
 
     if ($structureContext->hasCategoryPermission()) {
-        $tdLayoutClass = '';
         if ($user->hasPerm('publishCategory[]')) {
-            $tdLayoutClass = 'rex-table-action-no-dropdown';
             if (count($statusTypes) > 2) {
-                $tdLayoutClass = 'rex-table-action-dropdown';
                 $katStatus = '<div class="rex-dropdown"><button type="button" class="rex-dropdown-link ' . $statusClass . '" data-rex-dropdown aria-expanded="false"><i class="rex-icon ' . $statusIcon . '" aria-hidden="true"></i>&nbsp;' . $katStatus . '&nbsp;<span class="rex-caret" aria-hidden="true"></span></button><ul class="rex-dropdown-menu" data-align="end">';
                 foreach ($statusTypes as $catStatusKey => $catStatusType) {
                     $katStatus .= '<li><a class="' . $catStatusType[1] . '" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart, 'cat_status' => $catStatusKey] + CategoryStatusChange::getUrlParams()) . '">' . $catStatusType[0] . '</a></li>';
@@ -284,7 +281,7 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
             $rows[] = $row + [
                 'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['edit_id' => $iCategoryId, 'function' => 'edit_cat', 'catstart' => $structureContext->catStart]) . '"><i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('change') . '</a>'),
                 'delete' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart] + CategoryDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('delete') . '</a>'),
-                'status' => new TableCell(Html::raw($katStatus), attributes: new HtmlAttributes(['class' => [$tdLayoutClass]])),
+                'status' => Html::raw($katStatus),
             ];
         }
     } elseif ($user->getComplexPerm('structure')->hasCategoryPerm($iCategoryId)) {
@@ -469,12 +466,8 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             } else {
                 $delete = Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'artstart' => $structureContext->artStart] + ArticleDelete::getUrlParams()) . '" data-confirm="' . I18n::msg('structure_delete_all_languages') . '"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('delete') . '</a>');
 
-                $tdLayoutClass = '';
                 if ($user->hasPerm('publishArticle[]')) {
-                    $tdLayoutClass = 'rex-table-action-no-dropdown';
-
                     if (count($statusTypes) > 2) {
-                        $tdLayoutClass = 'rex-table-action-dropdown';
                         $articleStatus = '<div class="rex-dropdown"><button type="button" class="rex-dropdown-link ' . $articleClass . '" data-rex-dropdown aria-expanded="false"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i>&nbsp;' . $articleStatus . '&nbsp;<span class="rex-caret" aria-hidden="true"></span></button><ul class="rex-dropdown-menu" data-align="end">';
                         foreach ($statusTypes as $artStatusKey => $artStatusType) {
                             $articleStatus .= '<li><a  class="' . $artStatusType[1] . '" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'artstart' => $structureContext->artStart, 'art_status' => $artStatusKey] + ArticleStatusChange::getUrlParams()) . '">' . $artStatusType[0] . '</a></li>';
@@ -487,7 +480,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
                     $articleStatus = '<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i> ' . $articleStatus . '</span>';
                 }
 
-                $statusCell = new TableCell(Html::raw($articleStatus), attributes: new HtmlAttributes(['class' => [$tdLayoutClass]]));
+                $statusCell = Html::raw($articleStatus);
             }
 
             $editModeUrl = $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $articleId, 'mode' => 'edit']);

@@ -2,7 +2,8 @@
 // styles nor are used by the backend scripts, so dead classes do not pile up again. Run with
 // `npm run check:classes`.
 //
-// Only literal class names are found: `class="…"` attributes and `'class' => …` entries of HtmlAttributes.
+// Only literal class names are found: `class="…"` attributes, `'class' => …` entries of HtmlAttributes and strings
+// assigned to a variable named like `$…Class`.
 
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
@@ -45,6 +46,8 @@ for (const file of ['src', 'pages', 'fragments'].flatMap(dir => files(dir, '.php
         ...[...php.matchAll(/class=\\?["']([^"'<>$]*)["']/g)].map(match => match[1].split(/\s+/)),
         ...[...php.matchAll(/'class'\s*=>\s*\[([^\]]*)\]/g)].map(match => [...match[1].matchAll(/(?<!\$\w+\[)'([\w-]+)'/g)].map(item => item[1])),
         ...[...php.matchAll(/'class'\s*=>\s*'([^']*)'/g)].map(match => match[1].split(/\s+/)),
+        // classes held in a variable first, e.g. `$statusClass = 'rex-…'`
+        ...[...php.matchAll(/\$\w*[cC]lass\w*\s*=\s*'([\w -]+)'/g)].map(match => match[1].split(/\s+/)),
     ];
     for (const name of lists.flat()) {
         if (/^[a-z][\w-]*[a-z0-9]$/.test(name)) {
