@@ -5,8 +5,16 @@
 
 const RANGE = 1000;
 
+// rex.ready() may run again on a part of the page, the history is set up only once
+const initialized = new WeakSet();
+
 document.addEventListener('rex:ready', event => {
-    event.target.querySelectorAll('[data-rex-history]').forEach(init);
+    for (const root of event.target.querySelectorAll('[data-rex-history]')) {
+        if (!initialized.has(root)) {
+            initialized.add(root);
+            init(root);
+        }
+    }
 });
 
 function init(root) {

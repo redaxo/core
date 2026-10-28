@@ -234,6 +234,12 @@ class Select {
 
     /** Places the panel below the toggle, or above when there is more room there. */
     position(event) {
+        // an open panel removed with its page part (e.g. in the overlay) gets no beforetoggle to remove the listeners
+        if (!this.panel.isConnected) {
+            removeEventListener('scroll', this.position, true);
+            removeEventListener('resize', this.position);
+            return;
+        }
         if (event?.target instanceof Node && this.panel.contains(event.target)) {
             return;
         }

@@ -62,7 +62,7 @@ document.addEventListener('click', event => {
 });
 
 function dropdownItems(dropdown) {
-    return [...dropdown.querySelectorAll(`:scope > ${MENU} li:not(.disabled) > a`)];
+    return [...dropdown.querySelectorAll(`:scope > ${MENU} li:not(.disabled) :is(a[href], button:not(:disabled))`)];
 }
 
 document.addEventListener('keydown', event => {
@@ -85,7 +85,8 @@ document.addEventListener('keydown', event => {
         event.preventDefault();
         closeDropdowns();
         toggle.focus();
-    } else if ('ArrowDown' === event.key || 'ArrowUp' === event.key) {
+    } else if (('ArrowDown' === event.key || 'ArrowUp' === event.key) && !event.target.matches('input, select, textarea')) {
+        // fields of a form in the menu keep their own arrow keys
         event.preventDefault();
         const items = dropdownItems(dropdown);
         const index = items.indexOf(document.activeElement);
@@ -104,12 +105,23 @@ document.addEventListener('focusout', event => {
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Collapsible elements: the target (`data-target` or `href`) gets `.in`, its toggles `.collapsed`; the target then
-// dispatches `rex:collapse` with `detail.open`
+// Collapsible elements: the targets (`data-target` with any selector, or `href` with an id) get `.in`, their toggles
+// `.collapsed`; a target then dispatches `rex:collapse` with `detail.open`
+
+function targetsOf(toggle) {
+    const selector = toggle.dataset.target ?? toggle.getAttribute('href');
+    if (!selector || (!toggle.dataset.target && !/^#[^\s]+$/.test(selector))) {
+        return [];
+    }
+    try {
+        return [...document.querySelectorAll(selector)];
+    } catch {
+        return [];
+    }
+}
 
 function targetOf(toggle) {
-    const selector = toggle.dataset.target ?? toggle.getAttribute('href');
-    return selector?.startsWith('#') ? document.querySelector(selector) : null;
+    return targetsOf(toggle)[0] ?? null;
 }
 
 /** Shows or hides a collapsible element. */
@@ -119,7 +131,7 @@ export function collapse(target, open = !target.classList.contains('in')) {
     }
     target.classList.toggle('in', open);
     for (const toggle of document.querySelectorAll('[data-toggle="collapse"]')) {
-        if (targetOf(toggle) === target) {
+        if (targetsOf(toggle).includes(target)) {
             toggle.classList.toggle('collapsed', !open);
             toggle.setAttribute('aria-expanded', String(open));
         }
@@ -129,10 +141,10 @@ export function collapse(target, open = !target.classList.contains('in')) {
 
 document.addEventListener('click', event => {
     const toggle = event.target.closest('[data-toggle="collapse"]');
-    const target = toggle && targetOf(toggle);
-    if (target) {
+    const targets = toggle ? targetsOf(toggle) : [];
+    if (targets.length) {
         event.preventDefault();
-        collapse(target);
+        targets.forEach(target => collapse(target));
     }
 });
 

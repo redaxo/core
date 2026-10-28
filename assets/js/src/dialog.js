@@ -118,10 +118,12 @@ window.addEventListener('click', event => {
     }
     event.preventDefault();
     event.stopImmediatePropagation();
+    // the repeated click keeps the modifier keys, e.g. Ctrl/Cmd + click opens a link in a new tab
+    const {ctrlKey, metaKey, shiftKey, altKey, button} = event;
     confirm(element.dataset.confirm).then(ok => {
         if (ok) {
             confirmed.add(element);
-            element.click();
+            element.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window, ctrlKey, metaKey, shiftKey, altKey, button}));
         }
     });
 }, true);

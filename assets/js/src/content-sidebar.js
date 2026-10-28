@@ -4,11 +4,15 @@ import {collapse} from './toggles.js';
 
 const key = 'structure_content_sidebar_status';
 
+// rex.ready() may run again, the sidebar is set up only once
+const initialized = new WeakSet();
+
 document.addEventListener('rex:ready', event => {
     const sidebar = event.target.matches('#rex-page-content-edit') && event.target.querySelector('#rex-js-main-sidebar');
-    if (!sidebar) {
+    if (!sidebar || initialized.has(sidebar)) {
         return;
     }
+    initialized.add(sidebar);
 
     const panels = [...sidebar.children].filter(child => child.matches('section')).map(section => section.querySelector('div.collapse'));
     const store = () => {

@@ -150,19 +150,23 @@ if (window.PublicKeyCredential &&
             return;
         }
 
+        // rex.ready() may run again on a part of the page, each form gets its listeners only once
+        const initialized = new WeakSet();
+        const once = form => form && !initialized.has(form) && initialized.add(form);
+
         const init = function (container) {
             let form = container.querySelector('form[data-auth-add-passkey]');
-            if (form) {
+            if (once(form)) {
                 authAddPasskey(form);
                 authPasskeyVerify(form);
             }
             form = container.querySelector('form[data-auth-change-password]');
-            if (form) {
+            if (once(form)) {
                 authPasskeyVerify(form);
             }
 
             form = container.querySelector('form[data-auth-login]');
-            if (form) {
+            if (once(form)) {
                 authLogin(form);
             }
         }
