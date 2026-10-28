@@ -205,7 +205,10 @@ $openerLink = '';
 if ('' !== $picker) {
     $openerLink = '<button ' . new HtmlAttributes([
         'type' => 'button',
-        'class' => ['btn', 'btn-xs', 'btn-select', 'btn-highlight' => 'multiple' === $picker],
+        'class' => ['rex-button'],
+        'data-variant' => 'primary',
+        'data-size' => 'xs',
+        'data-effect' => 'multiple' === $picker ? 'flash' : null,
         'data-rex-pick' => $fname,
         'data-rex-pick-label' => $gf->getStringValue('title'),
     ])->toString() . '>' . I18n::msg('pool_file_get') . '</button>';
@@ -277,10 +280,10 @@ if ($TPERM) {
     $formElements = [];
 
     $e = [];
-    $e['field'] = '<button class="btn btn-apply rex-form-aligned" type="submit" value="' . I18n::msg('pool_file_update') . '" name="btn_update">' . I18n::msg('pool_file_update') . '</button>';
+    $e['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" data-rex-submit-shortcut type="submit" value="' . I18n::msg('pool_file_update') . '" name="btn_update">' . I18n::msg('pool_file_update') . '</button>';
     $formElements[] = $e;
     $e = [];
-    $e['field'] = '<button class="btn btn-delete" type="submit" value="' . I18n::msg('pool_file_delete') . '" name="btn_delete" data-confirm="' . I18n::msg('delete') . ' ?">' . I18n::msg('delete') . '</button>';
+    $e['field'] = '<button class="rex-button" data-variant="danger" type="submit" value="' . I18n::msg('pool_file_delete') . '" name="btn_delete" data-confirm="' . I18n::msg('delete') . ' ?">' . I18n::msg('delete') . '</button>';
     $formElements[] = $e;
 
     $fragment = new Fragment();

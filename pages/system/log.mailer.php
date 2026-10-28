@@ -71,7 +71,7 @@ $content = (string) new Table([
 
 $formElements = [];
 $n = [];
-$n['field'] = '<button class="btn btn-delete" type="submit" name="del_btn" data-confirm="' . I18n::msg('mailer_delete_log_msg') . '">' . I18n::msg('syslog_delete') . '</button>';
+$n['field'] = '<button class="rex-button" data-variant="danger" type="submit" name="del_btn" data-confirm="' . I18n::msg('mailer_delete_log_msg') . '">' . I18n::msg('syslog_delete') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();

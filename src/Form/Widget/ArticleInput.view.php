@@ -16,11 +16,13 @@ return static function (ArticleInput $input): void {
 
     $button = static fn (string $action, string $title, string $icon): string => '<button ' . new HtmlAttributes([
         'type' => 'button',
-        'class' => ['btn', 'btn-popup'],
+        'class' => ['rex-button'],
+        'data-variant' => 'field',
         'data-rex-widget-action' => $action,
         'title' => I18n::rawMsg($title),
+        'aria-label' => I18n::rawMsg($title),
         'disabled' => !$allowed,
-    ])->toString() . '><i class="rex-icon ' . $icon . '"></i></button>' ?>
+    ])->toString() . '><i class="rex-icon ' . $icon . '" aria-hidden="true"></i></button>' ?>
     <div <?= new HtmlAttributes([
         'class' => ['input-group'],
         'data-rex-widget' => 'article',

@@ -80,7 +80,7 @@
         }
     }
 
-    .rex-tabs__link:not(.btn) {
+    .rex-tabs__link:not(.btn, .rex-button) {
         display: block;
         position: relative;
         margin-right: 2px;

@@ -229,7 +229,7 @@ if ($hasCategoryPerm) {
         $e = [];
         $e['field'] = $catsSel->render();
         $e['left'] = I18n::msg('pool_changecat_selectedmedia_prefix');
-        $e['right'] = '<button class="btn btn-update" type="submit" name="media_method" value="updatecat_selectedmedia">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
+        $e['right'] = '<button class="rex-button" data-variant="primary" type="submit" name="media_method" value="updatecat_selectedmedia">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
 
         $fragment = new Fragment();
         $fragment->setVar('elements', [$e], false);
@@ -237,14 +237,14 @@ if ($hasCategoryPerm) {
     }
 
     $buttons = [
-        new Button(I18n::msg('pool_delete_selectedmedia'), variant: ButtonVariant::Delete, type: 'submit', attributes: new HtmlAttributes([
+        new Button(I18n::msg('pool_delete_selectedmedia'), variant: ButtonVariant::Danger, type: 'submit', attributes: new HtmlAttributes([
             'data-confirm' => I18n::msg('delete') . ' ?',
             'name' => 'media_method',
             'value' => 'delete_selectedmedia',
         ])),
     ];
     if ('multiple' === $picker) {
-        $buttons[] = new Button(I18n::msg('pool_get_selectedmedia'), variant: ButtonVariant::Apply, attributes: new HtmlAttributes(['data-rex-pick-checked' => 'selectedmedia[]']));
+        $buttons[] = new Button(I18n::msg('pool_get_selectedmedia'), variant: ButtonVariant::Success, attributes: new HtmlAttributes(['data-rex-pick-checked' => 'selectedmedia[]']));
     }
 
     $actionButtons = implode(' ', array_map(static fn (Button $button): string => (string) $button->render(), $buttons));
@@ -300,7 +300,10 @@ foreach ($items as $media) {
     if ('' !== $picker) {
         $openerLink = '<button ' . new HtmlAttributes([
             'type' => 'button',
-            'class' => ['btn', 'btn-xs', 'btn-select', 'btn-highlight' => 'multiple' === $picker],
+            'class' => ['rex-button'],
+            'data-variant' => 'primary',
+            'data-size' => 'xs',
+            'data-effect' => 'multiple' === $picker ? 'flash' : null,
             'data-rex-pick' => $media->fileName,
             'data-rex-pick-label' => $media->title,
         ])->toString() . '>' . I18n::msg('pool_file_get') . '</button>';

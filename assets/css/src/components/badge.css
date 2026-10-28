@@ -73,12 +73,12 @@
             float: right;
         }
 
-        .btn & {
+        :is(.btn, .rex-button) & {
             position: relative;
             top: 0;
         }
 
-        :is(.btn-xs, .btn-group-xs > .btn) & {
+        :is(.btn-xs, .btn-group-xs > .btn, .rex-button[data-size="xs"]) & {
             padding: 1px 5px;
         }
     }

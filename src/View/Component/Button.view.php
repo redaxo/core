@@ -1,12 +1,15 @@
 <?php
 
 use Redaxo\Core\View\Component\Button;
+use Redaxo\Core\View\Component\ButtonVariant;
 use Redaxo\Core\View\Component\Icon;
 use Redaxo\Core\View\Html;
 
 return static function (Button $button): void {
     $attributes = $button->attributes->with([
-        'class' => ['btn', ...(null === $button->variant ? [] : ['btn-' . $button->variant->value]), 'btn-xs' => $button->small],
+        'class' => ['rex-button'],
+        'data-variant' => ButtonVariant::Secondary === $button->variant ? null : $button->variant->value,
+        'data-size' => $button->small ? 'xs' : null,
         'href' => $button->url,
         'type' => null === $button->url ? $button->type : null,
     ]);

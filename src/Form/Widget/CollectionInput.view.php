@@ -11,10 +11,10 @@ return static function (CollectionInput $input): void {
         <div class="rex-form-collection-item rex-section rex-section--default">
             <?php if (!$input->disabled): ?>
             <div class="rex-section__header text-right">
-                <div class="btn-group btn-group-xs">
-                    <button type="button" class="btn btn-default" data-rex-collection-move="up" title="<?= escape(I18n::rawMsg('form_collection_move_up')) ?>"><i class="rex-icon rex-icon-up"></i></button>
-                    <button type="button" class="btn btn-default" data-rex-collection-move="down" title="<?= escape(I18n::rawMsg('form_collection_move_down')) ?>"><i class="rex-icon rex-icon-down"></i></button>
-                    <button type="button" class="btn btn-delete" data-rex-collection-remove title="<?= escape(I18n::rawMsg('form_collection_remove')) ?>"><i class="rex-icon rex-icon-delete"></i></button>
+                <div class="rex-button-group" data-size="xs">
+                    <button type="button" class="rex-button" data-rex-collection-move="up" title="<?= escape(I18n::rawMsg('form_collection_move_up')) ?>" aria-label="<?= escape(I18n::rawMsg('form_collection_move_up')) ?>"><i class="rex-icon rex-icon-up" aria-hidden="true"></i></button>
+                    <button type="button" class="rex-button" data-rex-collection-move="down" title="<?= escape(I18n::rawMsg('form_collection_move_down')) ?>" aria-label="<?= escape(I18n::rawMsg('form_collection_move_down')) ?>"><i class="rex-icon rex-icon-down" aria-hidden="true"></i></button>
+                    <button type="button" class="rex-button" data-variant="danger" data-rex-collection-remove title="<?= escape(I18n::rawMsg('form_collection_remove')) ?>" aria-label="<?= escape(I18n::rawMsg('form_collection_remove')) ?>"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i></button>
                 </div>
             </div>
             <?php endif ?>
@@ -36,7 +36,7 @@ return static function (CollectionInput $input): void {
         </div>
         <?php if (!$input->disabled): ?>
             <template><?php $item($input->template) ?></template>
-            <button type="button" class="btn btn-default" data-rex-collection-add><i class="rex-icon rex-icon-add"></i> <?= escape(I18n::rawMsg('form_collection_add')) ?></button>
+            <button type="button" class="rex-button" data-rex-collection-add><i class="rex-icon rex-icon-add" aria-hidden="true"></i> <?= escape(I18n::rawMsg('form_collection_add')) ?></button>
         <?php endif ?>
     </div>
 <?php };

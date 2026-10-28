@@ -57,7 +57,10 @@ export function dialog({title = '', content, buttons = [], className = '', role 
     const footer = element.querySelector('.rex-dialog-footer');
     for (const {label, icon, value = '', className = '', primary = false, onClick} of buttons) {
         const button = document.createElement('button');
-        button.className = ['btn', primary ? 'btn-primary' : 'btn-default', className].join(' ').trim();
+        button.className = ('rex-button ' + className).trim();
+        if (primary) {
+            button.dataset.variant = 'primary';
+        }
         button.value = value;
         if (icon) {
             button.insertAdjacentHTML('beforeend', `<i class="rex-icon rex-icon-${CSS.escape(icon)}" aria-hidden="true"></i> `);

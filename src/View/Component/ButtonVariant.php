@@ -2,17 +2,20 @@
 
 namespace Redaxo\Core\View\Component;
 
-/** Meaning of a {@see Button}, which determines its look. */
+/** Look of a {@see Button}, by the weight and meaning of its action. */
 enum ButtonVariant: string
 {
-    case Default = 'default';
+    /** The neutral button, e.g. abort */
+    case Secondary = 'secondary';
+    /** The main action, e.g. send or select */
     case Primary = 'primary';
-    case Save = 'save';
-    /** Saves without leaving the form */
-    case Apply = 'apply';
-    case Delete = 'delete';
-    case Abort = 'abort';
-    case Edit = 'edit';
-    case Send = 'send';
-    case Select = 'select';
+    /** Saving */
+    case Success = 'success';
+    case Warning = 'warning';
+    /** Deleting and other destructive actions */
+    case Danger = 'danger';
+    /** Aligned with the input fields, e.g. the buttons of a picker */
+    case Field = 'field';
+    /** Looks like a link */
+    case Link = 'link';
 }

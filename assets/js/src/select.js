@@ -24,8 +24,8 @@ class Select {
             <div class="rex-select-panel" id="${this.id}" popover>
                 ${this.search ? `<input type="search" class="form-control rex-select-search" autocomplete="off" aria-controls="${this.id}-options">` : ''}
                 ${this.search && select.multiple ? `<div class="rex-select-actions">
-                    <button type="button" class="btn btn-default btn-xs" data-rex-select-all></button>
-                    <button type="button" class="btn btn-default btn-xs" data-rex-select-none></button>
+                    <button type="button" class="rex-button" data-size="xs" data-rex-select-all></button>
+                    <button type="button" class="rex-button" data-size="xs" data-rex-select-none></button>
                 </div>` : ''}
                 <ul class="rex-select-options" id="${this.id}-options" role="listbox"></ul>
                 <p class="rex-select-empty" role="status"></p>

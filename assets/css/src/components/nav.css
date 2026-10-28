@@ -102,7 +102,7 @@
         }
 
         & > li {
-            & > a:not(.btn) {
+            & > a:not(.btn, .rex-button) {
                 padding-top: 5px;
                 padding-bottom: 4px;
                 border-color: transparent;
@@ -117,7 +117,7 @@
                 }
             }
 
-            &.active > a:not(.btn) {
+            &.active > a:not(.btn, .rex-button) {
                 &,
                 &:hover,
                 &:focus {

@@ -12,14 +12,14 @@ return static function (Dropdown $dropdown): void {
         $toggle .= ' <b>' . (string) Html::from($dropdown->label) . '</b>';
     } ?>
     <?php if ($dropdown->wrapped): ?>
-        <div <?= $dropdown->attributes->with(['class' => ['dropdown', 'btn-block' => $dropdown->block]]) ?>>
+        <div <?= $dropdown->attributes->with(['class' => ['dropdown'], 'data-width' => $dropdown->block ? 'full' : null]) ?>>
     <?php endif ?>
     <?php if ($dropdown->link): ?>
         <button <?= new HtmlAttributes(['class' => ['rex-dropdown-link', 'dropdown-toggle'], 'type' => 'button', 'data-toggle' => 'dropdown', 'aria-expanded' => 'false', 'disabled' => $dropdown->disabled]) ?>><?= $toggle ?> <span class="caret" aria-hidden="true"></span></button>
     <?php else: ?>
-        <button <?= new HtmlAttributes(['class' => ['btn', 'btn-default', 'btn-block' => $dropdown->block, 'dropdown-toggle'], 'type' => 'button', 'data-toggle' => 'dropdown', 'aria-expanded' => 'false', 'disabled' => $dropdown->disabled]) ?>><?= $toggle ?> <span class="caret" aria-hidden="true"></span></button>
+        <button <?= new HtmlAttributes(['class' => ['rex-button', 'dropdown-toggle'], 'data-width' => $dropdown->block ? 'full' : null, 'type' => 'button', 'data-toggle' => 'dropdown', 'aria-expanded' => 'false', 'disabled' => $dropdown->disabled]) ?>><?= $toggle ?> <span class="caret" aria-hidden="true"></span></button>
     <?php endif ?>
-    <ul <?= new HtmlAttributes(['class' => ['dropdown-menu', 'dropdown-menu-right' => $dropdown->alignEnd, 'btn-block' => $dropdown->block]]) ?>>
+    <ul <?= new HtmlAttributes(['class' => ['dropdown-menu', 'dropdown-menu-right' => $dropdown->alignEnd], 'data-width' => $dropdown->block ? 'full' : null]) ?>>
         <?php if ($filled($dropdown->header)): ?>
             <li class="dropdown-header"><?= Html::from($dropdown->header) ?></li>
         <?php endif ?>

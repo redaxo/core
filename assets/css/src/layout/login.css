@@ -70,42 +70,26 @@
 
         /* buttons */
 
-        & .rex-form-panel-footer > .btn-toolbar button:first-child {
-            margin-left: 0;
-        }
+        & .rex-button[data-variant="primary"] {
+            --rex-button-color: var(--rex-color-inverse-text-strong);
+            --rex-button-bg: var(--rex-color-inverse-bg-strong);
+            --rex-button-border: var(--rex-color-inverse-bg);
+            --rex-button-bg-hover: var(--rex-color-inverse-bg);
+            --rex-button-border-hover: var(--rex-color-inverse-bg);
 
-        & .btn-primary {
-            border-color: var(--rex-color-inverse-bg);
-            background-color: var(--rex-color-inverse-bg-strong);
-            color: var(--rex-color-inverse-text-strong);
             transition: background-color 100ms ease-out;
-
-            &:hover {
-                background-color: var(--rex-color-inverse-bg);
-            }
-        }
-
-        & .btn-view {
-            background-color: var(--rex-color-inverse-bg);
-            color: var(--rex-color-inverse-text);
-
-            &:hover {
-                background-color: var(--rex-color-inverse-bg-strong);
-                color: var(--rex-color-inverse-text-strong);
-            }
         }
 
         /* password toggle next to the field */
-        & .input-group-btn .btn-view {
-            border-color: var(--rex-color-inverse-bg);
-            border-left: none;
-            background-color: var(--rex-color-inverse-text);
-            color: var(--rex-color-inverse-bg-strong);
-            transition: background-color 100ms ease-out;
+        & .input-group-btn .rex-button {
+            --rex-button-color: var(--rex-color-inverse-bg-strong);
+            --rex-button-bg: var(--rex-color-inverse-text);
+            --rex-button-border: var(--rex-color-inverse-bg);
+            --rex-button-bg-hover: var(--rex-color-inverse-text-strong);
+            --rex-button-border-hover: var(--rex-color-inverse-bg);
 
-            &:hover {
-                background-color: var(--rex-color-inverse-text-strong);
-            }
+            border-left: none;
+            transition: background-color 100ms ease-out;
         }
 
         /* footer and background picture */

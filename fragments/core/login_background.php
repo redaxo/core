@@ -43,13 +43,10 @@ $url3500Webp = Url::coreAssets('images/' . $pictureName . '-3500.webp');
         background-color: rgba(33, 38, 41, 0.9);
     }
 
-    #rex-page-login .btn-primary {
-        background-color: #006ec6;
-        border-color: rgba(0, 0, 0, 0.5);
-    }
-    #rex-page-login .btn-primary:hover,
-    #rex-page-login .btn-primary:focus {
-        background-color: #b5400b;
+    #rex-page-login .rex-button[data-variant="primary"] {
+        --rex-button-bg: #006ec6;
+        --rex-button-border: rgba(0, 0, 0, 0.5);
+        --rex-button-bg-hover: #b5400b;
     }
 
     #rex-page-login .rex-global-footer {

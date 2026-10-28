@@ -16,8 +16,7 @@ final class Button implements Renderable
         public ?string $url = null,
         /** Name of an {@see Icon} shown before the label */
         public ?string $icon = null,
-        /** `null` for a button without variant styles */
-        public ?ButtonVariant $variant = ButtonVariant::Default,
+        public ButtonVariant $variant = ButtonVariant::Secondary,
         public bool $small = false,
         /** Shows the icon only, the label stays for assistive technology */
         public bool $hiddenLabel = false,

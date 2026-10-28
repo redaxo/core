@@ -125,7 +125,7 @@ if ('' != $error) {
 }
 
 $metaToggle = static fn (MetaForm $meta): string => $meta->hasFields()
-    ? '<button type="button" class="btn btn-default' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" data-target="#rex-language-metainfo" aria-controls="rex-language-metainfo" aria-expanded="' . ($meta->hasErrors() ? 'true' : 'false') . '"><i class="rex-icon rex-icon-structure-category-metainfo" aria-hidden="true"></i><span class="sr-only">' . I18n::msg('metadata') . '</span></button>'
+    ? '<button type="button" class="rex-button' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" data-target="#rex-language-metainfo" aria-controls="rex-language-metainfo" aria-expanded="' . ($meta->hasErrors() ? 'true' : 'false') . '"><i class="rex-icon rex-icon-structure-category-metainfo" aria-hidden="true"></i><span class="sr-only">' . I18n::msg('metadata') . '</span></button>'
     : '';
 $metaRow = static fn (MetaForm $meta): ?TableRow => $meta->hasFields()
     ? new TableRow([
@@ -144,8 +144,8 @@ $formCells = static fn (string $form, string $code, string $name, int $priority,
     'priority' => Html::raw('<input class="form-control" type="number" id="rex-form-language-prio" name="language_prio" value="' . $priority . '" required min="1" inputmode="numeric" />'),
     'edit' => Html::raw($buttons),
     'delete' => new TableCell(Html::raw('add' === $form
-        ? '<button class="btn btn-save" type="submit" name="add_language_save"' . Accesskey::attributes(I18n::msg('language_add'), 'save') . ' value="1">' . I18n::msg('language_add') . '</button>'
-        : '<button class="btn btn-save" type="submit" name="edit_language_save"' . Accesskey::attributes(I18n::msg('language_update'), 'save') . ' value="1">' . I18n::msg('language_update') . '</button>'), 2),
+        ? '<button class="rex-button" data-variant="success" type="submit" name="add_language_save"' . Accesskey::attributes(I18n::msg('language_add'), 'save') . ' value="1">' . I18n::msg('language_add') . '</button>'
+        : '<button class="rex-button" data-variant="success" type="submit" name="edit_language_save"' . Accesskey::attributes(I18n::msg('language_update'), 'save') . ' value="1">' . I18n::msg('language_update') . '</button>'), 2),
 ];
 
 $rows = [];

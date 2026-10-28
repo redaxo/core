@@ -94,24 +94,21 @@
     }
 
     /* "add block" button between the slices */
-    .rex-slice-select > .dropdown > .btn-default {
-        --btn-color: var(--rex-color-link-hover);
-        --btn-bg: var(--rex-color-accent-subtle);
-        --btn-border: var(--rex-color-accent-subtle);
-        --btn-bg-hover: var(--rex-color-accent-subtle-hover);
-        --btn-border-hover: var(--rex-color-accent-subtle-hover);
+    .rex-slice-select > .dropdown > .rex-button {
+        --rex-button-color: var(--rex-color-link-hover);
+        --rex-button-bg: var(--rex-color-accent-subtle);
+        --rex-button-border: var(--rex-color-accent-subtle);
+        --rex-button-bg-hover: var(--rex-color-accent-subtle-hover);
+        --rex-button-border-hover: var(--rex-color-accent-subtle-hover);
 
         border-radius: 0;
 
         &:is(:focus, .focus, :active, .active),
         .open > & {
-            --btn-color: var(--rex-color-on-accent);
-            --btn-bg: var(--rex-color-accent);
-            --btn-border: var(--rex-color-accent);
-            --btn-bg-hover: var(--rex-color-accent-hover);
-
-            background-color: var(--btn-bg);
-            border-color: var(--btn-border);
+            --rex-button-color: var(--rex-color-on-accent);
+            --rex-button-bg: var(--rex-color-accent);
+            --rex-button-border: var(--rex-color-accent);
+            --rex-button-bg-hover: var(--rex-color-accent-hover);
         }
     }
 }

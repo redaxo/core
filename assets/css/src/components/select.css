@@ -97,7 +97,7 @@
         gap: 6px;
         padding: 6px 6px 0;
 
-        & > .btn {
+        & > .rex-button {
             flex: 1;
         }
     }

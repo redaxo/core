@@ -81,12 +81,12 @@ $formElements = [];
 // XXX calc last line and use it instead
 if ($url = Editor::factory()->getUrl($logFile, 1)) {
     $n = [];
-    $n['field'] = '<a class="btn btn-save" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
+    $n['field'] = '<a class="rex-button" data-variant="success" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
     $formElements[] = $n;
 }
 
 $n = [];
-$n['field'] = '<button class="btn btn-delete" type="submit" name="del_btn" data-confirm="' . I18n::msg('cronjob_delete_log_msg') . '?">' . I18n::msg('syslog_delete') . '</button>';
+$n['field'] = '<button class="rex-button" data-variant="danger" type="submit" name="del_btn" data-confirm="' . I18n::msg('cronjob_delete_log_msg') . '?">' . I18n::msg('syslog_delete') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();

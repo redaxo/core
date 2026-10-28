@@ -130,7 +130,7 @@ $sideContent = [];
 $content = '
     <h3>' . I18n::msg('delete_cache') . '</h3>
     <p>' . I18n::msg('delete_cache_description') . '</p>
-    <p><a class="btn btn-delete" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('delete_cache') . '</a></p>';
+    <p><a class="rex-button" data-variant="danger" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('delete_cache') . '</a></p>';
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('system_features'));
@@ -209,7 +209,7 @@ $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCook
         </div>
         <footer class="rex-section__footer">
             <div class="rex-form-panel-footer">
-                <div class="btn-toolbar">
+                <div class="rex-button-toolbar">
                     <?= $form->button('save', ['class' => ['rex-form-aligned']]) ?>
                     <?php if ($viaCookie): ?>
                         <?= $form->button('delete_cookie') ?>

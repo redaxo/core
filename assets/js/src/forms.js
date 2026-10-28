@@ -5,13 +5,13 @@ import {announce} from './announce.js';
  `data-rex-requires-checked`, collection fields, the visibility toggle of password fields and submitting with Cmd/Ctrl + Enter
  */
 
-// submit forms with Cmd/Ctrl + Enter, preferring the apply button (e.g. when editing content)
+// submit forms with Cmd/Ctrl + Enter, preferring the button that saves without leaving the form
 document.addEventListener('keydown', event => {
     if ('Enter' !== event.key || !(event.metaKey || event.ctrlKey)) {
         return;
     }
     const form = event.target.closest?.('form');
-    (form?.querySelector('.btn-apply') ?? form?.querySelector('[type="submit"]'))?.click();
+    (form?.querySelector('[data-rex-submit-shortcut]') ?? form?.querySelector('[type="submit"]'))?.click();
 }, true);
 
 // a checkbox with `data-rex-check-all="name[]"` checks or unchecks all checkboxes of that name in its form
@@ -146,7 +146,7 @@ function addPasswordToggle(input) {
 
     const addon = document.createElement('span');
     addon.className = 'input-group-btn';
-    addon.innerHTML = '<button type="button" class="btn btn-view" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
+    addon.innerHTML = '<button type="button" class="rex-button" data-variant="field" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
     input.after(addon);
 
     const button = addon.querySelector('button');

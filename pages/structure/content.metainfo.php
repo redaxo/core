@@ -152,7 +152,7 @@ if (1 == $article->getRows()) {
                         <input type="hidden" name="content_section_id" value="' . $ctype . '" />
                         ' . $csrfToken->getHiddenField() . '
                         ' . $form . '
-                        <button class="btn btn-primary pull-left" type="submit" name="savemeta"' . Accesskey::attributes(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
+                        <button class="rex-button pull-left" data-variant="primary" type="submit" name="savemeta"' . Accesskey::attributes(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
                     </fieldset>
                 </form>
               </div>

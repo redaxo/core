@@ -96,6 +96,12 @@
         }
     }
 
+    /* a dropdown as wide as its container, with the menu below in the same width */
+    .dropdown[data-width="full"],
+    .dropdown-menu[data-width="full"] {
+        width: 100%;
+    }
+
     .dropdown-menu-right {
         right: 0;
         left: auto;

@@ -8,7 +8,7 @@ use function Redaxo\Core\View\escape;
 
 $report = SystemReport::factory()->asMarkdown();
 
-echo '<p><clipboard-copy for="rex-system-report-markdown" class="btn btn-copy btn-primary">' . I18n::msg('copy_to_clipboard') . '</clipboard-copy></p>';
+echo '<p><clipboard-copy for="rex-system-report-markdown" class="rex-button" data-variant="primary">' . I18n::msg('copy_to_clipboard') . '</clipboard-copy></p>';
 
 // there must be no whitespace between div and pre and within pre
 // otherwise the copied markdown via clipboard-copy can be invalid

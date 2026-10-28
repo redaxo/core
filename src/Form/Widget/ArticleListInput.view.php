@@ -15,11 +15,13 @@ return static function (ArticleListInput $input): void {
 
     $button = static fn (string $action, string $title, string $icon, bool $enabled = true): string => '<button ' . new HtmlAttributes([
         'type' => 'button',
-        'class' => ['btn', 'btn-popup'],
+        'class' => ['rex-button'],
+        'data-variant' => 'field',
         'data-rex-widget-action' => $action,
         'title' => I18n::rawMsg($title),
+        'aria-label' => I18n::rawMsg($title),
         'disabled' => !$enabled,
-    ])->toString() . '><i class="rex-icon ' . $icon . '"></i></button>' ?>
+    ])->toString() . '><i class="rex-icon ' . $icon . '" aria-hidden="true"></i></button>' ?>
     <div <?= new HtmlAttributes([
         'class' => ['input-group'],
         'data-rex-widget' => 'articlelist',
@@ -37,13 +39,13 @@ return static function (ArticleListInput $input): void {
         </select>
         <input type="hidden" name="<?= escape($input->name) ?>" value="<?= escape(implode(',', $input->articleIds)) ?>" data-rex-widget-value>
         <span class="input-group-addon">
-            <div class="btn-group-vertical">
+            <div class="rex-button-group" data-orientation="vertical">
                 <?= $button('move:top', 'form_articlelist_move_top', 'rex-icon-top', !$input->disabled) ?>
                 <?= $button('move:up', 'form_articlelist_move_up', 'rex-icon-up', !$input->disabled) ?>
                 <?= $button('move:down', 'form_articlelist_move_down', 'rex-icon-down', !$input->disabled) ?>
                 <?= $button('move:bottom', 'form_articlelist_move_bottom', 'rex-icon-bottom', !$input->disabled) ?>
             </div>
-            <div class="btn-group-vertical">
+            <div class="rex-button-group" data-orientation="vertical">
                 <?= $button('open', 'form_article_open', 'rex-icon-open-linkmap', $allowed) ?>
                 <?= $button('remove', 'form_article_delete', 'rex-icon-delete-link', $allowed) ?>
             </div>

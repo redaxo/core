@@ -163,8 +163,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 $item = [];
                 $item['label'] = I18n::msg('edit');
                 $item['url'] = $context->getUrl(['function' => 'edit']) . $fragment;
-                $item['attributes']['class'][] = 'btn-edit';
-                $item['attributes']['title'] = I18n::msg('edit');
+                $item['variant'] = 'success';
                 $menuEditAction = $item;
             }
 
@@ -172,8 +171,7 @@ final class ArticleContentEditor extends ArticleContentBase
             $item = [];
             $item['label'] = I18n::msg('delete');
             $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1] + CsrfToken::factory('structure_content_slice')->getUrlParams()) . $fragment;
-            $item['attributes']['class'][] = 'btn-delete';
-            $item['attributes']['title'] = I18n::msg('delete');
+            $item['variant'] = 'danger';
             $item['attributes']['data-confirm'] = I18n::msg('confirm_delete_block');
             $menuDeleteAction = $item;
 
@@ -183,7 +181,6 @@ final class ArticleContentEditor extends ArticleContentBase
                 $statusName = $sliceStatus ? 'online' : 'offline';
                 $item['label'] = I18n::msg('status_' . $statusName);
                 $item['url'] = $context->getUrl(['status' => $sliceStatus ? 0 : 1] + ArticleSliceStatusChange::getUrlParams());
-                $item['attributes']['class'][] = 'btn-default';
                 $item['attributes']['class'][] = 'rex-' . $statusName;
                 $menuStatusAction = $item;
             }
@@ -194,7 +191,6 @@ final class ArticleContentEditor extends ArticleContentBase
                 $item['url'] = $context->getUrl(
                     ['upd' => time(), 'direction' => SliceMoveDirection::Up->value] + ArticleSliceMove::getUrlParams(),
                 ) . $fragment;
-                $item['attributes']['class'][] = 'btn-move';
                 $item['attributes']['title'] = I18n::msg('move_slice_up');
                 $item['icon'] = 'up';
                 $menuMoveupAction = $item;
@@ -204,7 +200,6 @@ final class ArticleContentEditor extends ArticleContentBase
                 $item['url'] = $context->getUrl(
                     ['upd' => time(), 'direction' => SliceMoveDirection::Down->value] + ArticleSliceMove::getUrlParams(),
                 ) . $fragment;
-                $item['attributes']['class'][] = 'btn-move';
                 $item['attributes']['title'] = I18n::msg('move_slice_down');
                 $item['icon'] = 'down';
                 $menuMovedownAction = $item;
@@ -389,11 +384,11 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'content_section_id' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="rex-button" data-align="end" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'content_section_id' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('add_block'), 'save') . '>' . I18n::msg('add_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-variant="success" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('add_block'), 'save') . '>' . I18n::msg('add_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -444,15 +439,15 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'content_section_id' => $contentSectionId, 'language' => $this->languageId]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="rex-button" data-align="end" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'content_section_id' => $contentSectionId, 'language' => $this->languageId]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('save_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-variant="success" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('save_block') . '</button>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-apply" type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-variant="success" data-rex-submit-shortcut type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();

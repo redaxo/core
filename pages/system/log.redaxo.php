@@ -112,19 +112,19 @@ $content = (string) new Table([
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-delete" type="submit" name="del_btn" data-confirm="' . I18n::msg('delete') . '?">' . I18n::msg('syslog_delete') . '</button>';
+$n['field'] = '<button class="rex-button" data-variant="danger" type="submit" name="del_btn" data-confirm="' . I18n::msg('delete') . '?">' . I18n::msg('syslog_delete') . '</button>';
 $formElements[] = $n;
 
 if ($url = $editor->getUrl($logFile, 0)) {
     $n = [];
-    $n['field'] = '<a class="btn btn-save" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
+    $n['field'] = '<a class="rex-button" data-variant="success" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
     $formElements[] = $n;
 }
 
 if (is_file($logFile)) {
     $url = Url::currentBackendPage(['func' => 'download'] + $csrfToken->getUrlParams());
     $n = [];
-    $n['field'] = '<a class="btn btn-save" href="' . $url . '" download>' . I18n::msg('syslog_download', Path::basename($logFile)) . '</a>';
+    $n['field'] = '<a class="rex-button" data-variant="success" href="' . $url . '" download>' . I18n::msg('syslog_download', Path::basename($logFile)) . '</a>';
     $formElements[] = $n;
 }
 

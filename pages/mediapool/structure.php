@@ -125,11 +125,11 @@ if ($PERMALL) {
         }),
         new TableColumn(I18n::msg('pool_kat_function'), static function (?MediaCategory $category) use ($form, $link, $catId, $editId): Html|TableCell {
             if (null === $category) {
-                return new TableCell(Html::raw('<button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_create') . '"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'save') . '>' . I18n::msg('pool_kat_create') . '</button>'), 2);
+                return new TableCell(Html::raw('<button class="rex-button" data-variant="success" type="submit" value="' . I18n::msg('pool_kat_create') . '"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'save') . '>' . I18n::msg('pool_kat_create') . '</button>'), 2);
             }
             if ($form($category)) {
                 return new TableCell(Html::raw('<input type="hidden" name="edit_id" value="' . $editId . '" />
-                        <button class="btn btn-save" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Accesskey::attributes(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>'), 2);
+                        <button class="rex-button" data-variant="success" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Accesskey::attributes(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>'), 2);
             }
             return Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $category->id . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('pool_kat_edit') . '</a>');
         }, ColumnType::Action),

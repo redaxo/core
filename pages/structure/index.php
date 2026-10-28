@@ -158,7 +158,7 @@ if ('add_cat' === $structureContext->function || 'edit_cat' === $structureContex
 }
 
 $categoryMetaToggle = static fn (MetaForm $meta): string => $meta->hasFields()
-    ? '<button type="button" class="btn btn-default' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" data-target="#rex-structure-category-metainfo" aria-controls="rex-structure-category-metainfo" aria-expanded="' . ($meta->hasErrors() ? 'true' : 'false') . '"><i class="rex-icon rex-icon-structure-category-metainfo" aria-hidden="true"></i><span class="sr-only">' . I18n::msg('metadata') . '</span></button>'
+    ? '<button type="button" class="rex-button' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" data-target="#rex-structure-category-metainfo" aria-controls="rex-structure-category-metainfo" aria-expanded="' . ($meta->hasErrors() ? 'true' : 'false') . '"><i class="rex-icon rex-icon-structure-category-metainfo" aria-hidden="true"></i><span class="sr-only">' . I18n::msg('metadata') . '</span></button>'
     : '';
 $categoryMetaRow = static fn (MetaForm $meta): ?TableRow => $meta->hasFields()
     ? new TableRow([
@@ -193,7 +193,7 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
     $metaButtons = $categoryMetaToggle($meta) . Extension::dispatch(new CategoryFormButtons(null, $category, $structureContext->languageId));
     $addButtons = CategoryAdd::getHiddenFields() . '
         <input type="hidden" name="parent-category-id" value="' . $structureContext->categoryId . '" />
-        <button class="btn btn-save" type="submit" name="category-add-button"' . Accesskey::attributes(I18n::msg('add_category'), 'save') . '>' . I18n::msg('add_category') . '</button>';
+        <button class="rex-button" data-variant="success" type="submit" name="category-add-button"' . Accesskey::attributes(I18n::msg('add_category'), 'save') . '>' . I18n::msg('add_category') . '</button>';
 
     $rows[] = [
         'attributes' => new HtmlAttributes(['class' => 'mark']),
@@ -266,7 +266,7 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
 
             $addButtons = CategoryEdit::getHiddenFields() . '
                 <input type="hidden" name="category-id" value="' . $structureContext->editId . '" />
-                <button class="btn btn-save" type="submit" name="category-edit-button"' . Accesskey::attributes(I18n::msg('save_category'), 'save') . '>' . I18n::msg('save_category') . '</button>';
+                <button class="rex-button" data-variant="success" type="submit" name="category-edit-button"' . Accesskey::attributes(I18n::msg('save_category'), 'save') . '>' . I18n::msg('save_category') . '</button>';
 
             $rows[] = [
                 'attributes' => new HtmlAttributes(['class' => ['mark', 'rex-has-metainfo' => '' != $metaButtons], 'data-status' => $status]),
@@ -416,7 +416,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             'template' => new SelectInput('template', $templateChoices, $template),
             'date' => Formatter::intlDate(time()),
             'priority' => Html::raw('<input class="form-control" type="number" name="article-position" value="' . ($artPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
-            $firstAction => new TableCell(Html::raw(ArticleAdd::getHiddenFields() . '<button class="btn btn-save" type="submit" name="artadd_function"' . Accesskey::attributes(I18n::msg('article_add'), 'save') . '>' . I18n::msg('article_add') . '</button>'), $colspan),
+            $firstAction => new TableCell(Html::raw(ArticleAdd::getHiddenFields() . '<button class="rex-button" data-variant="success" type="submit" name="artadd_function"' . Accesskey::attributes(I18n::msg('article_add'), 'save') . '>' . I18n::msg('article_add') . '</button>'), $colspan),
         ];
     } elseif (0 === $sql->getRows()) {
         $rows[] = new TableRow([new TableCell(Html::raw('&nbsp;')), new TableCell(null), new TableCell(null), new TableCell(null), new TableCell(null), new TableCell(null), new TableCell(null, $colspan)]);
@@ -453,7 +453,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
                 'name' => Html::raw('<input class="form-control" type="text" name="article-name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" autofocus />'),
                 'template' => new SelectInput('template', $templateChoices, $sql->getNullableStringValue('template')),
                 'priority' => Html::raw('<input class="form-control" type="number" name="article-position" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" />'),
-                $firstAction => new TableCell(Html::raw(ArticleEdit::getHiddenFields() . '<button class="btn btn-save" type="submit" name="artedit_function"' . Accesskey::attributes(I18n::msg('article_save'), 'save') . '>' . I18n::msg('article_save') . '</button>'), $colspan),
+                $firstAction => new TableCell(Html::raw(ArticleEdit::getHiddenFields() . '<button class="rex-button" data-variant="success" type="submit" name="artedit_function"' . Accesskey::attributes(I18n::msg('article_save'), 'save') . '>' . I18n::msg('article_save') . '</button>'), $colspan),
             ] + $row;
         } elseif ($structureContext->hasCategoryPermission()) {
             // --------------------- ARTIKEL NORMAL VIEW | EDIT AND ENTER

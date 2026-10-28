@@ -98,7 +98,7 @@ if ($archiveExists) {
     $content .= '<form method="post" action="' . Url::currentBackendPage() . '">';
     $content .= CsrfToken::factory('mailer-delete-archive')->getHiddenField();
     $content .= '<input type="hidden" name="func" value="delete_archive">';
-    $content .= '<button type="submit" class="btn btn-danger btn-sm" data-confirm="' . I18n::msg('mailer_archive_delete_confirm') . '">';
+    $content .= '<button type="submit" class="rex-button" data-variant="danger" data-size="sm" data-confirm="' . I18n::msg('mailer_archive_delete_confirm') . '">';
     $content .= '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('mailer_archive_delete');
     $content .= '</button>';
     $content .= '</form>';

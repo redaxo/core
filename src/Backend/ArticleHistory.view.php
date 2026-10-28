@@ -50,7 +50,7 @@ return static function (ArticleHistory $history): void {
     $restore = null === $history->restoreUrl ? '' : Html::capture(static function () use ($history): void { ?>
         <form id="rex-history-restore" method="post" action="<?= escape($history->restoreUrl) ?>" target="_top">
             <?= Html::raw(CsrfToken::factory('structure_history')->getHiddenField()) ?>
-            <?= new Button(I18n::msg('structure_history_snapshot_reactivate'), icon: 'refresh', variant: ButtonVariant::Apply, type: 'submit', attributes: new HtmlAttributes([
+            <?= new Button(I18n::msg('structure_history_snapshot_reactivate'), icon: 'refresh', variant: ButtonVariant::Success, type: 'submit', attributes: new HtmlAttributes([
                 'name' => 'func',
                 'value' => 'restore',
                 'disabled' => true,

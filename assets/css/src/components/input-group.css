@@ -57,7 +57,7 @@
             margin-top: 0;
         }
 
-        & > .btn-group-vertical + .btn-group-vertical {
+        & > :is(.btn-group-vertical, .rex-button-group[data-orientation="vertical"]) + :is(.btn-group-vertical, .rex-button-group[data-orientation="vertical"]) {
             margin-left: 6px;
         }
 
@@ -72,20 +72,20 @@
 
     .input-group .form-control:first-child,
     .input-group-addon:first-child,
-    .input-group-btn:first-child > :is(.btn, .dropdown-toggle),
-    .input-group-btn:first-child > .btn-group > .btn,
-    .input-group-btn:last-child > .btn:not(:last-child, .dropdown-toggle),
-    .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
+    .input-group-btn:first-child > :is(.btn, .rex-button, .dropdown-toggle),
+    .input-group-btn:first-child > :is(.btn-group, .rex-button-group) > :is(.btn, .rex-button),
+    .input-group-btn:last-child > :is(.btn, .rex-button):not(:last-child, .dropdown-toggle),
+    .input-group-btn:last-child > :is(.btn-group, .rex-button-group):not(:last-child) > :is(.btn, .rex-button) {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
 
     .input-group .form-control:last-child,
     .input-group-addon:last-child,
-    .input-group-btn:last-child > :is(.btn, .dropdown-toggle),
-    .input-group-btn:last-child > .btn-group > .btn,
-    .input-group-btn:first-child > .btn:not(:first-child),
-    .input-group-btn:first-child > .btn-group:not(:first-child) > .btn {
+    .input-group-btn:last-child > :is(.btn, .rex-button, .dropdown-toggle),
+    .input-group-btn:last-child > :is(.btn-group, .rex-button-group) > :is(.btn, .rex-button),
+    .input-group-btn:first-child > :is(.btn, .rex-button):not(:first-child),
+    .input-group-btn:first-child > :is(.btn-group, .rex-button-group):not(:first-child) > :is(.btn, .rex-button) {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
     }
@@ -95,10 +95,10 @@
         font-size: 0;
         white-space: nowrap;
 
-        & > .btn {
+        & > :is(.btn, .rex-button) {
             position: relative;
 
-            & + .btn {
+            & + :is(.btn, .rex-button) {
                 margin-left: -1px;
             }
 
@@ -107,11 +107,11 @@
             }
         }
 
-        &:first-child > :is(.btn, .btn-group) {
+        &:first-child > :is(.btn, .rex-button, .btn-group, .rex-button-group) {
             margin-right: -1px;
         }
 
-        &:last-child > :is(.btn, .btn-group) {
+        &:last-child > :is(.btn, .rex-button, .btn-group, .rex-button-group) {
             z-index: 2;
             margin-left: -1px;
         }
@@ -125,5 +125,35 @@
     /* a search field right after a select shares the select's border, e.g. in the toolbar of the media pool */
     search .input-group > .form-control:first-child {
         border-left: 0;
+    }
+}
+
+/* REDAXO buttons as add-ons; in the components layer, as they would lose against `.rex-button` otherwise */
+@layer components {
+    .input-group-btn {
+        & > .rex-button + .rex-button {
+            margin-left: -1px;
+        }
+
+        &:first-child > :is(.rex-button, .rex-button-group > .rex-button) {
+            margin-right: -1px;
+            border-start-end-radius: 0;
+            border-end-end-radius: 0;
+        }
+
+        &:last-child > :is(.rex-button, .rex-button-group > .rex-button) {
+            margin-left: -1px;
+            border-start-start-radius: 0;
+            border-end-start-radius: 0;
+        }
+
+        &:last-child > .rex-button:not(:last-child) {
+            border-start-end-radius: 0;
+            border-end-end-radius: 0;
+        }
+
+        .rex-section__options .input-group & > .rex-button {
+            --rex-button-border: var(--rex-color-border-input);
+        }
     }
 }

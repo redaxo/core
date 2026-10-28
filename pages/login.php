@@ -112,7 +112,7 @@ $content .= '</fieldset>';
 
 $formElements = [];
 $n = [];
-$n['field'] = '<button class="btn btn-primary btn-block" type="submit"><i class="rex-icon rex-icon-sign-in"></i> ' . I18n::msg('login') . ' </button>';
+$n['field'] = '<button class="rex-button" data-variant="primary" data-width="full" type="submit"><i class="rex-icon rex-icon-sign-in"></i> ' . I18n::msg('login') . ' </button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();

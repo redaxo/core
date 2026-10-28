@@ -12,11 +12,13 @@ return static function (MediaListInput $input): void {
 
     $button = static fn (string $action, string $title, string $icon, bool $enabled = true): string => '<button ' . new HtmlAttributes([
         'type' => 'button',
-        'class' => ['btn', 'btn-popup'],
+        'class' => ['rex-button'],
+        'data-variant' => 'field',
         'data-rex-widget-action' => $action,
         'title' => I18n::rawMsg($title),
+        'aria-label' => I18n::rawMsg($title),
         'disabled' => !$enabled,
-    ])->toString() . '><i class="rex-icon ' . $icon . '"></i></button>' ?>
+    ])->toString() . '><i class="rex-icon ' . $icon . '" aria-hidden="true"></i></button>' ?>
     <div <?= new HtmlAttributes([
         'class' => ['rex-js-widget', 'rex-js-widget-medialist', 'rex-js-widget-preview' => $input->preview, 'rex-js-widget-preview-media-manager' => $input->preview],
         'data-rex-widget' => 'medialist',
@@ -30,13 +32,13 @@ return static function (MediaListInput $input): void {
             </select>
             <input type="hidden" name="<?= escape($input->name) ?>" value="<?= escape(implode(',', $input->fileNames)) ?>" data-rex-widget-value>
             <span class="input-group-addon">
-                <div class="btn-group-vertical">
+                <div class="rex-button-group" data-orientation="vertical">
                     <?= $button('move:top', 'form_medialist_move_top', 'rex-icon-top', !$input->disabled) ?>
                     <?= $button('move:up', 'form_medialist_move_up', 'rex-icon-up', !$input->disabled) ?>
                     <?= $button('move:down', 'form_medialist_move_down', 'rex-icon-down', !$input->disabled) ?>
                     <?= $button('move:bottom', 'form_medialist_move_bottom', 'rex-icon-bottom', !$input->disabled) ?>
                 </div>
-                <div class="btn-group-vertical">
+                <div class="rex-button-group" data-orientation="vertical">
                     <?= $button('open', 'form_media_open', 'rex-icon-open-mediapool', $allowed) ?>
                     <?= $button('add', 'form_media_new', 'rex-icon-add-media', $allowed) ?>
                     <?= $button('remove', 'form_media_remove', 'rex-icon-delete-media', $allowed) ?>

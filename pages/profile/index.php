@@ -211,7 +211,7 @@ $confirmField = static function (string $id) use ($login, $passkeyVerify): strin
     if ($login->getPasskey()) {
         $n['label'] = '<label for="' . $id . '">' . I18n::msg('passkey_current') . '</label>';
         $n['field'] = '<div data-auth-passkey-verify="' . escape($passkeyVerify) . '">
-        <button type="button" class="btn btn-primary" id="' . $id . '">' . I18n::msg('passkey_current_verify') . '</button>
+        <button type="button" class="rex-button" data-variant="primary" id="' . $id . '">' . I18n::msg('passkey_current_verify') . '</button>
         <i class="fa-regular fa-circle-check text-success hidden"></i>
         <input type="hidden" name="passkey_verify"/>
     </div>';
@@ -256,7 +256,7 @@ $content .= '</fieldset>';
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="upd_psw_button" ' . Accesskey::attributes(I18n::msg('profile_save_psw'), 'save') . '>' . I18n::msg('profile_save_psw') . '</button>';
+$n['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" type="submit" value="1" name="upd_psw_button" ' . Accesskey::attributes(I18n::msg('profile_save_psw'), 'save') . '>' . I18n::msg('profile_save_psw') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -277,7 +277,7 @@ $content .= '</fieldset>';
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="add_passkey" ' . Accesskey::attributes(I18n::msg('passkey_add'), 'save') . '>' . I18n::msg('passkey_add') . '</button>';
+$n['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" type="submit" value="1" name="add_passkey" ' . Accesskey::attributes(I18n::msg('passkey_add'), 'save') . '>' . I18n::msg('passkey_add') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();

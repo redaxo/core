@@ -286,7 +286,10 @@ function dialog({ title = "", content, buttons = [], className = "", role = "dia
   const footer = element.querySelector(".rex-dialog-footer");
   for (const { label, icon, value = "", className: className2 = "", primary = false, onClick } of buttons) {
     const button = document.createElement("button");
-    button.className = ["btn", primary ? "btn-primary" : "btn-default", className2].join(" ").trim();
+    button.className = ("rex-button " + className2).trim();
+    if (primary) {
+      button.dataset.variant = "primary";
+    }
     button.value = value;
     if (icon) {
       button.insertAdjacentHTML("beforeend", `<i class="rex-icon rex-icon-${CSS.escape(icon)}" aria-hidden="true"></i> `);
@@ -701,8 +704,8 @@ var Select = class {
             <div class="rex-select-panel" id="${this.id}" popover>
                 ${this.search ? `<input type="search" class="form-control rex-select-search" autocomplete="off" aria-controls="${this.id}-options">` : ""}
                 ${this.search && select.multiple ? `<div class="rex-select-actions">
-                    <button type="button" class="btn btn-default btn-xs" data-rex-select-all></button>
-                    <button type="button" class="btn btn-default btn-xs" data-rex-select-none></button>
+                    <button type="button" class="rex-button" data-size="xs" data-rex-select-all></button>
+                    <button type="button" class="rex-button" data-size="xs" data-rex-select-none></button>
                 </div>` : ""}
                 <ul class="rex-select-options" id="${this.id}-options" role="listbox"></ul>
                 <p class="rex-select-empty" role="status"></p>
@@ -919,7 +922,7 @@ document.addEventListener("keydown", (event) => {
     return;
   }
   const form = event.target.closest?.("form");
-  (form?.querySelector(".btn-apply") ?? form?.querySelector('[type="submit"]'))?.click();
+  (form?.querySelector("[data-rex-submit-shortcut]") ?? form?.querySelector('[type="submit"]'))?.click();
 }, true);
 document.addEventListener("change", (event) => {
   const all = event.target;
@@ -1029,7 +1032,7 @@ function addPasswordToggle(input) {
   }
   const addon = document.createElement("span");
   addon.className = "input-group-btn";
-  addon.innerHTML = '<button type="button" class="btn btn-view" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
+  addon.innerHTML = '<button type="button" class="rex-button" data-variant="field" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
   input.after(addon);
   const button = addon.querySelector("button");
   button.setAttribute("aria-label", window.rex.i18n?.password_show ?? "Show password");

@@ -232,7 +232,7 @@
         line-height: 1.5;
     }
 
-    :is(.input-xs, .input-group-xs > .form-control, .input-group-xs > .input-group-addon, .input-group-xs > .input-group-btn > .btn) {
+    :is(.input-xs, .input-group-xs > .form-control, .input-group-xs > .input-group-addon, .input-group-xs > .input-group-btn > :is(.btn, .rex-button)) {
         height: 24px;
         padding: 3px 8px;
         border-radius: 0;

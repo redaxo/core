@@ -145,16 +145,14 @@ final class View
                     I18n::translate($language->name),
                     $context->getUrl(['language' => $id]),
                     $language->isOnline() ? 'online' : 'offline',
-                    variant: null,
                     attributes: new HtmlAttributes([
-                        'class' => ['btn-language', 'active' => $id === $context->getParam('language')],
-                        'title' => I18n::translate($language->name),
+                        'aria-current' => $id === $context->getParam('language') ? 'page' : null,
                     ]),
                 );
             }
         }
 
-        return '<div class="rex-nav-btn rex-nav-language"><div class="btn-toolbar">' . (string) new ButtonGroup($buttons)->render() . '</div></div>';
+        return '<div class="rex-button-toolbar">' . (string) new ButtonGroup($buttons)->render() . '</div>';
     }
 
     /** Returns a language switch. */
@@ -256,7 +254,7 @@ final class View
 
         $addSubmit = '';
         if ($closeForm && '' !== $picker) {
-            $addSubmit = '<button class="btn btn-save" type="submit" name="saveandexit" value="' . I18n::msg('pool_file_upload_get') . '"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('pool_file_upload_get') . '</button>';
+            $addSubmit = '<button class="rex-button" data-variant="success" type="submit" name="saveandexit" value="' . I18n::msg('pool_file_upload_get') . '"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('pool_file_upload_get') . '</button>';
         }
 
         $panel = '';
@@ -300,7 +298,7 @@ final class View
         $formElements = [];
 
         $e = [];
-        $e['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="save" value="' . $buttonTitle . '"' . Accesskey::attributes($buttonTitle, 'save') . '>' . $buttonTitle . '</button>';
+        $e['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" type="submit" name="save" value="' . $buttonTitle . '"' . Accesskey::attributes($buttonTitle, 'save') . '>' . $buttonTitle . '</button>';
         $formElements[] = $e;
 
         $e = [];
