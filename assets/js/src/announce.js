@@ -1,17 +1,21 @@
 /* Announcements: messages for screen readers about changes that are not visible as focus or page change */
 
-const regions = {};
+const regions = new WeakMap();
 
 function region(assertive) {
+    // an open modal dialog makes the rest of the page inert, so the region lives in the topmost one
+    const container = [...document.querySelectorAll('dialog[open]')].filter(dialog => dialog.matches(':modal')).at(-1) ?? document.body;
     const key = assertive ? 'assertive' : 'polite';
-    if (!regions[key]?.isConnected) {
+    const containerRegions = regions.get(container) ?? {};
+    if (!containerRegions[key]?.isConnected) {
         const element = document.createElement('div');
         element.className = 'rex-u-visually-hidden';
         element.setAttribute('role', assertive ? 'alert' : 'status');
-        document.body.append(element);
-        regions[key] = element;
+        container.append(element);
+        containerRegions[key] = element;
+        regions.set(container, containerRegions);
     }
-    return regions[key];
+    return containerRegions[key];
 }
 
 /**
