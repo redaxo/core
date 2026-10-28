@@ -1,9 +1,16 @@
-/* Dropdowns (`.dropdown`, Redaxo\Core\View\Component\Dropdown), opened by js/src/toggles.js */
+/*
+ Dropdowns (`.rex-dropdown`, Redaxo\Core\View\Component\Dropdown): a toggle (`data-rex-dropdown`, a button) and a
+ menu of links (`.rex-dropdown-menu`), opened by js/src/toggles.js through `aria-expanded` of the toggle. The menu
+ opens above when there is no room below (`data-placement="top"`) and aligns to the end with `data-align="end"`.
+ */
 
-@layer bootstrap {
-    .dropdown,
-    .dropup {
+@layer components {
+    .rex-dropdown {
         position: relative;
+
+        &[data-width="full"] {
+            width: 100%;
+        }
     }
 
     /* toggle that looks like a link, e.g. the status in the structure */
@@ -22,97 +29,88 @@
         }
     }
 
-    .dropdown-menu {
+    .rex-caret {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 2px;
+        border-top: 4px dashed;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+        vertical-align: middle;
+    }
+
+    .rex-dropdown-menu {
         position: absolute;
         top: 100%;
         left: 0;
         z-index: 1065;
         display: none;
-        float: left;
         min-width: 160px;
         margin: 2px 0 0;
         padding: 5px 0;
         border: 1px solid var(--rex-color-border-strong);
-        border-radius: 0;
-        background-color: var(--rex-color-surface-raised);
+        background: var(--rex-color-surface-raised);
         background-clip: padding-box;
         box-shadow: var(--rex-shadow-md);
+        color: var(--rex-color-text);
         font-size: var(--rex-font-size);
         text-align: left;
         list-style: none;
 
-        .open > & {
+        .rex-dropdown:has(> [aria-expanded="true"]) > & {
             display: block;
         }
 
-        .dropup & {
+        .rex-dropdown[data-placement="top"] > & {
             top: auto;
             bottom: 100%;
-            margin-bottom: 2px;
+            margin: 0 0 2px;
+        }
+
+        &[data-align="end"] {
+            right: 0;
+            left: auto;
+        }
+
+        &[data-width="full"] {
+            width: 100%;
         }
 
         & > li > a {
             display: block;
-            clear: both;
             padding: 3px 20px;
             color: var(--rex-color-text);
-            font-weight: 400;
             line-height: var(--rex-line-height);
             white-space: nowrap;
+            text-decoration: none;
 
             &:hover,
-            &:focus {
-                background-color: var(--rex-color-surface-subtle);
+            &:focus-visible {
+                background: var(--rex-color-surface-subtle);
                 color: var(--rex-color-text);
-                text-decoration: none;
             }
-        }
 
-        & > .active > a {
-            &,
-            &:hover,
-            &:focus {
-                background-color: var(--rex-color-accent);
+            &[aria-current]:not([aria-current="false"]) {
+                background: var(--rex-color-accent);
                 color: var(--rex-color-on-accent);
-                text-decoration: none;
             }
         }
-
-        & > .disabled > a {
-            &,
-            &:hover,
-            &:focus {
-                background-color: transparent;
-                color: var(--rex-color-text-muted);
-                cursor: not-allowed;
-            }
-        }
-
-        & .divider {
-            height: 1px;
-            margin: 10px 0;
-            overflow: hidden;
-            background-color: var(--rex-color-border);
-        }
     }
 
-    /* a dropdown as wide as its container, with the menu below in the same width */
-    .dropdown[data-width="full"],
-    .dropdown-menu[data-width="full"] {
-        width: 100%;
-    }
-
-    .dropdown-menu-right {
-        right: 0;
-        left: auto;
-    }
-
-    .dropdown-header {
+    .rex-dropdown-header {
         display: block;
         padding: 3px 20px;
         color: var(--rex-color-text-muted);
         font-size: var(--rex-font-size-small);
         line-height: var(--rex-line-height);
         white-space: nowrap;
+    }
+
+    .rex-dropdown-divider {
+        height: 1px;
+        margin: 10px 0;
+        overflow: hidden;
+        background: var(--rex-color-border);
     }
 }

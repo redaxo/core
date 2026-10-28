@@ -357,14 +357,16 @@ window.addEventListener("submit", (event) => {
 }, true);
 
 // assets/js/src/toggles.js
+var TOGGLE = '[data-rex-dropdown], [data-toggle="dropdown"]';
+var MENU = ":is(.rex-dropdown-menu, .dropdown-menu)";
 function openDropdowns() {
-  return document.querySelectorAll('.open:has(> [data-toggle="dropdown"])');
+  return document.querySelectorAll(`.open:has(> :is(${TOGGLE}))`);
 }
 function closeDropdowns(except = null) {
   for (const dropdown of openDropdowns()) {
     if (dropdown !== except) {
       dropdown.classList.remove("open");
-      dropdown.querySelector(':scope > [data-toggle="dropdown"]').setAttribute("aria-expanded", "false");
+      dropdown.querySelector(`:scope > :is(${TOGGLE})`).setAttribute("aria-expanded", "false");
     }
   }
 }
@@ -373,19 +375,24 @@ function toggleDropdown(toggle) {
   const open = !dropdown.classList.contains("open");
   closeDropdowns(dropdown);
   if (open) {
-    const menu = dropdown.querySelector(":scope > .dropdown-menu");
+    const menu = dropdown.querySelector(`:scope > ${MENU}`);
     const rect = dropdown.getBoundingClientRect();
     dropdown.classList.remove("dropup");
+    delete dropdown.dataset.placement;
     dropdown.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
     const height = menu?.offsetHeight ?? 0;
-    dropdown.classList.toggle("dropup", innerHeight - rect.bottom < height && rect.top > height);
+    if (innerHeight - rect.bottom < height && rect.top > height) {
+      dropdown.classList.add("dropup");
+      dropdown.dataset.placement = "top";
+    }
   } else {
     dropdown.classList.remove("open");
   }
   toggle.setAttribute("aria-expanded", String(open));
 }
 document.addEventListener("click", (event) => {
-  const toggle = event.target.closest('[data-toggle="dropdown"]');
+  const toggle = event.target.closest(TOGGLE);
   if (toggle) {
     event.preventDefault();
     if (!toggle.matches(".disabled, :disabled")) {
@@ -393,26 +400,26 @@ document.addEventListener("click", (event) => {
     }
     return;
   }
-  if (!event.target.closest(".dropdown-menu form")) {
+  if (!event.target.closest(`${MENU} form`)) {
     closeDropdowns();
   }
 });
 function dropdownItems(dropdown) {
-  return [...dropdown.querySelectorAll(":scope > .dropdown-menu li:not(.disabled) > a")];
+  return [...dropdown.querySelectorAll(`:scope > ${MENU} li:not(.disabled) > a`)];
 }
 document.addEventListener("keydown", (event) => {
-  const closedToggle = event.target.closest('[data-toggle="dropdown"]');
+  const closedToggle = event.target.closest(TOGGLE);
   if (closedToggle && !closedToggle.parentElement.classList.contains("open") && "ArrowDown" === event.key) {
     event.preventDefault();
     toggleDropdown(closedToggle);
     dropdownItems(closedToggle.parentElement)[0]?.focus();
     return;
   }
-  const dropdown = event.target.closest('.open:has(> [data-toggle="dropdown"])');
+  const dropdown = event.target.closest(`.open:has(> :is(${TOGGLE}))`);
   if (!dropdown) {
     return;
   }
-  const toggle = dropdown.querySelector(':scope > [data-toggle="dropdown"]');
+  const toggle = dropdown.querySelector(`:scope > :is(${TOGGLE})`);
   if ("Escape" === event.key) {
     event.preventDefault();
     closeDropdowns();
@@ -426,10 +433,10 @@ document.addEventListener("keydown", (event) => {
   }
 });
 document.addEventListener("focusout", (event) => {
-  const dropdown = event.target.closest('.open:has(> [data-toggle="dropdown"])');
+  const dropdown = event.target.closest(`.open:has(> :is(${TOGGLE}))`);
   if (dropdown && !dropdown.contains(event.relatedTarget) && null !== event.relatedTarget) {
     dropdown.classList.remove("open");
-    dropdown.querySelector(':scope > [data-toggle="dropdown"]').setAttribute("aria-expanded", "false");
+    dropdown.querySelector(`:scope > :is(${TOGGLE})`).setAttribute("aria-expanded", "false");
   }
 });
 function targetOf(toggle) {

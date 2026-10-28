@@ -1,20 +1,24 @@
 /*
- Toggles for the Bootstrap 3 compatible markup: dropdowns (`data-toggle="dropdown"`), collapsible elements
- (`data-toggle="collapse"`) and tabs (`data-toggle="tab"`).
+ Toggles: dropdowns (`data-rex-dropdown`, and `data-toggle="dropdown"` of the Bootstrap 3 markup), collapsible
+ elements (`data-toggle="collapse"`) and tabs (`data-toggle="tab"`).
  */
 
+const TOGGLE = '[data-rex-dropdown], [data-toggle="dropdown"]';
+const MENU = ':is(.rex-dropdown-menu, .dropdown-menu)';
+
 // ---------------------------------------------------------------------------------------------------------------------
-// Dropdowns: the toggle's parent gets `.open`, `.dropup` when there is no room below
+// Dropdowns: the toggle gets `aria-expanded`, its parent `.open` (for the Bootstrap 3 markup) and, when there is no
+// room below, `data-placement="top"` and `.dropup`
 
 function openDropdowns() {
-    return document.querySelectorAll('.open:has(> [data-toggle="dropdown"])');
+    return document.querySelectorAll(`.open:has(> :is(${TOGGLE}))`);
 }
 
 function closeDropdowns(except = null) {
     for (const dropdown of openDropdowns()) {
         if (dropdown !== except) {
             dropdown.classList.remove('open');
-            dropdown.querySelector(':scope > [data-toggle="dropdown"]').setAttribute('aria-expanded', 'false');
+            dropdown.querySelector(`:scope > :is(${TOGGLE})`).setAttribute('aria-expanded', 'false');
         }
     }
 }
@@ -25,12 +29,17 @@ function toggleDropdown(toggle) {
     closeDropdowns(dropdown);
 
     if (open) {
-        const menu = dropdown.querySelector(':scope > .dropdown-menu');
+        const menu = dropdown.querySelector(`:scope > ${MENU}`);
         const rect = dropdown.getBoundingClientRect();
         dropdown.classList.remove('dropup');
+        delete dropdown.dataset.placement;
         dropdown.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
         const height = menu?.offsetHeight ?? 0;
-        dropdown.classList.toggle('dropup', innerHeight - rect.bottom < height && rect.top > height);
+        if (innerHeight - rect.bottom < height && rect.top > height) {
+            dropdown.classList.add('dropup');
+            dropdown.dataset.placement = 'top';
+        }
     } else {
         dropdown.classList.remove('open');
     }
@@ -38,7 +47,7 @@ function toggleDropdown(toggle) {
 }
 
 document.addEventListener('click', event => {
-    const toggle = event.target.closest('[data-toggle="dropdown"]');
+    const toggle = event.target.closest(TOGGLE);
     if (toggle) {
         event.preventDefault();
         if (!toggle.matches('.disabled, :disabled')) {
@@ -47,18 +56,18 @@ document.addEventListener('click', event => {
         return;
     }
     // forms inside a dropdown menu stay open while being filled in
-    if (!event.target.closest('.dropdown-menu form')) {
+    if (!event.target.closest(`${MENU} form`)) {
         closeDropdowns();
     }
 });
 
 function dropdownItems(dropdown) {
-    return [...dropdown.querySelectorAll(':scope > .dropdown-menu li:not(.disabled) > a')];
+    return [...dropdown.querySelectorAll(`:scope > ${MENU} li:not(.disabled) > a`)];
 }
 
 document.addEventListener('keydown', event => {
     // the arrow keys also open a closed dropdown, at its first item
-    const closedToggle = event.target.closest('[data-toggle="dropdown"]');
+    const closedToggle = event.target.closest(TOGGLE);
     if (closedToggle && !closedToggle.parentElement.classList.contains('open') && 'ArrowDown' === event.key) {
         event.preventDefault();
         toggleDropdown(closedToggle);
@@ -66,11 +75,11 @@ document.addEventListener('keydown', event => {
         return;
     }
 
-    const dropdown = event.target.closest('.open:has(> [data-toggle="dropdown"])');
+    const dropdown = event.target.closest(`.open:has(> :is(${TOGGLE}))`);
     if (!dropdown) {
         return;
     }
-    const toggle = dropdown.querySelector(':scope > [data-toggle="dropdown"]');
+    const toggle = dropdown.querySelector(`:scope > :is(${TOGGLE})`);
 
     if ('Escape' === event.key) {
         event.preventDefault();
@@ -87,10 +96,10 @@ document.addEventListener('keydown', event => {
 
 // an open dropdown closes once the focus leaves it
 document.addEventListener('focusout', event => {
-    const dropdown = event.target.closest('.open:has(> [data-toggle="dropdown"])');
+    const dropdown = event.target.closest(`.open:has(> :is(${TOGGLE}))`);
     if (dropdown && !dropdown.contains(event.relatedTarget) && null !== event.relatedTarget) {
         dropdown.classList.remove('open');
-        dropdown.querySelector(':scope > [data-toggle="dropdown"]').setAttribute('aria-expanded', 'false');
+        dropdown.querySelector(`:scope > :is(${TOGGLE})`).setAttribute('aria-expanded', 'false');
     }
 });
 

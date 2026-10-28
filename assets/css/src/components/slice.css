@@ -94,7 +94,7 @@
     }
 
     /* "add block" button between the slices */
-    .rex-slice-select > .dropdown > .rex-button {
+    .rex-slice-select > .rex-dropdown > .rex-button {
         --rex-button-color: var(--rex-color-link-hover);
         --rex-button-bg: var(--rex-color-accent-subtle);
         --rex-button-border: var(--rex-color-accent-subtle);

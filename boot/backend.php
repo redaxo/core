@@ -392,7 +392,7 @@ if (Core::getConfig('article_work_version', false)) {
 
         $toolbar = '';
 
-        $toolbar .= '<li class="dropdown">' . (string) new Dropdown(
+        $toolbar .= '<li class="rex-dropdown">' . (string) new Dropdown(
             $items,
             prefix: Html::raw('<b>' . escape($currentRevision) . '</b>'),
             disabled: !$user->hasPerm('version[live_version]'),

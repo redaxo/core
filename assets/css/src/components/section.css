@@ -122,7 +122,7 @@
             color: var(--rex-section-color);
         }
 
-        & > .dropdown .dropdown-toggle {
+        & > :is(.dropdown, .rex-dropdown) :is(.dropdown-toggle, [data-rex-dropdown]) {
             color: inherit;
         }
     }
