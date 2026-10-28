@@ -35,12 +35,12 @@
             height: auto;
         }
 
-        & .rex-section__options {
+        & .rex-section-options {
             float: right;
         }
 
         /* the buttons stay in reach while editing a long slice */
-        & .rex-section__footer {
+        & .rex-section-footer {
             position: sticky;
             bottom: 0;
             left: 0;
@@ -53,7 +53,7 @@
             width: 100%;
         }
 
-        & .rex-section__body {
+        & .rex-section-body {
             position: relative;
             overflow: auto;
         }
@@ -68,7 +68,7 @@
         }
 
         /* a veil keeps the output of an offline slice from being used */
-        & .rex-section__body {
+        & .rex-section-body {
             pointer-events: none;
 
             &::before {

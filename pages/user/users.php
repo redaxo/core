@@ -215,8 +215,8 @@ if ('add' === $func || $user) {
 
     echo $form->capture(static function (Form $form) use ($user, $loginTries): void { ?>
         <section class="rex-section rex-section--edit">
-            <header class="rex-section__header"><div class="rex-section__title"><?= Html::from($form->title ?? '') ?></div></header>
-            <div class="rex-section__body">
+            <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
+            <div class="rex-section-body">
                 <?php foreach ($form->getFormErrors() as $error): ?>
                     <?= Message::error((string) Html::from($error)) ?>
                 <?php endforeach ?>
@@ -236,7 +236,7 @@ if ('add' === $func || $user) {
                     <?= $form->row($name) ?>
                 <?php endforeach ?>
             </div>
-            <footer class="rex-section__footer">
+            <footer class="rex-section-footer">
                 <div class="rex-form-panel-footer">
                     <?= $form->buttons() ?>
                 </div>

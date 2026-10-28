@@ -89,7 +89,7 @@ var Overlay = class {
       template.innerHTML = await response.text();
       const doc = template.content;
       const main = doc.getElementById("rex-js-page-main") ?? doc;
-      const heading = main.querySelector(".rex-pageheader__title");
+      const heading = main.querySelector(".rex-pageheader-title");
       this.title.textContent = heading?.textContent.trim() || (doc.querySelector("title")?.textContent ?? "").split(" \xB7 ")[0];
       heading?.remove();
       this.url = response.url;
@@ -1383,7 +1383,7 @@ document.addEventListener("rex:ready", (event) => {
 });
 function init(root2) {
   const url = new URL(root2.dataset.rexHistory, location.href);
-  const [baseFrame, targetFrame] = root2.querySelectorAll(".rex-history__frame iframe");
+  const [baseFrame, targetFrame] = root2.querySelectorAll(".rex-history-frame iframe");
   const base = root2.querySelector("[data-rex-history-base]");
   const target = root2.querySelector("[data-rex-history-target]");
   const steps = root2.querySelectorAll("[data-rex-history-step]");
@@ -1413,7 +1413,7 @@ function init(root2) {
     clearTimeout(timer);
     timer = setTimeout(() => preview(targetFrame, target.value ? { rex_history_date: target.value } : {}), delay);
   };
-  const element = root2.querySelector(".rex-history__timeline");
+  const element = root2.querySelector(".rex-history-timeline");
   const timeline = element && createTimeline(element, options, select);
   const show2 = root2.querySelector("[data-rex-history-show]");
   const showBase = () => {
@@ -1438,19 +1438,19 @@ function positions(times, min) {
   return [0, ...gaps.map((gap) => position += gap < min ? min : gap - (spare && missing * (gap - min) / spare))].map((value) => Math.round(value * RANGE));
 }
 function createTimeline(element, options, select) {
-  const track = element.querySelector(".rex-history__track");
-  const range = element.querySelector(".rex-history__range");
+  const track = element.querySelector(".rex-history-track");
+  const range = element.querySelector(".rex-history-range");
   const points = positions(options.map((option) => Number(option.dataset.time)), 10 / (track.clientWidth || 800));
   const segments = points.slice(1).map((point, i) => {
     const segment = document.createElement("span");
-    segment.className = "rex-history__segment";
+    segment.className = "rex-history-segment";
     segment.style.setProperty("--from", points[i] / RANGE);
     segment.style.setProperty("--to", point / RANGE);
     return segment;
   });
   const ticks = points.map((point) => {
     const tick = document.createElement("span");
-    tick.className = "rex-history__tick";
+    tick.className = "rex-history-tick";
     tick.style.setProperty("--at", point / RANGE);
     return tick;
   });

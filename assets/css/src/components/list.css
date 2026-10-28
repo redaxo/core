@@ -38,7 +38,7 @@
             }
         }
 
-        .rex-section__header + & .rex-list-item:first-child {
+        .rex-section-header + & .rex-list-item:first-child {
             border-top-width: 0;
         }
     }

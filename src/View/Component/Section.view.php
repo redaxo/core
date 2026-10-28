@@ -13,18 +13,18 @@ return static function (Section $section): void {
     ?>
     <section <?= $section->attributes->with(['class' => ['rex-section', 'rex-section--' . $variant => SectionVariant::Default !== $section->variant]]) ?>>
         <?php if ($filled($section->title) || $filled($section->options) || $filled($section->header)): ?>
-            <header class="rex-section__header">
+            <header class="rex-section-header">
                 <?php if ($filled($section->options)): ?>
-                    <div class="rex-section__options"><?= Html::from($section->options) ?></div>
+                    <div class="rex-section-options"><?= Html::from($section->options) ?></div>
                 <?php endif ?>
                 <?php if ($filled($section->title)): ?>
-                    <h<?= $section->headingLevel ?> class="rex-section__title">
+                    <h<?= $section->headingLevel ?> class="rex-section-title">
                         <?php if (null === $collapseId): ?>
                             <?= Html::from($section->title) ?>
                         <?php else: ?>
                             <button <?= new HtmlAttributes([
                                 'type' => 'button',
-                                'class' => ['rex-section__toggle', 'collapsed' => $section->collapsed],
+                                'class' => ['rex-section-toggle', 'collapsed' => $section->collapsed],
                                 'data-toggle' => 'collapse',
                                 'data-target' => '#' . $collapseId,
                                 'aria-controls' => $collapseId,
@@ -37,14 +37,14 @@ return static function (Section $section): void {
             </header>
         <?php endif ?>
         <?php if (null !== $collapseId): ?>
-            <div id="<?= $collapseId ?>" class="rex-section__collapse collapse<?= $section->collapsed ? '' : ' in' ?>">
+            <div id="<?= $collapseId ?>" class="rex-section-collapse collapse<?= $section->collapsed ? '' : ' in' ?>">
         <?php endif ?>
         <?php if ($filled($section->body)): ?>
-            <div class="rex-section__body"><?= Html::from($section->body) ?></div>
+            <div class="rex-section-body"><?= Html::from($section->body) ?></div>
         <?php endif ?>
         <?= $filled($section->content) ? Html::from($section->content) : '' ?>
         <?php if ($filled($section->footer)): ?>
-            <footer class="rex-section__footer"><?= Html::from($section->footer) ?></footer>
+            <footer class="rex-section-footer"><?= Html::from($section->footer) ?></footer>
         <?php endif ?>
         <?php if (null !== $collapseId): ?>
             </div>

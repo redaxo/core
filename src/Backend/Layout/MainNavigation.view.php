@@ -9,10 +9,10 @@ use function Redaxo\Core\View\escape;
 
 return static function (MainNavigation $navigation): void { ?>
     <nav id="rex-js-nav-main" class="rex-sidebar" aria-label="<?= I18n::msg('navigation_main_label') ?>">
-        <div class="rex-sidebar__inner">
+        <div class="rex-sidebar-inner">
             <?php foreach ($navigation->blocks as $block): ?>
-                <h2 class="rex-sidebar__title"><?= $block['headline']['title'] ?></h2>
-                <ul class="rex-sidebar__list">
+                <h2 class="rex-sidebar-title"><?= $block['headline']['title'] ?></h2>
+                <ul class="rex-sidebar-list">
                     <?php foreach ($block['navigation'] as $item):
                         /** @var array<string, int|list<string>|string> $itemAttr */
                         $itemAttr = $item['itemAttr'] ?? [];
@@ -27,7 +27,7 @@ return static function (MainNavigation $navigation): void { ?>
                         <li<?= Str::buildAttributes($itemAttr) ?>>
                             <a href="<?= escape(Type::string($item['href'])) ?>"<?= Str::buildAttributes($linkAttr) ?>>
                                 <?php if ('' !== $icon): ?>
-                                    <i class="rex-sidebar__icon <?= escape($icon) ?>" aria-hidden="true"></i>
+                                    <i class="rex-sidebar-icon <?= escape($icon) ?>" aria-hidden="true"></i>
                                 <?php endif ?>
                                 <?= Type::string($item['title']) ?>
                             </a>

@@ -25,38 +25,38 @@ return static function (TopBar $bar): void {
             <style nonce="<?= Response::getNonce() ?>">.rex-topbar { --rex-instance-color: <?= escape($instanceColor) ?>; }</style>
         <?php endif ?>
         <?php if (!$bar->login && !$bar->popup): ?>
-            <button type="button" class="rex-topbar__toggle" id="rex-js-nav-main-toggle" aria-controls="rex-js-nav-main" aria-expanded="false">
+            <button type="button" class="rex-topbar-toggle" id="rex-js-nav-main-toggle" aria-controls="rex-js-nav-main" aria-expanded="false">
                 <span class="rex-u-visually-hidden"><?= I18n::msg('navigation_toggle') ?></span>
-                <span class="rex-topbar__bars"><span></span><span></span><span></span></span>
+                <span class="rex-topbar-bars"><span></span><span></span><span></span></span>
             </button>
         <?php endif ?>
-        <div class="rex-topbar__head">
+        <div class="rex-topbar-head">
             <?php if ($bar->popup): ?>
-                <span class="rex-topbar__brand"><?= $logo ?></span>
+                <span class="rex-topbar-brand"><?= $logo ?></span>
             <?php else: ?>
-                <a class="rex-topbar__brand" href="<?= Url::backendController() ?>"><?= $logo ?><span class="rex-u-visually-hidden">REDAXO</span></a>
+                <a class="rex-topbar-brand" href="<?= Url::backendController() ?>"><?= $logo ?><span class="rex-u-visually-hidden">REDAXO</span></a>
             <?php endif ?>
             <?php if (!$bar->popup && Core::getUser()?->admin && Core::isDevMode()): ?>
                 <?php if (null !== $devModeMarkerUrl = Appearance::$devModeMarkerUrl): ?>
-                    <a class="rex-topbar__devmode" href="<?= escape($devModeMarkerUrl) ?>" target="_blank" title="<?= I18n::msg('dev_mode_marker') ?>">
+                    <a class="rex-topbar-devmode" href="<?= escape($devModeMarkerUrl) ?>" target="_blank" title="<?= I18n::msg('dev_mode_marker') ?>">
                         <i class="rex-icon rex-icon-heartbeat rex-u-pulse" aria-hidden="true"></i>
                         <span class="rex-u-visually-hidden"><?= I18n::msg('dev_mode_marker') ?> (<?= I18n::msg('link_new_window') ?>)</span>
                     </a>
                 <?php else: ?>
-                    <span class="rex-topbar__devmode" title="<?= I18n::msg('dev_mode_marker') ?>">
+                    <span class="rex-topbar-devmode" title="<?= I18n::msg('dev_mode_marker') ?>">
                         <i class="rex-icon rex-icon-heartbeat rex-u-pulse" aria-hidden="true"></i>
                         <span class="rex-u-visually-hidden"><?= I18n::msg('dev_mode_marker') ?></span>
                     </span>
                 <?php endif ?>
             <?php endif ?>
             <?php if (!$bar->popup && Core::getUser()): ?>
-                <p class="rex-topbar__title">
-                    <a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-topbar__title-name"><?= escape(Core::getProject()->instanceName) ?></span><i class="rex-icon rex-icon-external-link" aria-hidden="true"></i><span class="rex-u-visually-hidden"> (<?= I18n::msg('link_new_window') ?>)</span></a>
+                <p class="rex-topbar-title">
+                    <a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-topbar-title-name"><?= escape(Core::getProject()->instanceName) ?></span><i class="rex-icon rex-icon-external-link" aria-hidden="true"></i><span class="rex-u-visually-hidden"> (<?= I18n::msg('link_new_window') ?>)</span></a>
                 </p>
             <?php endif ?>
         </div>
         <?php if ($bar->metaItems): ?>
-            <ul class="rex-topbar__meta">
+            <ul class="rex-topbar-meta">
                 <?php foreach ($bar->metaItems as $item): ?>
                     <?= $item ?>
                 <?php endforeach ?>

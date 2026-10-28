@@ -10,7 +10,7 @@ return static function (CollectionInput $input): void {
     $item = static function (Html $fields) use ($input): void { ?>
         <div class="rex-form-collection-item rex-section">
             <?php if (!$input->disabled): ?>
-            <div class="rex-section__header rex-u-align-end">
+            <div class="rex-section-header rex-u-align-end">
                 <div class="rex-button-group" data-size="xs">
                     <button type="button" class="rex-button" data-rex-collection-move="up" title="<?= escape(I18n::rawMsg('form_collection_move_up')) ?>" aria-label="<?= escape(I18n::rawMsg('form_collection_move_up')) ?>"><i class="rex-icon rex-icon-up" aria-hidden="true"></i></button>
                     <button type="button" class="rex-button" data-rex-collection-move="down" title="<?= escape(I18n::rawMsg('form_collection_move_down')) ?>" aria-label="<?= escape(I18n::rawMsg('form_collection_move_down')) ?>"><i class="rex-icon rex-icon-down" aria-hidden="true"></i></button>
@@ -18,7 +18,7 @@ return static function (CollectionInput $input): void {
                 </div>
             </div>
             <?php endif ?>
-            <div class="rex-section__body"><?= $fields ?></div>
+            <div class="rex-section-body"><?= $fields ?></div>
         </div>
     <?php } ?>
     <div <?= $input->attributes->with([

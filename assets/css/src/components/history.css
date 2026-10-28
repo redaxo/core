@@ -21,12 +21,12 @@
     }
 
     /* the track is inset by half a thumb, so the thumb's center meets the ticks */
-    .rex-history__timeline {
+    .rex-history-timeline {
         position: relative;
         padding-top: 10px;
     }
 
-    .rex-history__track {
+    .rex-history-track {
         position: relative;
         height: 16px;
         margin-inline: calc(var(--rex-history-thumb) / 2);
@@ -34,7 +34,7 @@
         background: var(--rex-color-surface-muted);
     }
 
-    .rex-history__segment {
+    .rex-history-segment {
         position: absolute;
         inset-block: 0;
         left: calc(var(--from) * 100%);
@@ -54,7 +54,7 @@
         }
     }
 
-    .rex-history__tick {
+    .rex-history-tick {
         position: absolute;
         top: -9px;
         left: calc(var(--at) * 100%);
@@ -71,7 +71,7 @@
         }
     }
 
-    .rex-history__range {
+    .rex-history-range {
         position: absolute;
         inset: 6px 0 auto;
         width: 100%;
@@ -127,7 +127,7 @@
         }
     }
 
-    .rex-history__scale {
+    .rex-history-scale {
         display: flex;
         justify-content: space-between;
         margin-top: 6px;
@@ -136,7 +136,7 @@
     }
 
     /* both previews share the rows of the grid, so the frames are equally high with or without a footer */
-    .rex-history__previews {
+    .rex-history-previews {
         display: grid;
         flex: 1;
         grid-template-columns: 1fr 1fr;
@@ -147,47 +147,47 @@
         @media (max-width: 1199px) {
             grid-template-columns: 1fr;
 
-            & > .rex-history__preview--base {
+            & > .rex-history-preview--base {
                 display: none;
             }
         }
     }
 
-    .rex-history__preview {
+    .rex-history-preview {
         display: grid;
         grid-row: span 3;
         grid-template-rows: subgrid;
         min-height: 0;
         margin: 0;
 
-        & > .rex-section__header {
+        & > .rex-section-header {
             display: flex;
             align-items: center;
             min-height: 55px;
         }
 
-        & .rex-section__title {
+        & .rex-section-title {
             flex: 1;
         }
 
-        & > .rex-section__footer {
+        & > .rex-section-footer {
             display: flex;
             justify-content: flex-end;
         }
     }
 
-    .rex-history__switch {
+    .rex-history-switch {
         display: flex;
         gap: 6px;
     }
 
-    .rex-history__select {
+    .rex-history-select {
         flex: 1;
         min-width: 0;
     }
 
     /* the previews show the page at desktop width, scaled down by half */
-    .rex-history__frame {
+    .rex-history-frame {
         position: relative;
         min-height: 300px;
         overflow: hidden;

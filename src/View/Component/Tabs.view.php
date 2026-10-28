@@ -28,21 +28,24 @@ return static function (Tabs $tabs): void {
         $rawItemAttr = (array) ($item['itemAttr'] ?? []);
         $itemAttr = $attributes($rawItemAttr);
         $itemAttr['class'] = [
-            $block . '__item',
+            $block . '-item',
             ...$classes($item['itemClasses'] ?? []),
             ...$classes($rawItemAttr['class'] ?? []),
             ...(($item['active'] ?? false) ? ['is-active'] : []),
-            ...($end ? [$block . '__item--end'] : []),
         ];
+
+        if ($end) {
+            $itemAttr['data-align'] = 'end';
+        }
 
         $label = ('' !== ($icon = Type::string($item['icon'] ?? '')) ? '<i class="' . escape($icon) . '" aria-hidden="true"></i> ' : '') . Type::string($item['title']);
         $href = Type::string($item['href'] ?? '');
         if ('' === $href) {
-            return Html::raw('<li' . Str::buildAttributes($itemAttr) . '><span class="' . $block . '__link">' . $label . '</span></li>');
+            return Html::raw('<li' . Str::buildAttributes($itemAttr) . '><span class="' . $block . '-link">' . $label . '</span></li>');
         }
 
         $linkAttr = $attributes($item['linkAttr'] ?? [], true);
-        $linkAttr['class'] = [$block . '__link', ...$classes($item['linkClasses'] ?? [])];
+        $linkAttr['class'] = [$block . '-link', ...$classes($item['linkClasses'] ?? [])];
         if ($item['active'] ?? false) {
             $linkAttr['aria-current'] = 'page';
         }

@@ -160,7 +160,7 @@
             }
         }
 
-        .rex-section__options & > .rex-button {
+        .rex-section-options & > .rex-button {
             --rex-button-border: var(--rex-color-border-input);
         }
     }

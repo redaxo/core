@@ -59,7 +59,7 @@
         }
 
         /* compact next to the options of a section header, e.g. the missing rights of a slice */
-        .rex-section__options & {
+        .rex-section-options & {
             padding: 5px 10px;
             font-size: var(--rex-font-size-small);
 

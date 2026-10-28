@@ -84,7 +84,7 @@ class Overlay {
             const main = doc.getElementById('rex-js-page-main') ?? doc;
 
             // the page heading moves into the overlay header
-            const heading = main.querySelector('.rex-pageheader__title');
+            const heading = main.querySelector('.rex-pageheader-title');
             this.title.textContent = heading?.textContent.trim() || (doc.querySelector('title')?.textContent ?? '').split(' · ')[0];
             heading?.remove();
 

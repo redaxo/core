@@ -43,7 +43,7 @@
         }
     }
 
-    .rex-section__header {
+    .rex-section-header {
         --rex-color-focus: var(--rex-section-header-text);
 
         display: flow-root;
@@ -54,12 +54,12 @@
         color: var(--rex-section-header-text);
         line-height: 1.25;
 
-        &:has(.rex-section__toggle:hover) {
+        &:has(.rex-section-toggle:hover) {
             background: color-mix(in srgb, var(--rex-section-color), var(--rex-color-text) 8%);
         }
     }
 
-    .rex-section__title {
+    .rex-section-title {
         margin: 0;
         color: inherit;
         font-size: 1.0625rem;
@@ -68,7 +68,7 @@
     }
 
     /* the title of a collapsible section, as wide as the header */
-    .rex-section__toggle {
+    .rex-section-toggle {
         display: block;
         width: 100%;
         margin: 0;
@@ -81,7 +81,7 @@
         cursor: pointer;
     }
 
-    .rex-section__options {
+    .rex-section-options {
         margin-block: -2px;
 
         @media (min-width: 992px) {
@@ -89,7 +89,7 @@
         }
     }
 
-    .rex-section__body {
+    .rex-section-body {
         display: flow-root;
         padding: 15px;
         background: var(--rex-section-body-bg);
@@ -105,18 +105,18 @@
         }
     }
 
-    :is(.rex-section--add, .rex-section--edit) > .rex-section__header mark {
+    :is(.rex-section--add, .rex-section--edit) > .rex-section-header mark {
         background-color: var(--rex-color-success-hover);
     }
 
-    .rex-section__footer {
+    .rex-section-footer {
         padding: 10px 15px;
         background: var(--rex-section-footer-bg);
         border-top: 1px solid var(--rex-section-footer-bg);
         border-radius: 0;
     }
 
-    .rex-section__header {
+    .rex-section-header {
         & .badge {
             background-color: var(--rex-section-header-text);
             color: var(--rex-section-color);
@@ -127,11 +127,11 @@
         }
     }
 
-    .rex-section__title :is(a, small) {
+    .rex-section-title :is(a, small) {
         color: inherit;
     }
 
-    .rex-section__options .navbar-form {
+    .rex-section-options .navbar-form {
         margin: 0 0 6px;
         padding: 0;
 
@@ -141,7 +141,7 @@
     }
 
     /* buttons of a form at the end of the body, stretched to the edges like the footer */
-    .rex-section__body .rex-form-panel-footer {
+    .rex-section-body .rex-form-panel-footer {
         margin: 0 -15px -15px;
         padding: 10px 15px;
         background: var(--rex-section-footer-bg);
@@ -149,7 +149,7 @@
     }
 
     /* tables and lists without padding (Section::$content) run to the edges */
-    :is(.rex-section, .rex-section__collapse, .rex-section > form, .rex-section > form > fieldset) > :is(.table, .rex-table) {
+    :is(.rex-section, .rex-section-collapse, .rex-section > form, .rex-section > form > fieldset) > :is(.table, .rex-table) {
         margin-bottom: 0;
     }
 
@@ -179,8 +179,8 @@
         }
     }
 
-    .rex-section__body + :is(.table, .rex-table),
-    .rex-section > :is(.table, .rex-table) + .rex-section__body {
+    .rex-section-body + :is(.table, .rex-table),
+    .rex-section > :is(.table, .rex-table) + .rex-section-body {
         border-top: 1px solid var(--rex-color-border);
     }
 
@@ -193,21 +193,21 @@
         border-radius: 5px;
         color: var(--rex-color-inverse-text-strong);
 
-        .rex-section__header,
-        .rex-section__footer {
+        .rex-section-header,
+        .rex-section-footer {
             background: transparent;
             border: 0;
         }
 
-        .rex-section__header {
+        .rex-section-header {
             color: var(--rex-color-inverse-text-strong);
         }
 
-        .rex-section__body {
+        .rex-section-body {
             padding: 25px 25px 5px;
         }
 
-        .rex-section__footer {
+        .rex-section-footer {
             padding: 5px 25px 25px;
         }
     }

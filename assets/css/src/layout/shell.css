@@ -124,7 +124,7 @@
         }
     }
 
-    .rex-topbar__toggle {
+    .rex-topbar-toggle {
         display: none;
         position: absolute;
         top: 0;
@@ -144,7 +144,7 @@
         }
     }
 
-    .rex-topbar__bars {
+    .rex-topbar-bars {
         position: absolute;
         top: 50%;
         left: 50%;
@@ -197,7 +197,7 @@
         }
     }
 
-    .rex-topbar__head {
+    .rex-topbar-head {
         position: relative;
 
         @media (max-width: 991px) {
@@ -218,7 +218,7 @@
         }
     }
 
-    .rex-topbar__brand {
+    .rex-topbar-brand {
         display: block;
         margin-left: -5px;
         padding: 5px;
@@ -227,7 +227,7 @@
         color: inherit;
     }
 
-    .rex-topbar__devmode {
+    .rex-topbar-devmode {
         position: absolute;
         top: 10px;
         right: -22px;
@@ -242,7 +242,7 @@
         }
     }
 
-    .rex-topbar__title {
+    .rex-topbar-title {
         position: absolute;
         top: 50%;
         left: 250px;
@@ -263,13 +263,13 @@
             color: var(--rex-topbar-text);
             text-decoration: none;
 
-            &:hover .rex-topbar__title-name,
-            &:focus .rex-topbar__title-name {
+            &:hover .rex-topbar-title-name,
+            &:focus .rex-topbar-title-name {
                 text-decoration: underline;
             }
         }
 
-        .rex-topbar__title-name,
+        .rex-topbar-title-name,
         .rex-icon {
             display: inline-block;
             vertical-align: middle;
@@ -277,7 +277,7 @@
             line-height: 20px;
         }
 
-        .rex-topbar__title-name {
+        .rex-topbar-title-name {
             max-width: 300px;
             margin-right: 8px;
             overflow: hidden;
@@ -292,7 +292,7 @@
             font-size: 1.25rem;
 
             /* the link keeps the name for screen readers */
-            .rex-topbar__title-name {
+            .rex-topbar-title-name {
                 position: absolute;
                 width: 1px;
                 height: 1px;
@@ -307,7 +307,7 @@
         }
     }
 
-    .rex-topbar__meta {
+    .rex-topbar-meta {
         display: flex;
         flex: 1 0 auto;
         justify-content: flex-end;
@@ -347,7 +347,7 @@
                 padding-bottom: 0;
             }
 
-            .rex-topbar__muted {
+            .rex-topbar-muted {
                 display: none;
             }
 
@@ -359,7 +359,7 @@
         }
     }
 
-    .rex-topbar__muted {
+    .rex-topbar-muted {
         color: var(--rex-topbar-text-muted);
     }
 
@@ -401,7 +401,7 @@
         }
     }
 
-    .rex-sidebar__inner {
+    .rex-sidebar-inner {
         display: flex;
         flex-direction: column;
         padding-bottom: var(--rex-gutter);
@@ -412,7 +412,7 @@
         }
     }
 
-    .rex-sidebar__title {
+    .rex-sidebar-title {
         margin: 15px 0 20px;
         padding: 25px 15px 0;
         color: var(--rex-sidebar-title);
@@ -420,12 +420,12 @@
         font-weight: 500;
         line-height: 1.1;
 
-        .rex-sidebar__list + & {
+        .rex-sidebar-list + & {
             border-top: 1px solid var(--rex-color-inverse-border);
         }
     }
 
-    .rex-sidebar__list {
+    .rex-sidebar-list {
         margin: 0;
         padding: 0;
         list-style: none;
@@ -455,7 +455,7 @@
         }
     }
 
-    .rex-sidebar__icon {
+    .rex-sidebar-icon {
         display: inline-block;
         width: 20px;
         margin: 0 3px 0 -28px;
@@ -507,7 +507,7 @@
         }
     }
 
-    .rex-main__inner {
+    .rex-main-inner {
         padding-inline: 15px;
 
         /* focused as the target of the skip link, the start point of the keyboard needs no ring */
@@ -552,7 +552,7 @@
         }
     }
 
-    .rex-footer__list {
+    .rex-footer-list {
         margin: 0 0 11px -5px;
         padding: 0;
         list-style: none;

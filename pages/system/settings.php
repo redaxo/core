@@ -197,8 +197,8 @@ $viaCookie = array_key_exists('editor', $_COOKIE);
 
 $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCookie): void { ?>
     <section class="rex-section rex-section--edit">
-        <header class="rex-section__header"><div class="rex-section__title"><?= Html::from($form->title ?? '') ?></div></header>
-        <div class="rex-section__body">
+        <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
+        <div class="rex-section-body">
             <p><?= I18n::msg('system_editor_note') ?></p>
             <?php if ($viaCookie): ?>
                 <?= Message::info(I18n::msg('system_editor_note_cookie')) ?>
@@ -207,7 +207,7 @@ $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCook
             <?php endif ?>
             <?= $form->rest() ?>
         </div>
-        <footer class="rex-section__footer">
+        <footer class="rex-section-footer">
             <div class="rex-form-panel-footer">
                 <div class="rex-button-toolbar">
                     <?= $form->button('save', ['class' => ['rex-form-aligned']]) ?>

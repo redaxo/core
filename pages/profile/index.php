@@ -186,15 +186,15 @@ echo ApiFunction::getMessage();
 if (!$passwordChangeRequired) {
     echo $profileForm->capture(static function (Form $form) use ($user): void { ?>
         <section class="rex-section rex-section--edit">
-            <header class="rex-section__header"><div class="rex-section__title"><?= Html::from($form->title ?? '') ?></div></header>
-            <div class="rex-section__body">
+            <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
+            <div class="rex-section-body">
                 <?php foreach ($form->getFormErrors() as $error): ?>
                     <?= Message::error((string) Html::from($error)) ?>
                 <?php endforeach ?>
                 <?= new FieldRow(Html::raw('<p class="rex-field-value">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
                 <?= $form->rest() ?>
             </div>
-            <footer class="rex-section__footer">
+            <footer class="rex-section-footer">
                 <div class="rex-form-panel-footer">
                     <?= $form->buttons() ?>
                 </div>

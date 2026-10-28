@@ -1,7 +1,7 @@
 /* Page header with tabs and subnavigation, breadcrumb (PageHeader, Tabs, Breadcrumb components) */
 
 @layer components {
-    .rex-pageheader__title {
+    .rex-pageheader-title {
         margin: 36px 0 33px;
         color: var(--rex-color-text);
         font-size: 1.5rem;
@@ -67,20 +67,20 @@
         border-bottom: 1px solid var(--rex-tabs-border);
     }
 
-    .rex-tabs__item {
+    .rex-tabs-item {
         position: relative;
         margin-bottom: -1px;
 
-        &.rex-tabs__item--end:not(.rex-tabs__item--end + .rex-tabs__item--end) {
+        &.rex-tabs-item[data-align="end"]:not(.rex-tabs-item[data-align="end"] + .rex-tabs-item[data-align="end"]) {
             margin-left: auto;
         }
 
-        &.rex-tabs__item--end:last-child > .rex-tabs__link {
+        &.rex-tabs-item[data-align="end"]:last-child > .rex-tabs-link {
             margin-right: 0;
         }
     }
 
-    .rex-tabs__link:not(.btn, .rex-button) {
+    .rex-tabs-link:not(.btn, .rex-button) {
         display: block;
         position: relative;
         margin-right: 2px;
@@ -114,7 +114,7 @@
             }
         }
 
-        .rex-tabs__item.is-active > & {
+        .rex-tabs-item.is-active > & {
             padding-bottom: 10px;
             background: var(--rex-tab-active-bg);
             border-color: var(--rex-tabs-border);
@@ -136,7 +136,7 @@
         border-top: 0;
     }
 
-    .rex-subnav__item {
+    .rex-subnav-item {
         display: flex;
 
         &:not(:last-child)::after {
@@ -147,7 +147,7 @@
         }
     }
 
-    .rex-subnav__link {
+    .rex-subnav-link {
         padding: 12px 15px;
         color: var(--rex-color-link);
         line-height: 22px;
@@ -159,7 +159,7 @@
 
         &:is(a):hover,
         &:is(a):focus,
-        .rex-subnav__item.is-active > & {
+        .rex-subnav-item.is-active > & {
             color: var(--rex-color-text);
             text-decoration: none;
         }
@@ -175,7 +175,7 @@
         }
     }
 
-    .rex-crumbs__list {
+    .rex-crumbs-list {
         display: flex;
         flex-wrap: wrap;
         margin: 0 0 22px;
@@ -196,8 +196,8 @@
         }
     }
 
-    .rex-crumbs__link,
-    .rex-crumbs__title > a {
+    .rex-crumbs-link,
+    .rex-crumbs-title > a {
         display: inline-block;
         margin: -4px -7px;
         padding: 4px 7px;

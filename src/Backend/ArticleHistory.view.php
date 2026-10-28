@@ -24,7 +24,7 @@ return static function (ArticleHistory $history): void {
             echo escape($current);
             return;
         } ?>
-        <select class="rex-input rex-history__select" data-rex-history-base aria-label="<?= escape($current) ?>">
+        <select class="rex-input rex-history-select" data-rex-history-base aria-label="<?= escape($current) ?>">
             <option value="<?= ArticleRevision::LIVE ?>"><?= escape($current) ?></option>
             <option value="<?= ArticleRevision::WORK ?>"><?= escape(I18n::msg('version_workingversion')) ?></option>
         </select>
@@ -32,9 +32,9 @@ return static function (ArticleHistory $history): void {
 
     // newest first like the snapshots, the current version on top; `data-time` places them on the timeline
     $target = Html::capture(static function () use ($history, $current, $version): void { ?>
-        <div class="rex-history__switch">
+        <div class="rex-history-switch">
             <?= new Button(I18n::msg('structure_history_older'), icon: 'previous', hiddenLabel: true, attributes: new HtmlAttributes(['data-rex-history-step' => '-1']))->render() ?>
-            <select name="history_date" form="rex-history-restore" class="rex-input rex-history__select" data-rex-history-target aria-label="<?= escape($version) ?>">
+            <select name="history_date" form="rex-history-restore" class="rex-input rex-history-select" data-rex-history-target aria-label="<?= escape($version) ?>">
                 <option value="" data-time="<?= time() ?>"><?= escape($current) ?></option>
                 <?php foreach ($history->snapshots as $snapshot): ?>
                     <option <?= new HtmlAttributes(['value' => $snapshot['history_date'], 'data-time' => (string) strtotime($snapshot['history_date'])]) ?>>
@@ -65,15 +65,15 @@ return static function (ArticleHistory $history): void {
     ]));
 
     $frame = static fn (string $title): Html => Html::capture(static function () use ($title): void { ?>
-        <div class="rex-history__frame"><iframe title="<?= escape($title) ?>"></iframe></div>
+        <div class="rex-history-frame"><iframe title="<?= escape($title) ?>"></iframe></div>
     <?php });
     ?>
     <div class="rex-history" data-rex-history="<?= escape($history->previewUrl) ?>">
         <?php if ($oldest = end($history->snapshots)): ?>
-            <div class="rex-history__timeline">
-                <div class="rex-history__track" aria-hidden="true"></div>
-                <input type="range" class="rex-history__range" min="0" max="1000" aria-label="<?= escape($version) ?>">
-                <div class="rex-history__scale" aria-hidden="true">
+            <div class="rex-history-timeline">
+                <div class="rex-history-track" aria-hidden="true"></div>
+                <input type="range" class="rex-history-range" min="0" max="1000" aria-label="<?= escape($version) ?>">
+                <div class="rex-history-scale" aria-hidden="true">
                     <span><?= escape(Formatter::intlDateTime($oldest['history_date'])) ?></span>
                     <span><?= escape($current) ?></span>
                 </div>
@@ -82,19 +82,19 @@ return static function (ArticleHistory $history): void {
             <?= new Alert(I18n::msg('structure_history_no_versions'))->render() ?>
         <?php endif ?>
 
-        <div class="rex-history__previews">
+        <div class="rex-history-previews">
             <?= new Section(
                 title: $base,
                 content: $frame($current),
                 footer: $show,
-                attributes: new HtmlAttributes(['class' => ['rex-history__preview', 'rex-history__preview--base']]),
+                attributes: new HtmlAttributes(['class' => ['rex-history-preview', 'rex-history-preview--base']]),
             )->render() ?>
             <?= new Section(
                 title: $target,
                 content: $frame($version),
                 footer: $restore,
                 variant: SectionVariant::Edit,
-                attributes: new HtmlAttributes(['class' => ['rex-history__preview']]),
+                attributes: new HtmlAttributes(['class' => ['rex-history-preview']]),
             )->render() ?>
         </div>
     </div>

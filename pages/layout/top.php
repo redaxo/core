@@ -74,7 +74,7 @@ if ($user && $hasNavigation) {
         $impersonator = $impersonator->name ?: $impersonator->login;
     }
 
-    $item = '<li><span class="rex-topbar__muted">' . I18n::msg('logged_in_as') . '</span> <a href="' . Url::backendPage('profile') . '" title="' . I18n::msg('profile_title') . '"><i class="rex-icon rex-icon-user" aria-hidden="true"></i> ' . escape($userName) . '</a>';
+    $item = '<li><span class="rex-topbar-muted">' . I18n::msg('logged_in_as') . '</span> <a href="' . Url::backendPage('profile') . '" title="' . I18n::msg('profile_title') . '"><i class="rex-icon rex-icon-user" aria-hidden="true"></i> ' . escape($userName) . '</a>';
     if ($impersonator) {
         $item .= ' (<i class="rex-icon rex-icon-user"></i> ' . escape($impersonator) . ')';
     }
@@ -135,4 +135,4 @@ echo '<div id="rex-js-page-container" class="rex-shell">';
 
 echo $navigation?->render();
 
-?><div class="rex-main"><main class="rex-main__inner" id="rex-js-page-main" tabindex="-1">
+?><div class="rex-main"><main class="rex-main-inner" id="rex-js-page-main" tabindex="-1">
