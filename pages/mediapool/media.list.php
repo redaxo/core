@@ -249,7 +249,7 @@ if ($hasCategoryPerm) {
 
     $actionButtons = implode(' ', array_map(static fn (Button $button): string => (string) $button->render(), $buttons));
 
-    $field = '<div class="row"><div class="col-sm-7">' . $field . '</div><div class="col-sm-5 text-right">' . $actionButtons . '</div>';
+    $field = '<div class="rex-grid" data-from="sm" data-columns="7 5"><div>' . $field . '</div><div data-align="end">' . $actionButtons . '</div></div>';
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_selectedmedia') . '</label>';

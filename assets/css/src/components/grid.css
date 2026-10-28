@@ -1,107 +1,137 @@
-/* Grid: rows of 12 columns (`.row`, `.col-sm-6` …) */
+/*
+ Grid (`.rex-grid`): columns side by side from a breakpoint (`data-from` `sm` 768px, `md` 992px, `lg` 1200px, default
+ `md`) on, stacked below. `data-columns` gives the widths in twelfths, e.g. `8 4`; the supported splits are listed
+ below, as style attributes are not allowed by the Content-Security-Policy.
+ */
 
-@layer bootstrap {
-    .container,
-    .container-fluid {
-        margin-right: auto;
-        margin-left: auto;
-        padding-right: 15px;
-        padding-left: 15px;
+@layer components {
+    .rex-grid {
+        display: grid;
+        gap: 0 var(--rex-gutter);
     }
-
-    .row {
-        margin-right: -15px;
-        margin-left: -15px;
-    }
-
-    :is(.container, .container-fluid, .row)::after {
-        content: "";
-        display: table;
-        clear: both;
-    }
-
-    [class*="col-xs-"],
-    [class*="col-sm-"],
-    [class*="col-md-"],
-    [class*="col-lg-"] {
-        position: relative;
-        min-height: 1px;
-        padding-right: 15px;
-        padding-left: 15px;
-    }
-
-    [class*="col-xs-"] {
-        float: left;
-    }
-
-    .col-xs-1 { width: 8.333333%; }
-    .col-xs-2 { width: 16.666667%; }
-    .col-xs-3 { width: 25%; }
-    .col-xs-4 { width: 33.333333%; }
-    .col-xs-5 { width: 41.666667%; }
-    .col-xs-6 { width: 50%; }
-    .col-xs-7 { width: 58.333333%; }
-    .col-xs-8 { width: 66.666667%; }
-    .col-xs-9 { width: 75%; }
-    .col-xs-10 { width: 83.333333%; }
-    .col-xs-11 { width: 91.666667%; }
-    .col-xs-12 { width: 100%; }
 
     @media (min-width: 768px) {
-        [class*="col-sm-"] {
-            float: left;
-        }
+        .rex-grid[data-from="sm"] {
+            &[data-columns="6 6"] {
+                grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+            }
 
-        .col-sm-1 { width: 8.333333%; }
-        .col-sm-2 { width: 16.666667%; }
-        .col-sm-3 { width: 25%; }
-        .col-sm-4 { width: 33.333333%; }
-        .col-sm-5 { width: 41.666667%; }
-        .col-sm-6 { width: 50%; }
-        .col-sm-7 { width: 58.333333%; }
-        .col-sm-8 { width: 66.666667%; }
-        .col-sm-9 { width: 75%; }
-        .col-sm-10 { width: 83.333333%; }
-        .col-sm-11 { width: 91.666667%; }
-        .col-sm-12 { width: 100%; }
+            &[data-columns="8 4"] {
+                grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+            }
+
+            &[data-columns="4 8"] {
+                grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+            }
+
+            &[data-columns="7 5"] {
+                grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+            }
+
+            &[data-columns="5 7"] {
+                grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+            }
+
+            &[data-columns="9 3"] {
+                grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
+            }
+
+            &[data-columns="3 9"] {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+            }
+
+            &[data-columns="4 4 4"] {
+                grid-template-columns: minmax(0, 4fr) minmax(0, 4fr) minmax(0, 4fr);
+            }
+
+            &[data-columns="3 3 3 3"] {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3fr);
+            }
+        }
     }
 
     @media (min-width: 992px) {
-        [class*="col-md-"] {
-            float: left;
-        }
+        .rex-grid:is([data-from="md"], :not([data-from])) {
+            &[data-columns="6 6"] {
+                grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+            }
 
-        .col-md-1 { width: 8.333333%; }
-        .col-md-2 { width: 16.666667%; }
-        .col-md-3 { width: 25%; }
-        .col-md-4 { width: 33.333333%; }
-        .col-md-5 { width: 41.666667%; }
-        .col-md-6 { width: 50%; }
-        .col-md-7 { width: 58.333333%; }
-        .col-md-8 { width: 66.666667%; }
-        .col-md-9 { width: 75%; }
-        .col-md-10 { width: 83.333333%; }
-        .col-md-11 { width: 91.666667%; }
-        .col-md-12 { width: 100%; }
+            &[data-columns="8 4"] {
+                grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+            }
+
+            &[data-columns="4 8"] {
+                grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+            }
+
+            &[data-columns="7 5"] {
+                grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+            }
+
+            &[data-columns="5 7"] {
+                grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+            }
+
+            &[data-columns="9 3"] {
+                grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
+            }
+
+            &[data-columns="3 9"] {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+            }
+
+            &[data-columns="4 4 4"] {
+                grid-template-columns: minmax(0, 4fr) minmax(0, 4fr) minmax(0, 4fr);
+            }
+
+            &[data-columns="3 3 3 3"] {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3fr);
+            }
+        }
     }
 
     @media (min-width: 1200px) {
-        [class*="col-lg-"] {
-            float: left;
-        }
+        .rex-grid[data-from="lg"] {
+            &[data-columns="6 6"] {
+                grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+            }
 
-        .col-lg-1 { width: 8.333333%; }
-        .col-lg-2 { width: 16.666667%; }
-        .col-lg-3 { width: 25%; }
-        .col-lg-4 { width: 33.333333%; }
-        .col-lg-5 { width: 41.666667%; }
-        .col-lg-6 { width: 50%; }
-        .col-lg-7 { width: 58.333333%; }
-        .col-lg-8 { width: 66.666667%; }
-        .col-lg-9 { width: 75%; }
-        .col-lg-10 { width: 83.333333%; }
-        .col-lg-11 { width: 91.666667%; }
-        .col-lg-12 { width: 100%; }
+            &[data-columns="8 4"] {
+                grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+            }
+
+            &[data-columns="4 8"] {
+                grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+            }
+
+            &[data-columns="7 5"] {
+                grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+            }
+
+            &[data-columns="5 7"] {
+                grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+            }
+
+            &[data-columns="9 3"] {
+                grid-template-columns: minmax(0, 9fr) minmax(0, 3fr);
+            }
+
+            &[data-columns="3 9"] {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+            }
+
+            &[data-columns="4 4 4"] {
+                grid-template-columns: minmax(0, 4fr) minmax(0, 4fr) minmax(0, 4fr);
+            }
+
+            &[data-columns="3 3 3 3"] {
+                grid-template-columns: minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3fr) minmax(0, 3fr);
+            }
+        }
     }
 
+    /* the second column of a grid aligned to the end, e.g. buttons */
+    .rex-grid > [data-align="end"] {
+        text-align: right;
+    }
 }

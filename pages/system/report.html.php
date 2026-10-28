@@ -16,11 +16,11 @@ use function Redaxo\Core\View\escape;
 
 $report = SystemReport::factory()->get();
 
-echo '<div class="row"><div class="col-sm-6">';
+echo '<div class="rex-grid" data-from="sm" data-columns="6 6"><div>';
 
 foreach ($report as $title => $group) {
     if (SystemReport::TITLE_PACKAGES === $title) {
-        echo '</div><div class="col-sm-6">';
+        echo '</div><div>';
     }
 
     $rows = [];
