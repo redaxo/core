@@ -19,7 +19,8 @@ return static function (FieldRow $row): void {
 
     $widget = $row->widget;
     if (!$group && $widget instanceof Widget) {
-        $widget = clone ($widget, ['attributes' => $widget->attributes->with($description)]);
+        $widget = clone $widget;
+        $widget->attributes = $widget->attributes->with($description);
     }
 
     $tag = $group ? 'fieldset' : 'div';

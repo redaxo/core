@@ -11,8 +11,9 @@ use function Redaxo\Core\View\escape;
  */
 
 $id = '';
-$class = $this->getVar('class', 'rex-input-group');
-$label = (string) $this->getVar('placeholder', I18n::msg('search_placeholder'));
+$class = escape((string) $this->getVar('class', 'rex-input-group'));
+// the placeholder is plain text and names the field as well
+$label = escape((string) $this->getVar('placeholder', I18n::rawMsg('search_placeholder')));
 $placeholder = ' placeholder="' . $label . '" aria-label="' . $label . '"';
 $autofocus = '';
 if (isset($this->autofocus) && $this->autofocus) {
@@ -24,11 +25,11 @@ if ('' !== $value) {
 }
 
 if ($this->id) {
-    $id = ' id="' . $this->id . '"';
+    $id = ' id="' . escape((string) $this->id) . '"';
 }
 
 $name = (string) $this->getVar('name', '');
-$name = $name ? ' name="' . $name . '"' : '';
+$name = $name ? ' name="' . escape($name) . '"' : '';
 
 echo '<search class="' . $class . '" data-size="xs"' . $id . '>
       <span class="rex-input-group-text"><i class="rex-icon rex-icon-search" aria-hidden="true"></i></span>

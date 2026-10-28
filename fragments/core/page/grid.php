@@ -28,6 +28,6 @@ $spans = $this->spans ?? array_fill(0, $count, 'md:' . intdiv(12, max(1, $count)
 
 echo '<div class="rex-grid">';
 foreach ($contents as $key => $content) {
-    echo '<div ' . new HtmlAttributes(['data-span' => $spans[$key] ?? null]) . '>' . $content . '</div>';
+    echo '<div ' . new HtmlAttributes(['data-span' => $spans[$key] ?? null])->toString() . '>' . $content . '</div>';
 }
 echo '</div>';
