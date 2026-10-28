@@ -15,7 +15,7 @@ final class ArticleList extends ArticleListRenderer
 {
     protected function listItem(Article $article, int $categoryId): string
     {
-        $linkClass = $article->isOnline() ? 'rex-online' : 'rex-offline';
+        $linkClass = $article->isOnline() ? 'rex-u-online' : 'rex-u-offline';
         $label = CategoryTreeRenderer::formatLabel($article);
 
         $iconType = match (true) {

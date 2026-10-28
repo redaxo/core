@@ -42,7 +42,7 @@ return static function (Table $table): void {
 
         $url = '' === $html || null === $column->link ? null : ($column->link)($row);
         if (null !== $url) {
-            $html = '<a ' . new HtmlAttributes(['href' => $url] + $column->linkAttributes + ['class' => 'rex-link-expanded'])->toString() . '>' . $html . '</a>';
+            $html = '<a ' . new HtmlAttributes(['href' => $url] + $column->linkAttributes + ['class' => 'rex-u-link-expanded'])->toString() . '>' . $html . '</a>';
         }
 
         // the header labels the cell where the rows become blocks on small screens
@@ -69,7 +69,7 @@ return static function (Table $table): void {
                         $label = (string) Html::from($column->label ?? '');
                         if (null !== $column->sortUrl) {
                             $icon = null === $column->sorted ? '' : ' <i class="rex-icon rex-icon-sort-' . $column->sorted . '" aria-hidden="true"></i>';
-                            $label = '<a class="rex-link-expanded" href="' . escape($column->sortUrl) . '">' . $label . $icon . '</a>';
+                            $label = '<a class="rex-u-link-expanded" href="' . escape($column->sortUrl) . '">' . $label . $icon . '</a>';
                         } ?>
                         <th <?= $column->attributes->with([
                             'class' => $typeClass($column->type),

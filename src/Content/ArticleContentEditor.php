@@ -181,7 +181,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 $statusName = $sliceStatus ? 'online' : 'offline';
                 $item['label'] = I18n::msg('status_' . $statusName);
                 $item['url'] = $context->getUrl(['status' => $sliceStatus ? 0 : 1] + ArticleSliceStatusChange::getUrlParams());
-                $item['attributes']['class'][] = 'rex-' . $statusName;
+                $item['attributes']['class'][] = 'rex-u-' . $statusName;
                 $menuStatusAction = $item;
             }
 

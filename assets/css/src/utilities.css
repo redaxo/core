@@ -1,8 +1,7 @@
 /* Utilities: single purpose classes that win over the components */
 
 @layer utilities {
-    .rex-visually-hidden,
-    .sr-only {
+    .rex-u-visually-hidden {
         position: absolute !important;
         width: 1px !important;
         height: 1px !important;
@@ -14,7 +13,7 @@
         border: 0 !important;
     }
 
-    .sr-only-focusable:is(:active, :focus) {
+    .rex-u-visually-hidden-focusable:is(:active, :focus) {
         position: static !important;
         width: auto !important;
         height: auto !important;
@@ -24,12 +23,11 @@
         white-space: normal !important;
     }
 
-    .hidden,
-    .rex-hidden {
+    .rex-u-hidden {
         display: none !important;
     }
 
-    .rex-visible {
+    .rex-u-visible {
         display: block !important;
     }
 
@@ -37,15 +35,15 @@
         display: none;
     }
 
-    .pull-left {
+    .rex-u-float-start {
         float: left !important;
     }
 
-    .pull-right {
+    .rex-u-float-end {
         float: right !important;
     }
 
-    .clearfix::after {
+    .rex-u-clearfix::after {
         content: "";
         display: table;
         clear: both;
@@ -53,89 +51,87 @@
 
     /* text */
 
-    .small {
+    .rex-u-small {
         font-size: 80%;
     }
 
-    .mark {
+    .rex-u-mark {
         padding: 0.1em 0.3em;
         background-color: var(--rex-color-mark);
         color: inherit;
         font-weight: 700;
     }
 
-    .text-left {
+    .rex-u-align-start {
         text-align: left !important;
     }
 
-    .text-right {
+    .rex-u-align-end {
         text-align: right !important;
     }
 
-    .text-center {
+    .rex-u-align-center {
         text-align: center !important;
     }
 
-    .text-nowrap {
+    .rex-u-nowrap {
         white-space: nowrap !important;
     }
 
-    .text-muted,
-    .rex-author,
-    .rex-filesize {
+    .rex-u-text-muted {
         color: var(--rex-color-text-muted);
     }
 
-    .text-success {
+    .rex-u-text-success {
         color: var(--rex-color-success-text);
     }
 
-    .text-warning {
+    .rex-u-text-warning {
         color: var(--rex-color-warning-text);
     }
 
-    .text-danger {
+    .rex-u-text-danger {
         color: var(--rex-color-danger-text);
     }
 
-    .rex-online {
+    .rex-u-online {
         color: var(--rex-color-success-text);
     }
 
-    .rex-offline {
+    .rex-u-offline {
         color: var(--rex-color-danger-text);
     }
 
-    .rex-word-break {
+    .rex-u-word-break {
         word-break: break-word;
         overflow-wrap: anywhere;
     }
 
-    .rex-text-hyphen {
+    .rex-u-hyphens {
         hyphens: auto;
     }
 
-    .vertical-top {
+    .rex-u-valign-top {
         vertical-align: top !important;
     }
 
-    .vertical-middle {
+    .rex-u-valign-middle {
         vertical-align: middle !important;
     }
 
-    .vertical-bottom {
+    .rex-u-valign-bottom {
         vertical-align: bottom !important;
     }
 
     /* images shrinking to the width of their container */
-    .img-responsive {
+    .rex-u-img-fluid {
         display: block;
         max-width: 100%;
         height: auto;
     }
 
     /* truncated text, `.rex-truncate-expandable` shows it in full on hover */
-    .rex-truncate-target {
+    .rex-u-truncate-target {
         display: inline-block;
         max-width: 150px;
         overflow: hidden;
@@ -148,15 +144,15 @@
         }
     }
 
-    .rex-truncate:is(.rex-truncate-target),
-    .rex-truncate .rex-truncate-target {
+    .rex-u-truncate:is(.rex-u-truncate-target),
+    .rex-u-truncate .rex-u-truncate-target {
         text-overflow: ellipsis;
     }
 
-    .rex-truncate-left {
+    .rex-u-truncate-start {
         position: relative;
 
-        & .rex-truncate-target {
+        & .rex-u-truncate-target {
             margin-left: 15px;
             direction: rtl;
             text-align: right;
@@ -171,12 +167,12 @@
 
     /* lists */
 
-    .list-unstyled {
+    .rex-u-list-unstyled {
         padding-left: 0;
         list-style: none;
     }
 
-    .list-inline {
+    .rex-u-list-inline {
         margin-left: -5px;
         padding-left: 0;
         list-style: none;
@@ -188,14 +184,14 @@
         }
     }
 
-    .dl-horizontal dd::after {
+    .rex-u-dl-horizontal dd::after {
         content: "";
         display: table;
         clear: both;
     }
 
     @media (min-width: 992px) {
-        .dl-horizontal {
+        .rex-u-dl-horizontal {
             & dt {
                 float: left;
                 clear: left;
@@ -206,7 +202,7 @@
                 white-space: nowrap;
             }
 
-            &.text-left > dt {
+            &.rex-u-align-start > dt {
                 text-align: left;
             }
 
@@ -243,7 +239,7 @@
     /* links */
 
     /* enlarges the clickable area of small text links */
-    .rex-link-expanded {
+    .rex-u-link-expanded {
         display: inline-block;
         margin: -4px -7px;
         padding: 4px 7px;
@@ -257,16 +253,16 @@
 
     /* effects */
 
-    .rex-pulse {
+    .rex-u-pulse {
         animation: rex-pulse 5s ease infinite;
     }
 
     /* highlights the row a link points to, e.g. a required package */
-    .rex-targeted-rows :target {
+    .rex-u-targeted-rows :target {
         animation: rex-fade-in-highlight 3s 3s backwards;
     }
 
-    .rex-scrollable {
+    .rex-u-scrollable {
         max-height: 500px;
         overflow-y: scroll;
 

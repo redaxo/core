@@ -53,7 +53,7 @@ if ('' == $func) {
 
     $list->column(
         'icon',
-        Html::raw('<a class="rex-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . '><i class="rex-icon rex-icon-add-userrole"></i></a>'),
+        Html::raw('<a class="rex-u-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user_role'), 'add') . '><i class="rex-icon rex-icon-add-userrole"></i></a>'),
         static fn (): Html => Html::raw('<i class="rex-icon rex-icon-userrole"></i>'),
         type: ColumnType::Icon,
         link: $editUrl,

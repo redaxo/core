@@ -69,7 +69,7 @@ $url3500Webp = Url::coreAssets('images/' . $pictureName . '-3500.webp');
 
 <footer class="rex-global-footer">
     <nav class="rex-nav-footer">
-        <ul class="list-inline">
+        <ul class="rex-u-list-inline">
             <li><a href="https://www.yakamara.de" target="_blank" rel="noreferrer noopener">yakamara.de</a></li>
             <li><a href="https://www.redaxo.org" target="_blank" rel="noreferrer noopener">redaxo.org</a></li>
             <li class="rex-background-credits">Photo by <a href="https://unsplash.com/de/@jrkorpa" target="_blank" rel="noreferrer noopener">@jrkorpa</a> on <a href="https://unsplash.com/de/fotos/braun-weisse-abstrakte-malerei-UFx4NcvTRBE"  target="_blank" rel="noreferrer noopener">Unsplash</a></li>

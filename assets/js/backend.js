@@ -11,7 +11,7 @@ function region(assertive) {
   const key2 = assertive ? "assertive" : "polite";
   if (!regions[key2]?.isConnected) {
     const element = document.createElement("div");
-    element.className = "rex-visually-hidden";
+    element.className = "rex-u-visually-hidden";
     element.setAttribute("role", assertive ? "alert" : "status");
     document.body.append(element);
     regions[key2] = element;
@@ -1252,7 +1252,7 @@ function failed(form, error) {
   announce(message, { assertive: true });
 }
 var authAddPasskey = function(form) {
-  form.classList.remove("hidden");
+  form.classList.remove("rex-u-hidden");
   const passkey = form.querySelector("[data-auth-passkey]");
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -1281,7 +1281,7 @@ var authPasskeyVerify = function(form) {
     authVerify(verify.dataset.authPasskeyVerify, "required", form, (value) => {
       passkey.value = value;
       button.disabled = true;
-      verify.querySelector("i").classList.remove("hidden");
+      verify.querySelector("i").classList.remove("rex-u-hidden");
       fields.forEach((field) => field.disabled = false);
     });
   });

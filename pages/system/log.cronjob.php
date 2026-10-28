@@ -134,8 +134,8 @@ if (!$cronjobs) {
 } else {
     $overview = (string) new Table([
         new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob"></i>'), ColumnType::Icon),
-        new TableColumn(I18n::msg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
-        new TableColumn(I18n::msg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="text-nowrap">' . escape($cronjob->schedule) . '</code>')),
+        new TableColumn(I18n::msg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="rex-u-text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
+        new TableColumn(I18n::msg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="rex-u-nowrap">' . escape($cronjob->schedule) . '</code>')),
         new TableColumn(I18n::msg('cronjob_lastrun'), static function (Cronjob $cronjob) use ($states): Html {
             $state = $states[$cronjob->name] ?? null;
             $lastRun = $state['lastRun'] ?? null;
@@ -145,13 +145,13 @@ if (!$cronjobs) {
 
             $text = Formatter::intlDateTime($lastRun);
             if ($state['running']) {
-                return Html::raw($text . ' <span class="text-muted">(' . I18n::msg('cronjob_running') . ')</span>');
+                return Html::raw($text . ' <span class="rex-u-text-muted">(' . I18n::msg('cronjob_running') . ')</span>');
             }
             if (true === $state['lastSuccess']) {
-                return Html::raw('<span class="rex-online"><i class="rex-icon rex-icon-active-true"></i> ' . $text . '</span>');
+                return Html::raw('<span class="rex-u-online"><i class="rex-icon rex-icon-active-true"></i> ' . $text . '</span>');
             }
             if (false === $state['lastSuccess']) {
-                return Html::raw('<span class="rex-offline"><i class="rex-icon rex-icon-active-false"></i> ' . $text . '</span>');
+                return Html::raw('<span class="rex-u-offline"><i class="rex-icon rex-icon-active-false"></i> ' . $text . '</span>');
             }
             return Html::raw($text);
         }, attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
@@ -160,7 +160,7 @@ if (!$cronjobs) {
                 return '–';
             }
             if (!CronjobManager::isEnabled($cronjob->name)) {
-                return Html::raw('<span class="text-muted">' . I18n::msg('cronjob_not_enabled') . '</span>');
+                return Html::raw('<span class="rex-u-text-muted">' . I18n::msg('cronjob_not_enabled') . '</span>');
             }
             return Formatter::intlDateTime($cronjob->getNextRunDate($states[$cronjob->name]['lastRun'] ?? $now));
         }, attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),

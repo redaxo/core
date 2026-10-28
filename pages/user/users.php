@@ -311,10 +311,10 @@ $editUrl = static fn (array $row): ?string => !$row['admin'] || $currentUser->ad
 
 $list->column(
     'icon',
-    Html::raw('<a class="rex-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user'), 'add') . '><i class="rex-icon rex-icon-add-user"></i></a>'),
+    Html::raw('<a class="rex-u-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user'), 'add') . '><i class="rex-icon rex-icon-add-user"></i></a>'),
     static fn (array $row): Html => $row['status']
         ? Html::raw('<i class="rex-icon rex-icon-user" title="' . I18n::msg('user_status_active') . '"></i>')
-        : Html::raw('<i class="rex-icon rex-icon-user-inactive text-muted" title="' . I18n::msg('user_status_inactive') . '"></i>'),
+        : Html::raw('<i class="rex-icon rex-icon-user-inactive rex-u-text-muted" title="' . I18n::msg('user_status_inactive') . '"></i>'),
     type: ColumnType::Icon,
     link: $editUrl,
 );
@@ -322,7 +322,7 @@ $list->column('id', 'Id', type: ColumnType::Id, sortable: true);
 $list->column('name', I18n::msg('name'), sortable: true, link: $editUrl);
 $list->column('login', I18n::msg('login'), static fn (array $row): string|Html => $row['status']
     ? (string) $row['login']
-    : Html::raw('<span class="text-muted">' . escape((string) $row['login']) . '</span>'), sortable: true);
+    : Html::raw('<span class="rex-u-text-muted">' . escape((string) $row['login']) . '</span>'), sortable: true);
 $list->column('role', I18n::msg('user_role'), static function (array $row) use ($noRole, $separator): Renderable {
     if ($noRole === $row['role']) {
         return new Badge(I18n::msg('user_no_role'), BadgeVariant::Warning);
@@ -331,7 +331,7 @@ $list->column('role', I18n::msg('user_role'), static function (array $row) use (
         return new Badge(I18n::msg('user_admin'), BadgeVariant::Success);
     }
 
-    return Html::raw('<div class="rex-docs"><ul class="small"><li>' . implode('</li><li>', explode($separator, escape((string) $row['role']))) . '</li></ul></div>');
+    return Html::raw('<div class="rex-docs"><ul class="rex-u-small"><li>' . implode('</li><li>', explode($separator, escape((string) $row['role']))) . '</li></ul></div>');
 }, sortable: true);
 $list->column('lastlogin', I18n::msg('last_login'), static fn (array $row): string => Formatter::intlDateTime(null === $row['lastlogin'] ? null : (string) $row['lastlogin']), sortable: 'desc');
 
@@ -354,7 +354,7 @@ if ($currentUser->admin) {
         if (Core::getImpersonator() || $row['id'] == $currentUser->id) {
             return Html::raw('<span class="rex-text-disabled">' . $label . '</span>');
         }
-        return Html::raw('<a class="rex-link-expanded" href="' . escape(Url::currentBackendPage(['_impersonate' => (int) $row['id']] + UserImpersonate::getUrlParams())) . '">' . $label . '</a>');
+        return Html::raw('<a class="rex-u-link-expanded" href="' . escape(Url::currentBackendPage(['_impersonate' => (int) $row['id']] + UserImpersonate::getUrlParams())) . '">' . $label . '</a>');
     }, type: ColumnType::Action);
 }
 

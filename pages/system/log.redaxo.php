@@ -84,13 +84,13 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
         if ($url = $editor->getUrl($fullPath, (int) ($line ?? 1))) {
             $path = '<a href="' . $url . '">' . $path . '</a>';
         }
-        $path = '<small class="rex-word-break"><span class="rex-badge">' . I18n::msg('syslog_file') . ':</span> ' . $path . '</small><br>';
+        $path = '<small class="rex-u-word-break"><span class="rex-badge">' . I18n::msg('syslog_file') . ':</span> ' . $path . '</small><br>';
     }
 
     $url = $data[4] ?? null;
     if ($url) {
         $url = escape($url);
-        $url = '<small class="rex-word-break"><span class="rex-badge">' . I18n::msg('syslog_url') . ':</span> <a href="' . $url . '">' . $url . '</a></small>';
+        $url = '<small class="rex-u-word-break"><span class="rex-badge">' . I18n::msg('syslog_url') . ':</span> <a href="' . $url . '">' . $url . '</a></small>';
     } else {
         $url = '';
     }
@@ -98,7 +98,7 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
     $rows[] = [
         'time' => Html::raw('<small>' . Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</small><br>
                         <span class="rex-badge" data-variant="' . $class . '">' . escape($type) . '</span>'),
-        'message' => Html::raw('<div class="rex-word-break rex-log-message">' . nl2br(escape($message)) . '</div>
+        'message' => Html::raw('<div class="rex-u-word-break rex-log-message">' . nl2br(escape($message)) . '</div>
                         ' . $path . '
                         ' . $url),
     ];

@@ -65,7 +65,7 @@ abstract class CategoryTreeRenderer
             $subLi = '';
             $liIcon = '<i class="rex-icon rex-icon-category" aria-hidden="true"></i> ';
 
-            $linkclasses .= $cat->isOnline() ? 'rex-online ' : 'rex-offline ';
+            $linkclasses .= $cat->isOnline() ? 'rex-u-online ' : 'rex-u-offline ';
             if (in_array($catId, $activeTreeIds)) {
                 $subLi = $this->renderTree($catChildren, $activeTreeIds);
                 $liIcon = '<i class="rex-icon rex-icon-open-category" aria-hidden="true"></i> ';

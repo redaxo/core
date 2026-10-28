@@ -20,7 +20,7 @@ function failed(form, error) {
 }
 
 const authAddPasskey = function (form) {
-    form.classList.remove('hidden');
+    form.classList.remove('rex-u-hidden');
 
     const passkey = form.querySelector('[data-auth-passkey]');
 
@@ -60,7 +60,7 @@ const authPasskeyVerify = function (form) {
         authVerify(verify.dataset.authPasskeyVerify, 'required', form, value => {
             passkey.value = value;
             button.disabled = true;
-            verify.querySelector('i').classList.remove('hidden');
+            verify.querySelector('i').classList.remove('rex-u-hidden');
             fields.forEach(field => field.disabled = false);
         });
     });

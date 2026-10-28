@@ -1,7 +1,7 @@
 /*
  Tables (`.rex-table`, Redaxo\Core\View\Component\Table): `data-hover` highlights the row under the pointer,
  `data-bordered` draws all cell borders, `data-density="compact"` reduces the padding. Column helpers
- (`.rex-table-*`), highlighted rows (`tr.mark`), row states (`.rex-state-*`) and, below 768px, one block per row with
+ (`.rex-table-*`), highlighted rows (`tr.rex-u-mark`), row states (`.rex-state-*`) and, below 768px, one block per row with
  the column titles taken from `data-title`.
  */
 
@@ -80,7 +80,7 @@
     }
 
     /* highlighted row, e.g. the add and edit rows of the structure */
-    .rex-table > tbody > tr.mark {
+    .rex-table > tbody > tr.rex-u-mark {
         background-color: var(--rex-color-surface-muted);
 
         & > :is(th, td) {

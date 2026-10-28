@@ -6,7 +6,7 @@ function region(assertive) {
     const key = assertive ? 'assertive' : 'polite';
     if (!regions[key]?.isConnected) {
         const element = document.createElement('div');
-        element.className = 'rex-visually-hidden';
+        element.className = 'rex-u-visually-hidden';
         element.setAttribute('role', assertive ? 'alert' : 'status');
         document.body.append(element);
         regions[key] = element;

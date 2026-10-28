@@ -15,6 +15,6 @@ return static function (Button $button): void {
     ]);
     $tag = null === $button->url ? 'button' : 'a';
     $icon = null === $button->icon ? '' : new Icon($button->icon)->render();
-    $label = $button->hiddenLabel ? '<span class="sr-only">' . (string) Html::from($button->label) . '</span>' : Html::from($button->label) ?>
+    $label = $button->hiddenLabel ? '<span class="rex-u-visually-hidden">' . (string) Html::from($button->label) . '</span>' : Html::from($button->label) ?>
     <<?= $tag ?> <?= $attributes ?>><?= $icon ?><?= $label ?></<?= $tag ?>>
 <?php };

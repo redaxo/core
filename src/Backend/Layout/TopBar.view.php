@@ -26,7 +26,7 @@ return static function (TopBar $bar): void {
         <?php endif ?>
         <?php if (!$bar->login && !$bar->popup): ?>
             <button type="button" class="rex-topbar__toggle" id="rex-js-nav-main-toggle" aria-controls="rex-js-nav-main" aria-expanded="false">
-                <span class="rex-visually-hidden"><?= I18n::msg('navigation_toggle') ?></span>
+                <span class="rex-u-visually-hidden"><?= I18n::msg('navigation_toggle') ?></span>
                 <span class="rex-topbar__bars"><span></span><span></span><span></span></span>
             </button>
         <?php endif ?>
@@ -34,24 +34,24 @@ return static function (TopBar $bar): void {
             <?php if ($bar->popup): ?>
                 <span class="rex-topbar__brand"><?= $logo ?></span>
             <?php else: ?>
-                <a class="rex-topbar__brand" href="<?= Url::backendController() ?>"><?= $logo ?><span class="rex-visually-hidden">REDAXO</span></a>
+                <a class="rex-topbar__brand" href="<?= Url::backendController() ?>"><?= $logo ?><span class="rex-u-visually-hidden">REDAXO</span></a>
             <?php endif ?>
             <?php if (!$bar->popup && Core::getUser()?->admin && Core::isDevMode()): ?>
                 <?php if (null !== $devModeMarkerUrl = Appearance::$devModeMarkerUrl): ?>
                     <a class="rex-topbar__devmode" href="<?= escape($devModeMarkerUrl) ?>" target="_blank" title="<?= I18n::msg('dev_mode_marker') ?>">
-                        <i class="rex-icon rex-icon-heartbeat rex-pulse" aria-hidden="true"></i>
-                        <span class="rex-visually-hidden"><?= I18n::msg('dev_mode_marker') ?> (<?= I18n::msg('link_new_window') ?>)</span>
+                        <i class="rex-icon rex-icon-heartbeat rex-u-pulse" aria-hidden="true"></i>
+                        <span class="rex-u-visually-hidden"><?= I18n::msg('dev_mode_marker') ?> (<?= I18n::msg('link_new_window') ?>)</span>
                     </a>
                 <?php else: ?>
                     <span class="rex-topbar__devmode" title="<?= I18n::msg('dev_mode_marker') ?>">
-                        <i class="rex-icon rex-icon-heartbeat rex-pulse" aria-hidden="true"></i>
-                        <span class="rex-visually-hidden"><?= I18n::msg('dev_mode_marker') ?></span>
+                        <i class="rex-icon rex-icon-heartbeat rex-u-pulse" aria-hidden="true"></i>
+                        <span class="rex-u-visually-hidden"><?= I18n::msg('dev_mode_marker') ?></span>
                     </span>
                 <?php endif ?>
             <?php endif ?>
             <?php if (!$bar->popup && Core::getUser()): ?>
                 <p class="rex-topbar__title">
-                    <a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-topbar__title-name"><?= escape(Core::getProject()->instanceName) ?></span><i class="rex-icon rex-icon-external-link" aria-hidden="true"></i><span class="rex-visually-hidden"> (<?= I18n::msg('link_new_window') ?>)</span></a>
+                    <a href="<?= Url::frontend() ?>" target="_blank" rel="noreferrer noopener"><span class="rex-topbar__title-name"><?= escape(Core::getProject()->instanceName) ?></span><i class="rex-icon rex-icon-external-link" aria-hidden="true"></i><span class="rex-u-visually-hidden"> (<?= I18n::msg('link_new_window') ?>)</span></a>
                 </p>
             <?php endif ?>
         </div>

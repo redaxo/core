@@ -47,7 +47,7 @@ $content = '';
 $formElements = [];
 $n = [];
 $n['label'] = '<label>' . I18n::msg('mailer_archive_path') . '</label>';
-$n['field'] = '<code class="rex-word-break">' . escape($archiveFolder) . '</code>';
+$n['field'] = '<code class="rex-u-word-break">' . escape($archiveFolder) . '</code>';
 $formElements[] = $n;
 
 if ($archiveExists) {
@@ -66,7 +66,7 @@ if ($archiveExists) {
 } else {
     $n = [];
     $n['label'] = '<label>' . I18n::msg('mailer_archive_status') . '</label>';
-    $n['field'] = '<span class="text-muted">' . I18n::msg('mailer_archive_empty') . '</span>';
+    $n['field'] = '<span class="rex-u-text-muted">' . I18n::msg('mailer_archive_empty') . '</span>';
     $formElements[] = $n;
 }
 
@@ -134,7 +134,7 @@ if ($archiveExists) {
         TableColumn::forKey(I18n::msg('mailer_archive_subject'), 'subject'),
         TableColumn::forKey(I18n::msg('mailer_archive_to'), 'to'),
         TableColumn::forKey(I18n::msg('mailer_archive_size'), 'size', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
-    ], $rows ?: [new TableRow([new TableCell(I18n::msg('mailer_archive_no_files'), 4, new HtmlAttributes(['class' => ['text-muted', 'text-center']]))])],
+    ], $rows ?: [new TableRow([new TableCell(I18n::msg('mailer_archive_no_files'), 4, new HtmlAttributes(['class' => ['rex-u-text-muted', 'rex-u-align-center']]))])],
         attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
     $fragment = new Fragment();

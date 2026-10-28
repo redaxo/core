@@ -74,13 +74,13 @@ if (0 == $article->getValue('startarticle')) {
             ] + ArticleStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $articleIcon . '"></i>&nbsp;' . $articleStatus . '</a>';
         }
     } else {
-        $articleStatus = '<span class="' . $articleClass . ' text-muted"><i class="rex-icon ' . $articleIcon . '"></i> ' . $articleStatus . '</span>';
+        $articleStatus = '<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '"></i> ' . $articleStatus . '</span>';
     }
 }
 
 $panels[] = '<dt>' . I18n::msg('status') . '</dt><dd class="' . $articleStatusTypes[$status][1] . '">' . $articleStatus . '</dd>';
 
-$content[] = '<dl class="dl-horizontal text-left">' . implode('', $panels) . '</dl>';
+$content[] = '<dl class="rex-u-dl-horizontal rex-u-align-start">' . implode('', $panels) . '</dl>';
 
 // ------------------
 
@@ -152,7 +152,7 @@ if (1 == $article->getRows()) {
                         <input type="hidden" name="content_section_id" value="' . $ctype . '" />
                         ' . $csrfToken->getHiddenField() . '
                         ' . $form . '
-                        <button class="rex-button pull-left" data-variant="primary" type="submit" name="savemeta"' . Accesskey::attributes(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
+                        <button class="rex-button rex-u-float-start" data-variant="primary" type="submit" name="savemeta"' . Accesskey::attributes(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
                     </fieldset>
                 </form>
               </div>

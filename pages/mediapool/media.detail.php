@@ -172,7 +172,7 @@ if ($fwidth > 0 && $fheight > 0) {
 // image driver can actually rasterise here (images always, plus e.g. PDF with Imagick + Ghostscript)
 if ($isSvg || MediaManager::canPreview($fileExt)) {
     if (!is_file(Path::media($fname))) {
-        $sidebar = '<i class="rex-mime rex-mime-error"></i><span class="sr-only">' . $fname . '</span>';
+        $sidebar = '<i class="rex-mime rex-mime-error"></i><span class="rex-u-visually-hidden">' . $fname . '</span>';
     } else {
         if ($isSvg) {
             $rfwidth = min($fwidth, 200);
@@ -187,7 +187,7 @@ if ($isSvg || MediaManager::canPreview($fileExt)) {
 
         $sidebar = '
                 <a href="' . $imgMax . '">
-                    <img class="img-responsive" src="' . $imgn . '"' . $width . ' alt="' . escape($ftitle) . '" title="' . escape($ftitle) . '" />
+                    <img class="rex-u-img-fluid" src="' . $imgn . '"' . $width . ' alt="' . escape($ftitle) . '" title="' . escape($ftitle) . '" />
                 </a>';
     }
 }
@@ -255,17 +255,17 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_filename') . '</label>';
-    $e['field'] = '<p class="rex-field-value rex-word-break"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a> <span class="rex-filesize">' . $ffileSize . '</span></p>';
+    $e['field'] = '<p class="rex-field-value rex-u-word-break"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a> <span class="rex-u-text-muted">' . $ffileSize . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
@@ -340,17 +340,17 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_filename') . '</label>';
-    $e['field'] = '<p class="rex-field-value"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a>  <span class="rex-filesize">' . $ffileSize . '</span></p>';
+    $e['field'] = '<p class="rex-field-value"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a>  <span class="rex-u-text-muted">' . $ffileSize . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $fragment = new Fragment();

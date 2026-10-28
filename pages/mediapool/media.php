@@ -88,7 +88,7 @@ $languageSwitch = View::languageSwitchAsButtons(new Context([
     'language' => Language::getCurrentId(),
 ]));
 if ('' !== $languageSwitch) {
-    echo '<div class="clearfix">' . $languageSwitch . '</div>';
+    echo '<div class="rex-u-clearfix">' . $languageSwitch . '</div>';
 }
 
 $toolbar = Extension::dispatch(new MediaListToolbar($subpage, $rexFileCategory > 0 ? MediaCategory::get($rexFileCategory) : null, $toolbar));

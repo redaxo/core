@@ -214,7 +214,7 @@ final class View
             }
         }
 
-        $title = '<a class="rex-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
+        $title = '<a class="rex-u-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
 
         return (string) new Breadcrumb(
             array_map(static fn (array $item): array => ['title' => Html::raw($item['title']), 'href' => $item['href'] ?? ''], $navigation),
@@ -283,8 +283,8 @@ final class View
             $e['label'] = '<label for="rex-mediapool-choose-file">' . I18n::msg('pool_file_file') . '</label>';
             $e['field'] = '<input id="rex-mediapool-choose-file" type="file" name="file_new" />';
             $e['after'] = '<h3>' . I18n::msg('phpini_settings') . '</h3>
-                        <dl class="dl-horizontal text-left">
-                        ' . ((0 == ini_get('file_uploads')) ? '<dt><span class="text-warning">' . I18n::msg('pool_upload') . '</span></dt><dd><span class="text-warning">' . I18n::msg('pool_upload_disabled') . '</span></dd>' : '') . '
+                        <dl class="rex-u-dl-horizontal rex-u-align-start">
+                        ' . ((0 == ini_get('file_uploads')) ? '<dt><span class="rex-u-text-warning">' . I18n::msg('pool_upload') . '</span></dt><dd><span class="rex-u-text-warning">' . I18n::msg('pool_upload_disabled') . '</span></dd>' : '') . '
                             <dt>' . I18n::msg('pool_max_uploadsize') . ':</dt><dd>' . Formatter::bytes(Request::getMaxUploadSize()) . '</dd>
                             <dt>' . I18n::msg('pool_max_uploadtime') . ':</dt><dd>' . ini_get('max_input_time') . 's</dd>
                         </dl>';

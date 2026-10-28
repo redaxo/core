@@ -212,7 +212,7 @@ $confirmField = static function (string $id) use ($login, $passkeyVerify): strin
         $n['label'] = '<label for="' . $id . '">' . I18n::msg('passkey_current') . '</label>';
         $n['field'] = '<div data-auth-passkey-verify="' . escape($passkeyVerify) . '">
         <button type="button" class="rex-button" data-variant="primary" id="' . $id . '">' . I18n::msg('passkey_current_verify') . '</button>
-        <i class="fa-regular fa-circle-check text-success hidden"></i>
+        <i class="fa-regular fa-circle-check rex-u-text-success rex-u-hidden"></i>
         <input type="hidden" name="passkey_verify"/>
     </div>';
     } else {
@@ -302,7 +302,7 @@ $content = '
 if (!$passwordChangeRequired) {
     $content .= '
         <div>
-            <form class="hidden" action="' . Url::currentBackendPage() . '" method="post" data-auth-add-passkey>
+            <form class="rex-u-hidden" action="' . Url::currentBackendPage() . '" method="post" data-auth-add-passkey>
                 <input type="hidden" name="function" value="add_passkey"/>
                 ' . $csrfToken->getHiddenField() . '
                 ' . $addPasskey . '

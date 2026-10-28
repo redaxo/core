@@ -14,7 +14,7 @@ return static function (Toolbar $toolbar): void {
             <span class="rex-toolbar-brand"><?= Html::from($toolbar->brand) ?></span>
         <?php endif ?>
         <button type="button" class="rex-toolbar-toggle" data-toggle="collapse" data-target="#<?= $target ?>" aria-controls="<?= $target ?>" aria-expanded="false">
-            <i class="rex-icon fa-solid fa-bars" aria-hidden="true"></i><span class="rex-visually-hidden"><?= I18n::msg('toolbar_toggle') ?></span>
+            <i class="rex-icon fa-solid fa-bars" aria-hidden="true"></i><span class="rex-u-visually-hidden"><?= I18n::msg('toolbar_toggle') ?></span>
         </button>
         <div class="rex-toolbar-content" id="<?= $target ?>">
             <?= Html::from($toolbar->content) ?>

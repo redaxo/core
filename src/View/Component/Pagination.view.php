@@ -24,7 +24,7 @@ return static function (Pagination $pagination): void {
     // at the first or last page, the step is no link
     $step = static fn (bool $disabled, int $target, string $label, string $icon): string => '<li>'
         . ($disabled ? '<span class="rex-pagination-link" aria-disabled="true">' : '<a class="rex-pagination-link" href="' . $url($target) . '">')
-        . '<i class="rex-icon ' . $icon . '" aria-hidden="true"></i><span class="rex-visually-hidden">' . I18n::msg($label) . '</span>'
+        . '<i class="rex-icon ' . $icon . '" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg($label) . '</span>'
         . ($disabled ? '</span>' : '</a>')
         . '</li>';
     $gap = '<li><span class="rex-pagination-link" aria-hidden="true">…</span></li>' ?>

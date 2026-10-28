@@ -111,17 +111,17 @@ if ($PERMALL) {
 
     $table = (string) new Table([
         new TableColumn(
-            Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'add') . '><i class="rex-icon rex-icon-add-media-category"></i></a>'),
+            Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=add_cat"' . Accesskey::attributes(I18n::msg('pool_kat_create'), 'add') . '><i class="rex-icon rex-icon-add-media-category"></i></a>'),
             static fn (?MediaCategory $category): Html => null === $category || $form($category)
                 ? Html::raw('<i class="rex-icon rex-icon-media-category"></i>')
-                : Html::raw('<a class="rex-link-expanded" href="' . $link . $category->id . '" title="' . escape($category->name) . '"><i class="rex-icon rex-icon-media-category"></i></a>'),
+                : Html::raw('<a class="rex-u-link-expanded" href="' . $link . $category->id . '" title="' . escape($category->name) . '"><i class="rex-icon rex-icon-media-category"></i></a>'),
             ColumnType::Icon,
         ),
         new TableColumn(I18n::msg('id'), static fn (?MediaCategory $category): int|string => $category->id ?? '-', ColumnType::Id),
         new TableColumn(I18n::msg('pool_kat_name'), static fn (?MediaCategory $category): Html => match (true) {
             null === $category => Html::raw('<input class="rex-input" type="text" name="catname" value="" autofocus />'),
             $form($category) => Html::raw('<input class="rex-input" type="text" name="cat_name" value="' . escape($category->name) . '" autofocus />'),
-            default => Html::raw('<a class="rex-link-expanded" href="' . $link . $category->id . '">' . escape($category->name) . '</a>'),
+            default => Html::raw('<a class="rex-u-link-expanded" href="' . $link . $category->id . '">' . escape($category->name) . '</a>'),
         }),
         new TableColumn(I18n::msg('pool_kat_function'), static function (?MediaCategory $category) use ($form, $link, $catId, $editId): Html|TableCell {
             if (null === $category) {
@@ -131,11 +131,11 @@ if ($PERMALL) {
                 return new TableCell(Html::raw('<input type="hidden" name="edit_id" value="' . $editId . '" />
                         <button class="rex-button" data-variant="success" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Accesskey::attributes(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>'), 2);
             }
-            return Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $category->id . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('pool_kat_edit') . '</a>');
+            return Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $category->id . '"><i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('pool_kat_edit') . '</a>');
         }, ColumnType::Action),
-        new TableColumn(null, static fn (MediaCategory $category): Html => Html::raw('<a class="rex-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), ColumnType::Action),
+        new TableColumn(null, static fn (MediaCategory $category): Html => Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), ColumnType::Action),
     ], [...('add_cat' == $mediaMethod ? [null] : []), ...$OOCats],
-        rowAttributes: static fn (?MediaCategory $category): HtmlAttributes => new HtmlAttributes(['class' => ['mark' => null === $category || $form($category)]]),
+        rowAttributes: static fn (?MediaCategory $category): HtmlAttributes => new HtmlAttributes(['class' => ['rex-u-mark' => null === $category || $form($category)]]),
         attributes: new HtmlAttributes(['data-hover' => true]),
     )->render();
 
