@@ -23,82 +23,9 @@
       <code><![CDATA[$content]]></code>
     </PossiblyFalseOperand>
   </file>
-  <file src="fragments/core/buttons/button.php">
-    <MixedArgument>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']['class']]]></code>
-      <code><![CDATA[$button['attributes']['class']]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']['class']]]></code>
-      <code><![CDATA[$button['attributes']['class']]]></code>
-      <code><![CDATA[$button['hidden_label']]]></code>
-      <code><![CDATA[$button['icon']]]></code>
-      <code><![CDATA[$button['label']]]></code>
-      <code><![CDATA[$button['url']]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']]]></code>
-      <code><![CDATA[$button['attributes']['class']]]></code>
-      <code><![CDATA[$button['attributes']['class']]]></code>
-      <code><![CDATA[$button['label']]]></code>
-      <code><![CDATA[$button['label']]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$button]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$button['hidden_label']]]></code>
-      <code><![CDATA[$button['icon']]]></code>
-      <code><![CDATA[$button['label']]]></code>
-      <code><![CDATA[escape($button['url'])]]></code>
-    </MixedOperand>
-  </file>
-  <file src="fragments/core/buttons/button_group.php">
-    <MixedArgument>
-      <code><![CDATA[$this->size]]></code>
-    </MixedArgument>
-    <MixedOperand>
-      <code><![CDATA[$this->size]]></code>
-    </MixedOperand>
-  </file>
-  <file src="fragments/core/dropdowns/dropdown.php">
-    <MixedArgument>
-      <code><![CDATA[$item['attributes']]]></code>
-      <code><![CDATA[$this->button_prefix]]></code>
-      <code><![CDATA[$this->footer]]></code>
-      <code><![CDATA[$this->header]]></code>
-      <code><![CDATA[(isset($item['href']) && '' != $item['href']) ? '<a href="' . escape($item['href']) . '">' . $item['title'] . '</a>' : $item['title']]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$item['attributes']]]></code>
-      <code><![CDATA[$item['title']]]></code>
-    </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$item]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$item['title']]]></code>
-      <code><![CDATA[$this->button_label]]></code>
-      <code><![CDATA[$this->class]]></code>
-      <code><![CDATA[escape($item['href'])]]></code>
-    </MixedOperand>
-  </file>
   <file src="fragments/core/fe_ooops.php">
     <MixedArgument>
       <code><![CDATA[$this->getVar('content', '')]]></code>
-    </MixedArgument>
-  </file>
-  <file src="fragments/core/footer.php">
-    <MixedArgument>
-      <code><![CDATA[$this->time]]></code>
     </MixedArgument>
   </file>
   <file src="fragments/core/form/checkbox.php">
@@ -141,19 +68,27 @@
     </MixedOperand>
   </file>
   <file src="fragments/core/form/form.php">
+    <MixedArgument>
+      <code><![CDATA[$field]]></code>
+      <code><![CDATA[$label]]></code>
+    </MixedArgument>
     <MixedArrayAccess>
       <code><![CDATA[$element['after']]]></code>
       <code><![CDATA[$element['before']]]></code>
+      <code><![CDATA[$element['field']]]></code>
       <code><![CDATA[$element['footer']]]></code>
       <code><![CDATA[$element['header']]]></code>
+      <code><![CDATA[$element['label']]]></code>
     </MixedArrayAccess>
     <MixedAssignment>
       <code><![CDATA[$after]]></code>
       <code><![CDATA[$before]]></code>
       <code><![CDATA[$element]]></code>
       <code><![CDATA[$field]]></code>
+      <code><![CDATA[$field]]></code>
       <code><![CDATA[$footer]]></code>
       <code><![CDATA[$header]]></code>
+      <code><![CDATA[$label]]></code>
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$after]]></code>
@@ -161,11 +96,11 @@
       <code><![CDATA[$element['class']]]></code>
       <code><![CDATA[$element['error']]]></code>
       <code><![CDATA[$element['id']]]></code>
-      <code><![CDATA[$element['label']]]></code>
       <code><![CDATA[$element['note']]]></code>
       <code><![CDATA[$field]]></code>
       <code><![CDATA[$footer]]></code>
       <code><![CDATA[$header]]></code>
+      <code><![CDATA[$label]]></code>
     </MixedOperand>
   </file>
   <file src="fragments/core/form/input_group.php">
@@ -199,16 +134,6 @@
       <code><![CDATA[$rightSide]]></code>
     </MixedOperand>
   </file>
-  <file src="fragments/core/form/search.php">
-    <MixedAssignment>
-      <code><![CDATA[$class]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$class]]></code>
-      <code><![CDATA[$this->getVar('placeholder', I18n::msg('search_placeholder'))]]></code>
-      <code><![CDATA[$this->id]]></code>
-    </MixedOperand>
-  </file>
   <file src="fragments/core/form/submit.php">
     <MixedArrayAccess>
       <code><![CDATA[$element['field']]]></code>
@@ -219,126 +144,6 @@
     </MixedAssignment>
     <MixedOperand>
       <code><![CDATA[$field]]></code>
-    </MixedOperand>
-  </file>
-  <file src="fragments/core/header.php">
-    <MixedArgument>
-      <code><![CDATA[$this->meta_navigation]]></code>
-    </MixedArgument>
-  </file>
-  <file src="fragments/core/navigation.php">
-    <MixedArgument>
-      <code><![CDATA[$this->navigation]]></code>
-    </MixedArgument>
-  </file>
-  <file src="fragments/core/navigations/breadcrumb.php">
-    <MixedArgument>
-      <code><![CDATA[$items]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$item]]></code>
-      <code><![CDATA[$items]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$item['title']]]></code>
-      <code><![CDATA[$this->id]]></code>
-      <code><![CDATA[$this->title]]></code>
-      <code><![CDATA[escape($item['href'])]]></code>
-    </MixedOperand>
-  </file>
-  <file src="fragments/core/navigations/content.php">
-    <MixedArgument>
-      <code><![CDATA[$navi['children']]]></code>
-      <code><![CDATA[$navi['itemAttr']]]></code>
-      <code><![CDATA[$navi['itemClasses']]]></code>
-      <code><![CDATA[$navi['itemClasses']]]></code>
-      <code><![CDATA[$navi['itemClasses']]]></code>
-      <code><![CDATA[$navi['itemClasses']]]></code>
-      <code><![CDATA[$navi['linkAttr']]]></code>
-      <code><![CDATA[$navi['linkClasses']]]></code>
-      <code><![CDATA[$navi['linkClasses']]]></code>
-      <code><![CDATA[$this->right]]></code>
-    </MixedArgument>
-    <MixedArgumentTypeCoercion>
-      <code><![CDATA[$attributes]]></code>
-      <code><![CDATA[$attributes]]></code>
-    </MixedArgumentTypeCoercion>
-    <MixedArrayAccess>
-      <code><![CDATA[$navi['itemAttr']['class']]]></code>
-      <code><![CDATA[$navi['itemClasses'][0]]]></code>
-      <code><![CDATA[$navi['linkClasses'][0]]]></code>
-      <code><![CDATA[$navi['title']]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$navi['itemClasses']]]></code>
-    </MixedArrayAssignment>
-    <MixedArrayOffset>
-      <code><![CDATA[$attributes[$key]]]></code>
-      <code><![CDATA[$attributes[$key]]]></code>
-    </MixedArrayOffset>
-    <MixedAssignment>
-      <code><![CDATA[$attributes[$key]]]></code>
-      <code><![CDATA[$attributes[$key]]]></code>
-      <code><![CDATA[$attributes['href']]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$key]]></code>
-      <code><![CDATA[$navi]]></code>
-      <code><![CDATA[$navi]]></code>
-      <code><![CDATA[$navigation]]></code>
-      <code><![CDATA[$navigation]]></code>
-      <code><![CDATA[$navigationArrays['children']]]></code>
-      <code><![CDATA[$navigationArrays['left']]]></code>
-      <code><![CDATA[$value]]></code>
-      <code><![CDATA[$value]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$navi['icon']]]></code>
-      <code><![CDATA[$navi['title']]]></code>
-      <code><![CDATA[$this->id]]></code>
-    </MixedOperand>
-  </file>
-  <file src="fragments/core/navigations/main.php">
-    <MixedArgument>
-      <code><![CDATA[$item['icon']]]></code>
-      <code><![CDATA[$item['itemAttr']]]></code>
-      <code><![CDATA[$item['linkAttr']]]></code>
-      <code><![CDATA[$this->headline['title']]]></code>
-      <code><![CDATA[escape($item['href'])]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$item['href']]]></code>
-      <code><![CDATA[$item['itemAttr']]]></code>
-      <code><![CDATA[$item['itemAttr']['class']]]></code>
-      <code><![CDATA[$item['linkAttr']]]></code>
-      <code><![CDATA[$item['title']]]></code>
-      <code><![CDATA[$this->headline['title']]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$item['itemAttr']['class']]]></code>
-      <code><![CDATA[$item['itemAttr']['class']]]></code>
-      <code><![CDATA[$item['itemAttr']['class']]]></code>
-      <code><![CDATA[$item['itemAttr']['class']]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$item]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$item['title']]]></code>
-    </MixedOperand>
-  </file>
-  <file src="fragments/core/navigations/meta.php">
-    <MixedArgument>
-      <code><![CDATA[$item['attributes']]]></code>
-      <code><![CDATA[$item['attributes']]]></code>
-      <code><![CDATA[$items]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$item]]></code>
-      <code><![CDATA[$items]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$item['title']]]></code>
-      <code><![CDATA[escape($item['href'])]]></code>
     </MixedOperand>
   </file>
   <file src="fragments/core/page/docs.php">
@@ -355,32 +160,6 @@
       <code><![CDATA[$this->sidebar]]></code>
     </MixedArgument>
   </file>
-  <file src="fragments/core/page/section.php">
-    <MixedArgument>
-      <code><![CDATA[$sectionAttributes]]></code>
-      <code><![CDATA[$this->after]]></code>
-      <code><![CDATA[$this->before]]></code>
-      <code><![CDATA[$this->body]]></code>
-      <code><![CDATA[$this->buttons]]></code>
-      <code><![CDATA[$this->class]]></code>
-      <code><![CDATA[$this->content]]></code>
-      <code><![CDATA[$this->footer]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$sectionAttributes['class']]]></code>
-    </MixedArrayAccess>
-    <MixedArrayAssignment>
-      <code><![CDATA[$sectionAttributes['class']]]></code>
-    </MixedArrayAssignment>
-    <MixedAssignment>
-      <code><![CDATA[$sectionAttributes]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$this->heading]]></code>
-      <code><![CDATA[$this->options]]></code>
-      <code><![CDATA[$this->title]]></code>
-    </MixedOperand>
-  </file>
   <file src="fragments/core/structure/content/slice_list.php">
     <MixedArgument>
       <code><![CDATA[$this->content]]></code>
@@ -392,15 +171,6 @@
       <code><![CDATA[$this->content]]></code>
       <code><![CDATA[$this->formAction]]></code>
     </MixedArgument>
-  </file>
-  <file src="fragments/core/toolbar.php">
-    <MixedArgument>
-      <code><![CDATA[$this->brand]]></code>
-      <code><![CDATA[$this->content]]></code>
-    </MixedArgument>
-    <MixedOperand>
-      <code><![CDATA[$this->cssClass]]></code>
-    </MixedOperand>
   </file>
   <file src="fragments/core/top.php">
     <ArgumentTypeCoercion>
@@ -499,29 +269,11 @@
       <code><![CDATA[array_merge($argUrl, ['cat_id' => ''])]]></code>
     </MixedArgumentTypeCoercion>
   </file>
-  <file src="pages/mediapool/upload.php">
-    <MixedArgument>
-      <code><![CDATA[$js]]></code>
-    </MixedArgument>
-  </file>
-  <file src="pages/profile/auth_methods.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[$params]]></code>
-    </ArgumentTypeCoercion>
-    <InvalidOperand>
-      <code><![CDATA[escape($id)]]></code>
-    </InvalidOperand>
-  </file>
   <file src="pages/structure/content.edit.php">
     <PossiblyNullPropertyAssignmentValue>
       <code><![CDATA[$info]]></code>
       <code><![CDATA[$warning]]></code>
     </PossiblyNullPropertyAssignmentValue>
-  </file>
-  <file src="pages/structure/content.functions.php">
-    <MixedOperand>
-      <code><![CDATA[escape($hiddenFields)]]></code>
-    </MixedOperand>
   </file>
   <file src="pages/structure/content.metainfo.php">
     <InvalidOperand>
@@ -559,9 +311,6 @@
       <code><![CDATA[$logFile]]></code>
       <code><![CDATA[$logLine]]></code>
     </MixedArgument>
-    <MixedAssignment>
-      <code><![CDATA[$logLine]]></code>
-    </MixedAssignment>
     <PossiblyFalseArgument>
       <code><![CDATA[$lines]]></code>
       <code><![CDATA[$logFile]]></code>
@@ -584,20 +333,6 @@
     <InvalidScalarArgument>
       <code><![CDATA[$value]]></code>
     </InvalidScalarArgument>
-    <PossiblyInvalidOperand>
-      <code><![CDATA[$value]]></code>
-    </PossiblyInvalidOperand>
-  </file>
-  <file src="pages/user/users.php">
-    <ArgumentTypeCoercion>
-      <code><![CDATA[['_impersonate' => $list->getValue('id')] + UserImpersonate::getUrlParams()]]></code>
-    </ArgumentTypeCoercion>
-    <NullArgument>
-      <code><![CDATA[escape($roles)]]></code>
-    </NullArgument>
-    <NullOperand>
-      <code><![CDATA[$login]]></code>
-    </NullOperand>
   </file>
   <file src="src/Addon/Addon.php">
     <PossiblyFalseArgument>
@@ -1179,9 +914,6 @@
       <code><![CDATA[$text]]></code>
       <code><![CDATA[$text]]></code>
     </PossiblyNullArgument>
-    <PossiblyNullOperand>
-      <code><![CDATA[$text]]></code>
-    </PossiblyNullOperand>
   </file>
   <file src="src/Util/Timer.php">
     <InvalidOperand>
