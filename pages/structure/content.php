@@ -28,6 +28,7 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\Security\ContentSecurityPolicy;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
@@ -83,6 +84,12 @@ if ($ctype < 2 || !$template?->hasContentSection($ctype)) {
 $OOArt = Article::require($articleId, $languageId);
 // Top level articles have no category, default to 0 (root) — backend pages expect an int category id.
 $categoryId = $OOArt->categoryId ?? 0;
+
+// the previews of the history show the article in frames, which the page the history overlay opens on must allow when
+// the article lives on another domain (several domains)
+if (true === Core::getConfig('article_history', false) && preg_match('@^https?://[^/?#]+@i', Url::article($articleId, $languageId), $origin)) {
+    ContentSecurityPolicy::backend()->add('frame-src', $origin[0]);
+}
 
 // the history is a popup page of its own, without the editor around it
 if ('history' === Controller::getCurrentPagePart(2)) {
