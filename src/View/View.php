@@ -268,7 +268,7 @@ final class View
 
         $e = [];
         $e['label'] = '<label for="rex-mediapool-title">' . I18n::msg('pool_file_title') . '</label>';
-        $e['field'] = '<input class="form-control" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape(Request::post('ftitle', 'string')) . '" maxlength="255" />';
+        $e['field'] = '<input class="rex-input" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape(Request::post('ftitle', 'string')) . '" maxlength="255" />';
         $formElements[] = $e;
 
         $fragment = new Fragment();

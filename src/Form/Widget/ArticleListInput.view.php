@@ -23,14 +23,14 @@ return static function (ArticleListInput $input): void {
         'disabled' => !$enabled,
     ])->toString() . '><i class="rex-icon ' . $icon . '" aria-hidden="true"></i></button>' ?>
     <div <?= new HtmlAttributes([
-        'class' => ['input-group'],
+        'class' => ['rex-input-group'],
         'data-rex-widget' => 'articlelist',
         'data-rex-widget-options' => json_encode([
             'category' => $input->categoryId ?? Category::getCurrent()->id ?? 0,
             'language' => Language::getCurrentId(),
         ], JSON_THROW_ON_ERROR),
     ]) ?>>
-        <select <?= $input->attributes->with(['class' => ['form-control'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
+        <select <?= $input->attributes->with(['class' => ['rex-input'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
             <?php foreach ($input->articleIds as $articleId): ?>
                 <?php if ($article = Article::get($articleId)): ?>
                     <option value="<?= $article->id ?>"><?= escape($article->name . ' [' . $article->id . ']') ?></option>
@@ -38,7 +38,7 @@ return static function (ArticleListInput $input): void {
             <?php endforeach ?>
         </select>
         <input type="hidden" name="<?= escape($input->name) ?>" value="<?= escape(implode(',', $input->articleIds)) ?>" data-rex-widget-value>
-        <span class="input-group-addon">
+        <span class="rex-input-group-text">
             <div class="rex-button-group" data-orientation="vertical">
                 <?= $button('move:top', 'form_articlelist_move_top', 'rex-icon-top', !$input->disabled) ?>
                 <?= $button('move:up', 'form_articlelist_move_up', 'rex-icon-up', !$input->disabled) ?>

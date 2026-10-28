@@ -191,7 +191,7 @@ if (!$passwordChangeRequired) {
                 <?php foreach ($form->getFormErrors() as $error): ?>
                     <?= Message::error((string) Html::from($error)) ?>
                 <?php endforeach ?>
-                <?= new FieldRow(Html::raw('<p class="form-control-static">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
+                <?= new FieldRow(Html::raw('<p class="rex-field-value">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
                 <?= $form->rest() ?>
             </div>
             <footer class="rex-section__footer">
@@ -217,7 +217,7 @@ $confirmField = static function (string $id) use ($login, $passkeyVerify): strin
     </div>';
     } else {
         $n['label'] = '<label for="' . $id . '">' . I18n::msg('current_password') . '</label>';
-        $n['field'] = '<input class="form-control rex-js-userpsw" type="password" id="' . $id . '" name="userpsw" autocomplete="current-password" autocorrect="off" autocapitalize="off" required />';
+        $n['field'] = '<input class="rex-input rex-js-userpsw" type="password" id="' . $id . '" name="userpsw" autocomplete="current-password" autocorrect="off" autocapitalize="off" required />';
     }
 
     $formElements[] = $n;
@@ -236,13 +236,13 @@ $formElements = [];
 
 $n = [];
 $n['label'] = '<label for="rex-id-userpsw-new-1">' . I18n::msg('new_password') . '</label>';
-$n['field'] = '<input class="form-control rex-js-userpsw-new-1" type="password" id="rex-id-userpsw-new-1" name="userpsw_new_1" autocomplete="new-password" autocorrect="off" autocapitalize="off" required ' . Str::buildAttributes($passwordPolicy->getHtmlAttributes()) . ' />';
+$n['field'] = '<input class="rex-input rex-js-userpsw-new-1" type="password" id="rex-id-userpsw-new-1" name="userpsw_new_1" autocomplete="new-password" autocorrect="off" autocapitalize="off" required ' . Str::buildAttributes($passwordPolicy->getHtmlAttributes()) . ' />';
 $n['note'] = $passwordPolicy->getDescription();
 $formElements[] = $n;
 
 $n = [];
 $n['label'] = '<label for="rex-id-userpsw-new-2">' . I18n::msg('new_password_repeat') . '</label>';
-$n['field'] = '<input class="form-control rex-js-userpsw-new-2" type="password" id="rex-id-userpsw-new-2" name="userpsw_new_2" autocomplete="new-password" autocorrect="off" autocapitalize="off" required />';
+$n['field'] = '<input class="rex-input rex-js-userpsw-new-2" type="password" id="rex-id-userpsw-new-2" name="userpsw_new_2" autocomplete="new-password" autocorrect="off" autocapitalize="off" required />';
 $formElements[] = $n;
 
 $fragment = new Fragment();

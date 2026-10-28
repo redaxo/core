@@ -139,9 +139,9 @@ $icon = Html::raw('<i class="rex-icon rex-icon-language"></i>');
 $formCells = static fn (string $form, string $code, string $name, int $priority, string $buttons): array => [
     'mark' => true,
     'icon' => $icon,
-    'code' => Html::raw('<input class="form-control" type="text" id="rex-form-language-code" name="language_code" value="' . escape($code) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus />'),
-    'name' => Html::raw('<input class="form-control" type="text" id="rex-form-language-name" name="language_name" value="' . escape($name) . '" required maxlength="255" />'),
-    'priority' => Html::raw('<input class="form-control" type="number" id="rex-form-language-prio" name="language_prio" value="' . $priority . '" required min="1" inputmode="numeric" />'),
+    'code' => Html::raw('<input class="rex-input" type="text" id="rex-form-language-code" name="language_code" value="' . escape($code) . '" required maxlength="35" autocapitalize="off" autocorrect="off" autofocus />'),
+    'name' => Html::raw('<input class="rex-input" type="text" id="rex-form-language-name" name="language_name" value="' . escape($name) . '" required maxlength="255" />'),
+    'priority' => Html::raw('<input class="rex-input" type="number" id="rex-form-language-prio" name="language_prio" value="' . $priority . '" required min="1" inputmode="numeric" />'),
     'edit' => Html::raw($buttons),
     'delete' => new TableCell(Html::raw('add' === $form
         ? '<button class="rex-button" data-variant="success" type="submit" name="add_language_save"' . Accesskey::attributes(I18n::msg('language_add'), 'save') . ' value="1">' . I18n::msg('language_add') . '</button>'

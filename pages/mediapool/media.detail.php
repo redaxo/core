@@ -161,7 +161,7 @@ $fheight = $gf->getNullableIntValue('height') ?? 0;
 if ($fwidth > 0 && $fheight > 0) {
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_img_width') . ' / ' . I18n::msg('pool_img_height') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . $fwidth . 'px / ' . $fheight . 'px</p>';
+    $e['field'] = '<p class="rex-field-value">' . $fwidth . 'px / ' . $fheight . 'px</p>';
 
     $fragment = new Fragment();
     $fragment->setVar('elements', [$e], false);
@@ -233,7 +233,7 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label for="rex-mediapool-title">' . I18n::msg('pool_file_title') . '</label>';
-    $e['field'] = '<input class="form-control" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape($ftitle) . '" />';
+    $e['field'] = '<input class="rex-input" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape($ftitle) . '" />';
     $formElements[] = $e;
 
     $e = [];
@@ -255,17 +255,17 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_filename') . '</label>';
-    $e['field'] = '<p class="form-control-static rex-word-break"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a> <span class="rex-filesize">' . $ffileSize . '</span></p>';
+    $e['field'] = '<p class="rex-field-value rex-word-break"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a> <span class="rex-filesize">' . $ffileSize . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
@@ -330,27 +330,27 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_file_title') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . escape($ftitle) . '</p>';
+    $e['field'] = '<p class="rex-field-value">' . escape($ftitle) . '</p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_file_category') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . escape($catname) . '</p>';
+    $e['field'] = '<p class="rex-field-value">' . escape($catname) . '</p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_filename') . '</label>';
-    $e['field'] = '<p class="form-control-static"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a>  <span class="rex-filesize">' . $ffileSize . '</span></p>';
+    $e['field'] = '<p class="rex-field-value"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a>  <span class="rex-filesize">' . $ffileSize . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $fragment = new Fragment();

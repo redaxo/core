@@ -44,7 +44,7 @@
         font-weight: 700;
     }
 
-    [aria-invalid="true"]:is(.form-control, .rex-select-toggle) {
+    [aria-invalid="true"].rex-select-toggle {
         border-color: var(--rex-color-danger-text);
     }
 
@@ -60,12 +60,12 @@
             & > .rex-field-control {
                 margin-left: var(--rex-field-label-width);
 
-                & :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                & :is(select.rex-input, input[type="file"]) {
                     margin-top: 7px;
                     margin-bottom: 7px;
                 }
 
-                & .input-group :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                & .rex-input-group :is(select.rex-input, input[type="file"]) {
                     margin-top: 0;
                     margin-bottom: 0;
                 }

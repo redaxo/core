@@ -1,0 +1,224 @@
+/*
+ Input fields (`.rex-input` on `<input>`, `<select>` and `<textarea>`), `data-size` `sm` or `xs`; invalid fields have
+ `aria-invalid="true"`. Input groups (`.rex-input-group`) attach text (`.rex-input-group-text`) and buttons
+ (`.rex-input-group-actions`) to a field. Checkboxes and radio buttons sit in their label (`.rex-check`,
+ `data-layout="inline"` side by side). `.rex-field-value` shows a value in place of a field.
+ */
+
+@layer components {
+    .rex-input {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 6px 12px;
+        border: 1px solid var(--rex-color-border-input);
+        border-radius: 0;
+        background: var(--rex-color-surface-subtle);
+        box-shadow: var(--rex-shadow-inset);
+        color: var(--rex-color-text);
+        font: inherit;
+        font-size: var(--rex-font-size);
+        line-height: var(--rex-line-height);
+        transition: border-color 0.15s ease-in-out;
+
+        &:focus {
+            border-color: var(--rex-color-focus);
+        }
+
+        &:focus:not([readonly]) {
+            background: var(--rex-color-surface);
+        }
+
+        &::placeholder {
+            color: var(--rex-color-text-muted);
+            opacity: 1;
+        }
+
+        &:is(:disabled, [readonly]) {
+            border-color: var(--rex-color-border-strong);
+            background: var(--rex-color-surface-muted);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+
+        &[aria-invalid="true"] {
+            border-color: var(--rex-color-danger-text);
+        }
+
+        /* date and time fields are as high as the other fields in WebKit */
+        &:is([type="date"], [type="time"], [type="datetime-local"], [type="month"]) {
+            display: inline-flex;
+            height: 36px;
+            padding-left: 10px;
+            line-height: inherit;
+        }
+
+        &[data-size="sm"] {
+            height: 30px;
+            padding: 5px 10px;
+            font-size: var(--rex-font-size-small);
+            line-height: 1.5;
+        }
+
+        &[data-size="xs"] {
+            height: 24px;
+            padding: 3px 8px;
+            font-size: var(--rex-font-size-small);
+            line-height: 1.3334;
+        }
+
+        &:is(textarea, select[multiple]):is([data-size="sm"], [data-size="xs"]) {
+            height: auto;
+        }
+    }
+
+    /* groups ---------------------------------------------------------------------------------------------------- */
+
+    .rex-input-group {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+
+        & > .rex-input {
+            flex: 1 1 auto;
+            width: 1%;
+            min-width: 0;
+
+            &:focus {
+                z-index: 3;
+            }
+        }
+
+        & > :not(:first-child) {
+            margin-left: -1px;
+        }
+
+        /* inner corners stay square */
+        & > :not(:last-child),
+        & > .rex-input-group-actions:not(:last-child) > :last-child {
+            border-start-end-radius: 0;
+            border-end-end-radius: 0;
+        }
+
+        & > :not(:first-child),
+        & > .rex-input-group-actions:not(:first-child) > :first-child {
+            border-start-start-radius: 0;
+            border-end-start-radius: 0;
+        }
+
+        &[data-size="xs"] > :is(.rex-input, .rex-input-group-text, .rex-input-group-actions > .rex-button) {
+            height: 24px;
+            padding: 3px 8px;
+            font-size: var(--rex-font-size-small);
+            line-height: 1.3334;
+        }
+    }
+
+    .rex-input-group-text {
+        display: flex;
+        align-items: center;
+        padding: 6px 12px;
+        border: 1px solid var(--rex-color-border-input);
+        border-radius: var(--rex-radius);
+        background: var(--rex-color-surface-muted);
+        color: var(--rex-color-text);
+        font-size: var(--rex-font-size);
+        line-height: 1;
+        white-space: nowrap;
+
+        & input:is([type="radio"], [type="checkbox"]) {
+            margin: 0;
+        }
+
+        & > .rex-button-group + .rex-button-group {
+            margin-left: 6px;
+        }
+    }
+
+    .rex-input-group-actions {
+        display: flex;
+
+        & > .rex-button {
+            position: relative;
+
+            &:not(:first-child) {
+                margin-left: -1px;
+                border-start-start-radius: 0;
+                border-end-start-radius: 0;
+            }
+
+            &:not(:last-child) {
+                border-start-end-radius: 0;
+                border-end-end-radius: 0;
+            }
+
+            &:is(:hover, :focus-visible, :active) {
+                z-index: 2;
+            }
+        }
+
+        .rex-section__options & > .rex-button {
+            --rex-button-border: var(--rex-color-border-input);
+        }
+    }
+
+    /* the add-ons of narrow selects in toolbars keep their natural width */
+    .rex-truncate-dropdown .rex-input-group > :is(.rex-input-group-text, .rex-input-group-actions) {
+        width: auto;
+    }
+
+    /* a search field right after a select shares the select's border, e.g. in the toolbar of the media pool */
+    search .rex-input-group > .rex-input:first-child {
+        border-left: 0;
+    }
+
+    /* checkboxes and radio buttons ---------------------------------------------------------------------------- */
+
+    .rex-check {
+        position: relative;
+        display: block;
+        margin: 10px 0;
+
+        & + & {
+            margin-top: -5px;
+        }
+
+        & label {
+            min-height: 22px;
+            margin-bottom: 0;
+            padding-left: 20px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        & input:is([type="checkbox"], [type="radio"]) {
+            position: absolute;
+            margin: 4px 0 0 -20px;
+        }
+
+        &:has(:disabled) label {
+            cursor: not-allowed;
+        }
+
+        &[data-layout="inline"] {
+            display: inline-block;
+            margin: 0 15px 0 0;
+        }
+
+        .rex-field-control & {
+            @media (min-width: 992px) {
+                margin-block: 7px;
+            }
+        }
+    }
+
+    /* a value in place of a field, e.g. the file name of a medium */
+    .rex-field-value {
+        min-height: 37px;
+        margin-bottom: 0;
+        padding-block: 7px;
+    }
+}

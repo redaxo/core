@@ -706,11 +706,11 @@ var Select = class {
     this.element = document.createElement("div");
     this.element.className = "rex-select";
     this.element.innerHTML = `
-            <button type="button" class="form-control rex-select-toggle" aria-haspopup="listbox" aria-expanded="false" popovertarget="${this.id}">
+            <button type="button" class="rex-input rex-select-toggle" aria-haspopup="listbox" aria-expanded="false" popovertarget="${this.id}">
                 <span class="rex-select-value" id="${this.id}-value"></span>
             </button>
             <div class="rex-select-panel" id="${this.id}" popover>
-                ${this.search ? `<input type="search" class="form-control rex-select-search" autocomplete="off" aria-controls="${this.id}-options">` : ""}
+                ${this.search ? `<input type="search" class="rex-input rex-select-search" autocomplete="off" aria-controls="${this.id}-options">` : ""}
                 ${this.search && select.multiple ? `<div class="rex-select-actions">
                     <button type="button" class="rex-button" data-size="xs" data-rex-select-all></button>
                     <button type="button" class="rex-button" data-size="xs" data-rex-select-none></button>
@@ -1032,14 +1032,14 @@ function addPasswordToggle(input) {
     return;
   }
   input.dataset.rexPasswordToggle = "true";
-  if (!input.parentElement.matches("div.input-group")) {
+  if (!input.parentElement.matches("div.rex-input-group, div.input-group")) {
     const group = document.createElement("div");
-    group.className = "input-group";
+    group.className = "rex-input-group";
     input.before(group);
     group.append(input);
   }
   const addon = document.createElement("span");
-  addon.className = "input-group-btn";
+  addon.className = "rex-input-group-actions";
   addon.innerHTML = '<button type="button" class="rex-button" data-variant="field" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
   input.after(addon);
   const button = addon.querySelector("button");

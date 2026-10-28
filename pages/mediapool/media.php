@@ -48,7 +48,7 @@ $selMedia = new SelectInput(
 
 $formElements = [];
 $n = [];
-$n['field'] = '<input class="form-control" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" />';
+$n['field'] = '<input class="rex-input" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" />';
 $n['right'] = '<button class="rex-button" type="submit"><i class="rex-icon rex-icon-search"></i></button>';
 $formElements[] = $n;
 $fragment = new Fragment();
@@ -68,7 +68,7 @@ $toolbar = '
 <div>
 <form action="' . Url::currentBackendPage() . '" method="post">
     ' . $argFields . '
-    <div class="form-group">
+    <div class="rex-field">
     ' . $toolbar . '
     </div>
 </form>

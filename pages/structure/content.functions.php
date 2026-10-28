@@ -48,7 +48,7 @@ if ($user->hasPerm('article2startarticle[]')) {
 
         $formElements = [];
         $n = [];
-        $n['field'] = '<p class="form-control-static">' . I18n::msg('content_nottostartarticle') . '</p>';
+        $n['field'] = '<p class="rex-field-value">' . I18n::msg('content_nottostartarticle') . '</p>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -59,7 +59,7 @@ if ($user->hasPerm('article2startarticle[]')) {
 
         $formElements = [];
         $n = [];
-        $n['field'] = '<p class="form-control-static">' . I18n::msg('content_isstartarticle') . '</p>';
+        $n['field'] = '<p class="rex-field-value">' . I18n::msg('content_isstartarticle') . '</p>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -68,7 +68,7 @@ if ($user->hasPerm('article2startarticle[]')) {
     } else {
         $formElements = [];
         $n = [];
-        $n['field'] = '<p class="form-control-static">' . I18n::msg('content_tostartarticle') . '</p>';
+        $n['field'] = '<p class="rex-field-value">' . I18n::msg('content_tostartarticle') . '</p>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -103,7 +103,7 @@ if (!$isStartpage && $user->hasPerm('article2category[]')) {
 
     $formElements = [];
     $n = [];
-    $n['field'] = '<p class="form-control-static">' . I18n::msg('content_tocategory') . '</p>';
+    $n['field'] = '<p class="rex-field-value">' . I18n::msg('content_tocategory') . '</p>';
     $formElements[] = $n;
 
     $fragment = new Fragment();
@@ -144,7 +144,7 @@ if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPer
 
         $formElements = [];
         $n = [];
-        $n['field'] = '<p class="form-control-static">' . I18n::msg('content_nottoarticle') . '</p>';
+        $n['field'] = '<p class="rex-field-value">' . I18n::msg('content_nottoarticle') . '</p>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -153,7 +153,7 @@ if ($isStartpage && $user->hasPerm('article2category[]') && $user->getComplexPer
     } else {
         $formElements = [];
         $n = [];
-        $n['field'] = '<p class="form-control-static">' . I18n::msg('content_toarticle') . '</p>';
+        $n['field'] = '<p class="rex-field-value">' . I18n::msg('content_toarticle') . '</p>';
         $formElements[] = $n;
 
         $fragment = new Fragment();

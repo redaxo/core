@@ -40,7 +40,7 @@
             margin-left: 0;
         }
 
-        & .form-control {
+        & .rex-input {
             border-color: var(--rex-color-inverse-bg);
             background-color: var(--rex-color-inverse-text);
             box-shadow: none;
@@ -52,18 +52,18 @@
             }
         }
 
-        & .input-group-addon {
+        & .rex-input-group-text {
             border-color: var(--rex-color-inverse-bg);
             background-color: var(--rex-color-inverse-text);
             color: var(--rex-color-inverse-bg);
         }
 
-        & .input-group {
-            & :is(.form-control, .input-group-addon) {
+        & .rex-input-group {
+            & :is(.rex-input, .rex-input-group-text) {
                 transition: background-color 100ms ease-out;
             }
 
-            &:focus-within :is(.form-control, .input-group-addon) {
+            &:focus-within :is(.rex-input, .rex-input-group-text) {
                 background-color: var(--rex-color-inverse-text-strong);
             }
         }
@@ -81,7 +81,7 @@
         }
 
         /* password toggle next to the field */
-        & .input-group-btn .rex-button {
+        & .rex-input-group-actions .rex-button {
             --rex-button-color: var(--rex-color-inverse-bg-strong);
             --rex-button-bg: var(--rex-color-inverse-text);
             --rex-button-border: var(--rex-color-inverse-bg);

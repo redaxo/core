@@ -24,14 +24,14 @@ return static function (MediaListInput $input): void {
         'data-rex-widget' => 'medialist',
         'data-rex-widget-options' => json_encode(['types' => $input->types, 'category' => $input->categoryId], JSON_THROW_ON_ERROR),
     ]) ?>>
-        <div class="input-group">
-            <select <?= $input->attributes->with(['class' => ['form-control'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
+        <div class="rex-input-group">
+            <select <?= $input->attributes->with(['class' => ['rex-input'], 'id' => $input->labelTarget(), 'size' => 10, 'disabled' => $input->disabled, 'data-rex-widget-list' => true]) ?>>
                 <?php foreach ($input->fileNames as $fileName): ?>
                     <option value="<?= escape($fileName) ?>"><?= escape($fileName) ?></option>
                 <?php endforeach ?>
             </select>
             <input type="hidden" name="<?= escape($input->name) ?>" value="<?= escape(implode(',', $input->fileNames)) ?>" data-rex-widget-value>
-            <span class="input-group-addon">
+            <span class="rex-input-group-text">
                 <div class="rex-button-group" data-orientation="vertical">
                     <?= $button('move:top', 'form_medialist_move_top', 'rex-icon-top', !$input->disabled) ?>
                     <?= $button('move:up', 'form_medialist_move_up', 'rex-icon-up', !$input->disabled) ?>

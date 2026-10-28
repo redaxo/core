@@ -12,7 +12,7 @@ return static function (ChoiceList $list): void {
         <?php foreach ($list->groups() as $group): ?>
             <?php if (null !== $group['label']): ?><fieldset class="rex-choice-group"><legend><?= escape($group['label']) ?></legend><?php endif ?>
             <?php foreach ($group['choices'] as $value => $label): ?>
-                <div class="<?= $list->inline ? $type . '-inline' : $type ?>">
+                <div class="rex-check"<?= $list->inline ? ' data-layout="inline"' : '' ?>>
                     <label>
                         <input <?= new HtmlAttributes([
                             'type' => $type,

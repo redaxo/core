@@ -12,6 +12,8 @@
 @import "compat/badge.css";
 @import "compat/button.css";
 @import "compat/dropdown.css";
+@import "compat/forms.css";
+@import "compat/input-group.css";
 @import "compat/list-group.css";
 @import "compat/nav.css";
 @import "compat/navbar.css";

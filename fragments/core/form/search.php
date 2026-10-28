@@ -11,9 +11,9 @@ use function Redaxo\Core\View\escape;
  */
 
 $id = '';
-$class = $this->getVar('class', 'input-group input-group-xs has-feedback form-clear-button');
-$clear = I18n::msg('search_clear');
-$placeholder = ' placeholder="' . $this->getVar('placeholder', I18n::msg('search_placeholder')) . '"';
+$class = $this->getVar('class', 'rex-input-group');
+$label = (string) $this->getVar('placeholder', I18n::msg('search_placeholder'));
+$placeholder = ' placeholder="' . $label . '" aria-label="' . $label . '"';
 $autofocus = '';
 if (isset($this->autofocus) && $this->autofocus) {
     $autofocus = ' autofocus ';
@@ -30,8 +30,7 @@ if ($this->id) {
 $name = (string) $this->getVar('name', '');
 $name = $name ? ' name="' . $name . '"' : '';
 
-echo '<search role="search" class="' . $class . '"' . $id . '>
-      <span class="input-group-addon clear-button"><i class="rex-icon rex-icon-search"></i></span>
-      <input class="form-control" type="text"' . $name . $autofocus . $placeholder . $value . '>
-      <span title="' . $clear . '" class="form-control-clear rex-icon rex-icon-clear form-control-feedback hidden"></span>
+echo '<search class="' . $class . '" data-size="xs"' . $id . '>
+      <span class="rex-input-group-text"><i class="rex-icon rex-icon-search" aria-hidden="true"></i></span>
+      <input class="rex-input" type="search"' . $name . $autofocus . $placeholder . $value . '>
 </search>';

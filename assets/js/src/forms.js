@@ -137,15 +137,15 @@ function addPasswordToggle(input) {
     }
     input.dataset.rexPasswordToggle = 'true';
 
-    if (!input.parentElement.matches('div.input-group')) {
+    if (!input.parentElement.matches('div.rex-input-group, div.input-group')) {
         const group = document.createElement('div');
-        group.className = 'input-group';
+        group.className = 'rex-input-group';
         input.before(group);
         group.append(input);
     }
 
     const addon = document.createElement('span');
-    addon.className = 'input-group-btn';
+    addon.className = 'rex-input-group-actions';
     addon.innerHTML = '<button type="button" class="rex-button" data-variant="field" aria-pressed="false"><i class="rex-icon rex-icon-view" aria-hidden="true"></i></button>';
     input.after(addon);
 

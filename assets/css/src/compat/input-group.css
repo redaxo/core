@@ -1,4 +1,4 @@
-/* Input groups: a field with add-ons or buttons attached (`.input-group`, `.input-group-addon`, `.input-group-btn`) */
+/* Bootstrap 3 input groups (`.input-group`, `.input-group-addon`, `.input-group-btn`) for addons; the core uses `.rex-input-group` (components/input.css) */
 
 @layer bootstrap {
     .input-group {
@@ -125,35 +125,5 @@
     /* a search field right after a select shares the select's border, e.g. in the toolbar of the media pool */
     search .input-group > .form-control:first-child {
         border-left: 0;
-    }
-}
-
-/* REDAXO buttons as add-ons; in the components layer, as they would lose against `.rex-button` otherwise */
-@layer components {
-    .input-group-btn {
-        & > .rex-button + .rex-button {
-            margin-left: -1px;
-        }
-
-        &:first-child > :is(.rex-button, .rex-button-group > .rex-button) {
-            margin-right: -1px;
-            border-start-end-radius: 0;
-            border-end-end-radius: 0;
-        }
-
-        &:last-child > :is(.rex-button, .rex-button-group > .rex-button) {
-            margin-left: -1px;
-            border-start-start-radius: 0;
-            border-end-start-radius: 0;
-        }
-
-        &:last-child > .rex-button:not(:last-child) {
-            border-start-end-radius: 0;
-            border-end-end-radius: 0;
-        }
-
-        .rex-section__options .input-group & > .rex-button {
-            --rex-button-border: var(--rex-color-border-input);
-        }
     }
 }

@@ -24,7 +24,7 @@ return static function (ArticleHistory $history): void {
             echo escape($current);
             return;
         } ?>
-        <select class="form-control rex-history__select" data-rex-history-base aria-label="<?= escape($current) ?>">
+        <select class="rex-input rex-history__select" data-rex-history-base aria-label="<?= escape($current) ?>">
             <option value="<?= ArticleRevision::LIVE ?>"><?= escape($current) ?></option>
             <option value="<?= ArticleRevision::WORK ?>"><?= escape(I18n::msg('version_workingversion')) ?></option>
         </select>
@@ -34,7 +34,7 @@ return static function (ArticleHistory $history): void {
     $target = Html::capture(static function () use ($history, $current, $version): void { ?>
         <div class="rex-history__switch">
             <?= new Button(I18n::msg('structure_history_older'), icon: 'previous', hiddenLabel: true, attributes: new HtmlAttributes(['data-rex-history-step' => '-1']))->render() ?>
-            <select name="history_date" form="rex-history-restore" class="form-control rex-history__select" data-rex-history-target aria-label="<?= escape($version) ?>">
+            <select name="history_date" form="rex-history-restore" class="rex-input rex-history__select" data-rex-history-target aria-label="<?= escape($version) ?>">
                 <option value="" data-time="<?= time() ?>"><?= escape($current) ?></option>
                 <?php foreach ($history->snapshots as $snapshot): ?>
                     <option <?= new HtmlAttributes(['value' => $snapshot['history_date'], 'data-time' => (string) strtotime($snapshot['history_date'])]) ?>>

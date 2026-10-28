@@ -1,7 +1,7 @@
 /* Select boxes: native selects and the search/multiple widget (js/src/select.js) share the look of a default button */
 
 @layer components {
-    select.form-control:not([multiple], [size]),
+    select.rex-input:not([multiple], [size]),
     .rex-select-toggle {
         appearance: none;
         margin-block: 0;
@@ -44,24 +44,23 @@
     }
 
     /* in input groups both behave like an add-on: as wide as their content */
-    .input-group > select.form-control,
-    .input-group > .rex-select {
-        display: table-cell;
+    .rex-input-group > select.rex-input,
+    .rex-input-group > .rex-select {
+        flex: none;
         width: auto;
-        vertical-align: middle;
     }
 
-    .input-group > .rex-select > .rex-select-toggle {
+    .rex-input-group > .rex-select > .rex-select-toggle {
         width: auto;
         max-width: 300px;
     }
 
-    .input-group > .rex-select:not(:first-child) > .rex-select-toggle {
+    .rex-input-group > .rex-select:not(:first-child) > .rex-select-toggle {
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
     }
 
-    .input-group > .rex-select:not(:last-child) > .rex-select-toggle {
+    .rex-input-group > .rex-select:not(:last-child) > .rex-select-toggle {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }

@@ -199,8 +199,8 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
         'attributes' => new HtmlAttributes(['class' => 'mark']),
         'icon' => Html::raw('<i class="rex-icon rex-icon-category"></i>'),
         'id' => '-',
-        'name' => Html::raw('<input class="form-control" type="text" name="category-name" value="' . escape(Request::post('category-name', 'string')) . '" class="rex-js-autofocus" required maxlength="255" autofocus />'),
-        'priority' => Html::raw('<input class="form-control" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $catPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
+        'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape(Request::post('category-name', 'string')) . '" class="rex-js-autofocus" required maxlength="255" autofocus />'),
+        'priority' => Html::raw('<input class="rex-input" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $catPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
         $firstAction => new TableCell(Html::raw($metaButtons . $addButtons), $colspan),
     ];
     $rows[] = $categoryMetaRow($meta);
@@ -270,8 +270,8 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
 
             $rows[] = [
                 'attributes' => new HtmlAttributes(['class' => ['mark', 'rex-has-metainfo' => '' != $metaButtons], 'data-status' => $status]),
-                'name' => Html::raw('<input class="form-control" type="text" name="category-name" value="' . escape($categoryApiFailed ? Request::post('category-name', 'string') : $KAT->getStringValue('catname')) . '" class="rex-js-autofocus" required maxlength="255" autofocus />'),
-                'priority' => Html::raw('<input class="form-control" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $KAT->getIntValue('catpriority')) . '" required min="1" inputmode="numeric" />'),
+                'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape($categoryApiFailed ? Request::post('category-name', 'string') : $KAT->getStringValue('catname')) . '" class="rex-js-autofocus" required maxlength="255" autofocus />'),
+                'priority' => Html::raw('<input class="rex-input" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $KAT->getIntValue('catpriority')) . '" required min="1" inputmode="numeric" />'),
                 $firstAction => new TableCell(Html::raw($metaButtons . $addButtons), $colspan),
             ] + $row;
             $rows[] = $categoryMetaRow($meta);
@@ -412,10 +412,10 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             'attributes' => new HtmlAttributes(['class' => 'mark']),
             'icon' => Html::raw('<i class="rex-icon rex-icon-article"></i>'),
             'id' => '-',
-            'name' => Html::raw('<input class="form-control" type="text" name="article-name" required maxlength="255" autofocus />'),
+            'name' => Html::raw('<input class="rex-input" type="text" name="article-name" required maxlength="255" autofocus />'),
             'template' => new SelectInput('template', $templateChoices, $template),
             'date' => Formatter::intlDate(time()),
-            'priority' => Html::raw('<input class="form-control" type="number" name="article-position" value="' . ($artPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
+            'priority' => Html::raw('<input class="rex-input" type="number" name="article-position" value="' . ($artPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
             $firstAction => new TableCell(Html::raw(ArticleAdd::getHiddenFields() . '<button class="rex-button" data-variant="success" type="submit" name="artadd_function"' . Accesskey::attributes(I18n::msg('article_add'), 'save') . '>' . I18n::msg('article_add') . '</button>'), $colspan),
         ];
     } elseif (0 === $sql->getRows()) {
@@ -450,9 +450,9 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             $rows[] = [
                 'attributes' => new HtmlAttributes(['class' => ['mark', 'rex-startarticle' => $sql->getBoolValue('startarticle'), $trStatusClass]]),
                 'icon' => Html::raw('<a class="rex-link-expanded" href="' . $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $articleId]) . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon' . $class . '"></i></a>'),
-                'name' => Html::raw('<input class="form-control" type="text" name="article-name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" autofocus />'),
+                'name' => Html::raw('<input class="rex-input" type="text" name="article-name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" autofocus />'),
                 'template' => new SelectInput('template', $templateChoices, $sql->getNullableStringValue('template')),
-                'priority' => Html::raw('<input class="form-control" type="number" name="article-position" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" />'),
+                'priority' => Html::raw('<input class="rex-input" type="number" name="article-position" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" />'),
                 $firstAction => new TableCell(Html::raw(ArticleEdit::getHiddenFields() . '<button class="rex-button" data-variant="success" type="submit" name="artedit_function"' . Accesskey::attributes(I18n::msg('article_save'), 'save') . '>' . I18n::msg('article_save') . '</button>'), $colspan),
             ] + $row;
         } elseif ($structureContext->hasCategoryPermission()) {

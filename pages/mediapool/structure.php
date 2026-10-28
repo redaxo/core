@@ -119,8 +119,8 @@ if ($PERMALL) {
         ),
         new TableColumn(I18n::msg('id'), static fn (?MediaCategory $category): int|string => $category->id ?? '-', ColumnType::Id),
         new TableColumn(I18n::msg('pool_kat_name'), static fn (?MediaCategory $category): Html => match (true) {
-            null === $category => Html::raw('<input class="form-control" type="text" name="catname" value="" autofocus />'),
-            $form($category) => Html::raw('<input class="form-control" type="text" name="cat_name" value="' . escape($category->name) . '" autofocus />'),
+            null === $category => Html::raw('<input class="rex-input" type="text" name="catname" value="" autofocus />'),
+            $form($category) => Html::raw('<input class="rex-input" type="text" name="cat_name" value="' . escape($category->name) . '" autofocus />'),
             default => Html::raw('<a class="rex-link-expanded" href="' . $link . $category->id . '">' . escape($category->name) . '</a>'),
         }),
         new TableColumn(I18n::msg('pool_kat_function'), static function (?MediaCategory $category) use ($form, $link, $catId, $editId): Html|TableCell {

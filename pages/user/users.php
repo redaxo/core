@@ -221,7 +221,7 @@ if ('add' === $func || $user) {
                     <?= Message::error((string) Html::from($error)) ?>
                 <?php endforeach ?>
                 <?php if ($user): ?>
-                    <?= new FieldRow(Html::raw('<p class="form-control-static">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
+                    <?= new FieldRow(Html::raw('<p class="rex-field-value">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
                 <?php endif ?>
                 <?php foreach (['login', 'password', 'passwordChangeRequired', 'name', 'description', 'email', 'admin', 'status'] as $name): ?>
                     <?php if ($form->has($name)): ?>

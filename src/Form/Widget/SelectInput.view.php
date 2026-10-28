@@ -8,7 +8,7 @@ use function Redaxo\Core\View\escape;
 
 return static function (SelectInput $select): void { ?>
     <select <?= $select->attributes->with([
-        'class' => ['form-control'],
+        'class' => ['rex-input'],
         'name' => $select->multiple ? $select->name . '[]' : $select->name,
         'id' => $select->id,
         'multiple' => $select->multiple,

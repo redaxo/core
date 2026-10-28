@@ -42,10 +42,10 @@ foreach ($this->elements as $element) {
         $classes .= ' ' . $element['class'];
     }
 
-    $class = $inline ? '-inline' : '';
+    $layout = $inline ? ' data-layout="inline"' : '';
 
     if ($grouped) {
-        $out .= '<div class="checkbox' . $class . '"' . $id . '>';
+        $out .= '<div class="rex-check"' . $layout . $id . '>';
         $out .= $label;
         $out .= '</div>';
     } else {
@@ -53,7 +53,7 @@ foreach ($this->elements as $element) {
         $out .= '<div class="rex-field' . $classes . '">';
         $out .= '<div class="rex-field-control">';
         $out .= $before;
-        $out .= '<div class="checkbox' . $class . '"' . $id . '>';
+        $out .= '<div class="rex-check"' . $layout . $id . '>';
         $out .= $label;
         $out .= '</div>';
         $out .= $after;

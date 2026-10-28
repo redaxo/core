@@ -18,11 +18,11 @@ class Select {
         this.element = document.createElement('div');
         this.element.className = 'rex-select';
         this.element.innerHTML = `
-            <button type="button" class="form-control rex-select-toggle" aria-haspopup="listbox" aria-expanded="false" popovertarget="${this.id}">
+            <button type="button" class="rex-input rex-select-toggle" aria-haspopup="listbox" aria-expanded="false" popovertarget="${this.id}">
                 <span class="rex-select-value" id="${this.id}-value"></span>
             </button>
             <div class="rex-select-panel" id="${this.id}" popover>
-                ${this.search ? `<input type="search" class="form-control rex-select-search" autocomplete="off" aria-controls="${this.id}-options">` : ''}
+                ${this.search ? `<input type="search" class="rex-input rex-select-search" autocomplete="off" aria-controls="${this.id}-options">` : ''}
                 ${this.search && select.multiple ? `<div class="rex-select-actions">
                     <button type="button" class="rex-button" data-size="xs" data-rex-select-all></button>
                     <button type="button" class="rex-button" data-size="xs" data-rex-select-none></button>

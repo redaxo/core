@@ -24,7 +24,7 @@ return static function (ArticleInput $input): void {
         'disabled' => !$allowed,
     ])->toString() . '><i class="rex-icon ' . $icon . '" aria-hidden="true"></i></button>' ?>
     <div <?= new HtmlAttributes([
-        'class' => ['input-group'],
+        'class' => ['rex-input-group'],
         'data-rex-widget' => 'article',
         'data-rex-widget-options' => json_encode([
             'category' => $article->categoryId ?? $input->categoryId ?? Category::getCurrent()->id ?? 0,
@@ -32,7 +32,7 @@ return static function (ArticleInput $input): void {
         ], JSON_THROW_ON_ERROR),
     ]) ?>>
         <input <?= $input->attributes->with([
-            'class' => ['form-control'],
+            'class' => ['rex-input'],
             'type' => 'text',
             'id' => $input->id,
             'value' => null === $article ? '' : $article->name . ' [' . $article->id . ']',
@@ -41,7 +41,7 @@ return static function (ArticleInput $input): void {
             'data-rex-widget-label' => true,
         ]) ?>>
         <input type="hidden" name="<?= escape($input->name) ?>" value="<?= escape((string) $input->articleId) ?>" data-rex-widget-value>
-        <span class="input-group-btn">
+        <span class="rex-input-group-actions">
             <?= $button('open', 'form_article_open', 'rex-icon-open-linkmap') ?>
             <?= $button('remove', 'form_article_delete', 'rex-icon-delete-link') ?>
         </span>
