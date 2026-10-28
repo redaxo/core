@@ -34,12 +34,13 @@
             opacity: 1;
         }
 
+        /* read-only fields (like the value of a media or link widget) keep the border of the other fields */
         &:is(:disabled, [readonly]) {
-            border-color: var(--rex-color-border-strong);
             background: var(--rex-color-surface-muted);
         }
 
         &:disabled {
+            border-color: var(--rex-color-border-strong);
             cursor: not-allowed;
         }
 
