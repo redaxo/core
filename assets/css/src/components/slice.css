@@ -18,17 +18,6 @@
         }
     }
 
-    @media (min-width: 992px) {
-        .rex-main-sidebar {
-            opacity: 0.5;
-            transition: opacity 0.2s;
-
-            &:hover {
-                opacity: 1;
-            }
-        }
-    }
-
     .rex-collapse-content {
         width: 100%;
     }
