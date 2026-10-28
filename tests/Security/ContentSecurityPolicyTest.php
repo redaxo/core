@@ -34,7 +34,7 @@ final class ContentSecurityPolicyTest extends TestCase
 
     public function testAddStartsWithFallback(): void
     {
-        $policy = new ContentSecurityPolicy(['default-src' => ["'self'"], 'script-src' => ["'self'", "'nonce-abc'"]]);
+        $policy = new ContentSecurityPolicy(['default-src' => ["'self'"], 'script-src' => ["'self'", "'nonce-abc'"], 'style-src' => ["'self'", "'nonce-abc'"]]);
         $policy->add('media-src', 'https://example.org');
         $policy->add('worker-src', 'blob:');
         $policy->add('form-action', 'https://example.org');
@@ -42,6 +42,9 @@ final class ContentSecurityPolicyTest extends TestCase
         self::assertSame(["'self'", 'https://example.org'], $policy->get('media-src'), 'media-src falls back to default-src');
         self::assertSame(["'self'", "'nonce-abc'", 'blob:'], $policy->get('worker-src'), 'worker-src falls back to script-src');
         self::assertSame(['https://example.org'], $policy->get('form-action'), 'form-action has no fallback');
+
+        $policy->add('style-src-elem', "'unsafe-inline'");
+        self::assertSame(["'self'", "'unsafe-inline'"], $policy->get('style-src-elem'), "'unsafe-inline' replaces the nonce it would be ignored next to");
     }
 
     #[DataProvider('provideAddRejectsInjection')]

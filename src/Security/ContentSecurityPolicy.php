@@ -71,7 +71,9 @@ final class ContentSecurityPolicy
     }
 
     /**
-     * Allows further sources for a directive, e.g. `add('frame-src', 'https://example.org')`.
+     * Allows further sources for a directive, e.g. `add('frame-src', 'https://example.org')`. A directive that is not
+     * set yet starts with the sources of its fallback (e.g. `default-src`), and `'unsafe-inline'` replaces the nonces
+     * and hashes of the directive, as browsers would ignore it next to them.
      *
      * @throws InvalidArgumentException for a directive or source that would break out of its place in the header
      */
@@ -89,6 +91,10 @@ final class ContentSecurityPolicy
             }
             // a single 'none' would block the added sources
             $current = array_values(array_diff($this->directives[$directive] ?? [], ["'none'"]));
+            // browsers ignore 'unsafe-inline' next to a nonce or hash, so these give way to it
+            if ("'unsafe-inline'" === $source) {
+                $current = array_values(array_filter($current, static fn (string $item): bool => !preg_match("/^'(nonce|sha256|sha384|sha512)-/", $item)));
+            }
             if (!in_array($source, $current, true)) {
                 $current[] = $source;
             }
