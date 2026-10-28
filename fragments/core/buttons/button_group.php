@@ -11,7 +11,8 @@ use Redaxo\Core\View\HtmlAttributes;
 /**
  * Buttons given as arrays (`label`, `url`, `icon`, `hidden_label`, `variant`, `attributes`), e.g. by the slice menu,
  * as a {@see ButtonGroup}. `variant` is a {@see ButtonVariant} value; without it, Bootstrap 3 classes like `btn-save`
- * of older items still pick the matching variant.
+ * of older items still pick the matching variant. A button without `url` submits its form unless `attributes` give
+ * another `type`.
  *
  * @var Fragment $this
  * @psalm-scope-this Fragment
@@ -36,6 +37,10 @@ echo new ButtonGroup(
         }
         $hidden = isset($button['hidden_label']);
 
+        // like the <button> of the older fragment, a button without URL submits its form unless it says otherwise
+        $type = Type::string($attributes['type'] ?? 'submit');
+        unset($attributes['type']);
+
         $variant = ButtonVariant::tryFrom(Type::string($button['variant'] ?? ''));
         foreach ((array) ($attributes['class'] ?? []) as $class) {
             $variant ??= $legacyVariants[$class] ?? null;
@@ -47,6 +52,7 @@ echo new ButtonGroup(
             isset($button['icon']) ? Type::string($button['icon']) : null,
             variant: $variant ?? ButtonVariant::Secondary,
             hiddenLabel: $hidden,
+            type: $type,
             attributes: new HtmlAttributes($attributes),
         );
     }, $buttons),

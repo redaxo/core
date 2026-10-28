@@ -27,6 +27,8 @@ $raw = function (string ...$names): Html {
 };
 $variant = SectionVariant::tryFrom((string) $this->getVar('class', '')) ?? SectionVariant::Default;
 
+// `before` and `after` stand outside the section, e.g. a message above the form of a slice
+echo $raw('before');
 echo new Section(
     title: $raw('title'),
     body: $raw('body'),
@@ -38,3 +40,4 @@ echo new Section(
     collapsible: (bool) $this->getVar('collapse', false),
     collapsed: (bool) $this->getVar('collapsed', false),
 )->render();
+echo $raw('after');
