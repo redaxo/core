@@ -54,12 +54,8 @@
         color: var(--rex-section-header-text);
         line-height: 1.25;
 
-        &[data-toggle] {
-            cursor: pointer;
-
-            &:hover {
-                background: color-mix(in srgb, var(--rex-section-color), var(--rex-color-text) 8%);
-            }
+        &:has(.rex-section__toggle:hover) {
+            background: color-mix(in srgb, var(--rex-section-color), var(--rex-color-text) 8%);
         }
     }
 
@@ -69,6 +65,20 @@
         font-size: 1.0625rem;
         font-weight: 400;
         line-height: 1.25;
+    }
+
+    /* the title of a collapsible section, as wide as the header */
+    .rex-section__toggle {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: inherit;
+        cursor: pointer;
     }
 
     .rex-section__options {

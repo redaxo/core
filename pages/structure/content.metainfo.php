@@ -56,7 +56,7 @@ $structureContext = new StructureContext(
 if (0 == $article->getValue('startarticle')) {
     if (Core::requireUser()->hasPerm('publishArticle[]')) {
         if (count($articleStatusTypes) > 2) {
-            $articleStatus = '<div class="dropdown"><a href="#" class="dropdown-toggle ' . $articleClass . '" type="button" data-toggle="dropdown"><i class="rex-icon ' . $articleIcon . '"></i>&nbsp;' . $articleStatus . '&nbsp;<span class="caret"></span></a><ul class="dropdown-menu dropdown-menu-right">';
+            $articleStatus = '<div class="dropdown"><button type="button" class="rex-dropdown-link dropdown-toggle ' . $articleClass . '" data-toggle="dropdown" aria-expanded="false"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i>&nbsp;' . $articleStatus . '&nbsp;<span class="caret" aria-hidden="true"></span></button><ul class="dropdown-menu dropdown-menu-right">';
             foreach ($articleStatusTypes as $artStatusKey => $artStatusType) {
                 $articleStatus .= '<li><a  class="' . $artStatusType[1] . '" href="' . $structureContext->getContext()->getUrl([
                     'article_id' => $articleId,

@@ -248,6 +248,7 @@ dialog_cancel = Abbrechen
 select_all = Alle auswählen
 select_none = Keine auswählen
 select_no_results = Keine Treffer
+select_search = Suchen
 overlay_close = Schließen
 password_show = Passwort anzeigen
 

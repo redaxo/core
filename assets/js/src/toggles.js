@@ -52,7 +52,20 @@ document.addEventListener('click', event => {
     }
 });
 
+function dropdownItems(dropdown) {
+    return [...dropdown.querySelectorAll(':scope > .dropdown-menu li:not(.disabled) > a')];
+}
+
 document.addEventListener('keydown', event => {
+    // the arrow keys also open a closed dropdown, at its first item
+    const closedToggle = event.target.closest('[data-toggle="dropdown"]');
+    if (closedToggle && !closedToggle.parentElement.classList.contains('open') && 'ArrowDown' === event.key) {
+        event.preventDefault();
+        toggleDropdown(closedToggle);
+        dropdownItems(closedToggle.parentElement)[0]?.focus();
+        return;
+    }
+
     const dropdown = event.target.closest('.open:has(> [data-toggle="dropdown"])');
     if (!dropdown) {
         return;
@@ -65,10 +78,19 @@ document.addEventListener('keydown', event => {
         toggle.focus();
     } else if ('ArrowDown' === event.key || 'ArrowUp' === event.key) {
         event.preventDefault();
-        const items = [...dropdown.querySelectorAll(':scope > .dropdown-menu li:not(.disabled) > a')];
+        const items = dropdownItems(dropdown);
         const index = items.indexOf(document.activeElement);
         const next = 'ArrowDown' === event.key ? Math.min(index + 1, items.length - 1) : Math.max(index - 1, 0);
         items[next]?.focus();
+    }
+});
+
+// an open dropdown closes once the focus leaves it
+document.addEventListener('focusout', event => {
+    const dropdown = event.target.closest('.open:has(> [data-toggle="dropdown"])');
+    if (dropdown && !dropdown.contains(event.relatedTarget) && null !== event.relatedTarget) {
+        dropdown.classList.remove('open');
+        dropdown.querySelector(':scope > [data-toggle="dropdown"]').setAttribute('aria-expanded', 'false');
     }
 });
 
@@ -106,7 +128,8 @@ document.addEventListener('click', event => {
 });
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Tabs: the link's list item and the pane it points to get `.active`
+// Tabs: the link's list item and the pane it points to get `.active`; not used by the core, kept for addons with the
+// Bootstrap 3 markup
 
 document.addEventListener('click', event => {
     const link = event.target.closest('[data-toggle="tab"]');

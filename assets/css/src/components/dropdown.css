@@ -6,6 +6,22 @@
         position: relative;
     }
 
+    /* toggle that looks like a link, e.g. the status in the structure */
+    .rex-dropdown-link {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--rex-color-link);
+        font: inherit;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--rex-color-link-hover);
+            text-decoration: underline;
+        }
+    }
+
     .dropdown-menu {
         position: absolute;
         top: 100%;

@@ -232,6 +232,7 @@ dialog_cancel = Cancel
 select_all = Select all
 select_none = Deselect all
 select_no_results = No results
+select_search = Search
 overlay_close = Close
 password_show = Show password
 

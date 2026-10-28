@@ -186,7 +186,7 @@ final class View
             label: $buttonLabel,
             prefix: I18n::msg('language'),
             header: I18n::msg('language_select'),
-            footer: $user->admin ? Html::raw('<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag"></i> ' . I18n::msg('languages_edit') . '</a>') : '',
+            footer: $user->admin ? Html::raw('<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . I18n::msg('languages_edit') . '</a>') : '',
             attributes: new HtmlAttributes(['class' => ['rex-language']]),
         )->render();
     }

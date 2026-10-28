@@ -29,7 +29,7 @@ final class Dropdown implements Renderable
         /** Full width */
         public bool $block = false,
         public bool $disabled = false,
-        /** Toggle as plain link instead of a button, e.g. within a toolbar */
+        /** Toggle styled as plain link instead of a button, e.g. within a toolbar */
         public bool $link = false,
         /** Without the wrapping element, when the surrounding element (e.g. a button group) takes its role */
         public bool $wrapped = true,

@@ -158,7 +158,7 @@ if ('add_cat' === $structureContext->function || 'edit_cat' === $structureContex
 }
 
 $categoryMetaToggle = static fn (MetaForm $meta): string => $meta->hasFields()
-    ? '<a class="btn btn-default' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" href="#rex-structure-category-metainfo"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>'
+    ? '<button type="button" class="btn btn-default' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" data-target="#rex-structure-category-metainfo" aria-controls="rex-structure-category-metainfo" aria-expanded="' . ($meta->hasErrors() ? 'true' : 'false') . '"><i class="rex-icon rex-icon-structure-category-metainfo" aria-hidden="true"></i><span class="sr-only">' . I18n::msg('metadata') . '</span></button>'
     : '';
 $categoryMetaRow = static fn (MetaForm $meta): ?TableRow => $meta->hasFields()
     ? new TableRow([
@@ -240,7 +240,7 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
             $tdLayoutClass = 'rex-table-action-no-dropdown';
             if (count($statusTypes) > 2) {
                 $tdLayoutClass = 'rex-table-action-dropdown';
-                $katStatus = '<div class="dropdown"><a href="#" class="dropdown-toggle ' . $statusClass . '" type="button" data-toggle="dropdown"><i class="rex-icon ' . $statusIcon . '"></i>&nbsp;' . $katStatus . '&nbsp;<span class="caret"></span></a><ul class="dropdown-menu dropdown-menu-right">';
+                $katStatus = '<div class="dropdown"><button type="button" class="rex-dropdown-link dropdown-toggle ' . $statusClass . '" data-toggle="dropdown" aria-expanded="false"><i class="rex-icon ' . $statusIcon . '" aria-hidden="true"></i>&nbsp;' . $katStatus . '&nbsp;<span class="caret" aria-hidden="true"></span></button><ul class="dropdown-menu dropdown-menu-right">';
                 foreach ($statusTypes as $catStatusKey => $catStatusType) {
                     $katStatus .= '<li><a class="' . $catStatusType[1] . '" href="' . $structureContext->getContext()->getUrl(['category-id' => $iCategoryId, 'catstart' => $structureContext->catStart, 'cat_status' => $catStatusKey] + CategoryStatusChange::getUrlParams()) . '">' . $catStatusType[0] . '</a></li>';
                 }
@@ -475,7 +475,7 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
 
                     if (count($statusTypes) > 2) {
                         $tdLayoutClass = 'rex-table-action-dropdown';
-                        $articleStatus = '<div class="dropdown"><a href="#" class="dropdown-toggle ' . $articleClass . '" type="button" data-toggle="dropdown"><i class="rex-icon ' . $articleIcon . '"></i>&nbsp;' . $articleStatus . '&nbsp;<span class="caret"></span></a><ul class="dropdown-menu dropdown-menu-right">';
+                        $articleStatus = '<div class="dropdown"><button type="button" class="rex-dropdown-link dropdown-toggle ' . $articleClass . '" data-toggle="dropdown" aria-expanded="false"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i>&nbsp;' . $articleStatus . '&nbsp;<span class="caret" aria-hidden="true"></span></button><ul class="dropdown-menu dropdown-menu-right">';
                         foreach ($statusTypes as $artStatusKey => $artStatusType) {
                             $articleStatus .= '<li><a  class="' . $artStatusType[1] . '" href="' . $structureContext->getContext()->getUrl(['article_id' => $articleId, 'artstart' => $structureContext->artStart, 'art_status' => $artStatusKey] + ArticleStatusChange::getUrlParams()) . '">' . $artStatusType[0] . '</a></li>';
                         }

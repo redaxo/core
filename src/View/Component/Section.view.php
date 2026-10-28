@@ -12,16 +12,25 @@ return static function (Section $section): void {
     ?>
     <section <?= $section->attributes->with(['class' => ['rex-section', 'rex-section--' . $variant]]) ?>>
         <?php if ($filled($section->title) || $filled($section->options) || $filled($section->header)): ?>
-            <header <?= new HtmlAttributes([
-                'class' => ['rex-section__header', 'collapsed' => $section->collapsible && $section->collapsed],
-                'data-toggle' => null === $collapseId ? null : 'collapse',
-                'data-target' => null === $collapseId ? null : '#' . $collapseId,
-            ]) ?>>
+            <header class="rex-section__header">
                 <?php if ($filled($section->options)): ?>
                     <div class="rex-section__options"><?= Html::from($section->options) ?></div>
                 <?php endif ?>
                 <?php if ($filled($section->title)): ?>
-                    <div class="rex-section__title"><?= Html::from($section->title) ?></div>
+                    <h<?= $section->headingLevel ?> class="rex-section__title">
+                        <?php if (null === $collapseId): ?>
+                            <?= Html::from($section->title) ?>
+                        <?php else: ?>
+                            <button <?= new HtmlAttributes([
+                                'type' => 'button',
+                                'class' => ['rex-section__toggle', 'collapsed' => $section->collapsed],
+                                'data-toggle' => 'collapse',
+                                'data-target' => '#' . $collapseId,
+                                'aria-controls' => $collapseId,
+                                'aria-expanded' => $section->collapsed ? 'false' : 'true',
+                            ]) ?>><?= Html::from($section->title) ?></button>
+                        <?php endif ?>
+                    </h<?= $section->headingLevel ?>>
                 <?php endif ?>
                 <?= $filled($section->header) ? Html::from($section->header) : '' ?>
             </header>

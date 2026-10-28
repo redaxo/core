@@ -28,9 +28,11 @@ final class Section implements Renderable
         /** Further header content below the title, e.g. tabs */
         public string|Renderable $header = '',
         public SectionVariant $variant = SectionVariant::Default,
-        /** Whether a click on the header collapses the content */
+        /** Whether the title is a button that collapses the content */
         public bool $collapsible = false,
         public bool $collapsed = false,
         public HtmlAttributes $attributes = new HtmlAttributes(),
+        /** @var int<2, 6> Level of the title heading, below the `<h1>` of the page */
+        public int $headingLevel = 2,
     ) {}
 }

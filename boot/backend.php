@@ -227,6 +227,7 @@ $i18n = [
     'select_all' => I18n::msg('select_all'),
     'select_none' => I18n::msg('select_none'),
     'select_no_results' => I18n::msg('select_no_results'),
+    'select_search' => I18n::msg('select_search'),
 ];
 
 if (Core::getUser()) {

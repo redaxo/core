@@ -111,6 +111,12 @@
         list-style: none;
     }
 
+    .rex-select-options [role="group"] {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
     .rex-select-group {
         padding: 6px 12px 3px;
         color: var(--rex-color-text-muted);
@@ -118,7 +124,7 @@
         font-weight: 700;
     }
 
-    .rex-select-options > [role="option"] {
+    .rex-select-options [role="option"] {
         position: relative;
         padding: 3px 20px 3px 12px;
         white-space: nowrap;
@@ -143,7 +149,7 @@
             cursor: not-allowed;
         }
 
-        [aria-multiselectable="true"] > & {
+        [aria-multiselectable="true"] & {
             padding-left: 30px;
 
             &.is-grouped {
@@ -182,5 +188,9 @@
         margin: 0;
         padding: 6px 12px 10px;
         color: var(--rex-color-text-muted);
+
+        &:empty {
+            display: none;
+        }
     }
 }

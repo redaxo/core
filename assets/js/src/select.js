@@ -19,16 +19,16 @@ class Select {
         this.element.className = 'rex-select';
         this.element.innerHTML = `
             <button type="button" class="form-control rex-select-toggle" aria-haspopup="listbox" aria-expanded="false" popovertarget="${this.id}">
-                <span class="rex-select-value"></span>
+                <span class="rex-select-value" id="${this.id}-value"></span>
             </button>
             <div class="rex-select-panel" id="${this.id}" popover>
-                ${this.search ? '<input type="search" class="form-control rex-select-search" autocomplete="off">' : ''}
+                ${this.search ? `<input type="search" class="form-control rex-select-search" autocomplete="off" aria-controls="${this.id}-options">` : ''}
                 ${this.search && select.multiple ? `<div class="rex-select-actions">
                     <button type="button" class="btn btn-default btn-xs" data-rex-select-all></button>
                     <button type="button" class="btn btn-default btn-xs" data-rex-select-none></button>
                 </div>` : ''}
-                <ul class="rex-select-options" role="listbox"></ul>
-                <p class="rex-select-empty" hidden></p>
+                <ul class="rex-select-options" id="${this.id}-options" role="listbox"></ul>
+                <p class="rex-select-empty" role="status"></p>
             </div>`;
 
         this.toggle = this.element.querySelector('.rex-select-toggle');
@@ -38,11 +38,14 @@ class Select {
         this.empty = this.element.querySelector('.rex-select-empty');
 
         this.list.setAttribute('aria-multiselectable', String(select.multiple));
-        this.empty.textContent = i18n().select_no_results ?? 'No results';
+        this.input?.setAttribute('aria-label', i18n().select_search ?? 'Search');
         this.element.querySelector('[data-rex-select-all]')?.append(i18n().select_all ?? 'All');
         this.element.querySelector('[data-rex-select-none]')?.append(i18n().select_none ?? 'None');
+        // the toggle reads as label and current value, the list of options as label
         if (select.labels[0]) {
-            this.toggle.setAttribute('aria-labelledby', select.labels[0].id ||= this.id + '-label');
+            const label = select.labels[0].id ||= this.id + '-label';
+            this.toggle.setAttribute('aria-labelledby', label + ' ' + this.id + '-value');
+            this.list.setAttribute('aria-labelledby', label);
         }
 
         select.before(this.element);
@@ -102,14 +105,24 @@ class Select {
 
     render() {
         this.list.replaceChildren();
+        let groupList = null;
         for (const [index, option] of [...this.select.options].entries()) {
             const group = option.parentElement instanceof HTMLOptGroupElement ? option.parentElement : null;
             if (group && option === group.querySelector('option')) {
-                const header = document.createElement('li');
+                // an option group is a labeled group of its options within the listbox
+                const wrapper = document.createElement('li');
+                wrapper.setAttribute('role', 'none');
+                const header = document.createElement('div');
                 header.className = 'rex-select-group';
-                header.setAttribute('role', 'presentation');
+                header.id = `${this.id}-group-${index}`;
                 header.textContent = group.label;
-                this.list.append(header);
+                groupList = document.createElement('ul');
+                groupList.setAttribute('role', 'group');
+                groupList.setAttribute('aria-labelledby', header.id);
+                wrapper.append(header, groupList);
+                this.list.append(wrapper);
+            } else if (!group) {
+                groupList = null;
             }
             const item = document.createElement('li');
             item.setAttribute('role', 'option');
@@ -121,7 +134,7 @@ class Select {
                 item.setAttribute('aria-disabled', 'true');
             }
             item.classList.toggle('is-grouped', null !== group);
-            this.list.append(item);
+            (groupList ?? this.list).append(item);
         }
         this.filter();
     }
@@ -133,15 +146,11 @@ class Select {
             item.hidden = '' !== term && !item.textContent.toLocaleLowerCase().includes(term);
             visible += item.hidden ? 0 : 1;
         }
-        for (const header of this.list.querySelectorAll('.rex-select-group')) {
-            let next = header.nextElementSibling;
-            let hasVisible = false;
-            for (; next && !next.matches('.rex-select-group'); next = next.nextElementSibling) {
-                hasVisible ||= !next.hidden;
-            }
-            header.hidden = !hasVisible;
+        for (const group of this.list.querySelectorAll('[role="group"]')) {
+            group.parentElement.hidden = !group.querySelector('[role="option"]:not([hidden])');
         }
-        this.empty.hidden = visible > 0;
+        // a live region, so the empty result is announced
+        this.empty.textContent = visible > 0 ? '' : (i18n().select_no_results ?? 'No results');
     }
 
     choose(item) {
@@ -181,6 +190,16 @@ class Select {
             event.preventDefault();
             const next = 'ArrowDown' === event.key ? Math.min(index + 1, options.length - 1) : index - 1;
             (next < 0 ? this.input ?? options[0] : options[next])?.focus();
+        } else if (('Home' === event.key || 'End' === event.key) && index >= 0) {
+            event.preventDefault();
+            options.at('Home' === event.key ? 0 : -1)?.focus();
+        } else if (1 === event.key.length && index >= 0 && !event.ctrlKey && !event.metaKey && !event.altKey && ' ' !== event.key) {
+            // type-ahead: the next option starting with the typed characters
+            clearTimeout(this.typeaheadTimer);
+            this.typeahead = (this.typeahead ?? '') + event.key.toLocaleLowerCase();
+            this.typeaheadTimer = setTimeout(() => this.typeahead = '', 500);
+            const ordered = [...options.slice(index + 1), ...options.slice(0, index + 1)];
+            ordered.find(option => option.textContent.toLocaleLowerCase().startsWith(this.typeahead))?.focus();
         } else if (('Enter' === event.key || ' ' === event.key) && index >= 0) {
             event.preventDefault();
             this.choose(options[index]);

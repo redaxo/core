@@ -125,7 +125,7 @@ if ('' != $error) {
 }
 
 $metaToggle = static fn (MetaForm $meta): string => $meta->hasFields()
-    ? '<a class="btn btn-default' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" href="#rex-language-metainfo"><i class="rex-icon rex-icon-structure-category-metainfo"></i></a>'
+    ? '<button type="button" class="btn btn-default' . ($meta->hasErrors() ? '' : ' collapsed') . '" data-toggle="collapse" data-target="#rex-language-metainfo" aria-controls="rex-language-metainfo" aria-expanded="' . ($meta->hasErrors() ? 'true' : 'false') . '"><i class="rex-icon rex-icon-structure-category-metainfo" aria-hidden="true"></i><span class="sr-only">' . I18n::msg('metadata') . '</span></button>'
     : '';
 $metaRow = static fn (MetaForm $meta): ?TableRow => $meta->hasFields()
     ? new TableRow([
