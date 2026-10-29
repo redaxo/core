@@ -95,7 +95,7 @@ final readonly class TabsItem
     {
         $result = [];
         foreach (is_array($attributes) ? $attributes : [] as $name => $value) {
-            if (!is_string($name) || 'class' === $name || !(is_string($value) || is_int($value))) {
+            if (!is_string($name) || 'class' === $name || !is_string($value) && !is_int($value)) {
                 continue;
             }
             if ('' === $value) {

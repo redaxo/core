@@ -48,7 +48,7 @@ foreach ($elements as $element) {
     if (isset($element['class']) && '' != $element['class']) {
         $classes .= ' ' . $element['class'];
     }
-    $layout = isset($element['vertical']) && true === $element['vertical'] ? ' data-layout="vertical"' : '';
+    $layout = isset($element['vertical']) && $element['vertical'] ? ' data-layout="vertical"' : '';
 
     $out .= $header;
     $out .= '<div class="' . $classes . '"' . $layout . $id . '>';
