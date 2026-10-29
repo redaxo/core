@@ -370,7 +370,7 @@ async function main() {
         page.waitForNavigation({ waitUntil: 'load' }),
         page.click('button[name="save"]'),
     ]);
-    await page.waitForSelector('.alert-danger');
+    await page.waitForSelector('.rex-alert[data-variant="danger"]');
     await createScreenshots(page, 'mediapool_upload.png');
 
     // test debug
