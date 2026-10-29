@@ -52,6 +52,16 @@ final class Asset
         self::$cssFiles['all'][] = $file;
     }
 
+    /** Forgets the files and properties given so far, so a new page (e.g. in tests or long-running processes) starts empty. */
+    public static function reset(): void
+    {
+        self::$cssFiles = [];
+        self::$jsFiles = [];
+        self::$jsProperties = [];
+        self::$favicon = null;
+        self::$cssFilesRead = false;
+    }
+
     /** Adds a CSS file. */
     public static function addCssFile(string $file, string $media = 'all'): void
     {
