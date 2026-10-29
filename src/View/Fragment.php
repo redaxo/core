@@ -7,6 +7,7 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Timer;
 use Redaxo\Core\Util\Type;
 use Stringable;
+use Throwable;
 
 use function array_key_exists;
 use function sprintf;
@@ -86,7 +87,13 @@ class Fragment
             if (is_readable($fragment)) {
                 $content = Timer::measure('Fragment: ' . $filename, function () use ($fragment) {
                     ob_start();
-                    require $fragment;
+                    try {
+                        require $fragment;
+                    } catch (Throwable $exception) {
+                        ob_end_clean();
+
+                        throw $exception;
+                    }
 
                     return Type::string(ob_get_clean());
                 });
