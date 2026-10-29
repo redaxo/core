@@ -8,6 +8,10 @@
  Colors switch with `light-dark()`, following the color scheme REDAXO sets per theme (`:root`, and the theme classes
  on the body below). Text colors reach 4.5:1 and the `-border-input` and `-focus` colors 3:1 against the surfaces
  they are used on (checked by `npm run check:contrast`).
+
+ Viewport breakpoints of the backend frame: 768px, 992px (the navigation opens beside the content), 1200px and
+ 1400px, as `min-width` and one pixel less as `max-width` (custom properties don't work in media queries, so stylelint
+ allows only these values). The grid uses container breakpoints instead (components/grid.css).
  */
 
 @layer tokens {
