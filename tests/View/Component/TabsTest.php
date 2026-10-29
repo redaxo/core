@@ -35,6 +35,18 @@ final class TabsTest extends TestCase
         self::assertStringContainsString('<ul class="rex-subnav"><li class="rex-subnav-item"><a href="index.php?page=b/sub" class="rex-subnav-link" aria-current="page">Sub</a></li></ul>', $html);
     }
 
+    public function testKeepsTheAlignmentOfAnItem(): void
+    {
+        // e.g. a subpage of an addon with `Page::setItemAttr('data-align', 'end')`
+        $html = self::render(new Tabs([
+            new TabsItem('One', 'index.php?page=a'),
+            new TabsItem('Readme', 'index.php?page=b', attributes: new HtmlAttributes(['data-align' => 'end'])),
+        ]));
+
+        self::assertStringContainsString('<li class="rex-tabs-item" data-align="end"><a href="index.php?page=b" class="rex-tabs-link">Readme</a></li>', $html);
+        self::assertStringContainsString('<li class="rex-tabs-item"><a href="index.php?page=a" class="rex-tabs-link">One</a></li>', $html);
+    }
+
     public function testDefaultLabelAndEmptyTabs(): void
     {
         self::assertStringContainsString('aria-label="', self::render(new Tabs([new TabsItem('a', 'x')])));
