@@ -231,11 +231,5 @@ The fragment system will be removed before the 6.0 release',
     'count' => 3,
     'path' => __DIR__ . '/../../../src/View/View.php',
 ];
-$ignoreErrors[] = [
-    'rawMessage' => 'Instantiation of deprecated class Redaxo\\Core\\View\\Fragment:
-The fragment system will be removed before the 6.0 release',
-    'count' => 1,
-    'path' => __DIR__ . '/../../../tests/View/Component/GridFragmentTest.php',
-];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];

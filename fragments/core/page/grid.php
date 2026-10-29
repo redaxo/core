@@ -22,25 +22,26 @@ use Redaxo\Core\View\Html;
 ?>
 <?php
 
-/** @var string|array<int, string> $content */
-$content = $this->content;
-$contents = is_string($content) ? [$content] : array_values($content);
+/** @var string|array<array-key, string|null>|null $content */
+$content = $this->content ?? '';
+// the keys of the contents also select their spans
+$contents = array_map(strval(...), is_array($content) ? $content : [$content]);
 
 if (isset($this->classes)) {
-    @trigger_error('The variable "classes" of the fragment "core/page/grid.php" is no longer supported, use "spans" or the component ' . Grid::class . '.', E_USER_DEPRECATED);
+    trigger_error('The variable "classes" of the fragment "core/page/grid.php" is no longer supported, use "spans" or the component ' . Grid::class . '.', E_USER_DEPRECATED);
 }
 
 if (1 === count($contents)) {
-    echo $contents[0];
+    echo reset($contents);
 
     return;
 }
 
-/** @var list<string>|null $spans */
+/** @var array<array-key, string>|null $spans */
 $spans = $this->spans ?? null;
 
 if (null === $spans) {
-    echo new Grid(array_map(Html::raw(...), $contents), layout: new GridLayoutSplit(Breakpoint::Md))->render();
+    echo new Grid(array_values(array_map(Html::raw(...), $contents)), layout: new GridLayoutSplit(Breakpoint::Md))->render();
 
     return;
 }
