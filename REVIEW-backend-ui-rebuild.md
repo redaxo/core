@@ -59,16 +59,17 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   2. **Was responsiv ist und was fest, ergibt sich aus der Struktur.** Responsive Werte stehen ausschließlich in `GridColumnRule`-Objekten, jedes an genau einen Breakpoint gebunden. Feste Werte sind Parameter von `Grid`, `GridColumn` oder dem Layout-Objekt.
      - responsiv (`GridColumnRule`): `width`, `start`, `order`, `visibility`
      - fest (`Grid`): `layout`, `gap`, `subgrid`
-     - fest (Layout-Objekt): `GridLayoutEqual::$from`, `GridLayoutTiles::$size`
+     - fest (Layout-Objekt): `GridLayoutSplit::$from`, `GridLayoutTiles::$size`
      - fest (`GridColumn`): `alignX`, `alignY`
-  3. **Kein `null` als Wert.** Ein weggelassener Parameter in `GridColumnRule` heißt immer „wie beim kleineren Breakpoint“. Zurückgesetzt wird über ausdrückliche Enum-Fälle (`GridOrder::Source`, `GridVisibility::Visible`, `GridColumnStart::Auto`) bzw. eine ausdrückliche Zahl (`width: 12`).
-- [ ] **Namen:** Der Namespace `Redaxo\Core\View\Component` ist flach, und die bestehenden Klassen tragen den Namen ihrer Komponente als Präfix (`TableColumn`, `ButtonVariant`, `SectionVariant`, `AlertType`). Deshalb bekommt alles, was nur zum Grid gehört, das Präfix `Grid`. Unbestimmte Namen wie `Equal`, `Columns`, `Order` oder `ColumnRule` wären im flachen Namespace mehrdeutig; `ColumnRule` würde z. B. direkt neben dem `ColumnType` der Tabelle stehen. Die Layouts heißen `GridLayout…` und nicht `Grid…Layout`, damit die Autovervollständigung nach `GridLayout` alle zeigt. Ohne Präfix bleibt nur `Breakpoint`, weil das ein Konzept über Komponenten hinweg ist (z. B. später Toolbar oder Tabs).
+  3. **Kein `null` als Wert.** Ein weggelassener Parameter in `GridColumnRule` heißt immer „wie beim kleineren Breakpoint“. Zurückgesetzt wird über ausdrückliche Enum-Fälle (`GridOrder::Source`, `GridVisibility::Visible`, `GridColumnStart::Auto`) bzw. eine ausdrückliche Breite (`width: 12` bei `Columns`, `width: GridColumnWidth::Fill` bei `Split`).
+- [ ] **Namen:** Der Namespace `Redaxo\Core\View\Component` ist flach, und die bestehenden Klassen tragen den Namen ihrer Komponente als Präfix (`TableColumn`, `ButtonVariant`, `SectionVariant`, `AlertType`). Deshalb bekommt alles, was nur zum Grid gehört, das Präfix `Grid`. Unbestimmte Namen wie `Split`, `Columns`, `Order` oder `ColumnRule` wären im flachen Namespace mehrdeutig; `ColumnRule` würde z. B. direkt neben dem `ColumnType` der Tabelle stehen. Die Layouts heißen `GridLayout…` und nicht `Grid…Layout`, damit die Autovervollständigung nach `GridLayout` alle zeigt. Ohne Präfix bleibt nur `Breakpoint`, weil das ein Konzept über Komponenten hinweg ist (z. B. später Toolbar oder Tabs).
   - Nebenbefund: Das bestehende `ColumnType` gehört zur Tabelle und verstößt gegen dieses Muster. Umbenennen in `TableColumnType`.
 - [ ] **Typen:**
   - Klassen: `Grid`, `GridColumn`, `GridColumnRule`
-  - Layouts (Interface `GridLayout`): `GridLayoutColumns` (Standard, 12 Spalten), `GridLayoutEqual(from: Breakpoint)`, `GridLayoutTiles(size: GridTileSize)`. Das Layout ist ein Objekt und kein Enum, weil es seine eigenen Einstellungen trägt. Ein `tileSize` bei einem Spalten-Grid lässt sich so gar nicht erst schreiben.
+  - Layouts (Interface `GridLayout`): `GridLayoutColumns` (Standard, 12 Spalten), `GridLayoutSplit(from: Breakpoint)`, `GridLayoutTiles(size: GridTileSize)`. Das Layout ist ein Objekt und kein Enum, weil es seine eigenen Einstellungen trägt. Ein `tileSize` bei einem Spalten-Grid lässt sich so gar nicht erst schreiben.
   - Enums:
     - `Breakpoint`: `Xs`, `Sm`, `Md`, `Lg`, `Xl`
+    - `GridColumnWidth`: `Auto` (so breit wie der Inhalt), `Fill` (teilt sich den restlichen Platz mit den anderen `Fill`-Spalten), nur bei `GridLayoutSplit`
     - `GridColumnStart`: `Auto` (direkt nach der vorherigen Spalte, der Normalfall)
     - `GridOrder`: `Source` (DOM-Reihenfolge), `First`, `Last`
     - `GridVisibility`: `Visible`, `Hidden`
@@ -80,7 +81,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
 
   **Entschieden: `start` statt `offset`.** Ein Offset ist aus Bootstrap als *Abstand zur vorherigen Spalte* bekannt. CSS Grid kann nur eine *absolute* Startspalte setzen. Unter dem Namen `offset` würde `[width: 4] [offset: 2, width: 4]` in die nächste Zeile springen statt bei Spalte 7 zu beginnen, ohne Fehlermeldung. `start: 7` sagt dagegen genau, was passiert, und braucht keine Umrechnung in der View.
 
-  **Entschieden: keine Breiten `Auto`/`Fill`.** In einem Raster aus 12 festen Spuren kann eine Spalte nur ganze Spuren belegen, „so breit wie der Inhalt“ gibt es dort nicht. „Rest der Zeile“ setzt eine bekannte Startspalte voraus; ohne sie belegt `grid-column: auto / -1` nur die letzte Spur. Das Muster „Feld + Buttons“ gehört in eine Flex-Komponente (Toolbar bzw. Eingabegruppe), nicht ins Grid.
+  **`Auto` und `Fill` nur in `GridLayoutSplit`.** In einem Raster aus 12 festen Spuren (`Columns`) belegt eine Spalte immer ganze Spuren; „so breit wie der Inhalt“ gibt es dort nicht, und „Rest der Zeile“ ginge nur mit bekannter Startspalte. Ein Wechsel des ganzen Rasters auf Flexbox scheidet aus, weil Subgrid CSS Grid braucht und `start` dann wieder relativ wäre. Deshalb bekommen `Auto` und `Fill` ein eigenes Layout, `GridLayoutSplit` (intern Flexbox, das bleibt in der View). Der Name sagt: Die Breite wird auf die Spalten aufgeteilt. „Row“ wurde verworfen, weil es nach einer von mehreren Reihen klingt.
 - [ ] **Signaturen.** Spalten und Regeln werden als Liste übergeben, nicht variadisch. Variadische Parameter müssen in PHP am Ende stehen, und Positionsargumente lassen sich nicht mit benannten Optionen davor mischen.
 
   ```php
@@ -102,9 +103,9 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
       public const int COLUMNS = 12;
   }
 
-  final class GridLayoutEqual implements GridLayout
+  final class GridLayoutSplit implements GridLayout
   {
-      /** @param Breakpoint $from below it the columns stack */
+      /** @param Breakpoint $from below it the columns stack, from it on they share exactly one row */
       public function __construct(
           public Breakpoint $from = Breakpoint::Xs,
       ) {}
@@ -132,8 +133,8 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   {
       public function __construct(
           public Breakpoint $breakpoint,
-          /** @var int<1,12>|null */
-          public ?int $width = null,
+          /** @var int<1,12>|GridColumnWidth|null */
+          public int|GridColumnWidth|null $width = null,
           /** @var int<1,12>|GridColumnStart|null */
           public int|GridColumnStart|null $start = null,
           public ?GridOrder $order = null,
@@ -146,9 +147,10 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
 
 - [ ] **Was in welchem Layout erlaubt ist** (in PHPUnit 1:1 als Data Provider abbilden):
 
-  | Eigenschaft | `Columns` | `Equal` | `Tiles` |
+  | Eigenschaft | `Columns` | `Split` | `Tiles` |
   |---|---|---|---|
-  | `width` | ja | Exception | Exception |
+  | `width` als Zahl | ja | ja, ab `from` | Exception |
+  | `width` als `Auto`/`Fill` | Exception | ja, ab `from` | Exception |
   | `start` | ja | Exception | Exception |
   | `order` | ja | ja | ja |
   | `visibility` | ja | ja | ja |
@@ -158,9 +160,13 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   - eine `GridColumnRule` ganz ohne Werte
   - doppelte Breakpoints in einer Spalte
   - Start + Breite ragen über 12 hinaus (`start + width - 1 > 12`). Geprüft wird pro Breakpoint mit den **geerbten** Werten: `width: 8` ab `Md` und `start: 6` ab `Lg` ist ab `Lg` ungültig. Ohne Prüfung legt CSS Grid stillschweigend zusätzliche Spuren an und die Seite läuft rechts über.
+  - bei `Split`: eine `width`-Regel unterhalb von `from` (dort stehen die Spalten untereinander)
+  - bei `Split`: die Zahlen-Breiten der sichtbaren Spalten ergeben an einem Breakpoint mehr als 12, oder genau 12, obwohl noch eine `Auto`- oder `Fill`-Spalte daneben steht (für sie bliebe kein Platz)
 
 - [ ] **Bedeutung der Werte:**
-  - `width` ohne Regel ist 12 (volle Breite) und gilt, bis eine Regel eines größeren Breakpoints sie ersetzt.
+  - `width` ohne Regel ist bei `Columns` 12 (volle Breite), bei `Split` `Fill` (alle gleich breit). Sie gilt, bis eine Regel eines größeren Breakpoints sie ersetzt.
+  - Bei `Split` heißt `width: 4` „4/12 der Zeile“, der Abstand ist dabei richtig verrechnet. `Auto` darf schrumpfen, damit langer Inhalt umbricht statt überzulaufen; `Fill` darf bis 0 schrumpfen.
+  - `alignX` muss in allen Layouts gleich wirken: Der Inhalt wird so breit wie nötig und steht am Anfang, in der Mitte oder am Ende seiner Spalte. `justify-self` greift in Flexbox nicht, deshalb braucht die View bei `Split` mit `alignX` ≠ `Stretch` einen eigenen Weg (z. B. ein inneres Element). `alignY` wird auch dort zu `align-self`.
   - `GridColumnStart::Auto` setzt die Spalte direkt hinter die vorherige; eine Zahl setzt sie fest in diese Spalte, notfalls in einer neuen Zeile.
   - `GridOrder::Source` stellt die Position im DOM wieder her (`order: 0`); `First`/`Last` ziehen die Spalte vor bzw. hinter alle `Source`-Spalten. Tastatur- und Vorleserreihenfolge bleiben immer die des DOM. Regel für die Doku: die visuelle Reihenfolge darf nur abweichen, wenn Inhalt und Tastaturreihenfolge verständlich bleiben (WCAG 1.3.2 / 2.4.3).
   - `GridVisibility::Hidden` ist `display: none`, also auch für Screenreader weg. `Visible` stellt die eigene Darstellung der Spalte wieder her, bei einer verschachtelten `.rex-grid` also `display: grid`.
@@ -168,13 +174,13 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
 - [ ] **Leere und ungewöhnliche Grids:**
   - Ohne Spalten gibt `Grid` nichts aus (leerer String, kein Wrapper). Listen kommen oft dynamisch aus der Datenbank, eine Exception würde jeden Aufrufer zu einer eigenen Prüfung zwingen.
   - Eine einzige Spalte bekommt trotzdem den Wrapper, denn auch sie kann Regeln haben. Nur der Fragment-Adapter behält die bisherige Rohausgabe bei einer Spalte.
-  - Mehr als 12 Spalten: Bei `Columns` brechen sie um (ohne `width` stehen ohnehin alle untereinander). Bei `Equal` stehen sie ab `from` alle gleich breit in einer Zeile, auch 13 oder mehr. Bei `Tiles` gibt es keine Obergrenze.
+  - Mehr als 12 Spalten: Bei `Columns` brechen sie um (ohne `width` stehen ohnehin alle untereinander). Bei `Split` stehen sie ab `from` alle in einer Zeile, auch 13 oder mehr. Bei `Tiles` gibt es keine Obergrenze.
   - `subgrid: true` ohne umgebendes Grid fällt auf ein normales 12er-Raster zurück (`subgrid` nur über `.rex-grid > .rex-grid[data-subgrid]`; die View rendert eine `GridColumn` mit Subgrid-Inhalt als ein Element). Die Spaltenangaben der inneren Spalten beziehen sich auf die Spuren der äußeren Spalte; reicht deren Breite nicht, brechen die inneren Spalten um. PHP prüft das nicht, weil das innere Grid sein äußeres nicht kennt.
   - Kachelbreiten sind fest pro `GridTileSize`; eine doppelt breite Kachel gibt es nicht (`width` ist bei `Tiles` verboten).
 - [ ] **Reiner Inhalt als Spalte:** `Grid` nimmt neben `GridColumn` auch reinen Inhalt (`string|Renderable`) an und verpackt ihn intern als Spalte ohne Regeln. `GridColumn` braucht man nur, wenn eine Spalte Regeln oder eine Ausrichtung hat. Einen Helfer wie `GridColumn::wrap()` gibt es nicht; der Entwickler muss nichts zusätzlich lernen.
 - [ ] **Wie `layout` und die Spalten zusammenspielen:**
   - **`GridLayoutColumns`** (Standard): ein Raster aus 12 Spalten. Jede Spalte gibt in ihren Regeln selbst `width`/`start` an. Ohne `width` ist sie 12 Spalten breit, und ergibt die Summe mehr als 12, bricht die Zeile um.
-  - **`GridLayoutEqual`**: Alle Spalten sind gleich breit und stehen ab `from` nebeneinander, darunter untereinander. Die Breite ergibt sich aus der Anzahl der Spalten, auch bei 5.
+  - **`GridLayoutSplit`**: Unterhalb von `from` stehen die Spalten untereinander. Ab `from` stehen sie in genau einer Zeile ohne Umbruch und teilen sich die Breite: ohne Angabe gleich breit (auch bei 5 Spalten), sonst nach Zahl, `Auto` oder `Fill`.
   - **`GridLayoutTiles`**: Kacheln mit einer Mindestbreite nach `size`. Pro Zeile passen so viele hinein, wie Platz ist, ohne Breakpoints.
 - [ ] **Beispiele:**
 
@@ -193,9 +199,23 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
       new GridColumn($form, [new GridColumnRule(Breakpoint::Md, width: 6, start: 4)]),
   ])->render();
 
-  // feste Layouts: keine width/start in den Spalten
+  // Kacheln: keine width/start in den Spalten
   echo new Grid($cards, layout: new GridLayoutTiles(GridTileSize::Small))->render();
-  echo new Grid([$a, $b, $c, $d, $e], layout: new GridLayoutEqual(from: Breakpoint::Md))->render();
+
+  // fünf gleich breite Spalten ab Md
+  echo new Grid([$a, $b, $c, $d, $e], layout: new GridLayoutSplit(from: Breakpoint::Md))->render();
+
+  // Feld + Buttons, immer nebeneinander
+  echo new Grid([
+      $field, // Fill
+      new GridColumn($buttons, [new GridColumnRule(Breakpoint::Xs, width: GridColumnWidth::Auto)], alignY: GridAlign::End),
+  ], layout: new GridLayoutSplit())->render();
+
+  // Navigation (3/12) + Inhalt (Rest), ab Md nebeneinander
+  echo new Grid([
+      new GridColumn($nav, [new GridColumnRule(Breakpoint::Md, width: 3)]),
+      $main, // Fill
+  ], layout: new GridLayoutSplit(from: Breakpoint::Md))->render();
 
   // gemischt: eine Spalte mit Regeln, eine als reiner Inhalt
   echo new Grid([
@@ -241,7 +261,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   </div>
   ```
 
-- [ ] **Fragment `core/page/grid.php` als Adapter** auf die Komponente. Das alte Var `classes` mit Deprecation abfangen statt still ignorieren, `spans` gegen das Vokabular prüfen. Den Standardwert ohne `spans` auf `GridLayoutEqual(from: Breakpoint::Md)` umstellen: bei 2, 3, 4, 6 und 12 Spalten sieht das aus wie heute, bei 5 Spalten entsteht keine Lücke mehr und ab 13 Spalten kein `md:0`. Die übrige Semantik bleibt, auch die Rohausgabe bei nur einem Inhalt.
+- [ ] **Fragment `core/page/grid.php` als Adapter** auf die Komponente. Das alte Var `classes` mit Deprecation abfangen statt still ignorieren, `spans` gegen das Vokabular prüfen. Den Standardwert ohne `spans` auf `GridLayoutSplit(from: Breakpoint::Md)` umstellen: bei 2, 3, 4, 6 und 12 Spalten sieht das aus wie heute, bei 5 Spalten entsteht keine Lücke mehr und ab 13 Spalten kein `md:0`. Die übrige Semantik bleibt, auch die Rohausgabe bei nur einem Inhalt.
 - [ ] **Alle sieben Core-Stellen auf die Komponente umstellen.** Sie dienen dann zugleich als Beispiele für Addons.
 - [ ] **Das Markup bleibt dokumentierter Vertrag** für Addons, die HTML direkt schreiben (Twig, JS-gerendert). Die PHP-Komponente ist aber der empfohlene Weg. Festlegen und dokumentieren:
   - **Öffentlich** sind nur die Klasse `.rex-grid` und die Attribute, die die View ausgibt (`data-span`, `data-start`, `data-order`, `data-visibility`, `data-align-x`, `data-align-y` an Spalten; `data-layout`, `data-gap`, `data-subgrid` und die Layout-Einstellungen am Grid) sowie das bestehende `data-align="end"`. Alles andere ist intern.
@@ -252,7 +272,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
 ### Fehlendes Vokabular im CSS (Grundlage für die Enums)
 
 - [ ] **Startspalte**, z. B. `data-start="md:4"` und `data-start="lg:auto"`. Ein zentriertes Formular oder eine rechts stehende Spalte lässt sich heute nicht ausdrücken.
-- [ ] **Gleich breite Spalten** ohne Rechnen (`grid-auto-flow: column` mit `grid-auto-columns: minmax(0, 1fr)` ab `from`). Fünf Spalten gehen mit 12 Tracks nicht.
+- [ ] **Split-Layout** (`data-layout="split"` o. ä.): Flexbox ohne Umbruch ab `from`, Spalten standardmäßig gleich breit (`flex: 1 1 0`, `min-inline-size: 0`), dazu `auto` (`flex: 0 1 auto`) und Zahlen als `flex: 0 0 calc(…)` mit verrechnetem Abstand. Fünf gleich breite Spalten gehen mit 12 Tracks nicht, Feld + Buttons auch nicht.
 - [ ] **Sichtbarkeit pro Breakpoint**, als Ersatz für `hidden-*`/`visible-*`.
 - [ ] **Reihenfolge pro Breakpoint**, als Ersatz für push/pull. Dokumentieren, dass die visuelle Reihenfolge von der DOM-Reihenfolge abweicht (WCAG 1.3.2 / 2.4.3).
 - [ ] **Zeilenabstand:** `gap: 0 var(--rex-gutter)` lässt umbrechende Spalten aneinanderkleben, `Tiles` hat dagegen einen Zeilenabstand. Entschieden: `GridGap` gilt für beide Achsen, `Default` ist `var(--rex-gutter)` in beiden Richtungen. Die Visual-Test-Baselines der betroffenen Core-Seiten ändern sich dadurch bewusst.
@@ -272,7 +292,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
 
 ### Absicherung
 
-- [ ] **Visual-Test-Fixture** mit allen Grid-Varianten (Spans, Start, equal, tiles, subgrid, hidden, order, gap, Ausrichtung) in mehreren Breiten, jeweils auch in Sidebar, Overlay und Dialog. Für die Compat-Schicht zusätzlich ein paar typische alte Bootstrap-Layouts (Offset, Push/Pull, `hidden-*`). Heute decken die Visual Tests das Grid nur zufällig über zwei Core-Seiten ab, und von den Varianten für Addons ist keine getestet.
+- [ ] **Visual-Test-Fixture** mit allen Grid-Varianten (Spans, Start, Split mit Zahl/auto/fill, Tiles, subgrid, hidden, order, gap, Ausrichtung) in mehreren Breiten, jeweils auch in Sidebar, Overlay und Dialog. Für die Compat-Schicht zusätzlich ein paar typische alte Bootstrap-Layouts (Offset, Push/Pull, `hidden-*`). Heute decken die Visual Tests das Grid nur zufällig über zwei Core-Seiten ab, und von den Varianten für Addons ist keine getestet.
 - [ ] **PHPUnit-Tests** für `Grid`/`GridColumn`: Markup pro Enum-Wert, die Matrix der erlaubten Eigenschaften, alle Exception-Fälle (auch Start + Breite über geerbte Werte), leeres Grid, Fragment-Adapter, Breakpoint-Werte gegen `grid.css`.
 - [ ] **Doku für Addon-Entwickler:** PHP-API mit Beispielen und der Markup-Vertrag.
 
