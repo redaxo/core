@@ -6,6 +6,91 @@
 
 ---
 
+## Review 3 (Stand c687c18a1, 15 Commits seit 28ff53aa7)
+
+**Checks:**
+- **PHPUnit:** Ohne DB ist alles grün, auch die 53 Grid- und Fragment-Tests. Die 19 Fehler kommen nur vom fehlenden `DATABASE_URL`.
+- **Statische Analyse:** PHPStan ist grün. Psalm ist grün mit `psalm:no-cache`; der normale Lauf meldete zwei Fehler, die aus einem veralteten Cache kamen.
+- **Lint:** `npm run lint` ist grün.
+- **Fixture:** Die Grid-Fixture wird aktuell aus der Komponente erzeugt.
+
+Das Grid ist weitgehend wie spezifiziert umgesetzt. Gut gelöst sind:
+- Validierung und Matrix der erlaubten Eigenschaften, mit Tests
+- Subgrid ohne eigenen Container (`container-type: normal`)
+- Sichtbarkeit über Bereichs-Queries, sodass `Visible` die eigene Darstellung behält
+- Split mit Zahl, `Auto` und `Fill` über Flex-Gewichte
+- Compat-Klassen für Offset, Push/Pull und `hidden-*`/`visible-*`
+- der Abgleich der Breakpoint-Werte mit dem CSS per Test
+
+Alle Core-Stellen sind umgestellt, roh geschriebenes Grid-Markup ist nicht mehr übrig. Die Punkte aus dem Re-Review sind erledigt bis auf die unten genannten Reste.
+
+### Grid
+
+- [ ] ✅ **Die Breakpoint-Werte gelten so nur ab 992px Fensterbreite** – `src/View/Component/Breakpoint.php:24-30`.
+  - **Ursache:** Die Notiz verlangte „Breite von `#rex-js-page-main` bei geöffneter Navigation“. Unterhalb von 992px liegt die Navigation aber außerhalb des Bildschirms (`shell.css:390`), und der Inhalt ist fast so breit wie das Fenster. Der Fehler liegt in der Vorgabe, nicht in der Umsetzung.
+  - **Folge für ein Grid im Hauptbereich:**
+    - `Sm` greift schon ab rund 518px Fensterbreite (vorher 768).
+    - `Md` greift ab 742px (vorher 992).
+    - `Lg` ist bei 920–991px an, bei 992–1169px aus und ab 1170px wieder an.
+  - **Was das ist:** Das Springen bei 992px ist kein Fehler, sondern die gewollte Folge der Container Queries: Der Inhalt wird beim Öffnen der Navigation 250px schmaler.
+  - **Abnahmekriterium:** Das Kriterium „Baselines unverändert“ war so nicht erreichbar. Es hat das Problem auch nicht gezeigt, weil die Visual Tests nur bei 1280px laufen.
+  - **Vorgabe:**
+    - `Md` 712, `Lg` 890 und `Xl` 1090 bleiben, sie sind korrekt hergeleitet.
+    - `Sm` = **⏸ Wert folgt nach Abstimmung mit dem Reviewer.** 488 ist zu klein: `media.detail.php` hätte bei 4/12 eine Vorschau von etwa 140px.
+    - Den Docblock in `Breakpoint.php` und `grid.css` korrigieren, sodass die Herleitung nur für `Md`–`Xl` gilt.
+    - Ausgewählte Core-Seiten in den Visual Tests zusätzlich bei 800px und 1024px Fensterbreite aufnehmen, z. B. `system/settings`, `mediapool/media` mit Detailansicht und `structure/content`.
+- [ ] ❔ **Zwischen gestapelten Sections im Grid stehen jetzt etwa 52px statt 22px.** Der neue Zeilenabstand (30px) kommt zum `margin-bottom` der Section hinzu.
+  - Betroffen sind `profile/index.php`, `log.mailer_archive.php`, `report.html.php`, `linkmap.php`, `settings.php` und `main_content.php`.
+  - **Vorgabe:** In einer Grid-Spalte hat das letzte Kind keinen Abstand nach unten mehr. Der Abstand zwischen den Spalten kommt allein aus `GridGap`.
+  - Bitte visuell bei schmaler Breite prüfen.
+- [ ] ✅ **Subgrid in `Split` und `Tiles` wird nicht verhindert** – `Grid.php` prüft es nicht, und `.rex-grid > .rex-grid[data-subgrid]` greift auch dort.
+  - In Split ist der äußere Container Flexbox. `subgrid` hat dann kein Raster zum Übernehmen und fällt auf `none` zurück.
+  - In Tiles bekommt das Subgrid genau eine Spur.
+  - **Vorgabe:**
+    - Eine `InvalidArgumentException`, wenn eine Spalte eines `Split`- oder `Tiles`-Grids ein Grid mit `subgrid: true` enthält.
+    - Im CSS den Selektor auf `.rex-grid:not([data-layout]) > .rex-grid[data-subgrid]` einschränken, damit auch handgeschriebenes Markup dort einfach ein normales Raster wird.
+- [ ] ✅ **Die Deprecation für `classes` im Fragment ist trotzdem stumm** – `fragments/core/page/grid.php:30`.
+  - `@trigger_error` wird vom `ErrorHandler` (`src/ErrorHandler.php:302-305`) als stummgeschaltet verworfen. Kein anderer Core-Code nutzt dieses Muster.
+  - **Vorgabe:** `trigger_error()` ohne `@`.
+  - Der Test (`GridFragmentTest.php:46-58`) muss in seinem Handler `error_reporting() & $errno` prüfen. Sonst besteht er auch bei stummen Fehlern.
+- [ ] ✅ **Neue PHPStan-Baseline für `GridFragmentTest.php`** (`new.deprecatedClass`) – stattdessen ein inline `@phpstan-ignore new.deprecatedClass` mit Begründung.
+- [ ] ❔ **Fragment-Adapter, Grenzfälle der alten Semantik** – `fragments/core/page/grid.php`:
+  - `array_values($content)` nummeriert die Inhalte neu, die `spans` werden aber weiter über den Schlüssel gesucht. Bei nicht-numerischen oder lückenhaften Schlüsseln verrutschen sie. Die Spans müssen über denselben Schlüssel zugeordnet werden wie vorher.
+  - Ein `null` in `content` wirft jetzt einen `TypeError` aus `Html::raw()`, vorher war das ein leerer Inhalt. Wie früher als leeren String behandeln.
+- [ ] ✅ **Fragment-Tests ergänzen** – reiner String als `content`, leeres `content`, `xl:`-Token, doppelter Breakpoint (`'md:6 md:8'`) und ungültige Tokens (`0`, `13`, `xs:6`, `md:auto`). `testInvalidSpan` als Data Provider `provideInvalidSpan`.
+- [ ] ✅ **Kleinigkeit:** `GridColumn.view.php` sagt im Kommentar „in the split layout“, setzt das innere `<div>` bei `alignX` ≠ `Stretch` aber in jedem Layout. Entweder nur bei Split ausgeben (die View kennt das Layout nicht, also über `Grid` durchreichen) oder den Kommentar korrigieren. In `Columns` ist es harmlos.
+- **Hinweis, keine Änderung:** Grids in einer `.rex-section-body` sind 32px schmaler als der Hauptbereich und schalten deshalb etwas später um, z. B. `credits.php` und `media.detail.php`. Das ist so gewollt. In der Doku für Addons erwähnen.
+
+### Übrige Fixes
+
+- [ ] ✅ **Neue Baseline-Einträge für `tests/View/AssetTest.php`.**
+  - Betroffen sind die PHPStan-Datei `staticMethod.deprecated.php`, angelegt in dff893a1a, und 4 Einträge `DeprecatedMethod` in der Psalm-Baseline aus 38f4d2aad.
+  - Stattdessen inline `// @phpstan-ignore staticMethod.deprecated` und `@psalm-suppress DeprecatedMethod` an den Testmethoden verwenden, wie in `tests/Content/CategoryHandlerTest.php:48-49`. Beide Baseline-Zusätze und die neue Datei samt `_loader.php`-Eintrag entfernen.
+- [ ] ✅ **`I18n::msg()` landet doppelt escaped in `HtmlAttributes`.** `msg()` escaped bereits, und `HtmlAttributes::toString()` escaped noch einmal.
+  - Heute fällt das nicht auf. Eine Übersetzung mit `&` oder Apostroph zeigt aber `&amp;`.
+  - Betroffen sind:
+    - `src/View/Component/Tabs.view.php:31` (neu)
+    - `src/View/Component/Breadcrumb.view.php:13`
+    - `pages/mediapool/media.php:47`
+    - `pages/mediapool/media.list.php:152`
+  - Überall `I18n::rawMsg()` verwenden.
+- [ ] ✅ **`@internal` fehlt** an `Asset::reset()` (`src/View/Asset.php:56`) und `TabsItem::fromNavigation()` (`src/View/Component/TabsItem.php:52`). Beide sind Hilfen für Tests bzw. interne Adapter, kein öffentlicher Vertrag.
+- [ ] ❔ **Mittelklick auf `data-confirm`-Links öffnet ohne Rückfrage** – `assets/js/src/dialog.js:114` hört nur auf `click`, ein Mittelklick löst aber nur `auxclick` aus. Ein Lösch-Link per GET öffnet so im neuen Tab ohne Bestätigung.
+  - Das war schon vorher so, ist aber das eigentliche Loch hinter dem Modifier-Befund.
+  - **Vorgabe:** Bei `auxclick` mit `button === 1` auf `[data-confirm]` `preventDefault()` aufrufen und denselben Dialog öffnen. Nach der Bestätigung öffnet der Link im neuen Tab.
+- [ ] ✅ **`'unsafe-inline'` auf Script-Direktiven ist jetzt wirkungslos**, das ist richtig so. `ContentSecurityPolicy::add()` (`src/Security/ContentSecurityPolicy.php:103`) schreibt es aber still mit in den Header. Den Docblock ergänzen: Bei `script-src*` hat `'unsafe-inline'` wegen des Nonce keine Wirkung.
+- [ ] ❔ **Klein:** `Fragment::parse()` (`src/View/Fragment.php:89-96`) dupliziert `Renderer::capture()`, und es gibt keinen Test dafür. Stattdessen `Renderer::capture()` verwenden und einen Test für ein Fragment ergänzen, das eine Exception wirft.
+- **Bestätigt erledigt:**
+  - `TableColumnType`
+  - die Psalm-Einträge zu `form.php`
+  - das Escaping des Sprach-Dropdowns
+  - `Asset::reset()`
+  - der Submit im Overlay: abbrechbar, nur einmal, mit Submitter
+  - der neue Tab bei Ctrl/Cmd/Shift
+  - die typisierten `Tabs`; alle Aufrufer sind umgestellt
+
+---
+
 ## Re-Review (Stand f58df83a2, 24 neue Commits seit c26f5c3ee)
 
 **Checks:**
@@ -17,13 +102,13 @@ Fast alle Punkte aus dem ersten Review sind sauber umgesetzt. Abgehakte Punkte s
 
 ### Offen / neu
 
-- [ ] ✅ **Neue Einträge in der Psalm-Baseline** – `.tools/psalm/baseline.xml`, Datei `fragments/core/form/form.php`: 6 neue Einträge (`MixedArgument` `$field`/`$label`, zusätzliche `MixedArrayAccess`/`MixedAssignment`/`MixedOperand`). Insgesamt schrumpft die Baseline stark, aber laut AGENTS.md darf neuer Code nichts hinzufügen. Entweder die Fragment-Vars typisieren (`@var`/`Type::…`) oder den Punkt im PR ausdrücklich nennen.
-- [ ] ✅ **Ein doppeltes Escaping ist übrig** – `src/View/View.php:185`: `prefix: I18n::msg('language')`, aber `Dropdown.view.php:10` escaped `prefix` über `Html::from()` noch einmal. Auf `I18n::rawMsg()` umstellen.
-- [ ] ✅ **`'unsafe-inline'` verdrängt jetzt Nonces** (`ContentSecurityPolicy::add()`, ca8da8634). Ruft ein Addon `add('script-src', "'unsafe-inline'")` auf, verliert das ganze Backend für diesen Request den Nonce-Schutz für Scripts. Vorher hat der Browser das `'unsafe-inline'` neben dem Nonce einfach ignoriert. Für den Fall aus dem debug-Addon (`style-src-elem`) ist das gewollt. Vorschlag: auf `style-src*` beschränken oder für `script-src*` bewusst entscheiden und im Docblock warnen.
-- [ ] ❔ **`data-confirm` mit Modifier-Tasten** – `assets/js/src/dialog.js:121-126` dispatcht ein synthetisches `MouseEvent` mit `ctrlKey`/`metaKey`. Ob Browser für ein untrusted Event wirklich einen neuen Tab öffnen, ist nicht getestet; Chrome behandelt das ggf. als Popup. Bitte in Chrome, Firefox und Safari ausprobieren.
-- [ ] ❔ **Overlay schluckt weiterhin Submit-Events** – `assets/js/src/overlay.js:185` (`stopPropagation`). Der Core-Fall ist durch die Capture-Phase in `forms.js` gelöst. Submit-Listener von Addons in der Bubble-Phase auf `document` laufen im Overlay aber weiterhin nicht. Mindestens in den PR-/Upgrade-Notes nennen.
-- [ ] ❔ **Doppelklick auf Submit im Overlay** – `load()` bricht jetzt die ältere Anfrage ab, aber beim Server kommen trotzdem beide POSTs an. Gegenmaßnahme: Submit-Buttons während des Ladens sperren.
-- [ ] ❔ **`Asset::$cssFilesRead` bleibt gesetzt** – `src/View/Asset.php`: ein statisches Flag ohne Reset (anders als `Accesskey::reset()`). In Tests oder langlaufenden Prozessen wirft ein späteres `requireBootstrapCompat()` dann eine Exception.
+- [x] ✅ **Neue Einträge in der Psalm-Baseline** – `.tools/psalm/baseline.xml`, Datei `fragments/core/form/form.php`: 6 neue Einträge (`MixedArgument` `$field`/`$label`, zusätzliche `MixedArrayAccess`/`MixedAssignment`/`MixedOperand`). Insgesamt schrumpft die Baseline stark, aber laut AGENTS.md darf neuer Code nichts hinzufügen. Entweder die Fragment-Vars typisieren (`@var`/`Type::…`) oder den Punkt im PR ausdrücklich nennen.
+- [x] ✅ **Ein doppeltes Escaping ist übrig** – `src/View/View.php:185`: `prefix: I18n::msg('language')`, aber `Dropdown.view.php:10` escaped `prefix` über `Html::from()` noch einmal. Auf `I18n::rawMsg()` umstellen.
+- [x] ✅ **`'unsafe-inline'` verdrängt jetzt Nonces** (`ContentSecurityPolicy::add()`, ca8da8634). Ruft ein Addon `add('script-src', "'unsafe-inline'")` auf, verliert das ganze Backend für diesen Request den Nonce-Schutz für Scripts. Vorher hat der Browser das `'unsafe-inline'` neben dem Nonce einfach ignoriert. Für den Fall aus dem debug-Addon (`style-src-elem`) ist das gewollt. Vorschlag: auf `style-src*` beschränken oder für `script-src*` bewusst entscheiden und im Docblock warnen.
+- [x] ❔ **`data-confirm` mit Modifier-Tasten** – `assets/js/src/dialog.js:121-126` dispatcht ein synthetisches `MouseEvent` mit `ctrlKey`/`metaKey`. Ob Browser für ein untrusted Event wirklich einen neuen Tab öffnen, ist nicht getestet; Chrome behandelt das ggf. als Popup. Bitte in Chrome, Firefox und Safari ausprobieren.
+- [x] ❔ **Overlay schluckt weiterhin Submit-Events** – `assets/js/src/overlay.js:185` (`stopPropagation`). Der Core-Fall ist durch die Capture-Phase in `forms.js` gelöst. Submit-Listener von Addons in der Bubble-Phase auf `document` laufen im Overlay aber weiterhin nicht. Mindestens in den PR-/Upgrade-Notes nennen.
+- [x] ❔ **Doppelklick auf Submit im Overlay** – `load()` bricht jetzt die ältere Anfrage ab, aber beim Server kommen trotzdem beide POSTs an. Gegenmaßnahme: Submit-Buttons während des Ladens sperren.
+- [x] ❔ **`Asset::$cssFilesRead` bleibt gesetzt** – `src/View/Asset.php`: ein statisches Flag ohne Reset (anders als `Accesskey::reset()`). In Tests oder langlaufenden Prozessen wirft ein späteres `requireBootstrapCompat()` dann eine Exception.
 - [ ] **Hinweise für die PR-Beschreibung** (das Repo hat keine Upgrade-Datei), alles Breaking Changes für Addons:
   - `DataList::getRows()` heißt jetzt `getPageRows()`.
   - Entfallen sind `REX_LIST_GET`, `factory()`, `addFormAttribute`, `setColumn*` und `removeColumn`.
@@ -31,7 +116,7 @@ Fast alle Punkte aus dem ersten Review sind sauber umgesetzt. Abgehakte Punkte s
   - `requireBootstrapCompat()` funktioniert nur noch in `boot()`.
   - Das Overlay übernimmt nur `#rex-js-page-main`.
   - Die globalen Funktionen (`openREXMedia`, `selectMedia`, …) sind entfallen.
-- [ ] **Entscheidung offen:** Die Komponenten sind jetzt bewusst öffentliche API. `Tabs` nimmt aber weiterhin untypisierte Arrays mit rohem HTML im `title` entgegen. Entweder `Tabs` `@internal` markieren oder typisieren.
+- [x] **Entscheidung offen:** Die Komponenten sind jetzt bewusst öffentliche API. `Tabs` nimmt aber weiterhin untypisierte Arrays mit rohem HTML im `title` entgegen. Entweder `Tabs` `@internal` markieren oder typisieren.
 
 ---
 
