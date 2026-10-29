@@ -50,6 +50,9 @@ final readonly class Grid implements Renderable
         $this->columns = array_map(static fn (GridColumn|string|Renderable $column): GridColumn => $column instanceof GridColumn ? $column : new GridColumn($column), $columns);
 
         foreach ($this->columns as $column) {
+            if (!$layout instanceof GridLayoutColumns && $column->content instanceof self && $column->content->subgrid) {
+                throw new InvalidArgumentException('A subgrid needs the tracks of a grid with the columns layout, a split or tiles grid has none.');
+            }
             match (true) {
                 $layout instanceof GridLayoutColumns => self::validateColumns($column),
                 $layout instanceof GridLayoutSplit => self::validateSplitColumn($column, $layout),

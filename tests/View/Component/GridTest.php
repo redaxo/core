@@ -190,6 +190,8 @@ final class GridTest extends TestCase
             new GridColumn('a', [new GridColumnRule(Breakpoint::Md, width: 8)]),
             new GridColumn('b', [new GridColumnRule(Breakpoint::Lg, width: 6)]),
         ], layout: new GridLayoutSplit(Breakpoint::Md))];
+        yield 'subgrid in split' => [static fn () => new Grid([new Grid(['a'], subgrid: true)], layout: new GridLayoutSplit())];
+        yield 'subgrid in tiles' => [static fn () => new Grid([new GridColumn(new Grid(['a'], subgrid: true))], layout: new GridLayoutTiles())];
         yield 'split widths of 12 besides fill' => [static fn () => new Grid([
             new GridColumn('a', [new GridColumnRule(Breakpoint::Md, width: 12)]),
             'b',

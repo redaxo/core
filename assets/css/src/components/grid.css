@@ -3,9 +3,11 @@
  that write the HTML themselves.
 
  Breakpoints are widths of the grid itself, not of the viewport: every grid is a container (`rex-grid`) and its
- columns query it, so a grid in a sidebar, overlay or dialog follows its own width. The widths match a grid in the
- main area with open navigation at the former viewport breakpoints (Redaxo\Core\View\Component\Breakpoint):
- `sm` 488px (768px), `md` 712px (992px), `lg` 890px (1200px), `xl` 1090px (1400px). A grid takes its width from the
+ columns query it, so a grid in a sidebar, overlay or dialog follows its own width
+ (Redaxo\Core\View\Component\Breakpoint): `sm` 576px, `md` 712px, `lg` 890px, `xl` 1090px. `md` to `xl` match a grid
+ in the main area with open navigation at the former viewport breakpoints 992px, 1200px and 1400px; below 992px the
+ navigation is closed and the main area nearly as wide as the window, so `sm` is a width of its own. A grid in the
+ body of a section is narrower than the main area and switches a little later. A grid takes its width from the
  surrounding block; where the width follows the content (inline-block, float, table cell) it collapses to 0.
 
  Attributes of the columns hold tokens `[bp:]value` separated by spaces, mobile first, a value without breakpoint
@@ -25,8 +27,8 @@
    `data-from` on (`sm`, `md`, `lg`, `xl`, without it at every width) and stack below it; `tiles`: tiles of
    at least `data-tile-size` (`sm` 12rem, without it 16rem, `lg` 24rem) per row, without breakpoints and spans
  - `data-gap`: `none`, `sm` or `lg` (without it the gutter), between columns and rows
- - `data-subgrid` on a column of another grid that is itself a grid: its columns use the tracks of the outer grid
-   and its breakpoints; outside a grid it is an ordinary grid
+ - `data-subgrid` on a column of another grid of 12 tracks that is itself a grid: its columns use the tracks of the
+   outer grid and its breakpoints; elsewhere, e.g. in a split or tiles layout, it is an ordinary grid
 
  The values are literal rules, as style attributes are not allowed by the Content-Security-Policy. They set custom
  properties that the layouts read; `--rex-grid-gap` on a column is the gap of its grid.
@@ -72,6 +74,13 @@
             & > * {
                 --rex-grid-gap: calc(var(--rex-gutter) * 2);
             }
+        }
+
+        /* the space between stacked columns comes from the gap alone, not from the margin of a section at the end of
+           the column, also in a form */
+        & > * > :last-child,
+        & > * > form:last-child > :last-child {
+            margin-bottom: 0;
         }
 
         & > [data-align="end"] {
@@ -145,7 +154,7 @@
         }
 
         /* the subgrid is no container, so its columns follow the outer grid */
-        & > &[data-subgrid] {
+        &:not([data-layout]) > &[data-subgrid] {
             container-type: normal;
             grid-template-columns: subgrid;
         }
@@ -318,7 +327,7 @@
         order: 1;
     }
 
-    @container rex-grid (min-width: 488px) {
+    @container rex-grid (min-width: 576px) {
         /* from sm: split layouts in one row */
         .rex-grid[data-layout="split"]:is(:not([data-from]), [data-from="sm"]) > * {
             flex: var(--rex-grid-flex);
@@ -996,13 +1005,13 @@
 
     /* hidden from a breakpoint on, unless a later `visible` up to the current breakpoint shows it again */
 
-    @container rex-grid (width < 488px) {
+    @container rex-grid (width < 576px) {
         .rex-grid > [data-visibility~="hidden"] {
             display: none;
         }
     }
 
-    @container rex-grid (width >= 488px) and (width < 712px) {
+    @container rex-grid (width >= 576px) and (width < 712px) {
         .rex-grid > [data-visibility~="hidden"]:not([data-visibility~="sm:visible"]) {
             display: none;
         }

@@ -23,7 +23,7 @@ return static function (GridColumn $column): void {
         return;
     }
 
-    // the single child aligns horizontally in the split layout, where `justify-self` has no effect
+    // a single child, which the split layout aligns horizontally, as `justify-self` has no effect there; harmless in the others
     $content = GridAlign::Stretch === $column->alignX ? Html::from($column->content) : '<div>' . (string) Html::from($column->content) . '</div>';
     $attributes = $attributes->toString() ?>
     <div<?= '' === $attributes ? '' : ' ' . $attributes ?>><?= $content ?></div>
