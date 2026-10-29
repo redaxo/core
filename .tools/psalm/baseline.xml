@@ -67,42 +67,6 @@
       <code><![CDATA[$label]]></code>
     </MixedOperand>
   </file>
-  <file src="fragments/core/form/form.php">
-    <MixedArgument>
-      <code><![CDATA[$field]]></code>
-      <code><![CDATA[$label]]></code>
-    </MixedArgument>
-    <MixedArrayAccess>
-      <code><![CDATA[$element['after']]]></code>
-      <code><![CDATA[$element['before']]]></code>
-      <code><![CDATA[$element['field']]]></code>
-      <code><![CDATA[$element['footer']]]></code>
-      <code><![CDATA[$element['header']]]></code>
-      <code><![CDATA[$element['label']]]></code>
-    </MixedArrayAccess>
-    <MixedAssignment>
-      <code><![CDATA[$after]]></code>
-      <code><![CDATA[$before]]></code>
-      <code><![CDATA[$element]]></code>
-      <code><![CDATA[$field]]></code>
-      <code><![CDATA[$field]]></code>
-      <code><![CDATA[$footer]]></code>
-      <code><![CDATA[$header]]></code>
-      <code><![CDATA[$label]]></code>
-    </MixedAssignment>
-    <MixedOperand>
-      <code><![CDATA[$after]]></code>
-      <code><![CDATA[$before]]></code>
-      <code><![CDATA[$element['class']]]></code>
-      <code><![CDATA[$element['error']]]></code>
-      <code><![CDATA[$element['id']]]></code>
-      <code><![CDATA[$element['note']]]></code>
-      <code><![CDATA[$field]]></code>
-      <code><![CDATA[$footer]]></code>
-      <code><![CDATA[$header]]></code>
-      <code><![CDATA[$label]]></code>
-    </MixedOperand>
-  </file>
   <file src="fragments/core/form/input_group.php">
     <MixedArgument>
       <code><![CDATA[$leftSide]]></code>
@@ -156,8 +120,6 @@
   <file src="fragments/core/page/main_content.php">
     <MixedArgument>
       <code><![CDATA[$this->content]]></code>
-      <code><![CDATA[$this->content]]></code>
-      <code><![CDATA[$this->sidebar]]></code>
     </MixedArgument>
   </file>
   <file src="fragments/core/structure/content/slice_list.php">

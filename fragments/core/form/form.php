@@ -7,9 +7,12 @@ use Redaxo\Core\View\Fragment;
  * @psalm-scope-this Fragment
  */
 
+/** @var list<array{id?: string, label?: string, field?: string, before?: string, after?: string, header?: string, footer?: string, error?: string, note?: string, class?: string, vertical?: bool}> $elements */
+$elements = $this->elements;
+
 $out = '';
 
-foreach ($this->elements as $element) {
+foreach ($elements as $element) {
     $id = isset($element['id']) && '' != $element['id'] ? ' id="' . $element['id'] . '"' : '';
     $label = $element['label'] ?? '';
     $field = $element['field'] ?? '';
