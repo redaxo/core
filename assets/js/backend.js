@@ -365,6 +365,19 @@ window.addEventListener("click", (event) => {
     element.click();
   });
 }, true);
+window.addEventListener("auxclick", (event) => {
+  const link = event.target.closest?.("a[href][data-confirm]");
+  if (!link || 1 !== event.button) {
+    return;
+  }
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  confirm(link.dataset.confirm).then((ok) => {
+    if (ok) {
+      window.open(link.href, "_blank", "noopener");
+    }
+  });
+}, true);
 window.addEventListener("submit", (event) => {
   const form = event.target;
   if (!form.matches("form[data-confirm]") || confirmed.delete(form)) {
