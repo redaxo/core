@@ -335,6 +335,15 @@ async function main() {
     // run through all pages in parallel
     await processAllPagesParallel(browser);
 
+    // the grid component in fixed widths, as grids follow their own width (.tools/visual-tests/fixtures/grid.html is
+    // generated from the component); served under the instance, so it loads the built backend styles
+    const gridFixtureUrl = new URL('/grid-fixture.html', START_URL).href;
+    const serveGridFixture = route => route.fulfill({ contentType: 'text/html', body: fs.readFileSync('.tools/visual-tests/fixtures/grid.html', 'utf8') });
+    await page.route(gridFixtureUrl, serveGridFixture);
+    await goToUrlOrThrow(page, gridFixtureUrl, { waitUntil: 'load' });
+    await createScreenshots(page, 'grid.png');
+    await page.unroute(gridFixtureUrl, serveGridFixture);
+
     // the following steps have side effects and must run sequentially on a single page
 
     await goToUrlOrThrow(page, START_URL + '?page=users/users&user_id=1', { waitUntil: 'load' });
