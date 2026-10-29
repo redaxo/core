@@ -76,8 +76,12 @@ final class ContentSecurityPolicy
 
     /**
      * Allows further sources for a directive, e.g. `add('frame-src', 'https://example.org')`. A directive that is not
-     * set yet starts with the sources of its fallback (e.g. `default-src`), and `'unsafe-inline'` replaces the nonces
-     * and hashes of the directive, as browsers would ignore it next to them.
+     * set yet starts with the sources of its fallback (e.g. `default-src`).
+     *
+     * In style directives (`style-src`, `style-src-elem`, `style-src-attr`) `'unsafe-inline'` replaces the nonces and
+     * hashes, as browsers would ignore it next to them. Script directives keep their nonces, so `'unsafe-inline'` has
+     * no effect there and inline scripts still need the nonce ({@see Response::getNonce()}): a single addon must not
+     * lift the script protection of the whole backend.
      *
      * @throws InvalidArgumentException for a directive or source that would break out of its place in the header
      */
@@ -95,8 +99,8 @@ final class ContentSecurityPolicy
             }
             // a single 'none' would block the added sources
             $current = array_values(array_diff($this->directives[$directive] ?? [], ["'none'"]));
-            // browsers ignore 'unsafe-inline' next to a nonce or hash, so these give way to it
-            if ("'unsafe-inline'" === $source) {
+            // browsers ignore 'unsafe-inline' next to a nonce or hash, so these give way to it, but only for styles
+            if ("'unsafe-inline'" === $source && str_starts_with($directive, 'style-src')) {
                 $current = array_values(array_filter($current, static fn (string $item): bool => !preg_match("/^'(nonce|sha256|sha384|sha512)-/", $item)));
             }
             if (!in_array($source, $current, true)) {

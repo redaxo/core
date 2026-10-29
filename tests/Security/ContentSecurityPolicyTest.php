@@ -45,6 +45,9 @@ final class ContentSecurityPolicyTest extends TestCase
 
         $policy->add('style-src-elem', "'unsafe-inline'");
         self::assertSame(["'self'", "'unsafe-inline'"], $policy->get('style-src-elem'), "'unsafe-inline' replaces the nonce it would be ignored next to");
+
+        $policy->add('script-src', "'unsafe-inline'");
+        self::assertSame(["'self'", "'nonce-abc'", "'unsafe-inline'"], $policy->get('script-src'), 'script directives keep their nonce');
     }
 
     #[DataProvider('provideAddRejectsInjection')]
