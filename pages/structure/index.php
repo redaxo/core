@@ -198,8 +198,8 @@ if ('add_cat' === $structureContext->function && $user->hasPerm('addCategory[]')
         'attributes' => new HtmlAttributes(['class' => 'rex-u-mark']),
         'icon' => Html::raw('<i class="rex-icon rex-icon-category" aria-hidden="true"></i>'),
         'id' => '-',
-        'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape(Request::post('category-name', 'string')) . '" required maxlength="255" autofocus />'),
-        'priority' => Html::raw('<input class="rex-input" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $catPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
+        'name' => Html::raw('<input class="rex-input" type="text" aria-label="' . I18n::msg('header_category') . '" name="category-name" value="' . escape(Request::post('category-name', 'string')) . '" required maxlength="255" autofocus />'),
+        'priority' => Html::raw('<input class="rex-input" type="number" aria-label="' . I18n::msg('header_priority') . '" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $catPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
         $firstAction => new TableCell(Html::raw($metaButtons . $addButtons), $colspan),
     ];
     $rows[] = $categoryMetaRow($meta);
@@ -267,8 +267,8 @@ for ($i = 0; $i < $KAT->getRows(); ++$i, $KAT->next()) {
 
             $rows[] = [
                 'attributes' => new HtmlAttributes(['class' => ['rex-u-mark'], 'data-status' => $status]),
-                'name' => Html::raw('<input class="rex-input" type="text" name="category-name" value="' . escape($categoryApiFailed ? Request::post('category-name', 'string') : $KAT->getStringValue('catname')) . '" required maxlength="255" autofocus />'),
-                'priority' => Html::raw('<input class="rex-input" type="number" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $KAT->getIntValue('catpriority')) . '" required min="1" inputmode="numeric" />'),
+                'name' => Html::raw('<input class="rex-input" type="text" aria-label="' . I18n::msg('header_category') . '" name="category-name" value="' . escape($categoryApiFailed ? Request::post('category-name', 'string') : $KAT->getStringValue('catname')) . '" required maxlength="255" autofocus />'),
+                'priority' => Html::raw('<input class="rex-input" type="number" aria-label="' . I18n::msg('header_priority') . '" name="category-position" value="' . ($categoryApiFailed ? Request::post('category-position', 'int') : $KAT->getIntValue('catpriority')) . '" required min="1" inputmode="numeric" />'),
                 $firstAction => new TableCell(Html::raw($metaButtons . $addButtons), $colspan),
             ] + $row;
             $rows[] = $categoryMetaRow($meta);
@@ -409,10 +409,10 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             'attributes' => new HtmlAttributes(['class' => 'rex-u-mark']),
             'icon' => Html::raw('<i class="rex-icon rex-icon-article" aria-hidden="true"></i>'),
             'id' => '-',
-            'name' => Html::raw('<input class="rex-input" type="text" name="article-name" required maxlength="255" autofocus />'),
-            'template' => new SelectInput('template', $templateChoices, $template),
+            'name' => Html::raw('<input class="rex-input" type="text" aria-label="' . I18n::msg('header_article_name') . '" name="article-name" required maxlength="255" autofocus />'),
+            'template' => new SelectInput('template', $templateChoices, $template, attributes: new HtmlAttributes(['aria-label' => I18n::rawMsg('header_template')])),
             'date' => Formatter::intlDate(time()),
-            'priority' => Html::raw('<input class="rex-input" type="number" name="article-position" value="' . ($artPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
+            'priority' => Html::raw('<input class="rex-input" type="number" aria-label="' . I18n::msg('header_priority') . '" name="article-position" value="' . ($artPager->getRowCount() + 1) . '" required min="1" inputmode="numeric" />'),
             $firstAction => new TableCell(Html::raw(ArticleAdd::getHiddenFields() . '<button class="rex-button" data-variant="success" type="submit" name="artadd_function"' . Accesskey::attributes(I18n::msg('article_add'), 'save') . '>' . I18n::msg('article_add') . '</button>'), $colspan),
         ];
     } elseif (0 === $sql->getRows()) {
@@ -447,9 +447,9 @@ if ($structureContext->categoryId > 0 || (0 === $structureContext->categoryId &&
             $rows[] = [
                 'attributes' => new HtmlAttributes(['class' => ['rex-u-mark']]),
                 'icon' => Html::raw('<a class="rex-u-link-expanded" href="' . $structureContext->getContext()->getUrl(['page' => 'content/edit', 'article_id' => $articleId]) . '" title="' . escape($sql->getStringValue('name')) . '"><i class="rex-icon' . $class . '" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . escape($sql->getStringValue('name')) . '</span></a>'),
-                'name' => Html::raw('<input class="rex-input" type="text" name="article-name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" autofocus />'),
-                'template' => new SelectInput('template', $templateChoices, $sql->getNullableStringValue('template')),
-                'priority' => Html::raw('<input class="rex-input" type="number" name="article-position" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" />'),
+                'name' => Html::raw('<input class="rex-input" type="text" aria-label="' . I18n::msg('header_article_name') . '" name="article-name" value="' . escape($sql->getStringValue('name')) . '" required maxlength="255" autofocus />'),
+                'template' => new SelectInput('template', $templateChoices, $sql->getNullableStringValue('template'), attributes: new HtmlAttributes(['aria-label' => I18n::rawMsg('header_template')])),
+                'priority' => Html::raw('<input class="rex-input" type="number" aria-label="' . I18n::msg('header_priority') . '" name="article-position" value="' . $sql->getIntValue('priority') . '" required min="1" inputmode="numeric" />'),
                 $firstAction => new TableCell(Html::raw(ArticleEdit::getHiddenFields() . '<button class="rex-button" data-variant="success" type="submit" name="artedit_function"' . Accesskey::attributes(I18n::msg('article_save'), 'save') . '>' . I18n::msg('article_save') . '</button>'), $colspan),
             ] + $row;
         } elseif ($structureContext->hasCategoryPermission()) {

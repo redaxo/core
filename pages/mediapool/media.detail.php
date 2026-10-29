@@ -274,8 +274,8 @@ if ($TPERM) {
     $formElements[] = $e;
 
     $e = [];
-    $e['label'] = '<label>' . I18n::msg('pool_file_exchange') . '</label>';
-    $e['field'] = '<input type="file" name="file_new" />';
+    $e['label'] = '<label for="rex-mediapool-file-new">' . I18n::msg('pool_file_exchange') . '</label>';
+    $e['field'] = '<input type="file" id="rex-mediapool-file-new" name="file_new" />';
     $formElements[] = $e;
 
     $fragment = new Fragment();
