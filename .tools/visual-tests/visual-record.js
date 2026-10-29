@@ -335,6 +335,16 @@ async function main() {
     // run through all pages in parallel
     await processAllPagesParallel(browser);
 
+    // pages with grids in narrower windows, where the navigation is closed (below 992px) or beside the content
+    for (const width of [800, 1024]) {
+        await page.setViewportSize({ width, height: viewportHeight });
+        for (const name of ['system_settings', 'mediapool_media_file', 'structure_article_edit']) {
+            await goToUrlOrThrow(page, allPages[name + '.png'], { waitUntil: 'load' });
+            await createScreenshots(page, `${name}--${width}.png`);
+        }
+    }
+    await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+
     // the grid component in fixed widths, as grids follow their own width (.tools/visual-tests/fixtures/grid.html is
     // generated from the component); served under the instance, so it loads the built backend styles
     const gridFixtureUrl = new URL('/grid-fixture.html', START_URL).href;
