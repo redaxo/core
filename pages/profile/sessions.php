@@ -41,7 +41,7 @@ $list->column(
     type: TableColumnType::Icon,
     // the current session can not be removed
     link: static fn (array $row): ?string => $isCurrent($row) ? null : $list->getUrl(['user_id' => $userId, 'session_hash' => $hash($row)] + UserRemoveSession::getUrlParams()),
-    linkAttributes: ['data-confirm' => I18n::msg('confirm_remove_session')],
+    linkAttributes: ['data-confirm' => I18n::rawMsg('confirm_remove_session')],
 );
 $list->column('session_id', I18n::rawMsg('session_id'), static fn (array $row): Html => Html::raw(
     escape(substr($hash($row), 0, 12)) . ($row['cookie_key'] ? ' ' . (string) new Badge(I18n::rawMsg('stay_logged_in'), BadgeVariant::Warning)->render() : ''),

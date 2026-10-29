@@ -28,7 +28,7 @@ return static function (Tabs $tabs): void {
     if (!$tabs->items && !$tabs->endItems && !$children) {
         return;
     }
-    $attributes = new HtmlAttributes(['aria-label' => I18n::msg('navigation_subpages')])->merge($tabs->attributes)->with(['class' => ['rex-pagenav']]) ?>
+    $attributes = new HtmlAttributes(['aria-label' => I18n::rawMsg('navigation_subpages')])->merge($tabs->attributes)->with(['class' => ['rex-pagenav']]) ?>
     <nav <?= $attributes ?>>
         <?php if ($tabs->items || $tabs->endItems): ?>
             <ul class="rex-tabs">

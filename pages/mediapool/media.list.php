@@ -149,7 +149,7 @@ $catsSel = new SelectInput(
     (string) $rexFileCategory,
     'rex-mediapool-move-category',
     search: true,
-    attributes: new HtmlAttributes(['aria-label' => I18n::msg('pool_changecat_selectedmedia_prefix') . ' … ' . I18n::msg('pool_changecat_selectedmedia_suffix')]),
+    attributes: new HtmlAttributes(['aria-label' => I18n::rawMsg('pool_changecat_selectedmedia_prefix') . ' … ' . I18n::rawMsg('pool_changecat_selectedmedia_suffix')]),
 );
 
 if ($error) {
@@ -231,7 +231,7 @@ if ($hasCategoryPerm) {
 
     $buttons = [
         new Button(I18n::rawMsg('pool_delete_selectedmedia'), variant: ButtonVariant::Danger, type: 'submit', attributes: new HtmlAttributes([
-            'data-confirm' => I18n::msg('delete') . ' ?',
+            'data-confirm' => I18n::rawMsg('delete') . ' ?',
             'name' => 'media_method',
             'value' => 'delete_selectedmedia',
         ])),

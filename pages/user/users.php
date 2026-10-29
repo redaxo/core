@@ -345,7 +345,7 @@ $list->column(
     static fn (array $row): Html => Html::raw(($canDelete($row) ? '' : '<span class="rex-u-text-muted">') . '<i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('user_delete') . ($canDelete($row) ? '' : '</span>')),
     type: TableColumnType::Action,
     link: static fn (array $row): ?string => $canDelete($row) ? $list->getUrl(['func' => 'delete', 'user_id' => (int) $row['id']] + CsrfToken::factory('user_delete')->getUrlParams()) : null,
-    linkAttributes: ['data-confirm' => I18n::msg('delete') . ' ?'],
+    linkAttributes: ['data-confirm' => I18n::rawMsg('delete') . ' ?'],
 );
 
 if ($currentUser->admin) {

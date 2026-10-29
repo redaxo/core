@@ -40,7 +40,7 @@ $list->column(
     link: static fn (array $row): ?string => $removable($row)
         ? $list->getUrl(['user_id' => $userId] + (null === $row['id'] ? ['password' => 1] : ['passkey_id' => (string) $row['id']]) + UserRemoveAuthMethod::getUrlParams())
         : null,
-    linkAttributes: ['data-confirm' => I18n::msg('confirm_remove_auth')],
+    linkAttributes: ['data-confirm' => I18n::rawMsg('confirm_remove_auth')],
 );
 $list->column('id', I18n::rawMsg('auth_method'), static fn (array $row): Html => null === $row['id']
     ? new Badge(I18n::rawMsg('password'))->render()

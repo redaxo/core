@@ -44,7 +44,7 @@ $selMedia = new SelectInput(
     (string) $rexFileCategory,
     'rex_file_category',
     search: true,
-    attributes: new HtmlAttributes(['data-rex-autosubmit' => true, 'aria-label' => I18n::msg('pool_file_category')]),
+    attributes: new HtmlAttributes(['data-rex-autosubmit' => true, 'aria-label' => I18n::rawMsg('pool_file_category')]),
 );
 
 $formElements = [];

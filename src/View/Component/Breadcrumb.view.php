@@ -10,7 +10,7 @@ use function Redaxo\Core\View\escape;
 
 return static function (Breadcrumb $breadcrumb): void {
     $filled = static fn (string|Renderable $value): bool => $value instanceof Html ? '' !== (string) $value : $value instanceof Renderable || '' !== $value ?>
-    <nav <?= new HtmlAttributes(['id' => $breadcrumb->id, 'class' => ['rex-crumbs'], 'aria-label' => I18n::msg('navigation_breadcrumb')]) ?>>
+    <nav <?= new HtmlAttributes(['id' => $breadcrumb->id, 'class' => ['rex-crumbs'], 'aria-label' => I18n::rawMsg('navigation_breadcrumb')]) ?>>
         <ol class="rex-crumbs-list">
             <?php if ($filled($breadcrumb->title)): ?>
                 <li class="rex-crumbs-title"><?= Html::from($breadcrumb->title) ?></li>

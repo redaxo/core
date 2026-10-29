@@ -74,7 +74,7 @@ if ('' == $func) {
         static fn (): Html => Html::raw('<i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('user_role_delete')),
         type: TableColumnType::Action,
         link: static fn (array $row): string => $list->getUrl(['func' => 'delete', 'id' => (int) $row['id']] + CsrfToken::factory('user_role_delete')->getUrlParams()),
-        linkAttributes: ['data-confirm' => I18n::msg('delete') . ' ?'],
+        linkAttributes: ['data-confirm' => I18n::rawMsg('delete') . ' ?'],
     );
 
     $content .= (string) $list->render();
