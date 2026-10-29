@@ -206,6 +206,11 @@
         min-width: 0;
         max-width: 1012px;
         margin-inline: auto;
+
+        /* links within text must be recognizable without their color */
+        & :is(p, li, dd, td, th, blockquote) a {
+            text-decoration: underline;
+        }
     }
 
     /* table of contents */

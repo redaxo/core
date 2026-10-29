@@ -606,6 +606,11 @@ smallScreen.addEventListener("change", () => {
   topbar.reset();
 });
 topbar.update();
+document.addEventListener("rex:ready", (event) => {
+  for (const pre of event.target.querySelectorAll(".rex-docs pre:not([tabindex])")) {
+    pre.tabIndex = 0;
+  }
+});
 
 // assets/js/src/widgets.js
 function setValue(input, value) {

@@ -89,3 +89,10 @@ smallScreen.addEventListener('change', () => {
 });
 
 topbar.update();
+
+// code blocks of the docs scroll horizontally, so keyboard users must be able to focus them
+document.addEventListener('rex:ready', event => {
+    for (const pre of event.target.querySelectorAll('.rex-docs pre:not([tabindex])')) {
+        pre.tabIndex = 0;
+    }
+});
