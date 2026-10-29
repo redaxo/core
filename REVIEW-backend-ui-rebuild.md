@@ -35,6 +35,85 @@ Fast alle Punkte aus dem ersten Review sind sauber umgesetzt. Abgehakte Punkte s
 
 ---
 
+## Grid-System (`.rex-grid` / `data-span`)
+
+**Ziel:** Ein stabiles Grid, das Addon-Entwickler einfach nutzen können, ohne das HTML zu kennen, das dabei ausgegeben wird. Das CSS selbst ist solide: Mobile first, die Reihenfolge der Tokens ist egal, die Begründung über die CSP ist dokumentiert. Es fehlen aber eine PHP-API, Teile des Vokabulars und Teile der Compat-Schicht.
+
+### Rückschritte gegenüber 6.x (✅)
+
+- [ ] **Compat-Grid unvollständig** – `assets/css/src/compat/grid.css` enthält nur `col-{xs,sm,md,lg}-{1..12}`. 6.x hatte zusätzlich `col-*-offset-*`, `col-*-push-*`/`col-*-pull-*` und die Sichtbarkeitsklassen `hidden-*`/`visible-*` (geprüft in `6.x:assets/css/styles.css`). Addons mit `requireBootstrapCompat()` brechen dort ohne Fehlermeldung. Die fehlenden Klassen gehören in `compat/` zurück.
+- [ ] **`xl` fehlt** – 6.x kannte `$screen-xl-min: 1400px`, und das neue CSS nutzt 1400px an drei Stellen. Im Grid gibt es aber kein `xl:`.
+
+### PHP-API: Komponente mit Enums statt Strings
+
+Heute wird das Grid auf drei Arten geschrieben:
+- über das Fragment mit `spans` als String-Array (`media.detail.php`, `settings.php`, `linkmap.php`, `credits.php`)
+- als roh geechotes HTML (`log.mailer_archive.php`, `profile/index.php`, `fragments/core/page/main_content.php`)
+- als String-Verschachtelung in einer Schleife (`report.html.php:19-23`)
+
+Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer das CSS-System austauscht, muss jede dieser Stellen anfassen.
+
+- [ ] **Komponenten `Grid` und `GridColumn`** in `src/View/Component/`, nach dem Muster der übrigen Komponenten (`*.view.php`). Die View ist die **einzige** Stelle, die das Markup (`.rex-grid`, `data-*`) kennt. Wer das CSS oder Framework austauscht, ändert nur `Grid.view.php` und `grid.css`.
+- [ ] **Enums für alle Wahlmöglichkeiten.** Der Entwickler wählt aus typisierten Werten und muss keine Attributwerte kennen.
+  - `Breakpoint`: `Sm`, `Md`, `Lg`, `Xl`
+  - `ColumnWidth` für Sonderfälle neben `int<1,12>`: `Auto` (so breit wie der Inhalt), `Fill` (der Rest), `Hidden`
+  - `GridLayout`: `Columns` (12 Tracks, Standard), `Equal` (gleich breite Spalten), `Tiles` (bisher `data-layout="auto"`)
+  - `GridGap`: `None`, `Small`, `Default`, `Large`
+  - `TileSize`: `Small`, `Medium`, `Large` (Mindestbreite bei `Tiles`)
+  - `Align`: `Start`, `Center`, `End`, `Stretch`, getrennt für die vertikale (`alignY`) und horizontale (`alignX`) Ausrichtung
+  - `Order`: `First`, `Last`
+- [ ] **Achtung: Enums können keine Array-Schlüssel sein.** `[Breakpoint::Lg => 8]` ist in PHP nicht möglich. Ein Vorschlag für die Werte pro Breakpoint ist ein kleines Value-Object mit benannten Argumenten:
+
+  ```php
+  echo new Grid(
+      new GridColumn($main, span: new Responsive(lg: 8)),
+      new GridColumn($aside, span: new Responsive(lg: 4), order: new Responsive(base: Order::First, lg: null)),
+      gap: GridGap::Large,
+  )->render();
+
+  echo new Grid(
+      new GridColumn($field, span: ColumnWidth::Fill),
+      new GridColumn($buttons, span: ColumnWidth::Auto, alignY: Align::End),
+  )->render();
+
+  echo new Grid(...$cards, layout: GridLayout::Tiles, tileSize: TileSize::Medium)->render();
+
+  echo new Grid(...$columns, layout: GridLayout::Equal, from: Breakpoint::Md)->render();
+  ```
+
+  `Responsive` (generisch über `int<1,12>|ColumnWidth` bzw. das jeweilige Enum) hat die Argumente `base`, `sm`, `md`, `lg`, `xl`. Die View iteriert intern über `Breakpoint::cases()`, damit die Liste der Breakpoints an genau einer Stelle steht. Ein einzelner Wert ohne `Responsive` gilt für alle Breiten.
+- [ ] **Ungültige Werte früh abweisen.** `int` außerhalb von 1–12 → `InvalidArgumentException`, Psalm-Typ `int<1,12>`. `Grid` nimmt nur `GridColumn` an (variadisch), der Nutzer schreibt kein Wrapper-HTML.
+- [ ] **Fragment `core/page/grid.php` als Adapter** auf die Komponente. Das alte Var `classes` mit Deprecation abfangen statt still ignorieren, `spans` gegen das Vokabular prüfen. Den Standardwert ohne `spans` auf `GridLayout::Equal` umstellen, damit `intdiv(12, $count)` bei 5 Spalten keine Lücke und ab 13 Spalten kein `md:0` mehr erzeugt.
+- [ ] **Alle sieben Core-Stellen auf die Komponente umstellen.** Sie dienen dann zugleich als Beispiele für Addons.
+- [ ] **Das Markup bleibt dokumentierter Vertrag** für Addons, die HTML direkt schreiben (Twig, JS-gerendert). Die PHP-Komponente ist aber der empfohlene Weg.
+
+### Fehlendes Vokabular im CSS (Grundlage für die Enums)
+
+- [ ] **Startposition / Offset**, z. B. `data-start="md:4"`. Ein zentriertes Formular oder eine rechts stehende Spalte lässt sich heute nicht ausdrücken.
+- [ ] **Spalte nach Inhalt / Rest der Zeile** (`auto`, `fill`). Typisches Muster im Backend: Feld plus Buttons.
+- [ ] **Gleich breite Spalten** ohne Rechnen (`grid-auto-flow: column`). Fünf Spalten gehen mit 12 Tracks nicht.
+- [ ] **Sichtbarkeit pro Breakpoint**, als Ersatz für `hidden-*`/`visible-*`.
+- [ ] **Reihenfolge pro Breakpoint**, als Ersatz für push/pull. Dokumentieren, dass die visuelle Reihenfolge von der DOM-Reihenfolge abweicht (WCAG 1.3.2 / 2.4.3).
+- [ ] **Zeilenabstand:** `gap: 0 var(--rex-gutter)` lässt umbrechende Spalten aneinanderkleben, `Tiles` hat dagegen einen Zeilenabstand. Das vereinheitlichen und Gap-Varianten anbieten.
+- [ ] **Ausrichtung:** `data-align="end"` ist heute `text-align: right`, also weder RTL-fähig noch eine Ausrichtung der Spalte selbst. Durch `align-self`/`justify-self` mit logischen Werten ersetzen.
+- [ ] **Tiles:** Die Mindestbreite ist fest `16rem`, Varianten fehlen. Spans werden zurückgesetzt, eine doppelt breite Kachel ist nicht möglich.
+- [ ] **Subgrid:** Die Voraussetzung (die Spalte ist selbst `.rex-grid` und hat einen Span) ist nicht dokumentiert. In der Komponente wäre das z. B. `new GridColumn(new Grid(..., subgrid: true), span: …)`.
+
+### Breakpoints
+
+- [ ] **Container Queries statt Viewport.** Ein Grid in der Content-Sidebar (`lg:4`), in einem Overlay oder einem Dialog reagiert heute auf den Viewport: `sm:6` ergibt dann zwei Spalten in rund 300px. Addons können das nicht beeinflussen. Die Lösung ist `container-type: inline-size` auf `.rex-grid` bzw. auf den Hauptbereichen, das liegt in der Baseline (Chrome 105 / Firefox 110 / Safari 16). Der Vertrag (`data-span`, Enums) bleibt dabei gleich.
+- [ ] **Eine einzige Quelle für die Werte.** 768/992/1200/1400 und die `max-width`-Gegenstücke stehen als Literale in rund 50 Media Queries. esbuild übersetzt `@custom-media` nicht, also die Werte wenigstens in `tokens.css` dokumentieren und beim Build bzw. im Lint prüfen. In PHP hält das Enum `Breakpoint` die Werte fest.
+
+### Absicherung
+
+- [ ] **Visual-Test-Fixture** mit allen Grid-Varianten (Spans, Start, auto/fill, equal, tiles, subgrid, hidden, order, gap, Ausrichtung) in mehreren Breiten. Heute decken die Visual Tests das Grid nur zufällig über zwei Core-Seiten ab, und von den Varianten für Addons ist keine getestet.
+- [ ] **PHPUnit-Tests** für `Grid`/`GridColumn`: Markup pro Enum-Wert, ungültige Werte, Fragment-Adapter.
+- [ ] **Doku für Addon-Entwickler:** PHP-API mit Beispielen und der Markup-Vertrag.
+
+> Korrektur zum ersten Grid-Befund: Die Varianten `data-subgrid`, `data-layout="auto"` und `data-align="end"` nicht entfernen, sie sind als API für Addons gedacht. Sie brauchen aber Doku und Tests (siehe oben).
+
+---
+
 ## Erstes Review (Stand c26f5c3ee)
 
 ### Blocker
