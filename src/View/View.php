@@ -27,10 +27,12 @@ use Redaxo\Core\View\Component\Breadcrumb;
 use Redaxo\Core\View\Component\Button;
 use Redaxo\Core\View\Component\ButtonGroup;
 use Redaxo\Core\View\Component\Dropdown;
+use Redaxo\Core\View\Component\Icon;
 use Redaxo\Core\View\Component\PageHeader;
 use Redaxo\Core\View\Component\Section;
 use Redaxo\Core\View\Component\SectionVariant;
 use Redaxo\Core\View\Component\Tabs;
+use Redaxo\Core\View\Component\TabsItem;
 use Redaxo\Core\View\Component\Toolbar;
 
 use function count;
@@ -86,7 +88,7 @@ final class View
             }
 
             if (!empty($navigation)) {
-                $subtitle = (string) new Tabs($navigation)->render();
+                $subtitle = (string) new Tabs(array_map(TabsItem::fromNavigation(...), array_values($navigation)))->render();
             } else {
                 $subtitle = '';
             }
@@ -113,14 +115,13 @@ final class View
         $items = [];
         foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
-                $icon = $id === $context->getParam('language') ? '<i class="rex-icon rex-icon-language-active" aria-hidden="true"></i> ' : '<i class="rex-icon rex-icon-language" aria-hidden="true"></i> ';
-                $item = [];
-                $item['href'] = $context->getUrl(['language' => $id]);
-                $item['title'] = $icon . I18n::translate($language->name);
-                if ($id === $context->getParam('language')) {
-                    $item['active'] = true;
-                }
-                $items[] = $item;
+                $active = $id === $context->getParam('language');
+                $items[] = new TabsItem(
+                    I18n::translate($language->name, false),
+                    $context->getUrl(['language' => $id]),
+                    $active,
+                    new Icon($active ? 'language-active' : 'language'),
+                );
             }
         }
 
@@ -142,7 +143,7 @@ final class View
         foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
                 $buttons[] = new Button(
-                    I18n::translate($language->name),
+                    I18n::translate($language->name, false),
                     $context->getUrl(['language' => $id]),
                     $language->isOnline() ? 'online' : 'offline',
                     attributes: new HtmlAttributes([
@@ -169,11 +170,11 @@ final class View
         foreach (Language::getAll() as $id => $language) {
             if ($user->getComplexPerm('language')->hasPerm($id)) {
                 $item = [];
-                $item['title'] = I18n::translate($language->name);
+                $item['title'] = I18n::translate($language->name, false);
                 $item['href'] = $context->getUrl(['language' => $id]);
                 if ($id === $context->getParam('language')) {
                     $item['active'] = true;
-                    $buttonLabel = I18n::translate($language->name);
+                    $buttonLabel = I18n::translate($language->name, false);
                 }
                 $items[] = $item;
             }
