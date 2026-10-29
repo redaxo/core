@@ -1014,6 +1014,12 @@
     </MixedOperand>
   </file>
   <file src="tests/View/AssetTest.php">
+    <DeprecatedMethod>
+      <code><![CDATA[Asset::requireBootstrapCompat()]]></code>
+      <code><![CDATA[Asset::requireBootstrapCompat()]]></code>
+      <code><![CDATA[Asset::requireBootstrapCompat()]]></code>
+      <code><![CDATA[Asset::requireBootstrapCompat()]]></code>
+    </DeprecatedMethod>
     <PossiblyInvalidArrayAccess>
       <code><![CDATA[$file]]></code>
       <code><![CDATA[$file]]></code>
