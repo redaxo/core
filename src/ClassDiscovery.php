@@ -85,8 +85,8 @@ final class ClassDiscovery
         $cacheData = $this->loadCacheData();
 
         if (!isset($cacheData[$cacheKey])) {
-            // Only the attribute arguments are cached (always constant expressions, hence var_export-safe);
-            // the instance is reconstructed below from the known attribute class.
+            // Only the attribute arguments are cached (constant expressions; objects created there via `new` need
+            // `__set_state()`); the instance is reconstructed below from the known attribute class.
             $raw = [];
 
             foreach ($this->getReflections() as $reflection) {
@@ -145,8 +145,8 @@ final class ClassDiscovery
         $cacheData = $this->loadCacheData();
 
         if (!isset($cacheData[$cacheKey])) {
-            // Only the attribute arguments are cached (always constant expressions, hence var_export-safe);
-            // the instance is reconstructed below from the known attribute class.
+            // Only the attribute arguments are cached (constant expressions; objects created there via `new` need
+            // `__set_state()`); the instance is reconstructed below from the known attribute class.
             $raw = [];
 
             foreach ($this->getReflections() as $reflection) {
@@ -381,9 +381,8 @@ final class ClassDiscovery
             return $this->cacheData;
         }
 
-        // The cache is a plain PHP file (var_export + include) so it benefits from OpCache. It only ever holds
-        // scalars, arrays and enums (attribute arguments are constant expressions), never arbitrary objects, so
-        // including it cannot instantiate unexpected classes.
+        // The cache is a plain PHP file (var_export + include) so it benefits from OpCache. It only holds attribute
+        // arguments (constant expressions), so including it can only instantiate classes used in attribute arguments.
         $file = self::getCacheFile();
         if (!is_file($file)) {
             return $this->cacheData = [];

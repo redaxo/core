@@ -7,7 +7,6 @@ use Locale;
 use Override;
 use Redaxo\Core\Security\ComplexPermission;
 use Redaxo\Core\Security\PermissionChoices;
-use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Translation\Translatable;
 
 use function in_array;
@@ -25,7 +24,7 @@ final class ModulePermission extends ComplexPermission
     {
         $choices = [];
         foreach (Module::getAll() as $key => $module) {
-            $choices[$key] = I18n::translate($module::name());
+            $choices[$key] = $module::name();
         }
         $collator = new Collator(Locale::getDefault());
         uasort($choices, static fn (string $a, string $b): int => (int) $collator->compare($a, $b));

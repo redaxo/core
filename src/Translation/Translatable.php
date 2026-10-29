@@ -30,6 +30,15 @@ final readonly class Translatable implements Renderable
         $this->replacements = array_values($replacements);
     }
 
+    /**
+     * @internal
+     * @param array{key: string, replacements: list<string|int>} $data
+     */
+    public static function __set_state(array $data): self
+    {
+        return new self($data['key'], ...$data['replacements']);
+    }
+
     /** Returns the plain, not escaped text, e.g. for attribute values. */
     public function translate(?string $locale = null): string
     {
