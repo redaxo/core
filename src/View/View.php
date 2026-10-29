@@ -182,7 +182,7 @@ final class View
         return (string) new Dropdown(
             $items,
             label: $buttonLabel,
-            prefix: I18n::msg('language'),
+            prefix: I18n::rawMsg('language'),
             header: I18n::rawMsg('language_select'),
             footer: $user->admin ? Html::raw('<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . I18n::msg('languages_edit') . '</a>') : '',
             attributes: new HtmlAttributes(['class' => ['rex-language']]),
