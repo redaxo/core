@@ -132,9 +132,9 @@ class Markdown
             ],
             'table' => [
                 'alignment_attributes' => [
-                    'left' => ['style' => 'text-align: left;'],
-                    'center' => ['style' => 'text-align: center;'],
-                    'right' => ['style' => 'text-align: right;'],
+                    'left' => ['class' => 'rex-u-align-start'],
+                    'center' => ['class' => 'rex-u-align-center'],
+                    'right' => ['class' => 'rex-u-align-end'],
                 ],
             ],
         ]);

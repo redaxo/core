@@ -13,6 +13,7 @@
  */
 
 import playwright from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
 import pixelmatch from 'pixelmatch';
 import {PNG} from 'pngjs';
 import fs from 'fs';
@@ -117,11 +118,11 @@ async function processScreenshot(page, screenshotName) {
     // mask dynamic content, to make it not appear like change (visual noise)
     await page.evaluate(function() {
         var changingElements = [
-            '.rex-js-script-time',
+            '.rex-footer-list li:last-child',
             'td[data-title="Letzter Login"]',
             '#rex-form-exportfilename',
-            '#rex-page-system-settings .col-lg-4 td',
-            '#rex-page-system-report-html .row td',
+            '#rex-page-system-settings .rex-grid > div:last-child td',
+            '#rex-page-system-report-html .rex-grid td',
             'td[data-title="Version"]',
             'td[data-title="Erstellt am"]',
             'td[data-title="Zeit"] small:first-child', // system log items
@@ -165,6 +166,32 @@ async function processScreenshot(page, screenshotName) {
     }
 }
 
+// every recorded page is checked with axe in both color schemes; serious and critical violations are A11Y-ERROR, the
+// workflow fails on them after all screenshots are recorded. Each scope writes its own log, emptied when it starts, so
+// old violations don't stay while the runs of one recording keep theirs
+const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+const A11Y_LOG = WORKING_DIR + (scope ? `a11y-${scope}.log` : 'a11y.log');
+fs.mkdirSync(WORKING_DIR, { recursive: true });
+fs.writeFileSync(A11Y_LOG, '');
+
+async function checkAccessibility(page, name) {
+    // the debug page is the unmodified ui of Clockwork, a third-party app
+    if (name.startsWith('debug_clockwork')) {
+        return;
+    }
+    const results = await new AxeBuilder({ page })
+        .withTags(AXE_TAGS)
+        // the output of modules is frontend content
+        .exclude('.rex-slice-output .rex-section-body')
+        .analyze();
+    for (const violation of results.violations) {
+        const level = ['serious', 'critical'].includes(violation.impact) ? 'A11Y-ERROR' : 'A11Y-WARNING';
+        const line = `${level}: ${name}: ${violation.id} (${violation.impact}): ${violation.nodes.map(node => node.target.join(' ')).join(', ')}`;
+        console.log(line);
+        fs.appendFileSync(A11Y_LOG, line + '\n');
+    }
+}
+
 async function createScreenshots(page, screenshotName) {
     const darkName = screenshotName.replace('.png', '--dark.png');
     expectedFiles.add(screenshotName);
@@ -172,9 +199,11 @@ async function createScreenshots(page, screenshotName) {
 
     await page.emulateMedia({ colorScheme: 'light' });
     await processScreenshot(page, screenshotName);
+    await checkAccessibility(page, screenshotName);
 
     await page.emulateMedia({ colorScheme: 'dark' });
     await processScreenshot(page, darkName);
+    await checkAccessibility(page, darkName);
 }
 
 async function logIntoBackend(page, username = 'myusername', password = 'mypassword') {
@@ -299,7 +328,7 @@ async function main() {
 
     // login page
     await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-    await page.waitForSelector('.rex-background--ready');
+    await page.waitForSelector('.rex-background[data-state="ready"]');
     await page.waitForTimeout(200); // wait for bg image to fade in
     await createScreenshots(page, 'login.png');
 
@@ -309,6 +338,25 @@ async function main() {
 
     // run through all pages in parallel
     await processAllPagesParallel(browser);
+
+    // pages with grids in narrower windows, where the navigation is closed (below 992px) or beside the content
+    for (const width of [800, 1024]) {
+        await page.setViewportSize({ width, height: viewportHeight });
+        for (const name of ['system_settings', 'mediapool_media_file', 'structure_article_edit']) {
+            await goToUrlOrThrow(page, allPages[name + '.png'], { waitUntil: 'load' });
+            await createScreenshots(page, `${name}--${width}.png`);
+        }
+    }
+    await page.setViewportSize({ width: viewportWidth, height: viewportHeight });
+
+    // the grid component in fixed widths, as grids follow their own width (.tools/visual-tests/fixtures/grid.html is
+    // generated from the component); served under the instance, so it loads the built backend styles
+    const gridFixtureUrl = new URL('/grid-fixture.html', START_URL).href;
+    const serveGridFixture = route => route.fulfill({ contentType: 'text/html', body: fs.readFileSync('.tools/visual-tests/fixtures/grid.html', 'utf8') });
+    await page.route(gridFixtureUrl, serveGridFixture);
+    await goToUrlOrThrow(page, gridFixtureUrl, { waitUntil: 'load' });
+    await createScreenshots(page, 'grid.png');
+    await page.unroute(gridFixtureUrl, serveGridFixture);
 
     // the following steps have side effects and must run sequentially on a single page
 
@@ -326,7 +374,7 @@ async function main() {
         page.waitForNavigation({ waitUntil: 'load' }),
         page.click('button[name="save"]'),
     ]);
-    await page.waitForSelector('.alert-danger');
+    await page.waitForSelector('.rex-alert[data-variant="danger"]');
     await createScreenshots(page, 'mediapool_upload.png');
 
     // test debug
@@ -341,8 +389,8 @@ async function main() {
     await goToUrlOrThrow(page, START_URL + '?page=structure', { waitUntil: 'load' });
 
     // logout
-    await page.click('#rex-js-nav-top .rex-logout');
-    await page.waitForSelector('.rex-background--ready');
+    await page.click('a[href*="rex_logout=1"]');
+    await page.waitForSelector('.rex-background[data-state="ready"]');
     await page.waitForTimeout(200); // wait for bg image to fade in
     await createScreenshots(page, 'logout.png');
 

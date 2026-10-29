@@ -46,6 +46,14 @@ profile = Mein Profil
 logout = abmelden
 navigation_system = Hauptmenü
 navigation_addons = AddOns
+skip_to_content = Zum Inhalt springen
+navigation_main_label = Hauptnavigation
+navigation_toggle = Navigation ein- und ausblenden
+navigation_breadcrumb = Pfad
+navigation_subpages = Unterseiten
+navigation_pagination = Seitenauswahl
+toolbar_toggle = Werkzeugleiste ein- und ausblenden
+link_new_window = öffnet in neuem Fenster
 subnavigation = Unternavigation von {0}
 
 # redaxo/include/classes/class.login.php
@@ -235,6 +243,20 @@ session_timeout_logout_label = Abmelden
 session_timeout_login_label = Erneut anmelden
 session_timeout_refresh_label = Session verlängern
 
+dialog_confirm = OK
+dialog_cancel = Abbrechen
+select_all = Alle auswählen
+select_none = Keine auswählen
+select_no_results = Keine Treffer
+select_search = Suchen
+overlay_close = Schließen
+password_show = Passwort anzeigen
+picker_picked = ausgewählt
+collection_added = Eintrag hinzugefügt
+collection_removed = Eintrag entfernt
+clipboard_copied = In die Zwischenablage kopiert
+passkey_failed = Der Passkey konnte nicht verwendet werden.
+
 password_change_required = Das Passwort ist abgelaufen. Um fortzufahren, bitte ein neues Passwort angeben!
 password_not_changed = Das neue Passwort muss sich vom vorherigen unterscheiden!
 password_already_used = Das Passwort wurde schon benutzt und kann nicht erneut verwendet werden!
@@ -306,6 +328,7 @@ footer_doku = Dokumentation lesen
 footer_datetime = {0}
 footer_scripttime = {0} Sek.
 footer_credits = Credits
+footer_top = Nach oben
 
 created_by = Erstellt von
 created_on = Erstellt am
@@ -509,7 +532,6 @@ pool_changecat_selectedmedia_suffix = verschieben
 pool_get_selectedmedia = übernehmen
 pool_selectedmedia_error = Keine Medien ausgewählt
 pool_selectedmedia_moved = Selektierte Medien sind verschoben worden
-pool_select_all = Alle
 pool_nomediafound = Keine Dateien in dieser Medienkategorie gefunden
 pool_image_get = Bild einfügen
 pool_link_get = Link einsetzen
@@ -716,8 +738,12 @@ structure_history = Historie
 structure_history_title_info = Kurzerklärung
 structure_history_snapshot_reactivate = Diese Version übernehmen
 structure_history_snapshot_reactivated = Version wurde übernommen
-structure_history_overview_versions = history_overview_versions
 structure_history_current_version = Aktuelle Version
+structure_history_version = Version
+structure_history_older = Ältere Version
+structure_history_newer = Neuere Version
+structure_history_no_versions = Es gibt noch keine früheren Versionen dieses Artikels. Sie entstehen, sobald Blöcke gespeichert, verschoben oder gelöscht werden.
+structure_history_snapshot_not_found = Diese Version gibt es nicht mehr.
 structure_history_info_content = <p>Eine History Erweiterung mit welchem man Änderungen in den Artikelinhalten aufnehmen kann. Es wird jeweils ein Snapshot der Version erstellt und mit einem Datum versehen. Nachträglich können dann ältere Versionen wieder aktiviert werden.</p>
 
 perm_options_history[article_rollback] = Artikel wiederherstellen (Historie)
@@ -725,7 +751,6 @@ perm_options_history[article_rollback] = Artikel wiederherstellen (Historie)
 structure_history_button_delete_history = Historie komplett löschen
 structure_history_deleted = Historie wurde komplett gelöscht.
 structure_history_savedby = gesichert durch
-structure_history_close = Abbrechen
 
 
 version = Version

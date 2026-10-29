@@ -1,1 +1,0 @@
-this jquery ui custom build consists only of all core and interaction modules.

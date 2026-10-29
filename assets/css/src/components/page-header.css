@@ -1,0 +1,227 @@
+/* Page header with tabs and subnavigation, breadcrumb (PageHeader, Tabs, Breadcrumb components) */
+
+@layer components {
+    .rex-pageheader-title {
+        margin: 36px 0 33px;
+        color: var(--rex-color-text);
+        font-size: 1.5rem;
+        font-weight: 400;
+        line-height: 1.1;
+
+        small {
+            color: var(--rex-color-text-muted);
+            font-size: 65%;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .rex-is-popup & {
+            position: absolute;
+            top: 0;
+            right: 15px;
+            z-index: 1030;
+            margin: 0;
+            color: var(--rex-color-on-accent);
+            line-height: var(--rex-topbar-height-mobile);
+        }
+    }
+
+    .rex-is-popup .rex-pageheader {
+        padding-top: var(--rex-gutter);
+    }
+
+    #rex-page-login .rex-pageheader {
+        display: none;
+    }
+
+    /* tabs ---------------------------------------------------------------------------------------------------- */
+
+    .rex-pagenav {
+        --rex-subnav-bg: var(--rex-color-surface);
+        --rex-subnav-border: var(--rex-color-border);
+        --rex-subnav-divider: var(--rex-color-border);
+
+        margin-bottom: 22px;
+
+        .rex-main-frame & {
+            --rex-subnav-bg: var(--rex-color-surface);
+            --rex-subnav-border: var(--rex-color-surface);
+        }
+    }
+
+    /* also used within the content, e.g. by the tabs of an addon's form */
+    .rex-tabs {
+        --rex-tabs-border: var(--rex-color-border-strong);
+        --rex-tab-bg: var(--rex-color-surface-muted);
+        --rex-tab-text: var(--rex-color-text);
+        --rex-tab-hover-text: var(--rex-color-link-hover);
+        --rex-tab-active-bg: var(--rex-color-surface);
+        --rex-tab-active-text: var(--rex-color-text);
+
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-bottom: 1px solid var(--rex-tabs-border);
+
+        .rex-main-frame .rex-pagenav & {
+            --rex-tabs-border: var(--rex-color-surface);
+            --rex-tab-bg: var(--rex-color-surface-strong);
+            --rex-tab-active-bg: var(--rex-color-surface);
+        }
+    }
+
+    .rex-tabs-item {
+        position: relative;
+        margin-bottom: -1px;
+
+        &.rex-tabs-item[data-align="end"]:not(.rex-tabs-item[data-align="end"] + .rex-tabs-item[data-align="end"]) {
+            margin-left: auto;
+        }
+
+        &.rex-tabs-item[data-align="end"]:last-child > .rex-tabs-link {
+            margin-right: 0;
+        }
+    }
+
+    .rex-tabs-link:not(.btn, .rex-button) {
+        display: block;
+        position: relative;
+        margin-right: 2px;
+        padding: 10px 15px 9px;
+        background: var(--rex-tab-bg);
+        border: 1px solid var(--rex-tab-bg);
+        border-bottom-color: transparent;
+        border-radius: var(--rex-radius) var(--rex-radius) 0 0;
+        color: var(--rex-tab-text);
+        line-height: 22px;
+        text-decoration: none;
+
+        &:is(a):hover,
+        &:is(a):focus {
+            background: var(--rex-tab-bg);
+            border-color: var(--rex-tab-bg);
+            border-bottom-color: transparent;
+            color: var(--rex-tab-hover-text);
+            text-decoration: none;
+        }
+
+        /* a link inside the title of an item without its own target */
+        > a {
+            color: inherit;
+            text-decoration: none;
+
+            &:hover,
+            &:focus {
+                color: var(--rex-tab-hover-text);
+                text-decoration: none;
+            }
+        }
+
+        &:is([aria-current="page"], [aria-selected="true"]) {
+            padding-bottom: 10px;
+            background: var(--rex-tab-active-bg);
+            border-color: var(--rex-tabs-border);
+            border-bottom-color: transparent;
+            color: var(--rex-tab-active-text);
+            cursor: default;
+        }
+    }
+
+    /* subnavigation of the active tab */
+    .rex-subnav {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        background: var(--rex-subnav-bg);
+        border: 1px solid var(--rex-subnav-border);
+        border-top: 0;
+    }
+
+    .rex-subnav-item {
+        display: flex;
+
+        &:not(:last-child)::after {
+            content: '';
+            height: 22px;
+            margin-top: 12px;
+            border-right: 1px solid var(--rex-subnav-divider);
+        }
+    }
+
+    .rex-subnav-link {
+        padding: 12px 15px;
+        color: var(--rex-color-link);
+        line-height: 22px;
+        text-decoration: none;
+
+        .rex-empty > & {
+            color: var(--rex-color-text-muted);
+        }
+
+        &:is(a):hover,
+        &:is(a):focus,
+        &[aria-current="page"] {
+            color: var(--rex-color-text);
+            text-decoration: none;
+        }
+    }
+
+    /* breadcrumb ---------------------------------------------------------------------------------------------- */
+
+    .rex-crumbs {
+        overflow: hidden;
+
+        .rex-pageheader + & {
+            margin-top: -9px;
+        }
+    }
+
+    .rex-crumbs-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 0 22px;
+        padding: 6px 15px;
+        list-style: none;
+        background: var(--rex-color-surface);
+        border: 1px solid var(--rex-color-border);
+        border-radius: 0;
+
+        .rex-list-item & {
+            margin-bottom: 0;
+        }
+
+        > li + li::before {
+            content: '/ ';
+            padding: 0 5px;
+            color: var(--rex-color-text-muted);
+        }
+    }
+
+    .rex-crumbs-link,
+    .rex-crumbs-title > a {
+        display: inline-block;
+        margin: -4px -7px;
+        padding: 4px 7px;
+        border-radius: 20px;
+    }
+
+    /* language switch of the content and mediapool pages, right of the page header from 992px */
+    .rex-language {
+        margin-bottom: 22px;
+
+        @media (min-width: 992px) {
+            float: right;
+            margin-left: 30px;
+            padding-top: 2px;
+
+            & :is(.dropdown-menu, .rex-dropdown-menu) {
+                right: 0;
+                left: auto;
+            }
+        }
+    }
+}

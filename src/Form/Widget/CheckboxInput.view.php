@@ -4,7 +4,7 @@ use Redaxo\Core\Form\Widget\CheckboxInput;
 use Redaxo\Core\View\Html;
 
 return static function (CheckboxInput $checkbox): void { ?>
-    <div class="checkbox">
+    <div class="rex-check">
         <label>
             <input <?= $checkbox->attributes->with([
                 'type' => 'checkbox',

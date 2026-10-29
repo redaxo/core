@@ -1,0 +1,64 @@
+/*
+ Badges (`.rex-badge`, Redaxo\Core\View\Component\Badge): a short label like a state or a role, `data-variant`
+ `neutral` (default), `primary`, `info`, `success`, `warning` or `danger`; `data-shape="pill"` for counters.
+ */
+
+@layer components {
+    .rex-badge {
+        --rex-badge-bg: var(--rex-color-neutral);
+        --rex-badge-text: var(--rex-color-on-neutral);
+
+        display: inline-block;
+        padding: 0.2em 0.6em 0.3em;
+        border-radius: 0.25em;
+        background: var(--rex-badge-bg);
+        color: var(--rex-badge-text);
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+
+        &:empty {
+            display: none;
+        }
+
+        &:is([data-variant="primary"], [data-variant="info"]) {
+            --rex-badge-bg: var(--rex-color-accent);
+            --rex-badge-text: var(--rex-color-on-accent);
+        }
+
+        &[data-variant="success"] {
+            --rex-badge-bg: var(--rex-color-success);
+            --rex-badge-text: var(--rex-color-on-success);
+        }
+
+        &[data-variant="warning"] {
+            --rex-badge-bg: var(--rex-color-warning);
+            --rex-badge-text: var(--rex-color-on-warning);
+        }
+
+        &[data-variant="danger"] {
+            --rex-badge-bg: var(--rex-color-danger);
+            --rex-badge-text: var(--rex-color-on-danger);
+        }
+
+        &[data-shape="pill"] {
+            min-width: 10px;
+            padding: 3px 7px;
+            border-radius: 10px;
+            font-size: var(--rex-font-size-small);
+            vertical-align: middle;
+
+            .rex-list-item > & {
+                float: right;
+            }
+        }
+
+        .rex-button & {
+            background: var(--rex-button-color);
+            color: var(--rex-button-bg);
+        }
+    }
+}

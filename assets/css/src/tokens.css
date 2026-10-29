@@ -1,0 +1,144 @@
+/*
+ Design tokens: the semantic colors, shadows and sizes the components are built from.
+
+ These custom properties are the public API for restyling the backend; there are no palette variables, so an
+ override always changes a role (accent, danger …), never "a blue". Components only use these tokens and their own
+ component tokens derived from them, no literal colors (enforced by stylelint).
+
+ Colors switch with `light-dark()`, following the color scheme REDAXO sets per theme (`:root`, and the theme classes
+ on the body below). Text colors reach 4.5:1 and the `-border-input` and `-focus` colors 3:1 against the surfaces
+ they are used on (checked by `npm run check:contrast`).
+
+ Viewport breakpoints of the backend frame: 768px, 992px (the navigation opens beside the content), 1200px and
+ 1400px, as `min-width` and one pixel less as `max-width` (custom properties don't work in media queries, so stylelint
+ allows only these values). The grid uses container breakpoints instead (components/grid.css).
+ */
+
+@layer tokens {
+    :root {
+        /* surfaces */
+        --rex-color-bg: light-dark(#f3f6fb, #1b232c);
+        --rex-color-surface: light-dark(#fff, #202b35);
+        --rex-color-surface-subtle: light-dark(#f3f6fb, #1b232c);
+        --rex-color-surface-muted: light-dark(#dfe3e9, #151c22);
+        --rex-color-surface-strong: light-dark(#d0d6df, #2e3b4a);
+        --rex-color-surface-raised: light-dark(#fff, #151c22);
+        --rex-color-canvas: light-dark(#a9b1bc, #0d1215);
+        /* frontend previews keep the white page background of the frontend */
+        --rex-color-preview-bg: #fff;
+
+        /* controls: buttons and similar raised elements */
+        --rex-color-control: light-dark(#fff, #2e3b4a);
+        --rex-color-control-hover: light-dark(#dfe3e9, #3a4a5c);
+
+        /* borders */
+        --rex-color-border: light-dark(#dfe3e9, #151c22);
+        --rex-color-border-strong: light-dark(#d0d6df, #2e3b4a);
+        --rex-color-border-input: light-dark(#7a8797, #66778a);
+
+        /* text */
+        --rex-color-text: light-dark(#324050, #bfc5cc);
+        --rex-color-text-muted: light-dark(#566270, #a4acb5);
+        --rex-color-link: light-dark(#1f6fb2, #7abaec);
+        --rex-color-link-hover: light-dark(#185a91, #a3cff2);
+
+        /* accent: primary actions, the active navigation item, the top bar */
+        --rex-color-accent: light-dark(#1f6fb2, #1867a6);
+        --rex-color-accent-hover: light-dark(#185a91, #1a5d94);
+        --rex-color-on-accent: #fff;
+        --rex-color-accent-subtle: light-dark(#dbedf7, #213c51);
+        --rex-color-accent-subtle-hover: light-dark(#cee7f4, #1c4260);
+
+        /* status: the plain token as filled background with `on-…` as its text, `-text` on surfaces, `-subtle` as
+           tinted background */
+        --rex-color-success: light-dark(#1e7a4a, #0d6a38);
+        --rex-color-success-hover: light-dark(#18633c, #0a5a2f);
+        --rex-color-on-success: #fff;
+        --rex-color-success-text: light-dark(#1e7a4a, #4cc787);
+        --rex-color-success-subtle: light-dark(#e9f5ef, #1f3d3c);
+
+        --rex-color-warning: light-dark(#cfb550, #78641e);
+        --rex-color-warning-hover: light-dark(#c2a73c, #685619);
+        --rex-color-on-warning: light-dark(#1b232c, #fff);
+        --rex-color-warning-text: light-dark(#7a6200, #e0c35a);
+
+        --rex-color-danger: light-dark(#c9302c, #801919);
+        --rex-color-danger-hover: light-dark(#a92824, #6b1515);
+        --rex-color-on-danger: #fff;
+        --rex-color-danger-text: light-dark(#b52b27, #ef6b67);
+        --rex-color-danger-subtle: light-dark(#f9e3e2, #3d1f1f);
+
+        --rex-color-neutral: light-dark(#5f6b7a, #2e3b4a);
+        --rex-color-neutral-hover: light-dark(#4d5866, #3a4a5c);
+        --rex-color-on-neutral: light-dark(#fff, #bfc5cc);
+
+        /* inverse: the dark chrome (main navigation, login page, inverse toolbar) in both color schemes */
+        --rex-color-inverse-bg: light-dark(#324050, #242f3c);
+        --rex-color-inverse-bg-strong: light-dark(#283542, #1b232c);
+        --rex-color-inverse-text: #c3cad4;
+        --rex-color-inverse-text-strong: #f3f6fb;
+        --rex-color-inverse-link: #7abaec;
+        --rex-color-inverse-border: rgb(156 165 178 / 0.3);
+
+        /* brand */
+        --rex-color-brand: #4b9ad9;
+        --rex-color-logo-primary: #fff;
+        --rex-color-logo-secondary: light-dark(#324050, rgb(27 35 44 / 0.8));
+        --rex-color-devmode: light-dark(#ff9f0f, #e68a00);
+        --rex-color-devmode-hover: light-dark(#f09000, #ff960a);
+
+        /* states */
+        --rex-color-focus: light-dark(#1f6fb2, #7abaec);
+        --rex-color-selection: light-dark(#b3d4fc, #0b304d);
+        --rex-color-highlight: light-dark(#fbffd6, #3d3a1f);
+        --rex-color-mark: light-dark(#b3bdcb, rgb(64 155 228 / 0.2));
+        --rex-color-backdrop: light-dark(rgb(40 53 66 / 0.6), rgb(0 0 0 / 0.6));
+
+        /* code */
+        --rex-color-code-bg: light-dark(#f9f2f4, #151c22);
+        --rex-color-code-text: light-dark(#c7254e, #7abaec);
+        --rex-color-code-string: light-dark(#d00, #d9c16c);
+        --rex-color-code-comment: light-dark(#b35900, #7e85e6);
+        --rex-color-code-keyword: light-dark(#070, #57d993);
+        --rex-color-code-default: light-dark(#00b, #7abaec);
+        --rex-color-code-html: light-dark(#000, #7abaec);
+
+        /* shadows */
+        --rex-shadow-sm: 0 1px 1px rgb(0 0 0 / 0.05);
+        --rex-shadow-bar: 0 2px 2px 0 rgb(40 53 66 / 0.2);
+        --rex-shadow-xs: 0 1px 3px rgb(0 0 0 / 0.2);
+        --rex-shadow-md: 0 6px 12px rgb(0 0 0 / 0.175);
+        --rex-shadow-lg: 0 10px 40px rgb(0 0 0 / 0.3);
+        --rex-shadow-inset: inset 0 1px 1px rgb(0 0 0 / 0.075);
+        --rex-shadow-pressed: inset 0 3px 5px rgb(0 0 0 / 0.125);
+
+        /* typography */
+        --rex-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell,
+            "Helvetica Neue", sans-serif;
+        --rex-font-mono: Menlo, Monaco, Consolas, "Courier New", monospace;
+
+        /* sizes */
+        --rex-font-size: 0.9375rem;
+        --rex-font-size-small: 0.8125rem;
+        --rex-font-size-large: 1.125rem;
+        --rex-line-height: 1.4667;
+        --rex-radius: 4px;
+        --rex-gutter: 30px;
+        --rex-topbar-height: 60px;
+        --rex-topbar-height-mobile: 50px;
+        --rex-sidebar-width: 250px;
+
+        --rex-ease-in: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+        --rex-ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+        --rex-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+        --rex-duration: 300ms;
+    }
+
+    body.rex-theme-light {
+        color-scheme: light;
+    }
+
+    body.rex-theme-dark {
+        color-scheme: dark;
+    }
+}

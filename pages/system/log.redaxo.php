@@ -12,7 +12,12 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
@@ -50,18 +55,9 @@ if ('' != $error) {
     echo Message::error($error);
 }
 
-$content = '
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>' . I18n::msg('syslog_timestamp') . '</th>
-                        <th>' . I18n::msg('syslog_message') . '</th>
-                    </tr>
-                </thead>
-                <tbody>';
-
 $editor = Editor::factory();
 
+$rows = [];
 $file = LogFile::factory($logFile);
 foreach (new LimitIterator($file, 0, 100) as $entry) {
     /** @var LogEntry $entry */
@@ -74,7 +70,7 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
 
     $class = match (strtolower($type)) {
         'success' => 'success',
-        'debug' => 'default',
+        'debug' => 'neutral',
         'info', 'notice', 'deprecated' => 'info',
         'warning' => 'warning',
         default => 'danger',
@@ -88,51 +84,47 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
         if ($url = $editor->getUrl($fullPath, (int) ($line ?? 1))) {
             $path = '<a href="' . $url . '">' . $path . '</a>';
         }
-        $path = '<small class="rex-word-break"><span class="label label-default">' . I18n::msg('syslog_file') . ':</span> ' . $path . '</small><br>';
+        $path = '<small class="rex-u-word-break"><span class="rex-badge">' . I18n::msg('syslog_file') . ':</span> ' . $path . '</small><br>';
     }
 
     $url = $data[4] ?? null;
     if ($url) {
         $url = escape($url);
-        $url = '<small class="rex-word-break"><span class="label label-default">' . I18n::msg('syslog_url') . ':</span> <a href="' . $url . '">' . $url . '</a></small>';
+        $url = '<small class="rex-u-word-break"><span class="rex-badge">' . I18n::msg('syslog_url') . ':</span> <a href="' . $url . '">' . $url . '</a></small>';
     } else {
         $url = '';
     }
 
-    $content .= '
-                <tr>
-                    <td data-title="' . I18n::msg('syslog_timestamp') . '" class="rex-table-tabular-nums rex-table-date">
-                        <small>' . Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</small><br>
-                        <span class="label label-' . $class . '">' . escape($type) . '</span>
-                    </td>
-                    <td data-title="' . I18n::msg('syslog_message') . '">
-                        <div class="rex-word-break"><b style="font-weight: 500">' . nl2br(escape($message)) . '</b></div>
+    $rows[] = [
+        'time' => Html::raw('<small>' . Formatter::intlDateTime($entry->getTimestamp(), [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</small><br>
+                        <span class="rex-badge" data-variant="' . $class . '">' . escape($type) . '</span>'),
+        'message' => Html::raw('<div class="rex-u-word-break rex-log-message">' . nl2br(escape($message)) . '</div>
                         ' . $path . '
-                        ' . $url . '
-                    </td>
-                </tr>';
+                        ' . $url),
+    ];
 }
 
-$content .= '
-                </tbody>
-            </table>';
+$content = (string) new Table([
+    TableColumn::forKey(I18n::rawMsg('syslog_timestamp'), 'time', TableColumnType::Date, new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    TableColumn::forKey(I18n::rawMsg('syslog_message'), 'message'),
+], $rows, attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-delete" type="submit" name="del_btn" data-confirm="' . I18n::msg('delete') . '?">' . I18n::msg('syslog_delete') . '</button>';
+$n['field'] = '<button class="rex-button" data-variant="danger" type="submit" name="del_btn" data-confirm="' . I18n::msg('delete') . '?">' . I18n::msg('syslog_delete') . '</button>';
 $formElements[] = $n;
 
 if ($url = $editor->getUrl($logFile, 0)) {
     $n = [];
-    $n['field'] = '<a class="btn btn-save" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
+    $n['field'] = '<a class="rex-button" data-variant="success" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
     $formElements[] = $n;
 }
 
 if (is_file($logFile)) {
     $url = Url::currentBackendPage(['func' => 'download'] + $csrfToken->getUrlParams());
     $n = [];
-    $n['field'] = '<a class="btn btn-save" href="' . $url . '" download>' . I18n::msg('syslog_download', Path::basename($logFile)) . '</a>';
+    $n['field'] = '<a class="rex-button" data-variant="success" href="' . $url . '" download>' . I18n::msg('syslog_download', Path::basename($logFile)) . '</a>';
     $formElements[] = $n;
 }
 

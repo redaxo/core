@@ -24,7 +24,7 @@ foreach ($this->elements as $element) {
     $header = $element['header'] ?? '';
     $footer = $element['footer'] ?? '';
 
-    $note = isset($element['note']) && '' != $element['note'] ? '<span class="help-block rex-note">' . $element['note'] . '</span>' : '';
+    $note = isset($element['note']) && '' != $element['note'] ? '<span class="rex-field-note">' . $element['note'] . '</span>' : '';
     $highlight = $element['highlight'] ?? false;
 
     if ('' != $field) {
@@ -36,34 +36,30 @@ foreach ($this->elements as $element) {
 
     $error = '';
     if (isset($element['error']) && '' != $element['error']) {
-        $classes .= ' has-error';
-        $error = '<dd class="rex-form-error">' . $element['error'] . '</dd>';
-    }
-    if (isset($element['required']) && $element['required']) {
-        $classes .= ' rex-is-required';
+        $error = '<p class="rex-field-error">' . $element['error'] . '</p>';
     }
     if (isset($element['class']) && '' != $element['class']) {
         $classes .= ' ' . $element['class'];
     }
 
-    $class = $inline ? '-inline' : '';
+    $layout = $inline ? ' data-layout="inline"' : '';
 
     if ($grouped) {
-        $out .= '<div class="checkbox' . $class . '"' . $id . '>';
+        $out .= '<div class="rex-check"' . $layout . $id . '>';
         $out .= $label;
         $out .= '</div>';
     } else {
         $out .= $header;
-        $out .= '<dl class="rex-form-group form-group' . $classes . '">';
-        $out .= '<dd>';
+        $out .= '<div class="rex-field' . $classes . '">';
+        $out .= '<div class="rex-field-control">';
         $out .= $before;
-        $out .= '<div class="checkbox' . $class . '"' . $id . '>';
+        $out .= '<div class="rex-check"' . $layout . $id . '>';
         $out .= $label;
         $out .= '</div>';
         $out .= $after;
-        $out .= '</dd>';
         $out .= $error;
-        $out .= '</dl>';
+        $out .= '</div>';
+        $out .= '</div>';
         $out .= $footer;
     }
 }

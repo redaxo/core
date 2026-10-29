@@ -1,93 +1,43 @@
 <?php
-use Redaxo\Core\Util\Str;
+
+use Redaxo\Core\Util\Type;
+use Redaxo\Core\View\Component\Section;
+use Redaxo\Core\View\Component\SectionVariant;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 
 /**
+ * Wrapper of the {@see Section} component for callers of the fragment.
+ *
  * @var Fragment $this
  * @psalm-scope-this Fragment
  */
 
-$sectionAttributes = [];
-if (isset($this->sectionAttributes)) {
-    $sectionAttributes = $this->sectionAttributes;
-}
-if (isset($sectionAttributes['class']) && !is_array($sectionAttributes['class'])) {
-    $sectionAttributes['class'] = [$sectionAttributes['class']];
-}
-$sectionAttributes['class'][] = 'rex-page-section';
+// the variables of the fragment hold markup the caller vouches for
+$raw = function (string ...$names): Html {
+    $html = '';
+    foreach ($names as $name) {
+        $html .= Type::string($this->getVar($name, ''));
+    }
 
-?>
-<section<?= Str::buildAttributes($sectionAttributes) ?>>
+    /** @psalm-taint-escape html */
+    $html = $html;
 
-    <?php if (isset($this->before)): ?>
-        <?= $this->before ?>
-    <?php endif ?>
+    return Html::raw($html);
+};
+$variant = SectionVariant::tryFrom((string) $this->getVar('class', '')) ?? SectionVariant::Default;
 
-    <?php if (isset($this->class) && '' != $this->class): ?>
-        <div class="panel panel-<?= $this->class ?>">
-    <?php else: ?>
-        <div class="panel panel-default">
-    <?php endif ?>
-
-        <?php
-        $collapseId = (isset($this->collapse) && $this->collapse) ? 'collapse-' . random_int(100_000, 999_999) : '';
-        $collapsed = isset($this->collapsed) && $this->collapsed;
-        $header = '';
-
-        $attributes = [];
-        $attributes['class'][] = 'panel-heading';
-        if (isset($this->options) && '' != $this->options) {
-            $attributes['class'][] = 'rex-has-panel-options';
-            $header .= '<div class="rex-panel-options">' . $this->options . '</div>';
-        }
-        if (isset($this->title) && '' != $this->title) {
-            $header .= '<div class="panel-title">' . $this->title . '</div>';
-        }
-        if (isset($this->heading) && '' != $this->heading) {
-            $header .= $this->heading;
-        }
-        if (isset($this->collapse) && $this->collapse) {
-            if ($collapsed) {
-                $attributes['class'][] = 'collapsed';
-            }
-            $attributes['data-toggle'] = 'collapse';
-            $attributes['data-target'] = '#' . $collapseId;
-        }
-        echo '' != $header ? '<header' . Str::buildAttributes($attributes) . '>' . $header . '</header>' : '';
-        ?>
-
-        <?php if (isset($this->collapse) && $this->collapse): ?>
-            <div id="<?= $collapseId ?>" class="panel-collapse collapse<?= $collapsed ? '' : ' in' ?>">
-        <?php endif ?>
-
-        <?php if (isset($this->body) && '' != $this->body): ?>
-            <div class="panel-body">
-                <?= $this->body ?>
-            </div>
-        <?php endif ?>
-
-        <?php if (isset($this->content) && '' != $this->content): ?>
-            <?= $this->content ?>
-        <?php endif ?>
-
-        <?php if ((isset($this->footer) && '' != $this->footer) || (isset($this->buttons) && '' != $this->buttons)): ?>
-            <footer class="panel-footer">
-                <?php if (isset($this->footer) && '' != $this->footer): ?>
-                    <?= $this->footer ?>
-                <?php endif ?>
-                <?php if (isset($this->buttons) && '' != $this->buttons): ?>
-                    <?= $this->buttons ?>
-                <?php endif ?>
-            </footer>
-        <?php endif ?>
-
-        <?php if (isset($this->collapse) && $this->collapse): ?>
-            </div>
-        <?php endif ?>
-    </div>
-
-
-    <?php if (isset($this->after)): ?>
-        <?= $this->after ?>
-    <?php endif ?>
-</section>
+// `before` and `after` stand outside the section, e.g. a message above the form of a slice
+echo $raw('before');
+echo new Section(
+    title: $raw('title'),
+    body: $raw('body'),
+    content: $raw('content'),
+    footer: $raw('footer', 'buttons'),
+    options: $raw('options'),
+    header: $raw('heading'),
+    variant: $variant,
+    collapsible: (bool) $this->getVar('collapse', false),
+    collapsed: (bool) $this->getVar('collapsed', false),
+)->render();
+echo $raw('after');

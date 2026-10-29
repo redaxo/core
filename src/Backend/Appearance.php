@@ -42,6 +42,9 @@ final class Appearance
      */
     public static function getInstanceColor(): ?string
     {
-        return Env::get('REX_INSTANCE_COLOR');
+        $color = Env::get('REX_INSTANCE_COLOR');
+
+        // the value ends up in a style element, so only plain color values pass
+        return null !== $color && preg_match('/^[\w#(),.%\/\s-]+$/', $color) ? $color : null;
     }
 }

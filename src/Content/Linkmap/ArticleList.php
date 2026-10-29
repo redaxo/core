@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Content\Linkmap;
 
 use Redaxo\Core\Content\Article;
+use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
 use function sprintf;
@@ -14,9 +15,7 @@ final class ArticleList extends ArticleListRenderer
 {
     protected function listItem(Article $article, int $categoryId): string
     {
-        $url = 'javascript:insertLink(\'redaxo://' . $article->id . '\',\'' . escape(trim(sprintf('%s [%s]', $article->name, $article->id)), 'js') . '\');';
-
-        $linkClass = $article->isOnline() ? 'rex-online' : 'rex-offline';
+        $linkClass = $article->isOnline() ? 'rex-u-online' : 'rex-u-offline';
         $label = CategoryTreeRenderer::formatLabel($article);
 
         $iconType = match (true) {
@@ -25,12 +24,17 @@ final class ArticleList extends ArticleListRenderer
             default => 'article',
         };
 
-        return '<li class="list-group-item rex-linkmap-list-item-article">'
-            . '<a href="' . $url . '" class="' . $linkClass . '">'
-            . '<i class="rex-icon rex-icon-' . $iconType . '"></i> '
+        return '<li class="rex-list-item">'
+            . '<button ' . new HtmlAttributes([
+                'type' => 'button',
+                'class' => $linkClass,
+                'data-rex-pick' => (string) $article->id,
+                'data-rex-pick-label' => trim(sprintf('%s [%s]', $article->name, $article->id)),
+            ])->toString() . '>'
+            . '<i class="rex-icon rex-icon-' . $iconType . '" aria-hidden="true"></i> '
             . escape($label)
-            . '<span class="list-item-suffix">' . $article->id . '</span>'
-            . '</a>'
+            . '<span class="rex-list-suffix">' . $article->id . '</span>'
+            . '</button>'
             . '</li>' . "\n";
     }
 }

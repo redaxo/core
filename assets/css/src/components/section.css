@@ -1,0 +1,214 @@
+/* Section: titled box of content (Redaxo\Core\View\Component\Section) */
+
+@layer components {
+    .rex-section {
+        --rex-section-color: var(--rex-color-border);
+        --rex-section-header-text: var(--rex-color-text);
+        --rex-section-body-bg: transparent;
+        --rex-section-footer-bg: var(--rex-color-surface-muted);
+
+        margin: 0 0 22px;
+        background: var(--rex-color-surface);
+        border: 1px solid var(--rex-section-color);
+        border-radius: 0;
+        box-shadow: var(--rex-shadow-sm);
+        color: var(--rex-color-text);
+
+        &[data-variant="edit"],
+        &[data-variant="add"] {
+            --rex-section-color: var(--rex-color-success);
+            --rex-section-header-text: var(--rex-color-on-success);
+            --rex-section-body-bg: var(--rex-color-success-subtle);
+            --rex-section-footer-bg: var(--rex-color-surface-muted);
+        }
+
+        &[data-variant="info"] {
+            --rex-section-color: var(--rex-color-accent);
+            --rex-section-header-text: var(--rex-color-on-accent);
+        }
+
+        &[data-variant="success"] {
+            --rex-section-color: var(--rex-color-success);
+            --rex-section-header-text: var(--rex-color-on-success);
+        }
+
+        &[data-variant="warning"] {
+            --rex-section-color: var(--rex-color-warning);
+            --rex-section-header-text: var(--rex-color-on-warning);
+        }
+
+        &[data-variant="danger"] {
+            --rex-section-color: var(--rex-color-danger);
+            --rex-section-header-text: var(--rex-color-on-danger);
+        }
+    }
+
+    .rex-section-header {
+        --rex-color-focus: var(--rex-section-header-text);
+
+        display: flow-root;
+        padding: 10px 15px;
+        background: var(--rex-section-color);
+        border-bottom: 1px solid var(--rex-section-color);
+        border-radius: 0;
+        color: var(--rex-section-header-text);
+        line-height: 1.25;
+
+        &:has(.rex-section-toggle:hover) {
+            background: color-mix(in srgb, var(--rex-section-color), var(--rex-color-text) 8%);
+        }
+    }
+
+    .rex-section-title {
+        margin: 0;
+        color: inherit;
+        font-size: 1.0625rem;
+        font-weight: 400;
+        line-height: 1.25;
+    }
+
+    /* the title of a collapsible section, as wide as the header */
+    .rex-section-toggle {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: inherit;
+        cursor: pointer;
+    }
+
+    .rex-section-options {
+        margin-block: -2px;
+
+        @media (min-width: 992px) {
+            float: right;
+        }
+    }
+
+    .rex-section-body {
+        display: flow-root;
+        padding: 15px;
+        background: var(--rex-section-body-bg);
+    }
+
+    .rex-section h3 {
+        font-size: 1.0625rem;
+        font-weight: 700;
+
+        .rex-slice & {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+    }
+
+    :is([data-variant="add"], [data-variant="edit"]) > .rex-section-header mark {
+        background-color: var(--rex-color-success-hover);
+    }
+
+    .rex-section-footer {
+        padding: 10px 15px;
+        background: var(--rex-section-footer-bg);
+        border-top: 1px solid var(--rex-section-footer-bg);
+        border-radius: 0;
+    }
+
+    .rex-section-header {
+        & .badge {
+            background-color: var(--rex-section-header-text);
+            color: var(--rex-section-color);
+        }
+
+        & > :is(.dropdown, .rex-dropdown) :is(.dropdown-toggle, [data-rex-dropdown]) {
+            color: inherit;
+        }
+    }
+
+    .rex-section-title :is(a, small) {
+        color: inherit;
+    }
+
+    .rex-section-options .navbar-form {
+        margin: 0 0 6px;
+        padding: 0;
+
+        @media (min-width: 992px) {
+            margin-block: -6px;
+        }
+    }
+
+    /* buttons of a form at the end of the body, stretched to the edges like the footer */
+    .rex-section-body .rex-form-panel-footer {
+        margin: 0 -15px -15px;
+        padding: 10px 15px;
+        background: var(--rex-section-footer-bg);
+        border-top: 1px solid var(--rex-section-footer-bg);
+    }
+
+    /* tables and lists without padding (Section::$content) run to the edges */
+    :is(.rex-section, .rex-section-collapse, .rex-section > form, .rex-section > form > fieldset) > :is(.table, .rex-table) {
+        margin-bottom: 0;
+    }
+
+    .rex-section > :is(.table, .rex-table) {
+        & caption {
+            padding-inline: 15px;
+        }
+
+        & > tbody:first-child > tr:first-child > :is(th, td) {
+            border-top: 0;
+        }
+
+        &:is(.table-bordered, [data-bordered]) {
+            border: 0;
+
+            & > :is(thead, tbody, tfoot) > tr > :first-child {
+                border-left: 0;
+            }
+
+            & > :is(thead, tbody, tfoot) > tr > :last-child {
+                border-right: 0;
+            }
+
+            & > :is(tbody, tfoot) > tr:last-child > * {
+                border-bottom: 0;
+            }
+        }
+    }
+
+    .rex-section-body + :is(.table, .rex-table),
+    .rex-section > :is(.table, .rex-table) + .rex-section-body {
+        border-top: 1px solid var(--rex-color-border);
+    }
+
+    /* login box */
+    #rex-page-login .rex-section {
+        position: relative;
+        z-index: 10;
+        background: color-mix(in srgb, var(--rex-color-inverse-bg) 97%, transparent);
+        border: 0;
+        border-radius: 5px;
+        color: var(--rex-color-inverse-text-strong);
+
+        .rex-section-header,
+        .rex-section-footer {
+            background: transparent;
+            border: 0;
+        }
+
+        .rex-section-header {
+            color: var(--rex-color-inverse-text-strong);
+        }
+
+        .rex-section-body {
+            padding: 25px 25px 5px;
+        }
+
+        .rex-section-footer {
+            padding: 5px 25px 25px;
+        }
+    }
+}

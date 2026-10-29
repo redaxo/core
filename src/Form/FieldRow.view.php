@@ -1,22 +1,49 @@
 <?php
 
 use Redaxo\Core\Form\FieldRow;
+use Redaxo\Core\Form\Widget\Widget;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 
-return static function (FieldRow $row): void { ?>
-    <dl <?= new HtmlAttributes(['class' => ['rex-form-group', 'form-group', 'rex-form-group-vertical' => $row->vertical, 'has-error' => null !== $row->error, 'rex-is-required' => $row->required]]) ?>>
+return static function (FieldRow $row): void {
+    $labelFor = $row->labelFor();
+    // a label without target belongs to a group of controls (e.g. checkboxes), which a fieldset with legend names
+    $group = null === $labelFor && null !== $row->label;
+    $id = $labelFor ?? 'rex-field-' . bin2hex(random_bytes(4));
+    $noteId = null === $row->note ? null : $id . '-note';
+    $errorId = null === $row->error ? null : $id . '-error';
+    $description = [
+        'aria-describedby' => implode(' ', array_filter([$errorId, $noteId])) ?: null,
+        'aria-invalid' => null === $row->error ? null : 'true',
+    ];
+
+    $widget = $row->widget;
+    if (!$group && $widget instanceof Widget) {
+        $widget = clone $widget;
+        $widget->attributes = $widget->attributes->with($description);
+    }
+
+    $tag = $group ? 'fieldset' : 'div';
+    $labelTag = $group ? 'legend' : 'label' ?>
+    <<?= $tag ?> <?= new HtmlAttributes([
+        'class' => ['rex-field'],
+        'data-layout' => $row->vertical ? 'vertical' : null,
+        ...($group ? $description : []),
+    ]) ?>>
         <?php if (null !== $row->label): ?>
-            <dt><label <?= new HtmlAttributes(['for' => $row->labelFor(), 'class' => $row->required ? 'required' : null]) ?>><?= Html::from($row->label) ?></label></dt>
+            <<?= $labelTag ?> <?= new HtmlAttributes(['class' => 'rex-field-label', 'for' => $labelFor]) ?>>
+                <?= Html::from($row->label) ?>
+                <?php if ($row->required): ?><span class="rex-field-required" aria-hidden="true">*</span><?php endif ?>
+            </<?= $labelTag ?>>
         <?php endif ?>
-        <dd>
-            <?= $row->widget->render() ?>
+        <div class="rex-field-control">
+            <?= $widget->render() ?>
             <?php if (null !== $row->note): ?>
-                <p class="help-block rex-note"><?= Html::from($row->note) ?></p>
+                <p class="rex-field-note" id="<?= $noteId ?>"><?= Html::from($row->note) ?></p>
             <?php endif ?>
             <?php if (null !== $row->error): ?>
-                <p class="rex-form-error"><?= Html::from($row->error) ?></p>
+                <p class="rex-field-error" id="<?= $errorId ?>"><?= Html::from($row->error) ?></p>
             <?php endif ?>
-        </dd>
-    </dl>
+        </div>
+    </<?= $tag ?>>
 <?php };

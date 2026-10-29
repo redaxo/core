@@ -25,24 +25,24 @@ foreach ($this->elements as $element) {
     }
 
     if ('' != $leftSide) {
-        $class = 'input-group-addon';
-        if (preg_match('@class=[\'|"]btn[^"\']@', $leftSide)) {
-            $class = 'input-group-btn';
+        $class = 'rex-input-group-text';
+        if (preg_match('@class=[\'"](?:btn|rex-button)\b@', $leftSide)) {
+            $class = 'rex-input-group-actions';
         }
 
         $field = '<span class="' . $class . '">' . $leftSide . '</span>' . $field;
     }
 
     if ('' != $rightSide) {
-        $class = 'input-group-addon';
-        if (preg_match('@class=[\'|"]btn[^"\']@', $rightSide)) {
-            $class = 'input-group-btn';
+        $class = 'rex-input-group-text';
+        if (preg_match('@class=[\'"](?:btn|rex-button)\b@', $rightSide)) {
+            $class = 'rex-input-group-actions';
         }
 
         $field = $field . '<span class="' . $class . '">' . $rightSide . '</span>';
     }
 
-    $out .= '<div class="input-group' . $classes . '"' . $id . '>' . $before . $field . $after . '</div>';
+    $out .= '<div class="rex-input-group' . $classes . '"' . $id . '>' . $before . $field . $after . '</div>';
 }
 
 echo $out;

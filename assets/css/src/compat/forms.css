@@ -1,0 +1,286 @@
+/*
+ Bootstrap 3 form controls (`.form-control`, `.checkbox`, `.help-block`, `.has-error`, …) and the `<dl>` layout of
+ `dl.rex-form-group` for addons; the core uses `.rex-input`, `.rex-check` and `.rex-field`
+ */
+
+@layer bootstrap {
+    /* text fields, selects and text areas */
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 6px 12px;
+        border: 1px solid var(--rex-color-border-input);
+        border-radius: 0;
+        background-color: var(--rex-color-surface-subtle);
+        background-image: none;
+        box-shadow: var(--rex-shadow-inset);
+        color: var(--rex-color-text);
+        font-size: var(--rex-font-size);
+        line-height: var(--rex-line-height);
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+        &:focus {
+            border-color: var(--rex-color-focus);
+        }
+
+        &:focus:not([readonly]) {
+            background-color: var(--rex-color-surface);
+        }
+
+        &::placeholder {
+            color: var(--rex-color-text-muted);
+            opacity: 1;
+        }
+
+        &:is([disabled], [readonly]),
+        fieldset[disabled] & {
+            border-color: var(--rex-color-border-strong);
+            background-color: var(--rex-color-surface-muted);
+            opacity: 1;
+        }
+
+        &[disabled],
+        fieldset[disabled] & {
+            cursor: not-allowed;
+        }
+
+        /* date and time fields are as high as the other fields in WebKit */
+        &:is([type="date"], [type="time"], [type="datetime-local"], [type="month"]) {
+            display: inline-flex;
+            height: 36px;
+            padding-left: 10px;
+            line-height: inherit;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .rex-form-group-no-margin {
+        margin-bottom: 0;
+    }
+
+    .checkbox,
+    .radio {
+        position: relative;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        & label {
+            min-height: 22px;
+            margin-bottom: 0;
+            padding-left: 20px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        & input:is([type="checkbox"], [type="radio"]) {
+            position: absolute;
+            margin-left: -20px;
+        }
+
+        &.disabled label,
+        fieldset[disabled] & label {
+            cursor: not-allowed;
+        }
+    }
+
+    .checkbox + .checkbox,
+    .radio + .radio {
+        margin-top: -5px;
+    }
+
+    .form-control-static {
+        min-height: 37px;
+        margin-bottom: 0;
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+
+    .help-block {
+        display: block;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        color: var(--rex-color-text-muted);
+    }
+
+    /* sizes */
+
+    .input-sm {
+        height: 30px;
+        padding: 5px 10px;
+        border-radius: 0;
+        font-size: var(--rex-font-size-small);
+        line-height: 1.5;
+    }
+
+    :is(.input-xs, .input-group-xs > .form-control, .input-group-xs > .input-group-addon, .input-group-xs > .input-group-btn > :is(.btn, .rex-button)) {
+        height: 24px;
+        padding: 3px 8px;
+        border-radius: 0;
+        font-size: var(--rex-font-size-small);
+        line-height: 1.3334;
+    }
+
+    :is(textarea, select[multiple]):is(.input-sm, .input-xs) {
+        height: auto;
+    }
+
+    /* icon inside of a field, e.g. the clear button of search fields */
+    .has-feedback {
+        position: relative;
+
+        & .form-control {
+            padding-right: 45px;
+        }
+    }
+
+    .form-control-feedback {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
+        display: block;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        text-align: center;
+        pointer-events: none;
+    }
+
+    .form-control-clear {
+        z-index: 22;
+        padding: 0.3em;
+        font-size: 1rem;
+        opacity: 0.6;
+        cursor: pointer;
+        pointer-events: auto;
+
+        .rex-section__header & {
+            color: var(--rex-color-text);
+        }
+    }
+
+    .form-clear-button input.form-control {
+        padding-right: 25px;
+    }
+
+    /* validation */
+    .has-error {
+        --state-text: var(--rex-color-danger-text);
+        --state-border: var(--rex-color-danger-text);
+        --state-bg: var(--rex-color-danger);
+
+        & :is(.help-block, .control-label, .radio, .checkbox, .radio label, .checkbox label) {
+            color: var(--state-text);
+        }
+
+        & .form-control {
+            border-color: var(--state-border);
+            box-shadow: var(--rex-shadow-inset);
+
+            &:focus {
+                border-color: var(--state-border);
+            }
+        }
+
+        & .input-group-addon {
+            border-color: var(--state-border);
+            background-color: var(--state-bg);
+            color: var(--state-text);
+        }
+
+        & .form-control-feedback {
+            color: var(--state-text);
+        }
+    }
+
+    /* REDAXO form layout: label (dt) and field (dd) side by side */
+    @media (min-width: 992px) {
+        .rex-form-group:not(.rex-form-group-vertical) {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+
+            :is(.table, .rex-table) & {
+                table-layout: auto;
+            }
+
+            & > :is(dt, dd) {
+                display: table-cell;
+                vertical-align: top;
+            }
+
+            & > dt {
+                width: 180px;
+                padding-top: 7px;
+                padding-right: 15px;
+            }
+
+            & > dd {
+                & :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                    margin-top: 7px;
+                    margin-bottom: 7px;
+                }
+
+                & .input-group :is(.checkbox, .radio, select.form-control, input[type="file"]) {
+                    margin-top: 0;
+                    margin-bottom: 0;
+                }
+
+                &:first-child {
+                    padding-left: 180px;
+                }
+            }
+
+            & textarea:not([rows]) {
+                min-height: 25em;
+            }
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .rex-form-group:not(.rex-form-group-vertical) {
+            & > dt {
+                width: 210px;
+                padding-right: 30px;
+            }
+
+            & > dd:first-child {
+                padding-left: 210px;
+            }
+
+            & textarea:not([rows]) {
+                min-height: 35em;
+            }
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .rex-form-group:not(.rex-form-group-vertical) {
+            & > dt {
+                width: 300px;
+            }
+
+            & > dd:first-child {
+                padding-left: 300px;
+            }
+        }
+    }
+
+    .rex-form-group:not(.rex-form-group-vertical) > dd {
+        & > .rex-form-group {
+            margin-bottom: 0;
+
+            & > dd {
+                padding-left: 0;
+            }
+        }
+
+        :is(.table, .rex-table) tr:not(.collapse, .collapsing) & {
+            padding-left: 0;
+        }
+    }
+}

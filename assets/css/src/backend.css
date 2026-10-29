@@ -1,0 +1,45 @@
+/*
+ REDAXO backend styles.
+
+ Layers, lowest first:
+ - base: element styles
+ - bootstrap: empty here, bootstrap-compat.css puts the styles of the Bootstrap 3 markup in it for addons
+ - tokens: the design tokens
+ - components: the REDAXO components (`.rex-…`), they may refine the bootstrap ones
+ - utilities: single purpose classes
+ Addon styles are unlayered and therefore win over all of them.
+
+ Build: npm run build:backend-css
+ */
+
+@layer base, bootstrap, tokens, components, utilities;
+
+@import "tokens.css";
+@import "base.css";
+
+@import "layout/shell.css";
+@import "layout/login.css";
+
+@import "components/icons.css";
+@import "components/page-header.css";
+@import "components/section.css";
+@import "components/slice.css";
+@import "components/docs.css";
+@import "components/grid.css";
+@import "components/forms.css";
+@import "components/input.css";
+@import "components/field.css";
+@import "components/button.css";
+@import "components/dropdown.css";
+@import "components/badge.css";
+@import "components/alert.css";
+@import "components/pagination.css";
+@import "components/list.css";
+@import "components/toolbar.css";
+@import "components/table.css";
+@import "components/overlay.css";
+@import "components/dialog.css";
+@import "components/history.css";
+@import "components/select.css";
+
+@import "utilities.css";

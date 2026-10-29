@@ -1,0 +1,116 @@
+/*
+ Dropdowns (`.rex-dropdown`, Redaxo\Core\View\Component\Dropdown): a toggle (`data-rex-dropdown`, a button) and a
+ menu of links (`.rex-dropdown-menu`), opened by js/src/toggles.js through `aria-expanded` of the toggle. The menu
+ opens above when there is no room below (`data-placement="top"`) and aligns to the end with `data-align="end"`.
+ */
+
+@layer components {
+    .rex-dropdown {
+        position: relative;
+
+        &[data-width="full"] {
+            width: 100%;
+        }
+    }
+
+    /* toggle that looks like a link, e.g. the status in the structure */
+    .rex-dropdown-link {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--rex-color-link);
+        font: inherit;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--rex-color-link-hover);
+            text-decoration: underline;
+        }
+    }
+
+    .rex-caret {
+        display: inline-block;
+        width: 0;
+        height: 0;
+        margin-left: 2px;
+        border-top: 4px dashed;
+        border-right: 4px solid transparent;
+        border-left: 4px solid transparent;
+        vertical-align: middle;
+    }
+
+    .rex-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1065;
+        display: none;
+        min-width: 160px;
+        margin: 2px 0 0;
+        padding: 5px 0;
+        border: 1px solid var(--rex-color-border-strong);
+        background: var(--rex-color-surface-raised);
+        background-clip: padding-box;
+        box-shadow: var(--rex-shadow-md);
+        color: var(--rex-color-text);
+        font-size: var(--rex-font-size);
+        text-align: left;
+        list-style: none;
+
+        .rex-dropdown:has(> [aria-expanded="true"]) > & {
+            display: block;
+        }
+
+        .rex-dropdown[data-placement="top"] > & {
+            top: auto;
+            bottom: 100%;
+            margin: 0 0 2px;
+        }
+
+        &[data-align="end"] {
+            right: 0;
+            left: auto;
+        }
+
+        &[data-width="full"] {
+            width: 100%;
+        }
+
+        & > li > a {
+            display: block;
+            padding: 3px 20px;
+            color: var(--rex-color-text);
+            line-height: var(--rex-line-height);
+            white-space: nowrap;
+            text-decoration: none;
+
+            &:hover,
+            &:focus-visible {
+                background: var(--rex-color-surface-subtle);
+                color: var(--rex-color-text);
+            }
+
+            &[aria-current]:not([aria-current="false"]) {
+                background: var(--rex-color-accent);
+                color: var(--rex-color-on-accent);
+            }
+        }
+    }
+
+    .rex-dropdown-header {
+        display: block;
+        padding: 3px 20px;
+        color: var(--rex-color-text-muted);
+        font-size: var(--rex-font-size-small);
+        line-height: var(--rex-line-height);
+        white-space: nowrap;
+    }
+
+    .rex-dropdown-divider {
+        height: 1px;
+        margin: 10px 0;
+        overflow: hidden;
+        background: var(--rex-color-border);
+    }
+}

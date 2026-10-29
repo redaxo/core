@@ -1,0 +1,79 @@
+/* Bootstrap 3 alerts (`.alert`, `.alert-*`) for addons; the core uses `.rex-alert` (components/alert.css) */
+
+@layer bootstrap {
+    .alert {
+        --alert-bg: var(--rex-color-accent);
+        --alert-border: var(--rex-color-accent-hover);
+        --alert-text: var(--rex-color-on-accent);
+        --rex-color-focus: var(--alert-text);
+
+        margin-bottom: 22px;
+        padding: 15px;
+        border: 1px solid var(--alert-border);
+        border-radius: 0;
+        background-color: var(--alert-bg);
+        color: var(--alert-text);
+        word-break: break-word;
+
+        & h4 {
+            margin-top: 0;
+            color: inherit;
+        }
+
+        & > :is(p, ul) {
+            margin-bottom: 0;
+        }
+
+        & > p + p {
+            margin-top: 5px;
+        }
+
+        & a,
+        & .alert-link {
+            color: inherit;
+            text-decoration: underline;
+
+            &:hover {
+                text-decoration-thickness: 2px;
+            }
+        }
+
+        & .alert-link {
+            font-weight: 700;
+        }
+
+        .rex-section__options & {
+            padding: 5px 10px;
+            font-size: var(--rex-font-size-small);
+
+            &:last-child {
+                margin-right: -10px;
+                margin-bottom: 0;
+            }
+        }
+
+        .rex-section > & {
+            margin-bottom: 0;
+            border: 0;
+            border-radius: 0;
+        }
+    }
+
+    .alert-success {
+        --alert-bg: var(--rex-color-success);
+        --alert-border: var(--rex-color-success-hover);
+        --alert-text: var(--rex-color-on-success);
+    }
+
+    .alert-warning {
+        --alert-bg: var(--rex-color-warning);
+        --alert-border: var(--rex-color-warning-hover);
+        --alert-text: var(--rex-color-on-warning);
+    }
+
+    .alert-danger {
+        --alert-bg: var(--rex-color-danger);
+        --alert-border: var(--rex-color-danger-hover);
+        --alert-text: var(--rex-color-on-danger);
+    }
+}

@@ -55,12 +55,12 @@ final class MarkdownTest extends TestCase
                     <table>
                     <thead>
                     <tr>
-                    <th style="text-align: right;">Foo</th>
+                    <th class="rex-u-align-end">Foo</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                    <td style="text-align: right;">Bar</td>
+                    <td class="rex-u-align-end">Bar</td>
                     </tr>
                     </tbody>
                     </table>
@@ -188,7 +188,7 @@ final class MarkdownTest extends TestCase
     {
         $code = "```php\necho 'foo';\n```";
 
-        $expected = '<pre><code><span style="color: #0000BB"></span><span style="color: #007700">echo </span><span style="color: #DD0000">&#039;foo&#039;</span><span style="color: #007700">;</span></code></pre>';
+        $expected = '<pre><code><span class="rex-code-default"></span><span class="rex-code-keyword">echo </span><span class="rex-code-string">&#039;foo&#039;</span><span class="rex-code-keyword">;</span></code></pre>';
 
         self::assertSame($expected, Markdown::factory()->parse($code, highlightPhp: true));
     }

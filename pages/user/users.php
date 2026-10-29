@@ -23,10 +23,16 @@ use Redaxo\Core\Security\UserRole;
 use Redaxo\Core\Security\UserSession;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Translation\Translatable;
+use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Badge;
+use Redaxo\Core\View\Component\BadgeVariant;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\DataList;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
+use Redaxo\Core\View\Renderable;
 
 use function Redaxo\Core\View\escape;
 
@@ -208,44 +214,46 @@ if ('add' === $func || $user) {
     echo $message;
 
     echo $form->capture(static function (Form $form) use ($user, $loginTries): void { ?>
-        <section class="rex-page-section">
-            <div class="panel panel-edit">
-                <header class="panel-heading"><div class="panel-title"><?= Html::from($form->title ?? '') ?></div></header>
-                <div class="panel-body">
-                    <?php foreach ($form->getFormErrors() as $error): ?>
-                        <?= Message::error((string) Html::from($error)) ?>
-                    <?php endforeach ?>
-                    <?php if ($user): ?>
-                        <?= new FieldRow(Html::raw('<p class="form-control-static">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
-                    <?php endif ?>
-                    <?php foreach (['login', 'password', 'passwordChangeRequired', 'name', 'description', 'email', 'admin', 'status'] as $name): ?>
-                        <?php if ($form->has($name)): ?>
-                            <?= $form->row($name) ?>
-                        <?php endif ?>
-                    <?php endforeach ?>
-                    <?php if ($form->has('resetLoginTries')): ?>
-                        <?php $field = $form->field('resetLoginTries') ?>
-                        <?= new FieldRow(new CheckboxInput($field->inputName, new Translatable('user_reset_tries', $loginTries), '1' === $field->raw, id: $field->id))->render() ?>
-                    <?php endif ?>
-                    <?php foreach (['roles', 'startPage', 'language'] as $name): ?>
+        <section class="rex-section" data-variant="edit">
+            <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
+            <div class="rex-section-body">
+                <?php foreach ($form->getFormErrors() as $error): ?>
+                    <?= Message::error((string) Html::from($error)) ?>
+                <?php endforeach ?>
+                <?php if ($user): ?>
+                    <?= new FieldRow(Html::raw('<p class="rex-field-value">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
+                <?php endif ?>
+                <?php foreach (['login', 'password', 'passwordChangeRequired', 'name', 'description', 'email', 'admin', 'status'] as $name): ?>
+                    <?php if ($form->has($name)): ?>
                         <?= $form->row($name) ?>
-                    <?php endforeach ?>
-                </div>
-                <footer class="panel-footer">
-                    <div class="rex-form-panel-footer">
-                        <?= $form->buttons() ?>
-                    </div>
-                </footer>
+                    <?php endif ?>
+                <?php endforeach ?>
+                <?php if ($form->has('resetLoginTries')): ?>
+                    <?php $field = $form->field('resetLoginTries') ?>
+                    <?= new FieldRow(new CheckboxInput($field->inputName, new Translatable('user_reset_tries', $loginTries), '1' === $field->raw, id: $field->id))->render() ?>
+                <?php endif ?>
+                <?php foreach (['roles', 'startPage', 'language'] as $name): ?>
+                    <?= $form->row($name) ?>
+                <?php endforeach ?>
             </div>
+            <footer class="rex-section-footer">
+                <div class="rex-form-panel-footer">
+                    <?= $form->buttons() ?>
+                </div>
+            </footer>
         </section>
     <?php });
     ?>
     <script nonce="<?= Response::getNonce() ?>">
-        jQuery(function ($) {
-            $('#user-admin').change(function () {
-                $('#user-roles').prop('disabled', $(this).is(':checked')).selectpicker('refresh');
-            }).change();
-        });
+        (() => {
+            const admin = document.getElementById('user-admin');
+            if (!admin) {
+                return;
+            }
+            const update = () => document.getElementById('user-roles').disabled = admin.checked;
+            admin.addEventListener('change', update);
+            update();
+        })();
     </script>
     <?php
 
@@ -279,7 +287,7 @@ if ($query) {
 // use string starting with "_" to have users without role at bottom when sorting by role ASC
 $noRole = '_no_role';
 $separator = "\0,\0";
-$list = DataList::factory('
+$list = new DataList('
     SELECT
         id,
         IF(name <> "", name, login) as name,
@@ -296,101 +304,61 @@ $list = DataList::factory('
     FROM rex_user u
     ' . $where . '
 ', defaultSort: ['name' => 'asc']);
-$list->addTableAttribute('class', 'table-striped table-hover');
+$list->attributes = new HtmlAttributes(['data-hover' => true]);
 
-$tdIcon = '<i class="rex-icon rex-icon-user" title="' . I18n::msg('user_status_active') . '"></i>';
-$thIcon = '<a class="rex-link-expanded" href="' . $list->getUrl(['func' => 'add']) . '"' . Accesskey::attributes(I18n::msg('create_user'), 'add') . '><i class="rex-icon rex-icon-add-user"></i></a>';
-$list->addColumn($thIcon, $tdIcon, 0, ['<th class="rex-table-icon">###VALUE###</th>', '<td class="rex-table-icon">###VALUE###</td>']);
-$list->setColumnParams($thIcon, ['user_id' => '###id###']);
-$list->setColumnFormat($thIcon, 'custom', static function () use ($currentUser, $list, $thIcon, $tdIcon) {
-    if (!$list->getValue('status')) {
-        $tdIcon = str_replace('rex-icon-user', 'rex-icon-user-inactive text-muted', $tdIcon);
-        $tdIcon = str_replace(I18n::msg('user_status_active'), I18n::msg('user_status_inactive'), $tdIcon);
+// only admins edit admins
+$editUrl = static fn (array $row): ?string => !$row['admin'] || $currentUser->admin ? $list->getUrl(['user_id' => (int) $row['id']]) : null;
+
+$list->column(
+    'icon',
+    Html::raw('<a class="rex-u-link-expanded" href="' . escape($list->getUrl(['func' => 'add'])) . '"' . Accesskey::attributes(I18n::msg('create_user'), 'add') . '><i class="rex-icon rex-icon-add-user" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('create_user') . '</span></a>'),
+    static fn (array $row): Html => $row['status']
+        ? Html::raw('<i class="rex-icon rex-icon-user" title="' . I18n::msg('user_status_active') . '" role="img"></i>')
+        : Html::raw('<i class="rex-icon rex-icon-user-inactive rex-u-text-muted" title="' . I18n::msg('user_status_inactive') . '" role="img"></i>'),
+    type: TableColumnType::Icon,
+    link: $editUrl,
+);
+$list->column('id', 'Id', type: TableColumnType::Id, sortable: true);
+$list->column('name', I18n::rawMsg('name'), sortable: true, link: $editUrl);
+$list->column('login', I18n::rawMsg('login'), static fn (array $row): string|Html => $row['status']
+    ? (string) $row['login']
+    : Html::raw('<span class="rex-u-text-muted">' . escape((string) $row['login']) . '</span>'), sortable: true);
+$list->column('role', I18n::rawMsg('user_role'), static function (array $row) use ($noRole, $separator): Renderable {
+    if ($noRole === $row['role']) {
+        return new Badge(I18n::rawMsg('user_no_role'), BadgeVariant::Warning);
     }
-    return !$list->getValue('admin') || $currentUser->admin ? $list->getColumnLink($thIcon, $tdIcon) : $tdIcon;
-});
-
-$list->removeColumn('admin');
-$list->removeColumn('status');
-
-$list->setColumnLabel('id', 'Id');
-$list->setColumnLayout('id', ['<th class="rex-table-id">###VALUE###</th>', '<td class="rex-table-id">###VALUE###</td>']);
-$list->setColumnSortable('id');
-
-$list->setColumnLabel('name', I18n::msg('name'));
-$list->setColumnParams('name', ['user_id' => '###id###']);
-$list->setColumnFormat('name', 'custom', static function () use ($currentUser, $list) {
-    $name = escape($list->getValue('name'));
-    return !$list->getValue('admin') || $currentUser->admin ? $list->getColumnLink('name', $name) : $name;
-});
-$list->setColumnSortable('name');
-
-$list->setColumnLabel('login', I18n::msg('login'));
-$list->setColumnFormat('login', 'custom', static function () use ($list) {
-    $login = escape($list->getValue('login'));
-    if (!$list->getValue('status')) {
-        $login = '<span class="text-muted">' . $login . '</span>';
-    }
-    return $login;
-});
-$list->setColumnSortable('login');
-
-$list->setColumnLabel('role', I18n::msg('user_role'));
-$list->setColumnFormat('role', 'custom', static function () use ($list, $noRole, $separator) {
-    $roles = $list->getValue('role');
-    if ($noRole === $roles) {
-        return '<span class="label label-warning">' . I18n::msg('user_no_role') . '</span>';
-    }
-    if ($list->getValue('admin')) {
-        return '<span class="label label-success">' . I18n::msg('user_admin') . '</span>';
+    if ($row['admin']) {
+        return new Badge(I18n::rawMsg('user_admin'), BadgeVariant::Success);
     }
 
-    return '<div class="rex-docs"><ul class="small"><li>' . implode('</li><li>', explode($separator, escape($roles))) . '</li></ul></div>';
-});
-$list->setColumnSortable('role');
+    return Html::raw('<div class="rex-docs"><ul class="rex-u-small"><li>' . implode('</li><li>', explode($separator, escape((string) $row['role']))) . '</li></ul></div>');
+}, sortable: true);
+$list->column('lastlogin', I18n::rawMsg('last_login'), static fn (array $row): string => Formatter::intlDateTime(null === $row['lastlogin'] ? null : (string) $row['lastlogin']), sortable: 'desc');
 
-$list->setColumnLabel('lastlogin', I18n::msg('last_login'));
-$list->setColumnFormat('lastlogin', 'intlDateTime');
-$list->setColumnSortable('lastlogin', 'desc');
-
-$colspan = $currentUser->admin ? 3 : 2;
-$list->addColumn(I18n::msg('user_functions'), '<i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit'));
-$list->setColumnLayout(I18n::msg('user_functions'), ['<th class="rex-table-action" colspan="' . $colspan . '">###VALUE###</th>', '<td class="rex-table-action">###VALUE###</td>']);
-$list->setColumnParams(I18n::msg('user_functions'), ['user_id' => '###id###']);
-$list->setColumnFormat(I18n::msg('user_functions'), 'custom', static function () use ($currentUser, $list) {
-    $edit = '<i class="rex-icon rex-icon-edit"></i> ' . I18n::msg('edit');
-    return !$list->getValue('admin') || $currentUser->admin ? $list->getColumnLink(I18n::msg('user_functions'), $edit) : $edit;
-});
-
-$list->addColumn('funcs', '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete'));
-$list->setColumnLayout('funcs', ['', '<td class="rex-table-action">###VALUE###</td>']);
-$list->setColumnParams('funcs', ['func' => 'delete', 'user_id' => '###id###'] + CsrfToken::factory('user_delete')->getUrlParams());
-$list->setColumnFormat('funcs', 'custom', static function () use ($currentUser, $list) {
-    if (
-        $list->getValue('id') == $currentUser->id
-        || $list->getValue('admin') && !$currentUser->admin
-        || ($impersonator = Core::getImpersonator()) && $list->getValue('id') == $impersonator->id
-    ) {
-        return '<span class="rex-text-disabled"><i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_delete') . '</span>';
-    }
-    return $list->getColumnLink('funcs', '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('user_delete'));
-});
-$list->addLinkAttribute('funcs', 'data-confirm', I18n::msg('delete') . ' ?');
+$list->column('edit', I18n::rawMsg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: TableColumnType::Action, link: $editUrl);
+$canDelete = static fn (array $row): bool => $row['id'] != $currentUser->id
+    && ($currentUser->admin || !$row['admin'])
+    && (!($impersonator = Core::getImpersonator()) || $row['id'] != $impersonator->id);
+$list->column(
+    'delete',
+    null,
+    static fn (array $row): Html => Html::raw(($canDelete($row) ? '' : '<span class="rex-u-text-muted">') . '<i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('user_delete') . ($canDelete($row) ? '' : '</span>')),
+    type: TableColumnType::Action,
+    link: static fn (array $row): ?string => $canDelete($row) ? $list->getUrl(['func' => 'delete', 'user_id' => (int) $row['id']] + CsrfToken::factory('user_delete')->getUrlParams()) : null,
+    linkAttributes: ['data-confirm' => I18n::rawMsg('delete') . ' ?'],
+);
 
 if ($currentUser->admin) {
-    $list->addColumn('impersonate', '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('delete'));
-    $list->setColumnLayout('impersonate', ['', '<td class="rex-table-action">###VALUE###</td>']);
-    $list->setColumnFormat('impersonate', 'custom', static function () use ($currentUser, $list) {
-        if (Core::getImpersonator() || $list->getValue('id') == $currentUser->id) {
-            return '<span class="rex-text-disabled"><i class="rex-icon rex-icon-sign-in"></i> ' . I18n::msg('login_impersonate') . '</span>';
+    $list->column('impersonate', null, static function (array $row) use ($currentUser): Html {
+        $label = '<i class="rex-icon rex-icon-sign-in" aria-hidden="true"></i> ' . I18n::msg('login_impersonate');
+        if (Core::getImpersonator() || $row['id'] == $currentUser->id) {
+            return Html::raw('<span class="rex-u-text-muted">' . $label . '</span>');
         }
-
-        $url = Url::currentBackendPage(['_impersonate' => $list->getValue('id')] + UserImpersonate::getUrlParams());
-        return sprintf('<a class="rex-link-expanded" href="%s" data-pjax="false"><i class="rex-icon rex-icon-sign-in"></i> %s</a>', $url, I18n::msg('login_impersonate'));
-    });
+        return Html::raw('<a class="rex-u-link-expanded" href="' . escape(Url::currentBackendPage(['_impersonate' => (int) $row['id']] + UserImpersonate::getUrlParams())) . '">' . $label . '</a>');
+    }, type: TableColumnType::Action);
 }
 
-$content = $list->get();
+$content = (string) $list->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('user_caption'));

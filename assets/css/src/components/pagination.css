@@ -1,0 +1,71 @@
+/*
+ Pagination (`.rex-pagination`, Redaxo\Core\View\Component\Pagination): links to the pages of a list with the number
+ of entries; the current page has `aria-current`, the unavailable steps `aria-disabled`.
+ */
+
+@layer components {
+    .rex-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0 12px;
+        margin-bottom: 11px;
+
+        .rex-section > & {
+            padding: 10px 15px;
+            background: var(--rex-color-surface-subtle);
+        }
+    }
+
+    .rex-pagination-list {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        & > li + li {
+            margin-left: -1px;
+        }
+    }
+
+    .rex-pagination-link {
+        position: relative;
+        display: block;
+        min-width: 36px;
+        padding: 6px 12px;
+        border: 1px solid var(--rex-color-border);
+        background: var(--rex-color-surface);
+        color: var(--rex-color-link);
+        line-height: var(--rex-line-height);
+        text-align: center;
+        text-decoration: none;
+
+        &:is(a):hover {
+            z-index: 2;
+            background: var(--rex-color-surface-subtle);
+            color: var(--rex-color-link-hover);
+        }
+
+        &:focus-visible {
+            z-index: 3;
+        }
+
+        &[aria-current="page"] {
+            z-index: 2;
+            border-color: var(--rex-color-accent);
+            background: var(--rex-color-accent);
+            color: var(--rex-color-on-accent);
+        }
+
+        &:is([aria-disabled="true"], [aria-hidden="true"]) {
+            color: var(--rex-color-text-muted);
+        }
+    }
+
+    .rex-pagination-count {
+        margin: 0;
+        padding: 7px 0;
+        line-height: var(--rex-line-height);
+    }
+}

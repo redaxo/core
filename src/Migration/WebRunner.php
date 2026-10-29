@@ -57,14 +57,16 @@ final class WebRunner
 
     /** The backend palette, inlined: these pages run before any asset was published. */
     private const string STYLESHEET = <<<'CSS'
+        /* --link and --accent are the contrast-checked colors of the backend tokens */
         :root {
             --bg: #f3f6fb; --panel: #fff; --border: #dfe3e9; --text: #324050;
-            --blue: #4b9ad9; --logo: #324050; --code: #f3f6fb; --fail: #c9302c;
+            --blue: #4b9ad9; --link: #1f6fb2; --accent: #1f6fb2; --logo: #324050; --code: #f3f6fb; --fail: #c9302c;
         }
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg: #151c22; --panel: #202b35; --border: #26323f; --text: rgba(255, 255, 255, .75);
-                --blue: #409be4; --logo: rgba(255, 255, 255, .8); --code: #1b232c; --fail: #e77;
+                --blue: #409be4; --link: #7abaec; --accent: #1867a6; --logo: rgba(255, 255, 255, .8); --code: #1b232c;
+                --fail: #e77;
             }
         }
         * { box-sizing: border-box; }
@@ -82,7 +84,7 @@ final class WebRunner
         p, ol, ul { margin: 0 0 1rem; }
         ol, ul { padding-left: 1.2rem; }
         li { margin-bottom: .4rem; }
-        a { color: var(--blue); }
+        a { color: var(--link); }
         code { padding: .1em .3em; background: var(--code); border-radius: 3px; font-size: .9em; }
         pre {
             margin: 0 0 1rem; padding: .8rem 1rem; background: var(--code); border: 1px solid var(--border);
@@ -95,7 +97,7 @@ final class WebRunner
             border: 1px solid var(--border); border-radius: 3px; font: inherit;
         }
         button, .button {
-            display: inline-block; padding: .6rem 1.4rem; background: var(--blue); color: #fff; border: 0;
+            display: inline-block; padding: .6rem 1.4rem; background: var(--accent); color: #fff; border: 0;
             border-radius: 3px; font: inherit; text-decoration: none; cursor: pointer;
         }
         button:hover, .button:hover { filter: brightness(1.1); }
@@ -460,6 +462,8 @@ final class WebRunner
         $heading = escape($heading);
         $logo = File::get(Path::core('assets/redaxo-logo.svg')) ?? '';
         $stylesheet = self::STYLESHEET;
+        // the backend sends its Content-Security-Policy before the runner takes over
+        $nonce = escape(Response::getNonce());
 
         return <<<HTML
             <!doctype html>
@@ -470,7 +474,7 @@ final class WebRunner
             <meta name="robots" content="noindex, nofollow">
             <link rel="icon" href="data:,">
             <title>REDAXO {$title}</title>
-            <style>
+            <style nonce="{$nonce}">
             {$stylesheet}
             </style>
             </head>

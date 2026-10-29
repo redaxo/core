@@ -3,21 +3,21 @@
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
+use Redaxo\Core\Util\Type;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
-
-use function Redaxo\Core\View\escape;
+use Redaxo\Core\View\HtmlAttributes;
 
 if (!isset($logFile)) {
     $logFile = ini_get('error_log');
 }
 
-$content = '
-            <table class="table table-hover">
-                <tbody>';
+$rows = [];
 
 $buttons = '';
 if (!is_file($logFile) || !is_readable($logFile) || filesize($logFile) <= 0) {
-    $content .= '<tr><td>' . I18n::msg('syslog_empty') . '</td></tr>';
+    $rows[] = I18n::msg('syslog_empty');
 } else {
     // TODO make this more effienct with things like LogFile->next()
     $file = new SplFileObject($logFile, 'r');
@@ -37,17 +37,14 @@ if (!is_file($logFile) || !is_readable($logFile) || filesize($logFile) <= 0) {
             continue;
         }
 
-        $content .= '
-        <tr>
-            <td>' . escape($logLine) . '</td>
-        </tr>';
+        $rows[] = Type::string($logLine);
     }
 
     if ($url = Editor::factory()->getUrl($logFile, $lastLine)) {
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-save" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
+        $n['field'] = '<a class="rex-button" data-variant="success" href="' . $url . '">' . I18n::msg('system_editor_open_file', Path::basename($logFile)) . '</a>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -56,9 +53,9 @@ if (!is_file($logFile) || !is_readable($logFile) || filesize($logFile) <= 0) {
     }
 }
 
-$content .= '
-                </tbody>
-            </table>';
+$content = (string) new Table([
+    new TableColumn('', static fn (string $line): string => $line),
+], $rows, attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('syslog_title', $logFile), false);

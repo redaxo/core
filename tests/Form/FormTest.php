@@ -5,6 +5,7 @@ namespace Redaxo\Core\Tests\Form;
 use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Form\ButtonStyle;
 use Redaxo\Core\Form\Field\Text;
@@ -18,6 +19,12 @@ use Redaxo\Core\Translation\Translatable;
 /** @internal */
 final class FormTest extends TestCase
 {
+    #[Override]
+    protected function setUp(): void
+    {
+        Accesskey::reset();
+    }
+
     #[Override]
     protected function tearDown(): void
     {
@@ -102,7 +109,7 @@ final class FormTest extends TestCase
         $form = new Form(new Settings(), csrf: false);
 
         $html = (string) $form->row('title');
-        self::assertStringContainsString('<label for="settings-title" class="required">Title</label>', $html);
+        self::assertMatchesRegularExpression('/<label class="rex-field-label" for="settings-title">\s*Title\s*<span class="rex-field-required" aria-hidden="true">\*<\/span>\s*<\/label>/', $html);
         self::assertStringContainsString('name="settings[title]"', $html);
         self::assertStringContainsString('value="Hello"', $html);
         self::assertStringContainsString('maxlength="20"', $html);
@@ -117,8 +124,8 @@ final class FormTest extends TestCase
     public function testButtons(): void
     {
         $form = new Form(new Settings(), csrf: false);
-        self::assertStringContainsString('<button class="btn btn-save rex-form-aligned" type="submit" name="settings[_button]" value="save" accesskey="s" title="Save [s]">Save</button>', (string) $form->buttons());
-        self::assertStringContainsString('<button class="btn btn-save foo" type="submit"', (string) $form->button('save', ['class' => ['foo']]));
+        self::assertStringContainsString('<button class="rex-button rex-form-aligned" data-variant="success" type="submit" name="settings[_button]" value="save" accesskey="s" title="Save [s]">Save</button>', (string) $form->buttons());
+        self::assertStringContainsString('<button class="rex-button foo" data-variant="success" type="submit"', (string) $form->button('save', ['class' => ['foo']]));
 
         $form = new Form(
             new Settings(),
@@ -128,7 +135,7 @@ final class FormTest extends TestCase
         );
 
         $html = (string) $form->buttons();
-        self::assertMatchesRegularExpression('/<button class="btn btn-delete rex-form-aligned" type="submit" name="settings\[_button\]" value="reset" title="Reset &lt;all&gt;">Reset &lt;all&gt;<\/button>\s*<button class="btn btn-save" [^>]*value="save"[^>]*>Store<\/button>\s*<a class="btn btn-abort" href="index.php\?a=1&amp;b=2">/', $html);
+        self::assertMatchesRegularExpression('/<button class="rex-button rex-form-aligned" data-variant="danger" type="submit" name="settings\[_button\]" value="reset">Reset &lt;all&gt;<\/button>\s*<button class="rex-button" data-variant="success" [^>]*value="save"[^>]*>Store<\/button>\s*<a class="rex-button" data-align="end" href="index.php\?a=1&amp;b=2">/', $html);
 
         self::assertTrue($form->submit(['title' => 'Saved', 'size' => '1']));
         self::assertFalse($form->isSubmittedBy('save'), 'no button when submitted without one, e.g. by script');
@@ -198,11 +205,11 @@ final class FormTest extends TestCase
     public function testVertical(): void
     {
         $form = new Form(new Settings(), csrf: false);
-        self::assertStringNotContainsString('rex-form-group-vertical', (string) $form->row('title'));
+        self::assertStringNotContainsString('data-layout="vertical"', (string) $form->row('title'));
 
         $form = new Form(new Settings(), csrf: false, vertical: true);
-        self::assertStringContainsString('rex-form-group-vertical', (string) $form->row('title'));
-        self::assertStringContainsString('rex-form-group-vertical', (string) $form->row('active'), 'checkbox rows as well');
+        self::assertStringContainsString('data-layout="vertical"', (string) $form->row('title'));
+        self::assertStringContainsString('data-layout="vertical"', (string) $form->row('active'), 'checkbox rows as well');
     }
 
     public function testUnknownField(): void

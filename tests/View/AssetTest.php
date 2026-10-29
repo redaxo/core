@@ -3,11 +3,22 @@
 namespace Redaxo\Core\Tests\View;
 
 use PHPUnit\Framework\TestCase;
+use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\View\Asset;
 
 /** @internal */
 final class AssetTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        Asset::reset();
+    }
+
+    protected function tearDown(): void
+    {
+        Asset::reset();
+    }
+
     public function testAddGetCss(): void
     {
         Asset::addCssFile('my.css');
@@ -45,5 +56,31 @@ final class AssetTest extends TestCase
         [$file, $options] = end($files);
         self::assertTrue('my_async.js' == $file);
         self::assertTrue($options == [Asset::JS_ASYNC => true, Asset::JS_DEFERED => true], 'multiple options');
+    }
+
+    /** @psalm-suppress DeprecatedMethod the deprecated method is tested */
+    public function testRequireBootstrapCompatAfterTheHeadThrows(): void
+    {
+        Asset::requireBootstrapCompat(); // @phpstan-ignore staticMethod.deprecated
+        Asset::getCssFiles();
+        Asset::requireBootstrapCompat(); // @phpstan-ignore staticMethod.deprecated (already added)
+
+        Asset::reset();
+        Asset::getCssFiles();
+
+        $this->expectException(LogicException::class);
+        Asset::requireBootstrapCompat(); // @phpstan-ignore staticMethod.deprecated
+    }
+
+    /** @psalm-suppress DeprecatedMethod the deprecated method is tested */
+    public function testResetForgetsTheReadHead(): void
+    {
+        Asset::getCssFiles();
+        Asset::reset();
+
+        Asset::requireBootstrapCompat(); // @phpstan-ignore staticMethod.deprecated
+
+        self::assertCount(1, Asset::getCssFiles()['all']);
+        self::assertSame([], Asset::getJsFiles());
     }
 }
