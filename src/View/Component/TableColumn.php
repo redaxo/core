@@ -25,7 +25,7 @@ final class TableColumn
         public string|Renderable|null $label,
         /** @var Closure(mixed): (string|int|float|Renderable|TableCell|null) cell of a row */
         public Closure $cell,
-        public ColumnType $type = ColumnType::Text,
+        public TableColumnType $type = TableColumnType::Text,
         /** @var (Closure(mixed): ?string)|null url the cell links to, `null` for a row without link */
         public ?Closure $link = null,
         /** @var array<literal-string, string|bool> e.g. `data-confirm` */
@@ -50,7 +50,7 @@ final class TableColumn
     public static function forKey(
         string|Renderable|null $label,
         string|int $key,
-        ColumnType $type = ColumnType::Text,
+        TableColumnType $type = TableColumnType::Text,
         HtmlAttributes $attributes = new HtmlAttributes(),
         bool $rowHeader = false,
         ?string $title = null,

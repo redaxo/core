@@ -14,9 +14,9 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
@@ -67,7 +67,7 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
 }
 
 $content .= (string) new Table([
-    TableColumn::forKey('', 'icon', ColumnType::Icon),
+    TableColumn::forKey('', 'icon', TableColumnType::Icon),
     TableColumn::forKey(I18n::rawMsg('cronjob_log_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
     TableColumn::forKey(I18n::rawMsg('cronjob_name'), 'name'),
     TableColumn::forKey(I18n::rawMsg('cronjob_log_message'), 'message'),
@@ -133,7 +133,7 @@ if (!$cronjobs) {
     $overviewBody = I18n::msg('cronjob_no_cronjobs');
 } else {
     $overview = (string) new Table([
-        new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob" aria-hidden="true"></i>'), ColumnType::Icon),
+        new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob" aria-hidden="true"></i>'), TableColumnType::Icon),
         new TableColumn(I18n::rawMsg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="rex-u-text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
         new TableColumn(I18n::rawMsg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="rex-u-nowrap">' . escape($cronjob->schedule) . '</code>')),
         new TableColumn(I18n::rawMsg('cronjob_lastrun'), static function (Cronjob $cronjob) use ($states): Html {

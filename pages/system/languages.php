@@ -16,10 +16,10 @@ use Redaxo\Core\MetaInfo\MetaEntity;
 use Redaxo\Core\MetaInfo\MetaForm;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
@@ -196,14 +196,14 @@ foreach ($sql as $row) {
 
 $content .= (string) new Table(
     [
-        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::currentBackendPage(['func' => 'add']) . '#language"' . Accesskey::attributes(I18n::msg('language_add'), 'add') . '><i class="rex-icon rex-icon-add-language" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('language_add') . '</span></a>'), 'icon', ColumnType::Icon),
-        TableColumn::forKey(I18n::rawMsg('id'), 'id', ColumnType::Id),
+        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::currentBackendPage(['func' => 'add']) . '#language"' . Accesskey::attributes(I18n::msg('language_add'), 'add') . '><i class="rex-icon rex-icon-add-language" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('language_add') . '</span></a>'), 'icon', TableColumnType::Icon),
+        TableColumn::forKey(I18n::rawMsg('id'), 'id', TableColumnType::Id),
         TableColumn::forKey(I18n::rawMsg('language_code'), 'code'),
         TableColumn::forKey(I18n::rawMsg('language_name'), 'name'),
-        TableColumn::forKey(I18n::rawMsg('language_priority'), 'priority', ColumnType::Priority),
-        TableColumn::forKey(I18n::rawMsg('language_function'), 'edit', ColumnType::Action),
-        TableColumn::forKey(null, 'delete', ColumnType::Action),
-        TableColumn::forKey(null, 'status', ColumnType::Action),
+        TableColumn::forKey(I18n::rawMsg('language_priority'), 'priority', TableColumnType::Priority),
+        TableColumn::forKey(I18n::rawMsg('language_function'), 'edit', TableColumnType::Action),
+        TableColumn::forKey(null, 'delete', TableColumnType::Action),
+        TableColumn::forKey(null, 'status', TableColumnType::Action),
     ],
     array_filter($rows),
     rowAttributes: static fn (array $row): HtmlAttributes => new HtmlAttributes(['class' => ['rex-u-mark' => (bool) ($row['mark'] ?? false)]]),

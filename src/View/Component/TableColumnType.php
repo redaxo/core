@@ -3,7 +3,7 @@
 namespace Redaxo\Core\View\Component;
 
 /** Kind of content of a {@see TableColumn}, which determines its width and alignment. */
-enum ColumnType: string
+enum TableColumnType: string
 {
     case Text = 'text';
     /** Narrow, centered column of an icon, often linked */

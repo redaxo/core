@@ -4,10 +4,10 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
@@ -62,7 +62,7 @@ $fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');
 
 $content = (string) new Table([
-    new TableColumn(Html::raw('&nbsp;'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-package-addon" aria-hidden="true"></i>'), ColumnType::Icon),
+    new TableColumn(Html::raw('&nbsp;'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-package-addon" aria-hidden="true"></i>'), TableColumnType::Icon),
     new TableColumn(I18n::rawMsg('credits_name'), static fn (Addon $package): string => $package->name),
     new TableColumn(I18n::rawMsg('credits_version'), static function (Addon $package): Html {
         $version = escape($package->getVersion());

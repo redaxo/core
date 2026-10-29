@@ -25,11 +25,11 @@ use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
 use Redaxo\Core\View\Component\Button;
 use Redaxo\Core\View\Component\ButtonVariant;
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Pagination;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
@@ -327,12 +327,12 @@ if (0 == $pager->getRowCount()) {
 $wordBreak = new HtmlAttributes(['class' => ['rex-u-word-break']]);
 $panel .= (string) new Table(
     [
-        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_file_insert') . '</span></a>'), 'select', ColumnType::Icon),
-        TableColumn::forKey(I18n::rawMsg('pool_file_thumbnail'), 'thumbnail', ColumnType::Thumbnail, $wordBreak),
+        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_file_insert') . '</span></a>'), 'select', TableColumnType::Icon),
+        TableColumn::forKey(I18n::rawMsg('pool_file_thumbnail'), 'thumbnail', TableColumnType::Thumbnail, $wordBreak),
         TableColumn::forKey(I18n::rawMsg('pool_file_info') . ' / ' . I18n::rawMsg('pool_file_description'), 'info', attributes: $wordBreak, title: I18n::rawMsg('pool_file_info')),
         TableColumn::forKey(I18n::rawMsg('pool_last_update'), 'updated'),
-        TableColumn::forKey(I18n::rawMsg('pool_file_functions'), 'edit', ColumnType::Action),
-        TableColumn::forKey(null, 'functions', ColumnType::Action),
+        TableColumn::forKey(I18n::rawMsg('pool_file_functions'), 'edit', TableColumnType::Action),
+        TableColumn::forKey(null, 'functions', TableColumnType::Action),
     ],
     $rows,
     footer: Html::raw($footer),

@@ -13,11 +13,11 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Pager;
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Pagination;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 
 use function in_array;
 use function is_bool;
@@ -27,7 +27,7 @@ use function is_bool;
  *
  * ```php
  * $list = new DataList('SELECT id, name FROM rex_user_role ORDER BY name');
- * $list->column('id', I18n::rawMsg('id'), type: ColumnType::Id);
+ * $list->column('id', I18n::rawMsg('id'), type: TableColumnType::Id);
  * $list->column('name', I18n::rawMsg('name'), sortable: true, link: fn (array $row) => $list->getUrl(['id' => $row['id']]));
  * echo $list->render();
  * ```
@@ -111,7 +111,7 @@ final class DataList implements Renderable, UrlProviderInterface
         string $name,
         string|Renderable|null $label = '',
         ?Closure $cell = null,
-        ColumnType $type = ColumnType::Text,
+        TableColumnType $type = TableColumnType::Text,
         bool|string $sortable = false,
         ?Closure $link = null,
         array $linkAttributes = [],

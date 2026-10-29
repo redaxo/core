@@ -1,9 +1,9 @@
 <?php
 
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
@@ -13,7 +13,7 @@ use function Redaxo\Core\View\escape;
 
 return static function (Table $table): void {
     /** @return list<string> */
-    $typeClass = static fn (ColumnType $type): array => ColumnType::Text === $type ? [] : ['rex-table-' . $type->value];
+    $typeClass = static fn (TableColumnType $type): array => TableColumnType::Text === $type ? [] : ['rex-table-' . $type->value];
     $content = static fn (string|int|float|Renderable|null $value): string => match (true) {
         null === $value => '',
         $value instanceof Renderable => (string) $value->render(),
@@ -46,7 +46,7 @@ return static function (Table $table): void {
         }
 
         // the header labels the cell where the rows become blocks on small screens
-        $title = $column->title ?? (is_string($column->label) && '' !== $column->label && !in_array($column->type, [ColumnType::Icon, ColumnType::Action], true) ? $column->label : null);
+        $title = $column->title ?? (is_string($column->label) && '' !== $column->label && !in_array($column->type, [TableColumnType::Icon, TableColumnType::Action], true) ? $column->label : null);
 
         return new TableCell(Html::raw($html), $cell->colspan, $column->attributes->merge($cell->attributes)->with([
             'class' => $typeClass($column->type),

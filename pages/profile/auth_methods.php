@@ -7,7 +7,7 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Component\Badge;
-use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\DataList;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
@@ -36,7 +36,7 @@ $list->column(
     'remove_auth',
     '',
     static fn (array $row): ?Html => $removable($row) ? Html::raw('<i class="rex-icon rex-icon-delete" aria-hidden="true"></i>') : null,
-    type: ColumnType::Icon,
+    type: TableColumnType::Icon,
     link: static fn (array $row): ?string => $removable($row)
         ? $list->getUrl(['user_id' => $userId] + (null === $row['id'] ? ['password' => 1] : ['passkey_id' => (string) $row['id']]) + UserRemoveAuthMethod::getUrlParams())
         : null,

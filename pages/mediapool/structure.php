@@ -8,10 +8,10 @@ use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MediaPool\MediaCategoryHandler;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
@@ -115,9 +115,9 @@ if ($PERMALL) {
             static fn (?MediaCategory $category): Html => null === $category || $form($category)
                 ? Html::raw('<i class="rex-icon rex-icon-media-category" aria-hidden="true"></i>')
                 : Html::raw('<a class="rex-u-link-expanded" href="' . $link . $category->id . '" title="' . escape($category->name) . '"><i class="rex-icon rex-icon-media-category" aria-hidden="true"></i></a>'),
-            ColumnType::Icon,
+            TableColumnType::Icon,
         ),
-        new TableColumn(I18n::rawMsg('id'), static fn (?MediaCategory $category): int|string => $category->id ?? '-', ColumnType::Id),
+        new TableColumn(I18n::rawMsg('id'), static fn (?MediaCategory $category): int|string => $category->id ?? '-', TableColumnType::Id),
         new TableColumn(I18n::rawMsg('pool_kat_name'), static fn (?MediaCategory $category): Html => match (true) {
             null === $category => Html::raw('<input class="rex-input" type="text" name="catname" value="" autofocus />'),
             $form($category) => Html::raw('<input class="rex-input" type="text" name="cat_name" value="' . escape($category->name) . '" autofocus />'),
@@ -132,8 +132,8 @@ if ($PERMALL) {
                         <button class="rex-button" data-variant="success" type="submit" value="' . I18n::msg('pool_kat_update') . '"' . Accesskey::attributes(I18n::msg('pool_kat_update'), 'save') . '>' . I18n::msg('pool_kat_update') . '</button>'), 2);
             }
             return Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $category->id . '"><i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('pool_kat_edit') . '</a>');
-        }, ColumnType::Action),
-        new TableColumn(null, static fn (MediaCategory $category): Html => Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), ColumnType::Action),
+        }, TableColumnType::Action),
+        new TableColumn(null, static fn (MediaCategory $category): Html => Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), TableColumnType::Action),
     ], [...('add_cat' == $mediaMethod ? [null] : []), ...$OOCats],
         rowAttributes: static fn (?MediaCategory $category): HtmlAttributes => new HtmlAttributes(['class' => ['rex-u-mark' => null === $category || $form($category)]]),
         attributes: new HtmlAttributes(['data-hover' => true]),

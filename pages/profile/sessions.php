@@ -9,7 +9,7 @@ use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Component\Badge;
 use Redaxo\Core\View\Component\BadgeVariant;
-use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\DataList;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
@@ -38,7 +38,7 @@ $list->column(
     'remove_session',
     '',
     static fn (array $row): ?Html => $isCurrent($row) ? null : Html::raw('<i class="rex-icon rex-icon-delete" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('delete') . '</span>'),
-    type: ColumnType::Icon,
+    type: TableColumnType::Icon,
     // the current session can not be removed
     link: static fn (array $row): ?string => $isCurrent($row) ? null : $list->getUrl(['user_id' => $userId, 'session_hash' => $hash($row)] + UserRemoveSession::getUrlParams()),
     linkAttributes: ['data-confirm' => I18n::msg('confirm_remove_session')],

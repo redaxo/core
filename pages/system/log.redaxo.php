@@ -12,9 +12,9 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
-use Redaxo\Core\View\Component\ColumnType;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
@@ -105,7 +105,7 @@ foreach (new LimitIterator($file, 0, 100) as $entry) {
 }
 
 $content = (string) new Table([
-    TableColumn::forKey(I18n::rawMsg('syslog_timestamp'), 'time', ColumnType::Date, new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    TableColumn::forKey(I18n::rawMsg('syslog_timestamp'), 'time', TableColumnType::Date, new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
     TableColumn::forKey(I18n::rawMsg('syslog_message'), 'message'),
 ], $rows, attributes: new HtmlAttributes(['data-hover' => true]))->render();
 

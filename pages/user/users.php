@@ -26,7 +26,7 @@ use Redaxo\Core\Translation\Translatable;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\View\Component\Badge;
 use Redaxo\Core\View\Component\BadgeVariant;
-use Redaxo\Core\View\Component\ColumnType;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\DataList;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
@@ -315,10 +315,10 @@ $list->column(
     static fn (array $row): Html => $row['status']
         ? Html::raw('<i class="rex-icon rex-icon-user" title="' . I18n::msg('user_status_active') . '" role="img"></i>')
         : Html::raw('<i class="rex-icon rex-icon-user-inactive rex-u-text-muted" title="' . I18n::msg('user_status_inactive') . '" role="img"></i>'),
-    type: ColumnType::Icon,
+    type: TableColumnType::Icon,
     link: $editUrl,
 );
-$list->column('id', 'Id', type: ColumnType::Id, sortable: true);
+$list->column('id', 'Id', type: TableColumnType::Id, sortable: true);
 $list->column('name', I18n::rawMsg('name'), sortable: true, link: $editUrl);
 $list->column('login', I18n::rawMsg('login'), static fn (array $row): string|Html => $row['status']
     ? (string) $row['login']
@@ -335,7 +335,7 @@ $list->column('role', I18n::rawMsg('user_role'), static function (array $row) us
 }, sortable: true);
 $list->column('lastlogin', I18n::rawMsg('last_login'), static fn (array $row): string => Formatter::intlDateTime(null === $row['lastlogin'] ? null : (string) $row['lastlogin']), sortable: 'desc');
 
-$list->column('edit', I18n::rawMsg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: ColumnType::Action, link: $editUrl);
+$list->column('edit', I18n::rawMsg('user_functions'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('edit')), type: TableColumnType::Action, link: $editUrl);
 $canDelete = static fn (array $row): bool => $row['id'] != $currentUser->id
     && ($currentUser->admin || !$row['admin'])
     && (!($impersonator = Core::getImpersonator()) || $row['id'] != $impersonator->id);
@@ -343,7 +343,7 @@ $list->column(
     'delete',
     null,
     static fn (array $row): Html => Html::raw(($canDelete($row) ? '' : '<span class="rex-u-text-muted">') . '<i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('user_delete') . ($canDelete($row) ? '' : '</span>')),
-    type: ColumnType::Action,
+    type: TableColumnType::Action,
     link: static fn (array $row): ?string => $canDelete($row) ? $list->getUrl(['func' => 'delete', 'user_id' => (int) $row['id']] + CsrfToken::factory('user_delete')->getUrlParams()) : null,
     linkAttributes: ['data-confirm' => I18n::msg('delete') . ' ?'],
 );
@@ -355,7 +355,7 @@ if ($currentUser->admin) {
             return Html::raw('<span class="rex-u-text-muted">' . $label . '</span>');
         }
         return Html::raw('<a class="rex-u-link-expanded" href="' . escape(Url::currentBackendPage(['_impersonate' => (int) $row['id']] + UserImpersonate::getUrlParams())) . '">' . $label . '</a>');
-    }, type: ColumnType::Action);
+    }, type: TableColumnType::Action);
 }
 
 $content = (string) $list->render();
