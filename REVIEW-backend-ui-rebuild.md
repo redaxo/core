@@ -54,25 +54,30 @@ Heute wird das Grid auf drei Arten geschrieben:
 Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer das CSS-System austauscht, muss jede dieser Stellen anfassen.
 
 - [ ] **Komponenten `Grid` und `GridColumn`** in `src/View/Component/`, nach dem Muster der übrigen Komponenten (`*.view.php`). Die View ist die **einzige** Stelle, die das Markup (`.rex-grid`, `data-*`) kennt. Wer das CSS oder Framework austauscht, ändert nur `Grid.view.php` und `grid.css`.
-- [ ] **API nach drei Regeln** (überarbeitet, ersetzt den ersten Entwurf mit `Responsive(lg: …)`):
-  1. **Breakpoints werden immer als Enum notiert.** Es gibt keine benannten Argumente `sm:`/`lg:` und keine Strings. `Breakpoint` hat die Fälle `Xs` (ab 0, die Basis), `Sm`, `Md`, `Lg`, `Xl`. Eine Sonderrolle „base“ gibt es nicht: Jede Angabe gilt „ab Breakpoint X“ (mobile first), auch die kleinste.
-  2. **Was responsiv ist und was fest, ergibt sich aus der Struktur.** Responsive Werte stehen ausschließlich in `ColumnLayout`-Objekten, von denen jedes an genau einen Breakpoint gebunden ist. Feste Werte sind direkte Parameter von `Grid` bzw. `GridColumn`. Ein Parameter ist also nie mal fest und mal responsiv.
-     - responsiv (`ColumnLayout`): `width`, `offset`, `order`, `visibility`
-     - fest (`Grid`): `layout`, `gap`, `tileSize`, `subgrid`, bei `GridLayout::Equal` der Breakpoint `from`
+- [ ] **API nach drei Regeln:**
+  1. **Breakpoints werden immer als Enum notiert.** Es gibt keine benannten Argumente `sm:`/`lg:` und keine Strings. `Breakpoint` hat die Fälle `Xs` (ab 0, die Basis), `Sm`, `Md`, `Lg`, `Xl`. Jede Angabe gilt „ab Breakpoint X“ (mobile first), auch die kleinste.
+  2. **Was responsiv ist und was fest, ergibt sich aus der Struktur.** Responsive Werte stehen ausschließlich in `GridColumnRule`-Objekten, jedes an genau einen Breakpoint gebunden. Feste Werte sind Parameter von `Grid`, `GridColumn` oder dem Layout-Objekt.
+     - responsiv (`GridColumnRule`): `width`, `offset`, `order`, `visibility`
+     - fest (`Grid`): `layout`, `gap`, `subgrid`
+     - fest (Layout-Objekt): `GridLayoutEqual::$from`, `GridLayoutTiles::$size`
      - fest (`GridColumn`): `alignX`, `alignY`
-  3. **Kein `null` als Wert.** Ein weggelassener Parameter in `ColumnLayout` heißt immer „wie beim kleineren Breakpoint“. Zurücksetzen geht nur über ausdrückliche Enum-Fälle (`Order::Source`, `Visibility::Visible`) bzw. ausdrückliche Zahlen (`offset: 0`, `width: 12`). Im ersten Entwurf hätte `lg: null` „ab `lg` wieder die normale Reihenfolge“ bedeuten sollen, das war aber nicht erkennbar. Jetzt heißt das `Order::Source`.
-- [ ] **Enums**, alle ohne Bezug zu 12 Tracks oder Klassennamen:
-  - `Breakpoint`: `Xs`, `Sm`, `Md`, `Lg`, `Xl`
-  - `ColumnWidth`: `Auto` (so breit wie der Inhalt), `Fill` (der Rest der Zeile). Das sind die beiden Breiten, die sich nicht als Spaltenzahl ausdrücken lassen.
-  - `Order`: `Source` (DOM-Reihenfolge), `First`, `Last`
-  - `Visibility`: `Visible`, `Hidden`
-  - `GridLayout`: `Columns` (Standard), `Equal` (gleich breite Spalten), `Tiles` (bisher `data-layout="auto"`)
-  - `GridGap`: `None`, `Small`, `Default`, `Large`
-  - `TileSize`: `Small`, `Medium`, `Large`
-  - `Align`: `Start`, `Center`, `End`, `Stretch`
+  3. **Kein `null` als Wert.** Ein weggelassener Parameter in `GridColumnRule` heißt immer „wie beim kleineren Breakpoint“. Zurückgesetzt wird über ausdrückliche Enum-Fälle (`GridOrder::Source`, `GridVisibility::Visible`) bzw. ausdrückliche Zahlen (`offset: 0`, `width: 12`).
+- [ ] **Namen:** Der Namespace `Redaxo\Core\View\Component` ist flach, und die bestehenden Klassen tragen den Namen ihrer Komponente als Präfix (`TableColumn`, `ButtonVariant`, `SectionVariant`, `AlertType`). Deshalb bekommt alles, was nur zum Grid gehört, das Präfix `Grid`. Unbestimmte Namen wie `Equal`, `Columns`, `Order` oder `ColumnRule` wären im flachen Namespace mehrdeutig; `ColumnRule` würde z. B. direkt neben dem `ColumnType` der Tabelle stehen. Die Layouts heißen `GridLayout…` und nicht `Grid…Layout`, damit die Autovervollständigung nach `GridLayout` alle zeigt. Ohne Präfix bleibt nur `Breakpoint`, weil das ein Konzept über Komponenten hinweg ist (z. B. später Toolbar oder Tabs).
+  - Nebenbefund: Das bestehende `ColumnType` gehört zur Tabelle und verstößt gegen dieses Muster. Umbenennen in `TableColumnType`.
+- [ ] **Typen:**
+  - Klassen: `Grid`, `GridColumn`, `GridColumnRule`
+  - Layouts (Interface `GridLayout`): `GridLayoutColumns` (Standard, 12 Spalten), `GridLayoutEqual(from: Breakpoint)`, `GridLayoutTiles(size: GridTileSize)`. Das Layout ist ein Objekt und kein Enum, weil es seine eigenen Einstellungen trägt. Ein `tileSize` bei einem Spalten-Grid lässt sich so gar nicht erst schreiben.
+  - Enums:
+    - `Breakpoint`: `Xs`, `Sm`, `Md`, `Lg`, `Xl`
+    - `GridColumnWidth`: `Auto` (so breit wie der Inhalt), `Fill` (der Rest der Zeile)
+    - `GridOrder`: `Source` (DOM-Reihenfolge), `First`, `Last`
+    - `GridVisibility`: `Visible`, `Hidden`
+    - `GridGap`: `None`, `Small`, `Default`, `Large`
+    - `GridTileSize`: `Small`, `Medium`, `Large`
+    - `GridAlign`: `Start`, `Center`, `End`, `Stretch`
 
-  **Breiten und Offsets sind Spaltenzahlen** von 12 (`width: 8`, `offset: 3`), denn Zahlen lesen sich am einfachsten. Psalm prüft `int<1,12>` bzw. `int<0,11>`, zur Laufzeit gibt es eine `InvalidArgumentException`. Die 12 steht als `Grid::COLUMNS` an einer Stelle. Ein anderes CSS-System bildet die Zahl in seiner View selbst ab, z. B. als `8 / 12` = 66,67 %.
-- [ ] **Signaturen.** Spalten und Layouts werden als Liste übergeben, nicht variadisch. Variadische Parameter müssen in PHP am Ende stehen, und Positionsargumente lassen sich nicht mit benannten Optionen davor mischen.
+  **Breiten und Offsets sind Spaltenzahlen** von 12 (`width: 8`, `offset: 3`), denn Zahlen lesen sich am einfachsten. Psalm prüft `int<1,12>` bzw. `int<0,11>`, zur Laufzeit gibt es eine `InvalidArgumentException`. Die 12 steht als `GridLayoutColumns::COLUMNS` an einer Stelle. Ein anderes CSS-System bildet die Zahl in seiner View selbst ab, z. B. als `8 / 12` = 66,67 %.
+- [ ] **Signaturen.** Spalten und Regeln werden als Liste übergeben, nicht variadisch. Variadische Parameter müssen in PHP am Ende stehen, und Positionsargumente lassen sich nicht mit benannten Optionen davor mischen.
 
   ```php
   final class Grid implements Renderable
@@ -80,99 +85,129 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
       /** @param list<GridColumn> $columns */
       public function __construct(
           public array $columns,
-          public GridLayout $layout = GridLayout::Columns,
+          public GridLayout $layout = new GridLayoutColumns(),
           public GridGap $gap = GridGap::Default,
-          public TileSize $tileSize = TileSize::Medium,   // nur bei GridLayout::Tiles
-          public Breakpoint $from = Breakpoint::Xs,       // nur bei GridLayout::Equal: darunter untereinander
           public bool $subgrid = false,
+      ) {}
+  }
+
+  interface GridLayout {}
+
+  final class GridLayoutColumns implements GridLayout
+  {
+      public const int COLUMNS = 12;
+  }
+
+  final class GridLayoutEqual implements GridLayout
+  {
+      /** @param Breakpoint $from below it the columns stack */
+      public function __construct(
+          public Breakpoint $from = Breakpoint::Xs,
+      ) {}
+  }
+
+  final class GridLayoutTiles implements GridLayout
+  {
+      public function __construct(
+          public GridTileSize $size = GridTileSize::Medium,
       ) {}
   }
 
   final class GridColumn implements Renderable
   {
-      /** @param list<ColumnLayout> $layouts je Breakpoint höchstens eines, Reihenfolge egal */
+      /** @param list<GridColumnRule> $rules at most one per breakpoint, in any order */
       public function __construct(
           public string|Renderable $content,
-          public array $layouts = [],
-          public Align $alignX = Align::Stretch,
-          public Align $alignY = Align::Stretch,
+          public array $rules = [],
+          public GridAlign $alignX = GridAlign::Stretch,
+          public GridAlign $alignY = GridAlign::Stretch,
       ) {}
+
+      /**
+       * @param list<string|Renderable> $contents
+       * @return list<self>
+       */
+      public static function wrap(array $contents): array { … }
   }
 
-  final class ColumnLayout
+  final class GridColumnRule
   {
       public function __construct(
           public Breakpoint $breakpoint,
-          /** @var int<1,12>|ColumnWidth|null */
-          public int|ColumnWidth|null $width = null,   // weggelassen = wie beim kleineren Breakpoint
+          /** @var int<1,12>|GridColumnWidth|null */
+          public int|GridColumnWidth|null $width = null,
           /** @var int<0,11>|null */
           public ?int $offset = null,
-          public ?Order $order = null,
-          public ?Visibility $visibility = null,
+          public ?GridOrder $order = null,
+          public ?GridVisibility $visibility = null,
       ) {}
   }
   ```
 
-  Die Parameter von `ColumnLayout` sind technisch nullable, damit sie weggelassen werden können. In der Doku steht aber nur „weglassen = übernehmen“, nie `null` als Wert. Ein `ColumnLayout` ganz ohne Werte und doppelte Breakpoints in einer Spalte → `InvalidArgumentException`.
+  Die Parameter von `GridColumnRule` sind technisch nullable, damit sie weggelassen werden können. In der Doku steht aber nur „weglassen = übernehmen“, nie `null` als Wert.
+
+  Diese Fälle werfen eine `InvalidArgumentException`:
+  - eine `GridColumnRule` ganz ohne Werte
+  - doppelte Breakpoints in einer Spalte
+  - `width` oder `offset` in einem Grid mit `GridLayoutEqual` oder `GridLayoutTiles` (`order` und `visibility` bleiben dort erlaubt)
+- [ ] **Wie `layout` und die Spalten zusammenspielen:**
+  - **`GridLayoutColumns`** (Standard): ein Raster aus 12 Spalten. Jede Spalte gibt in ihren Regeln selbst `width`/`offset` an. Ohne `width` ist sie 12 Spalten breit, und ergibt die Summe mehr als 12, bricht die Zeile um.
+  - **`GridLayoutEqual`**: Alle Spalten sind gleich breit und stehen ab `from` nebeneinander, darunter untereinander. Die Breite ergibt sich aus der Anzahl der Spalten, auch bei 5.
+  - **`GridLayoutTiles`**: Kacheln mit einer Mindestbreite nach `size`. Pro Zeile passen so viele hinein, wie Platz ist, ohne Breakpoints.
 - [ ] **Beispiele:**
 
   ```php
   // Hauptinhalt + Sidebar, ab Lg nebeneinander; die Sidebar steht mobil oben
   echo new Grid([
-      new GridColumn($main, [new ColumnLayout(Breakpoint::Lg, width: 8)]),
+      new GridColumn($main, [new GridColumnRule(Breakpoint::Lg, width: 8)]),
       new GridColumn($aside, [
-          new ColumnLayout(Breakpoint::Xs, order: Order::First),
-          new ColumnLayout(Breakpoint::Lg, width: 4, order: Order::Source),
+          new GridColumnRule(Breakpoint::Xs, order: GridOrder::First),
+          new GridColumnRule(Breakpoint::Lg, width: 4, order: GridOrder::Source),
       ]),
   ], gap: GridGap::Large)->render();
 
   // zentriertes Formular
   echo new Grid([
-      new GridColumn($form, [new ColumnLayout(Breakpoint::Md, width: 6, offset: 3)]),
+      new GridColumn($form, [new GridColumnRule(Breakpoint::Md, width: 6, offset: 3)]),
   ])->render();
 
   // Feld + Buttons nach Inhaltsbreite, immer nebeneinander
   echo new Grid([
-      new GridColumn($field, [new ColumnLayout(Breakpoint::Xs, width: ColumnWidth::Fill)]),
-      new GridColumn($buttons, [new ColumnLayout(Breakpoint::Xs, width: ColumnWidth::Auto)], alignY: Align::End),
+      new GridColumn($field, [new GridColumnRule(Breakpoint::Xs, width: GridColumnWidth::Fill)]),
+      new GridColumn($buttons, [new GridColumnRule(Breakpoint::Xs, width: GridColumnWidth::Auto)], alignY: GridAlign::End),
   ])->render();
 
-  // Hilfetext erst ab Md sichtbar
-  new GridColumn($help, [
-      new ColumnLayout(Breakpoint::Xs, visibility: Visibility::Hidden),
-      new ColumnLayout(Breakpoint::Md, width: 4, visibility: Visibility::Visible),
-  ]);
+  // feste Layouts: keine width/offset in den Spalten
+  echo new Grid(GridColumn::wrap($cards), layout: new GridLayoutTiles(GridTileSize::Small))->render();
+  echo new Grid(GridColumn::wrap([$a, $b, $c, $d, $e]), layout: new GridLayoutEqual(from: Breakpoint::Md))->render();
 
-  // feste Layouts ohne responsive Angaben
-  echo new Grid($cards, layout: GridLayout::Tiles, tileSize: TileSize::Small)->render();
-  echo new Grid($columns, layout: GridLayout::Equal, from: Breakpoint::Md)->render();
+  // verschachtelt, die inneren Spalten liegen auf dem Raster des äußeren Grids
+  new GridColumn(new Grid([...], subgrid: true), [new GridColumnRule(Breakpoint::Md, width: 6)]);
   ```
-
-  Für `Grid($cards, …)` müssen `$cards` bereits `GridColumn` sein; ein `GridColumn::wrap(list<string|Renderable>)` als Helfer wäre denkbar.
-- [ ] **Vollständiges Beispiel mit Grid, Spalten und Layouts**, angelehnt an `pages/mediapool/media.detail.php`. Mobil stehen die Spalten untereinander, die Vorschau oben. Ab `Md` steht links das Formular (8 Spalten), rechts die Vorschau (4). Ab `Xl` wird die Vorschau breiter (7 + 5). Ein Hinweistext ist erst ab `Md` sichtbar.
+- [ ] **Vollständiges Beispiel**, angelehnt an `pages/mediapool/media.detail.php`. Mobil stehen die Spalten untereinander, die Vorschau oben. Ab `Md` steht links das Formular (8), rechts die Vorschau (4). Ab `Xl` sind es 7 + 5. Ein Hinweistext ist erst ab `Md` sichtbar.
 
   ```php
   echo new Grid(
       [
           new GridColumn($form, [
-              new ColumnLayout(Breakpoint::Md, width: 8),
-              new ColumnLayout(Breakpoint::Xl, width: 7),
+              new GridColumnRule(Breakpoint::Md, width: 8),
+              new GridColumnRule(Breakpoint::Xl, width: 7),
           ]),
           new GridColumn($preview, [
-              new ColumnLayout(Breakpoint::Xs, order: Order::First),
-              new ColumnLayout(Breakpoint::Md, width: 4, order: Order::Source),
-              new ColumnLayout(Breakpoint::Xl, width: 5),
-          ], alignY: Align::Start),
+              new GridColumnRule(Breakpoint::Xs, order: GridOrder::First),
+              new GridColumnRule(Breakpoint::Md, width: 4, order: GridOrder::Source),
+              new GridColumnRule(Breakpoint::Xl, width: 5),
+          ], alignY: GridAlign::Start),
           new GridColumn($hint, [
-              new ColumnLayout(Breakpoint::Xs, visibility: Visibility::Hidden),
-              new ColumnLayout(Breakpoint::Md, visibility: Visibility::Visible, width: 8, offset: 4),
+              new GridColumnRule(Breakpoint::Xs, visibility: GridVisibility::Hidden),
+              new GridColumnRule(Breakpoint::Md, visibility: GridVisibility::Visible, width: 8, offset: 4),
           ]),
       ],
       gap: GridGap::Large,
   )->render();
   ```
 
-  Lesart: `Grid` legt fest, *wie* das Raster als Ganzes funktioniert (`layout`, `gap` …, alles fest). Jede `GridColumn` trägt ihren Inhalt, ihre feste Ausrichtung und eine Liste von `ColumnLayout`s. Jedes `ColumnLayout` sagt: „ab diesem Breakpoint gilt …“. Was dort nicht steht, bleibt wie beim kleineren Breakpoint.
+  Lesart: `Grid` legt mit `layout` und `gap` fest, *wie* das Raster als Ganzes funktioniert. Jede `GridColumn` trägt ihren Inhalt, ihre feste Ausrichtung und ihre Regeln. Jede `GridColumnRule` heißt: „ab diesem Breakpoint gilt …“.
 
   Ausgabe der heutigen View (nur zur Orientierung, der Entwickler sieht sie nicht; ein anderes CSS-System erzeugt hier anderes Markup):
 
@@ -185,17 +220,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   ```
 
   `offset: 4` wird zu `data-start="md:5"`, weil eine CSS-Grid-Spalte nach 4 freien Spalten bei Linie 5 beginnt. Diese Umrechnung steckt in der View und nicht beim Aufrufer.
-
-  Ein Grid **mit festem Layout** hat dagegen keine `ColumnLayout`s, die Spalten ordnen sich selbst an:
-
-  ```php
-  echo new Grid(GridColumn::wrap($cards), layout: GridLayout::Tiles, tileSize: TileSize::Small)->render();
-  echo new Grid(GridColumn::wrap([$a, $b, $c, $d, $e]), layout: GridLayout::Equal, from: Breakpoint::Md)->render();
-  ```
-
-  Werden bei `Tiles`/`Equal` trotzdem `width`/`offset` angegeben, sollte das eine `InvalidArgumentException` werfen. `order` und `visibility` bleiben dort erlaubt.
-- [ ] **Ungültige Werte früh abweisen.** `int` außerhalb von 1–12 → `InvalidArgumentException`, Psalm-Typ `int<1,12>`. `Grid` nimmt nur `GridColumn` an (variadisch), der Nutzer schreibt kein Wrapper-HTML.
-- [ ] **Fragment `core/page/grid.php` als Adapter** auf die Komponente. Das alte Var `classes` mit Deprecation abfangen statt still ignorieren, `spans` gegen das Vokabular prüfen. Den Standardwert ohne `spans` auf `GridLayout::Equal` umstellen, damit `intdiv(12, $count)` bei 5 Spalten keine Lücke und ab 13 Spalten kein `md:0` mehr erzeugt.
+- [ ] **Fragment `core/page/grid.php` als Adapter** auf die Komponente. Das alte Var `classes` mit Deprecation abfangen statt still ignorieren, `spans` gegen das Vokabular prüfen. Den Standardwert ohne `spans` auf `GridLayoutEqual` umstellen, damit `intdiv(12, $count)` bei 5 Spalten keine Lücke und ab 13 Spalten kein `md:0` mehr erzeugt.
 - [ ] **Alle sieben Core-Stellen auf die Komponente umstellen.** Sie dienen dann zugleich als Beispiele für Addons.
 - [ ] **Das Markup bleibt dokumentierter Vertrag** für Addons, die HTML direkt schreiben (Twig, JS-gerendert). Die PHP-Komponente ist aber der empfohlene Weg.
 
@@ -209,7 +234,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
 - [ ] **Zeilenabstand:** `gap: 0 var(--rex-gutter)` lässt umbrechende Spalten aneinanderkleben, `Tiles` hat dagegen einen Zeilenabstand. Das vereinheitlichen und Gap-Varianten anbieten.
 - [ ] **Ausrichtung:** `data-align="end"` ist heute `text-align: right`, also weder RTL-fähig noch eine Ausrichtung der Spalte selbst. Durch `align-self`/`justify-self` mit logischen Werten ersetzen.
 - [ ] **Tiles:** Die Mindestbreite ist fest `16rem`, Varianten fehlen. Spans werden zurückgesetzt, eine doppelt breite Kachel ist nicht möglich.
-- [ ] **Subgrid:** Die Voraussetzung (die Spalte ist selbst `.rex-grid` und hat einen Span) ist nicht dokumentiert. In der Komponente: `new GridColumn(new Grid([...], subgrid: true), [new ColumnLayout(Breakpoint::Md, width: 6)])`; die View setzt die Voraussetzungen selbst.
+- [ ] **Subgrid:** Die Voraussetzung (die Spalte ist selbst `.rex-grid` und hat einen Span) ist nicht dokumentiert. In der Komponente: `new GridColumn(new Grid([...], subgrid: true), [new GridColumnRule(Breakpoint::Md, width: 6)])`; die View setzt die Voraussetzungen selbst.
 
 ### Breakpoints
 
