@@ -175,6 +175,10 @@ fs.mkdirSync(WORKING_DIR, { recursive: true });
 fs.writeFileSync(A11Y_LOG, '');
 
 async function checkAccessibility(page, name) {
+    // the debug page is the unmodified ui of Clockwork, a third-party app
+    if (name.startsWith('debug_clockwork')) {
+        return;
+    }
     const results = await new AxeBuilder({ page })
         .withTags(AXE_TAGS)
         // the output of modules is frontend content
@@ -385,7 +389,7 @@ async function main() {
     await goToUrlOrThrow(page, START_URL + '?page=structure', { waitUntil: 'load' });
 
     // logout
-    await page.click('#rex-js-nav-top .rex-logout');
+    await page.click('a[href*="rex_logout=1"]');
     await page.waitForSelector('.rex-background[data-state="ready"]');
     await page.waitForTimeout(200); // wait for bg image to fade in
     await createScreenshots(page, 'logout.png');
