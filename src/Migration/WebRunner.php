@@ -460,6 +460,8 @@ final class WebRunner
         $heading = escape($heading);
         $logo = File::get(Path::core('assets/redaxo-logo.svg')) ?? '';
         $stylesheet = self::STYLESHEET;
+        // the backend sends its Content-Security-Policy before the runner takes over
+        $nonce = escape(Response::getNonce());
 
         return <<<HTML
             <!doctype html>
@@ -470,7 +472,7 @@ final class WebRunner
             <meta name="robots" content="noindex, nofollow">
             <link rel="icon" href="data:,">
             <title>REDAXO {$title}</title>
-            <style>
+            <style nonce="{$nonce}">
             {$stylesheet}
             </style>
             </head>
