@@ -36,7 +36,7 @@ Alle Core-Stellen sind umgestellt, roh geschriebenes Grid-Markup ist nicht mehr 
   - **Abnahmekriterium:** Das Kriterium „Baselines unverändert“ war so nicht erreichbar. Es hat das Problem auch nicht gezeigt, weil die Visual Tests nur bei 1280px laufen.
   - **Vorgabe:**
     - `Md` 712, `Lg` 890 und `Xl` 1090 bleiben, sie sind korrekt hergeleitet.
-    - `Sm` = **⏸ Wert folgt nach Abstimmung mit dem Reviewer.** 488 ist zu klein: `media.detail.php` hätte bei 4/12 eine Vorschau von etwa 140px.
+    - `Sm` = **576** (entschieden). Den alten Wert kann man nicht nachbilden: Das alte `sm`-Layout hatte mindestens 738px Platz, `Sm` muss aber unter `Md` (712) bleiben. 488 ist zu klein, `media.detail.php` hätte bei 4/12 eine Vorschau von etwa 140px. Mit 576 sind es etwa 170px, bei zwei Spalten je etwa 273px. 576 ist auch der gängige `sm`-Wert aus Bootstrap 5. Den Wert in `Breakpoint::minWidth()` und in `grid.css` ändern; der bestehende Test gleicht beide ab.
     - Den Docblock in `Breakpoint.php` und `grid.css` korrigieren, sodass die Herleitung nur für `Md`–`Xl` gilt.
     - Ausgewählte Core-Seiten in den Visual Tests zusätzlich bei 800px und 1024px Fensterbreite aufnehmen, z. B. `system/settings`, `mediapool/media` mit Detailansicht und `structure/content`.
 - [ ] ❔ **Zwischen gestapelten Sections im Grid stehen jetzt etwa 52px statt 22px.** Der neue Zeilenabstand (30px) kommt zum `margin-bottom` der Section hinzu.
