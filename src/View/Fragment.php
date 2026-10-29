@@ -5,9 +5,7 @@ namespace Redaxo\Core\View;
 use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Timer;
-use Redaxo\Core\Util\Type;
 use Stringable;
-use Throwable;
 
 use function array_key_exists;
 use function sprintf;
@@ -85,18 +83,9 @@ class Fragment
         foreach (self::$fragmentDirs as $fragDir) {
             $fragment = $fragDir . $filename;
             if (is_readable($fragment)) {
-                $content = Timer::measure('Fragment: ' . $filename, function () use ($fragment) {
-                    ob_start();
-                    try {
-                        require $fragment;
-                    } catch (Throwable $exception) {
-                        ob_end_clean();
-
-                        throw $exception;
-                    }
-
-                    return Type::string(ob_get_clean());
-                });
+                $content = Timer::measure('Fragment: ' . $filename, fn (): string => Renderer::capture(function () use ($fragment): void {
+                    require $fragment;
+                }));
 
                 if ($this->decorator) {
                     $this->decorator->setVar('rexDecoratedContent', $content, false);
