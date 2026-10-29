@@ -23,6 +23,10 @@ use Redaxo\Core\Security\WebAuthn;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Translation\Translatable;
 use Redaxo\Core\Util\Str;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridColumn;
+use Redaxo\Core\View\Component\GridColumnRule;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\Message;
@@ -291,28 +295,22 @@ $fragment->setVar('body', $content, false);
 $fragment->setVar('buttons', $buttons, false);
 $addPasskey = $fragment->parse('core/page/section.php');
 
-$content = '
-    <div class="rex-grid">
-        <div data-span="md:6">
-            <form action="' . Url::currentBackendPage() . '" method="post" data-auth-change-password>
-                ' . $csrfToken->getHiddenField() . '
-                ' . $changePassword . '
-            </form>
-        </div>';
+$half = [new GridColumnRule(Breakpoint::Md, width: 6)];
+$columns = [new GridColumn(Html::raw('
+    <form action="' . Url::currentBackendPage() . '" method="post" data-auth-change-password>
+        ' . $csrfToken->getHiddenField() . '
+        ' . $changePassword . '
+    </form>'), $half)];
 if (!$passwordChangeRequired) {
-    $content .= '
-        <div data-span="md:6">
-            <form class="rex-u-hidden" action="' . Url::currentBackendPage() . '" method="post" data-auth-add-passkey>
-                <input type="hidden" name="function" value="add_passkey"/>
-                ' . $csrfToken->getHiddenField() . '
-                ' . $addPasskey . '
-            </form>
-        </div>';
+    $columns[] = new GridColumn(Html::raw('
+        <form class="rex-u-hidden" action="' . Url::currentBackendPage() . '" method="post" data-auth-add-passkey>
+            <input type="hidden" name="function" value="add_passkey"/>
+            ' . $csrfToken->getHiddenField() . '
+            ' . $addPasskey . '
+        </form>'), $half);
 }
-$content .= '
-    </div>';
 
-echo $content;
+echo new Grid($columns)->render();
 
 require Path::core('pages/profile/auth_methods.php');
 require Path::core('pages/profile/sessions.php');

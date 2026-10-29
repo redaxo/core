@@ -22,6 +22,10 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Translation\Translatable;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Version;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridColumn;
+use Redaxo\Core\View\Component\GridColumnRule;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
@@ -220,7 +224,7 @@ $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCook
     </section>
 <?php });
 
-$fragment = new Fragment();
-$fragment->setVar('content', [implode('', $mainContent), implode('', $sideContent)], false);
-$fragment->setVar('spans', ['lg:8', 'lg:4'], false);
-echo $fragment->parse('core/page/grid.php');
+echo new Grid([
+    new GridColumn(Html::raw(implode('', $mainContent)), [new GridColumnRule(Breakpoint::Lg, width: 8)]),
+    new GridColumn(Html::raw(implode('', $sideContent)), [new GridColumnRule(Breakpoint::Lg, width: 4)]),
+])->render();

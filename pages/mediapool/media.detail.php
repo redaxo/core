@@ -24,7 +24,12 @@ use Redaxo\Core\MetaInfo\MetaForm;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridColumn;
+use Redaxo\Core\View\Component\GridColumnRule;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -291,10 +296,10 @@ if ($TPERM) {
     $buttons = $fragment->parse('core/form/submit.php');
 
     if ('' != $sidebar) {
-        $fragment = new Fragment();
-        $fragment->setVar('content', [$panel, $sidebar], false);
-        $fragment->setVar('spans', ['sm:8', 'sm:4'], false);
-        $panel = $fragment->parse('core/page/grid.php');
+        $panel = (string) new Grid([
+            new GridColumn(Html::raw($panel), [new GridColumnRule(Breakpoint::Sm, width: 8)]),
+            new GridColumn(Html::raw($sidebar), [new GridColumnRule(Breakpoint::Sm, width: 4)]),
+        ])->render();
     }
 
     $body = '
@@ -358,10 +363,10 @@ if ($TPERM) {
     $panel .= $fragment->parse('core/form/form.php');
 
     if ('' != $sidebar) {
-        $fragment = new Fragment();
-        $fragment->setVar('content', [$panel, $sidebar], false);
-        $fragment->setVar('spans', ['sm:8', 'sm:4'], false);
-        $panel = $fragment->parse('core/page/grid.php');
+        $panel = (string) new Grid([
+            new GridColumn(Html::raw($panel), [new GridColumnRule(Breakpoint::Sm, width: 8)]),
+            new GridColumn(Html::raw($sidebar), [new GridColumnRule(Breakpoint::Sm, width: 4)]),
+        ])->render();
     }
 
     $fragment = new Fragment();

@@ -9,7 +9,11 @@ use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridLayoutSplit;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\View;
 
 use function Redaxo\Core\View\escape;
@@ -73,7 +77,4 @@ $fragment->setVar('title', I18n::msg('linkmap_articles'), false);
 $fragment->setVar('content', $panel, false);
 $content[] = $fragment->parse('core/page/section.php');
 
-$fragment = new Fragment();
-$fragment->setVar('content', $content, false);
-$fragment->setVar('spans', ['sm:6', 'sm:6'], false);
-echo $fragment->parse('core/page/grid.php');
+echo new Grid(array_map(Html::raw(...), $content), layout: new GridLayoutSplit(Breakpoint::Sm))->render();

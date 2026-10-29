@@ -7,11 +7,15 @@ use Redaxo\Core\Mailer\MailArchive;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridLayoutSplit;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
@@ -36,11 +40,7 @@ if ('delete_archive' == $func) {
 $archiveFolder = MailArchive::folder();
 $archiveExists = is_dir($archiveFolder);
 
-// Two-column layout for Archive Information and Archive Maintenance
-echo '<div class="rex-grid">';
-
 // Archive Information Panel (left column)
-echo '<div data-span="md:6">';
 $content = '';
 
 // Archive Status Panel
@@ -79,11 +79,9 @@ $fragment = new Fragment();
 $fragment->setVar('class', 'info', false);
 $fragment->setVar('title', I18n::msg('mailer_archive_info'), false);
 $fragment->setVar('body', $content, false);
-echo $fragment->parse('core/page/section.php');
-echo '</div>';
+$infoSection = $fragment->parse('core/page/section.php');
 
 // Archive Maintenance Panel (right column)
-echo '<div data-span="md:6">';
 $content = '';
 $content .= '<p>' . I18n::msg('mailer_archive_purge_info') . '</p>';
 
@@ -108,11 +106,9 @@ $fragment = new Fragment();
 $fragment->setVar('class', 'edit', false);
 $fragment->setVar('title', I18n::msg('mailer_archive_maintenance'), false);
 $fragment->setVar('body', $content, false);
-echo $fragment->parse('core/page/section.php');
-echo '</div>';
 
-// Close row
-echo '</div>';
+// Two-column layout for Archive Information and Archive Maintenance
+echo new Grid([Html::raw($infoSection), Html::raw($fragment->parse('core/page/section.php'))], layout: new GridLayoutSplit(Breakpoint::Md))->render();
 
 // Recent Archived Emails Panel
 if ($archiveExists) {

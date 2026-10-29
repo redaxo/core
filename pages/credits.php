@@ -4,6 +4,9 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Core;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridLayoutSplit;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
@@ -47,9 +50,7 @@ $content[] = '
     <h3>Thomas Blum <small>thomas.blum@redaxo.org</small></h3>
     <p>Yakamara Media GmbH &amp; Co. KG, <a href="https://www.yakamara.de" target="_blank" rel="noopener">www.yakamara.de</a></p>';
 
-$fragment = new Fragment();
-$fragment->setVar('content', $content, false);
-$content = $fragment->parse('core/page/grid.php');
+$content = (string) new Grid(array_map(Html::raw(...), $content), layout: new GridLayoutSplit(Breakpoint::Md))->render();
 
 $coreVersion = escape(Core::getVersion());
 if (Version::isUnstable($coreVersion)) {

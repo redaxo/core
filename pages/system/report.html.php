@@ -5,6 +5,9 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\SystemReport;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridLayoutSplit;
 use Redaxo\Core\View\Component\Table;
 use Redaxo\Core\View\Component\TableCell;
 use Redaxo\Core\View\Component\TableColumn;
@@ -16,11 +19,12 @@ use function Redaxo\Core\View\escape;
 
 $report = SystemReport::factory()->get();
 
-echo '<div class="rex-grid"><div data-span="sm:6">';
+$columns = ['', ''];
+$column = 0;
 
 foreach ($report as $title => $group) {
     if (SystemReport::TITLE_PACKAGES === $title) {
-        echo '</div><div data-span="sm:6">';
+        $column = 1;
     }
 
     $rows = [];
@@ -55,7 +59,7 @@ foreach ($report as $title => $group) {
     }
 
     $fragment->setVar('content', $content, false);
-    echo $fragment->parse('core/page/section.php');
+    $columns[$column] .= $fragment->parse('core/page/section.php');
 }
 
-echo '</div></div>';
+echo new Grid(array_map(Html::raw(...), $columns), layout: new GridLayoutSplit(Breakpoint::Sm))->render();
