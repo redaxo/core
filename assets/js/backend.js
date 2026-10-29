@@ -71,7 +71,6 @@ var Overlay = class {
       this.close();
     });
     this.dialog.addEventListener("click", (event) => this.onClick(event));
-    this.dialog.addEventListener("submit", (event) => this.onSubmit(event));
     document.body.append(this.dialog);
     this.dialog.showModal();
     stack.push(this);
@@ -170,9 +169,9 @@ var Overlay = class {
     if (event.defaultPrevented || form.target || !this.keeps(url)) {
       return;
     }
-    event.stopPropagation();
     event.preventDefault();
     const data = new FormData(form, event.submitter);
+    [...form.elements].filter((element) => element.matches('button:not([type]), [type="submit"], [type="image"]')).forEach((button) => button.disabled = true);
     const method = (event.submitter?.getAttribute("formmethod") || form.getAttribute("method") || "get").toUpperCase();
     if ("GET" === method) {
       url.search = new URLSearchParams([...data].filter(([, value]) => "string" === typeof value)).toString();
@@ -224,6 +223,9 @@ function closeAll(keepHistory = false) {
     stack.at(-1).close(keepHistory);
   }
 }
+window.addEventListener("submit", (event) => {
+  stack.findLast((overlay2) => overlay2.dialog.contains(event.target))?.onSubmit(event);
+});
 window.addEventListener("popstate", () => {
   if (skipPopstate > 0) {
     --skipPopstate;

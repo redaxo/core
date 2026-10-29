@@ -57,7 +57,6 @@ class Overlay {
             this.close();
         });
         this.dialog.addEventListener('click', event => this.onClick(event));
-        this.dialog.addEventListener('submit', event => this.onSubmit(event));
 
         document.body.append(this.dialog);
         this.dialog.showModal();
@@ -182,10 +181,11 @@ class Overlay {
             return;
         }
 
-        event.stopPropagation();
         event.preventDefault();
 
         const data = new FormData(form, event.submitter);
+        // a second click or Enter would send the form again, the loaded page replaces the buttons
+        [...form.elements].filter(element => element.matches('button:not([type]), [type="submit"], [type="image"]')).forEach(button => button.disabled = true);
         const method = (event.submitter?.getAttribute('formmethod') || form.getAttribute('method') || 'get').toUpperCase();
         if ('GET' === method) {
             url.search = new URLSearchParams([...data].filter(([, value]) => 'string' === typeof value)).toString();
@@ -242,6 +242,12 @@ function closeAll(keepHistory = false) {
         stack.at(-1).close(keepHistory);
     }
 }
+
+// on the window in the bubble phase, so submit listeners of addons on the document run first and can cancel the
+// submit; the overlay only takes it over if nobody did
+window.addEventListener('submit', event => {
+    stack.findLast(overlay => overlay.dialog.contains(event.target))?.onSubmit(event);
+});
 
 window.addEventListener('popstate', () => {
     if (skipPopstate > 0) {
