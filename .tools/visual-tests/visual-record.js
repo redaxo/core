@@ -324,7 +324,7 @@ async function main() {
 
     // login page
     await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-    await page.waitForSelector('.rex-background--ready');
+    await page.waitForSelector('.rex-background[data-state="ready"]');
     await page.waitForTimeout(200); // wait for bg image to fade in
     await createScreenshots(page, 'login.png');
 
@@ -386,7 +386,7 @@ async function main() {
 
     // logout
     await page.click('#rex-js-nav-top .rex-logout');
-    await page.waitForSelector('.rex-background--ready');
+    await page.waitForSelector('.rex-background[data-state="ready"]');
     await page.waitForTimeout(200); // wait for bg image to fade in
     await createScreenshots(page, 'logout.png');
 
