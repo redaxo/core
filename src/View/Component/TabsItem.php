@@ -47,6 +47,8 @@ final readonly class TabsItem
      * `icon` (CSS classes), `itemClasses`, `itemAttr`, `linkClasses`, `linkAttr` and `children`.
      *
      * @param array<array-key, mixed> $item
+     *
+     * @internal
      */
     public static function fromNavigation(array $item): self
     {

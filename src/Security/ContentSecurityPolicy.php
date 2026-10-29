@@ -79,9 +79,9 @@ final class ContentSecurityPolicy
      * set yet starts with the sources of its fallback (e.g. `default-src`).
      *
      * In style directives (`style-src`, `style-src-elem`, `style-src-attr`) `'unsafe-inline'` replaces the nonces and
-     * hashes, as browsers would ignore it next to them. Script directives keep their nonces, so `'unsafe-inline'` has
-     * no effect there and inline scripts still need the nonce ({@see Response::getNonce()}): a single addon must not
-     * lift the script protection of the whole backend.
+     * hashes, as browsers would ignore it next to them. Script directives keep their nonces: `'unsafe-inline'` is written
+     * into the header there, but browsers ignore it next to the nonce, so inline scripts still need the nonce
+     * ({@see Response::getNonce()}); a single addon must not lift the script protection of the whole backend.
      *
      * @throws InvalidArgumentException for a directive or source that would break out of its place in the header
      */

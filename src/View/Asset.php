@@ -52,7 +52,11 @@ final class Asset
         self::$cssFiles['all'][] = $file;
     }
 
-    /** Forgets the files and properties given so far, so a new page (e.g. in tests or long-running processes) starts empty. */
+    /**
+     * Forgets the files and properties given so far, so a new page (e.g. in tests or long-running processes) starts empty.
+     *
+     * @internal
+     */
     public static function reset(): void
     {
         self::$cssFiles = [];
