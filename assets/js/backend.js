@@ -352,12 +352,17 @@ window.addEventListener("click", (event) => {
   }
   event.preventDefault();
   event.stopImmediatePropagation();
-  const { ctrlKey, metaKey, shiftKey, altKey, button } = event;
+  const newTab = element.matches("a[href]") && (event.ctrlKey || event.metaKey || event.shiftKey);
   confirm(element.dataset.confirm).then((ok) => {
-    if (ok) {
-      confirmed.add(element);
-      element.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window, ctrlKey, metaKey, shiftKey, altKey, button }));
+    if (!ok) {
+      return;
     }
+    if (newTab) {
+      window.open(element.href, "_blank", "noopener");
+      return;
+    }
+    confirmed.add(element);
+    element.click();
   });
 }, true);
 window.addEventListener("submit", (event) => {

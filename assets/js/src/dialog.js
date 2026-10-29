@@ -118,13 +118,18 @@ window.addEventListener('click', event => {
     }
     event.preventDefault();
     event.stopImmediatePropagation();
-    // the repeated click keeps the modifier keys, e.g. Ctrl/Cmd + click opens a link in a new tab
-    const {ctrlKey, metaKey, shiftKey, altKey, button} = event;
+    // browsers don't open a new tab for a repeated (untrusted) click with Ctrl/Cmd/Shift, so the link opens explicitly
+    const newTab = element.matches('a[href]') && (event.ctrlKey || event.metaKey || event.shiftKey);
     confirm(element.dataset.confirm).then(ok => {
-        if (ok) {
-            confirmed.add(element);
-            element.dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true, view: window, ctrlKey, metaKey, shiftKey, altKey, button}));
+        if (!ok) {
+            return;
         }
+        if (newTab) {
+            window.open(element.href, '_blank', 'noopener');
+            return;
+        }
+        confirmed.add(element);
+        element.click();
     });
 }, true);
 
