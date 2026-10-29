@@ -9,7 +9,8 @@ use Redaxo\Core\View\HtmlAttributes;
 return static function (Tabs $tabs): void {
     $item = static function (TabsItem $item, string $block, bool $end = false): Html {
         $label = (null === $item->icon ? '' : trim((string) $item->icon->render()) . ' ') . (string) Html::from($item->label);
-        $attributes = $item->attributes->with(['class' => [$block . '-item'], 'data-align' => $end ? 'end' : null])->toString();
+        // items keep an alignment of their own, e.g. from `Page::setItemAttr('data-align', 'end')`
+        $attributes = $item->attributes->with(['class' => [$block . '-item'], ...$end ? ['data-align' => 'end'] : []])->toString();
         if (null === $item->href) {
             return Html::raw('<li ' . $attributes . '><span class="' . $block . '-link">' . $label . '</span></li>');
         }
