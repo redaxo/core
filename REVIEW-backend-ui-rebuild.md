@@ -82,7 +82,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   ```php
   final class Grid implements Renderable
   {
-      /** @param list<GridColumn> $columns */
+      /** @param list<GridColumn|string|Renderable> $columns plain content becomes a column without rules */
       public function __construct(
           public array $columns,
           public GridLayout $layout = new GridLayoutColumns(),
@@ -122,12 +122,6 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
           public GridAlign $alignX = GridAlign::Stretch,
           public GridAlign $alignY = GridAlign::Stretch,
       ) {}
-
-      /**
-       * @param list<string|Renderable> $contents
-       * @return list<self>
-       */
-      public static function wrap(array $contents): array { … }
   }
 
   final class GridColumnRule
@@ -150,6 +144,7 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   - eine `GridColumnRule` ganz ohne Werte
   - doppelte Breakpoints in einer Spalte
   - `width` oder `offset` in einem Grid mit `GridLayoutEqual` oder `GridLayoutTiles` (`order` und `visibility` bleiben dort erlaubt)
+- [ ] **Reiner Inhalt als Spalte:** `Grid` nimmt neben `GridColumn` auch reinen Inhalt (`string|Renderable`) an und verpackt ihn intern als Spalte ohne Regeln. `GridColumn` braucht man nur, wenn eine Spalte Regeln oder eine Ausrichtung hat. Einen Helfer wie `GridColumn::wrap()` gibt es nicht; der Entwickler muss nichts zusätzlich lernen.
 - [ ] **Wie `layout` und die Spalten zusammenspielen:**
   - **`GridLayoutColumns`** (Standard): ein Raster aus 12 Spalten. Jede Spalte gibt in ihren Regeln selbst `width`/`offset` an. Ohne `width` ist sie 12 Spalten breit, und ergibt die Summe mehr als 12, bricht die Zeile um.
   - **`GridLayoutEqual`**: Alle Spalten sind gleich breit und stehen ab `from` nebeneinander, darunter untereinander. Die Breite ergibt sich aus der Anzahl der Spalten, auch bei 5.
@@ -178,8 +173,14 @@ Tippfehler wie `'md-6'`, `'md:13'` oder `'xl:4'` bleiben ohne Fehlermeldung. Wer
   ])->render();
 
   // feste Layouts: keine width/offset in den Spalten
-  echo new Grid(GridColumn::wrap($cards), layout: new GridLayoutTiles(GridTileSize::Small))->render();
-  echo new Grid(GridColumn::wrap([$a, $b, $c, $d, $e]), layout: new GridLayoutEqual(from: Breakpoint::Md))->render();
+  echo new Grid($cards, layout: new GridLayoutTiles(GridTileSize::Small))->render();
+  echo new Grid([$a, $b, $c, $d, $e], layout: new GridLayoutEqual(from: Breakpoint::Md))->render();
+
+  // gemischt: eine Spalte mit Regeln, eine als reiner Inhalt
+  echo new Grid([
+      new GridColumn($main, [new GridColumnRule(Breakpoint::Lg, width: 8)]),
+      $aside,
+  ])->render();
 
   // verschachtelt, die inneren Spalten liegen auf dem Raster des äußeren Grids
   new GridColumn(new Grid([...], subgrid: true), [new GridColumnRule(Breakpoint::Md, width: 6)]);
