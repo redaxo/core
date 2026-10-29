@@ -37,12 +37,6 @@
     /* tabs ---------------------------------------------------------------------------------------------------- */
 
     .rex-pagenav {
-        --rex-tabs-border: var(--rex-color-border-strong);
-        --rex-tab-bg: var(--rex-color-surface-muted);
-        --rex-tab-text: var(--rex-color-text);
-        --rex-tab-hover-text: var(--rex-color-link-hover);
-        --rex-tab-active-bg: var(--rex-color-surface);
-        --rex-tab-active-text: var(--rex-color-text);
         --rex-subnav-bg: var(--rex-color-surface);
         --rex-subnav-border: var(--rex-color-border);
         --rex-subnav-divider: var(--rex-color-border);
@@ -50,21 +44,32 @@
         margin-bottom: 22px;
 
         .rex-main-frame & {
-            --rex-tabs-border: var(--rex-color-surface);
-            --rex-tab-bg: var(--rex-color-surface-strong);
-            --rex-tab-active-bg: var(--rex-color-surface);
             --rex-subnav-bg: var(--rex-color-surface);
             --rex-subnav-border: var(--rex-color-surface);
         }
     }
 
+    /* also used within the content, e.g. by the tabs of an addon's form */
     .rex-tabs {
+        --rex-tabs-border: var(--rex-color-border-strong);
+        --rex-tab-bg: var(--rex-color-surface-muted);
+        --rex-tab-text: var(--rex-color-text);
+        --rex-tab-hover-text: var(--rex-color-link-hover);
+        --rex-tab-active-bg: var(--rex-color-surface);
+        --rex-tab-active-text: var(--rex-color-text);
+
         display: flex;
         flex-wrap: wrap;
         margin: 0;
         padding: 0;
         list-style: none;
         border-bottom: 1px solid var(--rex-tabs-border);
+
+        .rex-main-frame .rex-pagenav & {
+            --rex-tabs-border: var(--rex-color-surface);
+            --rex-tab-bg: var(--rex-color-surface-strong);
+            --rex-tab-active-bg: var(--rex-color-surface);
+        }
     }
 
     .rex-tabs-item {
@@ -114,7 +119,7 @@
             }
         }
 
-        &[aria-current="page"] {
+        &:is([aria-current="page"], [aria-selected="true"]) {
             padding-bottom: 10px;
             background: var(--rex-tab-active-bg);
             border-color: var(--rex-tabs-border);
