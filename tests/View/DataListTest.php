@@ -102,7 +102,7 @@ final class DataListTest extends TestCase
 
         self::assertStringContainsString('&lt;b&gt;bold&lt;/b&gt;', $html);
         self::assertStringNotContainsString('<b>bold</b>', $html);
-        self::assertStringContainsString('<a href="url-1" class="rex-link-expanded">edit 1</a>', $html);
+        self::assertStringContainsString('<a href="url-1" class="rex-u-link-expanded">edit 1</a>', $html);
         self::assertStringNotContainsString('url-2', $html);
         // the column without label joins the header of the previous one
         self::assertStringContainsString('<th colspan="2">', $html);
