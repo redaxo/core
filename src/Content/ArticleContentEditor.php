@@ -2,6 +2,8 @@
 
 namespace Redaxo\Core\Content;
 
+use Collator;
+use Locale;
 use Override;
 use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Controller;
@@ -25,6 +27,7 @@ use function assert;
 use function count;
 use function Redaxo\Core\View\escape;
 use function sprintf;
+use function uasort;
 
 /**
  * Erweiterung eines Artikels um slicemanagement.
@@ -322,12 +325,21 @@ final class ArticleContentEditor extends ArticleContentBase
 
             $category = $this->article->categoryId > 0 ? Category::get($this->article->categoryId) : null;
 
+            $modules = Module::getAll();
+            $names = [];
+            foreach ($modules as $key => $module) {
+                $names[$key] = $module::name();
+            }
+            $collator = new Collator(Locale::getDefault());
+            uasort($names, static fn (string $a, string $b): int => (int) $collator->compare($a, $b));
+
             $this->moduleSelect = [];
             foreach ($contentSections as $section) {
-                foreach (Module::getAll() as $key => $module) {
+                foreach ($names as $key => $name) {
+                    $module = $modules[$key];
                     if (Core::requireUser()->getComplexPerm('modules')->hasPerm($key)) {
                         if ((!$template || $template->isModuleAllowed($section, $module)) && $module::isAllowedInCategory($category)) {
-                            $this->moduleSelect[$section->id][] = ['name' => $module::name(), 'key' => $key];
+                            $this->moduleSelect[$section->id][] = ['name' => $name, 'key' => $key];
                         }
                     }
                 }
