@@ -1,5 +1,6 @@
 <?php
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /** @internal */
@@ -121,5 +122,65 @@ final class rex_media_service_test extends TestCase
         self::moveMedia($srcFile, $dstFile, 'image/svg+xml');
 
         self::assertSame([], glob(self::getTempPath() . '/*') ?: []);
+    }
+
+    /**
+     * @param list<array{string, 'ASC'|'DESC'}> $orderBy
+     * @param list<string> $expected
+     */
+    #[DataProvider('provideGetListOrder')]
+    public function testGetListOrder(array $orderBy, array $expected): void
+    {
+        // inserted in an order that matches none of the expected orders
+        $media = [
+            ['getlistorder-b.txt', 'Alpha', '2026-01-02 00:00:00'],
+            ['getlistorder-c.txt', 'Charlie', '2026-01-01 00:00:00'],
+            ['getlistorder-a.txt', 'Bravo', '2026-01-03 00:00:00'],
+        ];
+        foreach ($media as [$filename, $title, $updatedate]) {
+            rex_sql::factory()
+                ->setTable(rex::getTable('media'))
+                ->setValues([
+                    'filename' => $filename,
+                    'originalname' => $filename,
+                    'filetype' => 'text/plain',
+                    'filesize' => 1,
+                    'title' => $title,
+                    'category_id' => 0,
+                    'createdate' => $updatedate,
+                    'updatedate' => $updatedate,
+                    'createuser' => 'test',
+                    'updateuser' => 'test',
+                ])
+                ->insert();
+        }
+
+        try {
+            $list = rex_media_service::getList(['term' => 'getlistorder'], $orderBy);
+
+            self::assertSame($expected, array_map(static fn (rex_media $media) => $media->getFileName(), $list));
+        } finally {
+            rex_sql::factory()->setQuery(
+                'DELETE FROM ' . rex::getTable('media') . ' WHERE filename LIKE ?',
+                ['getlistorder-%'],
+            );
+            foreach ($media as [$filename]) {
+                rex_media_cache::delete($filename);
+            }
+        }
+    }
+
+    /** @return iterable<string, array{list<array{string, 'ASC'|'DESC'}>, list<string>}> */
+    public static function provideGetListOrder(): iterable
+    {
+        $a = 'getlistorder-a.txt';
+        $b = 'getlistorder-b.txt';
+        $c = 'getlistorder-c.txt';
+
+        yield 'filename asc' => [[['filename', 'ASC']], [$a, $b, $c]];
+        yield 'filename desc' => [[['filename', 'DESC']], [$c, $b, $a]];
+        yield 'title asc' => [[['title', 'ASC']], [$b, $a, $c]];
+        yield 'updatedate asc' => [[['updatedate', 'ASC']], [$c, $b, $a]];
+        yield 'default: updatedate desc' => [[], [$a, $b, $c]];
     }
 }
