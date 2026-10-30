@@ -15,12 +15,12 @@ const UI = 3;
 
 /** [foreground, backgrounds, minimum ratio] */
 const pairs = [
-    ['text', ['bg', 'surface', 'surface-subtle', 'surface-muted', 'surface-raised', 'control', 'canvas'], TEXT],
-    ['text-muted', ['bg', 'surface', 'surface-subtle', 'surface-muted', 'surface-raised'], TEXT],
+    ['text', ['bg', 'surface', 'surface-subtle', 'surface-muted', 'surface-raised', 'control', 'canvas', 'edit-subtle'], TEXT],
+    ['text-muted', ['bg', 'surface', 'surface-subtle', 'surface-muted', 'surface-raised', 'edit-subtle'], TEXT],
     ['link', ['bg', 'surface', 'surface-subtle', 'surface-raised'], TEXT],
     ['link-hover', ['bg', 'surface', 'surface-muted', 'accent-subtle', 'accent-subtle-hover'], TEXT],
     ['on-accent', ['accent', 'accent-hover'], TEXT],
-    ['on-success', ['success', 'success-hover'], TEXT],
+    ['on-success', ['success', 'success-hover', 'edit'], TEXT],
     ['success-text', ['bg', 'surface', 'success-subtle'], TEXT],
     ['on-warning', ['warning', 'warning-hover'], TEXT],
     ['warning-text', ['bg', 'surface'], TEXT],
@@ -31,8 +31,8 @@ const pairs = [
     ['inverse-text-strong', ['inverse-bg', 'inverse-bg-strong'], TEXT],
     ['inverse-link', ['inverse-bg', 'inverse-bg-strong'], TEXT],
     ['inverse-bg-strong', ['inverse-text', 'inverse-text-strong'], TEXT],
-    ['border-input', ['bg', 'surface', 'surface-subtle'], UI],
-    ['focus', ['bg', 'surface', 'surface-subtle'], UI],
+    ['border-input', ['bg', 'surface', 'surface-subtle', 'edit-subtle'], UI],
+    ['focus', ['bg', 'surface', 'surface-subtle', 'edit-subtle'], UI],
 ];
 
 /** Light and dark value of each `--rex-color-*` token. */

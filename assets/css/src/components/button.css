@@ -133,8 +133,8 @@
         --rex-button-color: var(--rex-color-success-text);
         --rex-button-bg: var(--rex-color-surface);
         --rex-button-border: var(--rex-color-surface);
-        --rex-button-bg-hover: var(--rex-color-success-subtle);
-        --rex-button-border-hover: var(--rex-color-success-subtle);
+        --rex-button-bg-hover: var(--rex-color-edit-subtle);
+        --rex-button-border-hover: var(--rex-color-edit-subtle);
     }
 
     /* the current language of the language switch, an `aria-current` link */
