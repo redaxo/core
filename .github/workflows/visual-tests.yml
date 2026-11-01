@@ -54,7 +54,7 @@ jobs:
                     ref: ${{ github.event.client_payload.pull_request.head.ref }}
 
             -   name: Setup nodejs
-                uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+                uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
                 with:
                     node-version: 23
                     cache: npm
@@ -74,7 +74,7 @@ jobs:
                 if: steps.playwright-cache.outputs.cache-hit != 'true'
 
             -   name: Setup PHP
-                uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
+                uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
                 with:
                     php-version: '8.5'
                     ini-values: 'error_reporting=E_ALL, display_errors=On, display_startup_errors=On'
@@ -127,7 +127,7 @@ jobs:
                     git diff --cached --exit-code --name-only .tools/visual-tests/screenshots/
 
             -   name: Commit changed files
-                uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
+                uses: stefanzweifel/git-auto-commit-action@d0b01107b5db882071f96de5dd4b54961ea93f4c # v7.2.1
                 if: failure() && env.writable == 1
                 with:
                     commit_message: 'test: update screenshots'
