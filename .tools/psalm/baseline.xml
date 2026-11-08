@@ -231,12 +231,6 @@
       <code><![CDATA[array_merge($argUrl, ['cat_id' => ''])]]></code>
     </MixedArgumentTypeCoercion>
   </file>
-  <file src="pages/structure/content.edit.php">
-    <PossiblyNullPropertyAssignmentValue>
-      <code><![CDATA[$info]]></code>
-      <code><![CDATA[$warning]]></code>
-    </PossiblyNullPropertyAssignmentValue>
-  </file>
   <file src="pages/structure/content.metainfo.php">
     <InvalidOperand>
       <code><![CDATA[escape($article->getValue('createuser'))]]></code>
