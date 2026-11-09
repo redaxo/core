@@ -18,9 +18,9 @@ assert(null === $invalidSliceForm || $invalidSliceForm instanceof Form);
 
 if ($result = ApiFunction::factory()?->result) {
     if ($result->succeeded) {
-        $info = $result->message;
+        $info = $result->message ?? '';
     } else {
-        $warning = $result->message;
+        $warning = $result->message ?? '';
     }
 }
 
