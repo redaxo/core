@@ -80,12 +80,25 @@
         flex: 1;
         overflow: auto;
         overscroll-behavior: contain;
-        padding: var(--rex-gutter);
+        padding: var(--rex-gutter) var(--rex-gutter) 0;
         /* stylelint-disable-next-line declaration-property-value-disallowed-list -- only focused by script, as the start point of the keyboard */
         outline: none;
 
+        /* the space at the end as a block instead of a padding: sticky elements like the footer of the media list
+           (Table::$stickyFooter) stick to the inner edge of the padding, so they would hover above the bottom edge */
+        &::after {
+            content: "";
+            display: block;
+            clear: both;
+            height: var(--rex-gutter);
+        }
+
         @media (max-width: 767px) {
-            padding: 15px;
+            padding: 15px 15px 0;
+
+            &::after {
+                height: 15px;
+            }
         }
     }
 
