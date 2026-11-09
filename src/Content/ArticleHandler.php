@@ -316,8 +316,8 @@ final class ArticleHandler
 
         if (!$artStatusTypes) {
             $artStatusTypes = Extension::dispatch(new ArticleStatusTypes([
-                [I18n::msg('status_offline'), 'rex-offline', 'rex-icon-offline'],
-                [I18n::msg('status_online'), 'rex-online', 'rex-icon-online'],
+                [I18n::msg('status_offline'), 'rex-u-offline', 'rex-icon-offline'],
+                [I18n::msg('status_online'), 'rex-u-online', 'rex-icon-online'],
             ]));
         }
 

@@ -1,0 +1,113 @@
+/* Bootstrap 3 dropdowns (`.dropdown`, `.dropdown-menu`) for addons; the core uses `.rex-dropdown` (components/dropdown.css) */
+
+@layer bootstrap {
+    .dropdown,
+    .dropup {
+        position: relative;
+    }
+
+    /* toggle that looks like a link, e.g. the status in the structure */
+    .rex-dropdown-link {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--rex-color-link);
+        font: inherit;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--rex-color-link-hover);
+            text-decoration: underline;
+        }
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1065;
+        display: none;
+        float: left;
+        min-width: 160px;
+        margin: 2px 0 0;
+        padding: 5px 0;
+        border: 1px solid var(--rex-color-border-strong);
+        border-radius: 0;
+        background-color: var(--rex-color-surface-raised);
+        background-clip: padding-box;
+        box-shadow: var(--rex-shadow-md);
+        font-size: var(--rex-font-size);
+        text-align: left;
+        list-style: none;
+
+        .open > & {
+            display: block;
+        }
+
+        .dropup & {
+            top: auto;
+            bottom: 100%;
+            margin-bottom: 2px;
+        }
+
+        & > li > a {
+            display: block;
+            clear: both;
+            padding: 3px 20px;
+            color: var(--rex-color-text);
+            font-weight: 400;
+            line-height: var(--rex-line-height);
+            white-space: nowrap;
+
+            &:hover,
+            &:focus {
+                background-color: var(--rex-color-surface-subtle);
+                color: var(--rex-color-text);
+                text-decoration: none;
+            }
+        }
+
+        & > .active > a {
+            &,
+            &:hover,
+            &:focus {
+                background-color: var(--rex-color-accent);
+                color: var(--rex-color-on-accent);
+                text-decoration: none;
+            }
+        }
+
+        & > .disabled > a {
+            &,
+            &:hover,
+            &:focus {
+                background-color: transparent;
+                color: var(--rex-color-text-muted);
+                cursor: not-allowed;
+            }
+        }
+
+        & .divider {
+            height: 1px;
+            margin: 10px 0;
+            overflow: hidden;
+            background-color: var(--rex-color-border);
+        }
+    }
+
+
+    .dropdown-menu-right {
+        right: 0;
+        left: auto;
+    }
+
+    .dropdown-header {
+        display: block;
+        padding: 3px 20px;
+        color: var(--rex-color-text-muted);
+        font-size: var(--rex-font-size-small);
+        line-height: var(--rex-line-height);
+        white-space: nowrap;
+    }
+}

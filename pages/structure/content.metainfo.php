@@ -56,7 +56,7 @@ $structureContext = new StructureContext(
 if (0 == $article->getValue('startarticle')) {
     if (Core::requireUser()->hasPerm('publishArticle[]')) {
         if (count($articleStatusTypes) > 2) {
-            $articleStatus = '<div class="dropdown"><a href="#" class="dropdown-toggle ' . $articleClass . '" type="button" data-toggle="dropdown"><i class="rex-icon ' . $articleIcon . '"></i>&nbsp;' . $articleStatus . '&nbsp;<span class="caret"></span></a><ul class="dropdown-menu dropdown-menu-right">';
+            $articleStatus = '<div class="rex-dropdown"><button type="button" class="rex-dropdown-link ' . $articleClass . '" data-rex-dropdown aria-expanded="false"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i>&nbsp;' . $articleStatus . '&nbsp;<span class="rex-caret" aria-hidden="true"></span></button><ul class="rex-dropdown-menu" data-align="end">';
             foreach ($articleStatusTypes as $artStatusKey => $artStatusType) {
                 $articleStatus .= '<li><a  class="' . $artStatusType[1] . '" href="' . $structureContext->getContext()->getUrl([
                     'article_id' => $articleId,
@@ -71,16 +71,16 @@ if (0 == $article->getValue('startarticle')) {
                 'article_id' => $articleId,
                 'page' => 'content/edit',
                 'mode' => 'edit',
-            ] + ArticleStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $articleIcon . '"></i>&nbsp;' . $articleStatus . '</a>';
+            ] + ArticleStatusChange::getUrlParams()) . '"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i>&nbsp;' . $articleStatus . '</a>';
         }
     } else {
-        $articleStatus = '<span class="' . $articleClass . ' text-muted"><i class="rex-icon ' . $articleIcon . '"></i> ' . $articleStatus . '</span>';
+        $articleStatus = '<span class="' . $articleClass . ' rex-u-text-muted"><i class="rex-icon ' . $articleIcon . '" aria-hidden="true"></i> ' . $articleStatus . '</span>';
     }
 }
 
 $panels[] = '<dt>' . I18n::msg('status') . '</dt><dd class="' . $articleStatusTypes[$status][1] . '">' . $articleStatus . '</dd>';
 
-$content[] = '<dl class="dl-horizontal text-left">' . implode('', $panels) . '</dl>';
+$content[] = '<dl class="rex-u-dl-horizontal rex-u-align-start">' . implode('', $panels) . '</dl>';
 
 // ------------------
 
@@ -144,15 +144,15 @@ if (1 == $article->getRows()) {
     $form .= $meta->render(vertical: true);
 
     $content[] = '
-              <div id="rex-page-sidebar-metainfo" data-pjax-container="#rex-page-sidebar-metainfo">
-                <form class="metainfo-sidebar" action="' . $context->getUrl() . '" method="post" enctype="multipart/form-data">
+              <div id="rex-page-sidebar-metainfo">
+                <form action="' . $context->getUrl() . '" method="post" enctype="multipart/form-data">
                     ' . $message . '
                     <fieldset>
                         <input type="hidden" name="save" value="1" />
                         <input type="hidden" name="content_section_id" value="' . $ctype . '" />
                         ' . $csrfToken->getHiddenField() . '
                         ' . $form . '
-                        <button class="btn btn-primary pull-left" type="submit" name="savemeta"' . Accesskey::attributes(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
+                        <button class="rex-button rex-u-float-start" data-variant="primary" type="submit" name="savemeta"' . Accesskey::attributes(I18n::msg('update_metadata'), 'save') . ' value="1">' . I18n::msg('update_metadata') . '</button>
                     </fieldset>
                 </form>
               </div>
@@ -162,7 +162,7 @@ if (1 == $article->getRows()) {
 // ------------------
 
 $fragment = new Fragment();
-$fragment->setVar('title', '<i class="rex-icon rex-icon-info"></i> ' . I18n::msg('metadata'), false);
+$fragment->setVar('title', '<i class="rex-icon rex-icon-info" aria-hidden="true"></i> ' . I18n::msg('metadata'), false);
 $fragment->setVar('body', implode('', $content), false);
 $fragment->setVar('article_id', $articleId, false);
 $fragment->setVar('language', $languageId, false);

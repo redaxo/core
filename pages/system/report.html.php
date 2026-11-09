@@ -5,28 +5,36 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\SystemReport;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Version;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridLayoutSplit;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 
 use function Redaxo\Core\View\escape;
 
 $report = SystemReport::factory()->get();
 
-echo '<div class="row"><div class="col-sm-6">';
+$columns = ['', ''];
+$column = 0;
 
 foreach ($report as $title => $group) {
     if (SystemReport::TITLE_PACKAGES === $title) {
-        echo '</div><div class="col-sm-6">';
+        $column = 1;
     }
 
-    $content = '';
-
+    $rows = [];
     foreach ($group as $label => $value) {
         if (SystemReport::TITLE_PACKAGES === $title || SystemReport::TITLE_REDAXO === $title) {
             if (null === $value) {
                 throw new RuntimeException('Package ' . $label . ' does not define a proper version in its composer.json.');
             }
             if (Version::isUnstable($value)) {
-                $value = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . escape($value);
+                $value = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '" role="img"></i> ' . escape($value);
             }
         } elseif (is_bool($value)) {
             $value = $value ? 'yes' : 'no';
@@ -34,26 +42,24 @@ foreach ($report as $title => $group) {
             $value = escape($value);
         }
 
-        $content .= '
-            <tr>
-                <th width="120">' . escape($label) . '</th>
-                <td data-title="' . escape($label) . '">' . $value . '</td>
-            </tr>
-        ';
+        $rows[] = [(string) $label, new TableCell(Html::raw((string) $value), attributes: new HtmlAttributes(['data-title' => (string) $label]))];
     }
 
-    $content = '<table class="table table-hover table-bordered"><tbody>' . $content . '</tbody></table>';
+    $content = (string) new Table([
+        TableColumn::forKey('', 0, attributes: new HtmlAttributes(['width' => '120']), rowHeader: true),
+        TableColumn::forKey('', 1),
+    ], $rows, attributes: new HtmlAttributes(['data-hover' => true, 'data-bordered' => true]))->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', $title);
 
     if (SystemReport::TITLE_PHP === $title) {
-        $phpinfo = '<a href="' . Url::backendPage('system/phpinfo') . '" class="btn btn-primary btn-xs" onclick="newWindow(\'phpinfo\', this.href, 1000,800,\',status=yes,resizable=yes\');return false;">phpinfo</a>';
+        $phpinfo = '<a href="' . Url::backendPage('system/phpinfo') . '" class="rex-button" data-variant="primary" data-size="xs" target="_blank" rel="noopener">phpinfo</a>';
         $fragment->setVar('options', $phpinfo, false);
     }
 
     $fragment->setVar('content', $content, false);
-    echo $fragment->parse('core/page/section.php');
+    $columns[$column] .= $fragment->parse('core/page/section.php');
 }
 
-echo '</div></div>';
+echo new Grid(array_map(Html::raw(...), $columns), layout: new GridLayoutSplit(Breakpoint::Sm))->render();

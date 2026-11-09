@@ -7,7 +7,6 @@ use Redaxo\Core\Security\User;
 use Redaxo\Core\Util\Str;
 
 use function is_array;
-use function is_string;
 
 /**
  * @psalm-import-type TUrlParams from Str
@@ -37,7 +36,6 @@ class Page
     private bool $hidden = false;
     private bool $hasLayout = true;
     private bool $hasNavigation = true;
-    private ?bool $pjax = null;
     private ?string $icon = null;
     /** @var list<string> */
     private array $requiredPermissions = [];
@@ -80,29 +78,24 @@ class Page
     }
 
     /**
-     * Sets whether the page is a popup page.
-     *
-     * The method adds (or removes) also the rex-popup CSS class and sets hasNavigation to false (true).
-     * If $popup is a string, the variable will be used for the onclick attribute.
+     * Sets whether the page is a popup page, i.e. a page without navigation whose links open it in an overlay.
      *
      * @return $this
      */
-    public function setPopup(bool|string $popup): static
+    public function setPopup(bool $popup): static
     {
         if ($popup) {
             $this->popup = true;
             $this->setHasNavigation(false);
             $this->addItemClass('rex-popup');
             $this->addLinkClass('rex-popup');
-            if (is_string($popup)) {
-                $this->setLinkAttr('onclick', $popup);
-            }
+            $this->setLinkAttr('data-rex-overlay', '');
         } else {
             $this->popup = false;
             $this->setHasNavigation(true);
             $this->removeItemClass('rex-popup');
             $this->removeLinkClass('rex-popup');
-            $this->removeLinkAttr('onclick');
+            $this->removeLinkAttr('data-rex-overlay');
         }
 
         return $this;
@@ -443,30 +436,6 @@ class Page
     public function hasNavigation(): bool
     {
         return $this->hasNavigation && (!$this->parent || $this->parent->hasNavigation());
-    }
-
-    /**
-     * Sets whether the page allows pjax.
-     *
-     * @return $this
-     */
-    public function setPjax(bool $pjax = true): static
-    {
-        $this->pjax = $pjax;
-
-        return $this;
-    }
-
-    /** Returns whether the page allows pjax. */
-    public function allowsPjax(): bool
-    {
-        if (null !== $this->pjax) {
-            return $this->pjax;
-        }
-        if ($this->parent) {
-            return $this->parent->allowsPjax();
-        }
-        return false;
     }
 
     /**

@@ -82,11 +82,11 @@ use Redaxo\Core\View\Fragment;
         <svg class="brand-svg"><title>REDAXO</title><use xlink:href="#redaxo-logo"></use></svg>
     </div>
 </div>
-<div style="display: none;">
+<div hidden>
     <svg xmlns="http://www.w3.org/2000/svg">
         <symbol id="ooops-badge" viewBox="0 0 472.66 512.85">
             <defs>
-                <style>.cls-1 {
+                <style nonce="<?= Response::getNonce() ?>">.cls-1 {
                         font-size: 24px;
                         font-family: Arial, Arial;
                         letter-spacing: 0.1em;

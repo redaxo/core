@@ -39,17 +39,14 @@ $url3500Webp = Url::coreAssets('images/' . $pictureName . '-3500.webp');
     #rex-page-login {
         background-color: #000000;
     }
-    #rex-page-login .panel-default {
+    #rex-page-login .rex-section {
         background-color: rgba(33, 38, 41, 0.9);
     }
 
-    #rex-page-login .btn-primary {
-        background-color: #006ec6;
-        border-color: rgba(0, 0, 0, 0.5);
-    }
-    #rex-page-login .btn-primary:hover,
-    #rex-page-login .btn-primary:focus {
-        background-color: #b5400b;
+    #rex-page-login .rex-button[data-variant="primary"] {
+        --rex-button-bg: #006ec6;
+        --rex-button-border: rgba(0, 0, 0, 0.5);
+        --rex-button-bg-hover: #b5400b;
     }
 
     #rex-page-login .rex-global-footer {
@@ -64,18 +61,18 @@ $url3500Webp = Url::coreAssets('images/' . $pictureName . '-3500.webp');
 
 <script nonce="<?= Response::getNonce() ?>">
     var picture = document.querySelector('.rex-background');
-    picture.classList.add('rex-background--process');
+    picture.dataset.state = 'process';
     picture.querySelector('img').onload = function() {
-        picture.classList.add('rex-background--ready');
+        picture.dataset.state = 'ready';
     }
 </script>
 
 <footer class="rex-global-footer">
     <nav class="rex-nav-footer">
-        <ul class="list-inline">
+        <ul class="rex-u-list-inline">
             <li><a href="https://www.yakamara.de" target="_blank" rel="noreferrer noopener">yakamara.de</a></li>
             <li><a href="https://www.redaxo.org" target="_blank" rel="noreferrer noopener">redaxo.org</a></li>
-            <li class="rex-background-credits">Photo by <a href="https://unsplash.com/de/@jrkorpa" target="_blank" rel="noreferrer noopener">@jrkorpa</a> on <a href="https://unsplash.com/de/fotos/braun-weisse-abstrakte-malerei-UFx4NcvTRBE"  target="_blank" rel="noreferrer noopener">Unsplash</a></li>
+            <li>Photo by <a href="https://unsplash.com/de/@jrkorpa" target="_blank" rel="noreferrer noopener">@jrkorpa</a> on <a href="https://unsplash.com/de/fotos/braun-weisse-abstrakte-malerei-UFx4NcvTRBE"  target="_blank" rel="noreferrer noopener">Unsplash</a></li>
         </ul>
     </nav>
 </footer>

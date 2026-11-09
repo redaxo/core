@@ -1,0 +1,271 @@
+/*
+ Buttons (`.rex-button`, Redaxo\Core\View\Component\Button, Redaxo\Core\Form\Widget\Button), on `<button>` and `<a>`.
+
+ - variant (`data-variant`): `primary`, `success`, `warning`, `danger`, `field` (aligned with the input fields, e.g.
+   the picker buttons), `link`; without it the neutral secondary button
+ - size (`data-size`): `sm`, `xs`
+ - `data-width="full"` spans the container
+ - pressed, expanded and current buttons (`aria-pressed`, `aria-expanded`, `aria-current`) show as active
+ - `data-effect="flash"` flashes when clicked, e.g. picking an item of a multiple picker
+
+ Groups (`.rex-button-group`, `data-orientation="vertical"`) join their buttons, a toolbar (`.rex-button-toolbar`)
+ puts them in a row with `data-align="end"` items on the right, `data-spacing="wide"` with more space between them.
+ */
+
+@layer components {
+    .rex-button {
+        --rex-button-color: var(--rex-color-text);
+        --rex-button-bg: var(--rex-color-control);
+        --rex-button-border: var(--rex-color-border-strong);
+        --rex-button-bg-hover: var(--rex-color-control-hover);
+        --rex-button-border-hover: var(--rex-color-border-input);
+
+        display: inline-block;
+        margin: 0;
+        padding: 6px 12px;
+        border: 1px solid var(--rex-button-border);
+        border-radius: var(--rex-radius);
+        background: var(--rex-button-bg);
+        color: var(--rex-button-color);
+        font: inherit;
+        font-size: var(--rex-font-size);
+        font-weight: 400;
+        line-height: var(--rex-line-height);
+        text-align: center;
+        text-decoration: none;
+        white-space: nowrap;
+        vertical-align: middle;
+        cursor: pointer;
+        touch-action: manipulation;
+        user-select: none;
+
+        &:hover {
+            border-color: var(--rex-button-border-hover);
+            background: var(--rex-button-bg-hover);
+            color: var(--rex-button-color);
+            text-decoration: none;
+        }
+
+        &:active,
+        &:is([aria-pressed="true"], [aria-expanded="true"], [aria-current]:not([aria-current="false"])) {
+            border-color: var(--rex-button-border-hover);
+            background: var(--rex-button-bg-hover);
+            box-shadow: var(--rex-shadow-pressed);
+        }
+
+        &:is(:disabled, [aria-disabled="true"]) {
+            &,
+            &:hover,
+            &:active {
+                border-color: var(--rex-button-border);
+                background: var(--rex-button-bg);
+                box-shadow: none;
+                opacity: 0.65;
+                cursor: not-allowed;
+            }
+        }
+
+        & .rex-icon {
+            vertical-align: -0.0625em;
+        }
+    }
+
+    /* variants */
+
+    .rex-button[data-variant="primary"] {
+        --rex-button-color: var(--rex-color-on-accent);
+        --rex-button-bg: var(--rex-color-accent);
+        --rex-button-border: var(--rex-color-accent);
+        --rex-button-bg-hover: var(--rex-color-accent-hover);
+        --rex-button-border-hover: var(--rex-color-accent-hover);
+    }
+
+    .rex-button[data-variant="success"] {
+        --rex-button-color: var(--rex-color-on-success);
+        --rex-button-bg: var(--rex-color-success);
+        --rex-button-border: var(--rex-color-success);
+        --rex-button-bg-hover: var(--rex-color-success-hover);
+        --rex-button-border-hover: var(--rex-color-success-hover);
+    }
+
+    .rex-button[data-variant="warning"] {
+        --rex-button-color: var(--rex-color-on-warning);
+        --rex-button-bg: var(--rex-color-warning);
+        --rex-button-border: var(--rex-color-warning);
+        --rex-button-bg-hover: var(--rex-color-warning-hover);
+        --rex-button-border-hover: var(--rex-color-warning-hover);
+    }
+
+    .rex-button[data-variant="danger"] {
+        --rex-button-color: var(--rex-color-on-danger);
+        --rex-button-bg: var(--rex-color-danger);
+        --rex-button-border: var(--rex-color-danger);
+        --rex-button-bg-hover: var(--rex-color-danger-hover);
+        --rex-button-border-hover: var(--rex-color-danger-hover);
+    }
+
+    .rex-button[data-variant="field"] {
+        --rex-button-bg: var(--rex-color-surface-subtle);
+        --rex-button-border: var(--rex-color-border-input);
+    }
+
+    .rex-button[data-variant="link"] {
+        --rex-button-color: var(--rex-color-link);
+        --rex-button-bg: transparent;
+        --rex-button-border: transparent;
+        --rex-button-bg-hover: transparent;
+        --rex-button-border-hover: transparent;
+
+        border-radius: 0;
+
+        &:hover {
+            color: var(--rex-color-link-hover);
+            text-decoration: underline;
+        }
+
+        &:active {
+            box-shadow: none;
+        }
+    }
+
+    /* inverted on the green header of edit sections */
+    .rex-section[data-variant="edit"] .rex-section-header .rex-button[data-variant="success"] {
+        --rex-button-color: var(--rex-color-success-text);
+        --rex-button-bg: var(--rex-color-surface);
+        --rex-button-border: var(--rex-color-surface);
+        --rex-button-bg-hover: var(--rex-color-success-subtle);
+        --rex-button-border-hover: var(--rex-color-success-subtle);
+    }
+
+    /* the current language of the language switch, an `aria-current` link */
+    .rex-button[aria-current]:not([aria-current="false"]) {
+        --rex-button-color: var(--rex-color-on-accent);
+        --rex-button-bg: var(--rex-color-accent);
+        --rex-button-border: var(--rex-color-accent);
+        --rex-button-bg-hover: var(--rex-color-accent-hover);
+        --rex-button-border-hover: var(--rex-color-accent-hover);
+
+        box-shadow: none;
+    }
+
+    .rex-button[data-effect="flash"] {
+        box-shadow: 0 0 0 25px transparent;
+        transition: all 1000ms ease-out 1000ms, box-shadow 800ms ease-out 100ms;
+
+        &:active {
+            box-shadow: 0 0 0 0 var(--rex-color-accent-subtle);
+            border-color: var(--rex-color-accent);
+            background: var(--rex-color-accent);
+            transition: all 0ms linear 0ms;
+        }
+    }
+
+    /* sizes, with at least 24px (WCAG 2.5.8) */
+
+    .rex-button[data-size="sm"],
+    .rex-button-group[data-size="sm"] > .rex-button {
+        min-height: 30px;
+        padding: 4px 10px;
+        font-size: var(--rex-font-size-small);
+        line-height: 1.5;
+    }
+
+    .rex-button[data-size="xs"],
+    .rex-button-group[data-size="xs"] > .rex-button {
+        min-width: 24px;
+        min-height: 24px;
+        padding: 2px 8px;
+        font-size: var(--rex-font-size-small);
+        line-height: 1.3334;
+
+        & > .rex-icon {
+            font-size: var(--rex-font-size);
+            vertical-align: middle;
+        }
+    }
+
+    .rex-button[data-width="full"] {
+        display: block;
+        width: 100%;
+
+        & + & {
+            margin-top: 5px;
+        }
+    }
+
+    /* groups */
+
+    .rex-button-group {
+        position: relative;
+        display: inline-flex;
+        vertical-align: middle;
+
+        & > .rex-button {
+            position: relative;
+
+            &:is(:hover, :focus-visible, :active) {
+                z-index: 2;
+            }
+
+            &:not(:first-child) {
+                margin-left: -1px;
+                border-start-start-radius: 0;
+                border-end-start-radius: 0;
+            }
+
+            &:not(:last-child) {
+                border-start-end-radius: 0;
+                border-end-end-radius: 0;
+            }
+        }
+
+        &[data-orientation="vertical"] {
+            flex-direction: column;
+
+            & > .rex-button {
+                width: 100%;
+
+                &:not(:first-child) {
+                    margin-top: -1px;
+                    margin-left: 0;
+                    border-radius: 0 0 var(--rex-radius) var(--rex-radius);
+                }
+
+                &:not(:last-child) {
+                    border-radius: var(--rex-radius) var(--rex-radius) 0 0;
+                }
+
+                &:not(:first-child, :last-child) {
+                    border-radius: 0;
+                }
+            }
+        }
+    }
+
+    .rex-button-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        align-items: center;
+
+        & > [data-align="end"] {
+            margin-left: auto;
+        }
+
+        /* a nested toolbar, e.g. a named group of actions, takes the remaining width */
+        & > & {
+            flex: 1 1 auto;
+        }
+
+        /* a label of a field in the toolbar, e.g. of a checkbox */
+        & > label {
+            margin: 0;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        &[data-spacing="wide"] {
+            gap: 10px 20px;
+        }
+    }
+}

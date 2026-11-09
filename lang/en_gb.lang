@@ -46,6 +46,14 @@ profile = My profile
 logout = sign out
 navigation_system = Main menu
 navigation_addons = AddOns
+skip_to_content = Skip to content
+navigation_main_label = Main navigation
+navigation_toggle = Toggle navigation
+navigation_breadcrumb = Breadcrumb
+navigation_subpages = Subpages
+navigation_pagination = Pagination
+toolbar_toggle = Toggle toolbar
+link_new_window = opens in a new window
 subnavigation = Sub navigation of {0}
 
 # redaxo/include/classes/class.login.php
@@ -219,6 +227,20 @@ session_timeout_logout_label = Log out
 session_timeout_login_label = Log in again
 session_timeout_refresh_label = Extend session
 
+dialog_confirm = OK
+dialog_cancel = Cancel
+select_all = Select all
+select_none = Deselect all
+select_no_results = No results
+select_search = Search
+overlay_close = Close
+password_show = Show password
+picker_picked = picked
+collection_added = Item added
+collection_removed = Item removed
+clipboard_copied = Copied to the clipboard
+passkey_failed = The passkey could not be used.
+
 list_previous = previous page
 list_next = next page
 list_rows_found = {0} entries found
@@ -275,6 +297,7 @@ footer_doku = Read the docs
 footer_datetime = {0}
 footer_scripttime = {0} sec.
 footer_credits = Credits
+footer_top = Back to top
 
 created_by = Created by
 created_on = Created
@@ -478,7 +501,6 @@ pool_changecat_selectedmedia_suffix = move
 pool_get_selectedmedia = apply
 pool_selectedmedia_error = No media selected
 pool_selectedmedia_moved = Moved selected media
-pool_select_all = Select all
 pool_nomediafound = No files in this category
 pool_image_get = Insert image
 pool_link_get = Insert link
@@ -682,8 +704,12 @@ structure_history = History
 structure_history_title_info = Short explanation
 structure_history_snapshot_reactivate = Revert to this version
 structure_history_snapshot_reactivated = Version has been revertet
-structure_history_overview_versions = History overview
 structure_history_current_version = Current version
+structure_history_version = Version
+structure_history_older = Older version
+structure_history_newer = Newer version
+structure_history_no_versions = There are no former versions of this article yet. They are created as soon as blocks are saved, moved or deleted.
+structure_history_snapshot_not_found = This version does not exist anymore.
 structure_history_info_content = <p>The History extension records all changes made to an article and creates snapshots which can later be used to restore a specific article to a previous state.</p>
 
 perm_options_history[article_rollback] = Restore article (History)
@@ -691,7 +717,6 @@ perm_options_history[article_rollback] = Restore article (History)
 structure_history_button_delete_history = Delete all snapshots from History
 structure_history_deleted = All snapshots have been deleted.
 structure_history_savedby = Saved by
-structure_history_close = Close
 
 
 version = Version

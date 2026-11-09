@@ -1,0 +1,103 @@
+/* Content editor: the frame around the slices, the slices with their add buttons and the sidebar */
+
+@layer components {
+    .rex-main-frame {
+        margin-inline: -15px;
+        padding: 30px 15px;
+        background-color: var(--rex-color-canvas);
+
+        @media (min-width: 1200px) {
+            margin-inline: -30px;
+            padding: 45px 30px;
+        }
+
+        .rex-is-logged-in & {
+            @media (min-width: 992px) {
+                margin-bottom: -30px;
+            }
+        }
+    }
+
+    .rex-collapse-content {
+        width: 100%;
+    }
+
+    .rex-slices {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    .rex-slice {
+        margin-block: 22px;
+
+        & :is(iframe, img, svg, video, object, embed) {
+            max-width: 100%;
+            height: auto;
+        }
+
+        & .rex-section-options {
+            float: right;
+        }
+
+        /* the buttons stay in reach while editing a long slice */
+        & .rex-section-footer {
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+    }
+
+    .rex-slice-output {
+        & .container {
+            width: 100%;
+        }
+
+        & .rex-section-body {
+            position: relative;
+            overflow: auto;
+        }
+    }
+
+    .rex-slice-offline {
+        opacity: 0.8;
+
+        & .rex-section {
+            --rex-section-color: var(--rex-color-neutral);
+            --rex-section-header-text: var(--rex-color-on-neutral);
+        }
+
+        /* a veil keeps the output of an offline slice from being used */
+        & .rex-section-body {
+            pointer-events: none;
+
+            &::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                z-index: 100;
+                display: block;
+                background: color-mix(in srgb, var(--rex-color-neutral) 60%, transparent);
+            }
+        }
+    }
+
+    /* "add block" button between the slices */
+    .rex-slice-select > .rex-dropdown > .rex-button {
+        --rex-button-color: var(--rex-color-link-hover);
+        --rex-button-bg: var(--rex-color-accent-subtle);
+        --rex-button-border: var(--rex-color-accent-subtle);
+        --rex-button-bg-hover: var(--rex-color-accent-subtle-hover);
+        --rex-button-border-hover: var(--rex-color-accent-subtle-hover);
+
+        border-radius: 0;
+
+        &:is(:focus, .focus, :active, .active),
+        .open > & {
+            --rex-button-color: var(--rex-color-on-accent);
+            --rex-button-bg: var(--rex-color-accent);
+            --rex-button-border: var(--rex-color-accent);
+            --rex-button-bg-hover: var(--rex-color-accent-hover);
+        }
+    }
+}

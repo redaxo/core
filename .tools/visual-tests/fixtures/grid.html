@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Grid</title>
+    <!-- Visual test fixture of the grid (components/grid.css) and the Bootstrap 3 compat grid; generated from
+         Redaxo\Core\View\Component\Grid, so it shows the markup the component renders. Grids query their own
+         width, so the fixed widths below stand for a sidebar, a dialog, an overlay and the main area. -->
+    <link rel="stylesheet" href="/assets/core/css/backend.css">
+    <link rel="stylesheet" href="/assets/core/css/bootstrap-compat.css">
+    <style>
+        body { padding: 20px; }
+        h2 { margin: 30px 0 10px; font-size: 1.125rem; }
+        h3 { margin: 15px 0 5px; font-size: 0.875rem; font-weight: 400; }
+        .demo { padding: 6px 10px; border: 1px solid var(--rex-color-border-strong); background: var(--rex-color-accent-subtle); }
+        .demo-tall { min-height: 90px; }
+        .frame { outline: 1px dashed var(--rex-color-border-strong); }
+                .w400 { width: 400px; }
+                .w600 { width: 600px; }
+                .w800 { width: 800px; }
+                .w1000 { width: 1000px; }
+                .w1200 { width: 1200px; }
+            </style>
+</head>
+<body>
+<main>
+    <h1>Grid</h1>
+            <h2>Spans: md:8 xl:7 / md:4 xl:5 / 6 sm:4 lg:3</h2>
+                    <h3>400px</h3>
+            <div class="frame w400">    <div class="rex-grid">
+                        <div data-span="md:8 xl:7"><div class="demo">md:8 xl:7</div></div>
+                        <div data-span="md:4 xl:5"><div class="demo">md:4 xl:5</div></div>
+                        <div data-span="6 sm:4 lg:3"><div class="demo">6 sm:4 lg:3</div></div>
+                        <div data-span="6 sm:8 lg:9"><div class="demo">6 sm:8 lg:9</div></div>
+            </div>
+</div>
+                    <h3>600px</h3>
+            <div class="frame w600">    <div class="rex-grid">
+                        <div data-span="md:8 xl:7"><div class="demo">md:8 xl:7</div></div>
+                        <div data-span="md:4 xl:5"><div class="demo">md:4 xl:5</div></div>
+                        <div data-span="6 sm:4 lg:3"><div class="demo">6 sm:4 lg:3</div></div>
+                        <div data-span="6 sm:8 lg:9"><div class="demo">6 sm:8 lg:9</div></div>
+            </div>
+</div>
+                    <h3>800px</h3>
+            <div class="frame w800">    <div class="rex-grid">
+                        <div data-span="md:8 xl:7"><div class="demo">md:8 xl:7</div></div>
+                        <div data-span="md:4 xl:5"><div class="demo">md:4 xl:5</div></div>
+                        <div data-span="6 sm:4 lg:3"><div class="demo">6 sm:4 lg:3</div></div>
+                        <div data-span="6 sm:8 lg:9"><div class="demo">6 sm:8 lg:9</div></div>
+            </div>
+</div>
+                    <h3>1000px</h3>
+            <div class="frame w1000">    <div class="rex-grid">
+                        <div data-span="md:8 xl:7"><div class="demo">md:8 xl:7</div></div>
+                        <div data-span="md:4 xl:5"><div class="demo">md:4 xl:5</div></div>
+                        <div data-span="6 sm:4 lg:3"><div class="demo">6 sm:4 lg:3</div></div>
+                        <div data-span="6 sm:8 lg:9"><div class="demo">6 sm:8 lg:9</div></div>
+            </div>
+</div>
+                    <h3>1200px</h3>
+            <div class="frame w1200">    <div class="rex-grid">
+                        <div data-span="md:8 xl:7"><div class="demo">md:8 xl:7</div></div>
+                        <div data-span="md:4 xl:5"><div class="demo">md:4 xl:5</div></div>
+                        <div data-span="6 sm:4 lg:3"><div class="demo">6 sm:4 lg:3</div></div>
+                        <div data-span="6 sm:8 lg:9"><div class="demo">6 sm:8 lg:9</div></div>
+            </div>
+</div>
+                    <h2>Start: md:6 start md:4, lg:4 start lg:9</h2>
+                    <h3>400px</h3>
+            <div class="frame w400">    <div class="rex-grid">
+                        <div data-span="md:6" data-start="md:4"><div class="demo">md:6 start md:4</div></div>
+                        <div data-span="lg:4" data-start="lg:9"><div class="demo">lg:4 start lg:9</div></div>
+            </div>
+</div>
+                    <h3>600px</h3>
+            <div class="frame w600">    <div class="rex-grid">
+                        <div data-span="md:6" data-start="md:4"><div class="demo">md:6 start md:4</div></div>
+                        <div data-span="lg:4" data-start="lg:9"><div class="demo">lg:4 start lg:9</div></div>
+            </div>
+</div>
+                    <h3>800px</h3>
+            <div class="frame w800">    <div class="rex-grid">
+                        <div data-span="md:6" data-start="md:4"><div class="demo">md:6 start md:4</div></div>
+                        <div data-span="lg:4" data-start="lg:9"><div class="demo">lg:4 start lg:9</div></div>
+            </div>
+</div>
+                    <h3>1000px</h3>
+            <div class="frame w1000">    <div class="rex-grid">
+                        <div data-span="md:6" data-start="md:4"><div class="demo">md:6 start md:4</div></div>
+                        <div data-span="lg:4" data-start="lg:9"><div class="demo">lg:4 start lg:9</div></div>
+            </div>
+</div>
+                    <h3>1200px</h3>
+            <div class="frame w1200">    <div class="rex-grid">
+                        <div data-span="md:6" data-start="md:4"><div class="demo">md:6 start md:4</div></div>
+                        <div data-span="lg:4" data-start="lg:9"><div class="demo">lg:4 start lg:9</div></div>
+            </div>
+</div>
+                    <h2>Order and visibility: second is first below md, third hidden below md</h2>
+                    <h3>400px</h3>
+            <div class="frame w400">    <div class="rex-grid">
+                        <div data-span="md:4"><div class="demo">1</div></div>
+                        <div data-span="md:4" data-order="first md:source"><div class="demo">2: first md:source</div></div>
+                        <div data-span="md:4" data-visibility="hidden md:visible"><div class="demo">3: hidden md:visible</div></div>
+            </div>
+</div>
+                    <h3>600px</h3>
+            <div class="frame w600">    <div class="rex-grid">
+                        <div data-span="md:4"><div class="demo">1</div></div>
+                        <div data-span="md:4" data-order="first md:source"><div class="demo">2: first md:source</div></div>
+                        <div data-span="md:4" data-visibility="hidden md:visible"><div class="demo">3: hidden md:visible</div></div>
+            </div>
+</div>
+                    <h3>800px</h3>
+            <div class="frame w800">    <div class="rex-grid">
+                        <div data-span="md:4"><div class="demo">1</div></div>
+                        <div data-span="md:4" data-order="first md:source"><div class="demo">2: first md:source</div></div>
+                        <div data-span="md:4" data-visibility="hidden md:visible"><div class="demo">3: hidden md:visible</div></div>
+            </div>
+</div>
+                    <h3>1000px</h3>
+            <div class="frame w1000">    <div class="rex-grid">
+                        <div data-span="md:4"><div class="demo">1</div></div>
+                        <div data-span="md:4" data-order="first md:source"><div class="demo">2: first md:source</div></div>
+                        <div data-span="md:4" data-visibility="hidden md:visible"><div class="demo">3: hidden md:visible</div></div>
+            </div>
+</div>
+                    <h3>1200px</h3>
+            <div class="frame w1200">    <div class="rex-grid">
+                        <div data-span="md:4"><div class="demo">1</div></div>
+                        <div data-span="md:4" data-order="first md:source"><div class="demo">2: first md:source</div></div>
+                        <div data-span="md:4" data-visibility="hidden md:visible"><div class="demo">3: hidden md:visible</div></div>
+            </div>
+</div>
+                    <h2>Split from md: five equal columns</h2>
+                    <h3>400px</h3>
+            <div class="frame w400">    <div class="rex-grid" data-layout="split" data-from="md">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+                        <div><div class="demo">4</div></div>
+                        <div><div class="demo">5</div></div>
+            </div>
+</div>
+                    <h3>600px</h3>
+            <div class="frame w600">    <div class="rex-grid" data-layout="split" data-from="md">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+                        <div><div class="demo">4</div></div>
+                        <div><div class="demo">5</div></div>
+            </div>
+</div>
+                    <h3>800px</h3>
+            <div class="frame w800">    <div class="rex-grid" data-layout="split" data-from="md">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+                        <div><div class="demo">4</div></div>
+                        <div><div class="demo">5</div></div>
+            </div>
+</div>
+                    <h3>1000px</h3>
+            <div class="frame w1000">    <div class="rex-grid" data-layout="split" data-from="md">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+                        <div><div class="demo">4</div></div>
+                        <div><div class="demo">5</div></div>
+            </div>
+</div>
+                    <h3>1200px</h3>
+            <div class="frame w1200">    <div class="rex-grid" data-layout="split" data-from="md">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+                        <div><div class="demo">4</div></div>
+                        <div><div class="demo">5</div></div>
+            </div>
+</div>
+                    <h2>Split from sm: md:3 and fill</h2>
+                    <h3>400px</h3>
+            <div class="frame w400">    <div class="rex-grid" data-layout="split" data-from="sm">
+                        <div data-span="md:3"><div class="demo">md:3</div></div>
+                        <div><div class="demo">fill</div></div>
+            </div>
+</div>
+                    <h3>600px</h3>
+            <div class="frame w600">    <div class="rex-grid" data-layout="split" data-from="sm">
+                        <div data-span="md:3"><div class="demo">md:3</div></div>
+                        <div><div class="demo">fill</div></div>
+            </div>
+</div>
+                    <h3>800px</h3>
+            <div class="frame w800">    <div class="rex-grid" data-layout="split" data-from="sm">
+                        <div data-span="md:3"><div class="demo">md:3</div></div>
+                        <div><div class="demo">fill</div></div>
+            </div>
+</div>
+                    <h3>1000px</h3>
+            <div class="frame w1000">    <div class="rex-grid" data-layout="split" data-from="sm">
+                        <div data-span="md:3"><div class="demo">md:3</div></div>
+                        <div><div class="demo">fill</div></div>
+            </div>
+</div>
+                    <h3>1200px</h3>
+            <div class="frame w1200">    <div class="rex-grid" data-layout="split" data-from="sm">
+                        <div data-span="md:3"><div class="demo">md:3</div></div>
+                        <div><div class="demo">fill</div></div>
+            </div>
+</div>
+                        <h2>Split: fill and auto, aligned to the end</h2>
+        <div class="frame w1000">    <div class="rex-grid" data-layout="split">
+                        <div><input class="rex-input" aria-label="Field" value="fill"></div>
+                        <div data-span="auto" data-align-y="end"><span class="rex-button-toolbar"><button type="button" class="rex-button">auto</button><button type="button" class="rex-button" data-variant="primary">Save</button></span></div>
+            </div>
+</div>
+            <h2>Split: 4 and fill and auto</h2>
+        <div class="frame w1000">    <div class="rex-grid" data-layout="split">
+                        <div data-span="4"><div class="demo">4</div></div>
+                        <div><div class="demo">fill</div></div>
+                        <div data-span="auto"><div class="demo">auto</div></div>
+            </div>
+</div>
+            <h2>Split: alignX start, center, end</h2>
+        <div class="frame w1000">    <div class="rex-grid" data-layout="split">
+                        <div data-align-x="start"><div><div class="demo">start</div></div></div>
+                        <div data-align-x="center"><div><div class="demo">center</div></div></div>
+                        <div data-align-x="end"><div><div class="demo">end</div></div></div>
+            </div>
+</div>
+            <h2>Columns: alignX and alignY</h2>
+        <div class="frame w1000">    <div class="rex-grid">
+                        <div data-span="3"><div class="demo demo-tall">tall</div></div>
+                        <div data-span="3" data-align-x="start" data-align-y="start"><div><div class="demo">x start, y start</div></div></div>
+                        <div data-span="3" data-align-x="center" data-align-y="center"><div><div class="demo">x center, y center</div></div></div>
+                        <div data-span="3" data-align-x="end" data-align-y="end"><div><div class="demo">x end, y end</div></div></div>
+            </div>
+</div>
+            <h2>Tiles small</h2>
+        <div class="frame w1000">    <div class="rex-grid" data-layout="tiles" data-tile-size="sm">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+                        <div><div class="demo">4</div></div>
+                        <div><div class="demo">5</div></div>
+                        <div><div class="demo">6</div></div>
+                        <div><div class="demo">7</div></div>
+            </div>
+</div>
+            <h2>Tiles medium</h2>
+        <div class="frame w1000">    <div class="rex-grid" data-layout="tiles">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+                        <div><div class="demo">4</div></div>
+                        <div><div class="demo">5</div></div>
+            </div>
+</div>
+            <h2>Tiles large</h2>
+        <div class="frame w1000">    <div class="rex-grid" data-layout="tiles" data-tile-size="lg">
+                        <div><div class="demo">1</div></div>
+                        <div><div class="demo">2</div></div>
+                        <div><div class="demo">3</div></div>
+            </div>
+</div>
+            <h2>Gap none, small, large</h2>
+        <div class="frame w1000">    <div class="rex-grid">
+                        <div>    <div class="rex-grid" data-layout="split" data-gap="none">
+                        <div><div class="demo">none</div></div>
+                        <div><div class="demo">none</div></div>
+                        <div><div class="demo">none</div></div>
+                        <div><div class="demo">none</div></div>
+            </div>
+</div>
+                        <div>    <div class="rex-grid" data-layout="split" data-gap="sm">
+                        <div><div class="demo">sm</div></div>
+                        <div><div class="demo">sm</div></div>
+                        <div><div class="demo">sm</div></div>
+                        <div><div class="demo">sm</div></div>
+            </div>
+</div>
+                        <div>    <div class="rex-grid" data-layout="split" data-gap="lg">
+                        <div><div class="demo">lg</div></div>
+                        <div><div class="demo">lg</div></div>
+                        <div><div class="demo">lg</div></div>
+                        <div><div class="demo">lg</div></div>
+            </div>
+</div>
+            </div>
+</div>
+            <h2>Columns wrap with the row gap</h2>
+        <div class="frame w1000">    <div class="rex-grid">
+                        <div data-span="4"><div class="demo">1</div></div>
+                        <div data-span="4"><div class="demo">2</div></div>
+                        <div data-span="4"><div class="demo">3</div></div>
+                        <div data-span="4"><div class="demo">4</div></div>
+                        <div data-span="4"><div class="demo">5</div></div>
+                        <div data-span="4"><div class="demo">6</div></div>
+            </div>
+</div>
+            <h2>Subgrid: inner columns on the outer tracks</h2>
+        <div class="frame w1000">    <div class="rex-grid">
+                        <div data-span="3"><div class="demo">3</div></div>
+                        <div class="rex-grid" data-subgrid data-span="9">
+                        <div data-span="4"><div class="demo">inner 4</div></div>
+                        <div data-span="5"><div class="demo">inner 5</div></div>
+            </div>
+                        <div data-span="3"><div class="demo">3</div></div>
+                        <div data-span="4"><div class="demo">4</div></div>
+                        <div data-span="5"><div class="demo">5</div></div>
+            </div>
+</div>
+    <h2>Bootstrap 3 compat (viewport 1280px)</h2>
+    <div class="container-fluid frame w1200">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-2"><div class="demo">col-md-4 col-md-offset-2</div></div>
+            <div class="col-md-4"><div class="demo">col-md-4</div></div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-push-4"><div class="demo">col-md-8 col-md-push-4 (first in source)</div></div>
+            <div class="col-md-4 col-md-pull-8"><div class="demo">col-md-4 col-md-pull-8</div></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 hidden-lg"><div class="demo">hidden-lg (not shown)</div></div>
+            <div class="col-xs-6 visible-lg-block"><div class="demo">visible-lg-block</div></div>
+            <div class="col-xs-6 hidden-xs hidden-sm"><div class="demo">hidden-xs hidden-sm</div></div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

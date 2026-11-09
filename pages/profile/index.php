@@ -23,6 +23,10 @@ use Redaxo\Core\Security\WebAuthn;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Translation\Translatable;
 use Redaxo\Core\Util\Str;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridColumn;
+use Redaxo\Core\View\Component\GridColumnRule;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
 use Redaxo\Core\View\Message;
@@ -185,24 +189,22 @@ echo ApiFunction::getMessage();
 
 if (!$passwordChangeRequired) {
     echo $profileForm->capture(static function (Form $form) use ($user): void { ?>
-        <section class="rex-page-section">
-            <div class="panel panel-edit">
-                <header class="panel-heading"><div class="panel-title"><?= Html::from($form->title ?? '') ?></div></header>
-                <div class="panel-body">
-                    <?php foreach ($form->getFormErrors() as $error): ?>
-                        <?= Message::error((string) Html::from($error)) ?>
-                    <?php endforeach ?>
-                    <?= new FieldRow(Html::raw('<p class="form-control-static">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
-                    <?= $form->rest() ?>
-                </div>
-                <footer class="panel-footer">
-                    <div class="rex-form-panel-footer">
-                        <?= $form->buttons() ?>
-                    </div>
-                </footer>
+        <section class="rex-section" data-variant="edit">
+            <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
+            <div class="rex-section-body">
+                <?php foreach ($form->getFormErrors() as $error): ?>
+                    <?= Message::error((string) Html::from($error)) ?>
+                <?php endforeach ?>
+                <?= new FieldRow(Html::raw('<p class="rex-field-value">' . escape($user->login) . '</p>'), new Translatable('login_name'))->render() ?>
+                <?= $form->rest() ?>
             </div>
+            <footer class="rex-section-footer">
+                <div class="rex-form-panel-footer">
+                    <?= $form->buttons() ?>
+                </div>
+            </footer>
         </section>
-    <?php }, ['data-pjax' => 'false']);
+    <?php });
 }
 
 $passkeyVerify = $login->getPasskey() ? $webauthn->getGetArgs($login->getPasskey()) : '';
@@ -213,13 +215,13 @@ $confirmField = static function (string $id) use ($login, $passkeyVerify): strin
     if ($login->getPasskey()) {
         $n['label'] = '<label for="' . $id . '">' . I18n::msg('passkey_current') . '</label>';
         $n['field'] = '<div data-auth-passkey-verify="' . escape($passkeyVerify) . '">
-        <button type="button" class="btn btn-primary" id="' . $id . '">' . I18n::msg('passkey_current_verify') . '</button>
-        <i class="fa fa-check-circle-o text-success hidden"></i>
+        <button type="button" class="rex-button" data-variant="primary" id="' . $id . '">' . I18n::msg('passkey_current_verify') . '</button>
+        <i class="fa-regular fa-circle-check rex-u-text-success rex-u-hidden" aria-hidden="true"></i>
         <input type="hidden" name="passkey_verify"/>
     </div>';
     } else {
         $n['label'] = '<label for="' . $id . '">' . I18n::msg('current_password') . '</label>';
-        $n['field'] = '<input class="form-control rex-js-userpsw" type="password" id="' . $id . '" name="userpsw" autocomplete="current-password" autocorrect="off" autocapitalize="off" required />';
+        $n['field'] = '<input class="rex-input" type="password" id="' . $id . '" name="userpsw" autocomplete="current-password" autocorrect="off" autocapitalize="off" required />';
     }
 
     $formElements[] = $n;
@@ -238,13 +240,13 @@ $formElements = [];
 
 $n = [];
 $n['label'] = '<label for="rex-id-userpsw-new-1">' . I18n::msg('new_password') . '</label>';
-$n['field'] = '<input class="form-control rex-js-userpsw-new-1" type="password" id="rex-id-userpsw-new-1" name="userpsw_new_1" autocomplete="new-password" autocorrect="off" autocapitalize="off" required ' . Str::buildAttributes($passwordPolicy->getHtmlAttributes()) . ' />';
+$n['field'] = '<input class="rex-input" type="password" id="rex-id-userpsw-new-1" name="userpsw_new_1" autocomplete="new-password" autocorrect="off" autocapitalize="off" required ' . Str::buildAttributes($passwordPolicy->getHtmlAttributes()) . ' />';
 $n['note'] = $passwordPolicy->getDescription();
 $formElements[] = $n;
 
 $n = [];
 $n['label'] = '<label for="rex-id-userpsw-new-2">' . I18n::msg('new_password_repeat') . '</label>';
-$n['field'] = '<input class="form-control rex-js-userpsw-new-2" type="password" id="rex-id-userpsw-new-2" name="userpsw_new_2" autocomplete="new-password" autocorrect="off" autocapitalize="off" required />';
+$n['field'] = '<input class="rex-input" type="password" id="rex-id-userpsw-new-2" name="userpsw_new_2" autocomplete="new-password" autocorrect="off" autocapitalize="off" required />';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -258,7 +260,7 @@ $content .= '</fieldset>';
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="upd_psw_button" ' . Accesskey::attributes(I18n::msg('profile_save_psw'), 'save') . '>' . I18n::msg('profile_save_psw') . '</button>';
+$n['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" type="submit" value="1" name="upd_psw_button" ' . Accesskey::attributes(I18n::msg('profile_save_psw'), 'save') . '>' . I18n::msg('profile_save_psw') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -279,7 +281,7 @@ $content .= '</fieldset>';
 $formElements = [];
 
 $n = [];
-$n['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" value="1" name="add_passkey" ' . Accesskey::attributes(I18n::msg('passkey_add'), 'save') . '>' . I18n::msg('passkey_add') . '</button>';
+$n['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" type="submit" value="1" name="add_passkey" ' . Accesskey::attributes(I18n::msg('passkey_add'), 'save') . '>' . I18n::msg('passkey_add') . '</button>';
 $formElements[] = $n;
 
 $fragment = new Fragment();
@@ -293,28 +295,22 @@ $fragment->setVar('body', $content, false);
 $fragment->setVar('buttons', $buttons, false);
 $addPasskey = $fragment->parse('core/page/section.php');
 
-$content = '
-    <div class="row">
-        <div class="col-md-6">
-            <form class="rex-js-form-profile-password" action="' . Url::currentBackendPage() . '" method="post" data-auth-change-password>
-                ' . $csrfToken->getHiddenField() . '
-                ' . $changePassword . '
-            </form>
-        </div>';
+$half = [new GridColumnRule(Breakpoint::Md, width: 6)];
+$columns = [new GridColumn(Html::raw('
+    <form action="' . Url::currentBackendPage() . '" method="post" data-auth-change-password>
+        ' . $csrfToken->getHiddenField() . '
+        ' . $changePassword . '
+    </form>'), $half)];
 if (!$passwordChangeRequired) {
-    $content .= '
-        <div class="col-md-6">
-            <form class="hidden" action="' . Url::currentBackendPage() . '" method="post" data-auth-add-passkey>
-                <input type="hidden" name="function" value="add_passkey"/>
-                ' . $csrfToken->getHiddenField() . '
-                ' . $addPasskey . '
-            </form>
-        </div>';
+    $columns[] = new GridColumn(Html::raw('
+        <form class="rex-u-hidden" action="' . Url::currentBackendPage() . '" method="post" data-auth-add-passkey>
+            <input type="hidden" name="function" value="add_passkey"/>
+            ' . $csrfToken->getHiddenField() . '
+            ' . $addPasskey . '
+        </form>'), $half);
 }
-$content .= '
-    </div>';
 
-echo $content;
+echo new Grid($columns)->render();
 
 require Path::core('pages/profile/auth_methods.php');
 require Path::core('pages/profile/sessions.php');

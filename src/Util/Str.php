@@ -7,6 +7,7 @@ use Redaxo\Core\Exception\InvalidArgumentException;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
+use function ini_get;
 use function is_array;
 use function is_int;
 use function Redaxo\Core\View\escape;
@@ -169,7 +170,27 @@ final class Str
         $text = preg_replace('@<span style="color:[^"]+">\n(<span style="color:[^"]+">)@', '$1', $text, 1);
         $text = preg_replace('@<\/span>\n(<\/span>\n<\/code>)$@', '$1', $text, 1);
 
-        return '<pre class="rex-code">' . $text . '</pre>';
+        return '<pre class="rex-code">' . self::highlightClasses(Type::string($text)) . '</pre>';
+    }
+
+    /**
+     * Replaces the inline colors of `highlight_string()` by classes (`rex-code-keyword` …), so that highlighted code
+     * needs no inline styles under a Content-Security-Policy.
+     *
+     * @internal
+     */
+    public static function highlightClasses(string $html): string
+    {
+        $classes = [];
+        foreach (['comment', 'default', 'html', 'keyword', 'string'] as $type) {
+            $classes[strtolower((string) ini_get('highlight.' . $type))] ??= 'rex-code-' . $type;
+        }
+
+        return Type::string(preg_replace_callback(
+            '@ style="color: ([^"]+)"@',
+            static fn (array $match): string => isset($classes[strtolower($match[1])]) ? ' class="' . $classes[strtolower($match[1])] . '"' : '',
+            $html,
+        ));
     }
 
     /**

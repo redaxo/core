@@ -22,8 +22,15 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Translation\Translatable;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Version;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridColumn;
+use Redaxo\Core\View\Component\GridColumnRule;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableColumn;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 use Symfony\Component\Mailer\Exception\ExceptionInterface as MailerException;
 use Symfony\Component\Mime\Address;
@@ -118,7 +125,7 @@ if (str_contains($rexVersion, '-dev')) {
 }
 
 if (Version::isUnstable($rexVersion)) {
-    $rexVersion = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '"></i> ' . escape($rexVersion);
+    $rexVersion = '<i class="rex-icon rex-icon-unstable-version" title="' . I18n::msg('unstable_version') . '" role="img"></i> ' . escape($rexVersion);
 }
 
 $mainContent = [];
@@ -127,65 +134,40 @@ $sideContent = [];
 $content = '
     <h3>' . I18n::msg('delete_cache') . '</h3>
     <p>' . I18n::msg('delete_cache_description') . '</p>
-    <p><a class="btn btn-delete" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('delete_cache') . '</a></p>';
+    <p><a class="rex-button" data-variant="danger" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('delete_cache') . '</a></p>';
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('system_features'));
 $fragment->setVar('body', $content, false);
 $sideContent[] = $fragment->parse('core/page/section.php');
 
-$content = '
-    <table class="table">
-        <tr>
-            <th class="rex-table-width-3">REDAXO</th>
-            <td>' . $rexVersion . '</td>
-        </tr>
-        <tr>
-            <th>' . I18n::msg('mode') . '</th>
-            <td>' . Core::getMode()->value . '</td>
-        </tr>
-        <tr>
-            <th>PHP</th>
-            <td>' . PHP_VERSION . ' <a class="rex-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" onclick="newWindow(\'phpinfo\', this.href, 1000,800,\',status=yes,resizable=yes\');return false;"><i class="rex-icon rex-icon-phpinfo"></i></a></td>
-        </tr>
-        <tr>
-            <th>' . I18n::msg('base_url') . '</th>
-            <td><span class="rex-word-break">' . escape(Url::absoluteBase()) . '</span></td>
-        </tr>
-        <tr>
-            <th>' . I18n::msg('error_email') . '</th>
-            <td><span class="rex-word-break">' . escape(Env::get('REX_ERROR_EMAIL') ?? I18n::msg('deactivated')) . '</span></td>
-        </tr>
-        <tr>
-            <th>' . I18n::msg('path') . '</th>
-			<td>
-			<div class="rex-word-break">' . Path::base() . '</div>
-			</td>
-        </tr>
-    </table>';
+// table of properties: the label as header of each row
+$properties = static fn (array $rows): string => (string) new Table([
+    TableColumn::forKey('', 0, attributes: new HtmlAttributes(['class' => ['rex-table-width-3']]), rowHeader: true),
+    TableColumn::forKey('', 1),
+], $rows)->render();
+
+$content = $properties([
+    ['REDAXO', Html::raw($rexVersion)],
+    [I18n::rawMsg('mode'), Html::raw(Core::getMode()->value)],
+    ['PHP', Html::raw(PHP_VERSION . ' <a class="rex-u-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" target="_blank" rel="noopener"><i class="rex-icon rex-icon-phpinfo" aria-hidden="true"></i></a>')],
+    [I18n::rawMsg('base_url'), Html::raw('<span class="rex-u-word-break">' . escape(Url::absoluteBase()) . '</span>')],
+    [I18n::rawMsg('error_email'), Html::raw('<span class="rex-u-word-break">' . escape(Env::get('REX_ERROR_EMAIL') ?? I18n::rawMsg('deactivated')) . '</span>')],
+    [I18n::rawMsg('path'), Html::raw('<div class="rex-u-word-break">' . escape(Path::base()) . '</div>')],
+]);
 
 $fragment = new Fragment();
-$fragment->setVar('title', I18n::msg('installation'));
+$fragment->setVar('title', I18n::rawMsg('installation'));
 $fragment->setVar('content', $content, false);
 $sideContent[] = $fragment->parse('core/page/section.php');
 
 $sql = Sql::factory();
 
-$content = '
-    <table class="table">
-        <tr>
-            <th class="rex-table-width-3">' . I18n::msg('version') . '</th>
-            <td>' . $sql->getDbType() . ' ' . $sql->getDbVersion() . '</td>
-        </tr>
-        <tr>
-            <th>' . I18n::msg('name') . '</th>
-            <td><span class="rex-word-break">' . $dbconfig->name . '</span></td>
-        </tr>
-        <tr>
-            <th>' . I18n::msg('host') . '</th>
-            <td>' . $dbconfig->host . '</td>
-        </tr>
-    </table>';
+$content = $properties([
+    [I18n::rawMsg('version'), $sql->getDbType() . ' ' . $sql->getDbVersion()],
+    [I18n::rawMsg('name'), Html::raw('<span class="rex-u-word-break">' . escape($dbconfig->name) . '</span>')],
+    [I18n::rawMsg('host'), $dbconfig->host],
+]);
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('database'));
@@ -195,29 +177,13 @@ $sideContent[] = $fragment->parse('core/page/section.php');
 $addresses = static fn (array $addresses): string => escape(implode(', ', array_map(static fn (Address $address) => $address->toString(), $addresses)));
 
 if ($mailer instanceof Mailer) {
-    $content = '
-        <table class="table">
-            <tr>
-                <th class="rex-table-width-3">' . I18n::msg('mailer_transport') . '</th>
-                <td><span class="rex-word-break">' . escape((string) $mailer->transport) . '</span></td>
-            </tr>
-            <tr>
-                <th>' . I18n::msg('mailer_from') . '</th>
-                <td><span class="rex-word-break">' . (null === $mailer->defaultFrom ? '-' : $addresses([$mailer->defaultFrom])) . '</span></td>
-            </tr>
-            <tr>
-                <th>' . I18n::msg('mailer_detour') . '</th>
-                <td><span class="rex-word-break">' . ($mailer->detourRecipients ? '<span class="text-danger">' . $addresses($mailer->detourRecipients) . '</span>' : I18n::msg('deactivated')) . '</span></td>
-            </tr>
-            <tr>
-                <th>' . I18n::msg('mailer_log') . '</th>
-                <td>' . $mailer->logMode->value . '</td>
-            </tr>
-            <tr>
-                <th>' . I18n::msg('mailer_archive') . '</th>
-                <td>' . I18n::msg($mailer->archive ? 'activated' : 'deactivated') . '</td>
-            </tr>
-        </table>';
+    $content = $properties([
+        [I18n::rawMsg('mailer_transport'), Html::raw('<span class="rex-u-word-break">' . escape((string) $mailer->transport) . '</span>')],
+        [I18n::rawMsg('mailer_from'), Html::raw('<span class="rex-u-word-break">' . (null === $mailer->defaultFrom ? '-' : $addresses([$mailer->defaultFrom])) . '</span>')],
+        [I18n::rawMsg('mailer_detour'), Html::raw('<span class="rex-u-word-break">' . ($mailer->detourRecipients ? '<span class="rex-u-text-danger">' . $addresses($mailer->detourRecipients) . '</span>' : I18n::msg('deactivated')) . '</span>')],
+        [I18n::rawMsg('mailer_log'), Html::raw($mailer->logMode->value)],
+        [I18n::rawMsg('mailer_archive'), Html::raw(I18n::msg($mailer->archive ? 'activated' : 'deactivated'))],
+    ]);
 
     $fragment = new Fragment();
     $fragment->setVar('title', I18n::msg('mailer'));
@@ -234,33 +200,31 @@ $mainContent[] = $systemForm->render();
 $viaCookie = array_key_exists('editor', $_COOKIE);
 
 $mainContent[] = $editorForm->capture(static function (Form $form) use ($viaCookie): void { ?>
-    <section class="rex-page-section">
-        <div class="panel panel-edit">
-            <header class="panel-heading"><div class="panel-title"><?= Html::from($form->title ?? '') ?></div></header>
-            <div class="panel-body">
-                <p><?= I18n::msg('system_editor_note') ?></p>
-                <?php if ($viaCookie): ?>
-                    <?= Message::info(I18n::msg('system_editor_note_cookie')) ?>
-                <?php elseif (Env::get('REX_EDITOR')): ?>
-                    <?= Message::info(I18n::msg('system_editor_note_env')) ?>
-                <?php endif ?>
-                <?= $form->rest() ?>
-            </div>
-            <footer class="panel-footer">
-                <div class="rex-form-panel-footer">
-                    <div class="btn-toolbar">
-                        <?= $form->button('save', ['class' => ['rex-form-aligned']]) ?>
-                        <?php if ($viaCookie): ?>
-                            <?= $form->button('delete_cookie') ?>
-                        <?php endif ?>
-                    </div>
-                </div>
-            </footer>
+    <section class="rex-section" data-variant="edit">
+        <header class="rex-section-header"><div class="rex-section-title"><?= Html::from($form->title ?? '') ?></div></header>
+        <div class="rex-section-body">
+            <p><?= I18n::msg('system_editor_note') ?></p>
+            <?php if ($viaCookie): ?>
+                <?= Message::info(I18n::msg('system_editor_note_cookie')) ?>
+            <?php elseif (Env::get('REX_EDITOR')): ?>
+                <?= Message::info(I18n::msg('system_editor_note_env')) ?>
+            <?php endif ?>
+            <?= $form->rest() ?>
         </div>
+        <footer class="rex-section-footer">
+            <div class="rex-form-panel-footer">
+                <div class="rex-button-toolbar">
+                    <?= $form->button('save', ['class' => ['rex-form-aligned']]) ?>
+                    <?php if ($viaCookie): ?>
+                        <?= $form->button('delete_cookie') ?>
+                    <?php endif ?>
+                </div>
+            </div>
+        </footer>
     </section>
 <?php });
 
-$fragment = new Fragment();
-$fragment->setVar('content', [implode('', $mainContent), implode('', $sideContent)], false);
-$fragment->setVar('classes', ['col-lg-8', 'col-lg-4'], false);
-echo $fragment->parse('core/page/grid.php');
+echo new Grid([
+    new GridColumn(Html::raw(implode('', $mainContent)), [new GridColumnRule(Breakpoint::Lg, width: 8)]),
+    new GridColumn(Html::raw(implode('', $sideContent)), [new GridColumnRule(Breakpoint::Lg, width: 4)]),
+])->render();

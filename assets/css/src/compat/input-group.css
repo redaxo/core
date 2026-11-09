@@ -1,0 +1,129 @@
+/* Bootstrap 3 input groups (`.input-group`, `.input-group-addon`, `.input-group-btn`) for addons; the core uses `.rex-input-group` (components/input.css) */
+
+@layer bootstrap {
+    .input-group {
+        position: relative;
+        display: table;
+        border-collapse: separate;
+
+        &[class*="col-"] {
+            float: none;
+            padding-right: 0;
+            padding-left: 0;
+        }
+
+        & .form-control {
+            position: relative;
+            z-index: 2;
+            float: left;
+            width: 100%;
+            margin-bottom: 0;
+
+            &:focus {
+                z-index: 3;
+            }
+        }
+    }
+
+    .input-group-addon,
+    .input-group-btn,
+    .input-group .form-control {
+        display: table-cell;
+
+        &:not(:first-child, :last-child) {
+            border-radius: 0;
+        }
+    }
+
+    .input-group-addon,
+    .input-group-btn {
+        width: 1%;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .input-group-addon {
+        padding: 6px 12px;
+        border: 1px solid var(--rex-color-border-input);
+        border-radius: 4px;
+        background-color: var(--rex-color-surface-muted);
+        color: var(--rex-color-text);
+        font-size: var(--rex-font-size);
+        font-weight: 400;
+        line-height: 1;
+        text-align: center;
+
+        & input:is([type="radio"], [type="checkbox"]) {
+            margin-top: 0;
+        }
+
+        & > :is(.btn-group-vertical, .rex-button-group[data-orientation="vertical"]) + :is(.btn-group-vertical, .rex-button-group[data-orientation="vertical"]) {
+            margin-left: 6px;
+        }
+
+        &:first-child {
+            border-right: 0;
+        }
+
+        &:last-child {
+            border-left: 0;
+        }
+    }
+
+    .input-group .form-control:first-child,
+    .input-group-addon:first-child,
+    .input-group-btn:first-child > :is(.btn, .rex-button, .dropdown-toggle),
+    .input-group-btn:first-child > :is(.btn-group, .rex-button-group) > :is(.btn, .rex-button),
+    .input-group-btn:last-child > :is(.btn, .rex-button):not(:last-child, .dropdown-toggle),
+    .input-group-btn:last-child > :is(.btn-group, .rex-button-group):not(:last-child) > :is(.btn, .rex-button) {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .input-group .form-control:last-child,
+    .input-group-addon:last-child,
+    .input-group-btn:last-child > :is(.btn, .rex-button, .dropdown-toggle),
+    .input-group-btn:last-child > :is(.btn-group, .rex-button-group) > :is(.btn, .rex-button),
+    .input-group-btn:first-child > :is(.btn, .rex-button):not(:first-child),
+    .input-group-btn:first-child > :is(.btn-group, .rex-button-group):not(:first-child) > :is(.btn, .rex-button) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .input-group-btn {
+        position: relative;
+        font-size: 0;
+        white-space: nowrap;
+
+        & > :is(.btn, .rex-button) {
+            position: relative;
+
+            & + :is(.btn, .rex-button) {
+                margin-left: -1px;
+            }
+
+            &:is(:hover, :focus, :active) {
+                z-index: 2;
+            }
+        }
+
+        &:first-child > :is(.btn, .rex-button, .btn-group, .rex-button-group) {
+            margin-right: -1px;
+        }
+
+        &:last-child > :is(.btn, .rex-button, .btn-group, .rex-button-group) {
+            z-index: 2;
+            margin-left: -1px;
+        }
+    }
+
+    /* the add-ons of narrow selects in toolbars keep their natural width */
+    .rex-truncate-dropdown .input-group > :is(.input-group-addon, .input-group-btn) {
+        width: auto;
+    }
+
+    /* a search field right after a select shares the select's border, e.g. in the toolbar of the media pool */
+    search .input-group > .form-control:first-child {
+        border-left: 0;
+    }
+}
