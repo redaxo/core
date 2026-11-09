@@ -16,9 +16,9 @@
 
         &[data-variant="edit"],
         &[data-variant="add"] {
-            --rex-section-color: var(--rex-color-success);
+            --rex-section-color: var(--rex-color-edit);
             --rex-section-header-text: var(--rex-color-on-success);
-            --rex-section-body-bg: var(--rex-color-success-subtle);
+            --rex-section-body-bg: var(--rex-color-edit-subtle);
             --rex-section-footer-bg: var(--rex-color-surface-muted);
         }
 

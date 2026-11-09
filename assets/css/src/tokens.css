@@ -57,6 +57,10 @@
         --rex-color-success-text: light-dark(#1e7a4a, #4cc787);
         --rex-color-success-subtle: light-dark(#e9f5ef, #1f3d3c);
 
+        /* edit and add sections: the success colors in light, muted in dark so that large green areas don't glare */
+        --rex-color-edit: light-dark(#1e7a4a, #164e37);
+        --rex-color-edit-subtle: light-dark(#e9f5ef, #192c2d);
+
         --rex-color-warning: light-dark(#cfb550, #78641e);
         --rex-color-warning-hover: light-dark(#c2a73c, #685619);
         --rex-color-on-warning: light-dark(#1b232c, #fff);
