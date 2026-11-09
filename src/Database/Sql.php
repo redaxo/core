@@ -52,6 +52,7 @@ class Sql implements Iterator
     final public const string MARIADB = 'MariaDB';
 
     final public const int ERROR_VIOLATE_UNIQUE_KEY = 1062;
+    final public const int ERROR_UNKNOWN_DATABASE = 1049;
     final public const string ERRNO_TABLE_OR_VIEW_DOESNT_EXIST = '42S02';
 
     /** Default SQL datetime format */

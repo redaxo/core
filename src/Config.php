@@ -255,8 +255,13 @@ final class Config
             // fallback to load config from the db
             self::loadFromDb();
         } catch (CouldNotConnectException $e) {
-            // rethrown first so that the errno is only asked for below when there is a connection to ask
-            throw $e;
+            // a database that does not exist yet has nothing to read either, and the setup has to boot to create it;
+            // caught first so that the errno is only asked for below when there is a connection to ask
+            if (Sql::ERROR_UNKNOWN_DATABASE !== $e->getErrorCode()) {
+                throw $e;
+            }
+
+            return;
         } catch (SqlException $e) {
             // as long as the schema is not set up there is nothing to read and consumers fall back to their
             // defaults; nothing is cached either, so the next request picks the config up once the table is there
