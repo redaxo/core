@@ -9,8 +9,9 @@ use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 
 return static function (PermissionsInput $input): void { ?>
+    <div <?= $input->attributes ?>>
     <?php if (null !== $input->error): ?>
-        <p class="rex-form-error"><?= Html::from($input->error) ?></p>
+        <p class="rex-field-error"><?= Html::from($input->error) ?></p>
     <?php endif ?>
     <?php foreach ($input->groups as $group): ?>
         <?php
@@ -32,4 +33,5 @@ return static function (PermissionsInput $input): void { ?>
         ?>
         <?= new FieldRow($widget, $group['label'], null === $allLabel ? null : $id)->render() ?>
     <?php endforeach ?>
+    </div>
 <?php };

@@ -2,6 +2,8 @@
 
 namespace Redaxo\Core\Content;
 
+use Collator;
+use Locale;
 use Override;
 use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Controller;
@@ -25,6 +27,7 @@ use function assert;
 use function count;
 use function Redaxo\Core\View\escape;
 use function sprintf;
+use function uasort;
 
 /**
  * Erweiterung eines Artikels um slicemanagement.
@@ -121,7 +124,7 @@ final class ArticleContentEditor extends ArticleContentBase
     private function getSliceHeading(string $moduleKey): string
     {
         $module = Module::getClass($moduleKey);
-        return null !== $module ? I18n::translate($module::name()) : $moduleKey;
+        return escape(null !== $module ? $module::name() : $moduleKey);
     }
 
     /** Returns the slice menu. */
@@ -163,8 +166,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 $item = [];
                 $item['label'] = I18n::msg('edit');
                 $item['url'] = $context->getUrl(['function' => 'edit']) . $fragment;
-                $item['attributes']['class'][] = 'btn-edit';
-                $item['attributes']['title'] = I18n::msg('edit');
+                $item['variant'] = 'success';
                 $menuEditAction = $item;
             }
 
@@ -172,8 +174,7 @@ final class ArticleContentEditor extends ArticleContentBase
             $item = [];
             $item['label'] = I18n::msg('delete');
             $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1] + CsrfToken::factory('structure_content_slice')->getUrlParams()) . $fragment;
-            $item['attributes']['class'][] = 'btn-delete';
-            $item['attributes']['title'] = I18n::msg('delete');
+            $item['variant'] = 'danger';
             $item['attributes']['data-confirm'] = I18n::msg('confirm_delete_block');
             $menuDeleteAction = $item;
 
@@ -183,8 +184,7 @@ final class ArticleContentEditor extends ArticleContentBase
                 $statusName = $sliceStatus ? 'online' : 'offline';
                 $item['label'] = I18n::msg('status_' . $statusName);
                 $item['url'] = $context->getUrl(['status' => $sliceStatus ? 0 : 1] + ArticleSliceStatusChange::getUrlParams());
-                $item['attributes']['class'][] = 'btn-default';
-                $item['attributes']['class'][] = 'rex-' . $statusName;
+                $item['attributes']['class'][] = 'rex-u-' . $statusName;
                 $menuStatusAction = $item;
             }
 
@@ -194,7 +194,6 @@ final class ArticleContentEditor extends ArticleContentBase
                 $item['url'] = $context->getUrl(
                     ['upd' => time(), 'direction' => SliceMoveDirection::Up->value] + ArticleSliceMove::getUrlParams(),
                 ) . $fragment;
-                $item['attributes']['class'][] = 'btn-move';
                 $item['attributes']['title'] = I18n::msg('move_slice_up');
                 $item['icon'] = 'up';
                 $menuMoveupAction = $item;
@@ -204,13 +203,12 @@ final class ArticleContentEditor extends ArticleContentBase
                 $item['url'] = $context->getUrl(
                     ['upd' => time(), 'direction' => SliceMoveDirection::Down->value] + ArticleSliceMove::getUrlParams(),
                 ) . $fragment;
-                $item['attributes']['class'][] = 'btn-move';
                 $item['attributes']['title'] = I18n::msg('move_slice_down');
                 $item['icon'] = 'down';
                 $menuMovedownAction = $item;
             }
         } else {
-            $headerRight .= sprintf('<div class="alert">%s %s</div>', I18n::msg('no_editing_rights'), $moduleName);
+            $headerRight .= sprintf('<div class="rex-alert">%s %s</div>', I18n::msg('no_editing_rights'), $moduleName);
         }
 
         // ----- EXTENSION POINT
@@ -327,12 +325,21 @@ final class ArticleContentEditor extends ArticleContentBase
 
             $category = $this->article->categoryId > 0 ? Category::get($this->article->categoryId) : null;
 
+            $modules = Module::getAll();
+            $names = [];
+            foreach ($modules as $key => $module) {
+                $names[$key] = $module::name();
+            }
+            $collator = new Collator(Locale::getDefault());
+            uasort($names, static fn (string $a, string $b): int => (int) $collator->compare($a, $b));
+
             $this->moduleSelect = [];
             foreach ($contentSections as $section) {
-                foreach (Module::getAll() as $key => $module) {
+                foreach ($names as $key => $name) {
+                    $module = $modules[$key];
                     if (Core::requireUser()->getComplexPerm('modules')->hasPerm($key)) {
                         if ((!$template || $template->isModuleAllowed($section, $module)) && $module::isAllowedInCategory($category)) {
-                            $this->moduleSelect[$section->id][] = ['name' => I18n::translate($module::name()), 'key' => $key];
+                            $this->moduleSelect[$section->id][] = ['name' => $name, 'key' => $key];
                         }
                     }
                 }
@@ -389,11 +396,11 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'content_section_id' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="rex-button" data-align="end" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'content_section_id' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('add_block'), 'save') . '>' . I18n::msg('add_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-variant="success" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('add_block'), 'save') . '>' . I18n::msg('add_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -417,13 +424,13 @@ final class ArticleContentEditor extends ArticleContentBase
         $fragment = new Fragment();
         $fragment->setVar('before', $msg, false);
         $fragment->setVar('class', 'add', false);
-        $fragment->setVar('title', I18n::msg('module') . ': ' . I18n::translate($module::name()), false);
+        $fragment->setVar('title', I18n::msg('module') . ': ' . escape($module::name()), false);
         $fragment->setVar('body', $panel, false);
         $fragment->setVar('footer', $sliceFooter, false);
         $sliceContent = $fragment->parse('core/page/section.php');
 
         $fragment = new Fragment();
-        $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-add']], false);
+        $fragment->setVar('attributes', ['class' => ['rex-slice']], false);
         $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'language' => $this->languageId, 'content_section_id' => $this->contentSectionId]) . '#slice-add-pos-' . $this->sliceAddPosition);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');
@@ -444,15 +451,15 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements = [];
 
         $n = [];
-        $n['field'] = '<a class="btn btn-abort" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'content_section_id' => $contentSectionId, 'language' => $this->languageId]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
+        $n['field'] = '<a class="rex-button" data-align="end" href="' . Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'content_section_id' => $contentSectionId, 'language' => $this->languageId]) . '#slice' . $sliceId . '">' . I18n::msg('form_abort') . '</a>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-save" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('save_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-variant="success" type="submit" name="btn_save" value="1"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('save_block') . '</button>';
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="btn btn-apply" type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-variant="success" data-rex-submit-shortcut type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();
@@ -483,7 +490,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $sliceContent = $fragment->parse('core/page/section.php');
 
         $fragment = new Fragment();
-        $fragment->setVar('attributes', ['class' => ['rex-slice', 'rex-slice-edit'], 'id' => 'slice' . $sliceId], false);
+        $fragment->setVar('attributes', ['class' => ['rex-slice'], 'id' => 'slice' . $sliceId], false);
         $fragment->setVar('formAction', Url::currentBackendPage(['article_id' => $this->articleId, 'slice_id' => $sliceId, 'content_section_id' => $contentSectionId, 'language' => $this->languageId, 'function' => 'edit']) . '#slice' . $sliceId);
         $fragment->setVar('content', $sliceContent, false);
         return $fragment->parse('core/structure/content/slice_list_item.php');

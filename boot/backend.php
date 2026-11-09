@@ -1,20 +1,18 @@
 <?php
 
 use Redaxo\Core\ApiFunction\ApiFunction;
-use Redaxo\Core\Backend\Accesskey;
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Content\Article;
 use Redaxo\Core\Content\ArticleRevision;
 use Redaxo\Core\Content\ArticleSliceHistory;
-use Redaxo\Core\Content\ContentHandler;
 use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Content\ExtensionPoint\ContentPageBeforeSlices;
 use Redaxo\Core\Content\ExtensionPoint\ContentPageHeader;
-use Redaxo\Core\Content\HistoryLogin;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\ExtensionPoint\Extension;
+use Redaxo\Core\ExtensionPoint\ExtensionLevel;
 use Redaxo\Core\ExtensionPoint\ExtensionPoint;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
@@ -25,9 +23,9 @@ use Redaxo\Core\Http\Exception\NotFoundHttpException;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Http\Session;
-use Redaxo\Core\Language\Language;
 use Redaxo\Core\Migration\WebRunner;
 use Redaxo\Core\Security\BackendLogin;
+use Redaxo\Core\Security\ContentSecurityPolicy;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Security\Login;
 use Redaxo\Core\Security\Permission;
@@ -35,7 +33,8 @@ use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Asset;
-use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Component\Dropdown;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
 
@@ -43,7 +42,9 @@ use function Redaxo\Core\View\escape;
 
 header('X-Robots-Tag: noindex, nofollow, noarchive');
 header('X-Frame-Options: SAMEORIGIN');
-header("Content-Security-Policy: frame-ancestors 'self'");
+// the base policy covers responses that end early (e.g. API functions); the page sends it again with what the page
+// and the extensions added, see below
+header('Content-Security-Policy: ' . ContentSecurityPolicy::backend()->toString());
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: no-referrer');
 
@@ -217,19 +218,25 @@ if (Core::getUser()) {
     }
 }
 
-Asset::addJsFile(Url::coreAssets('jquery.min.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('jquery-ui.custom.min.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('jquery-pjax.min.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('standard.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('clipboard-copy-element.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('js/mediapool.js'), [Asset::JS_IMMUTABLE => true]);
-
 Asset::setJsProperty('backend', true);
-Asset::setJsProperty('accesskeys', Accesskey::$enabled);
+
+$i18n = [
+    'overlay_close' => I18n::msg('overlay_close'),
+    'password_show' => I18n::msg('password_show'),
+    'picker_picked' => I18n::msg('picker_picked'),
+    'collection_added' => I18n::msg('collection_added'),
+    'collection_removed' => I18n::msg('collection_removed'),
+    'clipboard_copied' => I18n::msg('clipboard_copied'),
+    'passkey_failed' => I18n::msg('passkey_failed'),
+    'dialog_confirm' => I18n::msg('dialog_confirm'),
+    'dialog_cancel' => I18n::msg('dialog_cancel'),
+    'select_all' => I18n::msg('select_all'),
+    'select_none' => I18n::msg('select_none'),
+    'select_no_results' => I18n::msg('select_no_results'),
+    'select_search' => I18n::msg('select_search'),
+];
 
 if (Core::getUser()) {
-    Asset::addJsFile(Url::coreAssets('session-timeout.js'), [Asset::JS_IMMUTABLE => true]);
-
     $login = BackendLogin::requireCurrent();
     Asset::setJsProperty('session_keep_alive_url', Url::backendController(['page' => 'credits', 'rex-api-call' => 'user_session_status']));
     Asset::setJsProperty('session_logout_url', Url::backendController(['rex_logout' => 1] + CsrfToken::factory('backend_logout')->getUrlParams()));
@@ -243,7 +250,7 @@ if (Core::getUser()) {
     Asset::setJsProperty('session_warning_time', $sessionPolicy->warningTime);
     Asset::setJsProperty('session_server_time', time());
 
-    Asset::setJsProperty('i18n', [
+    $i18n += [
         'session_timeout_title' => I18n::msg('session_timeout_title'),
         'session_timeout_message_expand' => I18n::msg('session_timeout_message_expand'),
         'session_timeout_message_expired' => I18n::msg('session_timeout_message_expired'),
@@ -251,132 +258,14 @@ if (Core::getUser()) {
         'session_timeout_logout_label' => I18n::msg('session_timeout_logout_label'),
         'session_timeout_login_label' => I18n::msg('session_timeout_login_label'),
         'session_timeout_refresh_label' => I18n::msg('session_timeout_refresh_label'),
-    ]);
+    ];
 }
 
-Asset::addCssFile(Url::coreAssets('css/styles.css'));
-Asset::addCssFile(Url::coreAssets('css/bootstrap-select.min.css'));
-Asset::addJsFile(Url::coreAssets('js/bootstrap.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('js/bootstrap-select.min.js'), [Asset::JS_IMMUTABLE => true]);
-$bootstrapSelectLang = [
-    'de_de' => 'de_DE',
-    'en_gb' => 'en_US',
-][I18n::getLocale()] ?? 'en_US';
-Asset::addJsFile(Url::coreAssets('js/bootstrap-select-defaults-' . $bootstrapSelectLang . '.min.js'), [Asset::JS_IMMUTABLE => true]);
-Asset::addJsFile(Url::coreAssets('js/main.js'), [Asset::JS_IMMUTABLE => true]);
+Asset::setJsProperty('i18n', $i18n);
 
-Asset::addCssFile(Url::coreAssets('css/redaxo.css'));
-Asset::addJsFile(Url::coreAssets('js/redaxo.js'), [Asset::JS_IMMUTABLE => true]);
-
-if (Core::getUser()) {
-    Asset::addJsFile(Url::coreAssets('js/linkmap.js'), [Asset::JS_IMMUTABLE => true]);
-
-    if ('content' == Controller::getCurrentPagePart(1)) {
-        Asset::addJsFile(Url::coreAssets('js/content.js'), [Asset::JS_IMMUTABLE => true]);
-    }
-}
-
-if (Core::getConfig('article_history', false) && Core::getUser()?->hasPerm('history[article_rollback]')) {
-    Asset::addCssFile(Url::coreAssets('noUiSlider/nouislider.css'));
-    Asset::addJsFile(Url::coreAssets('noUiSlider/nouislider.js'), [Asset::JS_IMMUTABLE => true]);
-    Asset::addCssFile(Url::coreAssets('css/history.css'));
-    Asset::addJsFile(Url::coreAssets('js/history.js'), [Asset::JS_IMMUTABLE => true]);
-
-    $historyFunction = Request::request('rex_history_function', 'string');
-    $articleId = Request::request('history_article_id', 'int');
-    $languageId = Request::request('history_language_id', 'int');
-
-    if (in_array($historyFunction, ['snap', 'layer'], true)) {
-        $historyArticle = Article::get($articleId, $languageId);
-        $user = Core::requireUser();
-
-        if (
-            !$historyArticle instanceof Article
-            || !$user->getComplexPerm('language')->hasPerm($languageId)
-            || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->categoryId)
-            // restoring a snapshot replaces the live revision
-            || 'snap' === $historyFunction && !ContentHandler::hasRevisionPerm($user, ArticleRevision::LIVE)
-        ) {
-            Response::setStatus(Response::HTTP_FORBIDDEN);
-            Response::sendContent(I18n::msg('no_rights_to_this_function'), 'text/plain');
-            exit;
-        }
-    }
-
-    switch ($historyFunction) {
-        case 'snap':
-            if (!CsrfToken::factory('structure_history')->isValid()) {
-                Response::setStatus(Response::HTTP_FORBIDDEN);
-                Response::sendContent(I18n::msg('csrf_token_invalid'), 'text/plain');
-                exit;
-            }
-
-            $historyDate = Request::request('history_date', 'string');
-            ArticleSliceHistory::restoreSnapshot($historyDate, $articleId, $languageId);
-
-            // no break
-        case 'layer':
-            $versions = ArticleSliceHistory::getSnapshots($articleId, $languageId);
-
-            $select1 = [];
-            $select1[] = '<option value="0" selected="selected" data-revision="0">' . I18n::msg('structure_history_current_version') . '</option>';
-            if (true === Core::getConfig('article_work_version', false)) {
-                $select1[] = '<option value="1" data-revision="1">' . I18n::msg('version_workingversion') . '</option>';
-            }
-
-            $select2 = [];
-            $select2[] = '<option value="" selected="selected">' . I18n::msg('structure_history_current_version') . '</option>';
-            foreach ($versions as $version) {
-                $historyInfo = $version['history_date'];
-                if ('' != $version['history_user']) {
-                    $historyInfo = $version['history_date'] . ' [' . $version['history_user'] . ']';
-                }
-                $select2[] = '<option value="' . strtotime($version['history_date']) . '" data-history-date="' . escape($version['history_date']) . '">' . escape($historyInfo) . '</option>';
-            }
-
-            $content1select = '<select id="content-history-select-date-1" class="content-history-select" data-iframe="content-history-iframe-1" style="">' . implode('', $select1) . '</select>';
-            $content1iframe = '<iframe id="content-history-iframe-1" class="history-iframe"></iframe>';
-            $content2select = '<select id="content-history-select-date-2" class="content-history-select" data-iframe="content-history-iframe-2">' . implode('', $select2) . '</select>';
-            $content2iframe = '<iframe id="content-history-iframe-2" class="history-iframe"></iframe>';
-
-            // fragment holen und ausgeben
-            $fragment = new Fragment();
-            $fragment->setVar('title', I18n::msg('structure_history_overview_versions'));
-            $fragment->setVar('content1select', $content1select, false);
-            $fragment->setVar('content1iframe', $content1iframe, false);
-            $fragment->setVar('content2select', $content2select, false);
-            $fragment->setVar('content2iframe', $content2iframe, false);
-
-            echo $fragment->parse('core/structure/history/layer.php');
-            exit;
-    }
-
-    Extension::register(ContentPageHeader::class, static function (ContentPageHeader $ep): void {
-        if ('content/edit' == $ep->page) {
-            $articleLink = Url::article(Article::getCurrentId(), Language::getCurrentId());
-            if (str_starts_with($articleLink, 'http')) {
-                $user = Core::requireUser();
-                $userLogin = $user->login;
-                $historyValidTime = new DateTime();
-                $historyValidTime = $historyValidTime->modify('+10 Minutes')->format('YmdHis'); // 10 minutes valid key
-                $userHistorySession = HistoryLogin::createSessionKey($userLogin, $historyValidTime);
-                $articleLink = Url::article(Article::getCurrentId(), Language::getCurrentId(), [
-                    'rex_history_login' => $userLogin,
-                    'rex_history_session' => $userHistorySession,
-                    'rex_history_validtime' => $historyValidTime,
-                ]);
-            }
-
-            echo '<script nonce="' . Response::getNonce() . '">
-                    var history_article_id = ' . Article::getCurrentId() . ';
-                    var history_language_id = ' . Language::getCurrentId() . ';
-                    var history_content_section_id = ' . Request::request('content_section_id', 'int', 0) . ';
-                    var history_article_link = "' . escape($articleLink, 'js') . '";
-                    var history_csrf_token = "' . escape(CsrfToken::factory('structure_history')->getValue(), 'js') . '";
-                </script>';
-        }
-    });
-}
+Asset::addCssFile(Url::coreAssets('fonts/font-awesome/css/all.min.css'));
+Asset::addCssFile(Url::coreAssets('css/backend.css'));
+Asset::addJsFile(Url::coreAssets('js/backend.js'), [Asset::JS_IMMUTABLE => true, Asset::JS_MODULE => true]);
 
 if (Core::getConfig('article_work_version', false)) {
     Extension::register(ContentPageHeader::class, static function (ContentPageHeader $ep): void {
@@ -504,16 +393,13 @@ if (Core::getConfig('article_work_version', false)) {
 
         $toolbar = '';
 
-        $fragment = new Fragment();
-        $fragment->setVar('button_prefix', '<b>' . $currentRevision . '</b>', false);
-        $fragment->setVar('items', $items, false);
-        $fragment->setVar('toolbar', true);
-
-        if (!$user->hasPerm('version[live_version]')) {
-            $fragment->setVar('disabled', true);
-        }
-
-        $toolbar .= '<li class="dropdown">' . $fragment->parse('core/dropdowns/dropdown.php') . '</li>';
+        $toolbar .= '<li class="rex-dropdown">' . (string) new Dropdown(
+            $items,
+            prefix: Html::raw('<b>' . escape($currentRevision) . '</b>'),
+            disabled: !$user->hasPerm('version[live_version]'),
+            link: true,
+            wrapped: false,
+        )->render() . '</li>';
 
         if (!$user->hasPerm('version[live_version]')) {
             if ($revision > 0) {
@@ -532,10 +418,10 @@ if (Core::getConfig('article_work_version', false)) {
             }
         }
 
+        // the working version shows in the dark variant
         $inverse = ArticleRevision::WORK == $revision;
-        $cssClass = ArticleRevision::WORK == $revision ? 'rex-state-inprogress' : 'rex-state-live';
 
-        $return .= View::toolbar('<ul class="nav navbar-nav">' . $toolbar . '</ul>', null, $cssClass, $inverse);
+        $return .= View::toolbar('<ul class="rex-toolbar-nav" role="list">' . $toolbar . '</ul>', null, null, $inverse);
 
         return $return;
     });
@@ -606,10 +492,6 @@ if ('content' == Controller::getCurrentPagePart(1)) {
 // page variable validated
 Extension::dispatch(new ExtensionPoint('PAGE_CHECKED', $page, ['pages' => $pages], true));
 
-if (in_array($page, ['profile', 'login'], true)) {
-    Asset::addJsFile(Url::coreAssets('webauthn.js'), [Asset::JS_IMMUTABLE => true]);
-}
-
 if ($page) {
     // trigger api functions after PAGE_CHECKED, if page param is set
     // the api function is responsible for checking permissions.
@@ -623,4 +505,8 @@ Controller::includeCurrentPage();
 $CONTENT = ob_get_clean();
 
 // ----- inhalt ausgeben
+// the policy is read after the other OUTPUT_FILTER extensions, so they can still extend it
+Extension::register('OUTPUT_FILTER', static function (ExtensionPoint $ep): void {
+    Response::setHeader('Content-Security-Policy', ContentSecurityPolicy::backend()->toString());
+}, ExtensionLevel::Late);
 Response::sendPage($CONTENT);

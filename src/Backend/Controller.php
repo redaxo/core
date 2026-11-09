@@ -10,9 +10,9 @@ use Redaxo\Core\Exception\LogicException;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Context;
-use Redaxo\Core\Http\Request;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Mailer\MailArchive;
+use Redaxo\Core\Security\ContentSecurityPolicy;
 use Redaxo\Core\Security\User;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Markdown\Markdown;
@@ -146,8 +146,7 @@ final class Controller
     public static function appendLoggedInPages(): void
     {
         self::$pages['profile'] = new Page('profile', I18n::msg('profile'))
-            ->setPath(Path::core('pages/profile/index.php'))
-            ->setPjax();
+            ->setPath(Path::core('pages/profile/index.php'));
 
         self::$pages['credits'] = new Page('credits', I18n::msg('credits'))
             ->setPath(Path::core('pages/credits.php'));
@@ -175,13 +174,11 @@ final class Controller
             ->setPath(Path::core('pages/structure/index.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')
             ->setPrio(10)
-            ->setPjax()
             ->setIcon('rex-icon rex-icon-open-category')
         ;
         self::$pages['content'] = new MainPage('system', 'content', I18n::msg('content'))
             ->setPath(Path::core('pages/structure/content.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')
-            ->setPjax(false)
             ->setHidden()
             ->addSubpage(new Page('edit', I18n::msg('edit_mode'))
                 ->setSubPath(Path::core('pages/structure/content.edit.php'))
@@ -196,7 +193,6 @@ final class Controller
         self::$pages['linkmap'] = new MainPage('system', 'linkmap', I18n::msg('linkmap'))
             ->setPath(Path::core('pages/structure/linkmap.php'))
             ->setRequiredPermissions('structure/hasStructurePerm')
-            ->setPjax()
             ->setPopup(true)
             ->setHidden()
         ;
@@ -205,7 +201,6 @@ final class Controller
             ->setPath(Path::core('pages/system/index.php'))
             ->setRequiredPermissions('isAdmin')
             ->setPrio(100)
-            ->setPjax()
             ->setIcon('rex-icon rex-icon-system')
             ->addSubpage(new Page('settings', I18n::msg('main_preferences'))->setSubPath(Path::core('pages/system/settings.php')))
             ->addSubpage(new Page('lang', I18n::msg('languages'))->setSubPath(Path::core('pages/system/languages.php')))
@@ -225,10 +220,12 @@ final class Controller
         if (Core::getConfig('article_history', false)) {
             self::$pages['content']->addSubpage(new Page('history', '')
                 ->setRequiredPermissions('history[article_rollback]')
-                ->setIcon('fa fa-history')
-                ->setHref('#')
+                ->setSubPath(Path::core('pages/structure/content.history.php'))
+                ->setIcon('rex-icon rex-icon-history')
+                ->setPopup(true)
                 ->setItemAttr('left', 'true')
-                ->setLinkAttr('data-history-layer', 'open'),
+                ->setLinkAttr('title', I18n::msg('structure_history'))
+                ->setLinkAttr('aria-label', I18n::msg('structure_history')),
             );
             self::$pages['system']->addSubpage(new Page('history', I18n::msg('structure_history'))->setSubPath(Path::core('pages/system/history.php')));
         }
@@ -237,7 +234,6 @@ final class Controller
             ->setPath(Path::core('pages/user/index.php'))
             ->setRequiredPermissions('users[]')
             ->setPrio(50)
-            ->setPjax()
             ->setIcon('rex-icon rex-icon-user')
             ->addSubpage(
                 new Page('users', I18n::msg('users'))
@@ -254,9 +250,8 @@ final class Controller
             ->setPath(Path::core('pages/mediapool/index.php'))
             ->setRequiredPermissions('media/hasMediaPerm')
             ->setPrio(20)
-            ->setPjax()
             ->setIcon('rex-icon rex-icon-media')
-            ->setPopup('openMediaPool(); return false;')
+            ->setPopup(true)
             ->addSubpage(new Page('media', I18n::msg('pool_file_list'))->setSubPath(Path::core('pages/mediapool/media.php')))
             ->addSubpage(new Page('upload', I18n::msg('pool_file_insert'))->setSubPath(Path::core('pages/mediapool/upload.php')))
             ->addSubpage(new Page('structure', I18n::msg('pool_cat_list'))->setRequiredPermissions('media/hasAll')->setSubPath(Path::core('pages/mediapool/structure.php')))
@@ -355,12 +350,6 @@ final class Controller
     {
         $currentPage = self::requireCurrentPageObject();
 
-        if (Request::isPJAXRequest() && !Request::isPJAXContainer('#rex-js-page-container')) {
-            // non-core pjax containers should not have a layout.
-            // they render their whole response on their own
-            $currentPage->setHasLayout(false);
-        }
-
         Timer::measure('Layout: top.php', function () {
             require Path::core('pages/layout/top.php');
         });
@@ -400,6 +389,8 @@ final class Controller
         }
 
         [$toc, $content] = Markdown::factory()->parseWithToc(File::require($path), softLineBreaks: false, highlightPhp: true);
+        // docs of addons often show images of their repository, e.g. screenshots or badges
+        ContentSecurityPolicy::backend()->add('img-src', 'https:');
         $fragment = new Fragment();
         $fragment->setVar('content', $content, false);
         $fragment->setVar('toc', $toc, false);

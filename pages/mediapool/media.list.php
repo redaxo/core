@@ -23,14 +23,23 @@ use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Pager;
+use Redaxo\Core\View\Component\Button;
+use Redaxo\Core\View\Component\ButtonVariant;
+use Redaxo\Core\View\Component\Pagination;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableColumnType;
+use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
 
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
-assert(isset($openerInputField) && is_string($openerInputField));
+assert(isset($picker) && is_string($picker));
 assert(isset($argFields) && is_string($argFields));
 assert(isset($toolbar) && is_string($toolbar));
 assert(isset($rexFileCategoryName) && is_string($rexFileCategoryName));
@@ -45,7 +54,7 @@ if (!isset($error)) {
     $error = '';
 }
 
-/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
+/** @var array{types?: string, picker?: string, language?: int} $argUrl */
 $argUrl ??= [];
 
 $mediaMethod = Request::request('media_method', 'string');
@@ -133,12 +142,14 @@ if ($hasCategoryPerm && 'delete_selectedmedia' == $mediaMethod) {
     }
 }
 
+// the category to move the selected media to, labeled by the text in front of it
 $catsSel = new SelectInput(
     'rex_file_category',
     new MediaCategoryChoices(root: true)->choices(),
     (string) $rexFileCategory,
-    'rex_file_category',
-    attributes: new HtmlAttributes(['data-live-search' => 'true']),
+    'rex-mediapool-move-category',
+    search: true,
+    attributes: new HtmlAttributes(['aria-label' => I18n::rawMsg('pool_changecat_selectedmedia_prefix') . ' … ' . I18n::rawMsg('pool_changecat_selectedmedia_suffix')]),
 );
 
 if ($error) {
@@ -191,126 +202,83 @@ $pager = new Pager();
 
 $items = MediaHandler::getList($filter, [], $pager);
 
-$mediaFragment = new Fragment();
-$mediaFragment->setVar('pager', $pager);
-$mediaFragment->setVar('urlprovider', $context);
-
-$panel = $mediaFragment->parse('core/navigations/pagination.php');
+$panel = (string) new Pagination($pager, $context)->render();
 
 // deletefilelist und cat change
 $panel .= '
 <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data">
     <fieldset>
         ' . $csrf->getHiddenField() . '
-        <input type="hidden" id="media_method" name="media_method" value="" />
-        ' . $argFields . '
-
-        <table class="table table-striped table-hover">
-            <thead>
-            <tr>
-                <th class="rex-table-icon"><a class="rex-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media"></i></a></th>
-                <th class="rex-table-thumbnail">' . I18n::msg('pool_file_thumbnail') . '</th>
-                <th>' . I18n::msg('pool_file_info') . ' / ' . I18n::msg('pool_file_description') . '</th>
-                <th>' . I18n::msg('pool_last_update') . '</th>
-                <th class="rex-table-action" colspan="2">' . I18n::msg('pool_file_functions') . '</th>
-            </tr>
-            </thead>';
+        ' . $argFields;
 
 // ----- move, delete and get selected items
+$footer = '';
 if ($hasCategoryPerm) {
-    $addInput = '';
     $filecat = Sql::factory();
     $filecat->setQuery('SELECT * FROM rex_media_category ORDER BY name ASC LIMIT 1');
-
-    $e = [];
-    $e['label'] = '<label>' . I18n::msg('pool_select_all') . '</label>';
-    $e['field'] = '<input type="checkbox" name="checkie" value="0" onclick="setAllCheckBoxes(\'selectedmedia[]\',this)" />';
-    $e['class'] = 'rex-form-group-no-margin';
-    $fragment = new Fragment();
-    $fragment->setVar('elements', [$e], false);
-    $checkbox = $fragment->parse('core/form/checkbox.php');
 
     $field = '';
     if ($filecat->getRows() > 0) {
         $e = [];
         $e['field'] = $catsSel->render();
         $e['left'] = I18n::msg('pool_changecat_selectedmedia_prefix');
-        $e['right'] = '<button class="btn btn-update" type="submit" onclick="var needle=new getObj(\'media_method\');needle.obj.value=\'updatecat_selectedmedia\';">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
+        $e['right'] = '<button class="rex-button" data-variant="primary" type="submit" name="media_method" value="updatecat_selectedmedia">' . I18n::msg('pool_changecat_selectedmedia_suffix') . '</button>';
 
         $fragment = new Fragment();
         $fragment->setVar('elements', [$e], false);
         $field .= '<div class="rex-truncate-dropdown">' . $fragment->parse('core/form/input_group.php') . '</div>';
     }
 
-    $buttons = [];
-
-    $button = [];
-    $button['label'] = I18n::msg('pool_delete_selectedmedia');
-    $button['attributes']['class'][] = 'btn-delete';
-    $button['attributes']['type'][] = 'submit';
-    $button['attributes']['onclick'][] = 'if(confirm(\'' . I18n::msg('delete') . ' ?\')){var needle=new getObj(\'media_method\');needle.obj.value=\'delete_selectedmedia\';}else{return false;}';
-    $buttons[] = $button;
-
-    // $buttons = '<button class="btn btn-delete" type="submit" onclick="if(confirm(\'' . I18n::msg('delete') . ' ?\')){var needle=new getObj(\'media_method\');needle.obj.value=\'delete_selectedmedia\';}else{return false;}">' . I18n::msg('pool_delete_selectedmedia') . '</button>';
-    if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-        $button = [];
-        $button['label'] = I18n::msg('pool_get_selectedmedia');
-        $button['attributes']['class'][] = 'btn-apply';
-        $button['attributes']['type'][] = 'submit';
-        $button['attributes']['onclick'][] = 'selectMediaListArray(\'selectedmedia[]\');return false;';
-        $buttons[] = $button;
+    $buttons = [
+        new Button(I18n::rawMsg('pool_delete_selectedmedia'), variant: ButtonVariant::Danger, type: 'submit', attributes: new HtmlAttributes([
+            'data-confirm' => I18n::rawMsg('delete') . ' ?',
+            'name' => 'media_method',
+            'value' => 'delete_selectedmedia',
+        ])),
+    ];
+    if ('multiple' === $picker) {
+        $buttons[] = new Button(I18n::rawMsg('pool_get_selectedmedia'), variant: ButtonVariant::Success, attributes: new HtmlAttributes(['data-rex-pick-checked' => 'selectedmedia[]']));
     }
 
-    $actionButtons = '';
-    foreach ($buttons as $button) {
-        $fragment = new Fragment();
-        $fragment->setVar('buttons', [$button], false);
-        $actionButtons .= $fragment->parse('core/buttons/button.php');
-        $actionButtons .= ' ';
-    }
+    $actionButtons = implode(' ', array_map(static fn (Button $button): string => (string) $button->render(), $buttons));
 
-    $field = '<div class="row"><div class="col-sm-7">' . $field . '</div><div class="col-sm-5 text-right">' . $actionButtons . '</div>';
-
-    $e = [];
-    $e['label'] = '<label>' . I18n::msg('pool_selectedmedia') . '</label>';
-    $e['field'] = $field;
-    $e['class'] = 'rex-form-group-no-margin';
-    $fragment = new Fragment();
-    $fragment->setVar('elements', [$e], false);
-    $field = $fragment->parse('core/form/form.php');
-
-    $panel .= '
-                <tfoot class="rex-sticky-table-footer">
+    // the checkbox to select all sits in the column of the checkboxes of the rows, the actions for the selected media
+    // form a named group next to it
+    $footer = '
                 <tr>
-                    <td colspan="2">
-                        ' . $checkbox . '
+                    <td class="rex-table-icon">
+                        <input type="checkbox" id="rex-mediapool-select-all" data-rex-check-all="selectedmedia[]" />
                     </td>
-                    <td colspan="4">
-                        ' . $field . '
+                    <td colspan="5">
+                        <div class="rex-button-toolbar" data-spacing="wide">
+                            <label for="rex-mediapool-select-all">' . I18n::msg('pool_select_all') . '</label>
+                            <div class="rex-button-toolbar" role="group" aria-labelledby="rex-mediapool-selected">
+                                <strong id="rex-mediapool-selected">' . I18n::msg('pool_selectedmedia') . '</strong>
+                                ' . $field . '
+                                <div data-align="end">' . $actionButtons . '</div>
+                            </div>
+                        </div>
                     </td>
-                </tr>
-                </tfoot>
-                ';
+                </tr>';
 }
 
-$panel .= '<tbody>';
-
+$rows = [];
 foreach ($items as $media) {
     $alt = escape($media->title);
     $desc = '<p>' . escape(strip_tags((string) $media->getValue('description'))) . '</p>';
 
     if (!is_file(Path::media($media->fileName))) {
-        $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '"></i><span class="sr-only">' . $media->fileName . '</span>';
+        $thumbnail = '<i class="rex-mime rex-mime-error" title="' . I18n::msg('pool_file_does_not_exist') . '" role="img"></i><span class="rex-u-visually-hidden">' . $media->fileName . '</span>';
     } else {
         $fileExt = File::extension($media->fileName);
-        $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '"></i><span class="sr-only">' . $media->fileName . '</span>';
+        $thumbnail = '<i class="rex-mime rex-mime-' . escape($fileExt) . '" title="' . $alt . '" data-extension="' . $fileExt . '" role="img"></i><span class="rex-u-visually-hidden">' . $media->fileName . '</span>';
 
         if ('svg' === $fileExt) {
             // SVG is rendered by the browser directly, no image driver involved
-            $thumbnail = '<img class="thumbnail" src="' . Url::media($media->fileName) . '?buster=' . $media->getValue('updatedate') . '" width="80" height="80" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
+            $thumbnail = '<img class="rex-thumbnail" src="' . Url::media($media->fileName) . '?buster=' . $media->getValue('updatedate') . '" width="80" height="80" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
         } elseif (MediaManager::canPreview($fileExt)) {
             // a rasterised preview can be produced (image formats always, plus e.g. PDF when the driver supports it)
-            $thumbnail = '<img class="thumbnail" src="' . MediaManager::getUrl('rex_media_small', urlencode($media->fileName), $media->getValue('updatedate')) . '" width="100" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
+            $thumbnail = '<img class="rex-thumbnail" src="' . MediaManager::getUrl('rex_media_small', urlencode($media->fileName), $media->getValue('updatedate')) . '" width="100" alt="' . $alt . '" title="' . $alt . '" loading="lazy" />';
         }
     }
 
@@ -321,51 +289,58 @@ foreach ($items as $media) {
     }
 
     $openerLink = '';
-    if ('' != $openerInputField) {
-        $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $media->fileName . '\', \'' . escape($media->title, 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
-        if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-            $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $media->fileName . '\', this);return false;">' . I18n::msg('pool_file_get') . '</a>';
-        }
+    if ('' !== $picker) {
+        $openerLink = '<button ' . new HtmlAttributes([
+            'type' => 'button',
+            'class' => ['rex-button'],
+            'data-variant' => 'primary',
+            'data-size' => 'xs',
+            'data-effect' => 'multiple' === $picker ? 'flash' : null,
+            'data-rex-pick' => $media->fileName,
+            'data-rex-pick-label' => $media->title,
+        ])->toString() . '>' . I18n::msg('pool_file_get') . '</button>';
     }
 
     $ilink = Url::currentBackendPage(array_merge(['file_id' => $media->id, 'rex_file_category' => $rexFileCategory], $argUrl));
 
-    $addTd = '<td></td>';
-    // the search may list media from categories the user has no permission for
-    if ($hasCategoryPerm && $perm->hasCategoryPerm($media->categoryId)) {
-        $addTd = '<td><input type="checkbox" name="selectedmedia[]" value="' . $media->fileName . '" /></td>';
-    }
-
-    $panel .= '<tr>
-                    ' . $addTd . '
-                    <td class="rex-word-break" data-title="' . I18n::msg('pool_file_thumbnail') . '"><a href="' . $ilink . '">' . $thumbnail . '</a></td>
-                    <td class="rex-word-break" data-title="' . I18n::msg('pool_file_info') . '">
-                        <h3><a class="rex-link-expanded" href="' . $ilink . '">' . escape($media->title) . '</a></h3>
+    $rows[] = [
+        // the search may list media from categories the user has no permission for
+        'select' => $hasCategoryPerm && $perm->hasCategoryPerm($media->categoryId)
+            ? Html::raw('<input type="checkbox" name="selectedmedia[]" value="' . $media->fileName . '" aria-label="' . escape($media->fileName) . '" />')
+            : null,
+        'thumbnail' => Html::raw('<a href="' . $ilink . '">' . $thumbnail . '</a>'),
+        'info' => Html::raw('
+                        <h3><a class="rex-u-link-expanded" href="' . $ilink . '">' . escape($media->title) . '</a></h3>
                         ' . $desc . '
-                        <p>' . escape($media->fileName) . ' <span class="rex-filesize">' . Formatter::bytes($media->size) . '</span></p>
-                    </td>
-                    <td data-title="' . I18n::msg('pool_last_update') . '"><p class="rex-date">' . Formatter::intlDateTime($media->updateDate) . '</p><p class="rex-author">' . escape($media->updateUser) . '</p></td>
-                    <td class="rex-table-action"><a class="rex-link-expanded" href="' . $ilink . '">' . I18n::msg('edit') . '</a></td>
-                    <td class="rex-table-action">';
-
-    $panel .= Extension::dispatch(new MediaListFunctions($media, $openerLink));
-
-    $panel .= '</td>
-                </tr>';
+                        <p>' . escape($media->fileName) . ' <span class="rex-u-text-muted">' . Formatter::bytes($media->size) . '</span></p>
+                    '),
+        'updated' => Html::raw('<p>' . Formatter::intlDateTime($media->updateDate) . '</p><p class="rex-u-text-muted">' . escape($media->updateUser) . '</p>'),
+        'edit' => Html::raw('<a class="rex-u-link-expanded" href="' . $ilink . '">' . I18n::msg('edit') . '</a>'),
+        'functions' => Html::raw(Extension::dispatch(new MediaListFunctions($media, $openerLink))),
+    ];
 }
 
-// ----- no items found
 if (0 == $pager->getRowCount()) {
-    $panel .= '
-            <tr>
-                <td></td>
-                <td colspan="5">' . I18n::msg('pool_nomediafound') . '</td>
-            </tr>';
+    $rows[] = new TableRow([new TableCell(null), new TableCell(I18n::rawMsg('pool_nomediafound'), 5)]);
 }
+
+$wordBreak = new HtmlAttributes(['class' => ['rex-u-word-break']]);
+$panel .= (string) new Table(
+    [
+        TableColumn::forKey(Html::raw('<a class="rex-u-link-expanded" href="' . Url::backendController(array_merge(['page' => 'mediapool/upload'], $argUrl)) . '"' . Accesskey::attributes(I18n::msg('pool_file_insert'), 'add') . '><i class="rex-icon rex-icon-add-media" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_file_insert') . '</span></a>'), 'select', TableColumnType::Icon),
+        TableColumn::forKey(I18n::rawMsg('pool_file_thumbnail'), 'thumbnail', TableColumnType::Thumbnail, $wordBreak),
+        TableColumn::forKey(I18n::rawMsg('pool_file_info') . ' / ' . I18n::rawMsg('pool_file_description'), 'info', attributes: $wordBreak, title: I18n::rawMsg('pool_file_info')),
+        TableColumn::forKey(I18n::rawMsg('pool_last_update'), 'updated'),
+        TableColumn::forKey(I18n::rawMsg('pool_file_functions'), 'edit', TableColumnType::Action),
+        TableColumn::forKey(null, 'functions', TableColumnType::Action),
+    ],
+    $rows,
+    footer: Html::raw($footer),
+    stickyFooter: true,
+    attributes: new HtmlAttributes(['data-hover' => true]),
+)->render();
 
 $panel .= '
-                </tbody>
-        </table>
     </fieldset>
 </form>';
 

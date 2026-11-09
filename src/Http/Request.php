@@ -12,8 +12,6 @@ use function ini_parse_quantity;
 use function is_array;
 use function is_scalar;
 
-use const PHP_SAPI;
-
 /**
  * Class for getting the superglobals.
  *
@@ -188,30 +186,6 @@ final class Request
     public static function isXmlHttpRequest(): bool
     {
         return Core::getRequest()->isXmlHttpRequest();
-    }
-
-    /**
-     * Returns true if the request is a PJAX-Request.
-     *
-     * @see http://pjax.heroku.com/
-     */
-    public static function isPJAXRequest(): bool
-    {
-        if ('cli' === PHP_SAPI) {
-            return false;
-        }
-
-        return 'true' == Core::getRequest()->headers->get('X-Pjax');
-    }
-
-    /** Returns true when the current request is a PJAX-Request and the requested container matches the given $containerId. */
-    public static function isPJAXContainer(string $containerId): bool
-    {
-        if (!self::isPJAXRequest()) {
-            return false;
-        }
-
-        return $containerId === Core::getRequest()->headers->get('X-Pjax-Container');
     }
 
     /**

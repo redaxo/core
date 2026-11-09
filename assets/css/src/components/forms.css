@@ -1,0 +1,169 @@
+/*
+ Form elements (fieldset, legend, labels, checkboxes, range sliders), forms in section headers and the alignment of
+ buttons with the fields of a REDAXO form; the fields themselves are components/input.css and components/field.css
+ */
+
+@layer base {
+    fieldset {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    legend {
+        display: block;
+        width: 100%;
+        margin-bottom: 22px;
+        padding: 0 0 3px;
+        border: 0;
+        border-bottom: 1px solid var(--rex-color-border-strong);
+        color: var(--rex-color-text);
+        font-size: var(--rex-font-size-large);
+        font-weight: 700;
+        line-height: inherit;
+
+        .rex-slice-input & {
+            font-size: var(--rex-font-size);
+        }
+    }
+
+    label {
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 700;
+
+        &.required::after {
+            content: "*";
+            color: var(--rex-color-danger-text);
+        }
+    }
+
+    input:is([type="radio"], [type="checkbox"]) {
+        margin: 4px 0 0;
+        line-height: normal;
+
+        &:is([disabled], .disabled),
+        fieldset[disabled] & {
+            cursor: not-allowed;
+        }
+    }
+
+    input[type="file"] {
+        display: block;
+    }
+
+    select:is([multiple], [size]) {
+        height: auto;
+    }
+
+    /* track and thumb have a transparent border, which forced colors show in place of the dropped backgrounds */
+    input[type="range"] {
+        display: block;
+        width: 100%;
+        background: transparent;
+        -webkit-appearance: none;
+        appearance: none;
+
+        &:focus-visible {
+            /* stylelint-disable-next-line declaration-property-value-disallowed-list -- the thumb shows the focus */
+            outline: none;
+
+            /* separate rules, a browser drops a selector list with a pseudo-element it does not know */
+            &::-webkit-slider-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 2px;
+            }
+
+            &::-moz-range-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 2px;
+            }
+        }
+
+        &::-webkit-slider-runnable-track {
+            box-sizing: border-box;
+            width: 100%;
+            height: 7px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            background: var(--rex-color-border-input) padding-box;
+            cursor: pointer;
+        }
+
+        &::-webkit-slider-thumb {
+            box-sizing: border-box;
+            width: 16px;
+            height: 16px;
+            margin-top: -5.5px;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            background: var(--rex-color-accent);
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        &::-moz-range-track {
+            box-sizing: border-box;
+            width: 100%;
+            height: 7px;
+            border: 1px solid transparent;
+            border-radius: 3px;
+            background: var(--rex-color-border-input) padding-box;
+            cursor: pointer;
+        }
+
+        &::-moz-range-thumb {
+            box-sizing: border-box;
+            width: 16px;
+            height: 16px;
+            border: 1px solid transparent;
+            border-radius: 50%;
+            background: var(--rex-color-accent);
+            cursor: pointer;
+        }
+    }
+}
+
+@layer components {
+    /* forms in the options area of a section header */
+    .rex-section-options {
+        & .rex-field:last-child {
+            margin-bottom: 0;
+        }
+
+        & .rex-input-group > .rex-input {
+            min-width: 160px;
+        }
+    }
+
+    .rex-section > form {
+        margin-bottom: 0;
+    }
+}
+
+@layer utilities {
+    /* aligns buttons with the fields of a REDAXO form; the toolbar is moved 5px to the left */
+    @media (min-width: 992px) {
+        .rex-form-aligned {
+            margin-left: 185px;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .rex-form-aligned {
+            margin-left: 215px;
+        }
+    }
+
+    @media (min-width: 1400px) {
+        .rex-form-aligned {
+            margin-left: 305px;
+        }
+    }
+
+    :is(.table, .rex-table) + .rex-section-footer .rex-form-aligned {
+        margin-left: 0;
+    }
+}

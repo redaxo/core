@@ -24,7 +24,12 @@ use Redaxo\Core\MetaInfo\MetaForm;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridColumn;
+use Redaxo\Core\View\Component\GridColumnRule;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -32,7 +37,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use function Redaxo\Core\View\escape;
 
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
-assert(isset($openerInputField) && is_string($openerInputField));
+assert(isset($picker) && is_string($picker));
 assert(isset($argFields) && is_string($argFields));
 assert(isset($toolbar) && is_string($toolbar));
 /** @psalm-suppress RedundantCondition */
@@ -161,7 +166,7 @@ $fheight = $gf->getNullableIntValue('height') ?? 0;
 if ($fwidth > 0 && $fheight > 0) {
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_img_width') . ' / ' . I18n::msg('pool_img_height') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . $fwidth . 'px / ' . $fheight . 'px</p>';
+    $e['field'] = '<p class="rex-field-value">' . $fwidth . 'px / ' . $fheight . 'px</p>';
 
     $fragment = new Fragment();
     $fragment->setVar('elements', [$e], false);
@@ -172,7 +177,7 @@ if ($fwidth > 0 && $fheight > 0) {
 // image driver can actually rasterise here (images always, plus e.g. PDF with Imagick + Ghostscript)
 if ($isSvg || MediaManager::canPreview($fileExt)) {
     if (!is_file(Path::media($fname))) {
-        $sidebar = '<i class="rex-mime rex-mime-error"></i><span class="sr-only">' . $fname . '</span>';
+        $sidebar = '<i class="rex-mime rex-mime-error" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . $fname . '</span>';
     } else {
         if ($isSvg) {
             $rfwidth = min($fwidth, 200);
@@ -187,7 +192,7 @@ if ($isSvg || MediaManager::canPreview($fileExt)) {
 
         $sidebar = '
                 <a href="' . $imgMax . '">
-                    <img class="img-responsive" src="' . $imgn . '"' . $width . ' alt="' . escape($ftitle) . '" title="' . escape($ftitle) . '" />
+                    <img class="rex-u-img-fluid" src="' . $imgn . '"' . $width . ' alt="' . escape($ftitle) . '" title="' . escape($ftitle) . '" />
                 </a>';
     }
 }
@@ -202,11 +207,16 @@ if ('' != $success) {
 }
 
 $openerLink = '';
-if ('' != $openerInputField) {
-    $openerLink = '<a class="btn btn-xs btn-select" onclick="selectMedia(\'' . $encodedFname . '\', \'' . escape($gf->getStringValue('title'), 'js') . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
-    if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-        $openerLink = '<a class="btn btn-xs btn-select btn-highlight" onclick="selectMedialist(\'' . $encodedFname . '\'); return false;">' . I18n::msg('pool_file_get') . '</a>';
-    }
+if ('' !== $picker) {
+    $openerLink = '<button ' . new HtmlAttributes([
+        'type' => 'button',
+        'class' => ['rex-button'],
+        'data-variant' => 'primary',
+        'data-size' => 'xs',
+        'data-effect' => 'multiple' === $picker ? 'flash' : null,
+        'data-rex-pick' => $fname,
+        'data-rex-pick-label' => $gf->getStringValue('title'),
+    ])->toString() . '>' . I18n::msg('pool_file_get') . '</button>';
 
     $openerLink = ' | ' . $openerLink;
 }
@@ -221,14 +231,14 @@ if ($TPERM) {
         new MediaCategoryChoices(root: true)->choices(),
         (string) $rexFileCategory,
         'rex-mediapool-category',
-        attributes: new HtmlAttributes(['data-live-search' => 'true']),
+        search: true,
     );
 
     $formElements = [];
 
     $e = [];
     $e['label'] = '<label for="rex-mediapool-title">' . I18n::msg('pool_file_title') . '</label>';
-    $e['field'] = '<input class="form-control" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape($ftitle) . '" />';
+    $e['field'] = '<input class="rex-input" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape($ftitle) . '" />';
     $formElements[] = $e;
 
     $e = [];
@@ -250,22 +260,22 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_filename') . '</label>';
-    $e['field'] = '<p class="form-control-static rex-word-break"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a> <span class="rex-filesize">' . $ffileSize . '</span></p>';
+    $e['field'] = '<p class="rex-field-value rex-u-word-break"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a> <span class="rex-u-text-muted">' . $ffileSize . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
-    $e['label'] = '<label>' . I18n::msg('pool_file_exchange') . '</label>';
-    $e['field'] = '<input type="file" name="file_new" />';
+    $e['label'] = '<label for="rex-mediapool-file-new">' . I18n::msg('pool_file_exchange') . '</label>';
+    $e['field'] = '<input type="file" id="rex-mediapool-file-new" name="file_new" />';
     $formElements[] = $e;
 
     $fragment = new Fragment();
@@ -275,10 +285,10 @@ if ($TPERM) {
     $formElements = [];
 
     $e = [];
-    $e['field'] = '<button class="btn btn-apply rex-form-aligned" type="submit" value="' . I18n::msg('pool_file_update') . '" name="btn_update">' . I18n::msg('pool_file_update') . '</button>';
+    $e['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" data-rex-submit-shortcut type="submit" value="' . I18n::msg('pool_file_update') . '" name="btn_update">' . I18n::msg('pool_file_update') . '</button>';
     $formElements[] = $e;
     $e = [];
-    $e['field'] = '<button class="btn btn-delete" type="submit" value="' . I18n::msg('pool_file_delete') . '" name="btn_delete" data-confirm="' . I18n::msg('delete') . ' ?">' . I18n::msg('delete') . '</button>';
+    $e['field'] = '<button class="rex-button" data-variant="danger" type="submit" value="' . I18n::msg('pool_file_delete') . '" name="btn_delete" data-confirm="' . I18n::msg('delete') . ' ?">' . I18n::msg('delete') . '</button>';
     $formElements[] = $e;
 
     $fragment = new Fragment();
@@ -286,14 +296,14 @@ if ($TPERM) {
     $buttons = $fragment->parse('core/form/submit.php');
 
     if ('' != $sidebar) {
-        $fragment = new Fragment();
-        $fragment->setVar('content', [$panel, $sidebar], false);
-        $fragment->setVar('classes', ['col-sm-8', 'col-sm-4'], false);
-        $panel = $fragment->parse('core/page/grid.php');
+        $panel = (string) new Grid([
+            new GridColumn(Html::raw($panel), [new GridColumnRule(Breakpoint::Sm, width: 8)]),
+            new GridColumn(Html::raw($sidebar), [new GridColumnRule(Breakpoint::Sm, width: 4)]),
+        ])->render();
     }
 
     $body = '
-        <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data" data-pjax="false">
+        <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data">
             ' . $csrf->getHiddenField() . '
             <input type="hidden" name="file_id" value="' . $fileId . '" />
             ' . $argFields . '
@@ -325,27 +335,27 @@ if ($TPERM) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_file_title') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . escape($ftitle) . '</p>';
+    $e['field'] = '<p class="rex-field-value">' . escape($ftitle) . '</p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_file_category') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . escape($catname) . '</p>';
+    $e['field'] = '<p class="rex-field-value">' . escape($catname) . '</p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_filename') . '</label>';
-    $e['field'] = '<p class="form-control-static"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a>  <span class="rex-filesize">' . $ffileSize . '</span></p>';
+    $e['field'] = '<p class="rex-field-value"><a href="' . Url::media($encodedFname) . '">' . escape($fname) . '</a>  <span class="rex-u-text-muted">' . $ffileSize . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_last_update') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-author">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('updatedate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('updateuser')) . '</span></p>';
     $formElements[] = $e;
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_created') . '</label>';
-    $e['field'] = '<p class="form-control-static">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-author">' . escape($gf->getStringValue('createuser')) . '</span></p>';
+    $e['field'] = '<p class="rex-field-value">' . Formatter::intlDateTime($gf->getDateTimeValue('createdate')) . ' <span class="rex-u-text-muted">' . escape($gf->getStringValue('createuser')) . '</span></p>';
     $formElements[] = $e;
 
     $fragment = new Fragment();
@@ -353,10 +363,10 @@ if ($TPERM) {
     $panel .= $fragment->parse('core/form/form.php');
 
     if ('' != $sidebar) {
-        $fragment = new Fragment();
-        $fragment->setVar('content', [$panel, $sidebar], false);
-        $fragment->setVar('classes', ['col-sm-8', 'col-sm-4'], false);
-        $panel = $fragment->parse('core/page/grid.php');
+        $panel = (string) new Grid([
+            new GridColumn(Html::raw($panel), [new GridColumnRule(Breakpoint::Sm, width: 8)]),
+            new GridColumn(Html::raw($sidebar), [new GridColumnRule(Breakpoint::Sm, width: 4)]),
+        ])->render();
     }
 
     $fragment = new Fragment();

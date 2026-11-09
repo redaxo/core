@@ -2,13 +2,13 @@
 
 namespace Redaxo\Core\Form\Widget;
 
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\RendersView;
 
 /**
- * Picker for an ordered list of media via the media pool popup.
+ * Picker for an ordered list of media via the media pool overlay.
  *
- * The file names are submitted comma-separated by a hidden input. The element ids follow the `REX_MEDIALIST_*`
- * convention the media pool scripts rely on.
+ * The file names are submitted comma-separated by a hidden input.
  */
 final class MediaListInput implements Widget
 {
@@ -16,7 +16,6 @@ final class MediaListInput implements Widget
 
     public function __construct(
         public string $name,
-        /** Only `a-z`, `0-9`, `_` and `-`, as the media pool addresses the inputs by id. */
         public string $id,
         /** @var list<string> */
         public array $fileNames = [],
@@ -27,10 +26,11 @@ final class MediaListInput implements Widget
         /** Whether to show a preview of the selected medium. */
         public bool $preview = false,
         public bool $disabled = false,
+        public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 
     public function labelTarget(): string
     {
-        return 'REX_MEDIALIST_SELECT_' . $this->id;
+        return $this->id;
     }
 }

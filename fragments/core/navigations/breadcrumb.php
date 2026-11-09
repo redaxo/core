@@ -1,43 +1,43 @@
 <?php
 
+use Redaxo\Core\Util\Type;
+use Redaxo\Core\View\Component\Breadcrumb;
 use Redaxo\Core\View\Fragment;
-
-use function Redaxo\Core\View\escape;
+use Redaxo\Core\View\Html;
 
 /**
+ * Wrapper of the {@see Breadcrumb} component for callers of the fragment; titles are not escaped.
+ *
  * @var Fragment $this
  * @psalm-scope-this Fragment
  */
 
-/*
-    Vars
+/** @var list<array{title?: string, href?: string}> $items */
+$items = $this->getVar('items', []);
+$id = Type::string($this->getVar('id', ''));
 
-    "title" of items list will not be escaped, the caller is responsible todo so.
-*/
-
-// --------------------- List Items
-$listItems = [];
-
-if (isset($this->title) && '' != $this->title) {
-    $listItems[] = '<li class="rex-breadcrumb-title">' . $this->title . '</li>';
-}
-
-$items = $this->items;
-
-if (count($items) > 0) {
-    foreach ($items as $item) {
-        $listItem = '';
-
-        if (isset($item['title']) && '' != $item['title']) {
-            $listItem .= $item['title'];
-        }
-
-        if (isset($item['href']) && '' != $item['href']) {
-            $listItem = '<a class="rex-link-expanded" href="' . escape($item['href']) . '">' . $listItem . '</a>';
-        }
-
-        $listItems[] = '<li>' . $listItem . '</li>';
+// the variables of the fragment hold markup the caller vouches for
+$raw = function (string ...$names): Html {
+    $html = '';
+    foreach ($names as $name) {
+        $html .= Type::string($this->getVar($name, ''));
     }
+
+    /** @psalm-taint-escape html */
+    $html = $html;
+
+    return Html::raw($html);
+};
+
+$crumbs = [];
+foreach ($items as $item) {
+    /** @psalm-taint-escape html */
+    $title = $item['title'] ?? '';
+    $crumbs[] = ['title' => Html::raw($title), 'href' => $item['href'] ?? ''];
 }
 
-echo '<div' . ((isset($this->id) && '' != $this->id) ? ' id="' . $this->id . '"' : '') . ' class="rex-breadcrumb"><ol class="breadcrumb">' . implode('', $listItems) . '</ol></div>';
+echo new Breadcrumb(
+    $crumbs,
+    $raw('title'),
+    '' === $id ? null : $id,
+)->render();

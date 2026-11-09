@@ -1,0 +1,158 @@
+/*
+ Lists of entries (`.rex-list` of `.rex-list-item`), e.g. the categories and articles of the linkmap; the current entry
+ has `aria-current`. `.rex-list-suffix` adds info in brackets, `.rex-thumbnail` frames a preview image.
+ */
+
+@layer components {
+    .rex-list {
+        margin-bottom: 20px;
+        padding-left: 0;
+
+        .rex-section > & {
+            margin-bottom: 0;
+
+            & .rex-list-item {
+                border-width: 1px 0;
+                border-radius: 0;
+            }
+
+            &:first-child .rex-list-item:first-child {
+                border-top: 0;
+            }
+
+            &:last-child .rex-list-item:last-child {
+                border-bottom: 0;
+            }
+
+            /* nested list, e.g. the subcategories of the linkmap */
+            & .rex-list {
+                margin: 10px -15px -10px 0;
+
+                & > .rex-list-item {
+                    padding-left: 20px;
+
+                    &:first-child {
+                        border-top-width: 1px;
+                    }
+                }
+            }
+        }
+
+        .rex-section-header + & .rex-list-item:first-child {
+            border-top-width: 0;
+        }
+    }
+
+    .rex-list-item {
+        position: relative;
+        display: block;
+        margin-bottom: -1px;
+        padding: 10px 15px;
+        border: 1px solid var(--rex-color-border);
+        background-color: var(--rex-color-surface);
+
+        /* current category of the linkmap */
+        & > [aria-current]:not([aria-current="false"]) {
+            font-weight: 700;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        :is(a, button)& {
+            color: var(--rex-color-text);
+
+            &:hover,
+            &:focus {
+                background-color: var(--rex-color-surface-subtle);
+                color: var(--rex-color-text);
+                text-decoration: none;
+            }
+        }
+
+        &[aria-current]:not([aria-current="false"]) {
+            &,
+            &:hover,
+            &:focus {
+                z-index: 2;
+                border-color: var(--rex-color-accent);
+                background-color: var(--rex-color-accent);
+                color: var(--rex-color-on-accent);
+            }
+        }
+
+        &[aria-disabled="true"] {
+            &,
+            &:hover,
+            &:focus {
+                background-color: var(--rex-color-surface-muted);
+                color: var(--rex-color-text-muted);
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    /* the entries of the linkmap: links to categories, buttons picking an article */
+    .rex-linkmap-list .rex-list-item > :is(a, button) {
+        margin: 0;
+        border: 0;
+        background: none;
+        color: var(--rex-color-link);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        position: relative;
+        display: inline-block;
+        padding-left: 20px;
+
+        & > .rex-icon {
+            position: absolute;
+            top: 2px;
+            left: 0;
+        }
+    }
+
+    /* additional info after a list entry, in brackets */
+    .rex-list-suffix {
+        display: inline-block;
+        margin-left: 0.5em;
+        color: var(--rex-color-text-muted);
+        font-size: var(--rex-font-size-small);
+
+        a:hover & {
+            text-decoration: none;
+        }
+
+        &::before {
+            content: "[";
+        }
+
+        &::after {
+            content: "]";
+        }
+    }
+
+    .rex-thumbnail {
+        display: block;
+        margin-bottom: 22px;
+        padding: 4px;
+        border: 1px solid var(--rex-color-border);
+        border-radius: 0;
+        background-color: var(--rex-color-surface-subtle);
+        line-height: var(--rex-line-height);
+        transition: border 0.2s ease-in-out;
+
+        & > img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        a&:hover {
+            border-color: var(--rex-color-accent);
+        }
+    }
+}
