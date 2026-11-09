@@ -125,7 +125,7 @@ abstract class Module
 
     final public static function name(): string
     {
-        return self::attribute()->name;
+        return Translatable::text(self::attribute()->name);
     }
 
     /**

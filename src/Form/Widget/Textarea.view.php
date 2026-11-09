@@ -6,7 +6,7 @@ use function Redaxo\Core\View\escape;
 
 return static function (Textarea $textarea): void { ?>
     <textarea <?= $textarea->attributes->with([
-        'class' => ['form-control'],
+        'class' => ['rex-input'],
         'name' => $textarea->name,
         'id' => $textarea->id,
         'rows' => $textarea->rows,

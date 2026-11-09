@@ -28,6 +28,7 @@ use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Context;
 use Redaxo\Core\Http\Request;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\Security\ContentSecurityPolicy;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Type;
@@ -83,6 +84,18 @@ if ($ctype < 2 || !$template?->hasContentSection($ctype)) {
 $OOArt = Article::require($articleId, $languageId);
 // Top level articles have no category, default to 0 (root) — backend pages expect an int category id.
 $categoryId = $OOArt->categoryId ?? 0;
+
+// the previews of the history show the article in frames, which the page the history overlay opens on must allow when
+// the article lives on another domain (several domains)
+if (true === Core::getConfig('article_history', false) && preg_match('@^https?://[^/?#]+@i', Url::article($articleId, $languageId), $origin)) {
+    ContentSecurityPolicy::backend()->add('frame-src', $origin[0]);
+}
+
+// the history is a popup page of its own, without the editor around it
+if ('history' === Controller::getCurrentPagePart(2)) {
+    Controller::includeCurrentPageSubPath(compact('OOArt', 'articleId', 'languageId', 'categoryId'));
+    return;
+}
 
 // ----- Request Parameter
 $subpage = Controller::getCurrentPagePart(2);
@@ -328,7 +341,11 @@ if (
     $navigation = current($blocks);
     $contentNaviRight = $navigation['navigation'] ?? [];
 
-    $contentNaviRight[] = ['title' => '<a href="' . Url::article($articleId, $languageId) . '" onclick="window.open(this.href); return false;">' . I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link"></i></a>'];
+    $contentNaviRight[] = [
+        'title' => I18n::msg('article_show') . ' <i class="rex-icon rex-icon-external-link" aria-hidden="true"></i>',
+        'href' => Url::article($articleId, $languageId),
+        'linkAttr' => ['target' => '_blank', 'rel' => 'noopener'],
+    ];
 
     $fragment = new Fragment();
     $fragment->setVar('id', 'rex-js-structure-content-nav', false);
@@ -367,7 +384,7 @@ if (
 
     $contentMain .= Extension::dispatch(new ContentPageAfterSlices($OOArt, Controller::getCurrentPage(), $ctype, $function, $sliceId, $sliceRevision));
 
-    $contentMain = '<section id="rex-js-page-main-content" data-pjax-container="#rex-js-page-main-content">' . $contentMain . '</section>';
+    $contentMain = '<section id="rex-js-page-main-content">' . $contentMain . '</section>';
 
     // own scope, the sidebar must not overwrite the variables of this page
     $metaSidebar = Type::string((static fn (int $articleId, int $languageId, int $ctype): mixed => include Path::core('pages/structure/content.metainfo.php'))($articleId, $languageId, $ctype));

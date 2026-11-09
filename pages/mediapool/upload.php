@@ -17,10 +17,10 @@ use Redaxo\Core\View\View;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 assert(isset($PERMALL) && is_bool($PERMALL));
-assert(isset($openerInputField) && is_string($openerInputField));
+assert(isset($picker) && is_string($picker));
 assert(isset($rexFileCategory) && is_int($rexFileCategory));
 
-/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
+/** @var array{types?: string, picker?: string, language?: int} $argUrl */
 $argUrl ??= [];
 
 if (!$PERMALL && !Core::requireUser()->getComplexPerm('media')->hasCategoryPerm($rexFileCategory)) {
@@ -59,25 +59,10 @@ if ('add_file' == $mediaMethod) {
 
                 $media = MediaHandler::add($data, $meta->values(), types: '' === $types ? [] : explode(',', $types));
                 $info = I18n::msg('pool_file_added');
-                if (Request::post('saveandexit', 'boolean')) {
-                    if ('' != $openerInputField) {
-                        if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-                            $js = "selectMedialist('" . $media->fileName . "');";
-                            $js .= 'location.href = "' . Url::backendPage('mediapool', ['info' => $info, ...$argUrl]) . '";';
-                        } else {
-                            $js = "selectMedia('" . $media->fileName . "');";
-                        }
-                    }
+                // in picker mode "save and pick" hands the new medium to the overlay, see pages/mediapool/index.php
+                $picked = '' !== $picker && Request::post('saveandexit', 'boolean') ? ['picked' => $media->fileName] : [];
 
-                    echo '<script type="text/javascript" nonce="' . Response::getNonce() . '">';
-                    if (isset($js)) {
-                        echo $js;
-                    }
-                    echo '</script>';
-                    exit;
-                }
-
-                Response::sendRedirect(Url::backendPage('mediapool/media', ['info' => $info, ...$argUrl]));
+                Response::sendRedirect(Url::backendPage('mediapool/media', ['info' => $info, ...$argUrl, ...$picked]));
             } catch (UserMessageException $e) {
                 $warning = $e->getMessage();
             }

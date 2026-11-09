@@ -7,7 +7,16 @@ use Redaxo\Core\Mailer\MailArchive;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridLayoutSplit;
+use Redaxo\Core\View\Component\Table;
+use Redaxo\Core\View\Component\TableCell;
+use Redaxo\Core\View\Component\TableColumn;
+use Redaxo\Core\View\Component\TableRow;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 
 use function Redaxo\Core\View\escape;
@@ -31,18 +40,14 @@ if ('delete_archive' == $func) {
 $archiveFolder = MailArchive::folder();
 $archiveExists = is_dir($archiveFolder);
 
-// Two-column layout for Archive Information and Archive Maintenance
-echo '<div class="row">';
-
 // Archive Information Panel (left column)
-echo '<div class="col-md-6">';
 $content = '';
 
 // Archive Status Panel
 $formElements = [];
 $n = [];
 $n['label'] = '<label>' . I18n::msg('mailer_archive_path') . '</label>';
-$n['field'] = '<span style="word-break: break-all; font-family: monospace; font-size: 0.9em;">' . escape($archiveFolder) . '</span>';
+$n['field'] = '<code class="rex-u-word-break">' . escape($archiveFolder) . '</code>';
 $formElements[] = $n;
 
 if ($archiveExists) {
@@ -61,7 +66,7 @@ if ($archiveExists) {
 } else {
     $n = [];
     $n['label'] = '<label>' . I18n::msg('mailer_archive_status') . '</label>';
-    $n['field'] = '<span class="text-muted">' . I18n::msg('mailer_archive_empty') . '</span>';
+    $n['field'] = '<span class="rex-u-text-muted">' . I18n::msg('mailer_archive_empty') . '</span>';
     $formElements[] = $n;
 }
 
@@ -74,11 +79,9 @@ $fragment = new Fragment();
 $fragment->setVar('class', 'info', false);
 $fragment->setVar('title', I18n::msg('mailer_archive_info'), false);
 $fragment->setVar('body', $content, false);
-echo $fragment->parse('core/page/section.php');
-echo '</div>';
+$infoSection = $fragment->parse('core/page/section.php');
 
 // Archive Maintenance Panel (right column)
-echo '<div class="col-md-6">';
 $content = '';
 $content .= '<p>' . I18n::msg('mailer_archive_purge_info') . '</p>';
 
@@ -93,8 +96,8 @@ if ($archiveExists) {
     $content .= '<form method="post" action="' . Url::currentBackendPage() . '">';
     $content .= CsrfToken::factory('mailer-delete-archive')->getHiddenField();
     $content .= '<input type="hidden" name="func" value="delete_archive">';
-    $content .= '<button type="submit" class="btn btn-danger btn-sm" data-confirm="' . I18n::msg('mailer_archive_delete_confirm') . '">';
-    $content .= '<i class="rex-icon rex-icon-delete"></i> ' . I18n::msg('mailer_archive_delete');
+    $content .= '<button type="submit" class="rex-button" data-variant="danger" data-size="sm" data-confirm="' . I18n::msg('mailer_archive_delete_confirm') . '">';
+    $content .= '<i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('mailer_archive_delete');
     $content .= '</button>';
     $content .= '</form>';
 }
@@ -103,45 +106,32 @@ $fragment = new Fragment();
 $fragment->setVar('class', 'edit', false);
 $fragment->setVar('title', I18n::msg('mailer_archive_maintenance'), false);
 $fragment->setVar('body', $content, false);
-echo $fragment->parse('core/page/section.php');
-echo '</div>';
 
-// Close row
-echo '</div>';
+// Two-column layout for Archive Information and Archive Maintenance
+echo new Grid([Html::raw($infoSection), Html::raw($fragment->parse('core/page/section.php'))], layout: new GridLayoutSplit(Breakpoint::Md))->render();
 
 // Recent Archived Emails Panel
 if ($archiveExists) {
-    $content = '';
-    $content .= '<table class="table table-hover">';
-    $content .= '<thead>';
-    $content .= '<tr>';
-    $content .= '<th>' . I18n::msg('mailer_archive_date') . '</th>';
-    $content .= '<th>' . I18n::msg('mailer_archive_subject') . '</th>';
-    $content .= '<th>' . I18n::msg('mailer_archive_to') . '</th>';
-    $content .= '<th>' . I18n::msg('mailer_archive_size') . '</th>';
-    $content .= '</tr>';
-    $content .= '</thead>';
-    $content .= '<tbody>';
-
     $recentFiles = MailArchive::getRecentFiles(10);
 
-    if ($recentFiles) {
-        foreach ($recentFiles as $file) {
-            $emailData = MailArchive::parseHeaders($file);
-
-            $content .= '<tr>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_date') . '" class="rex-table-tabular-nums">' . Formatter::intlDateTime($emailData['mtime'], [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]) . '</td>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_subject') . '">' . escape($emailData['subject']) . '</td>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_to') . '">' . escape($emailData['recipient']) . '</td>';
-            $content .= '<td data-title="' . I18n::msg('mailer_archive_size') . '" class="rex-table-tabular-nums">' . Formatter::bytes($emailData['size']) . '</td>';
-            $content .= '</tr>';
-        }
-    } else {
-        $content .= '<tr><td colspan="4" class="text-muted text-center">' . I18n::msg('mailer_archive_no_files') . '</td></tr>';
+    $rows = [];
+    foreach ($recentFiles as $file) {
+        $mail = MailArchive::parseHeaders($file);
+        $rows[] = [
+            'date' => Formatter::intlDateTime($mail['mtime'], [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]),
+            'subject' => $mail['subject'],
+            'to' => $mail['recipient'],
+            'size' => Formatter::bytes($mail['size']),
+        ];
     }
 
-    $content .= '</tbody>';
-    $content .= '</table>';
+    $content = (string) new Table([
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_date'), 'date', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_subject'), 'subject'),
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_to'), 'to'),
+        TableColumn::forKey(I18n::rawMsg('mailer_archive_size'), 'size', attributes: new HtmlAttributes(['class' => ['rex-table-tabular-nums']])),
+    ], $rows ?: [new TableRow([new TableCell(I18n::rawMsg('mailer_archive_no_files'), 4, new HtmlAttributes(['class' => ['rex-u-text-muted', 'rex-u-align-center']]))])],
+        attributes: new HtmlAttributes(['data-hover' => true]))->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', I18n::msg('mailer_archive_recent_mails'), false);

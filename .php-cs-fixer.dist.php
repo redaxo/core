@@ -28,6 +28,8 @@ $finder = Finder::create()
 ;
 
 return Config::redaxo6()
+    // the error handler of REDAXO discards silenced errors, so a muted deprecation would never be reported
+    ->setRules(['error_suppression' => ['mute_deprecation_error' => false]])
     ->setFinder($finder)
     ->setCacheFile(__DIR__ . '/.tools/.cache/php-cs-fixer.cache')
 ;

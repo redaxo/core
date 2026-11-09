@@ -4,6 +4,7 @@ namespace Redaxo\Core\Form\Widget;
 
 use Redaxo\Core\Form\Field\Collection;
 use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\RendersView;
 
 /**
@@ -25,6 +26,7 @@ final class CollectionInput implements Widget
         /** @var positive-int|null */
         public ?int $max = null,
         public bool $disabled = false,
+        public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 
     public function labelTarget(): ?string

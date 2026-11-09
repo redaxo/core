@@ -19,7 +19,7 @@ final class UsageListTest extends TestCase
 
         self::assertFalse($usages->isEmpty());
         self::assertSame(
-            '<div class="rex-usage-list">'
+            '<div>'
             . '<p>Articles</p><ul>'
             . '<li><a href="index.php?page=content&amp;article_id=1">Foo &amp; Bar</a></li>'
             . '<li><a href="index.php?page=content&amp;article_id=2">Baz</a></li>'

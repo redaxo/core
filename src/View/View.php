@@ -23,6 +23,17 @@ use Redaxo\Core\MetaInfo\MetaForm;
 use Redaxo\Core\Security\CsrfToken;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
+use Redaxo\Core\View\Component\Breadcrumb;
+use Redaxo\Core\View\Component\Button;
+use Redaxo\Core\View\Component\ButtonGroup;
+use Redaxo\Core\View\Component\Dropdown;
+use Redaxo\Core\View\Component\Icon;
+use Redaxo\Core\View\Component\PageHeader;
+use Redaxo\Core\View\Component\Section;
+use Redaxo\Core\View\Component\SectionVariant;
+use Redaxo\Core\View\Component\Tabs;
+use Redaxo\Core\View\Component\TabsItem;
+use Redaxo\Core\View\Component\Toolbar;
 
 use function count;
 use function ini_get;
@@ -36,22 +47,13 @@ final class View
     /** Returns a toolbar. */
     public static function toolbar(string $content, ?string $brand = null, ?string $cssClass = null, bool $inverse = false): string
     {
-        $fragment = new Fragment();
-        $fragment->setVar('inverse', $inverse);
-        $fragment->setVar('cssClass', $cssClass);
-        $fragment->setVar('brand', $brand);
-        $fragment->setVar('content', $content, false);
-
-        return $fragment->parse('core/toolbar.php');
+        return (string) new Toolbar(Html::raw($content), Html::raw($brand ?? ''), $inverse, new HtmlAttributes(['class' => array_values(array_filter(explode(' ', $cssClass ?? '')))]))->render();
     }
 
     /** Returns a content block. */
     public static function content(string $content, string $title = ''): string
     {
-        $fragment = new Fragment();
-        $fragment->setVar('title', $title, false);
-        $fragment->setVar('body', $content, false);
-        return $fragment->parse('core/page/section.php');
+        return (string) new Section(Html::raw($title), Html::raw($content))->render();
     }
 
     /**
@@ -86,9 +88,7 @@ final class View
             }
 
             if (!empty($navigation)) {
-                $fragment = new Fragment();
-                $fragment->setVar('left', $navigation, false);
-                $subtitle = $fragment->parse('core/navigations/content.php');
+                $subtitle = (string) new Tabs(array_map(TabsItem::fromNavigation(...), array_values($navigation)))->render();
             } else {
                 $subtitle = '';
             }
@@ -98,12 +98,7 @@ final class View
 
         $title = Extension::dispatch(new ExtensionPoint('PAGE_TITLE', $head));
 
-        $fragment = new Fragment();
-        $fragment->setVar('heading', $title, false);
-        $fragment->setVar('subtitle', $subtitle, false);
-        $return = $fragment->parse('core/page/header.php');
-
-        return $return . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
+        return (string) new PageHeader(Html::raw($title), navigation: Html::raw($subtitle))->render() . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
     }
 
     /** Returns a language switch. */
@@ -120,20 +115,17 @@ final class View
         $items = [];
         foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
-                $icon = $id === $context->getParam('language') ? '<i class="rex-icon rex-icon-language-active"></i> ' : '<i class="rex-icon rex-icon-language"></i> ';
-                $item = [];
-                $item['href'] = $context->getUrl(['language' => $id]);
-                $item['title'] = $icon . I18n::translate($language->name);
-                if ($id === $context->getParam('language')) {
-                    $item['active'] = true;
-                }
-                $items[] = $item;
+                $active = $id === $context->getParam('language');
+                $items[] = new TabsItem(
+                    I18n::translate($language->name, false),
+                    $context->getUrl(['language' => $id]),
+                    $active,
+                    new Icon($active ? 'language-active' : 'language'),
+                );
             }
         }
-        $fragment = new Fragment();
-        $fragment->setVar('left', $items, false);
 
-        return $fragment->parse('core/navigations/content.php');
+        return (string) new Tabs($items)->render();
     }
 
     /** Returns a language switch. */
@@ -147,25 +139,21 @@ final class View
             return self::languageSwitchAsDropdown($context);
         }
 
-        $items = [];
+        $buttons = [];
         foreach (Language::getAll() as $id => $language) {
             if (Core::requireUser()->getComplexPerm('language')->hasPerm($id)) {
-                $icon = $language->isOnline() ? '<i class="rex-icon rex-icon-online"></i> ' : '<i class="rex-icon rex-icon-offline"></i> ';
-                $item = [];
-                $item['label'] = $icon . I18n::translate($language->name);
-                $item['url'] = $context->getUrl(['language' => $id]);
-                $item['attributes']['class'][] = 'btn-language';
-                $item['attributes']['title'] = I18n::translate($language->name);
-                if ($id === $context->getParam('language')) {
-                    $item['attributes']['class'][] = 'active';
-                }
-                $items[] = $item;
+                $buttons[] = new Button(
+                    I18n::translate($language->name, false),
+                    $context->getUrl(['language' => $id]),
+                    $language->isOnline() ? 'online' : 'offline',
+                    attributes: new HtmlAttributes([
+                        'aria-current' => $id === $context->getParam('language') ? 'page' : null,
+                    ]),
+                );
             }
         }
 
-        $fragment = new Fragment();
-        $fragment->setVar('buttons', $items, false);
-        return '<div class="rex-nav-btn rex-nav-language"><div class="btn-toolbar">' . $fragment->parse('core/buttons/button_group.php') . '</div></div>';
+        return '<div class="rex-button-toolbar">' . (string) new ButtonGroup($buttons)->render() . '</div>';
     }
 
     /** Returns a language switch. */
@@ -182,28 +170,24 @@ final class View
         foreach (Language::getAll() as $id => $language) {
             if ($user->getComplexPerm('language')->hasPerm($id)) {
                 $item = [];
-                $item['title'] = I18n::translate($language->name);
+                $item['title'] = I18n::translate($language->name, false);
                 $item['href'] = $context->getUrl(['language' => $id]);
                 if ($id === $context->getParam('language')) {
                     $item['active'] = true;
-                    $buttonLabel = I18n::translate($language->name);
+                    $buttonLabel = I18n::translate($language->name, false);
                 }
                 $items[] = $item;
             }
         }
 
-        $fragment = new Fragment();
-        $fragment->setVar('class', 'rex-language');
-        $fragment->setVar('button_prefix', I18n::msg('language'));
-        $fragment->setVar('button_label', $buttonLabel);
-        $fragment->setVar('header', I18n::msg('language_select'));
-        $fragment->setVar('items', $items, false);
-
-        if ($user->admin) {
-            $fragment->setVar('footer', '<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag"></i> ' . I18n::msg('languages_edit') . '</a>', false);
-        }
-
-        return $fragment->parse('core/dropdowns/dropdown.php');
+        return (string) new Dropdown(
+            $items,
+            label: $buttonLabel,
+            prefix: I18n::rawMsg('language'),
+            header: I18n::rawMsg('language_select'),
+            footer: $user->admin ? Html::raw('<a href="' . Url::backendPage('system/lang') . '"><i class="fa fa-flag" aria-hidden="true"></i> ' . I18n::msg('languages_edit') . '</a>') : '',
+            attributes: new HtmlAttributes(['class' => ['rex-language']]),
+        )->render();
     }
 
     /** @internal */
@@ -231,13 +215,13 @@ final class View
             }
         }
 
-        $title = '<a class="rex-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level"></i> ' . I18n::msg('root_level') . '</a>';
+        $title = '<a class="rex-u-link-expanded" href="' . Url::backendPage('structure', ['category_id' => 0, 'language' => $languageId]) . '"><i class="rex-icon rex-icon-structure-root-level" aria-hidden="true"></i> ' . I18n::msg('root_level') . '</a>';
 
-        $fragment = new Fragment();
-        $fragment->setVar('id', 'rex-js-structure-breadcrumb', false);
-        $fragment->setVar('title', $title, false);
-        $fragment->setVar('items', $navigation, false);
-        return $fragment->parse('core/navigations/breadcrumb.php');
+        return (string) new Breadcrumb(
+            array_map(static fn (array $item): array => ['title' => Html::raw($item['title']), 'href' => $item['href'] ?? ''], $navigation),
+            Html::raw($title),
+            'rex-js-structure-breadcrumb',
+        )->render();
     }
 
     /**
@@ -254,7 +238,8 @@ final class View
             new MediaCategoryChoices(root: true)->choices(),
             (string) $rexFileCategory,
             'rex-mediapool-category',
-            attributes: new HtmlAttributes(['onchange' => 'this.form.submit()', 'data-live-search' => 'true']),
+            search: true,
+            attributes: new HtmlAttributes(['data-rex-autosubmit' => true]),
         );
 
         $argFields = '';
@@ -263,14 +248,14 @@ final class View
             $argFields .= '<input type="hidden" name="types" value="' . escape($types) . '" />' . "\n";
         }
 
-        $openerInputField = Request::request('opener_input_field', 'string');
-        if ('' != $openerInputField) {
-            $argFields .= '<input type="hidden" name="opener_input_field" value="' . escape($openerInputField) . '" />' . "\n";
+        $picker = Request::request('picker', 'string');
+        if ('' !== $picker) {
+            $argFields .= '<input type="hidden" name="picker" value="' . escape($picker) . '" />' . "\n";
         }
 
         $addSubmit = '';
-        if ($closeForm && '' != $openerInputField) {
-            $addSubmit = '<button class="btn btn-save" type="submit" name="saveandexit" value="' . I18n::msg('pool_file_upload_get') . '"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('pool_file_upload_get') . '</button>';
+        if ($closeForm && '' !== $picker) {
+            $addSubmit = '<button class="rex-button" data-variant="success" type="submit" name="saveandexit" value="' . I18n::msg('pool_file_upload_get') . '"' . Accesskey::attributes(I18n::msg('save_and_close_tooltip'), 'save') . '>' . I18n::msg('pool_file_upload_get') . '</button>';
         }
 
         $panel = '';
@@ -284,7 +269,7 @@ final class View
 
         $e = [];
         $e['label'] = '<label for="rex-mediapool-title">' . I18n::msg('pool_file_title') . '</label>';
-        $e['field'] = '<input class="form-control" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape(Request::post('ftitle', 'string')) . '" maxlength="255" />';
+        $e['field'] = '<input class="rex-input" type="text" id="rex-mediapool-title" name="ftitle" value="' . escape(Request::post('ftitle', 'string')) . '" maxlength="255" />';
         $formElements[] = $e;
 
         $fragment = new Fragment();
@@ -299,8 +284,8 @@ final class View
             $e['label'] = '<label for="rex-mediapool-choose-file">' . I18n::msg('pool_file_file') . '</label>';
             $e['field'] = '<input id="rex-mediapool-choose-file" type="file" name="file_new" />';
             $e['after'] = '<h3>' . I18n::msg('phpini_settings') . '</h3>
-                        <dl class="dl-horizontal text-left">
-                        ' . ((0 == ini_get('file_uploads')) ? '<dt><span class="text-warning">' . I18n::msg('pool_upload') . '</span></dt><dd><span class="text-warning">' . I18n::msg('pool_upload_disabled') . '</span></dd>' : '') . '
+                        <dl class="rex-u-dl-horizontal rex-u-align-start">
+                        ' . ((0 == ini_get('file_uploads')) ? '<dt><span class="rex-u-text-warning">' . I18n::msg('pool_upload') . '</span></dt><dd><span class="rex-u-text-warning">' . I18n::msg('pool_upload_disabled') . '</span></dd>' : '') . '
                             <dt>' . I18n::msg('pool_max_uploadsize') . ':</dt><dd>' . Formatter::bytes(Request::getMaxUploadSize()) . '</dd>
                             <dt>' . I18n::msg('pool_max_uploadtime') . ':</dt><dd>' . ini_get('max_input_time') . 's</dd>
                         </dl>';
@@ -314,7 +299,7 @@ final class View
         $formElements = [];
 
         $e = [];
-        $e['field'] = '<button class="btn btn-save rex-form-aligned" type="submit" name="save" value="' . $buttonTitle . '"' . Accesskey::attributes($buttonTitle, 'save') . '>' . $buttonTitle . '</button>';
+        $e['field'] = '<button class="rex-button rex-form-aligned" data-variant="success" type="submit" name="save" value="' . $buttonTitle . '"' . Accesskey::attributes($buttonTitle, 'save') . '>' . $buttonTitle . '</button>';
         $formElements[] = $e;
 
         $e = [];
@@ -325,14 +310,9 @@ final class View
         $fragment->setVar('elements', $formElements, false);
         $buttons = $fragment->parse('core/form/submit.php');
 
-        $fragment = new Fragment();
-        $fragment->setVar('class', 'edit', false);
-        $fragment->setVar('title', $formTitle, false);
-        $fragment->setVar('body', $panel, false);
-        $fragment->setVar('buttons', $buttons, false);
-        $content = $fragment->parse('core/page/section.php');
+        $content = (string) new Section(Html::raw($formTitle), Html::raw($panel), footer: Html::raw($buttons), variant: SectionVariant::Edit)->render();
 
-        $s .= ' <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data" data-pjax="false">
+        $s .= ' <form action="' . Url::currentBackendPage() . '" method="post" enctype="multipart/form-data">
                 ' . CsrfToken::factory('mediapool')->getHiddenField() . '
                 <fieldset>
                     <input type="hidden" name="media_method" value="add_file" />

@@ -3,6 +3,7 @@
 namespace Redaxo\Core\Form\Widget;
 
 use Redaxo\Core\Translation\Translatable;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\RendersView;
 
 use function preg_replace;
@@ -29,6 +30,7 @@ final class ChoiceList implements Widget
         public bool $multiple = false,
         public bool $inline = false,
         public bool $disabled = false,
+        public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 
     public function optionId(int|string $value): ?string

@@ -8,7 +8,7 @@ use Redaxo\Core\View\Fragment;
  */
 
 ?>
-</div><!-- END .rex-page -->
+</div><!-- END .rex-app -->
 
 </body>
 </html>

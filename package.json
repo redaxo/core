@@ -3,23 +3,25 @@
     "type": "module",
     "dependencies": {
         "@fortawesome/fontawesome-free": "6.7.2",
-        "bootstrap-sass": "3.4.1",
-        "bootstrap-select": "1.13.18",
-        "jquery": "3.7.1",
-        "jquery-pjax": "2.0.1",
-        "nouislider": "15.8.1"
+        "@github/clipboard-copy-element": "1.3.2"
     },
     "devDependencies": {
+        "@axe-core/playwright": "4.14.0",
         "esbuild": "0.28.1",
         "mkdirp": "3.0.1",
         "pixelmatch": "8.0.0",
         "playwright": "1.64.1",
         "pngjs": "7.0.0",
-        "sass": "1.83.4"
+        "stylelint": "17.16.0"
     },
     "scripts": {
-        "build": "npm run build:css && npm run build:js",
-        "build:css": "sass --quiet-deps --silence-deprecation=import,global-builtin,color-functions,mixed-decls,abs-percent --load-path=node_modules --style=compressed --no-source-map assets/scss/master.scss:assets/css/styles.css assets/scss/redaxo.scss:assets/css/redaxo.css",
-        "build:js": "node .tools/build/copy-vendor-assets.mjs"
+        "build": "npm run build:backend-css && npm run build:backend-js && npm run build:js",
+        "build:backend-css": "esbuild assets/css/src/backend.css assets/css/src/bootstrap-compat.css --bundle --minify --target=chrome125,firefox128,safari18 --log-level=warning --outdir=assets/css",
+        "build:backend-js": "esbuild assets/js/src/backend.js --bundle --format=esm --target=chrome125,firefox128,safari18 --banner:js='/* Built from assets/js/src/ with `npm run build:backend-js`, do not edit. */' --log-level=warning --outfile=assets/js/backend.js",
+        "build:js": "node .tools/build/copy-vendor-assets.mjs",
+        "lint": "npm run lint:css && npm run check:contrast && npm run check:classes",
+        "lint:css": "stylelint \"assets/css/src/**/*.css\"",
+        "check:contrast": "node .tools/build/check-contrast.mjs",
+        "check:classes": "node .tools/build/check-classes.mjs"
     }
 }

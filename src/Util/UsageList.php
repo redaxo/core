@@ -40,6 +40,6 @@ final class UsageList
             $html .= '</ul>';
         }
 
-        return '<div class="rex-usage-list">' . $html . '</div>';
+        return '<div>' . $html . '</div>';
     }
 }

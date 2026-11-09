@@ -5,6 +5,7 @@ namespace Redaxo\Core\Content;
 use InvalidArgumentException;
 use Redaxo\Core\ClassDiscovery;
 use Redaxo\Core\Content\Exception\ArticleNotFoundException;
+use Redaxo\Core\Translation\Translatable;
 
 use function sprintf;
 
@@ -16,10 +17,14 @@ abstract class Template
     /** @var class-string<self>|null */
     private static ?string $defaultClass = null;
 
+    final public string $name {
+        get => Translatable::text($this->translatableName);
+    }
+
     final public function __construct(
         /** Unique key, used as DB reference in rex_article.template. */
         final public readonly string $key,
-        final public readonly string $name,
+        private readonly string|Translatable $translatableName,
     ) {}
 
     /**

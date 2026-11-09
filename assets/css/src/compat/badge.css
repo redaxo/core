@@ -1,0 +1,86 @@
+/*
+ Bootstrap 3 labels (`.label`, `.label-*`) and counters (`.badge`) for addons; the core uses `.rex-badge`
+ (components/badge.css)
+ */
+
+@layer bootstrap {
+    .label {
+        --label-bg: var(--rex-color-neutral);
+        --label-text: var(--rex-color-on-neutral);
+
+        display: inline;
+        padding: 0.2em 0.6em 0.3em;
+        border-radius: 0.25em;
+        background-color: var(--label-bg);
+        color: var(--label-text);
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+
+        &:empty {
+            display: none;
+        }
+
+        a&:is(:hover, :focus) {
+            color: var(--label-text);
+            text-decoration: none;
+            cursor: pointer;
+        }
+    }
+
+    .label-primary,
+    .label-info {
+        --label-bg: var(--rex-color-accent);
+        --label-text: var(--rex-color-on-accent);
+    }
+
+    .label-success {
+        --label-bg: var(--rex-color-success);
+        --label-text: var(--rex-color-on-success);
+    }
+
+    .label-warning {
+        --label-bg: var(--rex-color-warning);
+        --label-text: var(--rex-color-on-warning);
+    }
+
+    .label-danger {
+        --label-bg: var(--rex-color-danger);
+        --label-text: var(--rex-color-on-danger);
+    }
+
+    .badge {
+        display: inline-block;
+        min-width: 10px;
+        padding: 3px 7px;
+        border-radius: 10px;
+        background-color: var(--rex-color-neutral);
+        color: var(--rex-color-on-neutral);
+        font-size: var(--rex-font-size-small);
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+
+        &:empty {
+            display: none;
+        }
+
+        .list-group-item > & {
+            float: right;
+        }
+
+        .btn & {
+            position: relative;
+            top: 0;
+        }
+
+        :is(.btn-xs, .btn-group-xs > .btn) & {
+            padding: 1px 5px;
+        }
+    }
+}

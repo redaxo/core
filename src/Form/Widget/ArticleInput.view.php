@@ -12,32 +12,38 @@ use function Redaxo\Core\View\escape;
 
 return static function (ArticleInput $input): void {
     $article = null === $input->articleId ? null : Article::get($input->articleId);
-    $valueId = $input->id . '-value';
-
-    $params = '&opener_input_field_name=' . $input->id
-        . '&language=' . Language::getCurrentId()
-        . '&category_id=' . ($article->categoryId ?? $input->categoryId ?? Category::getCurrent()->id ?? 0);
-
     $allowed = !$input->disabled && Core::requireUser()->getComplexPerm('structure')->hasStructurePerm();
-    $open = sprintf('openLinkMap("%s", "%s"); return false;', escape($valueId, 'js'), escape($params, 'js'));
-    $delete = sprintf(
-        'document.getElementById("%s").value = ""; document.getElementById("%s").value = ""; return false;',
-        escape($valueId, 'js'),
-        escape($input->id, 'js'),
-    ) ?>
-    <div class="input-group">
-        <input <?= new HtmlAttributes([
-            'class' => ['form-control'],
+
+    $button = static fn (string $action, string $title, string $icon): string => '<button ' . new HtmlAttributes([
+        'type' => 'button',
+        'class' => ['rex-button'],
+        'data-variant' => 'field',
+        'data-rex-widget-action' => $action,
+        'title' => I18n::rawMsg($title),
+        'aria-label' => I18n::rawMsg($title),
+        'disabled' => !$allowed,
+    ])->toString() . '><i class="rex-icon ' . $icon . '" aria-hidden="true"></i></button>' ?>
+    <div <?= new HtmlAttributes([
+        'class' => ['rex-input-group'],
+        'data-rex-widget' => 'article',
+        'data-rex-widget-options' => json_encode([
+            'category' => $article->categoryId ?? $input->categoryId ?? Category::getCurrent()->id ?? 0,
+            'language' => Language::getCurrentId(),
+        ], JSON_THROW_ON_ERROR),
+    ]) ?>>
+        <input <?= $input->attributes->with([
+            'class' => ['rex-input'],
             'type' => 'text',
             'id' => $input->id,
             'value' => null === $article ? '' : $article->name . ' [' . $article->id . ']',
             'readonly' => true,
             'disabled' => $input->disabled,
+            'data-rex-widget-label' => true,
         ]) ?>>
-        <input type="hidden" name="<?= escape($input->name) ?>" id="<?= escape($valueId) ?>" value="<?= escape((string) $input->articleId) ?>">
-        <span class="input-group-btn">
-            <a href="#" <?= new HtmlAttributes(['class' => ['btn', 'btn-popup', 'rex-disabled' => !$allowed], 'onclick' => $allowed ? $open : 'return false;', 'title' => I18n::rawMsg('form_article_open')]) ?>><i class="rex-icon rex-icon-open-linkmap"></i></a>
-            <a href="#" <?= new HtmlAttributes(['class' => ['btn', 'btn-popup', 'rex-disabled' => !$allowed], 'onclick' => $allowed ? $delete : 'return false;', 'title' => I18n::rawMsg('form_article_delete')]) ?>><i class="rex-icon rex-icon-delete-link"></i></a>
+        <input type="hidden" name="<?= escape($input->name) ?>" value="<?= escape((string) $input->articleId) ?>" data-rex-widget-value>
+        <span class="rex-input-group-actions">
+            <?= $button('open', 'form_article_open', 'rex-icon-open-linkmap') ?>
+            <?= $button('remove', 'form_article_delete', 'rex-icon-delete-link') ?>
         </span>
     </div>
 <?php };

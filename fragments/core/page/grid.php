@@ -1,59 +1,63 @@
 <?php
 
+use Redaxo\Core\Exception\InvalidArgumentException;
+use Redaxo\Core\View\Component\Breakpoint;
+use Redaxo\Core\View\Component\Grid;
+use Redaxo\Core\View\Component\GridColumn;
+use Redaxo\Core\View\Component\GridColumnRule;
+use Redaxo\Core\View\Component\GridLayoutSplit;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
 
 /**
+ * Adapter of {@see Grid} for fragments, prefer the component.
+ *
+ * `content` holds the HTML of each column. `spans` the widths of each column as tokens `[bp:]tracks` (e.g.
+ * `['md:8', 'md:4 xl:6']`); without `spans` the columns share one row equally from `md` on. A single content is
+ * output without grid.
+ *
  * @var Fragment $this
  * @psalm-scope-this Fragment
  */
 ?>
 <?php
 
-/** @var array<int, string> $contents */
-$contents = is_string($this->content) ? [$this->content] : $this->content;
-$count = count($contents);
+/** @var string|array<array-key, string|null>|null $content */
+$content = $this->content ?? '';
+// the keys of the contents also select their spans
+$contents = array_map(strval(...), is_array($content) ? $content : [$content]);
 
-/** @var array<int, string> $classes */
-$classes = isset($this->classes) && (is_array($this->classes) && count($this->classes) == $count) ? $this->classes : [];
-
-switch ($count) {
-    case '4':
-        echo '<div class="row">';
-
-        foreach ($contents as $key => $content) {
-            echo '<div class="' . ($classes[$key] ?? 'col-sm-6 col-md-3') . '">' . $content . '</div>';
-        }
-
-        echo '</div>';
-
-        break;
-
-    case '3':
-        echo '<div class="row">';
-
-        foreach ($contents as $key => $content) {
-            echo '<div class="' . ($classes[$key] ?? 'col-md-4') . '">' . $content . '</div>';
-        }
-
-        echo '</div>';
-
-        break;
-
-    case '2':
-        echo '<div class="row">';
-
-        foreach ($contents as $key => $content) {
-            echo '<div class="' . ($classes[$key] ?? 'col-md-6') . '">' . $content . '</div>';
-        }
-
-        echo '</div>';
-
-        break;
-
-    default:
-        foreach ($contents as $content) {
-            echo $content;
-        }
-
-        break;
+if (isset($this->classes)) {
+    trigger_error('The variable "classes" of the fragment "core/page/grid.php" is no longer supported, use "spans" or the component ' . Grid::class . '.', E_USER_DEPRECATED);
 }
+
+if (1 === count($contents)) {
+    echo reset($contents);
+
+    return;
+}
+
+/** @var array<array-key, string>|null $spans */
+$spans = $this->spans ?? null;
+
+if (null === $spans) {
+    echo new Grid(array_values(array_map(Html::raw(...), $contents)), layout: new GridLayoutSplit(Breakpoint::Md))->render();
+
+    return;
+}
+
+$columns = [];
+foreach ($contents as $key => $html) {
+    $rules = [];
+    foreach (preg_split('/\s+/', trim($spans[$key] ?? ''), -1, PREG_SPLIT_NO_EMPTY) ?: [] as $token) {
+        if (!preg_match('/^(?:(sm|md|lg|xl):)?([1-9]|1[0-2])$/', $token, $match)) {
+            throw new InvalidArgumentException('Invalid span "' . $token . '" for the fragment "core/page/grid.php", expected e.g. "6" or "md:6".');
+        }
+        /** @var int<1, 12> $width */
+        $width = (int) $match[2];
+        $rules[] = new GridColumnRule(Breakpoint::from('' === $match[1] ? 'xs' : $match[1]), width: $width);
+    }
+    $columns[] = new GridColumn(Html::raw($html), $rules);
+}
+
+echo new Grid($columns)->render();

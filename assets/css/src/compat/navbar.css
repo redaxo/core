@@ -1,0 +1,263 @@
+/*
+ Bootstrap 3 navbars (`.navbar`) for addons; the core uses `.rex-toolbar` (components/toolbar.css)
+ */
+
+@layer bootstrap {
+    .navbar {
+        --navbar-bg: var(--rex-color-accent);
+        --navbar-border: var(--rex-color-accent);
+        --navbar-link: var(--rex-color-on-accent);
+        --navbar-link-hover: var(--rex-color-on-accent);
+        --navbar-active-bg: var(--rex-color-accent-hover);
+        --rex-color-focus: var(--navbar-link);
+
+        position: relative;
+        display: flow-root;
+        min-height: 50px;
+        margin-bottom: 22px;
+        border: 1px solid var(--navbar-border);
+        background-color: var(--navbar-bg);
+    }
+
+    .navbar-inverse,
+    .rex-state-inprogress {
+        --navbar-bg: var(--rex-color-inverse-bg);
+        --navbar-border: var(--rex-color-inverse-bg-strong);
+        --navbar-link: var(--rex-color-inverse-text);
+        --navbar-link-hover: var(--rex-color-inverse-link);
+        --navbar-active-bg: var(--rex-color-inverse-bg-strong);
+    }
+
+    .navbar > .container-fluid {
+        display: flow-root;
+        padding-right: 15px;
+        padding-left: 15px;
+
+        & > :is(.navbar-header, .navbar-collapse) {
+            margin-right: -15px;
+            margin-left: -15px;
+        }
+    }
+
+    .navbar-header {
+        position: relative;
+        display: flow-root;
+    }
+
+    .navbar-brand {
+        float: left;
+        height: 50px;
+        padding: 14px 15px;
+        color: var(--navbar-link);
+        font-size: var(--rex-font-size-large);
+        line-height: 22px;
+    }
+
+    .navbar-toggle {
+        position: relative;
+        float: right;
+        margin: 8px 15px 8px 0;
+        padding: 9px 10px;
+        border: 1px solid var(--navbar-link);
+        border-radius: 0;
+        background-color: transparent;
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--navbar-active-bg);
+        }
+
+        & .icon-bar {
+            display: block;
+            width: 22px;
+            height: 2px;
+            border-radius: 1px;
+            background-color: var(--navbar-link);
+
+            & + .icon-bar {
+                margin-top: 4px;
+            }
+        }
+    }
+
+    .navbar-collapse {
+        max-height: 340px;
+        padding-right: 15px;
+        padding-left: 15px;
+        overflow-x: visible;
+        border-top: 1px solid var(--navbar-border);
+
+        &.in {
+            overflow-y: auto;
+        }
+    }
+
+    .navbar-nav {
+        margin: 7.5px -15px;
+
+        & > li > a {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            color: var(--navbar-link);
+            line-height: 22px;
+
+            &:hover,
+            &:focus {
+                background-color: transparent;
+                color: var(--navbar-link-hover);
+            }
+        }
+
+        & > :is(.active, .open) > a {
+            &,
+            &:hover,
+            &:focus {
+                background-color: var(--navbar-active-bg);
+                color: var(--navbar-link-hover);
+            }
+        }
+
+        & > .disabled > a {
+            &,
+            &:hover,
+            &:focus {
+                background-color: transparent;
+                color: color-mix(in srgb, var(--navbar-link) 60%, var(--navbar-bg));
+            }
+        }
+
+        & > li > .dropdown-menu {
+            margin-top: 0;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .navbar-nav .open .dropdown-menu {
+            position: static;
+            float: none;
+            width: auto;
+            margin-top: 0;
+            border: 0;
+            background-color: transparent;
+            box-shadow: none;
+
+            & > li > a {
+                padding: 5px 15px 5px 25px;
+                color: var(--navbar-link);
+            }
+        }
+    }
+
+    @media (min-width: 992px) {
+        .navbar > .container-fluid {
+            & > :is(.navbar-header, .navbar-collapse) {
+                margin-right: 0;
+                margin-left: 0;
+            }
+
+            & .navbar-brand {
+                margin-left: -15px;
+            }
+        }
+
+        .navbar-header {
+            float: left;
+        }
+
+        .navbar-toggle {
+            display: none;
+        }
+
+        .navbar-collapse {
+            width: auto;
+            border-top: 0;
+
+            &.collapse {
+                display: block !important;
+                height: auto !important;
+                padding-bottom: 0;
+                overflow: visible !important;
+            }
+        }
+
+        .navbar-nav {
+            float: left;
+            margin: 0;
+
+            & > li {
+                float: left;
+
+                & > a {
+                    padding-top: 14px;
+                    padding-bottom: 14px;
+                }
+            }
+        }
+
+        .navbar-right {
+            float: right !important;
+            margin-right: -15px;
+        }
+
+        .rex-navbar-without-brand :is(.container-fluid, .navbar-collapse) {
+            padding-left: 0;
+        }
+    }
+
+    /* inline form, e.g. the search of the media pool */
+    .navbar-form {
+        margin: 7px -15px;
+        padding: 10px 15px;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--navbar-link) 10%, transparent), 0 1px 0 color-mix(in srgb, var(--navbar-link) 10%, transparent);
+
+        @media (min-width: 768px) {
+            & .form-group {
+                display: inline-block;
+                margin-bottom: 0;
+                vertical-align: middle;
+            }
+
+            & .form-control {
+                display: inline-block;
+                width: auto;
+                vertical-align: middle;
+            }
+
+            & .input-group {
+                display: inline-table;
+                vertical-align: middle;
+
+                & :is(.input-group-addon, .input-group-btn, .form-control) {
+                    width: auto;
+                }
+
+                & > .form-control {
+                    width: 100%;
+                }
+            }
+        }
+
+        @media (max-width: 991px) {
+            & .form-group {
+                margin-bottom: 5px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        @media (min-width: 992px) {
+            width: auto;
+            margin-right: 0;
+            margin-left: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border: 0;
+            box-shadow: none;
+        }
+    }
+}

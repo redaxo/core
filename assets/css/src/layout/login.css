@@ -1,0 +1,148 @@
+/*
+ Login page: dark box with the logo above it on a background picture (fragments core/login_branding.php and
+ core/login_background.php, which also sets the colors that match the picture). Same colors in both schemes.
+ */
+
+@layer components {
+    #rex-page-login {
+        --rex-color-focus: var(--rex-color-inverse-link);
+
+        background: var(--rex-color-inverse-bg-strong);
+
+        & .rex-branding {
+            margin: 10px 0 30px;
+        }
+
+        & .rex-redaxo-logo {
+            height: 24px;
+            vertical-align: middle;
+
+            & :is(.rex-redaxo-logo-r, .rex-redaxo-logo-e, .rex-redaxo-logo-d, .rex-redaxo-logo-cms) {
+                fill: var(--rex-color-brand);
+            }
+
+            & :is(.rex-redaxo-logo-a, .rex-redaxo-logo-x, .rex-redaxo-logo-o, .rex-redaxo-logo-reg) {
+                fill: var(--rex-color-logo-primary);
+            }
+        }
+
+        & .rex-js-login-message {
+            margin: 0 -25px;
+
+            & .rex-alert {
+                padding-left: 25px;
+            }
+        }
+
+        /* fields */
+
+        & .rex-field-control {
+            margin-left: 0;
+        }
+
+        & .rex-input {
+            border-color: var(--rex-color-inverse-bg);
+            background-color: var(--rex-color-inverse-text);
+            box-shadow: none;
+            color: var(--rex-color-inverse-bg-strong);
+            appearance: none;
+
+            &:last-child {
+                border-radius: 0 4px 4px 0;
+            }
+        }
+
+        & .rex-input-group-text {
+            border-color: var(--rex-color-inverse-bg);
+            background-color: var(--rex-color-inverse-text);
+            color: var(--rex-color-inverse-bg);
+        }
+
+        & .rex-input-group {
+            & :is(.rex-input, .rex-input-group-text) {
+                transition: background-color 100ms ease-out;
+            }
+
+            &:focus-within :is(.rex-input, .rex-input-group-text) {
+                background-color: var(--rex-color-inverse-text-strong);
+            }
+        }
+
+        /* buttons */
+
+        & .rex-button[data-variant="primary"] {
+            --rex-button-color: var(--rex-color-inverse-text-strong);
+            --rex-button-bg: var(--rex-color-inverse-bg-strong);
+            --rex-button-border: var(--rex-color-inverse-bg);
+            --rex-button-bg-hover: var(--rex-color-inverse-bg);
+            --rex-button-border-hover: var(--rex-color-inverse-bg);
+
+            transition: background-color 100ms ease-out;
+        }
+
+        /* password toggle next to the field */
+        & .rex-input-group-actions .rex-button {
+            --rex-button-color: var(--rex-color-inverse-bg-strong);
+            --rex-button-bg: var(--rex-color-inverse-text);
+            --rex-button-border: var(--rex-color-inverse-bg);
+            --rex-button-bg-hover: var(--rex-color-inverse-text-strong);
+            --rex-button-border-hover: var(--rex-color-inverse-bg);
+
+            border-left: none;
+            transition: background-color 100ms ease-out;
+        }
+
+        /* footer and background picture */
+
+        & .rex-global-footer {
+            position: fixed;
+            right: 0;
+            bottom: 5px;
+            left: 0;
+            padding-inline: 15px;
+            font-size: var(--rex-font-size-small);
+            text-align: center;
+        }
+
+        & .rex-nav-footer {
+            margin-inline: 5vw;
+
+            &,
+            & a {
+                color: var(--rex-color-inverse-text);
+            }
+        }
+
+        & .rex-background {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            align-items: center;
+            justify-content: center;
+            background-position: center;
+            background-size: cover;
+
+            & :is(source, img) {
+                min-height: 100%;
+                overflow: hidden;
+                object-fit: cover;
+            }
+        }
+
+        /* shown once the picture is loaded */
+        & .rex-background[data-state="process"] {
+            display: none;
+        }
+
+        & .rex-background[data-state="ready"] {
+            display: flex;
+            animation: rex-fade-in 800ms ease-out;
+        }
+    }
+
+    @keyframes rex-fade-in {
+        from {
+            opacity: 0;
+        }
+    }
+}
