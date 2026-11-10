@@ -176,7 +176,8 @@ abstract class Module
     /**
      * Creates the form editing the fields of this module.
      *
-     * @internal
+     * The form can be rendered (the slice editor of the backend does that) or only be used to convert and check
+     * values, see {@see self::submitValues()}.
      */
     final public function createForm(): Form
     {
@@ -194,6 +195,32 @@ abstract class Module
         /** @var array<array-key, mixed> $values */
         $values = Request::post(self::FORM_NAME, 'array', []);
 
+        return $this->submitValues($values, $form);
+    }
+
+    /**
+     * Submits raw field values into the given form, followed by {@see self::validate()} – the same checks as the slice
+     * editor of the backend, for values that do not come from its request (an API, an import, another editor).
+     *
+     * The values are keyed by property name and given as a field widget submits them (strings, lists of strings). On
+     * success the properties hold the converted values, otherwise the errors are in the form
+     * ({@see Form::getFieldErrors()}, {@see Form::getFormErrors()}) and the properties keep their previous values.
+     *
+     * ```php
+     * $module = Module::of($slice);
+     * $form = $module->createForm();
+     * if ($module->submitValues(['headline' => 'Hello'], $form)) {
+     *     $module->beforeSave();
+     *     $saved = ContentHandler::editSlice($slice->id, $module->storedValues());
+     *     Module::of($saved)->afterSave();
+     * }
+     * ```
+     *
+     * @param array<array-key, mixed> $values
+     * @return bool whether all values are valid
+     */
+    final public function submitValues(array $values, Form $form): bool
+    {
         if (!$form->submit($values)) {
             return false;
         }
@@ -206,6 +233,16 @@ abstract class Module
         }
 
         return true;
+    }
+
+    /**
+     * Returns the field values as they are stored, keyed by storage key – e.g. for {@see ContentHandler::editSlice()}.
+     *
+     * @return array<string, string|int|float|bool|array<array-key, mixed>|null>
+     */
+    final public function storedValues(): array
+    {
+        return FormSchema::of(static::class)->encode($this);
     }
 
     /**
