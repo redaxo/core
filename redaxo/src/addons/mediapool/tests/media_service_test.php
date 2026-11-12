@@ -193,6 +193,7 @@ final class rex_media_service_test extends TestCase
             self::assertSame($expected, $getFilenames($list));
 
             $pager = new rex_pager(2);
+            $pager->setCursor(0);
             $list = rex_media_service::getList(['term' => 'getlistorder'], $orderBy, $pager);
             self::assertSame(3, $pager->getRowCount());
             self::assertSame(array_slice($expected, 0, 2), $getFilenames($list));
