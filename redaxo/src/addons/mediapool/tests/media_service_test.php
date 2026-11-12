@@ -187,9 +187,15 @@ final class rex_media_service_test extends TestCase
         }
 
         try {
-            $list = rex_media_service::getList(['term' => 'getlistorder'], $orderBy);
+            $getFilenames = static fn (array $list) => array_map(static fn (rex_media $media) => $media->getFileName(), $list);
 
-            self::assertSame($expected, array_map(static fn (rex_media $media) => $media->getFileName(), $list));
+            $list = rex_media_service::getList(['term' => 'getlistorder'], $orderBy);
+            self::assertSame($expected, $getFilenames($list));
+
+            $pager = new rex_pager(2);
+            $list = rex_media_service::getList(['term' => 'getlistorder'], $orderBy, $pager);
+            self::assertSame(3, $pager->getRowCount());
+            self::assertSame(array_slice($expected, 0, 2), $getFilenames($list));
         } finally {
             rex_sql::factory()->setQuery(
                 'DELETE FROM ' . rex::getTable('media') . ' WHERE filename LIKE ?',
