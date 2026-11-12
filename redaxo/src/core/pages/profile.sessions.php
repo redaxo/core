@@ -13,13 +13,15 @@ $list = rex_list::factory('
 $list->addTableAttribute('class', 'table-hover');
 
 $list->addColumn('remove_session', '<i class="rex-icon rex-icon-delete"></i>', 0, ['<th class="rex-table-icon"></th>', '<td class="rex-table-icon">###VALUE###</td>']);
-$list->setColumnParams('remove_session', ['session_id' => '###session_id###', 'user_id' => $userId] + rex_api_user_remove_session::getUrlParams());
+$list->setColumnParams('remove_session', ['user_id' => $userId] + rex_api_user_remove_session::getUrlParams());
 $list->setColumnFormat('remove_session', 'custom', static function () use ($list) {
     // prevent removing the current session
     if ($list->getValue('session_id') === session_id()) {
         return '';
     }
-    return $list->getColumnLink('remove_session', $list->getValue('remove_session'));
+    return $list->getColumnLink('remove_session', $list->getValue('remove_session'), [
+        'session_hash' => rex_user_session::hashSessionId((string) $list->getValue('session_id')),
+    ]);
 });
 $list->addLinkAttribute('remove_session', 'data-confirm', rex_i18n::msg('confirm_remove_session'));
 
@@ -30,8 +32,9 @@ $list->setColumnLabel('useragent', rex_i18n::msg('user_agent'));
 $list->setColumnLabel('starttime', rex_i18n::msg('starttime'));
 $list->setColumnLabel('last_activity', rex_i18n::msg('last_activity'));
 
+// the session id itself must not be exposed, a short hash is enough to tell the sessions apart
 $list->setColumnFormat('session_id', 'custom', static function () use ($list) {
-    return rex_escape((string) $list->getValue('session_id'))
+    return substr(rex_user_session::hashSessionId((string) $list->getValue('session_id')), 0, 12)
         . ($list->getValue('cookie_key') ? ' <span class="label label-warning">' . rex_i18n::msg('stay_logged_in') . '</span>' : '');
 });
 $list->setColumnFormat('last_activity', 'custom', static function () use ($list) {

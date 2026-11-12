@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Version 2.18.6 – 25.10.2026
+---------------------------
+
+### Bugfixes
+
+* Gängige Audio- und Videoformate (`m4a`, `m4v`, `oga`, `ogg`, `ogv`, `wav`, `weba`, `webm`) in der MIME-Type-Allowlist ergänzt, vorher konnten sie nicht hochgeladen werden (@gharlan)
+* Die angezeigte maximale Upload-Größe und die Fehlermeldung bei zu großen Dateien berücksichtigen auch `post_max_size` (@gharlan)
+* Instance-Pool:
+  - Nach dem Hinzufügen eines Mediums lieferte `rex_media::get` im selben Request `null` für die neue Datei (z.B. in `MEDIA_ADDED`) (@gharlan)
+  - `rex_media::getRootMedia` wurde beim Löschen der Medienlisten-Caches nicht zurückgesetzt (@gharlan)
+  - Die Instance-Pools werden beim Löschen des Caches (`CACHE_DELETED`) geleert (@gharlan)
+
+
 Version 2.18.5 – 06.10.2026
 ---------------------------
 

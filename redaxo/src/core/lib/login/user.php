@@ -264,6 +264,7 @@ class rex_user
         $user = static::getInstance($key);
 
         if (!$user) {
+            static::baseClearInstance($key);
             return;
         }
 

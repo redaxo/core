@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.10.5 – 25.10.2026
+---------------------------
+
+### Bugfixes
+
+* Import: Die angezeigte maximale Upload-Größe berücksichtigt auch `post_max_size` (@gharlan)
+
+
 Version 2.10.4 – 06.10.2026
 ---------------------------
 

@@ -124,6 +124,37 @@ final class rex_media_service_test extends TestCase
         self::assertSame([], glob(self::getTempPath() . '/*') ?: []);
     }
 
+    public function testAddMediaClearsInstancePool(): void
+    {
+        $srcFile = self::getPath('source.txt');
+        rex_file::put($srcFile, 'test');
+
+        $filename = rex_mediapool::filename('rex_media_service_test.txt');
+
+        // populate the instance pools, including a cached null for the not yet existing media
+        $media = rex_media::get($filename);
+        self::assertNull($media);
+        $rootMedia = rex_media::getRootMedia();
+
+        $result = rex_media_service::addMedia([
+            'category_id' => 0,
+            'title' => 'test',
+            'file' => ['name' => $filename, 'path' => $srcFile],
+        ], false);
+
+        try {
+            self::assertSame($filename, $result['filename']);
+            self::assertSame($filename, rex_media::get($filename)?->getFileName());
+
+            $rootMediaNames = array_map(static fn (rex_media $media) => $media->getFileName(), rex_media::getRootMedia());
+            self::assertCount(count($rootMedia) + 1, $rootMediaNames);
+            self::assertContains($filename, $rootMediaNames);
+        } finally {
+            rex_media::clearInstance($filename);
+            rex_media_service::deleteMedia($filename);
+        }
+    }
+
     /**
      * @param list<array{string, 'ASC'|'DESC'}> $orderBy
      * @param list<string> $expected

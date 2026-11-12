@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 3.8.3 – 25.10.2026
+--------------------------
+
+### Bugfixes
+
+* Customizer: Bei erneutem `rex:ready` wurden CodeMirror-Editoren mehrfach erzeugt, und beim Wechsel zwischen Dark und Light Mode wurde nur ein Editor umgeschaltet (@gharlan)
+
+
 Version 3.8.2 – 31.07.2026
 --------------------------
 

@@ -37,6 +37,7 @@ class rex_api_content_move_slice extends rex_api_function
             !$user->getComplexPerm('clang')->hasPerm($clang)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($ooArt->getCategoryId())
             || !$user->getComplexPerm('modules')->hasPerm($moduleId)
+            || !rex_content_service::hasRevisionPerm($user, (int) $CM->getValue(rex::getTablePrefix() . 'article_slice.revision'))
         ) {
             throw new rex_api_exception(rex_i18n::msg('no_rights_to_this_function'));
         }
