@@ -74,17 +74,17 @@ final class rex_article_slice_history_test extends TestCase
         self::assertSame([$first], array_map(static fn (array $row): int => (int) $row['slice_id'], $rows));
     }
 
-    private function addSlice(int $priority = 1, int $ctypeId = 1, int $status = 1): int
+    private function addSlice(int $priority = 1): int
     {
         return (int) rex_sql::factory()
             ->setTable(rex::getTable('article_slice'))
             ->setValues([
                 'article_id' => $this->articleId,
                 'clang_id' => 1,
-                'ctype_id' => $ctypeId,
+                'ctype_id' => 1,
                 'module_id' => 1,
                 'priority' => $priority,
-                'status' => $status,
+                'status' => 1,
                 'revision' => 0,
             ])
             ->addGlobalCreateFields()
