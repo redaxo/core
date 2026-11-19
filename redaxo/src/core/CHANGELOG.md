@@ -1,6 +1,20 @@
 Changelog
 =========
 
+Version 5.21.6 – 25.10.2026
+---------------------------
+
+### Security
+
+* Session-Übersicht (Profil und Benutzerverwaltung): Die Session-IDs wurden im Klartext ausgegeben und beim Entfernen einer Session als URL-Parameter übertragen; nun wird nur noch ein gekürzter Hash angezeigt und verwendet (gemeldet von @skerbis) (@gharlan)
+
+### Bugfixes
+
+* Überschreitet ein Request `post_max_size`, verwirft PHP sämtliche POST-Daten und Uploads; das Backend zeigt nun eine Fehlermeldung, statt das Formular kommentarlos neu zu laden (@gharlan)
+* `rex_user::clearInstance` konnte im Instance-Pool gecachte `null`-Einträge nicht entfernen (@gharlan)
+* Vendor-Updates (u.a. `enshrined/svg-sanitize` 1.1 mit gehärteter SVG-Bereinigung) (@gharlan)
+
+
 Version 5.21.5 – 06.10.2026
 ---------------------------
 

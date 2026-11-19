@@ -47,6 +47,54 @@ final class rex_article_slice_history_test extends TestCase
         rex_article_cache::delete($this->articleId);
     }
 
+    public function testGetSlicesQuery(): void
+    {
+        $first = $this->addSlice(1);
+        $this->addSlice(2, status: 0);
+        $third = $this->addSlice(3);
+
+        rex_article_slice_history::makeSnapshot($this->articleId, 1, 'slice_update');
+        $snapshot = rex_type::array(rex_article_slice_history::getSnapshots($this->articleId, 1)[0]);
+        $historyDate = rex_type::string($snapshot['history_date']);
+
+        $query = rex_article_slice_history::getSlicesQuery($historyDate, $this->articleId, 1);
+
+        $slices = [];
+        foreach (rex_sql::factory()->setQuery($query) as $row) {
+            $slices[] = rex_article_slice::fromSql($row);
+        }
+
+        // original slice ids instead of the ids of the history records, without the offline slice
+        self::assertSame([$first, $third], array_map(static fn (rex_article_slice $slice) => $slice->getId(), $slices));
+    }
+
+    public function testMakeSnapshotKeepsTheFirstStateWithinTheSameSecond(): void
+    {
+        $first = $this->addSlice();
+        $table = rex_article_slice_history::getTable();
+
+        do {
+            rex_sql::factory()->setQuery('DELETE FROM ' . $table . ' WHERE article_id = ?', [$this->articleId]);
+            rex_sql::factory()->setQuery(
+                'DELETE FROM ' . rex::getTable('article_slice') . ' WHERE article_id = ? AND id <> ?',
+                [$this->articleId, $first],
+            );
+
+            $second = time();
+            rex_article_slice_history::makeSnapshot($this->articleId, 1, 'slice_add');
+            $this->addSlice(2);
+            rex_article_slice_history::makeSnapshot($this->articleId, 1, 'slice_add');
+        } while (time() !== $second);
+
+        $rows = rex_sql::factory()->getArray(
+            'SELECT slice_id FROM ' . $table . ' WHERE article_id = ?',
+            [$this->articleId],
+        );
+
+        self::assertCount(1, rex_article_slice_history::getSnapshots($this->articleId, 1));
+        self::assertSame([$first], array_map(static fn (array $row): int => (int) $row['slice_id'], $rows));
+    }
+
     public function testRestoreSnapshotRegistersArtContentUpdated(): void
     {
         $this->addSlice();
@@ -77,14 +125,14 @@ final class rex_article_slice_history_test extends TestCase
         self::assertSame($this->articleId, $events[0]->getArticle()->getId());
     }
 
-    private function addSlice(int $priority = 1, int $ctypeId = 1, int $status = 1): int
+    private function addSlice(int $priority = 1, int $status = 1): int
     {
         return (int) rex_sql::factory()
             ->setTable(rex::getTable('article_slice'))
             ->setValues([
                 'article_id' => $this->articleId,
                 'clang_id' => 1,
-                'ctype_id' => $ctypeId,
+                'ctype_id' => 1,
                 'module_id' => 1,
                 'priority' => $priority,
                 'status' => $status,

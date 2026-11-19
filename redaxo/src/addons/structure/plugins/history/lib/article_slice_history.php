@@ -29,6 +29,20 @@ class rex_article_slice_history
     {
         self::checkTables();
 
+        $historyDate = date(rex_sql::FORMAT_DATETIME);
+
+        // Snapshots are identified by their date in seconds, so the first snapshot with rows in a second is kept
+        // instead of mixing in later states (a snapshot of an article without slices has no rows and doesn't count).
+        $sql = rex_sql::factory();
+        $existing = $sql->getArray(
+            'select 1 from ' . $sql->escapeIdentifier(self::getTable()) . '
+                where article_id=? and clang_id=? and revision=? and history_date=? limit 1',
+            [$articleId, $clangId, 0, $historyDate],
+        );
+        if ($existing) {
+            return;
+        }
+
         $slices = rex_sql::factory()->getArray(
             'select * from ' . rex::getTable('article_slice') . ' where article_id=? and clang_id=? and revision=?',
             [
@@ -37,8 +51,6 @@ class rex_article_slice_history
                 0,
             ],
         );
-
-        $historyDate = date(rex_sql::FORMAT_DATETIME);
 
         foreach ($slices as $slice) {
             $sql = rex_sql::factory();
@@ -122,6 +134,50 @@ class rex_article_slice_history
         }
 
         return true;
+    }
+
+    /**
+     * Query for the slices of a snapshot, in the shape of the regular slices query of the article content
+     * (`ART_SLICES_QUERY`) in the frontend.
+     *
+     * The slices keep their original ids, so that the id refers to the slice and not to the history record.
+     * Like in the frontend, offline slices are left out.
+     *
+     * @internal
+     */
+    public static function getSlicesQuery(string $historyDate, int $articleId, int $clangId): string
+    {
+        self::checkTables();
+
+        $sql = rex_sql::factory();
+        $columns = [];
+        foreach (rex_sql_table::get(rex::getTable('article_slice'))->getColumns() as $column) {
+            if ('id' !== $column->getName()) {
+                $columns[] = $sql->escapeIdentifier($column->getName());
+            }
+        }
+
+        $prefix = rex::getTablePrefix();
+        $historyTable = $sql->escapeIdentifier(self::getTable());
+        $columns = implode(', ', $columns);
+        $historyDate = $sql->escape($historyDate);
+
+        return <<<SQL
+            SELECT
+                {$prefix}module.id, {$prefix}module.key, {$prefix}module.name, {$prefix}module.output, {$prefix}module.input,
+                {$prefix}article_slice.*,
+                {$prefix}article.parent_id
+            FROM (
+                SELECT slice_id AS id, {$columns}
+                FROM {$historyTable}
+                WHERE history_date = {$historyDate} AND article_id = {$articleId} AND clang_id = {$clangId}
+                    AND revision = 0 AND status = 1
+            ) AS {$prefix}article_slice
+            LEFT JOIN {$prefix}module ON {$prefix}article_slice.module_id = {$prefix}module.id
+            LEFT JOIN {$prefix}article ON {$prefix}article_slice.article_id = {$prefix}article.id
+            WHERE {$prefix}article.clang_id = {$clangId}
+            ORDER BY {$prefix}article_slice.priority
+            SQL;
     }
 
     /** @return void */
