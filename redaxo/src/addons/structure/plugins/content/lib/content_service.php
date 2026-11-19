@@ -58,7 +58,7 @@ class rex_content_service
             rex::getTable('article_slice'),
             'priority',
             $where,
-            'priority, updatedate DESC',
+            'priority, id = ' . (int) $sliceId . ' DESC, id',
         );
 
         rex_article_cache::delete($articleId, $clangId);
@@ -144,7 +144,7 @@ class rex_content_service
                     rex::getTable('article_slice'),
                     'priority',
                     'article_id=' . (int) $articleId . ' AND clang_id=' . (int) $clang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . (int) $sliceRevision,
-                    'priority, updatedate ' . $updSort,
+                    'priority, id = ' . (int) $sliceId . ' ' . $updSort . ', id',
                 );
 
                 // check if the slice moved at all (first cannot be moved up, last not down)
@@ -250,9 +250,9 @@ class rex_content_service
 
         $gc = rex_sql::factory();
         if (null === $revision) {
-            $gc->setQuery('select * from ' . rex::getTablePrefix() . 'article_slice where article_id=? and clang_id=?', [$fromId, $fromClang]);
+            $gc->setQuery('select * from ' . rex::getTablePrefix() . 'article_slice where article_id=? and clang_id=? order by priority, id', [$fromId, $fromClang]);
         } else {
-            $gc->setQuery('select * from ' . rex::getTablePrefix() . 'article_slice where article_id=? and clang_id=? and revision=?', [$fromId, $fromClang, $revision]);
+            $gc->setQuery('select * from ' . rex::getTablePrefix() . 'article_slice where article_id=? and clang_id=? and revision=? order by priority, id', [$fromId, $fromClang, $revision]);
         }
 
         rex_extension::registerPoint(new rex_extension_point('ART_SLICES_COPY', '', [
@@ -328,7 +328,7 @@ class rex_content_service
                     rex::getTable('article_slice'),
                     'priority',
                     'article_id=' . (int) $toId . ' AND clang_id=' . (int) $toClang . ' AND ctype_id=' . (int) $ctype . ' AND revision=' . $revision,
-                    'priority, updatedate',
+                    'priority, id',
                 );
             }
         }
