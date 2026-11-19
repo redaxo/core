@@ -16,8 +16,7 @@ if ($func && !$csrfToken->isValid()) {
 } elseif ('setup' == $func && !rex::isLiveMode()) {
     // REACTIVATE SETUP
     if (false !== $url = rex_setup::startWithToken()) {
-        header('Location:' . $url);
-        exit;
+        rex_response::sendRedirect($url);
     }
     $error[] = rex_i18n::msg('setup_error2');
 } elseif ('generate' == $func) {
