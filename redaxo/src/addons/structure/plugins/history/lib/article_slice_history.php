@@ -29,6 +29,20 @@ class rex_article_slice_history
     {
         self::checkTables();
 
+        $historyDate = date(rex_sql::FORMAT_DATETIME);
+
+        // Snapshots are identified by their date in seconds, so the first snapshot with rows in a second is kept
+        // instead of mixing in later states (a snapshot of an article without slices has no rows and doesn't count).
+        $sql = rex_sql::factory();
+        $existing = $sql->getArray(
+            'select 1 from ' . $sql->escapeIdentifier(self::getTable()) . '
+                where article_id=? and clang_id=? and revision=? and history_date=? limit 1',
+            [$articleId, $clangId, 0, $historyDate],
+        );
+        if ($existing) {
+            return;
+        }
+
         $slices = rex_sql::factory()->getArray(
             'select * from ' . rex::getTable('article_slice') . ' where article_id=? and clang_id=? and revision=?',
             [
@@ -37,8 +51,6 @@ class rex_article_slice_history
                 0,
             ],
         );
-
-        $historyDate = date(rex_sql::FORMAT_DATETIME);
 
         foreach ($slices as $slice) {
             $sql = rex_sql::factory();

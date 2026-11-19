@@ -68,14 +68,41 @@ final class rex_article_slice_history_test extends TestCase
         self::assertSame([$first, $third], array_map(static fn (rex_article_slice $slice) => $slice->getId(), $slices));
     }
 
-    private function addSlice(int $priority = 1, int $ctypeId = 1, int $status = 1): int
+    public function testMakeSnapshotKeepsTheFirstStateWithinTheSameSecond(): void
+    {
+        $first = $this->addSlice();
+        $table = rex_article_slice_history::getTable();
+
+        do {
+            rex_sql::factory()->setQuery('DELETE FROM ' . $table . ' WHERE article_id = ?', [$this->articleId]);
+            rex_sql::factory()->setQuery(
+                'DELETE FROM ' . rex::getTable('article_slice') . ' WHERE article_id = ? AND id <> ?',
+                [$this->articleId, $first],
+            );
+
+            $second = time();
+            rex_article_slice_history::makeSnapshot($this->articleId, 1, 'slice_add');
+            $this->addSlice(2);
+            rex_article_slice_history::makeSnapshot($this->articleId, 1, 'slice_add');
+        } while (time() !== $second);
+
+        $rows = rex_sql::factory()->getArray(
+            'SELECT slice_id FROM ' . $table . ' WHERE article_id = ?',
+            [$this->articleId],
+        );
+
+        self::assertCount(1, rex_article_slice_history::getSnapshots($this->articleId, 1));
+        self::assertSame([$first], array_map(static fn (array $row): int => (int) $row['slice_id'], $rows));
+    }
+
+    private function addSlice(int $priority = 1, int $status = 1): int
     {
         return (int) rex_sql::factory()
             ->setTable(rex::getTable('article_slice'))
             ->setValues([
                 'article_id' => $this->articleId,
                 'clang_id' => 1,
-                'ctype_id' => $ctypeId,
+                'ctype_id' => 1,
                 'module_id' => 1,
                 'priority' => $priority,
                 'status' => $status,

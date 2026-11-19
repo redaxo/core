@@ -45,6 +45,7 @@ class rex_media_cache
                 rex_file::delete($file);
             }
         }
+        rex_media::clearInstanceListPool();
         rex_media_category::clearInstanceListPool();
     }
 
@@ -58,6 +59,9 @@ class rex_media_cache
     {
         rex_file::delete(rex_path::addonCache('mediapool', $categoryId . '.mlist'));
         rex_media_category::clearInstanceList([$categoryId, 'media']);
+        if (0 == $categoryId) {
+            rex_media::clearInstanceList('root_media');
+        }
     }
 
     /**

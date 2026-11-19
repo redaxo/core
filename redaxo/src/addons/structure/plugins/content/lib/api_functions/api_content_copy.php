@@ -35,7 +35,10 @@ class rex_api_content_copy extends rex_api_function
             throw new rex_api_exception(rex_i18n::msg('no_rights_to_this_function'));
         }
 
-        if (rex_content_service::copyContent($articleId, $articleId, $clangA, $clangB, null, $overwrite)) {
+        // without the live perm only the working version may be changed
+        $revision = rex_content_service::hasRevisionPerm($user, 0) ? null : rex_article_revision::WORK;
+
+        if (rex_content_service::copyContent($articleId, $articleId, $clangA, $clangB, $revision, $overwrite)) {
             return new rex_api_result(true, rex_i18n::msg('content_contentcopy'));
         }
 
