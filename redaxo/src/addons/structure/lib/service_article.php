@@ -420,7 +420,7 @@ class rex_article_service
      * @param int|null $id Id of the added or moved article, used to place it in front of or behind an article with the same priority
      * @return void
      */
-    public static function newArtPrio($parentId, $clang, $newPrio, $oldPrio, $id = null)
+    public static function newArtPrio($parentId, $clang, $newPrio, $oldPrio, ?int $id = null)
     {
         $parentId = (int) $parentId;
 
@@ -435,7 +435,7 @@ class rex_article_service
                 rex::getTable('article'),
                 'priority',
                 'clang_id=' . (int) $clang . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
-                'priority, ' . (null === $id ? '' : 'id = ' . (int) $id . ' ' . $addsql . ', ') . 'id',
+                'priority, ' . (null === $id ? '' : 'id = ' . $id . ' ' . $addsql . ', ') . 'id',
             );
 
             rex_article_cache::deleteLists($parentId);

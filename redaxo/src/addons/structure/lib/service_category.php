@@ -418,7 +418,7 @@ class rex_category_service
      * @param int|null $id Id of the added or moved category, used to place it in front of or behind a category with the same priority
      * @return void
      */
-    public static function newCatPrio($parentId, $clang, $newPrio, $oldPrio, $id = null)
+    public static function newCatPrio($parentId, $clang, $newPrio, $oldPrio, ?int $id = null)
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -431,7 +431,7 @@ class rex_category_service
                 rex::getTable('article'),
                 'catpriority',
                 'clang_id=' . (int) $clang . ' AND parent_id=' . (int) $parentId . ' AND startarticle=1',
-                'catpriority, ' . (null === $id ? '' : 'id = ' . (int) $id . ' ' . $addsql . ', ') . 'id',
+                'catpriority, ' . (null === $id ? '' : 'id = ' . $id . ' ' . $addsql . ', ') . 'id',
             );
 
             rex_article_cache::deleteLists($parentId);

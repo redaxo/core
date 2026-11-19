@@ -10,14 +10,26 @@ final class rex_service_priority_test extends TestCase
 
     protected function tearDown(): void
     {
-        foreach (array_reverse($this->created) as [$id, $isCategory]) {
-            if ($isCategory) {
-                rex_category_service::deleteCategory($id);
-            } else {
-                rex_article_service::deleteArticle($id);
+        // On an empty database the first created category gets id 1, which is the default start/notfound article
+        $structure = rex_addon::get('structure');
+        $startArticleId = rex_article::getSiteStartArticleId();
+        $notfoundArticleId = rex_article::getNotfoundArticleId();
+        $structure->setProperty('start_article_id', 0);
+        $structure->setProperty('notfound_article_id', 0);
+
+        try {
+            foreach (array_reverse($this->created) as [$id, $isCategory]) {
+                if ($isCategory) {
+                    rex_category_service::deleteCategory($id);
+                } else {
+                    rex_article_service::deleteArticle($id);
+                }
             }
+        } finally {
+            $this->created = [];
+            $structure->setProperty('start_article_id', $startArticleId);
+            $structure->setProperty('notfound_article_id', $notfoundArticleId);
         }
-        $this->created = [];
     }
 
     public function testArticlesAddedAndMovedWithinTheSameSecondKeepTheirOrder(): void

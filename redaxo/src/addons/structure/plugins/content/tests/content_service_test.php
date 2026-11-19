@@ -26,7 +26,20 @@ final class rex_content_service_test extends TestCase
 
     protected function tearDown(): void
     {
-        rex_article_service::deleteArticle($this->articleId);
+        // On an empty database the test article gets id 1, which is the default start/notfound article
+        $structure = rex_addon::get('structure');
+        $startArticleId = rex_article::getSiteStartArticleId();
+        $notfoundArticleId = rex_article::getNotfoundArticleId();
+        $structure->setProperty('start_article_id', 0);
+        $structure->setProperty('notfound_article_id', 0);
+
+        try {
+            rex_article_service::deleteArticle($this->articleId);
+        } finally {
+            $structure->setProperty('start_article_id', $startArticleId);
+            $structure->setProperty('notfound_article_id', $notfoundArticleId);
+        }
+
         rex_sql::factory()->setTable(rex::getTable('module'))->setWhere(['id' => $this->moduleId])->delete();
     }
 
