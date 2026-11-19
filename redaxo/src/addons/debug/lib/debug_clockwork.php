@@ -94,4 +94,33 @@ class rex_debug_clockwork
 
         return $debugEnabled;
     }
+
+    /**
+     * Returns the console arguments or options that differ from their defaults, for the command in Clockwork.
+     *
+     * Each value is compared with the default of its own argument or option. Array values (arguments and options that
+     * accept several values) are compared as arrays, all other values as strings.
+     *
+     * @param array<array-key, mixed> $values
+     * @param array<array-key, mixed> $defaults
+     * @return array<array-key, mixed>
+     *
+     * @internal
+     */
+    public static function getChangedInputValues(array $values, array $defaults): array
+    {
+        // like array_diff(): null and false count as '', true as '1'
+        $text = static fn (mixed $value): string => is_scalar($value) ? (string) $value : '';
+
+        return array_filter($values, static function (mixed $value, string|int $name) use ($defaults, $text): bool {
+            if (!array_key_exists($name, $defaults)) {
+                return true;
+            }
+            if (is_array($value) || is_array($defaults[$name])) {
+                return $value !== $defaults[$name];
+            }
+
+            return $text($value) !== $text($defaults[$name]);
+        }, ARRAY_FILTER_USE_BOTH);
+    }
 }

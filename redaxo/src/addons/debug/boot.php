@@ -129,15 +129,18 @@ if ('cli' === PHP_SAPI) {
         // we need to make sure that the storage path exists after actions like cache:clear
         rex_debug_clockwork::ensureStoragePath();
 
+        $argumentDefaults = $command->getDefinition()->getArgumentDefaults();
+        $optionDefaults = $command->getDefinition()->getOptionDefaults();
+
         $clockwork = rex_debug_clockwork::getInstance();
         $clockwork
             ->resolveAsCommand(
                 $command->getName(),
                 $exitCode,
-                array_diff($input->getArguments(), $command->getDefinition()->getArgumentDefaults()),
-                array_diff($input->getOptions(), $command->getDefinition()->getOptionDefaults()),
-                $command->getDefinition()->getArgumentDefaults(),
-                $command->getDefinition()->getOptionDefaults(),
+                rex_debug_clockwork::getChangedInputValues($input->getArguments(), $argumentDefaults),
+                rex_debug_clockwork::getChangedInputValues($input->getOptions(), $optionDefaults),
+                $argumentDefaults,
+                $optionDefaults,
                 // $output->fetch()
             )
         ->storeRequest();
