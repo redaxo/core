@@ -34,6 +34,7 @@
         <testsuite name="structure">
             <directory suffix="_test.php">redaxo/src/addons/structure/tests</directory>
             <directory suffix="_test.php">redaxo/src/addons/structure/plugins/content/tests</directory>
+            <directory suffix="_test.php">redaxo/src/addons/structure/plugins/history/tests</directory>
         </testsuite>
     </testsuites>
     <source ignoreIndirectDeprecations="true">
