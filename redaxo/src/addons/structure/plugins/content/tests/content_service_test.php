@@ -10,8 +10,9 @@ final class rex_content_service_test extends TestCase
 
     protected function setUp(): void
     {
-        rex_article_service::addArticle(['name' => 'test', 'category_id' => 0, 'priority' => 1, 'template_id' => 0]);
-        $sql = rex_sql::factory()->setQuery('SELECT MAX(id) AS id FROM ' . rex::getTable('article'));
+        $name = 'rex_content_service_test ' . uniqid();
+        rex_article_service::addArticle(['name' => $name, 'category_id' => 0, 'priority' => 1, 'template_id' => 0]);
+        $sql = rex_sql::factory()->setQuery('SELECT id FROM ' . rex::getTable('article') . ' WHERE name = ?', [$name]);
         $this->articleId = (int) $sql->getValue('id');
 
         $this->moduleId = (int) rex_sql::factory()
@@ -25,12 +26,7 @@ final class rex_content_service_test extends TestCase
 
     protected function tearDown(): void
     {
-        rex_sql::factory()
-            ->setTable(rex::getTable('article_slice'))
-            ->setWhere(['article_id' => $this->articleId])
-            ->delete();
-        rex_sql::factory()->setTable(rex::getTable('article'))->setWhere(['id' => $this->articleId])->delete();
-        rex_article_cache::delete($this->articleId);
+        rex_article_service::deleteArticle($this->articleId);
         rex_sql::factory()->setTable(rex::getTable('module'))->setWhere(['id' => $this->moduleId])->delete();
     }
 
@@ -51,10 +47,17 @@ final class rex_content_service_test extends TestCase
 
     private function addSlice(?int $priority = null): int
     {
-        $data = null === $priority ? [] : ['priority' => $priority];
+        $marker = uniqid();
+        $data = ['value1' => $marker];
+        if (null !== $priority) {
+            $data['priority'] = $priority;
+        }
         rex_content_service::addSlice($this->articleId, 1, 1, $this->moduleId, $data);
 
-        $sql = rex_sql::factory()->setQuery('SELECT MAX(id) AS id FROM ' . rex::getTable('article_slice'));
+        $sql = rex_sql::factory()->setQuery(
+            'SELECT id FROM ' . rex::getTable('article_slice') . ' WHERE article_id = ? AND value1 = ?',
+            [$this->articleId, $marker],
+        );
         return (int) $sql->getValue('id');
     }
 

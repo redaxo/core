@@ -431,7 +431,7 @@ class rex_category_service
                 rex::getTable('article'),
                 'catpriority',
                 'clang_id=' . (int) $clang . ' AND parent_id=' . (int) $parentId . ' AND startarticle=1',
-                null === $id ? 'catpriority,updatedate ' . $addsql : 'catpriority, id = ' . (int) $id . ' ' . $addsql,
+                'catpriority, ' . (null === $id ? '' : 'id = ' . (int) $id . ' ' . $addsql . ', ') . 'id',
             );
 
             rex_article_cache::deleteLists($parentId);

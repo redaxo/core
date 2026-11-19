@@ -435,7 +435,7 @@ class rex_article_service
                 rex::getTable('article'),
                 'priority',
                 'clang_id=' . (int) $clang . ' AND ((startarticle<>1 AND parent_id=' . $parentId . ') OR (startarticle=1 AND id=' . $parentId . '))',
-                null === $id ? 'priority,updatedate ' . $addsql : 'priority, id = ' . (int) $id . ' ' . $addsql,
+                'priority, ' . (null === $id ? '' : 'id = ' . (int) $id . ' ' . $addsql . ', ') . 'id',
             );
 
             rex_article_cache::deleteLists($parentId);

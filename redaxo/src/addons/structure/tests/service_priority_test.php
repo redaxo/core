@@ -5,16 +5,19 @@ use PHPUnit\Framework\TestCase;
 /** @internal */
 final class rex_service_priority_test extends TestCase
 {
-    /** @var list<int> */
-    private array $ids = [];
+    /** @var list<array{int, bool}> */
+    private array $created = [];
 
     protected function tearDown(): void
     {
-        foreach ($this->ids as $id) {
-            rex_sql::factory()->setTable(rex::getTable('article'))->setWhere(['id' => $id])->delete();
-            rex_article_cache::delete($id);
+        foreach (array_reverse($this->created) as [$id, $isCategory]) {
+            if ($isCategory) {
+                rex_category_service::deleteCategory($id);
+            } else {
+                rex_article_service::deleteArticle($id);
+            }
         }
-        $this->ids = [];
+        $this->created = [];
     }
 
     public function testArticlesAddedAndMovedWithinTheSameSecondKeepTheirOrder(): void
@@ -51,26 +54,39 @@ final class rex_service_priority_test extends TestCase
 
     private function addCategory(int $parentId, int $priority): int
     {
-        rex_category_service::addCategory($parentId, ['catname' => 'test', 'catpriority' => $priority]);
+        $name = $this->uniqueName();
+        rex_category_service::addCategory($parentId, ['catname' => $name, 'catpriority' => $priority]);
 
-        return $this->ids[] = $this->lastId();
+        $id = $this->idByName($name);
+        $this->created[] = [$id, true];
+
+        return $id;
     }
 
     private function addArticle(int $categoryId, int $priority): int
     {
+        $name = $this->uniqueName();
         rex_article_service::addArticle([
-            'name' => 'test',
+            'name' => $name,
             'category_id' => $categoryId,
             'priority' => $priority,
             'template_id' => 0,
         ]);
 
-        return $this->ids[] = $this->lastId();
+        $id = $this->idByName($name);
+        $this->created[] = [$id, false];
+
+        return $id;
     }
 
-    private function lastId(): int
+    private function uniqueName(): string
     {
-        $sql = rex_sql::factory()->setQuery('SELECT MAX(id) AS id FROM ' . rex::getTable('article'));
+        return 'rex_service_priority_test ' . uniqid();
+    }
+
+    private function idByName(string $name): int
+    {
+        $sql = rex_sql::factory()->setQuery('SELECT id FROM ' . rex::getTable('article') . ' WHERE name = ? AND clang_id = 1', [$name]);
         return (int) $sql->getValue('id');
     }
 
