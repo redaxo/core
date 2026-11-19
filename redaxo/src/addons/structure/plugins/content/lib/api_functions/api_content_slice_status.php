@@ -35,8 +35,8 @@ class rex_api_content_slice_status extends rex_api_function
         // the slice must belong to the article whose category permission was checked above, otherwise slices of
         // categories the user has no permission for could be addressed
         $slice = rex_sql::factory();
-        $slice->setQuery('SELECT id FROM ' . rex::getTable('article_slice') . ' WHERE id = ? AND article_id = ? AND clang_id = ?', [$sliceId, $articleId, $clang]);
-        if (1 !== $slice->getRows()) {
+        $slice->setQuery('SELECT revision FROM ' . rex::getTable('article_slice') . ' WHERE id = ? AND article_id = ? AND clang_id = ?', [$sliceId, $articleId, $clang]);
+        if (1 !== $slice->getRows() || !rex_content_service::hasRevisionPerm($user, (int) $slice->getValue('revision'))) {
             throw new rex_api_exception(rex_i18n::msg('no_rights_to_this_function'));
         }
 

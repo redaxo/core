@@ -124,6 +124,7 @@ final class rex_media_service
 
         $data['message'] = implode('<br />', $message);
 
+        rex_media::clearInstance($data['file']['name_new']);
         rex_media_cache::deleteList($categoryId);
 
         /**
@@ -329,15 +330,15 @@ final class rex_media_service
         $query = 'SELECT m.filename FROM ' . implode(',', $tables) . ' ' . $where;
 
         $orderbys = [];
-        foreach ($orderBy as $index => $orderByItem) {
+        foreach ($orderBy as $orderByItem) {
             if (!is_array($orderByItem)) {
                 continue;
             }
             if (!in_array($orderByItem[0], self::ORDER_BY, true)) {
                 continue;
             }
-            $orderbys[] = ':orderby_' . $index . ' ' . ('ASC' == $orderByItem[1] ? 'ASC' : 'DESC');
-            $queryParams['orderby_' . $index] = 'm.' . $orderByItem[0];
+            // column names can't be bound as parameters; they come from the allow list self::ORDER_BY
+            $orderbys[] = 'm.' . $orderByItem[0] . ' ' . ('ASC' == $orderByItem[1] ? 'ASC' : 'DESC');
         }
 
         if (0 == count($orderbys)) {
@@ -429,7 +430,12 @@ final class rex_media_service
             return null;
         }
 
-        $content = (new Sanitizer())->sanitize(rex_type::notNull(rex_file::get($path)));
+        try {
+            $content = (new Sanitizer())->sanitize(rex_type::notNull(rex_file::get($path)));
+        } catch (ValueError) {
+            // svg-sanitize 1.1.0 throws instead of returning `false` for some malformed input
+            $content = false;
+        }
 
         if (false === $content) {
             throw new rex_api_exception(rex_i18n::msg('pool_file_upload_error'));
