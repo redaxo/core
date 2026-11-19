@@ -125,6 +125,26 @@ final class rex_article_slice_history_test extends TestCase
         self::assertSame($this->articleId, $events[0]->getArticle()->getId());
     }
 
+    public function testRestoreSnapshotOfMissingArticle(): void
+    {
+        $sliceId = $this->addSlice();
+
+        rex_article_slice_history::makeSnapshot($this->articleId, 1, 'slice_update');
+        $snapshot = rex_type::array(rex_article_slice_history::getSnapshots($this->articleId, 1)[0]);
+        $historyDate = rex_type::string($snapshot['history_date']);
+
+        rex_sql::factory()->setTable(rex::getTable('article'))->setWhere(['id' => $this->articleId])->delete();
+        rex_article_cache::delete($this->articleId);
+
+        self::assertFalse(rex_article_slice_history::restoreSnapshot($historyDate, $this->articleId, 1));
+
+        $rows = rex_sql::factory()->getArray(
+            'SELECT id FROM ' . rex::getTable('article_slice') . ' WHERE article_id = ?',
+            [$this->articleId],
+        );
+        self::assertSame([$sliceId], array_map(static fn (array $row): int => (int) $row['id'], $rows));
+    }
+
     private function addSlice(int $priority = 1, int $status = 1): int
     {
         return (int) rex_sql::factory()

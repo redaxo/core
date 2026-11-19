@@ -95,6 +95,11 @@ class rex_article_slice_history
     {
         self::checkTables();
 
+        $article = rex_article::get($articleId, $clangId);
+        if (!$article) {
+            return false;
+        }
+
         $sql = rex_sql::factory();
         $slices = $sql->getArray('select id from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and clang_id=? and revision=? and history_date=?', [$articleId, $clangId, 0, $historyDate]);
 
@@ -128,10 +133,7 @@ class rex_article_slice_history
         }
         rex_article_cache::delete($articleId, $clangId);
 
-        $article = rex_article::get($articleId, $clangId);
-        if ($article) {
-            rex_extension::registerPoint(new rex_extension_point_art_content_updated($article, 'snapshot_restored'));
-        }
+        rex_extension::registerPoint(new rex_extension_point_art_content_updated($article, 'snapshot_restored'));
 
         return true;
     }
