@@ -136,6 +136,26 @@ class rex_user_session
         return $sql->getRows() > 0;
     }
 
+    /** Session ids must not be exposed (e.g. in the session list or in URLs), the hash is used to identify them instead. */
+    public static function hashSessionId(string $sessionId): string
+    {
+        return hash('sha256', $sessionId);
+    }
+
+    public function removeSessionByHash(string $hash, int $userId): bool
+    {
+        $sessionIds = rex_sql::factory()->getArray('SELECT session_id FROM ' . rex::getTable('user_session') . ' WHERE user_id = ?', [$userId]);
+
+        foreach ($sessionIds as $row) {
+            $sessionId = (string) $row['session_id'];
+            if (hash_equals(self::hashSessionId($sessionId), $hash)) {
+                return $this->removeSession($sessionId, $userId);
+            }
+        }
+
+        return false;
+    }
+
     public function removeSessionsExceptCurrent(int $userId): void
     {
         $sessionId = session_id();

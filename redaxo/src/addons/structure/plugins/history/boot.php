@@ -139,6 +139,8 @@ if (rex::isBackend() && rex::getUser()?->hasPerm('history[article_rollback]')) {
             !$historyArticle instanceof rex_article
             || !$user->getComplexPerm('clang')->hasPerm($clangId)
             || !$user->getComplexPerm('structure')->hasCategoryPerm($historyArticle->getCategoryId())
+            // restoring a snapshot replaces the live revision
+            || 'snap' === $historyFunction && !rex_content_service::hasRevisionPerm($user, 0)
         ) {
             rex_response::setStatus(rex_response::HTTP_FORBIDDEN);
             rex_response::sendContent(rex_i18n::msg('no_rights_to_this_function'), 'text/plain');

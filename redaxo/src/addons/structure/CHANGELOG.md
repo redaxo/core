@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 2.20.6 – 25.10.2026
+---------------------------
+
+### Security
+
+* Content/History: Redakteure ohne die Berechtigung `version[live_version]` konnten die Live-Version von Artikeln ändern, da nur die Bearbeitungsseite auf die Arbeitsversion beschränkt war: Slices in der Live-Version anlegen, bearbeiten, löschen, online/offline schalten und verschieben, Inhalte zwischen Sprachen kopieren sowie History-Stände wiederherstellen ([GHSA-6w5f-mr8f-5964](https://github.com/redaxo/core/security/advisories/GHSA-6w5f-mr8f-5964)) (gemeldet von @skerbis) (@gharlan)
+
+
 Version 2.20.5 – 06.10.2026
 ---------------------------
 

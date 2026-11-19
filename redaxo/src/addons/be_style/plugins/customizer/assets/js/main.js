@@ -50,17 +50,24 @@ $(document).on('rex:ready', function (event, container) {
 
 var Customizer = function () { };
 
-Customizer.init = function (container) {
-    var cm_editor = {};
-    var cm = 0;
+// shared across inits, so generated ids stay unique when rex:ready is triggered for further containers
+Customizer.codemirrorIdCounter = 0;
 
+Customizer.init = function (container) {
     container.find(rex.customizer_codemirror_selectors).each(function () {
         var t = $(this);
+        var editor = null;
+
+        // skip textareas already converted, e.g. when rex:ready is triggered again for the same container
+        if (t.next('.CodeMirror').length) {
+            return;
+        }
+
         var id = t.attr("id");
 
         if (typeof id === "undefined") {
-            cm++;
-            id = 'codemirror-id-' + cm;
+            Customizer.codemirrorIdCounter++;
+            id = 'codemirror-id-' + Customizer.codemirrorIdCounter;
             t.attr("id", id);
         }
 
@@ -92,7 +99,9 @@ Customizer.init = function (container) {
                 } else if (document.body.classList.contains('rex-theme-dark')) {
                     theme = rex.customizer_codemirror_defaultdarktheme;
                 }
-                cm_editor[cm].setOption('theme', theme);
+                if (editor) {
+                    editor.setOption('theme', theme);
+                }
             });
         }
 
@@ -168,7 +177,7 @@ Customizer.init = function (container) {
                 console.log('Error in Textarea-Codemirror-Options! \nOptions: ' + new_options);
                 console.log(e);
             }
-            cm_editor[cm] = CodeMirror.fromTextArea(document.getElementById(id), cm_options);
+            editor = CodeMirror.fromTextArea(this, cm_options);
         }
     });
 

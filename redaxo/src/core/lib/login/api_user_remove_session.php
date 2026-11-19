@@ -15,9 +15,9 @@ class rex_api_user_remove_session extends rex_api_function
             throw new rex_api_exception('Permission denied');
         }
 
-        $sessionId = rex_request::get('session_id', 'string');
+        $sessionHash = rex_request::get('session_hash', 'string');
 
-        if (rex_user_session::getInstance()->removeSession($sessionId, $userId)) {
+        if (rex_user_session::getInstance()->removeSessionByHash($sessionHash, $userId)) {
             return new rex_api_result(true, rex_i18n::msg('session_removed'));
         }
 
