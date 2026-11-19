@@ -306,6 +306,10 @@
     @extend .fa-arrow-rotate-left;
     @extend .fa-fw;
 }
+.rex-icon-passkey {
+    @extend .fa-solid;
+    @extend .fa-fingerprint;
+}
 .rex-icon-password {
     @extend .fa-solid;
     @extend .fa-lock;

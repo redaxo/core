@@ -98,6 +98,9 @@ $formElements = [];
 $n = [];
 $n['field'] = '<button class="btn btn-primary btn-block" type="submit"><i class="rex-icon rex-icon-sign-in"></i> ' . rex_i18n::msg('login') . ' </button>';
 $formElements[] = $n;
+$n = [];
+$n['field'] = '<button class="btn btn-default btn-block hidden" type="button" data-auth-passkey-login><i class="rex-icon rex-icon-passkey"></i> ' . rex_i18n::msg('login_passkey') . '</button>';
+$formElements[] = $n;
 
 $fragment = new rex_fragment();
 $fragment->setVar('elements', $formElements, false);
