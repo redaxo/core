@@ -130,7 +130,7 @@ class rex_article_slice_history
 
         $article = rex_article::get($articleId, $clangId);
         if ($article) {
-            rex_extension::registerPoint(new rex_extension_point_art_content_updated($article, 'history_restored'));
+            rex_extension::registerPoint(new rex_extension_point_art_content_updated($article, 'snapshot_restored'));
         }
 
         return true;

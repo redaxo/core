@@ -121,7 +121,7 @@ final class rex_article_slice_history_test extends TestCase
         }
 
         self::assertCount(1, $events);
-        self::assertSame('history_restored', $events[0]->getAction());
+        self::assertSame('snapshot_restored', $events[0]->getAction());
         self::assertSame($this->articleId, $events[0]->getArticle()->getId());
     }
 
