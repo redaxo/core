@@ -155,7 +155,6 @@ class rex_article_slice_history
         $historyTable = $sql->escapeIdentifier(self::getTable());
         $columns = implode(', ', $columns);
         $historyDate = $sql->escape($historyDate);
-        $articleLimit = 0 !== $articleId ? 'AND article_id = ' . $articleId : '';
 
         return <<<SQL
             SELECT
@@ -165,8 +164,8 @@ class rex_article_slice_history
             FROM (
                 SELECT slice_id AS id, {$columns}
                 FROM {$historyTable}
-                WHERE history_date = {$historyDate} AND clang_id = {$clangId} AND revision = 0 AND status = 1
-                    {$articleLimit}
+                WHERE history_date = {$historyDate} AND article_id = {$articleId} AND clang_id = {$clangId}
+                    AND revision = 0 AND status = 1
             ) AS {$prefix}article_slice
             LEFT JOIN {$prefix}module ON {$prefix}article_slice.module_id = {$prefix}module.id
             LEFT JOIN {$prefix}article ON {$prefix}article_slice.article_id = {$prefix}article.id
