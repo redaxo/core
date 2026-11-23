@@ -104,12 +104,10 @@ class rex_debug_clockwork
      * @param array<array-key, mixed> $values
      * @param array<array-key, mixed> $defaults
      * @return array<array-key, mixed>
-     *
-     * @internal
      */
     public static function getChangedInputValues(array $values, array $defaults): array
     {
-        // like array_diff(): null and false count as '', true as '1'
+        // null and false count as '', true as '1'
         $text = static fn (mixed $value): string => is_scalar($value) ? (string) $value : '';
 
         return array_filter($values, static function (mixed $value, string|int $name) use ($defaults, $text): bool {
