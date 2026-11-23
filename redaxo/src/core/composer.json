@@ -2,19 +2,19 @@
     "type": "project",
 
     "require": {
-        "composer/ca-bundle": "^1.6.0",
+        "composer/ca-bundle": "^1.6.1",
         "enshrined/svg-sanitize": "^1.1.1",
         "erusev/parsedown": "^1.8.0",
         "erusev/parsedown-extra": "^0.9.0",
-        "filp/whoops": "^2.18.7",
+        "filp/whoops": "^2.19.3",
         "lbuchs/webauthn": "^2.2.0",
         "psr/log": "^3.0.2",
         "ramsey/http-range": "^2.0.0",
-        "symfony/console": "^7.4.21",
-        "symfony/http-foundation": "^7.4.21",
-        "symfony/var-dumper": "^7.4.21",
-        "symfony/yaml": "^7.4.21",
-        "voku/anti-xss": "^4.1.45",
+        "symfony/console": "^7.4.23",
+        "symfony/http-foundation": "^7.4.23",
+        "symfony/var-dumper": "^7.4.22",
+        "symfony/yaml": "^7.4.23",
+        "voku/anti-xss": "^4.1.50",
         "voku/portable-utf8": "^6.1.1"
     },
 
