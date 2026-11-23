@@ -1131,8 +1131,7 @@ abstract class rex_form_base
             exit;
         }
 
-        header('Location: ' . $this->applyUrl . $paramString);
-        exit;
+        rex_response::sendRedirect($this->applyUrl . $paramString);
     }
 
     /** @return string */
