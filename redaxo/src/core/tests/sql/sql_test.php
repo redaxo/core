@@ -621,6 +621,8 @@ final class rex_sql_test extends TestCase
     #[DataProvider('provideGetArrayRestoresFetchTableNamesOnError')]
     public function testGetArrayRestoresFetchTableNamesOnError(string $method): void
     {
+        $this->testInsertRow();
+
         $sql = rex_sql::factory();
 
         try {
@@ -629,7 +631,8 @@ final class rex_sql_test extends TestCase
         } catch (rex_sql_exception) {
         }
 
-        self::assertTrue($sql->getConnection()->getAttribute(PDO::ATTR_FETCH_TABLE_NAMES));
+        $sql->setQuery('SELECT * FROM ' . self::TABLE);
+        self::assertSame('abc', $sql->getValue(self::TABLE . '.col_str'));
     }
 
     /** @return list<array{'getArray'|'getDBArray'}> */
