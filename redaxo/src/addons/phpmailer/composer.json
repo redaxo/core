@@ -2,7 +2,7 @@
     "type": "project",
 
     "require": {
-        "phpmailer/phpmailer": "^7.1.1"
+        "phpmailer/phpmailer": "^7.2.0"
     },
 
     "config": {

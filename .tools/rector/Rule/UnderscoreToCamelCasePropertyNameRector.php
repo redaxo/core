@@ -5,22 +5,27 @@ declare(strict_types=1);
 namespace Redaxo\Rector\Rule;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\StaticPropertyFetch;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Property;
-use Rector\Naming\ValueObject\PropertyRename;
-use Rector\Naming\ValueObjectFactory\PropertyRenameFactory;
+use PhpParser\Node\VarLikeIdentifier;
+use PHPStan\Reflection\ReflectionProvider;
+use Rector\NodeAnalyzer\PropertyFetchAnalyzer;
 use Rector\Rector\AbstractRector;
 use Redaxo\Rector\Util\UnderscoreCamelCaseExpectedNameResolver;
-use Redaxo\Rector\Util\UnderscoreCamelCasePropertyRenamer;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
+
+use function array_count_values;
+use function in_array;
 
 final class UnderscoreToCamelCasePropertyNameRector extends AbstractRector
 {
     public function __construct(
-        private readonly UnderscoreCamelCasePropertyRenamer $underscoreCamelCasePropertyRenamer,
-        private readonly PropertyRenameFactory $propertyRenameFactory,
         private readonly UnderscoreCamelCaseExpectedNameResolver $underscoreCamelCaseExpectedNameResolver,
+        private readonly PropertyFetchAnalyzer $propertyFetchAnalyzer,
+        private readonly ReflectionProvider $reflectionProvider,
     ) {}
 
     public function getRuleDefinition(): RuleDefinition
@@ -62,12 +67,13 @@ final class UnderscoreToCamelCasePropertyNameRector extends AbstractRector
     /** @param ClassLike $node */
     public function refactor(Node $node): ?Node
     {
+        if ($this->hasMagicGetOrSet($node)) {
+            return null;
+        }
+
         $hasChanged = false;
-
         foreach ($node->getProperties() as $property) {
-            $property = $this->refactorProperty($node, $property);
-
-            if ($property) {
+            if ($this->refactorProperty($node, $property)) {
                 $hasChanged = true;
             }
         }
@@ -75,23 +81,72 @@ final class UnderscoreToCamelCasePropertyNameRector extends AbstractRector
         return $hasChanged ? $node : null;
     }
 
-    public function refactorProperty(ClassLike $classLike, Property $node): ?Node
+    private function refactorProperty(ClassLike $classLike, Property $property): bool
     {
-        $propertyName = $this->getName($node);
-        if (!str_contains($propertyName, '_')) {
-            return null;
+        // renaming non-private properties would break BC for subclasses and external callers
+        if (!$property->isPrivate()) {
+            return false;
         }
 
-        $expectedPropertyName = $this->underscoreCamelCaseExpectedNameResolver->resolve($node);
-        if (null === $expectedPropertyName) {
-            return null;
+        $currentName = $this->getName($property);
+        if (!str_contains($currentName, '_')) {
+            return false;
         }
 
-        $propertyRename = $this->propertyRenameFactory->createFromExpectedName($classLike, $node, $expectedPropertyName);
-        if (!$propertyRename instanceof PropertyRename) {
-            return null;
+        $expectedName = $this->underscoreCamelCaseExpectedNameResolver->resolve($property);
+        if (null === $expectedName || $expectedName === $currentName) {
+            return false;
         }
 
-        return $this->underscoreCamelCasePropertyRenamer->rename($propertyRename);
+        if (in_array($expectedName, $this->resolveConflictingNames($classLike), true)) {
+            return false;
+        }
+
+        $property->props[0]->name = new VarLikeIdentifier($expectedName);
+
+        $this->traverseNodesWithCallable($classLike, function (Node $node) use ($currentName, $expectedName): ?Node {
+            if (!$this->propertyFetchAnalyzer->isLocalPropertyFetchName($node, $currentName)) {
+                return null;
+            }
+
+            /** @var Node\Expr\PropertyFetch|Node\Expr\NullsafePropertyFetch|StaticPropertyFetch $node */
+            $node->name = $node instanceof StaticPropertyFetch ? new VarLikeIdentifier($expectedName) : new Identifier($expectedName);
+            return $node;
+        });
+
+        return true;
+    }
+
+    /**
+     * Names that several properties would end up with after renaming (e.g. `$foo_bar` and `$fooBar`).
+     *
+     * @return list<string>
+     */
+    private function resolveConflictingNames(ClassLike $classLike): array
+    {
+        $expectedNames = [];
+        foreach ($classLike->getProperties() as $property) {
+            $expectedNames[] = $this->underscoreCamelCaseExpectedNameResolver->resolve($property) ?? $this->getName($property);
+        }
+
+        $conflictingNames = [];
+        foreach (array_count_values($expectedNames) as $name => $count) {
+            if ($count > 1) {
+                $conflictingNames[] = (string) $name;
+            }
+        }
+
+        return $conflictingNames;
+    }
+
+    private function hasMagicGetOrSet(ClassLike $classLike): bool
+    {
+        $className = $this->getName($classLike);
+        if (null === $className || !$this->reflectionProvider->hasClass($className)) {
+            return false;
+        }
+
+        $classReflection = $this->reflectionProvider->getClass($className);
+        return $classReflection->hasMethod('__get') || $classReflection->hasMethod('__set');
     }
 }
