@@ -61,6 +61,7 @@ login_user_not_found = User does not exist.
 login_welcome = Please sign in.
 login_logged_out = Signed out.
 stay_logged_in = Stay signed in
+login_passkey = Sign in with a passkey
 
 login_impersonate = switch user
 login_depersonate = switch back

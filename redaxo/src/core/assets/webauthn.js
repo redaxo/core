@@ -47,20 +47,38 @@ const authPasskeyVerify = function (form) {
 
 const authLogin = function (form) {
     const passkey = form.querySelector('[data-auth-passkey]');
+    const button = form.querySelector('[data-auth-passkey-login]');
 
-    authVerify(passkey.dataset.authPasskey, 'conditional', value => {
+    const onSuccess = value => {
         passkey.value = value;
         form.submit();
+    };
+
+    let conditional;
+    const startConditional = function () {
+        conditional = new AbortController();
+        authVerify(passkey.dataset.authPasskey, 'conditional', onSuccess, conditional.signal).catch(() => {});
+    };
+
+    startConditional();
+
+    button.classList.remove('hidden');
+    button.addEventListener('click', () => {
+        // only one credential request may be pending, so the autofill request has to be aborted first
+        conditional.abort();
+
+        authVerify(passkey.dataset.authPasskey, 'optional', onSuccess).catch(startConditional);
     });
 }
 
-const authVerify = function (options, mediation, onSuccess) {
+const authVerify = function (options, mediation, onSuccess, signal) {
     options = JSON.parse(options);
     recursiveBase64StrToArrayBuffer(options);
 
     options.mediation = mediation;
+    options.signal = signal;
 
-    navigator.credentials.get(options).then(data => {
+    return navigator.credentials.get(options).then(data => {
         data = {
             id: data.id,
             clientDataJSON: data.response.clientDataJSON  ? arrayBufferToBase64(data.response.clientDataJSON) : null,

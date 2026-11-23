@@ -61,6 +61,7 @@ login_user_not_found = Benutzer nicht gefunden!
 login_welcome = Bitte anmelden.
 login_logged_out = Abgemeldet.
 stay_logged_in = Eingeloggt bleiben
+login_passkey = Mit Passkey anmelden
 
 login_impersonate = Identität wechseln
 login_depersonate = zurückwechseln
