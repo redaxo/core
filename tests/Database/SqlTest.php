@@ -762,4 +762,28 @@ final class SqlTest extends TestCase
             self::assertIsString($k);
         }
     }
+
+    /** @param 'getArray'|'getDBArray' $method */
+    #[DataProvider('provideGetArrayRestoresFetchTableNamesOnError')]
+    public function testGetArrayRestoresFetchTableNamesOnError(string $method): void
+    {
+        $this->testInsertRow();
+
+        $sql = Sql::factory();
+
+        try {
+            $sql->$method('SELECT * FROM rex_tests_table_that_does_not_exist');
+            self::fail('Expected SqlException');
+        } catch (SqlException) {
+        }
+
+        $sql->setQuery('SELECT * FROM ' . self::TABLE);
+        self::assertSame('abc', $sql->getValue(self::TABLE . '.col_str'));
+    }
+
+    /** @return list<array{'getArray'|'getDBArray'}> */
+    public static function provideGetArrayRestoresFetchTableNamesOnError(): array
+    {
+        return [['getArray'], ['getDBArray']];
+    }
 }
