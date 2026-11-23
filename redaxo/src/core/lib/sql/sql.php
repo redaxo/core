@@ -1200,8 +1200,11 @@ class rex_sql implements Iterator
         $pdo = $this->getConnection();
 
         $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, false);
-        $this->setDBQuery($query, $params);
-        $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
+        try {
+            $this->setDBQuery($query, $params);
+        } finally {
+            $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
+        }
 
         return $this->stmt->fetchAll($fetchType);
     }
@@ -1237,8 +1240,11 @@ class rex_sql implements Iterator
         $pdo = $this->getConnection();
 
         $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, false);
-        $this->setQuery($query, $params);
-        $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
+        try {
+            $this->setQuery($query, $params);
+        } finally {
+            $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
+        }
 
         return $this->stmt->fetchAll($fetchType);
     }
