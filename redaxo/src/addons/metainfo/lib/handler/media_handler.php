@@ -124,7 +124,7 @@ class rex_metainfo_media_handler extends rex_metainfo_handler
         if (isset($params['activeItem'])) {
             $catId = $params['activeItem']->getValue('category_id');
         } elseif (isset($params['category_id'])) {
-            // MEDIA_ADDED/MEDIA_UPDATED: media may be saved outside the mediapool page, where the session category is unrelated
+            // MEDIA_ADDED/UPDATED: the session category is unrelated when media is saved outside the mediapool
             $catId = (int) $params['category_id'];
         }
 
