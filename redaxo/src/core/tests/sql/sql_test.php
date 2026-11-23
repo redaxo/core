@@ -616,4 +616,25 @@ final class rex_sql_test extends TestCase
             self::assertIsString($k);
         }
     }
+
+    /** @param 'getArray'|'getDBArray' $method */
+    #[DataProvider('provideGetArrayRestoresFetchTableNamesOnError')]
+    public function testGetArrayRestoresFetchTableNamesOnError(string $method): void
+    {
+        $sql = rex_sql::factory();
+
+        try {
+            $sql->$method('SELECT * FROM rex_tests_table_that_does_not_exist');
+            self::fail('Expected rex_sql_exception');
+        } catch (rex_sql_exception) {
+        }
+
+        self::assertTrue($sql->getConnection()->getAttribute(PDO::ATTR_FETCH_TABLE_NAMES));
+    }
+
+    /** @return list<array{'getArray'|'getDBArray'}> */
+    public static function provideGetArrayRestoresFetchTableNamesOnError(): array
+    {
+        return [['getArray'], ['getDBArray']];
+    }
 }
