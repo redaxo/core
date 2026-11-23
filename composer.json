@@ -102,7 +102,6 @@
             "Redaxo\\Rector\\": ".tools/rector"
         },
         "classmap": [
-            "redaxo/src/addons/debug/tests/",
             "redaxo/src/addons/media_manager/tests/",
             "redaxo/src/addons/mediapool/tests/",
             "redaxo/src/addons/structure/tests/",
