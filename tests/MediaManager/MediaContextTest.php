@@ -9,6 +9,7 @@ use Override;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
+use Redaxo\Core\MediaManager\ImageManagerFactory;
 use Redaxo\Core\MediaManager\MediaContext;
 
 use function file_put_contents;
@@ -41,7 +42,7 @@ final class MediaContextTest extends TestCase
     #[Override]
     protected function tearDown(): void
     {
-        MediaContext::$maxPixels = 100_000_000;
+        ImageManagerFactory::$maxPixels = 100_000_000;
 
         foreach (glob($this->tmpDir . '/*') ?: [] as $file) {
             unlink($file);
@@ -104,7 +105,7 @@ final class MediaContextTest extends TestCase
     public function testRejectsImagesExceedingMaxPixels(): void
     {
         $this->manager->createImage(20, 10)->save($this->tmpDir . '/image.png');
-        MediaContext::$maxPixels = 199;
+        ImageManagerFactory::$maxPixels = 199;
 
         $this->expectException(MediaNotFoundException::class);
 
