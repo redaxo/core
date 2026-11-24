@@ -1955,7 +1955,7 @@ class Sql implements Iterator
                 $errMsg = I18n::msg('sql_unable_to_connect_database');
             }
             // ER_BAD_DB_ERROR
-            elseif (str_contains($e->getMessage(), 'SQLSTATE[HY000] [1049]') || str_contains($e->getMessage(), 'SQLSTATE[42000]')) {
+            elseif (self::ERROR_UNKNOWN_DATABASE === ($e->errorInfo[1] ?? null) || str_contains($e->getMessage(), 'SQLSTATE[42000]')) {
                 if ($createDb) {
                     try {
                         // use the "mysql" db for the connection

@@ -255,8 +255,7 @@ final class Config
             // fallback to load config from the db
             self::loadFromDb();
         } catch (CouldNotConnectException $e) {
-            // a database that does not exist yet has nothing to read either, and the setup has to boot to create it;
-            // caught first so that the errno is only asked for below when there is a connection to ask
+            // a database that does not exist yet has nothing to read either, and the setup has to boot to create it
             if (Sql::ERROR_UNKNOWN_DATABASE !== $e->getErrorCode()) {
                 throw $e;
             }
