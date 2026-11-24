@@ -22,6 +22,7 @@ use function function_exists;
 use function implode;
 use function is_array;
 use function is_dir;
+use function is_file;
 use function realpath;
 use function sort;
 use function str_replace;
@@ -304,12 +305,13 @@ final class ClassDiscovery
         }
 
         $paths = [];
+        $dependencyPaths = $this->getDependencyPaths();
 
-        // PSR-4 directories outside of the vendor directory (project-level code)
+        // PSR-4 directories outside of the dependencies (project-level code)
         foreach ($this->classLoader->getPrefixesPsr4() as $dirs) {
             foreach ($dirs as $dir) {
                 $realDir = (string) realpath($dir);
-                if ('' !== $realDir && !str_starts_with($realDir, $this->vendorPath)) {
+                if ('' !== $realDir && !$this->isRelevantPath($realDir . DIRECTORY_SEPARATOR, $dependencyPaths)) {
                     $paths[] = $realDir . DIRECTORY_SEPARATOR;
                 }
             }
@@ -324,6 +326,39 @@ final class ClassDiscovery
         }
 
         return $this->relevantPaths = $paths;
+    }
+
+    /**
+     * Returns the vendor directory and the real paths of the installed packages, which differ from it for packages
+     * symlinked by a composer path repository. The root package and project packages are no dependencies: the
+     * project skeleton is symlinked into the core's own dev instance.
+     *
+     * @return list<string>
+     */
+    private function getDependencyPaths(): array
+    {
+        $paths = [$this->vendorPath];
+
+        $installedFile = $this->vendorPath . 'composer' . DIRECTORY_SEPARATOR . 'installed.php';
+        if (!is_file($installedFile)) {
+            return $paths;
+        }
+
+        /** @var array{root: array{name: string}, versions: array<string, array{type?: string, install_path?: string}>} $installed */
+        $installed = require $installedFile;
+
+        foreach ($installed['versions'] as $name => $package) {
+            if ($name === $installed['root']['name'] || 'project' === ($package['type'] ?? null) || !isset($package['install_path'])) {
+                continue;
+            }
+
+            $realPath = realpath($package['install_path']);
+            if (false !== $realPath && !str_starts_with($realPath . DIRECTORY_SEPARATOR, $this->vendorPath)) {
+                $paths[] = $realPath . DIRECTORY_SEPARATOR;
+            }
+        }
+
+        return $paths;
     }
 
     /** @return list<string> */
