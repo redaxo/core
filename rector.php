@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use Rector\Arguments\Rector\ClassMethod\ReplaceArgumentDefaultValueRector;
-use Rector\Arguments\ValueObject\ReplaceArgumentDefaultValue;
 use Rector\CodeQuality\Rector as CodeQuality;
 use Rector\CodingStyle\Rector as CodingStyle;
 use Rector\Config\RectorConfig;
@@ -22,18 +20,10 @@ use Rector\Renaming\Rector\FuncCall\RenameFunctionRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\PropertyFetch\RenamePropertyRector;
-use Rector\Renaming\Rector\StaticCall\RenameStaticMethodRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
 use Rector\Renaming\ValueObject\RenameClassAndConstFetch;
 use Rector\Renaming\ValueObject\RenameProperty;
-use Rector\Renaming\ValueObject\RenameStaticMethod;
-use Rector\Transform\Rector\FuncCall\FuncCallToStaticCallRector;
-use Rector\Transform\Rector\MethodCall\MethodCallToStaticCallRector;
-use Rector\Transform\Rector\New_\NewToStaticCallRector;
 use Rector\Transform\Rector\StaticCall\StaticCallToNewRector;
-use Rector\Transform\ValueObject\FuncCallToStaticCall;
-use Rector\Transform\ValueObject\MethodCallToStaticCall;
-use Rector\Transform\ValueObject\NewToStaticCall;
 use Rector\Transform\ValueObject\StaticCallToNew;
 use Rector\TypeDeclaration\Rector as TypeDeclaration;
 use Rector\ValueObject\PhpVersion;
@@ -66,8 +56,13 @@ use Redaxo\Core\Util;
 use Redaxo\Core\Validator;
 use Redaxo\Core\View;
 use Redaxo\Rector\Rule as RedaxoRule;
+use Redaxo\Rector\ValueObject\FuncCallToStaticCall;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyAssign;
 use Redaxo\Rector\ValueObject\MethodCallToPropertyFetch;
+use Redaxo\Rector\ValueObject\MethodCallToStaticCall;
+use Redaxo\Rector\ValueObject\NewToStaticCall;
+use Redaxo\Rector\ValueObject\RenameStaticMethod;
+use Redaxo\Rector\ValueObject\ReplaceArgumentValue;
 use Redaxo\Rector\ValueObject\SetterCallToConstructorArgument;
 use Redaxo\Rector\ValueObject\StaticCallToStaticPropertyAssign;
 use Redaxo\Rector\ValueObject\StaticCallToStaticPropertyFetch;
@@ -361,7 +356,7 @@ return RectorConfig::configure()
         new MethodCallRename(MediaPool\MediaCategoryHandler::class, 'editCategory', 'edit'),
         new MethodCallRename(MediaPool\MediaCategoryHandler::class, 'deleteCategory', 'delete'),
     ])
-    ->withConfiguredRule(RenameStaticMethodRector::class, [
+    ->withConfiguredRule(RedaxoRule\RenameStaticMethodRector::class, [
         new RenameStaticMethod(Core::class, 'getPackageOrder', Addon\Addon::class, 'getBootOrder'),
         new RenameStaticMethod(Core::class, 'getVersionHash', Util\Version::class, 'gitHash'),
         new RenameStaticMethod(Core::class, 'isDebugMode', Core::class, 'isDevMode'),
@@ -403,17 +398,17 @@ return RectorConfig::configure()
         new RenameStaticMethod(Content\CategoryHandler::class, 'nextStatus', Content\ArticleHandler::class, 'nextStatus'),
         new RenameStaticMethod(Content\CategoryHandler::class, 'prevStatus', Content\ArticleHandler::class, 'prevStatus'),
     ])
-    ->withConfiguredRule(NewToStaticCallRector::class, [
+    ->withConfiguredRule(RedaxoRule\NewToStaticCallRector::class, [
         new NewToStaticCall(Log\LogFile::class, Log\LogFile::class, 'factory'),
         new NewToStaticCall('rex_exception', Exception\RuntimeException::class, 'create'), // 2 step modification, see StaticCallToNewRector
     ])
     ->withConfiguredRule(StaticCallToNewRector::class, [
         new StaticCallToNew(Exception\RuntimeException::class, 'create'), // 2 step modification, see NewToStaticCallRector
     ])
-    ->withConfiguredRule(MethodCallToStaticCallRector::class, [
+    ->withConfiguredRule(RedaxoRule\MethodCallToStaticCallRector::class, [
         new MethodCallToStaticCall(Security\BackendLogin::class, 'getLoginPolicy', Security\BackendLogin::class, 'getLoginPolicy'),
     ])
-    ->withConfiguredRule(FuncCallToStaticCallRector::class, [
+    ->withConfiguredRule(RedaxoRule\FuncCallToStaticCallRector::class, [
         new FuncCallToStaticCall('rex_mediapool_filename', MediaPool\MediaPool::class, 'filename'),
         new FuncCallToStaticCall('rex_mediapool_isAllowedMediaType', MediaPool\MediaPool::class, 'isAllowedExtension'),
         new FuncCallToStaticCall('rex_mediapool_isAllowedMimeType', MediaPool\MediaPool::class, 'isAllowedMimeType'),
@@ -650,87 +645,87 @@ return RectorConfig::configure()
         new ArgumentRemover(Content\StructureElement::class, 'getUrl', 1, null),
         new ArgumentRemover(MediaManager\MediaManager::class, 'getUrl', 3, null),
     ])
-    ->withConfiguredRule(ReplaceArgumentDefaultValueRector::class, [
-        new ReplaceArgumentDefaultValue(Content\ArticleContentBase::class, 'renderContent', 0, -1, null),
-
-        new ReplaceArgumentDefaultValue(Security\User::class, 'getComplexPerm', 0, 'clang', 'language'),
-
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'PACKAGE_CACHE_DELETED', 'ADDON_CACHE_DELETED'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_ADDED', '\\' . Content\ExtensionPoint\ArticleContentUpdated::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_UPDATED', '\\' . Content\ExtensionPoint\ArticleContentUpdated::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_DELETED', '\\' . Content\ExtensionPoint\ArticleContentUpdated::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_ADDED', '\\' . Content\ExtensionPoint\ArticleContentUpdated::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_UPDATED', '\\' . Content\ExtensionPoint\ArticleContentUpdated::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_DELETED', '\\' . Content\ExtensionPoint\ArticleContentUpdated::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_ARTICLE_UPDATED', '\\' . Content\ExtensionPoint\ArticleContentUpdated::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SLICE_MENU', '\\' . Content\ExtensionPoint\SliceMenu::class . '::NAME'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_ADDED', '\\' . Language\ExtensionPoint\LanguageAdded::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_UPDATED', '\\' . Language\ExtensionPoint\LanguageUpdated::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_DELETED', '\\' . Language\ExtensionPoint\LanguageDeleted::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_FORM_BUTTONS', '\\' . Language\ExtensionPoint\LanguageFormButtons::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_FORM_ADD', '\\' . Language\ExtensionPoint\LanguageFormAdd::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CLANG_FORM_EDIT', '\\' . Language\ExtensionPoint\LanguageFormEdit::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_ADDED', '\\' . Content\ExtensionPoint\ArticleAdded::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_UPDATED', '\\' . Content\ExtensionPoint\ArticleUpdated::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_META_UPDATED', '\\' . Content\ExtensionPoint\ArticleUpdated::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_DELETED', '\\' . Content\ExtensionPoint\ArticleDeleted::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_ADDED', '\\' . Content\ExtensionPoint\CategoryAdded::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_UPDATED', '\\' . Content\ExtensionPoint\CategoryUpdated::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_DELETED', '\\' . Content\ExtensionPoint\CategoryDeleted::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_ADDED', '\\' . MediaPool\ExtensionPoint\MediaAdded::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_UPDATED', '\\' . MediaPool\ExtensionPoint\MediaUpdated::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_MOVED', '\\' . MediaPool\ExtensionPoint\MediaUpdated::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_DELETED', '\\' . MediaPool\ExtensionPoint\MediaDeleted::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_CATEGORY_ADDED', '\\' . MediaPool\ExtensionPoint\MediaCategoryAdded::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_CATEGORY_UPDATED', '\\' . MediaPool\ExtensionPoint\MediaCategoryUpdated::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_CATEGORY_DELETED', '\\' . MediaPool\ExtensionPoint\MediaCategoryDeleted::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_STATUS', '\\' . Content\ExtensionPoint\ArticleStatusChanged::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_STATUS', '\\' . Content\ExtensionPoint\CategoryStatusChanged::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_MOVED', '\\' . Content\ExtensionPoint\ArticleMoved::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_MOVED', '\\' . Content\ExtensionPoint\CategoryMoved::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_COPIED', '\\' . Content\ExtensionPoint\ArticleCopied::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_TO_CAT', '\\' . Content\ExtensionPoint\ArticleConvertedToCategory::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_TO_ART', '\\' . Content\ExtensionPoint\CategoryConvertedToArticle::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_TO_STARTARTICLE', '\\' . Content\ExtensionPoint\ArticleConvertedToStartArticle::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_ADD', '\\' . MediaPool\ExtensionPoint\MediaAdding::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_IS_IN_USE', '\\' . MediaPool\ExtensionPoint\MediaUsageCheck::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_CATEGORY_IS_IN_USE', '\\' . MediaPool\ExtensionPoint\MediaCategoryUsageCheck::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_SHOW', '\\' . Content\ExtensionPoint\SliceOutput::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_OUTPUT', '\\' . Content\ExtensionPoint\SliceOutput::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_ADD', '\\' . Content\ExtensionPoint\SliceAdding::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_UPDATE', '\\' . Content\ExtensionPoint\SliceUpdating::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_MOVE', '\\' . Content\ExtensionPoint\SliceMoving::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_DELETE', '\\' . Content\ExtensionPoint\SliceDeleting::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_SLICES_COPY', '\\' . Content\ExtensionPoint\ArticleSlicesCopying::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_PRE_DELETED', '\\' . Content\ExtensionPoint\ArticleDeleting::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_IS_PERMITTED', '\\' . Content\ExtensionPoint\ArticlePermissionCheck::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_IS_PERMITTED', '\\' . Content\ExtensionPoint\CategoryPermissionCheck::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_IS_PERMITTED', '\\' . MediaPool\ExtensionPoint\MediaPermissionCheck::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_STATUS_TYPES', '\\' . Content\ExtensionPoint\ArticleStatusTypes::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_STATUS_TYPES', '\\' . Content\ExtensionPoint\ArticleStatusTypes::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_CONTENT', '\\' . Content\ExtensionPoint\ArticleContentOutput::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_INIT', '\\' . Content\ExtensionPoint\ArticleContentRendering::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'ART_SLICES_QUERY', '\\' . Content\ExtensionPoint\ArticleSlicesQuery::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'URL_REWRITE', '\\' . Content\ExtensionPoint\ArticleUrl::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_URL_REWRITE', '\\' . MediaPool\ExtensionPoint\MediaUrl::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_LIST_QUERY', '\\' . MediaPool\ExtensionPoint\MediaListQuery::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_MANAGER_URL', '\\' . MediaManager\ExtensionPoint\MediaManagerUrl::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_HEADER', '\\' . Content\ExtensionPoint\ContentPageHeader::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_BEFORE_SLICES', '\\' . Content\ExtensionPoint\ContentPageBeforeSlices::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_AFTER_SLICES', '\\' . Content\ExtensionPoint\ContentPageAfterSlices::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_SIDEBAR', '\\' . Content\ExtensionPoint\ContentPageSidebar::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'STRUCTURE_CONTENT_MODULE_SELECT', '\\' . Content\ExtensionPoint\ContentPageModuleSelect::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'SLICE_BE_PREVIEW', '\\' . Content\ExtensionPoint\SlicePreview::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_FORM_ADD', '\\' . Content\ExtensionPoint\CategoryFormAdd::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_FORM_EDIT', '\\' . Content\ExtensionPoint\CategoryFormEdit::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'CAT_FORM_BUTTONS', '\\' . Content\ExtensionPoint\CategoryFormButtons::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'PAGE_STRUCTURE_ARTICLE_ORDER_BY', '\\' . Content\ExtensionPoint\ArticleListOrder::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_FORM_ADD', '\\' . MediaPool\ExtensionPoint\MediaFormAdd::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_FORM_EDIT', '\\' . MediaPool\ExtensionPoint\MediaFormEdit::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_DETAIL_SIDEBAR', '\\' . MediaPool\ExtensionPoint\MediaDetailSidebar::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_LIST_FUNCTIONS', '\\' . MediaPool\ExtensionPoint\MediaListFunctions::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_LIST_THUMBNAIL', '\\' . MediaPool\ExtensionPoint\MediaListThumbnail::class . '::class'),
-        new ReplaceArgumentDefaultValue(ExtensionPoint\Extension::class, 'register', 0, 'MEDIA_LIST_TOOLBAR', '\\' . MediaPool\ExtensionPoint\MediaListToolbar::class . '::class'),
+    ->withConfiguredRule(RedaxoRule\ReplaceArgumentValueRector::class, [
+        new ReplaceArgumentValue(Content\ArticleContentBase::class, 'renderContent', 0, -1, null),
+        new ReplaceArgumentValue(Security\User::class, 'getComplexPerm', 0, 'clang', 'language'),
+    ])
+    ->withConfiguredRule(RedaxoRule\ExtensionPointNameToClassRector::class, [
+        'PACKAGE_CACHE_DELETED' => Addon\ExtensionPoint\AddonCacheDeleted::class,
+        'STRUCTURE_CONTENT_SLICE_ADDED' => Content\ExtensionPoint\ArticleContentUpdated::class,
+        'STRUCTURE_CONTENT_SLICE_UPDATED' => Content\ExtensionPoint\ArticleContentUpdated::class,
+        'STRUCTURE_CONTENT_SLICE_DELETED' => Content\ExtensionPoint\ArticleContentUpdated::class,
+        'SLICE_ADDED' => Content\ExtensionPoint\ArticleContentUpdated::class,
+        'SLICE_UPDATED' => Content\ExtensionPoint\ArticleContentUpdated::class,
+        'SLICE_DELETED' => Content\ExtensionPoint\ArticleContentUpdated::class,
+        'STRUCTURE_CONTENT_ARTICLE_UPDATED' => Content\ExtensionPoint\ArticleContentUpdated::class,
+        'STRUCTURE_CONTENT_SLICE_MENU' => Content\ExtensionPoint\SliceMenu::class,
+        'CLANG_ADDED' => Language\ExtensionPoint\LanguageAdded::class,
+        'CLANG_UPDATED' => Language\ExtensionPoint\LanguageUpdated::class,
+        'CLANG_DELETED' => Language\ExtensionPoint\LanguageDeleted::class,
+        'CLANG_FORM_BUTTONS' => Language\ExtensionPoint\LanguageFormButtons::class,
+        'CLANG_FORM_ADD' => Language\ExtensionPoint\LanguageFormAdd::class,
+        'CLANG_FORM_EDIT' => Language\ExtensionPoint\LanguageFormEdit::class,
+        'ART_ADDED' => Content\ExtensionPoint\ArticleAdded::class,
+        'ART_UPDATED' => Content\ExtensionPoint\ArticleUpdated::class,
+        'ART_META_UPDATED' => Content\ExtensionPoint\ArticleUpdated::class,
+        'ART_DELETED' => Content\ExtensionPoint\ArticleDeleted::class,
+        'CAT_ADDED' => Content\ExtensionPoint\CategoryAdded::class,
+        'CAT_UPDATED' => Content\ExtensionPoint\CategoryUpdated::class,
+        'CAT_DELETED' => Content\ExtensionPoint\CategoryDeleted::class,
+        'MEDIA_ADDED' => MediaPool\ExtensionPoint\MediaAdded::class,
+        'MEDIA_UPDATED' => MediaPool\ExtensionPoint\MediaUpdated::class,
+        'MEDIA_MOVED' => MediaPool\ExtensionPoint\MediaUpdated::class,
+        'MEDIA_DELETED' => MediaPool\ExtensionPoint\MediaDeleted::class,
+        'MEDIA_CATEGORY_ADDED' => MediaPool\ExtensionPoint\MediaCategoryAdded::class,
+        'MEDIA_CATEGORY_UPDATED' => MediaPool\ExtensionPoint\MediaCategoryUpdated::class,
+        'MEDIA_CATEGORY_DELETED' => MediaPool\ExtensionPoint\MediaCategoryDeleted::class,
+        'ART_STATUS' => Content\ExtensionPoint\ArticleStatusChanged::class,
+        'CAT_STATUS' => Content\ExtensionPoint\CategoryStatusChanged::class,
+        'ART_MOVED' => Content\ExtensionPoint\ArticleMoved::class,
+        'CAT_MOVED' => Content\ExtensionPoint\CategoryMoved::class,
+        'ART_COPIED' => Content\ExtensionPoint\ArticleCopied::class,
+        'ART_TO_CAT' => Content\ExtensionPoint\ArticleConvertedToCategory::class,
+        'CAT_TO_ART' => Content\ExtensionPoint\CategoryConvertedToArticle::class,
+        'ART_TO_STARTARTICLE' => Content\ExtensionPoint\ArticleConvertedToStartArticle::class,
+        'MEDIA_ADD' => MediaPool\ExtensionPoint\MediaAdding::class,
+        'MEDIA_IS_IN_USE' => MediaPool\ExtensionPoint\MediaUsageCheck::class,
+        'MEDIA_CATEGORY_IS_IN_USE' => MediaPool\ExtensionPoint\MediaCategoryUsageCheck::class,
+        'SLICE_SHOW' => Content\ExtensionPoint\SliceOutput::class,
+        'SLICE_OUTPUT' => Content\ExtensionPoint\SliceOutput::class,
+        'SLICE_ADD' => Content\ExtensionPoint\SliceAdding::class,
+        'SLICE_UPDATE' => Content\ExtensionPoint\SliceUpdating::class,
+        'SLICE_MOVE' => Content\ExtensionPoint\SliceMoving::class,
+        'SLICE_DELETE' => Content\ExtensionPoint\SliceDeleting::class,
+        'ART_SLICES_COPY' => Content\ExtensionPoint\ArticleSlicesCopying::class,
+        'ART_PRE_DELETED' => Content\ExtensionPoint\ArticleDeleting::class,
+        'ART_IS_PERMITTED' => Content\ExtensionPoint\ArticlePermissionCheck::class,
+        'CAT_IS_PERMITTED' => Content\ExtensionPoint\CategoryPermissionCheck::class,
+        'MEDIA_IS_PERMITTED' => MediaPool\ExtensionPoint\MediaPermissionCheck::class,
+        'ART_STATUS_TYPES' => Content\ExtensionPoint\ArticleStatusTypes::class,
+        'CAT_STATUS_TYPES' => Content\ExtensionPoint\ArticleStatusTypes::class,
+        'ART_CONTENT' => Content\ExtensionPoint\ArticleContentOutput::class,
+        'ART_INIT' => Content\ExtensionPoint\ArticleContentRendering::class,
+        'ART_SLICES_QUERY' => Content\ExtensionPoint\ArticleSlicesQuery::class,
+        'URL_REWRITE' => Content\ExtensionPoint\ArticleUrl::class,
+        'MEDIA_URL_REWRITE' => MediaPool\ExtensionPoint\MediaUrl::class,
+        'MEDIA_LIST_QUERY' => MediaPool\ExtensionPoint\MediaListQuery::class,
+        'MEDIA_MANAGER_URL' => MediaManager\ExtensionPoint\MediaManagerUrl::class,
+        'STRUCTURE_CONTENT_HEADER' => Content\ExtensionPoint\ContentPageHeader::class,
+        'STRUCTURE_CONTENT_BEFORE_SLICES' => Content\ExtensionPoint\ContentPageBeforeSlices::class,
+        'STRUCTURE_CONTENT_AFTER_SLICES' => Content\ExtensionPoint\ContentPageAfterSlices::class,
+        'STRUCTURE_CONTENT_SIDEBAR' => Content\ExtensionPoint\ContentPageSidebar::class,
+        'STRUCTURE_CONTENT_MODULE_SELECT' => Content\ExtensionPoint\ContentPageModuleSelect::class,
+        'SLICE_BE_PREVIEW' => Content\ExtensionPoint\SlicePreview::class,
+        'CAT_FORM_ADD' => Content\ExtensionPoint\CategoryFormAdd::class,
+        'CAT_FORM_EDIT' => Content\ExtensionPoint\CategoryFormEdit::class,
+        'CAT_FORM_BUTTONS' => Content\ExtensionPoint\CategoryFormButtons::class,
+        'PAGE_STRUCTURE_ARTICLE_ORDER_BY' => Content\ExtensionPoint\ArticleListOrder::class,
+        'MEDIA_FORM_ADD' => MediaPool\ExtensionPoint\MediaFormAdd::class,
+        'MEDIA_FORM_EDIT' => MediaPool\ExtensionPoint\MediaFormEdit::class,
+        'MEDIA_DETAIL_SIDEBAR' => MediaPool\ExtensionPoint\MediaDetailSidebar::class,
+        'MEDIA_LIST_FUNCTIONS' => MediaPool\ExtensionPoint\MediaListFunctions::class,
+        'MEDIA_LIST_THUMBNAIL' => MediaPool\ExtensionPoint\MediaListThumbnail::class,
+        'MEDIA_LIST_TOOLBAR' => MediaPool\ExtensionPoint\MediaListToolbar::class,
     ])
     ->withConfiguredRule(RenameClassConstFetchRector::class, [
         new RenameClassAndConstFetch(ExtensionPoint\Extension::class, 'EARLY', ExtensionPoint\ExtensionLevel::class, 'Early'),

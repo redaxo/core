@@ -6,7 +6,6 @@ use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\Filesystem\Finder;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Request;
-use Redaxo\Core\Http\Response;
 use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MediaPool\MediaHandler;
 use Redaxo\Core\MediaPool\MediaPoolCache;
@@ -150,7 +149,7 @@ if ($diffCount > 0) {
 
     $e = [];
     $e['label'] = '<label>' . I18n::msg('pool_select_all') . '</label>';
-    $e['field'] = '<input type="checkbox" name="checkie" id="rex-js-checkie" value="0" onchange="setAllCheckBoxes(\'sync_files[]\',this)" />';
+    $e['field'] = '<input type="checkbox" name="checkie" id="rex-js-checkie" value="0" data-rex-check-all="sync_files[]" />';
     $writable[] = $e;
 
     $fragment = new Fragment();
@@ -160,7 +159,7 @@ if ($diffCount > 0) {
     $count = count($writable) - 1;
     if ($count) {
         $content .= View::mediaPoolMediaForm(I18n::msg('pool_sync_title'), I18n::msg('pool_sync_button'), $rexFileCategory, false, false, $meta);
-        $content .= '<fieldset>';
+        $content .= '<fieldset data-rex-requires-checked="sync_files[]">';
 
         $title = I18n::msg('pool_sync_affected_files') . ' (' . $count . ')';
 
@@ -172,17 +171,7 @@ if ($diffCount > 0) {
         $content .= '
                 </fieldset>
             </form>
-
-            <script type="text/javascript" nonce="' . Response::getNonce() . '">
-                jQuery(document).ready(function($){
-                    $("input[name=\'sync_files[]\']").change(function() {
-                        $(this).closest(\'form\').find("[type=\'submit\']").attr("disabled", $("input[name=\'sync_files[]\']:checked").length == 0);
-                    }).change();
-                    $("#rex-js-checkie").change(function() {
-                        $("input[name=\'sync_files[]\']").change();
-                    });
-                });
-            </script>';
+';
     }
 
     $count = count($notWritable);

@@ -1,0 +1,75 @@
+/* Bootstrap 3 tables (`.table`, `.table-*`) for addons; the core uses `.rex-table` (components/table.css) */
+
+@layer bootstrap {
+    .table {
+        --table-border: var(--rex-color-border);
+
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 22px;
+
+        & > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+            padding: 8px;
+            border-top: 1px solid var(--table-border);
+            line-height: var(--rex-line-height);
+            vertical-align: top;
+        }
+
+        & > thead > tr > th {
+            border-bottom: 2px solid var(--table-border);
+            vertical-align: bottom;
+        }
+
+        & > :is(caption, colgroup) + thead > tr:first-child > :is(th, td),
+        & > thead:first-child > tr:first-child > :is(th, td) {
+            border-top: 0;
+        }
+
+        & > tbody + tbody {
+            border-top: 2px solid var(--table-border);
+        }
+
+        & .table {
+            background-color: var(--rex-color-surface-subtle);
+        }
+
+        & > tbody > tr > td > h3 {
+            font-size: var(--rex-font-size);
+            font-weight: 700;
+            line-height: var(--rex-line-height);
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+    }
+
+    .table-condensed > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+        padding: 5px;
+    }
+
+    .table-bordered {
+        border: 1px solid var(--table-border);
+
+        & > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+            border: 1px solid var(--table-border);
+        }
+
+        & > thead > tr > :is(th, td) {
+            border-bottom-width: 2px;
+        }
+    }
+
+    .table-hover > tbody > tr:hover {
+        background-color: var(--rex-color-surface-subtle);
+    }
+
+    /* highlighted row, e.g. the add and edit rows of the structure */
+    .table > tbody > tr.mark {
+        background-color: var(--rex-color-surface-muted);
+
+        & > :is(th, td) {
+            vertical-align: middle;
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "rules": {
+        "color-named": "never",
+        "color-no-hex": true,
+        "function-disallowed-list": ["rgb", "rgba", "hsl", "hsla", "hwb", "lab", "lch", "oklab", "oklch", "color", "light-dark"],
+        "declaration-property-unit-disallowed-list": {
+            "font-size": ["px"]
+        },
+        "declaration-property-value-disallowed-list": {
+            "outline": ["/(^|\\s)none(\\s|$)/", "/^0(px)?(\\s|$)/"],
+            "outline-style": ["none"],
+            "outline-width": ["/^0(px)?$/"]
+        },
+        "media-feature-name-value-allowed-list": {
+            "min-width": ["768px", "992px", "1200px", "1400px"],
+            "max-width": ["767px", "991px", "1199px", "1399px"]
+        }
+    },
+    "overrides": [
+        {
+            "files": ["assets/css/src/tokens.css"],
+            "rules": {
+                "color-no-hex": null,
+                "function-disallowed-list": null
+            }
+        }
+    ]
+}

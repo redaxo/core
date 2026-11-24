@@ -117,14 +117,17 @@ if ('cli' === PHP_SAPI) {
         // we need to make sure that the storage path exists after actions like cache:clear
         $addon->ensureClockworkStoragePath();
 
+        $argumentDefaults = $command->getDefinition()->getArgumentDefaults();
+        $optionDefaults = $command->getDefinition()->getOptionDefaults();
+
         $clockwork = $addon->clockwork;
         $clockwork->resolveAsCommand(
             $command->getName(),
             $exitCode,
-            array_diff($input->getArguments(), $command->getDefinition()->getArgumentDefaults()),
-            array_diff($input->getOptions(), $command->getDefinition()->getOptionDefaults()),
-            $command->getDefinition()->getArgumentDefaults(),
-            $command->getDefinition()->getOptionDefaults(),
+            DebugAddon::getChangedInputValues($input->getArguments(), $argumentDefaults),
+            DebugAddon::getChangedInputValues($input->getOptions(), $optionDefaults),
+            $argumentDefaults,
+            $optionDefaults,
             // $output->fetch()
         );
 

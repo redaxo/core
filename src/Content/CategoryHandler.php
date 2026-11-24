@@ -129,7 +129,7 @@ final class CategoryHandler
         }
 
         // ----- PRIOR
-        self::updatePriorities($categoryId, 0, $priority);
+        self::updatePriorities($categoryId, 0, $priority, $id);
 
         ArticleCache::delete($id);
 
@@ -186,7 +186,7 @@ final class CategoryHandler
         $category->update();
 
         if ($oldPrio != $priority) {
-            self::updatePriorities($thisCat->getNullableIntValue('parent_id'), $priority, $oldPrio);
+            self::updatePriorities($thisCat->getNullableIntValue('parent_id'), $priority, $oldPrio, $categoryId);
         }
 
         ArticleCache::delete($categoryId);
@@ -287,8 +287,9 @@ final class CategoryHandler
      * @internal
      *
      * @param int|null $parentId `null` for the root level
+     * @param int|null $id Id of the added or moved category, used to place it in front of or behind a category with the same priority
      */
-    public static function updatePriorities(?int $parentId, int $newPrio, int $oldPrio): void
+    public static function updatePriorities(?int $parentId, int $newPrio, int $oldPrio, ?int $id = null): void
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -301,7 +302,7 @@ final class CategoryHandler
                 'rex_category',
                 'priority',
                 self::siblingsWhere($parentId),
-                'priority, updatedate ' . $addsql,
+                'priority, ' . (null === $id ? '' : 'id = ' . $id . ' ' . $addsql . ', ') . 'id',
             );
 
             ArticleCache::deleteLists($parentId);

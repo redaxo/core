@@ -4,6 +4,7 @@ use Redaxo\Core\Addon\Addon;
 use Redaxo\Core\Backend\Appearance;
 use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Http\Response;
+use Redaxo\Core\Security\ContentSecurityPolicy;
 use Redaxo\Core\Util\Editor;
 use Redaxo\Core\Util\Type;
 use Redaxo\Debug\ApiFunction\ClockworkMetadata;
@@ -33,6 +34,9 @@ if (!$appearance) {
 }
 
 $nonce = Response::getNonce();
+
+// the bundled Clockwork app adds style elements at runtime, which cannot carry the nonce
+ContentSecurityPolicy::backend()->add('style-src-elem', "'self'", "'unsafe-inline'");
 
 $injectedScript = <<<EOF
     <script nonce="$nonce">

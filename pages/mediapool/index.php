@@ -3,12 +3,14 @@
 use Redaxo\Core\Backend\Controller;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Exception\InvalidArgumentException;
 use Redaxo\Core\Http\Request;
-use Redaxo\Core\Http\Response;
 use Redaxo\Core\Http\Session;
 use Redaxo\Core\Language\Language;
+use Redaxo\Core\MediaPool\Media;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Str;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Message;
 use Redaxo\Core\View\View;
 
@@ -37,21 +39,14 @@ if (Language::count() > 1) {
     $argFields .= '<input type="hidden" name="language" value="' . Language::getCurrentId() . '" />' . "\n";
 }
 
-// ----- opener_input_field setzen
-$openerInputField = Request::request('opener_input_field', 'string', '');
-
-if ('' != $openerInputField) {
-    if (!preg_match('{^[A-Za-z]+[\w\-\:\.]*$}', $openerInputField)) {
-        throw new Exception('invalid opener_input_field given: ' . $openerInputField);
-    }
-
-    $openerId = null;
-    if (str_starts_with($openerInputField, 'REX_MEDIALIST_')) {
-        $openerId = (int) substr($openerInputField, 14, strlen($openerInputField));
-    }
-
-    $argUrl['opener_input_field'] = $openerInputField;
-    $argFields .= '<input type="hidden" name="opener_input_field" value="' . escape($openerInputField) . '"/>' . "\n";
+// ----- picker mode: the media pool runs in an overlay and hands the chosen media to its opener
+$picker = Request::request('picker', 'string');
+if (!in_array($picker, ['', 'single', 'multiple'], true)) {
+    throw new InvalidArgumentException(sprintf('Invalid picker mode "%s".', $picker));
+}
+if ('' !== $picker) {
+    $argUrl['picker'] = $picker;
+    $argFields .= '<input type="hidden" name="picker" value="' . escape($picker) . '"/>' . "\n";
 }
 
 // -------------- CatId in Session speichern
@@ -109,14 +104,11 @@ if ('' != $error) {
     $error = '';
 }
 
-if (!Request::isXmlHttpRequest()) {
-    ?>
-    <script type="text/javascript" nonce="<?= Response::getNonce() ?>">
-        rex_retain_popup_event_handlers("rex:selectMedia");
-        <?= $openerInputField ? 'rex.mediapoolOpenerInputField = "' . escape($openerInputField, 'js') . '";' : '' ?>
-    </script>
-    <?php
+// a medium just uploaded in picker mode is picked right away by the overlay
+$picked = Request::request('picked', 'string');
+if ('' !== $picker && null !== $pickedMedia = Media::get($picked)) {
+    echo '<div hidden data-rex-pick-auto ' . new HtmlAttributes(['data-rex-pick' => $pickedMedia->fileName, 'data-rex-pick-label' => $pickedMedia->title])->toString() . '></div>';
 }
 
 // -------------- Include Page
-Controller::includeCurrentPageSubPath(compact('openerInputField', 'argUrl', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));
+Controller::includeCurrentPageSubPath(compact('picker', 'argUrl', 'argFields', 'rexFileCategory', 'rexFileCategoryName', 'PERMALL', 'fileId', 'error', 'success'));

@@ -24,12 +24,13 @@ use Redaxo\Core\View\Fragment;
 
     <?php if (isset($this->formAction) && '' !== $this->formAction): ?>
         </form>
-        <script type="text/javascript" nonce="<?= Response::getNonce() ?>">
-            <!--
-            jQuery(function($) {
-                $(":input:visible:enabled:not([readonly]):first", $("#REX_FORM")).focus();
-            });
-            //-->
+        <script nonce="<?= Response::getNonce() ?>">
+            // focus the first field once the widgets have enhanced the form
+            addEventListener('DOMContentLoaded', () => requestAnimationFrame(() => {
+                [...document.getElementById('REX_FORM').querySelectorAll('input, select, textarea, button')]
+                    .find(field => 'hidden' !== field.type && !field.disabled && !field.readOnly && field.checkVisibility())
+                    ?.focus();
+            }));
         </script>
     <?php endif ?>
 </li>

@@ -2,6 +2,9 @@
 
 namespace Redaxo\Core\View;
 
+use Redaxo\Core\View\Component\Alert;
+use Redaxo\Core\View\Component\AlertType;
+
 final class Message
 {
     private function __construct() {}
@@ -13,12 +16,7 @@ final class Message
      */
     public static function info(string $message, string $cssClass = ''): string
     {
-        $cssClassMessage = 'alert-info';
-        if ('' != $cssClass) {
-            $cssClassMessage .= ' ' . $cssClass;
-        }
-
-        return self::message($message, $cssClassMessage);
+        return self::message($message, AlertType::Info, $cssClass);
     }
 
     /**
@@ -28,12 +26,7 @@ final class Message
      */
     public static function success(string $message, string $cssClass = ''): string
     {
-        $cssClassMessage = 'alert-success';
-        if ('' != $cssClass) {
-            $cssClassMessage .= ' ' . $cssClass;
-        }
-
-        return self::message($message, $cssClassMessage);
+        return self::message($message, AlertType::Success, $cssClass);
     }
 
     /**
@@ -43,12 +36,7 @@ final class Message
      */
     public static function warning(string $message, string $cssClass = ''): string
     {
-        $cssClassMessage = 'alert-warning';
-        if ('' != $cssClass) {
-            $cssClassMessage .= ' ' . $cssClass;
-        }
-
-        return self::message($message, $cssClassMessage);
+        return self::message($message, AlertType::Warning, $cssClass);
     }
 
     /**
@@ -58,28 +46,12 @@ final class Message
      */
     public static function error(string $message, string $cssClass = ''): string
     {
-        $cssClassMessage = 'alert-danger';
-        if ('' != $cssClass) {
-            $cssClassMessage .= ' ' . $cssClass;
-        }
-
-        return self::message($message, $cssClassMessage);
+        return self::message($message, AlertType::Error, $cssClass);
     }
 
     /** Returns a message. */
-    private static function message(string $message, string $cssClass): string
+    private static function message(string $message, AlertType $type, string $cssClass): string
     {
-        $cssClassMessage = 'alert';
-        if ('' != $cssClass) {
-            $cssClassMessage .= ' ' . $cssClass;
-        }
-
-        /*
-        $fragment = new Fragment();
-        $fragment->setVar('class', $cssClass);
-        $fragment->setVar('message', $content, false);
-        $return = $fragment->parse('message.php');
-        */
-        return '<div class="' . $cssClassMessage . '">' . $message . '</div>';
+        return (string) new Alert(Html::raw($message), $type, new HtmlAttributes(['class' => array_values(array_filter(explode(' ', $cssClass)))]))->render();
     }
 }

@@ -1,0 +1,82 @@
+/*
+ Alerts (`.rex-alert`, Redaxo\Core\View\Component\Alert, Redaxo\Core\View\Message): a message on a colored box,
+ `data-variant` `info` (default), `success`, `warning` or `danger`.
+ */
+
+@layer components {
+    .rex-alert {
+        --rex-alert-bg: var(--rex-color-accent);
+        --rex-alert-border: var(--rex-color-accent-hover);
+        --rex-alert-text: var(--rex-color-on-accent);
+        --rex-color-focus: var(--rex-alert-text);
+
+        margin-bottom: 22px;
+        padding: 15px;
+        border: 1px solid var(--rex-alert-border);
+        background: var(--rex-alert-bg);
+        color: var(--rex-alert-text);
+        word-break: break-word;
+
+        & :is(h2, h3, h4) {
+            margin-top: 0;
+            color: inherit;
+        }
+
+        & > :is(p, ul) {
+            margin-bottom: 0;
+        }
+
+        & > p + p {
+            margin-top: 5px;
+        }
+
+        /* text links, not links styled as buttons (also `.btn` of addons with the Bootstrap 3 markup) */
+        & a:not(.rex-button, .btn) {
+            color: inherit;
+            font-weight: 700;
+            text-decoration: underline;
+
+            &:hover {
+                text-decoration-thickness: 2px;
+            }
+        }
+
+        &[data-variant="success"] {
+            --rex-alert-bg: var(--rex-color-success);
+            --rex-alert-border: var(--rex-color-success-hover);
+            --rex-alert-text: var(--rex-color-on-success);
+        }
+
+        &[data-variant="warning"] {
+            --rex-alert-bg: var(--rex-color-warning);
+            --rex-alert-border: var(--rex-color-warning-hover);
+            --rex-alert-text: var(--rex-color-on-warning);
+        }
+
+        &[data-variant="danger"] {
+            --rex-alert-bg: var(--rex-color-danger);
+            --rex-alert-border: var(--rex-color-danger-hover);
+            --rex-alert-text: var(--rex-color-on-danger);
+        }
+
+        /* compact next to the options of a section header, e.g. the missing rights of a slice */
+        .rex-section-options & {
+            padding: 5px 10px;
+            font-size: var(--rex-font-size-small);
+
+            &:last-child {
+                margin-right: -10px;
+                margin-bottom: 0;
+            }
+        }
+
+        .rex-section > & {
+            margin-bottom: 0;
+            border: 0;
+        }
+
+        tr & {
+            margin: -8px;
+        }
+    }
+}

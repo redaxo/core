@@ -4,6 +4,7 @@ namespace Redaxo\Core\Tests\MediaPool;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use Redaxo\Core\Filesystem\Dir;
@@ -26,6 +27,7 @@ use ReflectionProperty;
 use Symfony\Component\HttpFoundation\File\File as SymfonyFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use function array_slice;
 use function count;
 
 use const UPLOAD_ERR_INI_SIZE;
@@ -405,5 +407,64 @@ final class MediaHandlerTest extends TestCase
         } finally {
             MediaHandler::delete($filename);
         }
+    }
+
+    /**
+     * @param list<array{string, 'ASC'|'DESC'}> $orderBy
+     * @param list<string> $expected
+     */
+    #[DataProvider('provideGetListOrder')]
+    public function testGetListOrder(array $orderBy, array $expected): void
+    {
+        // inserted in an order that matches none of the expected orders
+        $media = [
+            ['getlistorder-b.txt', 'Alpha', '2026-01-02 00:00:00'],
+            ['getlistorder-c.txt', 'Charlie', '2026-01-01 00:00:00'],
+            ['getlistorder-a.txt', 'Bravo', '2026-01-03 00:00:00'],
+        ];
+        $filenames = [];
+
+        try {
+            foreach ($media as [$filename, $title, $updatedate]) {
+                $srcFile = self::getPath($filename);
+                File::put($srcFile, 'test');
+                $filenames[] = $filename = MediaHandler::add([
+                    'category_id' => null,
+                    'title' => $title,
+                    'file' => new SymfonyFile($srcFile),
+                ], subindexing: false)->fileName;
+
+                Sql::factory()->setQuery('UPDATE rex_media SET updatedate = ? WHERE filename = ?', [$updatedate, $filename]);
+            }
+
+            $getFilenames = static fn (array $list) => array_map(static fn (Media $media) => $media->fileName, $list);
+
+            $list = MediaHandler::getList(['term' => 'getlistorder'], $orderBy);
+            self::assertSame($expected, $getFilenames($list));
+
+            $pager = new Pager(2);
+            $pager->setCursor(0);
+            $list = MediaHandler::getList(['term' => 'getlistorder'], $orderBy, $pager);
+            self::assertSame(3, $pager->getRowCount());
+            self::assertSame(array_slice($expected, 0, 2), $getFilenames($list));
+        } finally {
+            foreach ($filenames as $filename) {
+                MediaHandler::delete($filename);
+            }
+        }
+    }
+
+    /** @return iterable<string, array{list<array{string, 'ASC'|'DESC'}>, list<string>}> */
+    public static function provideGetListOrder(): iterable
+    {
+        $a = 'getlistorder-a.txt';
+        $b = 'getlistorder-b.txt';
+        $c = 'getlistorder-c.txt';
+
+        yield 'filename asc' => [[['filename', 'ASC']], [$a, $b, $c]];
+        yield 'filename desc' => [[['filename', 'DESC']], [$c, $b, $a]];
+        yield 'title asc' => [[['title', 'ASC']], [$b, $a, $c]];
+        yield 'updatedate asc' => [[['updatedate', 'ASC']], [$c, $b, $a]];
+        yield 'default: updatedate desc' => [[], [$a, $b, $c]];
     }
 }

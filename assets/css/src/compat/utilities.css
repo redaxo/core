@@ -1,0 +1,297 @@
+/* The utilities under their former names (`.sr-only`, `.text-muted`, `.rex-word-break` …) for addons; the core uses `.rex-u-*` (utilities.css) */
+
+@layer utilities {
+    .rex-visually-hidden,
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .sr-only-focusable:is(:active, :focus) {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        overflow: visible;
+        clip-path: none;
+        white-space: normal;
+    }
+
+    .hidden,
+    .rex-hidden {
+        display: none;
+    }
+
+    .rex-visible {
+        display: block;
+    }
+
+    .collapse:not(.in) {
+        display: none;
+    }
+
+    .pull-left {
+        float: left;
+    }
+
+    .pull-right {
+        float: right;
+    }
+
+    .clearfix::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    /* text */
+
+    .small {
+        font-size: 80%;
+    }
+
+    .mark {
+        padding: 0.1em 0.3em;
+        background-color: var(--rex-color-mark);
+        color: inherit;
+        font-weight: 700;
+    }
+
+    .text-left {
+        text-align: left;
+    }
+
+    .text-right {
+        text-align: right;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .text-nowrap {
+        white-space: nowrap;
+    }
+
+    .text-muted,
+    .rex-author,
+    .rex-filesize {
+        color: var(--rex-color-text-muted);
+    }
+
+    .text-success {
+        color: var(--rex-color-success-text);
+    }
+
+    .text-warning {
+        color: var(--rex-color-warning-text);
+    }
+
+    .text-danger {
+        color: var(--rex-color-danger-text);
+    }
+
+    .rex-online {
+        color: var(--rex-color-success-text);
+    }
+
+    .rex-offline {
+        color: var(--rex-color-danger-text);
+    }
+
+    .rex-word-break {
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .rex-text-hyphen {
+        hyphens: auto;
+    }
+
+    .vertical-top {
+        vertical-align: top;
+    }
+
+    .vertical-middle {
+        vertical-align: middle;
+    }
+
+    .vertical-bottom {
+        vertical-align: bottom;
+    }
+
+    /* images shrinking to the width of their container */
+    .img-responsive {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+
+    /* truncated text, `.rex-truncate-expandable` shows it in full on hover */
+    .rex-truncate-target {
+        display: inline-block;
+        max-width: 150px;
+        overflow: hidden;
+        vertical-align: top;
+        white-space: nowrap;
+
+        &.rex-truncate-expandable:hover,
+        .rex-truncate-expandable > &:hover {
+            max-width: 10000px;
+        }
+    }
+
+    .rex-truncate:is(.rex-truncate-target),
+    .rex-truncate .rex-truncate-target {
+        text-overflow: ellipsis;
+    }
+
+    .rex-truncate-left {
+        position: relative;
+
+        & .rex-truncate-target {
+            margin-left: 15px;
+            direction: rtl;
+            text-align: right;
+
+            &::after {
+                content: "...";
+                position: absolute;
+                left: 0;
+            }
+        }
+    }
+
+    /* lists */
+
+    .list-unstyled {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    .list-inline {
+        margin-left: -5px;
+        padding-left: 0;
+        list-style: none;
+
+        & > li {
+            display: inline-block;
+            padding-right: 5px;
+            padding-left: 5px;
+        }
+    }
+
+    .dl-horizontal dd::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    @media (min-width: 992px) {
+        .dl-horizontal {
+            & dt {
+                float: left;
+                clear: left;
+                width: 160px;
+                overflow: hidden;
+                text-align: right;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            &.text-left > dt {
+                text-align: left;
+            }
+
+            & dd {
+                margin-left: 180px;
+            }
+        }
+    }
+
+    /* fixed column widths in steps of 40px, `.rex-table-width-1` to `-10` (centered for the narrowest) */
+    @media (min-width: 992px) {
+        .rex-table-width-1 { width: 40px; text-align: center; }
+        .rex-table-width-2 { width: 80px; }
+        .rex-table-width-3 { width: 120px; }
+        .rex-table-width-4 { width: 160px; }
+        .rex-table-width-5 { width: 200px; }
+        .rex-table-width-6 { width: 240px; }
+        .rex-table-width-7 { width: 280px; }
+        .rex-table-width-8 { width: 320px; }
+        .rex-table-width-9 { width: 360px; }
+        .rex-table-width-10 { width: 400px; }
+        .rex-table-min-width-1 { min-width: 40px; }
+        .rex-table-min-width-2 { min-width: 80px; }
+        .rex-table-min-width-3 { min-width: 120px; }
+        .rex-table-min-width-4 { min-width: 160px; }
+        .rex-table-min-width-5 { min-width: 200px; }
+        .rex-table-min-width-6 { min-width: 240px; }
+        .rex-table-min-width-7 { min-width: 280px; }
+        .rex-table-min-width-8 { min-width: 320px; }
+        .rex-table-min-width-9 { min-width: 360px; }
+        .rex-table-min-width-10 { min-width: 400px; }
+    }
+
+    /* links */
+
+    /* enlarges the clickable area of small text links */
+    .rex-link-expanded {
+        display: inline-block;
+        margin: -4px -7px;
+        padding: 4px 7px;
+        border-radius: 20px;
+
+        .rex-table-icon & {
+            margin: -7px -11px;
+            padding: 7px 11px;
+        }
+    }
+
+    /* effects */
+
+    .rex-pulse {
+        animation: rex-pulse 5s ease infinite;
+    }
+
+    /* highlights the row a link points to, e.g. a required package */
+    .rex-targeted-rows :target {
+        animation: rex-fade-in-highlight 3s 3s backwards;
+    }
+
+    .rex-scrollable {
+        max-height: 500px;
+        overflow-y: scroll;
+
+        .rex-section > & {
+            padding: 15px;
+        }
+
+        .rex-section__body > & {
+            margin: -15px;
+            padding: 15px;
+        }
+    }
+}
+
+@keyframes rex-pulse {
+    0%, 20%, 30%, 50%, 70% {
+        transform: scale(1);
+    }
+    5%, 35%, 55% {
+        transform: scale(1.25);
+    }
+}
+
+@keyframes rex-fade-in-highlight {
+    from {
+        background-color: var(--rex-color-highlight);
+    }
+}

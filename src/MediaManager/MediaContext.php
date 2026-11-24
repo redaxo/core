@@ -2,13 +2,22 @@
 
 namespace Redaxo\Core\MediaManager;
 
+use finfo;
 use Intervention\Image\Exceptions\ImageException;
 use Intervention\Image\Interfaces\ImageInterface;
 use Intervention\Image\Interfaces\ImageManagerInterface;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
 
+use function getimagesize;
+use function getimagesizefromstring;
+use function is_array;
+use function is_file;
+use function str_contains;
+use function strlen;
 use function strtolower;
+
+use const FILEINFO_MIME_TYPE;
 
 /**
  * The single touch point a {@see MediaType} works with.
@@ -86,10 +95,29 @@ final class MediaContext
     /** @throws MediaNotFoundException if the source cannot be decoded as an image */
     private function load(string $source): ImageInterface
     {
+        $this->assertDecodable($source);
+
         try {
             return $this->manager->decode($source);
         } catch (ImageException $e) {
             throw new MediaNotFoundException('Could not decode media source as an image.', $e);
+        }
+    }
+
+    /** @throws MediaNotFoundException if the source is not an allowed image format or too large */
+    private function assertDecodable(string $source): void
+    {
+        $isPath = !str_contains($source, "\0") && strlen($source) < 4096 && is_file($source);
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = (string) ($isPath ? $finfo->file($source) : $finfo->buffer($source));
+
+        if (!ImageManagerFactory::isDecodable($mime, $isPath ? File::extension($source) : null)) {
+            throw new MediaNotFoundException('Media source is not a decodable image format.');
+        }
+
+        $size = $isPath ? @getimagesize($source) : @getimagesizefromstring($source);
+        if (is_array($size) && $size[0] * $size[1] > ImageManagerFactory::$maxPixels) {
+            throw new MediaNotFoundException('Media source exceeds the maximum image size.');
         }
     }
 

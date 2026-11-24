@@ -5,6 +5,7 @@ namespace Redaxo\Core\Tests\MediaManager;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Format;
 use Intervention\Image\ImageManager;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Redaxo\Core\MediaManager\ImageManagerFactory;
 use Throwable;
@@ -12,9 +13,18 @@ use Throwable;
 /** @internal */
 final class ImageManagerFactoryTest extends TestCase
 {
+    /** @var array<string, list<string>> */
+    private array $delegateFormats;
+
+    protected function setUp(): void
+    {
+        $this->delegateFormats = ImageManagerFactory::$delegateFormats;
+    }
+
     protected function tearDown(): void
     {
-        ImageManagerFactory::setDriver(null);
+        ImageManagerFactory::$delegateFormats = $this->delegateFormats;
+        ImageManagerFactory::$driver = null;
         ImageManagerFactory::reset();
     }
 
@@ -25,7 +35,7 @@ final class ImageManagerFactoryTest extends TestCase
 
     public function testExplicitDriverIsUsed(): void
     {
-        ImageManagerFactory::setDriver(GdDriver::class);
+        ImageManagerFactory::$driver = GdDriver::class;
 
         self::assertSame(5, ImageManagerFactory::create()->createImage(5, 5)->width());
     }
@@ -94,6 +104,45 @@ final class ImageManagerFactoryTest extends TestCase
 
             self::assertSame($reallyDecodes, ImageManagerFactory::canDecode($manager, $extension), $extension);
         }
+    }
+
+    public function testCanDecodeDoesNotProbeFormatsThatAreNotAllowed(): void
+    {
+        unset(ImageManagerFactory::$delegateFormats['pdf']);
+
+        $manager = $this->getMockBuilder(ImageManager::class)
+            ->setConstructorArgs([new GdDriver()])
+            ->onlyMethods(['decode'])
+            ->getMock();
+        $manager->expects(self::never())->method('decode');
+
+        self::assertFalse(ImageManagerFactory::canDecode($manager, 'pdf'));
+    }
+
+    #[DataProvider('provideIsDecodable')]
+    public function testIsDecodable(bool $expected, string $mimeType, ?string $extension): void
+    {
+        self::assertSame($expected, ImageManagerFactory::isDecodable($mimeType, $extension));
+    }
+
+    /** @return list<array{bool, string, string|null}> */
+    public static function provideIsDecodable(): array
+    {
+        return [
+            [true, 'image/jpeg', 'jpg'],
+            [true, 'image/png', 'jpg'],
+            [true, 'image/webp', 'txt'],
+            [true, 'image/jpeg', null],
+            [true, 'application/pdf', 'pdf'],
+            [true, 'application/pdf', 'PDF'],
+            [true, 'application/pdf', null],
+            [false, 'application/pdf', 'jpg'],
+            [false, 'image/tiff', 'pdf'],
+            [false, 'application/postscript', 'eps'],
+            [false, 'image/svg+xml', 'svg'],
+            [false, 'image/jp2', 'jp2'],
+            [false, 'text/plain', null],
+        ];
     }
 
     private function sample(string $extension, ImageManager $manager): ?string

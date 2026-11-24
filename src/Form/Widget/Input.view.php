@@ -4,7 +4,7 @@ use Redaxo\Core\Form\Widget\Input;
 
 return static function (Input $input): void { ?>
     <input <?= $input->attributes->with([
-        'class' => ['form-control'],
+        'class' => ['rex-input'],
         'type' => $input->type,
         'name' => $input->name,
         'id' => $input->id,

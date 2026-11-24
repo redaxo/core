@@ -10,7 +10,7 @@ return static function (ButtonToolbar $toolbar): void {
         $first = clone ($buttons[0], ['attributes' => $buttons[0]->attributes->with(['class' => ['rex-form-aligned']])]);
         $buttons[0] = $first;
     } ?>
-    <div class="btn-toolbar">
+    <div class="rex-button-toolbar">
         <?php foreach ($buttons as $button): ?>
             <?= $button->render() ?>
         <?php endforeach ?>
