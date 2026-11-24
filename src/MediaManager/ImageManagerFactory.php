@@ -12,8 +12,11 @@ use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\Filesystem\Path;
 use Throwable;
 
+use function array_merge;
+use function array_values;
 use function base64_decode;
 use function extension_loaded;
+use function in_array;
 use function strtolower;
 
 /**
@@ -21,25 +24,47 @@ use function strtolower;
  *
  * No image driver is a hard composer dependency. By default the driver is detected automatically,
  * preferring Imagick over GD. A specific driver — including the libvips driver from the optional
- * `intervention/image-driver-vips` package — can be selected explicitly via {@see self::setDriver()}.
+ * `intervention/image-driver-vips` package — can be selected explicitly via {@see self::$driver}.
  * If no driver is available a clear exception is thrown instead of a cryptic Intervention error.
+ *
+ * It also decides which sources may be handed to the driver at all: plain raster formats under any name, formats
+ * needing an external delegate only as listed in {@see self::$delegateFormats}, nothing else.
  */
 final class ImageManagerFactory
 {
-    /** @var class-string<DriverInterface>|null */
-    private static ?string $driver = null;
+    /** Raster formats the drivers decode themselves, without external delegates (extension => content types) */
+    private const array RASTER_FORMATS = [
+        'jpg' => ['image/jpeg'], 'jpeg' => ['image/jpeg'], 'jpe' => ['image/jpeg'],
+        'png' => ['image/png'], 'gif' => ['image/gif'], 'webp' => ['image/webp'], 'avif' => ['image/avif'],
+        'bmp' => ['image/bmp', 'image/x-ms-bmp'],
+    ];
+    /** @var class-string<DriverInterface>|null Driver to use; `null` detects one automatically */
+    public static ?string $driver = null;
+
+    /**
+     * Formats beyond plain raster images that may be decoded, by extension, with the content types the file must have.
+     *
+     * Anything not listed here — notably SVG, EPS/PS, MVG/MSL — never reaches the driver: ImageMagick picks its decoder
+     * from the file content and would otherwise feed any media pool file to delegates like Ghostscript or rsvg on an
+     * anonymous media manager request. Listed formats run such delegates too (PDF: Ghostscript), so only add formats
+     * that should really be rasterized.
+     *
+     * @var array<string, list<string>>
+     */
+    public static array $delegateFormats = [
+        'tif' => ['image/tiff'], 'tiff' => ['image/tiff'],
+        'pdf' => ['application/pdf'],
+        'psd' => ['image/vnd.adobe.photoshop'],
+    ];
+
+    /** Upper limit for width × height of a source image (protects against decompression bombs) */
+    public static int $maxPixels = 100_000_000;
 
     /** @var array<string, bool>|null Encode-capability probes (driver id + format => bool), lazily loaded from cache */
     private static ?array $encodeSupport = null;
 
     /** @var array<string, bool>|null Decode-capability probes (driver id + extension => bool), lazily loaded from cache */
     private static ?array $decodeSupport = null;
-
-    /** @param class-string<DriverInterface>|null $driver `null` restores automatic detection */
-    public static function setDriver(?string $driver): void
-    {
-        self::$driver = $driver;
-    }
 
     /** @internal */
     public static function create(): ImageManager
@@ -83,7 +108,8 @@ final class ImageManagerFactory
 
     /**
      * Whether the manager's driver can actually *decode* a source with the given file extension —
-     * i.e. whether a raster preview can be produced from it.
+     * i.e. whether a raster preview can be produced from it. Extensions that are neither a plain
+     * raster format nor listed in {@see self::$delegateFormats} are never decodable.
      *
      * This is what separates "is conceptually an image" (a static extension list) from "the active
      * driver can rasterize this here and now". The answer is runtime-dependent: GD cannot decode
@@ -105,6 +131,10 @@ final class ImageManagerFactory
     {
         $extension = strtolower($extension);
 
+        if (!isset(self::RASTER_FORMATS[$extension]) && !isset(self::$delegateFormats[$extension])) {
+            return false;
+        }
+
         if (null === self::$decodeSupport) {
             /** @var array<string, bool> $cached */
             $cached = File::getCache(self::decodeSupportCacheFile(), []) ?? [];
@@ -119,6 +149,27 @@ final class ImageManagerFactory
         }
 
         return self::$decodeSupport[$key];
+    }
+
+    /**
+     * Whether a source with the given content type may be handed to the driver.
+     *
+     * @param string|null $extension Extension of the source file; `null` for a binary string, which then may have the
+     *     content type of any allowed format
+     *
+     * @internal
+     */
+    public static function isDecodable(string $mimeType, ?string $extension): bool
+    {
+        $mimeTypes = array_merge(...array_values(self::RASTER_FORMATS));
+
+        if (null === $extension) {
+            $mimeTypes = [...$mimeTypes, ...array_merge(...array_values(self::$delegateFormats))];
+        } else {
+            $mimeTypes = [...$mimeTypes, ...self::$delegateFormats[strtolower($extension)] ?? []];
+        }
+
+        return in_array($mimeType, $mimeTypes, true);
     }
 
     /**
@@ -212,6 +263,6 @@ final class ImageManagerFactory
             return new GdDriver();
         }
 
-        throw new RuntimeException('No image driver available. Install the GD or Imagick PHP extension, or set a driver explicitly via ImageManagerFactory::setDriver() (e.g. the libvips driver from "intervention/image-driver-vips").');
+        throw new RuntimeException('No image driver available. Install the GD or Imagick PHP extension, or set a driver explicitly via ImageManagerFactory::$driver (e.g. the libvips driver from "intervention/image-driver-vips").');
     }
 }

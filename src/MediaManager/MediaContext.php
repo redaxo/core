@@ -9,11 +9,8 @@ use Intervention\Image\Interfaces\ImageManagerInterface;
 use Redaxo\Core\Filesystem\File;
 use Redaxo\Core\MediaManager\Exception\MediaNotFoundException;
 
-use function array_merge;
-use function array_values;
 use function getimagesize;
 use function getimagesizefromstring;
-use function in_array;
 use function is_array;
 use function is_file;
 use function str_contains;
@@ -39,8 +36,6 @@ use const FILEINFO_MIME_TYPE;
  */
 final class MediaContext
 {
-    /** Raster formats the drivers decode themselves, without external delegates */
-    private const array RASTER_MIME_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif', 'image/bmp', 'image/x-ms-bmp'];
     /**
      * Path to the source file. Assigning a new path switches the source (e.g. to a file outside the
      * media pool) and discards any image decoded so far.
@@ -70,28 +65,6 @@ final class MediaContext
     private ?ImageInterface $decodedImage = null;
 
     public readonly MediaResponse $response;
-
-    /**
-     * Formats the media manager may hand to the image driver, with the content types the file must actually have.
-     *
-     * Everything else — notably SVG, EPS/PS, MVG/MSL, plain text — never reaches the driver: ImageMagick picks its decoder
-     * from the file *content*, so without this check any media pool file (a crafted EPS, an SVG with external references,
-     * a text file starting with MVG commands …) would be fed to delegates like Ghostscript or rsvg by a single anonymous
-     * request to `?rex_media_type=…&rex_media_file=…`.
-     *
-     * Addons can extend the list for further formats they deliberately want to rasterize.
-     *
-     * @var array<string, list<string>>
-     */
-    public static array $decodableFormats = [
-        'jpg' => ['image/jpeg'], 'jpeg' => ['image/jpeg'], 'jpe' => ['image/jpeg'],
-        'png' => ['image/png'], 'gif' => ['image/gif'], 'webp' => ['image/webp'], 'avif' => ['image/avif'],
-        'bmp' => ['image/bmp', 'image/x-ms-bmp'], 'tif' => ['image/tiff'], 'tiff' => ['image/tiff'],
-        'pdf' => ['application/pdf'], 'psd' => ['image/vnd.adobe.photoshop'],
-    ];
-
-    /** Upper limit for width × height of a source image (protects against decompression bombs) */
-    public static int $maxPixels = 100_000_000;
 
     /**
      * @param string $filename Original media filename (basename), e.g. `image.jpg`
@@ -138,20 +111,12 @@ final class MediaContext
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $mime = (string) ($isPath ? $finfo->file($source) : $finfo->buffer($source));
 
-        // plain raster content (decoded by the driver itself, no delegates) is fine under any name; formats that need
-        // delegates (PDF, PSD, TIFF …) only when the extension says so; everything else never
-        $allowed = self::RASTER_MIME_TYPES;
-        if ($isPath) {
-            $allowed = [...$allowed, ...self::$decodableFormats[strtolower(File::extension($source))] ?? []];
-        } else {
-            $allowed = [...$allowed, ...array_merge(...array_values(self::$decodableFormats))];
-        }
-        if (!in_array($mime, $allowed, true)) {
+        if (!ImageManagerFactory::isDecodable($mime, $isPath ? File::extension($source) : null)) {
             throw new MediaNotFoundException('Media source is not a decodable image format.');
         }
 
         $size = $isPath ? @getimagesize($source) : @getimagesizefromstring($source);
-        if (is_array($size) && $size[0] * $size[1] > self::$maxPixels) {
+        if (is_array($size) && $size[0] * $size[1] > ImageManagerFactory::$maxPixels) {
             throw new MediaNotFoundException('Media source exceeds the maximum image size.');
         }
     }
