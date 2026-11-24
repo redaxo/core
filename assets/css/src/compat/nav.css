@@ -1,0 +1,137 @@
+/* Bootstrap 3 navs and tabs (`.nav`, `.nav-tabs`), e.g. the tabs of YForm forms; not used by the core */
+
+@layer bootstrap {
+    .nav {
+        display: flow-root;
+        margin-bottom: 0;
+        padding-left: 0;
+        list-style: none;
+
+        & > li {
+            position: relative;
+            display: block;
+
+            & > a {
+                position: relative;
+                display: block;
+                padding: 10px 15px;
+
+                &:hover,
+                &:focus {
+                    background-color: var(--rex-color-surface-subtle);
+                    text-decoration: none;
+                }
+            }
+
+            &.disabled > a {
+                &,
+                &:hover,
+                &:focus {
+                    background-color: transparent;
+                    color: var(--rex-color-text-muted);
+                    cursor: not-allowed;
+                }
+            }
+        }
+
+        & .open > a {
+            &,
+            &:hover,
+            &:focus {
+                border-color: var(--rex-color-accent);
+                background-color: var(--rex-color-surface-subtle);
+            }
+        }
+    }
+
+    .nav-tabs {
+        border-bottom: 1px solid var(--rex-color-border-strong);
+
+        & > li {
+            float: left;
+            margin-bottom: -1px;
+
+            & > a {
+                margin-right: 2px;
+                border: 1px solid transparent;
+                border-radius: 0;
+                line-height: var(--rex-line-height);
+
+                &:hover {
+                    border-color: var(--rex-color-surface-muted) var(--rex-color-surface-muted) var(--rex-color-border-strong);
+                }
+            }
+
+            &.active > a {
+                &,
+                &:hover,
+                &:focus {
+                    border: 1px solid var(--rex-color-border-strong);
+                    border-bottom-color: transparent;
+                    background-color: var(--rex-color-surface);
+                    color: var(--rex-color-text);
+                    cursor: default;
+                }
+            }
+        }
+
+        & > li.pull-right > a {
+            margin-right: 0;
+            margin-left: 2px;
+        }
+
+        .rex-slice-input & {
+            margin-bottom: 22px;
+        }
+    }
+
+    /* tabs in the header of a section */
+    .rex-section__header .nav-tabs {
+        --tab-bg: var(--rex-color-surface-subtle);
+        --tab-bg-hover: color-mix(in srgb, var(--rex-color-surface-subtle), var(--rex-color-surface));
+        --tab-active-bg: var(--rex-color-surface);
+
+        display: flex;
+        margin-bottom: -10px;
+        border-bottom: 0;
+
+        :is(.rex-section--edit, .rex-section[data-variant="edit"]) & {
+            --tab-bg: color-mix(in srgb, var(--rex-color-success-subtle) 70%, var(--rex-color-success));
+            --tab-bg-hover: color-mix(in srgb, var(--rex-color-success-subtle) 85%, var(--rex-color-success));
+            --tab-active-bg: var(--rex-color-success-subtle);
+        }
+
+        & > li {
+            & > a:not(.btn, .rex-button) {
+                padding-top: 5px;
+                padding-bottom: 4px;
+                border-color: transparent;
+                border-radius: 4px 4px 0 0;
+                background-color: var(--tab-bg);
+                color: var(--rex-color-text-muted);
+
+                &:hover,
+                &:focus {
+                    background-color: var(--tab-bg-hover);
+                    color: var(--rex-color-text);
+                }
+            }
+
+            &.active > a:not(.btn, .rex-button) {
+                &,
+                &:hover,
+                &:focus {
+                    padding-bottom: 5px;
+                    border-color: transparent;
+                    background-color: var(--tab-active-bg);
+                    color: var(--rex-color-text);
+                }
+            }
+        }
+    }
+
+    /* only the active pane of tabs (`data-toggle="tab"`) shows */
+    .tab-content > .tab-pane:not(.active) {
+        display: none;
+    }
+}

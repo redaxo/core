@@ -5,6 +5,7 @@ use Redaxo\Core\Filesystem\Path;
 use Redaxo\Core\Filesystem\Url;
 use Redaxo\Core\Http\Response;
 use Redaxo\Core\Translation\I18n;
+use Redaxo\Core\Util\Type;
 use Redaxo\Core\View\Asset;
 use Redaxo\Core\View\Fragment;
 
@@ -74,7 +75,9 @@ use function Redaxo\Core\View\escape;
             $attributes[] = 'defer="defer"';
         }
 
-        echo "\n" . '    <script type="text/javascript" src="' . $file . '" ' . implode(' ', $attributes) . ' nonce="' . Response::getNonce() . '"></script>';
+        $type = true === (Type::array($options)[Asset::JS_MODULE] ?? false) ? 'module' : 'text/javascript';
+
+        echo "\n" . '    <script type="' . $type . '" src="' . $file . '" ' . implode(' ', $attributes) . ' nonce="' . Response::getNonce() . '"></script>';
     }
 ?>
 
@@ -92,9 +95,6 @@ use function Redaxo\Core\View\escape;
 </head>
 <body<?= $this->bodyAttr ?>>
 
-<div class="rex-ajax-loader" id="rex-js-ajax-loader">
-    <div class="rex-ajax-loader-element"></div>
-    <div class="rex-ajax-loader-backdrop"></div>
-</div>
+<a class="rex-skip-link" href="#rex-js-page-main"><?= I18n::msg('skip_to_content') ?></a>
 
-<div id="rex-start-of-page" class="rex-page">
+<div id="rex-start-of-page" class="rex-app">

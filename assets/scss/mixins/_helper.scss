@@ -1,9 +1,0 @@
-@mixin generate-spacing($from, $to, $class, $property, $factor, $important: false) {
-    @for $i from $from through $to {
-        $px: $factor * $i;
-        $suffix: if($important, '!important', '');
-        .#{$class}-#{$i} {
-            #{$property}: #{$px} #{$suffix};
-        }
-    }
-}

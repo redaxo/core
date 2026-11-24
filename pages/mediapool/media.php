@@ -12,6 +12,7 @@ use Redaxo\Core\MediaPool\ExtensionPoint\MediaListToolbar;
 use Redaxo\Core\MediaPool\MediaCategory;
 use Redaxo\Core\MediaPool\MediaCategoryChoices;
 use Redaxo\Core\Security\CsrfToken;
+use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\View\Fragment;
 use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\View;
@@ -22,7 +23,7 @@ assert(isset($rexFileCategory) && is_int($rexFileCategory));
 assert(isset($argFields) && is_string($argFields));
 assert(isset($fileId) && is_int($fileId));
 
-/** @var array{types?: string, opener_input_field?: string, language?: int} $argUrl */
+/** @var array{types?: string, picker?: string, language?: int} $argUrl */
 $argUrl ??= [];
 
 $subpage = Controller::getCurrentPagePart(2);
@@ -42,13 +43,14 @@ $selMedia = new SelectInput(
     $categoryChoices->choices(),
     (string) $rexFileCategory,
     'rex_file_category',
-    attributes: new HtmlAttributes(['onchange' => 'this.form.submit();', 'data-live-search' => 'true']),
+    search: true,
+    attributes: new HtmlAttributes(['data-rex-autosubmit' => true, 'aria-label' => I18n::rawMsg('pool_file_category')]),
 );
 
 $formElements = [];
 $n = [];
-$n['field'] = '<input class="form-control" style="border-left: 0;" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" />';
-$n['right'] = '<button class="btn btn-search" type="submit"><i class="rex-icon rex-icon-search"></i></button>';
+$n['field'] = '<input class="rex-input" type="text" name="media_name" id="be_search-media-name" value="' . escape($mediaName) . '" aria-label="' . I18n::msg('pool_search') . '" />';
+$n['right'] = '<button class="rex-button" type="submit"><i class="rex-icon rex-icon-search" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('pool_search') . '</span></button>';
 $formElements[] = $n;
 $fragment = new Fragment();
 $fragment->setVar('elements', $formElements, false);
@@ -64,10 +66,10 @@ $fragment->setVar('elements', $formElements, false);
 $toolbar = '<div class="rex-truncate-dropdown">' . $fragment->parse('core/form/input_group.php') . '</div>';
 
 $toolbar = '
-<div class="navbar-form navbar-right">
+<div>
 <form action="' . Url::currentBackendPage() . '" method="post">
     ' . $argFields . '
-    <div class="form-group">
+    <div class="rex-field">
     ' . $toolbar . '
     </div>
 </form>
@@ -87,7 +89,7 @@ $languageSwitch = View::languageSwitchAsButtons(new Context([
     'language' => Language::getCurrentId(),
 ]));
 if ('' !== $languageSwitch) {
-    echo '<div class="clearfix">' . $languageSwitch . '</div>';
+    echo '<div class="rex-u-clearfix">' . $languageSwitch . '</div>';
 }
 
 $toolbar = Extension::dispatch(new MediaListToolbar($subpage, $rexFileCategory > 0 ? MediaCategory::get($rexFileCategory) : null, $toolbar));

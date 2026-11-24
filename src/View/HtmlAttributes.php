@@ -100,6 +100,12 @@ final readonly class HtmlAttributes implements Stringable
         return new self($attributes);
     }
 
+    /** Returns a new instance in which the given attributes take precedence, merged like in {@see with()}. */
+    public function merge(self $attributes): self
+    {
+        return $this->with($attributes->attributes);
+    }
+
     public function toString(): string
     {
         $attr = '';

@@ -1,0 +1,304 @@
+/*
+ Tables (`.rex-table`, Redaxo\Core\View\Component\Table): `data-hover` highlights the row under the pointer,
+ `data-bordered` draws all cell borders, `data-density="compact"` reduces the padding. Column helpers
+ (`.rex-table-*`), highlighted rows (`tr.rex-u-mark`), row states (`.rex-state-*`) and, below 768px, one block per row with
+ the column titles taken from `data-title`.
+ */
+
+@layer components {
+    table {
+        background-color: var(--rex-color-surface);
+    }
+
+    caption {
+        padding-block: 8px;
+        color: var(--rex-color-text-muted);
+        text-align: left;
+    }
+
+    .rex-table {
+        --rex-table-border: var(--rex-color-border);
+
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 22px;
+
+        & > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+            padding: 8px;
+            border-top: 1px solid var(--rex-table-border);
+            line-height: var(--rex-line-height);
+            vertical-align: top;
+        }
+
+        & > thead > tr > :is(th, td) {
+            border-bottom: 2px solid var(--rex-table-border);
+            vertical-align: bottom;
+        }
+
+        /* the footer holds controls, e.g. actions for the selected rows */
+        & > tfoot > tr > :is(th, td) {
+            vertical-align: middle;
+        }
+
+        & > :is(caption, colgroup) + thead > tr:first-child > :is(th, td),
+        & > thead:first-child > tr:first-child > :is(th, td) {
+            border-top: 0;
+        }
+
+        & > tbody + tbody {
+            border-top: 2px solid var(--rex-table-border);
+        }
+
+        & .rex-table {
+            background-color: var(--rex-color-surface-subtle);
+        }
+
+        & > tbody > tr > td > h3 {
+            font-size: var(--rex-font-size);
+            font-weight: 700;
+            line-height: var(--rex-line-height);
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+    }
+
+    .rex-table[data-density="compact"] > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+        padding: 5px;
+    }
+
+    .rex-table[data-bordered] {
+        border: 1px solid var(--rex-table-border);
+
+        & > :is(thead, tbody, tfoot) > tr > :is(th, td) {
+            border: 1px solid var(--rex-table-border);
+        }
+
+        & > thead > tr > :is(th, td) {
+            border-bottom-width: 2px;
+        }
+    }
+
+    .rex-table[data-hover] > tbody > tr:hover {
+        background-color: var(--rex-color-surface-subtle);
+    }
+
+    /* highlighted row, e.g. the add and edit rows of the structure */
+    .rex-table > tbody > tr.rex-u-mark {
+        background-color: var(--rex-color-surface-muted);
+
+        & > :is(th, td) {
+            vertical-align: middle;
+        }
+    }
+
+    /* message column of the system log */
+    .rex-log-message {
+        font-weight: 500;
+    }
+
+    /* row states, e.g. of the log tables */
+    :is(.rex-state-success, .rex-state-danger, .rex-state-error) {
+        /* text links, not links styled as buttons (also `.btn` of addons with the Bootstrap 3 markup) */
+        &,
+        & a:not(.rex-button, .btn) {
+            color: var(--rex-state-text);
+        }
+
+        & a:not(.rex-button, .btn) {
+            text-decoration: underline;
+        }
+    }
+
+    .rex-state-success {
+        --rex-state-text: var(--rex-color-on-success);
+
+        background-color: var(--rex-color-success);
+
+        tr&:hover > :is(th, td) {
+            background-color: var(--rex-color-success-hover);
+        }
+    }
+
+    :is(.rex-state-danger, .rex-state-error) {
+        --rex-state-text: var(--rex-color-on-danger);
+
+        background-color: var(--rex-color-danger);
+
+        tr&:hover > :is(th, td) {
+            background-color: var(--rex-color-danger-hover);
+        }
+    }
+
+    /* footer row that stays visible at the bottom of the viewport */
+    .rex-sticky-table-footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+
+        & :is(th, td) {
+            position: sticky;
+            bottom: 0;
+            z-index: 1;
+            background-color: var(--rex-color-surface-muted);
+        }
+    }
+
+    /* columns */
+    @media (min-width: 992px) {
+        .rex-table :is(th, td) {
+            &.rex-table-icon {
+                width: 40px;
+                min-width: 40px;
+                text-align: center;
+            }
+
+            /* numbers: as narrow as possible, right aligned with digits of equal width */
+            &:is(.rex-table-id, .rex-table-number, .rex-table-priority) {
+                width: 1%;
+                min-width: 50px;
+                font-variant-numeric: tabular-nums;
+                text-align: right;
+                white-space: nowrap;
+            }
+
+            /* leaves room for a four digit input in edit mode */
+            &.rex-table-priority {
+                min-width: 80px;
+            }
+
+            &:is(.rex-table-category, .rex-table-article-name) {
+                width: 100%;
+            }
+
+            &.rex-table-template {
+                min-width: 150px;
+            }
+
+            &:is(.rex-table-date, .rex-table-sort) {
+                white-space: nowrap;
+            }
+
+            &.rex-table-tabular-nums {
+                font-variant-numeric: tabular-nums;
+            }
+
+            &.rex-table-slimmer {
+                width: 80px;
+            }
+
+            &:is(.rex-table-slim, .rex-table-thumbnail) {
+                width: 120px;
+            }
+
+            &.rex-table-action:not([colspan]) {
+                width: 1px;
+            }
+
+            &.rex-table-action > * {
+                white-space: nowrap;
+            }
+        }
+
+        #rex-page-structure .rex-table-action {
+            white-space: nowrap;
+        }
+
+        #rex-page-mediapool-media td.rex-table-action:last-child {
+            text-align: right;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .rex-table :is(th, td).rex-table-action {
+            padding-inline: 16px;
+        }
+    }
+
+    /* small screens: each row becomes a block, each cell a line with its column title on the left */
+    @media (max-width: 767px) {
+        .rex-table {
+            position: relative;
+
+            &,
+            & > caption,
+            & > :is(thead, tbody, tfoot),
+            & > :is(thead, tbody, tfoot) > tr,
+            & > :is(thead, tfoot) > tr > :is(th, td),
+            & > tbody > tr > :is(th[data-title], td) {
+                display: block;
+            }
+
+            & > tbody > tr > th,
+            & > tbody > tr > :is(th, td):empty,
+            & > :is(thead, tbody) > tr.collapse > :is(th, td) {
+                display: none;
+            }
+
+            & > :is(thead, tbody) > tr:is(.collapsing, .collapse.in) > :is(th, td) {
+                display: block;
+            }
+
+            /* the titles move out of sight, the first one stays as a link, e.g. to add an entry */
+            & > thead > tr > :is(th, td) {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+
+                &:first-child > a {
+                    position: absolute;
+                    top: 10007px;
+                    left: 10007px;
+                    z-index: 900;
+                    display: block;
+                }
+            }
+
+            & > tbody > tr {
+                border-bottom: 1px solid var(--rex-table-border);
+
+                &:last-child {
+                    border-bottom: 0;
+                }
+            }
+
+            & > tbody > tr > :is(th[data-title], td) {
+                position: relative;
+                width: 100%;
+                padding-left: 40%;
+                border: 0 !important;
+                border-bottom: 1px solid var(--rex-color-border) !important;
+                text-align: left;
+                white-space: normal;
+
+                &::before {
+                    content: attr(data-title);
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 35%;
+                    overflow: hidden;
+                    padding: 8px;
+                    font-weight: 700;
+                    line-height: 22px;
+                    text-align: left;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+
+            &.rex-table[data-density="compact"] > tbody > tr > :is(th[data-title], td)::before {
+                padding: 5px;
+            }
+
+            & > tbody > tr:is(.collapsing, .collapse.in) > :is(th[data-title], td) {
+                padding-left: 8px;
+            }
+
+            & > tbody > tr:last-child > :is(th, td):last-child {
+                border: 0 !important;
+            }
+        }
+    }
+}

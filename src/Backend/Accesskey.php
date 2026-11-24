@@ -16,12 +16,23 @@ final class Accesskey
         'add_2' => 'y',
     ];
 
+    /** @var array<string, true> keys already given to an element of the current page */
+    private static array $used = [];
+
     private function __construct() {}
 
-    /** Returns the accesskey for the given key, or `null` if accesskeys are disabled or the key has none. */
+    /**
+     * Returns the accesskey for the given key, or `null` if accesskeys are disabled, the key has none or an earlier
+     * element of the page already got it (an accesskey must be unique within the page, e.g. when several forms save).
+     */
     public static function get(string $key): ?string
     {
-        return self::$enabled ? self::$keys[$key] ?? null : null;
+        if (!self::$enabled || !isset(self::$keys[$key]) || isset(self::$used[$key])) {
+            return null;
+        }
+        self::$used[$key] = true;
+
+        return self::$keys[$key];
     }
 
     /**
@@ -38,5 +49,11 @@ final class Accesskey
         }
 
         return ' title="' . $title . '"';
+    }
+
+    /** Forgets the keys given so far, so a new page (e.g. in tests or long-running processes) gets them again. */
+    public static function reset(): void
+    {
+        self::$used = [];
     }
 }

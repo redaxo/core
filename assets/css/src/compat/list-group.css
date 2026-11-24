@@ -1,0 +1,116 @@
+/* Bootstrap 3 list groups (`.list-group`) and `.thumbnail` for addons; the core uses `.rex-list` (components/list.css) */
+
+@layer bootstrap {
+    .list-group {
+        margin-bottom: 20px;
+        padding-left: 0;
+
+        .rex-section > & {
+            margin-bottom: 0;
+
+            & .list-group-item {
+                border-width: 1px 0;
+                border-radius: 0;
+            }
+
+            &:first-child .list-group-item:first-child {
+                border-top: 0;
+            }
+
+            &:last-child .list-group-item:last-child {
+                border-bottom: 0;
+            }
+
+            /* nested list, e.g. the subcategories of the linkmap */
+            & .list-group {
+                margin: 10px -15px -10px 0;
+
+                & > .list-group-item {
+                    padding-left: 20px;
+
+                    &:first-child {
+                        border-top-width: 1px;
+                    }
+                }
+            }
+        }
+
+        .rex-section__header + & .list-group-item:first-child {
+            border-top-width: 0;
+        }
+    }
+
+    .list-group-item {
+        position: relative;
+        display: block;
+        margin-bottom: -1px;
+        padding: 10px 15px;
+        border: 1px solid var(--rex-color-border);
+        background-color: var(--rex-color-surface);
+
+        /* current category of the linkmap */
+        & > .rex-active {
+            color: var(--rex-color-link);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        :is(a, button)& {
+            color: var(--rex-color-text);
+
+            &:hover,
+            &:focus {
+                background-color: var(--rex-color-surface-subtle);
+                color: var(--rex-color-text);
+                text-decoration: none;
+            }
+        }
+
+        &.active {
+            &,
+            &:hover,
+            &:focus {
+                z-index: 2;
+                border-color: var(--rex-color-accent);
+                background-color: var(--rex-color-accent);
+                color: var(--rex-color-on-accent);
+            }
+        }
+
+        &.disabled {
+            &,
+            &:hover,
+            &:focus {
+                background-color: var(--rex-color-surface-muted);
+                color: var(--rex-color-text-muted);
+                cursor: not-allowed;
+            }
+        }
+    }
+
+
+    .thumbnail {
+        display: block;
+        margin-bottom: 22px;
+        padding: 4px;
+        border: 1px solid var(--rex-color-border);
+        border-radius: 0;
+        background-color: var(--rex-color-surface-subtle);
+        line-height: var(--rex-line-height);
+        transition: border 0.2s ease-in-out;
+
+        & > img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        a&:is(:hover, :focus, .active) {
+            border-color: var(--rex-color-accent);
+        }
+    }
+}

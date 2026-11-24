@@ -1,0 +1,117 @@
+/*
+ Toolbar (`.rex-toolbar`, Redaxo\Core\View\Component\Toolbar), e.g. the version bar of the content editor: a bar of
+ links and controls, `data-variant="inverse"` for the dark one. Below 992px its content collapses behind a toggle.
+ */
+
+@layer components {
+    .rex-toolbar {
+        --rex-toolbar-bg: var(--rex-color-accent);
+        --rex-toolbar-text: var(--rex-color-on-accent);
+        --rex-toolbar-hover-text: var(--rex-color-on-accent);
+        --rex-toolbar-active-bg: var(--rex-color-accent-hover);
+        --rex-color-focus: var(--rex-toolbar-text);
+
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        min-height: 50px;
+        margin-bottom: 22px;
+        padding: 0 15px;
+        background: var(--rex-toolbar-bg);
+        color: var(--rex-toolbar-text);
+
+        &[data-variant="inverse"] {
+            --rex-toolbar-bg: var(--rex-color-inverse-bg);
+            --rex-toolbar-text: var(--rex-color-inverse-text);
+            --rex-toolbar-hover-text: var(--rex-color-inverse-link);
+            --rex-toolbar-active-bg: var(--rex-color-inverse-bg-strong);
+        }
+    }
+
+    .rex-toolbar-brand {
+        margin-right: 15px;
+        font-size: var(--rex-font-size-large);
+    }
+
+    .rex-toolbar-toggle {
+        display: none;
+        margin: 8px 0 8px auto;
+        padding: 6px 10px;
+        border: 1px solid currentColor;
+        border-radius: var(--rex-radius);
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+
+        &:hover {
+            background: var(--rex-toolbar-active-bg);
+        }
+    }
+
+    .rex-toolbar-content {
+        display: flex;
+        flex: 1;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    @media (max-width: 991px) {
+        .rex-toolbar-toggle {
+            display: block;
+        }
+
+        .rex-toolbar-content {
+            flex-basis: 100%;
+            flex-direction: column;
+            align-items: stretch;
+            padding-bottom: 8px;
+
+            &:not(.in) {
+                display: none;
+            }
+        }
+    }
+
+    /* the links of the bar, also as toggles of dropdowns */
+    .rex-toolbar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 0 0 -15px;
+        padding: 0;
+        list-style: none;
+
+        @media (max-width: 991px) {
+            flex-direction: column;
+        }
+
+        & > li {
+            position: relative;
+        }
+
+        & > li > :is(a, button) {
+            display: block;
+            padding: 14px 15px;
+            border: 0;
+            background: none;
+            color: var(--rex-toolbar-text);
+            font: inherit;
+            line-height: 22px;
+            text-decoration: none;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--rex-toolbar-hover-text);
+                text-decoration: underline;
+            }
+
+            &:is([aria-expanded="true"], [aria-current]:not([aria-current="false"])) {
+                background: var(--rex-toolbar-active-bg);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+                opacity: 0.65;
+            }
+        }
+    }
+}

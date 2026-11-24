@@ -4,6 +4,7 @@ namespace Redaxo\Core\Backend\Form;
 
 use Redaxo\Core\Form\Widget\Widget;
 use Redaxo\Core\Translation\Translatable;
+use Redaxo\Core\View\HtmlAttributes;
 use Redaxo\Core\View\Renderable;
 use Redaxo\Core\View\RendersView;
 
@@ -31,6 +32,7 @@ final class PermissionsInput implements Widget
         public array $groups,
         public string|Renderable|null $error = null,
         public bool $disabled = false,
+        public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 
     public function groupId(string $key): string

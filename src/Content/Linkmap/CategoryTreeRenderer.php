@@ -42,7 +42,7 @@ abstract class CategoryTreeRenderer
 
         $rendered = $this->renderTree($roots, $tree);
         // add css class to root node
-        return '<ul class="list-group rex-linkmap-list-group"' . substr($rendered, 3);
+        return '<ul class="rex-list rex-linkmap-list"' . substr($rendered, 3);
     }
 
     /**
@@ -60,15 +60,15 @@ abstract class CategoryTreeRenderer
         foreach ($children as $cat) {
             $catChildren = $cat->getChildren();
             $catId = $cat->id;
-            $liclasses = 'list-group-item';
+            $liclasses = 'rex-list-item';
             $linkclasses = '';
             $subLi = '';
-            $liIcon = '<i class="rex-icon rex-icon-category"></i> ';
+            $liIcon = '<i class="rex-icon rex-icon-category" aria-hidden="true"></i> ';
 
-            $linkclasses .= $cat->isOnline() ? 'rex-online ' : 'rex-offline ';
+            $linkclasses .= $cat->isOnline() ? 'rex-u-online ' : 'rex-u-offline ';
             if (in_array($catId, $activeTreeIds)) {
                 $subLi = $this->renderTree($catChildren, $activeTreeIds);
-                $liIcon = '<i class="rex-icon rex-icon-open-category"></i> ';
+                $liIcon = '<i class="rex-icon rex-icon-open-category" aria-hidden="true"></i> ';
                 $linkclasses .= 'rex-active ';
             }
 
@@ -76,7 +76,7 @@ abstract class CategoryTreeRenderer
         }
 
         if ('' != $li) {
-            $ul = '<ul class="list-group" data-cat-id="' . ($children[0]->parentId ?? 0) . '">' . "\n" . $li . '</ul>' . "\n";
+            $ul = '<ul class="rex-list" data-cat-id="' . ($children[0]->parentId ?? 0) . '">' . "\n" . $li . '</ul>' . "\n";
         }
 
         return $ul;

@@ -8,6 +8,7 @@ use Redaxo\Core\Content\ExtensionPoint\ArticleSlicesCopying;
 use Redaxo\Core\Content\ExtensionPoint\SliceAdding;
 use Redaxo\Core\Content\ExtensionPoint\SliceDeleting;
 use Redaxo\Core\Content\ExtensionPoint\SliceMoving;
+use Redaxo\Core\Content\ExtensionPoint\SliceUpdating;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\DatabaseUtil;
 use Redaxo\Core\Database\Sql;
@@ -81,7 +82,7 @@ final class ContentHandler
             'rex_article_slice',
             'priority',
             $where,
-            'priority, updatedate DESC',
+            'priority, id = ' . $sliceId . ' DESC, id',
         );
 
         ArticleCache::delete($articleId, $languageId);
@@ -144,7 +145,7 @@ final class ContentHandler
             'rex_article_slice',
             'priority',
             'article_id=' . $articleId . ' AND language_id=' . $languageId . ' AND content_section_id=' . $ctype . ' AND revision=' . $sliceRevision,
-            'priority, updatedate ' . $updSort,
+            'priority, id = ' . $sliceId . ' ' . $updSort . ', id',
         );
 
         // check if the slice moved at all (first cannot be moved up, last not down)
@@ -226,6 +227,42 @@ final class ContentHandler
     }
 
     /**
+     * @param array<string, mixed> $values the stored values of the module fields, keyed by storage key; replaces the previous values
+     *
+     * @throws UserMessageException
+     */
+    public static function editSlice(int $sliceId, array $values): ArticleSlice
+    {
+        $sql = Sql::factory();
+        $sql->setQuery('SELECT * FROM rex_article_slice WHERE id = ?', [$sliceId]);
+
+        if (1 !== $sql->getRows()) {
+            throw new UserMessageException(I18n::msg('slice_not_found'));
+        }
+
+        $slice = ArticleSlice::fromSql($sql);
+
+        Extension::dispatch(new SliceUpdating($slice));
+
+        Sql::factory()
+            ->setTable('rex_article_slice')
+            ->setWhere(['id' => $sliceId])
+            ->setValue('data', ArticleSlice::encodeData($values))
+            ->addGlobalUpdateFields(self::getUser())
+            ->update();
+
+        ArticleCache::deleteContent($slice->articleId, $slice->languageId);
+
+        $article = Article::require($slice->articleId, $slice->languageId);
+        $slice = Type::notNull(ArticleSlice::getArticleSliceById($sliceId, $slice->languageId, $slice->revision));
+        ArticleSliceReference::update($slice);
+
+        Extension::dispatch(new ArticleContentUpdated($article, 'slice_updated', $slice));
+
+        return $slice;
+    }
+
+    /**
      * Kopiert die Inhalte eines Artikels in einen anderen Artikel.
      *
      * @param int|null $revision If null, slices of all revisions are copied
@@ -241,9 +278,9 @@ final class ContentHandler
 
         $gc = Sql::factory();
         if (null === $revision) {
-            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=?', [$fromId, $fromLanguageId]);
+            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? order by priority, id', [$fromId, $fromLanguageId]);
         } else {
-            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? and revision=?', [$fromId, $fromLanguageId, $revision]);
+            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? and revision=? order by priority, id', [$fromId, $fromLanguageId, $revision]);
         }
 
         Extension::dispatch(new ArticleSlicesCopying(
@@ -321,7 +358,7 @@ final class ContentHandler
                     'rex_article_slice',
                     'priority',
                     'article_id=' . $toId . ' AND language_id=' . $toLanguageId . ' AND content_section_id=' . (int) $ctype . ' AND revision=' . $revision,
-                    'priority, updatedate',
+                    'priority, id',
                 );
             }
         }

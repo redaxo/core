@@ -1,0 +1,208 @@
+/* Article history (Redaxo\Core\Backend\ArticleHistory): timeline of the versions and the two previews */
+
+@layer components {
+    /* the previews need the room of two pages side by side */
+    .rex-overlay:has(.rex-history) {
+        width: min(1600px, 100vw - 32px);
+    }
+
+    .rex-history {
+        --rex-history-thumb: 22px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: 100%;
+        min-height: 500px;
+
+        & > .rex-alert {
+            margin: 0;
+        }
+    }
+
+    /* the track is inset by half a thumb, so the thumb's center meets the ticks */
+    .rex-history-timeline {
+        position: relative;
+        padding-top: 10px;
+    }
+
+    .rex-history-track {
+        position: relative;
+        height: 16px;
+        margin-inline: calc(var(--rex-history-thumb) / 2);
+        border-radius: 2px;
+        background: var(--rex-color-surface-muted);
+    }
+
+    .rex-history-segment {
+        position: absolute;
+        inset-block: 0;
+        left: calc(var(--from) * 100%);
+        width: calc((var(--to) - var(--from)) * 100%);
+        background: color-mix(in srgb, var(--rex-color-accent) 45%, var(--rex-color-surface));
+
+        &:nth-child(even) {
+            background: color-mix(in srgb, var(--rex-color-accent) 35%, var(--rex-color-surface));
+        }
+
+        &[data-past] {
+            background: color-mix(in srgb, var(--rex-color-accent) 80%, var(--rex-color-surface));
+
+            &:nth-child(even) {
+                background: color-mix(in srgb, var(--rex-color-accent) 68%, var(--rex-color-surface));
+            }
+        }
+    }
+
+    .rex-history-tick {
+        position: absolute;
+        top: -9px;
+        left: calc(var(--at) * 100%);
+        width: 1px;
+        height: 5px;
+        background: var(--rex-color-text-muted);
+
+        &[data-selected] {
+            top: -10px;
+            width: 3px;
+            height: 7px;
+            margin-left: -1px;
+            background: var(--rex-color-text);
+        }
+    }
+
+    .rex-history-range {
+        position: absolute;
+        inset: 6px 0 auto;
+        width: 100%;
+        height: 24px;
+        margin: 0;
+        appearance: none;
+        background: transparent;
+        cursor: pointer;
+
+        &::-webkit-slider-runnable-track {
+            height: 24px;
+            background: transparent;
+        }
+
+        &::-moz-range-track {
+            height: 24px;
+            background: transparent;
+        }
+
+        &::-webkit-slider-thumb {
+            width: var(--rex-history-thumb);
+            height: 24px;
+            appearance: none;
+            border: 1px solid var(--rex-color-border-strong);
+            border-radius: 3px;
+            background: var(--rex-color-control) linear-gradient(to right, transparent 9px, var(--rex-color-border-input) 9px 10px, transparent 10px 12px, var(--rex-color-border-input) 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
+            box-shadow: var(--rex-shadow-xs);
+        }
+
+        &::-moz-range-thumb {
+            width: var(--rex-history-thumb);
+            height: 24px;
+            box-sizing: border-box;
+            border: 1px solid var(--rex-color-border-strong);
+            border-radius: 3px;
+            background: var(--rex-color-control) linear-gradient(to right, transparent 9px, var(--rex-color-border-input) 9px 10px, transparent 10px 12px, var(--rex-color-border-input) 12px 13px, transparent 13px) no-repeat 0 50% / 100% 8px;
+            box-shadow: var(--rex-shadow-xs);
+        }
+
+        &:focus-visible {
+            /* stylelint-disable-next-line declaration-property-value-disallowed-list -- the thumb shows the focus */
+            outline: none;
+
+            &::-webkit-slider-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 1px;
+            }
+
+            &::-moz-range-thumb {
+                outline: 2px solid var(--rex-color-focus);
+                outline-offset: 1px;
+            }
+        }
+    }
+
+    .rex-history-scale {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 6px;
+        color: var(--rex-color-text-muted);
+        font-size: var(--rex-font-size-small);
+    }
+
+    /* both previews share the rows of the grid, so the frames are equally high with or without a footer */
+    .rex-history-previews {
+        display: grid;
+        flex: 1;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr auto;
+        gap: 0 20px;
+        min-height: 0;
+
+        @media (max-width: 1199px) {
+            grid-template-columns: 1fr;
+
+            & > .rex-history-preview[data-version="base"] {
+                display: none;
+            }
+        }
+    }
+
+    .rex-history-preview {
+        display: grid;
+        grid-row: span 3;
+        grid-template-rows: subgrid;
+        min-height: 0;
+        margin: 0;
+
+        & > .rex-section-header {
+            display: flex;
+            align-items: center;
+            min-height: 55px;
+        }
+
+        & .rex-section-title {
+            flex: 1;
+        }
+
+        & > .rex-section-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+    }
+
+    .rex-history-switch {
+        display: flex;
+        gap: 6px;
+    }
+
+    .rex-history-select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* the previews show the page at desktop width, scaled down by half */
+    .rex-history-frame {
+        position: relative;
+        min-height: 300px;
+        overflow: hidden;
+        background: var(--rex-color-surface-muted);
+
+        & iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            border: 0;
+            background: var(--rex-color-preview-bg);
+            transform: scale(0.5);
+            transform-origin: 0 0;
+        }
+    }
+}

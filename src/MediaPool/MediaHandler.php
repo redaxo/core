@@ -341,15 +341,15 @@ final class MediaHandler
         $query = 'SELECT m.filename FROM ' . implode(',', $tables) . ' ' . $where;
 
         $orderbys = [];
-        foreach ($orderBy as $index => $orderByItem) {
+        foreach ($orderBy as $orderByItem) {
             if (!is_array($orderByItem)) {
                 continue;
             }
             if (!in_array($orderByItem[0], self::ORDER_BY, true)) {
                 continue;
             }
-            $orderbys[] = ':orderby_' . $index . ' ' . ('ASC' == $orderByItem[1] ? 'ASC' : 'DESC');
-            $queryParams['orderby_' . $index] = ('title' === $orderByItem[0] ? 'l.' : 'm.') . $orderByItem[0];
+            // column names can't be bound as parameters; they come from the allow list self::ORDER_BY
+            $orderbys[] = ('title' === $orderByItem[0] ? 'l.' : 'm.') . $orderByItem[0] . ' ' . ('ASC' == $orderByItem[1] ? 'ASC' : 'DESC');
         }
 
         if (0 == count($orderbys)) {

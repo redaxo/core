@@ -20,7 +20,7 @@ if ('clearall' == Request::request('func', 'string')) {
 }
 
 $content = I18n::rawMsg('structure_history_info_content');
-$content .= '<p><a href="' . Url::currentBackendPage(['func' => 'clearall'] + $csrfToken->getUrlParams()) . '" class="btn btn-setup">' . I18n::msg('structure_history_button_delete_history') . '</a></p>';
+$content .= '<p><a href="' . Url::currentBackendPage(['func' => 'clearall'] + $csrfToken->getUrlParams()) . '" class="rex-button">' . I18n::msg('structure_history_button_delete_history') . '</a></p>';
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('structure_history_title_info'));

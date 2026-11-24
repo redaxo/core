@@ -1,0 +1,23 @@
+/*
+ Styles for the Bootstrap 3 markup (`.btn`, `.form-control`, `.table` …) and the former utility names that addons may
+ still output; the core itself uses the REDAXO components. Built into assets/css/bootstrap-compat.css, loaded only
+ when an addon calls `Asset::requireBootstrapCompat()`; deprecated, it goes away with REDAXO 7.
+
+ Build: npm run build:backend-css
+ */
+
+@layer base, bootstrap, tokens, components, utilities;
+
+@import "compat/alert.css";
+@import "compat/badge.css";
+@import "compat/button.css";
+@import "compat/dropdown.css";
+@import "compat/forms.css";
+@import "compat/grid.css";
+@import "compat/input-group.css";
+@import "compat/list-group.css";
+@import "compat/nav.css";
+@import "compat/navbar.css";
+@import "compat/pagination.css";
+@import "compat/table.css";
+@import "compat/utilities.css";

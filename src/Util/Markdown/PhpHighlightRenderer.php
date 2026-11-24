@@ -7,6 +7,7 @@ use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
 use Override;
+use Redaxo\Core\Util\Str;
 use Redaxo\Core\Util\Type;
 
 /**
@@ -49,6 +50,6 @@ final class PhpHighlightRenderer implements NodeRendererInterface
             $text = Type::string(preg_replace('@(<span style="color:[^"]+">)(?:&lt;|<)\?php(?:&nbsp;|\s)@', '$1', $text, 1));
         }
 
-        return '<pre>' . $text . '</pre>';
+        return '<pre>' . Str::highlightClasses($text) . '</pre>';
     }
 }

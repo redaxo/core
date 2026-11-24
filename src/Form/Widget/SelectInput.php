@@ -29,6 +29,8 @@ final class SelectInput implements Widget
         public string|Translatable|null $placeholder = null,
         public bool $required = false,
         public bool $disabled = false,
+        /** Adds a search field to filter the choices. */
+        public bool $search = false,
         public HtmlAttributes $attributes = new HtmlAttributes(),
     ) {}
 

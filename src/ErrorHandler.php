@@ -128,6 +128,12 @@ final class ErrorHandler
         exit(1);
     }
 
+    /** Whether an environment/server variable may contain a secret and must not be displayed */
+    private static function isSensitiveKey(string $key): bool
+    {
+        return 1 === preg_match('/PASS|PWD|SECRET|TOKEN|KEY|DSN|DATABASE_URL|AUTH|CREDENTIAL|SALT|PRIVATE|COOKIE/i', $key);
+    }
+
     /** @return array{string, string} */
     private static function renderWhoops(Throwable $exception): array
     {
@@ -136,12 +142,25 @@ final class ErrorHandler
         $whoops->allowQuit(false);
 
         $handler = new PrettyPageHandler();
+        // only called to build the error page (never on the cli), whoops would otherwise skip the cli
+        $handler->handleUnconditionally(true);
         $handler->setApplicationRootPath(rtrim(Path::base(), '/\\'));
 
         $handler->setEditor([Editor::factory(), 'getUrl']);
 
         $handler->hideSuperglobalKey('_COOKIE', session_name());
         $handler->hideSuperglobalKey('_COOKIE', BackendLogin::getStayLoggedInCookieName());
+
+        // Never show secrets on the error page (DATABASE_URL with password, MAILER_DSN, REX_MIGRATE_TOKEN, …): Dotenv
+        // copies them into $_SERVER/$_ENV, and the page is shown to anonymous visitors in dev mode and to admins in live mode.
+        foreach (['_SERVER' => $_SERVER, '_ENV' => $_ENV] as $superglobal => $values) {
+            foreach (array_keys($values) as $key) {
+                $key = (string) $key;
+                if (self::isSensitiveKey($key)) {
+                    $handler->hideSuperglobalKey($superglobal, $key);
+                }
+            }
+        }
 
         $whoops->pushHandler($handler);
 

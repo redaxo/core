@@ -7,57 +7,52 @@ use Redaxo\Core\Security\UserSession;
 use Redaxo\Core\Translation\I18n;
 use Redaxo\Core\Util\Formatter;
 use Redaxo\Core\Util\Type;
+use Redaxo\Core\View\Component\Badge;
+use Redaxo\Core\View\Component\BadgeVariant;
+use Redaxo\Core\View\Component\TableColumnType;
 use Redaxo\Core\View\DataList;
 use Redaxo\Core\View\Fragment;
+use Redaxo\Core\View\Html;
+use Redaxo\Core\View\HtmlAttributes;
+
+use function Redaxo\Core\View\escape;
 
 if (!isset($userId) || 1 > $userId) {
     $userId = Core::requireUser()->id;
 }
 Type::int($userId);
 
-$list = DataList::factory('
+$list = new DataList('
     SELECT session_id, cookie_key, ip, useragent, starttime, last_activity
     FROM rex_user_session
     WHERE user_id = ' . $userId . '
     ORDER BY session_id = ' . Sql::factory()->escape((string) session_id()) . ' DESC, last_activity DESC
 ');
-$list->addTableAttribute('class', 'table-hover');
+$list->attributes = new HtmlAttributes(['data-hover' => true]);
 
-$list->addColumn('remove_session', '<i class="rex-icon rex-icon-delete"></i>', 0, ['<th class="rex-table-icon"></th>', '<td class="rex-table-icon">###VALUE###</td>']);
-$list->setColumnParams('remove_session', ['user_id' => $userId] + UserRemoveSession::getUrlParams());
-$list->setColumnFormat('remove_session', 'custom', static function () use ($list) {
-    // prevent removing the current session
-    if ($list->getValue('session_id') === session_id()) {
-        return '';
-    }
-    return $list->getColumnLink('remove_session', $list->getValue('remove_session'), [
-        'session_hash' => UserSession::hashSessionId((string) $list->getValue('session_id')),
-    ]);
-});
-$list->addLinkAttribute('remove_session', 'data-confirm', I18n::msg('confirm_remove_session'));
-
-$list->removeColumn('cookie_key');
-$list->setColumnLabel('session_id', I18n::msg('session_id'));
-$list->setColumnLabel('ip', I18n::msg('ip'));
-$list->setColumnLabel('useragent', I18n::msg('user_agent'));
-$list->setColumnLabel('starttime', I18n::msg('starttime'));
-$list->setColumnLabel('last_activity', I18n::msg('last_activity'));
-
+$isCurrent = static fn (array $row): bool => $row['session_id'] === session_id();
 // the session id itself must not be exposed, a short hash is enough to tell the sessions apart
-$list->setColumnFormat('session_id', 'custom', static function () use ($list) {
-    return substr(UserSession::hashSessionId((string) $list->getValue('session_id')), 0, 12)
-        . ($list->getValue('cookie_key') ? ' <span class="label label-warning">' . I18n::msg('stay_logged_in') . '</span>' : '');
-});
-$list->setColumnFormat('last_activity', 'custom', static function () use ($list) {
-    if (session_id() === $list->getValue('session_id')) {
-        return '<span class="label label-info">' . I18n::msg('active_session') . '</span>';
-    }
-    return Formatter::intlDateTime((string) $list->getValue('last_activity'), IntlDateFormatter::SHORT);
-});
-$list->setColumnFormat('starttime', 'custom', static function () use ($list) {
-    return Formatter::intlDateTime((string) $list->getValue('starttime'), IntlDateFormatter::SHORT);
-});
-$content = $list->get();
+$hash = static fn (array $row): string => UserSession::hashSessionId((string) $row['session_id']);
+
+$list->column(
+    'remove_session',
+    '',
+    static fn (array $row): ?Html => $isCurrent($row) ? null : Html::raw('<i class="rex-icon rex-icon-delete" aria-hidden="true"></i><span class="rex-u-visually-hidden">' . I18n::msg('delete') . '</span>'),
+    type: TableColumnType::Icon,
+    // the current session can not be removed
+    link: static fn (array $row): ?string => $isCurrent($row) ? null : $list->getUrl(['user_id' => $userId, 'session_hash' => $hash($row)] + UserRemoveSession::getUrlParams()),
+    linkAttributes: ['data-confirm' => I18n::rawMsg('confirm_remove_session')],
+);
+$list->column('session_id', I18n::rawMsg('session_id'), static fn (array $row): Html => Html::raw(
+    escape(substr($hash($row), 0, 12)) . ($row['cookie_key'] ? ' ' . (string) new Badge(I18n::rawMsg('stay_logged_in'), BadgeVariant::Warning)->render() : ''),
+));
+$list->column('ip', I18n::rawMsg('ip'));
+$list->column('useragent', I18n::rawMsg('user_agent'));
+$list->column('starttime', I18n::rawMsg('starttime'), static fn (array $row): string => Formatter::intlDateTime((string) $row['starttime'], IntlDateFormatter::SHORT));
+$list->column('last_activity', I18n::rawMsg('last_activity'), static fn (array $row): string|Badge => $isCurrent($row)
+    ? new Badge(I18n::rawMsg('active_session'), BadgeVariant::Info)
+    : Formatter::intlDateTime((string) $row['last_activity'], IntlDateFormatter::SHORT));
+$content = (string) $list->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('session_caption'));

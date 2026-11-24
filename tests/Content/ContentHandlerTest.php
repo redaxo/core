@@ -11,10 +11,14 @@ use Redaxo\Core\Content\ExtensionPoint\ArticleSlicesCopying;
 use Redaxo\Core\Content\ExtensionPoint\SliceAdding;
 use Redaxo\Core\Content\ExtensionPoint\SliceDeleting;
 use Redaxo\Core\Content\ExtensionPoint\SliceMoving;
+use Redaxo\Core\Content\ExtensionPoint\SliceUpdating;
 use Redaxo\Core\Content\SliceMoveDirection;
 use Redaxo\Core\Database\Sql;
+use Redaxo\Core\Exception\UserMessageException;
 use Redaxo\Core\ExtensionPoint\Extension;
 use ReflectionProperty;
+
+use const PHP_INT_MAX;
 
 /** @internal */
 final class ContentHandlerTest extends TestCase
@@ -61,9 +65,6 @@ final class ContentHandlerTest extends TestCase
         self::assertSame(['text' => 'foo'], $first->data);
         self::assertSame(1, $first->priority);
 
-        // moveSlice() resolves equal priorities by updatedate, so the slices must not share the current second
-        Sql::factory()->setQuery('UPDATE rex_article_slice SET updatedate = updatedate - INTERVAL 1 MINUTE WHERE article_id = ?', [$this->articleId]);
-
         ContentHandler::moveSlice($first->id, 1, SliceMoveDirection::Down);
         ContentHandler::changeSliceStatus($first->id, 0);
         ContentHandler::deleteSlice($first->id);
@@ -94,9 +95,6 @@ final class ContentHandlerTest extends TestCase
 
         $first = ContentHandler::addSlice($this->articleId, 1, 1, 'test');
         ContentHandler::addSlice($this->articleId, 1, 1, 'test');
-
-        // moveSlice() resolves equal priorities by updatedate, so the slices must not share the current second
-        Sql::factory()->setQuery('UPDATE rex_article_slice SET updatedate = updatedate - INTERVAL 1 MINUTE WHERE article_id = ?', [$this->articleId]);
 
         ContentHandler::moveSlice($first->id, 1, SliceMoveDirection::Down);
         ContentHandler::deleteSlice($first->id);
@@ -135,6 +133,62 @@ final class ContentHandlerTest extends TestCase
         self::assertSame($targetId, $copying->article->id);
         self::assertSame($this->articleId, $copying->source->id);
         self::assertNull($copying->revision);
+    }
+
+    public function testSlicesAddedAndMovedWithinTheSameSecondKeepTheirOrder(): void
+    {
+        $a = ContentHandler::addSlice($this->articleId, 1, 1, 'test')->id;
+        $b = ContentHandler::addSlice($this->articleId, 1, 1, 'test')->id;
+        $c = ContentHandler::addSlice($this->articleId, 1, 1, 'test', priority: 2)->id;
+        $d = ContentHandler::addSlice($this->articleId, 1, 1, 'test', priority: 1)->id;
+        self::assertSame([$d, $a, $c, $b], $this->sliceIds());
+
+        ContentHandler::moveSlice($b, 1, SliceMoveDirection::Up);
+        self::assertSame([$d, $a, $b, $c], $this->sliceIds());
+
+        ContentHandler::moveSlice($d, 1, SliceMoveDirection::Down);
+        self::assertSame([$a, $d, $b, $c], $this->sliceIds());
+    }
+
+    public function testEditSlice(): void
+    {
+        $slice = ContentHandler::addSlice($this->articleId, 1, 1, 'test', ['text' => 'foo']);
+
+        $updating = [];
+        Extension::register(SliceUpdating::class, static function (SliceUpdating $ep) use (&$updating): void {
+            $updating[] = $ep->slice;
+        });
+
+        $edited = ContentHandler::editSlice($slice->id, ['text' => 'bar']);
+
+        self::assertSame($slice->id, $edited->id);
+        self::assertSame(['text' => 'bar'], $edited->data);
+        self::assertSame(['text' => 'bar'], ArticleSlice::getArticleSliceById($slice->id, 1)?->data);
+
+        // the slice is passed in its state before the update
+        self::assertCount(1, $updating);
+        self::assertSame(['text' => 'foo'], $updating[0]->data);
+
+        $updated = $this->events[1] ?? null;
+        self::assertNotNull($updated);
+        self::assertSame('slice_updated', $updated->action);
+        self::assertSame(['text' => 'bar'], $updated->slice?->data);
+    }
+
+    public function testEditSliceThrowsForUnknownSlice(): void
+    {
+        $this->expectException(UserMessageException::class);
+
+        ContentHandler::editSlice(PHP_INT_MAX, []);
+    }
+
+    /** @return list<int> */
+    private function sliceIds(): array
+    {
+        return array_map(
+            static fn (array $row): int => (int) $row['id'],
+            Sql::factory()->getArray('SELECT id FROM rex_article_slice WHERE article_id = ? ORDER BY priority', [$this->articleId]),
+        );
     }
 
     private static function createArticle(): int
