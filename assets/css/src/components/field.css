@@ -23,9 +23,12 @@
         margin: 0 0 5px;
         padding: 0;
         border: 0;
-        color: inherit;
-        font-size: var(--rex-font-size);
+        color: var(--rex-color-text-muted);
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
         font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
     }
 
     .rex-field-required {

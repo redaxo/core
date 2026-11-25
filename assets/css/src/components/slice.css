@@ -2,18 +2,34 @@
 
 @layer components {
     .rex-main-frame {
-        margin-inline: -15px;
-        padding: 30px 15px;
-        background-color: var(--rex-color-canvas);
+        padding-bottom: 30px;
+    }
 
-        @media (min-width: 1200px) {
-            margin-inline: -30px;
-            padding: 45px 30px;
+    /* the editor is a card: the mode tabs as its header bar, below them the ctypes, the toolbar and the slices */
+    #rex-js-page-main-content {
+        margin-bottom: 22px;
+        padding: 0 18px 4px;
+        background: var(--rex-color-surface);
+        border: var(--rex-border-width) solid var(--rex-color-border-strong);
+        border-radius: var(--rex-radius-lg);
+
+        & > .rex-pagenav {
+            margin: 0 -18px 18px;
+            padding: 12px 18px;
+            border-bottom: var(--rex-border-width) solid var(--rex-color-border);
         }
 
-        .rex-is-logged-in & {
-            @media (min-width: 992px) {
-                margin-bottom: -30px;
+        & > .rex-pagenav > .rex-subnav {
+            margin: 12px -18px 0;
+            padding: 12px 18px 0;
+        }
+
+        /* the version bar is a quiet strip within the card, the working version only tinted */
+        & > .rex-toolbar {
+            --rex-toolbar-border: var(--rex-color-border);
+
+            &[data-variant="inverse"] {
+                --rex-toolbar-border: var(--rex-color-border-strong);
             }
         }
     }
@@ -35,9 +51,130 @@
             height: auto;
         }
 
-        & .rex-section-options {
-            float: right;
+        /* a slice is a card with an ink outline and a sunken header */
+        & .rex-section:not([data-variant]) {
+            --rex-section-color: var(--rex-color-border-emphasis);
+            --rex-section-header-bg: var(--rex-color-surface-muted);
         }
+
+        /* the head: number and module as tag on the left, status and icon tools on the right */
+        & .rex-section-header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 10px;
+            align-items: center;
+            padding: 9px 12px;
+        }
+
+        & .rex-section-title {
+            order: -1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+
+        & .rex-section-options {
+            float: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            align-items: center;
+            margin: 0 0 0 auto;
+        }
+
+        & .rex-section-options > .rex-button-group[data-size="xs"] {
+            gap: 2px;
+
+            &:has(> :is(.rex-u-online, .rex-u-offline)) {
+                order: -1;
+            }
+
+            & > .rex-button {
+                --rex-button-bg: transparent;
+                --rex-button-border: transparent;
+                --rex-button-bg-hover: var(--rex-color-surface-strong);
+                --rex-button-border-hover: transparent;
+
+                min-width: 30px;
+                min-height: 30px;
+                margin: 0;
+                padding: 4px 7px;
+                border-radius: var(--rex-radius);
+                color: var(--rex-section-header-text);
+            }
+
+            /* the status as a pill with a dot */
+            & > .rex-button:is(.rex-u-online, .rex-u-offline) {
+                --rex-button-border: color-mix(in srgb, currentColor 42%, transparent);
+                --rex-button-border-hover: currentColor;
+                --rex-button-bg-hover: transparent;
+
+                display: inline-flex;
+                gap: 6px;
+                align-items: center;
+                min-height: 24px;
+                margin-right: 6px;
+                padding: 0 9px;
+                border-radius: 999px;
+                font-size: 0.6875rem;
+                font-weight: 700;
+
+                &::before {
+                    content: "";
+                    width: 6px;
+                    height: 6px;
+                    border-radius: 50%;
+                    background: currentColor;
+                }
+            }
+
+            /* on white, so that the green text reaches 4.5:1 on the sunken header */
+            & > .rex-button.rex-u-online {
+                --rex-button-bg: var(--rex-color-surface);
+                --rex-button-bg-hover: var(--rex-color-surface);
+            }
+
+            /* offline in the colour of the header, the utility class takes it from the token */
+            & > .rex-button.rex-u-offline {
+                --rex-color-danger-text: var(--rex-section-header-text);
+            }
+
+            & > .rex-button[data-variant="danger"]:hover {
+                --rex-button-bg-hover: var(--rex-color-danger);
+
+                color: var(--rex-color-on-danger);
+            }
+        }
+    }
+
+    /* slices are numbered in their order */
+    .rex-slices {
+        counter-reset: rex-slice;
+    }
+
+    .rex-slice:has(> .rex-section, > form > .rex-section) {
+        counter-increment: rex-slice;
+    }
+
+    .rex-slice .rex-section-title::before {
+        content: counter(rex-slice, decimal-leading-zero);
+        color: var(--rex-color-link);
+        font-family: var(--rex-font-display);
+        font-size: 0.875rem;
+        font-weight: 800;
+    }
+
+    .rex-slice-offline .rex-section:not([data-variant]) .rex-section-title::before {
+        color: inherit;
+    }
+
+    /* the slice being edited stands out in the accent */
+    .rex-slice .rex-section:is([data-variant="edit"], [data-variant="add"]) {
+        --rex-section-color: var(--rex-color-accent);
+        --rex-section-header-bg: var(--rex-color-surface-muted);
+
+        box-shadow: 3px 3px 0 var(--rex-color-accent);
 
         /* the buttons stay in reach while editing a long slice */
         & .rex-section-footer {
@@ -62,8 +199,10 @@
     .rex-slice-offline {
         opacity: 0.8;
 
-        & .rex-section {
+        & .rex-section:not([data-variant]) {
             --rex-section-color: var(--rex-color-neutral);
+            --rex-section-header-bg: var(--rex-section-color);
+            --rex-section-header-border: var(--rex-section-color);
             --rex-section-header-text: var(--rex-color-on-neutral);
         }
 
@@ -82,15 +221,43 @@
         }
     }
 
-    /* "add block" button between the slices */
-    .rex-slice-select > .rex-dropdown > .rex-button {
-        --rex-button-color: var(--rex-color-link-hover);
-        --rex-button-bg: var(--rex-color-accent-subtle);
-        --rex-button-border: var(--rex-color-accent-subtle);
-        --rex-button-bg-hover: var(--rex-color-accent-subtle-hover);
-        --rex-button-border-hover: var(--rex-color-accent-subtle-hover);
+    /* "add block" button between the slices: a small pill on a line */
+    .rex-slice-select > .rex-dropdown {
+        display: flex;
+        gap: 12px;
+        align-items: center;
 
-        border-radius: 0;
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            border-top: var(--rex-border-width) solid var(--rex-color-border);
+        }
+    }
+
+    .rex-slice-select > .rex-dropdown > .rex-button {
+        --rex-button-color: var(--rex-color-text-muted);
+        --rex-button-bg: var(--rex-color-surface);
+        --rex-button-border: var(--rex-color-border-input);
+        --rex-button-bg-hover: var(--rex-color-surface);
+        --rex-button-border-hover: var(--rex-color-text);
+
+        width: auto;
+        min-height: 0;
+        padding: 5px 14px;
+        border-style: dashed;
+        border-radius: 999px;
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        line-height: 1.4;
+        text-transform: uppercase;
+
+        &:hover {
+            --rex-button-color: var(--rex-color-text);
+
+            border-style: solid;
+        }
 
         &:is(:focus, .focus, :active, .active),
         .open > & {
@@ -98,6 +265,8 @@
             --rex-button-bg: var(--rex-color-accent);
             --rex-button-border: var(--rex-color-accent);
             --rex-button-bg-hover: var(--rex-color-accent-hover);
+
+            border-style: solid;
         }
     }
 }

@@ -49,7 +49,7 @@
         min-width: 160px;
         margin: 2px 0 0;
         padding: 5px 0;
-        border: 1px solid var(--rex-color-border-strong);
+        border: var(--rex-border-width) solid var(--rex-color-border-emphasis);
         background: var(--rex-color-surface-raised);
         background-clip: padding-box;
         box-shadow: var(--rex-shadow-md);

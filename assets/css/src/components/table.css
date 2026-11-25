@@ -31,8 +31,35 @@
         }
 
         & > thead > tr > :is(th, td) {
-            border-bottom: 2px solid var(--rex-table-border);
+            border-bottom: var(--rex-border-width) solid var(--rex-color-border-strong);
             vertical-align: bottom;
+        }
+
+        /* column titles as eyebrows */
+        & > thead > tr > th {
+            color: var(--rex-color-text-muted);
+            font-family: var(--rex-font-mono);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        /* text links in ink like the rest of the row, red on hover; sort links of the column titles stay muted */
+        & > tbody a:not(.rex-button, .btn) {
+            color: var(--rex-color-text);
+
+            &:hover {
+                color: var(--rex-color-link-hover);
+            }
+        }
+
+        & > thead > tr > th a:not(.rex-button, .btn) {
+            color: inherit;
+
+            &:hover {
+                color: var(--rex-color-text);
+            }
         }
 
         /* the footer holds controls, e.g. actions for the selected rows */
@@ -141,7 +168,7 @@
             position: sticky;
             bottom: 0;
             z-index: 1;
-            background-color: var(--rex-color-surface-muted);
+            background-color: var(--rex-color-surface);
         }
     }
 

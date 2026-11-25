@@ -19,8 +19,8 @@ final class SliceMenu extends ExtensionPoint
     /**
      * Each action is an item of the fragment `core/buttons/button_group.php`, `variant` a {@see ButtonVariant} value.
      *
-     * @param array{label?: string, url?: string, variant?: string, attributes?: array{class?: list<string>, title?: string}} $menuEditAction
-     * @param array{label?: string, url?: string, variant?: string, attributes?: array{class?: list<string>, title?: string, data-confirm?: string}} $menuDeleteAction
+     * @param array{label?: string, hidden_label?: string, url?: string, icon?: string, variant?: string, attributes?: array{class?: list<string>, title?: string}} $menuEditAction
+     * @param array{label?: string, hidden_label?: string, url?: string, icon?: string, variant?: string, attributes?: array{class?: list<string>, title?: string, data-confirm?: string}} $menuDeleteAction
      * @param array{label?: string, url?: string, variant?: string, attributes?: array{class?: list<string>}} $menuStatusAction
      * @param array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class?: list<string>, title?: string}} $menuMoveupAction
      * @param array{hidden_label?: string, url?: string, icon?: string, attributes?: array{class?: list<string>, title?: string}} $menuMovedownAction

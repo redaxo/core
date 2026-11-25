@@ -10,6 +10,7 @@
 
         display: inline-block;
         padding: 0.2em 0.6em 0.3em;
+        border: var(--rex-border-width) solid transparent;
         border-radius: 0.25em;
         background: var(--rex-badge-bg);
         color: var(--rex-badge-text);
@@ -29,19 +30,24 @@
             --rex-badge-text: var(--rex-color-on-accent);
         }
 
+        /* states as outlined pills */
+        &:is([data-variant="success"], [data-variant="warning"], [data-variant="danger"]) {
+            --rex-badge-bg: transparent;
+
+            border-color: color-mix(in srgb, var(--rex-badge-text) 40%, transparent);
+            border-radius: 999px;
+        }
+
         &[data-variant="success"] {
-            --rex-badge-bg: var(--rex-color-success);
-            --rex-badge-text: var(--rex-color-on-success);
+            --rex-badge-text: var(--rex-color-success-text);
         }
 
         &[data-variant="warning"] {
-            --rex-badge-bg: var(--rex-color-warning);
-            --rex-badge-text: var(--rex-color-on-warning);
+            --rex-badge-text: var(--rex-color-warning-text);
         }
 
         &[data-variant="danger"] {
-            --rex-badge-bg: var(--rex-color-danger);
-            --rex-badge-text: var(--rex-color-on-danger);
+            --rex-badge-text: var(--rex-color-danger-text);
         }
 
         &[data-shape="pill"] {

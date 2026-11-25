@@ -1,15 +1,15 @@
 /*
  Toolbar (`.rex-toolbar`, Redaxo\Core\View\Component\Toolbar), e.g. the version bar of the content editor: a bar of
- links and controls, `data-variant="inverse"` for the dark one. Below 992px its content collapses behind a toggle.
+ links and controls, `data-variant="inverse"` stands out more, e.g. while the working version is shown. Below 992px its content collapses behind a toggle.
  */
 
 @layer components {
     .rex-toolbar {
-        --rex-toolbar-bg: var(--rex-color-accent);
-        --rex-toolbar-text: var(--rex-color-on-accent);
-        --rex-toolbar-hover-text: var(--rex-color-on-accent);
-        --rex-toolbar-active-bg: var(--rex-color-accent-hover);
-        --rex-color-focus: var(--rex-toolbar-text);
+        --rex-toolbar-bg: var(--rex-color-surface);
+        --rex-toolbar-border: var(--rex-color-border-strong);
+        --rex-toolbar-text: var(--rex-color-text);
+        --rex-toolbar-hover-text: var(--rex-color-link-hover);
+        --rex-toolbar-active-bg: var(--rex-color-surface-muted);
 
         display: flex;
         flex-wrap: wrap;
@@ -17,14 +17,15 @@
         min-height: 50px;
         margin-bottom: 22px;
         padding: 0 15px;
+        border: var(--rex-border-width) solid var(--rex-toolbar-border);
+        border-radius: var(--rex-radius-lg);
         background: var(--rex-toolbar-bg);
         color: var(--rex-toolbar-text);
 
         &[data-variant="inverse"] {
-            --rex-toolbar-bg: var(--rex-color-inverse-bg);
-            --rex-toolbar-text: var(--rex-color-inverse-text);
-            --rex-toolbar-hover-text: var(--rex-color-inverse-link);
-            --rex-toolbar-active-bg: var(--rex-color-inverse-bg-strong);
+            --rex-toolbar-bg: var(--rex-color-surface-muted);
+            --rex-toolbar-border: var(--rex-color-border-emphasis);
+            --rex-toolbar-active-bg: var(--rex-color-surface-strong);
         }
     }
 

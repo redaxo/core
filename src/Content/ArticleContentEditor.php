@@ -165,14 +165,19 @@ final class ArticleContentEditor extends ArticleContentBase
                 // edit
                 $item = [];
                 $item['label'] = I18n::msg('edit');
+                $item['hidden_label'] = I18n::msg('module') . ' ' . $moduleName . ' ' . I18n::msg('edit');
+                $item['icon'] = 'edit';
+                $item['attributes']['title'] = I18n::msg('edit');
                 $item['url'] = $context->getUrl(['function' => 'edit']) . $fragment;
-                $item['variant'] = 'success';
                 $menuEditAction = $item;
             }
 
             // delete
             $item = [];
             $item['label'] = I18n::msg('delete');
+            $item['hidden_label'] = I18n::msg('module') . ' ' . $moduleName . ' ' . I18n::msg('delete');
+            $item['icon'] = 'delete';
+            $item['attributes']['title'] = I18n::msg('delete');
             $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1] + CsrfToken::factory('structure_content_slice')->getUrlParams()) . $fragment;
             $item['variant'] = 'danger';
             $item['attributes']['data-confirm'] = I18n::msg('confirm_delete_block');
@@ -459,7 +464,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="rex-button" data-variant="success" data-rex-submit-shortcut type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-rex-submit-shortcut type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();

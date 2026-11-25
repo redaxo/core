@@ -21,13 +21,14 @@ return static function (MainNavigation $navigation): void { ?>
                         if ($item['active'] ?? false) {
                             $linkAttr['aria-current'] = 'page';
                         }
-                        $icon = trim(Type::string($item['icon'] ?? '')) ?>
+                        // the full title as tooltip, as the narrow navigation may cut the label
+                        $linkAttr['title'] ??= strip_tags(Type::string($item['title']));
+                        // pages without their own icon get a generic one, so that the narrow navigation stays aligned
+                        $icon = trim(Type::string($item['icon'] ?? '')) ?: 'rex-icon rex-icon-package-addon' ?>
                         <li<?= Str::buildAttributes($itemAttr) ?>>
                             <a href="<?= escape(Type::string($item['href'])) ?>"<?= Str::buildAttributes($linkAttr) ?>>
-                                <?php if ('' !== $icon): ?>
-                                    <i class="rex-sidebar-icon <?= escape($icon) ?>" aria-hidden="true"></i>
-                                <?php endif ?>
-                                <?= Type::string($item['title']) ?>
+                                <i class="rex-sidebar-icon <?= escape($icon) ?>" aria-hidden="true"></i>
+                                <span class="rex-sidebar-label"><?= Type::string($item['title']) ?></span>
                             </a>
                         </li>
                     <?php endforeach ?>

@@ -44,8 +44,8 @@
 
     .input-group-addon {
         padding: 6px 12px;
-        border: 1px solid var(--rex-color-border-input);
-        border-radius: 4px;
+        border: var(--rex-border-width) solid var(--rex-color-border-input);
+        border-radius: var(--rex-radius);
         background-color: var(--rex-color-surface-muted);
         color: var(--rex-color-text);
         font-size: var(--rex-font-size);
@@ -99,7 +99,7 @@
             position: relative;
 
             & + :is(.btn, .rex-button) {
-                margin-left: -1px;
+                margin-left: calc(var(--rex-border-width) * -1);
             }
 
             &:is(:hover, :focus, :active) {
@@ -108,12 +108,12 @@
         }
 
         &:first-child > :is(.btn, .rex-button, .btn-group, .rex-button-group) {
-            margin-right: -1px;
+            margin-right: calc(var(--rex-border-width) * -1);
         }
 
         &:last-child > :is(.btn, .rex-button, .btn-group, .rex-button-group) {
             z-index: 2;
-            margin-left: -1px;
+            margin-left: calc(var(--rex-border-width) * -1);
         }
     }
 

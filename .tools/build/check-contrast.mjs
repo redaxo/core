@@ -20,7 +20,7 @@ const pairs = [
     ['link', ['bg', 'surface', 'surface-subtle', 'surface-raised'], TEXT],
     ['link-hover', ['bg', 'surface', 'surface-muted', 'accent-subtle', 'accent-subtle-hover'], TEXT],
     ['on-accent', ['accent', 'accent-hover'], TEXT],
-    ['on-success', ['success', 'success-hover', 'edit'], TEXT],
+    ['on-success', ['success', 'success-hover'], TEXT],
     ['success-text', ['bg', 'surface', 'success-subtle'], TEXT],
     ['on-warning', ['warning', 'warning-hover'], TEXT],
     ['warning-text', ['bg', 'surface'], TEXT],
@@ -32,6 +32,7 @@ const pairs = [
     ['inverse-link', ['inverse-bg', 'inverse-bg-strong'], TEXT],
     ['inverse-bg-strong', ['inverse-text', 'inverse-text-strong'], TEXT],
     ['border-input', ['bg', 'surface', 'surface-subtle', 'edit-subtle'], UI],
+    ['border-emphasis', ['bg', 'surface', 'surface-raised', 'canvas'], UI],
     ['focus', ['bg', 'surface', 'surface-subtle', 'edit-subtle'], UI],
 ];
 

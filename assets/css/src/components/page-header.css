@@ -1,11 +1,30 @@
 /* Page header with tabs and subnavigation, breadcrumb (PageHeader, Tabs, Breadcrumb components) */
 
 @layer components {
-    .rex-pageheader-title {
+    /* the heading with the meta text on the right */
+    .rex-pageheader-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 20px;
+        align-items: center;
         margin: 36px 0 33px;
+
+        .rex-is-popup & {
+            margin: 0;
+        }
+    }
+
+    .rex-pageheader-title {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        align-items: center;
+        margin: 0;
         color: var(--rex-color-text);
-        font-size: 1.5rem;
-        font-weight: 400;
+        font-family: var(--rex-font-display);
+        font-size: 1.75rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
         line-height: 1.1;
 
         small {
@@ -21,9 +40,35 @@
             right: 15px;
             z-index: 1030;
             margin: 0;
-            color: var(--rex-color-on-accent);
+            font-size: 1.25rem;
             line-height: var(--rex-topbar-height-mobile);
         }
+    }
+
+    .rex-pageheader-eyebrow {
+        color: var(--rex-color-text-muted);
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        line-height: 1.2;
+        text-transform: uppercase;
+    }
+
+    .rex-pageheader-separator {
+        flex-shrink: 0;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--rex-color-border-input);
+    }
+
+    .rex-pageheader-meta {
+        margin: 0 0 0 auto;
+        color: var(--rex-color-text-muted);
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
+        white-space: nowrap;
     }
 
     .rex-is-popup .rex-pageheader {
@@ -34,75 +79,50 @@
         display: none;
     }
 
-    /* tabs ---------------------------------------------------------------------------------------------------- */
+    /* tabs: pills, the current page filled with the text color -------------------------------------------- */
 
     .rex-pagenav {
-        --rex-subnav-bg: var(--rex-color-surface);
-        --rex-subnav-border: var(--rex-color-border);
-        --rex-subnav-divider: var(--rex-color-border);
-
         margin-bottom: 22px;
-
-        .rex-main-frame & {
-            --rex-subnav-bg: var(--rex-color-surface);
-            --rex-subnav-border: var(--rex-color-surface);
-        }
     }
 
-    /* also used within the content, e.g. by the tabs of an addon's form */
     .rex-tabs {
-        --rex-tabs-border: var(--rex-color-border-strong);
-        --rex-tab-bg: var(--rex-color-surface-muted);
-        --rex-tab-text: var(--rex-color-text);
-        --rex-tab-hover-text: var(--rex-color-link-hover);
-        --rex-tab-active-bg: var(--rex-color-surface);
-        --rex-tab-active-text: var(--rex-color-text);
+        --rex-tab-text: var(--rex-color-text-muted);
+        --rex-tab-hover-bg: var(--rex-color-surface-muted);
+        --rex-tab-hover-text: var(--rex-color-text);
+        --rex-tab-active-bg: var(--rex-color-text);
+        --rex-tab-active-text: var(--rex-color-surface);
 
         display: flex;
         flex-wrap: wrap;
+        gap: 4px;
         margin: 0;
         padding: 0;
         list-style: none;
-        border-bottom: 1px solid var(--rex-tabs-border);
-
-        .rex-main-frame .rex-pagenav & {
-            --rex-tabs-border: var(--rex-color-surface);
-            --rex-tab-bg: var(--rex-color-surface-strong);
-            --rex-tab-active-bg: var(--rex-color-surface);
-        }
     }
 
     .rex-tabs-item {
         position: relative;
-        margin-bottom: -1px;
 
-        &.rex-tabs-item[data-align="end"]:not(.rex-tabs-item[data-align="end"] + .rex-tabs-item[data-align="end"]) {
+        &[data-align="end"]:not([data-align="end"] + [data-align="end"]) {
             margin-left: auto;
-        }
-
-        &.rex-tabs-item[data-align="end"]:last-child > .rex-tabs-link {
-            margin-right: 0;
         }
     }
 
     .rex-tabs-link:not(.btn, .rex-button) {
-        display: block;
-        position: relative;
-        margin-right: 2px;
-        padding: 10px 15px 9px;
-        background: var(--rex-tab-bg);
-        border: 1px solid var(--rex-tab-bg);
-        border-bottom-color: transparent;
-        border-radius: var(--rex-radius) var(--rex-radius) 0 0;
+        display: flex;
+        gap: 7px;
+        align-items: center;
+        min-height: var(--rex-control-height-sm);
+        padding: 4px 14px;
+        border-radius: var(--rex-radius);
         color: var(--rex-tab-text);
-        line-height: 22px;
+        font-weight: 600;
+        line-height: 1.25;
         text-decoration: none;
 
         &:is(a):hover,
         &:is(a):focus {
-            background: var(--rex-tab-bg);
-            border-color: var(--rex-tab-bg);
-            border-bottom-color: transparent;
+            background: var(--rex-tab-hover-bg);
             color: var(--rex-tab-hover-text);
             text-decoration: none;
         }
@@ -114,59 +134,53 @@
 
             &:hover,
             &:focus {
-                color: var(--rex-tab-hover-text);
+                color: inherit;
                 text-decoration: none;
             }
         }
 
         &:is([aria-current="page"], [aria-selected="true"]) {
-            padding-bottom: 10px;
             background: var(--rex-tab-active-bg);
-            border-color: var(--rex-tabs-border);
-            border-bottom-color: transparent;
             color: var(--rex-tab-active-text);
             cursor: default;
         }
     }
 
-    /* subnavigation of the active tab */
+    /* subnavigation of the active tab: smaller pills below the tabs */
     .rex-subnav {
         display: flex;
         flex-wrap: wrap;
-        margin: 0;
-        padding: 0;
+        gap: 4px;
+        margin: 10px 0 0;
+        padding: 10px 0 0;
         list-style: none;
-        background: var(--rex-subnav-bg);
-        border: 1px solid var(--rex-subnav-border);
-        border-top: 0;
+        border-top: var(--rex-border-width) solid var(--rex-color-border);
     }
 
     .rex-subnav-item {
         display: flex;
-
-        &:not(:last-child)::after {
-            content: '';
-            height: 22px;
-            margin-top: 12px;
-            border-right: 1px solid var(--rex-subnav-divider);
-        }
     }
 
     .rex-subnav-link {
-        padding: 12px 15px;
-        color: var(--rex-color-link);
-        line-height: 22px;
+        padding: 4px 11px;
+        border-radius: var(--rex-radius);
+        color: var(--rex-color-text-muted);
+        font-size: var(--rex-font-size-small);
+        font-weight: 600;
+        line-height: 1.5;
         text-decoration: none;
 
-        .rex-empty > & {
-            color: var(--rex-color-text-muted);
-        }
-
         &:is(a):hover,
-        &:is(a):focus,
-        &[aria-current="page"] {
+        &:is(a):focus {
+            background: var(--rex-color-surface-muted);
             color: var(--rex-color-text);
             text-decoration: none;
+        }
+
+        &[aria-current="page"] {
+            background: var(--rex-color-surface-muted);
+            color: var(--rex-color-text);
+            box-shadow: inset 0 0 0 var(--rex-border-width) var(--rex-color-border-strong);
         }
     }
 
@@ -187,8 +201,8 @@
         padding: 6px 15px;
         list-style: none;
         background: var(--rex-color-surface);
-        border: 1px solid var(--rex-color-border);
-        border-radius: 0;
+        border: var(--rex-border-width) solid var(--rex-color-border);
+        border-radius: var(--rex-radius);
 
         .rex-list-item & {
             margin-bottom: 0;

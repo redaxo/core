@@ -1,19 +1,27 @@
 /*
  Backend shell: top bar, main navigation (sidebar), main area and footer.
 
- Below 992px the sidebar moves off canvas and opens via the toggle in the top bar (body class `rex-sidebar-open`,
- see js/backend.js).
+ The top bar is light like the canvas. From 992px the navigation is the spine: a narrow dark column of icons with
+ short labels beside the top bar, the full titles show as tooltips. The main area shows the construction grid of the
+ canvas.
+
+ Below 992px the sidebar moves off canvas with full labels and opens via the toggle in the top bar (body class
+ `rex-sidebar-open`, see js/backend.js).
  */
 
 @layer components {
     :root {
         --rex-sidebar-bg: var(--rex-color-inverse-bg);
         --rex-sidebar-text: var(--rex-color-inverse-text);
-        --rex-sidebar-title: var(--rex-color-inverse-text-strong);
+        --rex-sidebar-title: var(--rex-color-inverse-text);
         --rex-sidebar-hover-bg: var(--rex-color-inverse-bg-strong);
-        --rex-sidebar-hover-text: var(--rex-color-inverse-link);
+        --rex-sidebar-hover-text: var(--rex-color-inverse-text-strong);
         --rex-sidebar-active-bg: var(--rex-color-accent);
         --rex-sidebar-active-text: var(--rex-color-on-accent);
+
+        @media (min-width: 992px) {
+            --rex-sidebar-width: 88px;
+        }
     }
 
     .rex-app {
@@ -41,8 +49,8 @@
 
     .rex-topbar {
         /* on the element, so overrides of the colors (e.g. while impersonating) also change the muted text */
-        --rex-topbar-bg: var(--rex-color-accent);
-        --rex-topbar-text: var(--rex-color-on-accent);
+        --rex-topbar-bg: var(--rex-color-bg);
+        --rex-topbar-text: var(--rex-color-text);
         --rex-topbar-text-muted: color-mix(in srgb, var(--rex-topbar-text) 90%, var(--rex-topbar-bg));
         --rex-color-focus: var(--rex-topbar-text);
 
@@ -56,6 +64,7 @@
         min-height: var(--rex-topbar-height);
         padding: 0 15px;
         background: var(--rex-topbar-bg);
+        border-bottom: var(--rex-border-width) solid var(--rex-color-border);
         color: var(--rex-topbar-text);
         transition: transform var(--rex-duration) var(--rex-ease-out), box-shadow var(--rex-duration) var(--rex-ease-out);
 
@@ -66,7 +75,14 @@
         }
 
         @media (min-width: 1200px) {
-            padding-right: var(--rex-gutter);
+            padding-inline: var(--rex-gutter);
+        }
+
+        /* beside the spine, which runs up to the top of the viewport */
+        @media (min-width: 992px) {
+            :root:has(.rex-sidebar) &[data-variant="fixed"] {
+                left: var(--rex-sidebar-width);
+            }
         }
 
         @media (max-width: 991px) {
@@ -245,7 +261,7 @@
     .rex-topbar-title {
         position: absolute;
         top: 50%;
-        left: 250px;
+        left: 215px;
         transform: translateY(-50%);
         margin: 0;
         font-size: 2.25rem;
@@ -253,8 +269,8 @@
         line-height: 0;
         white-space: nowrap;
 
-        @media (max-width: 1199px) {
-            left: 235px;
+        @media (min-width: 1200px) {
+            left: 230px;
         }
 
         a {
@@ -273,12 +289,16 @@
         .rex-icon {
             display: inline-block;
             vertical-align: middle;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             line-height: 20px;
         }
 
         .rex-topbar-title-name {
             max-width: 300px;
+            font-family: var(--rex-font-mono);
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
             margin-right: 8px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -416,9 +436,12 @@
         margin: 15px 0 20px;
         padding: 25px 15px 0;
         color: var(--rex-sidebar-title);
-        font-size: var(--rex-font-size-large);
-        font-weight: 500;
+        font-family: var(--rex-font-mono);
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
         line-height: 1.1;
+        text-transform: uppercase;
 
         .rex-sidebar-list + & {
             border-top: 1px solid var(--rex-color-inverse-border);
@@ -437,7 +460,10 @@
         > li > a {
             display: block;
             position: relative;
-            padding: 8px 15px 8px 45px;
+            margin-inline: 10px;
+            padding: 8px 15px 8px 35px;
+            border-radius: var(--rex-radius);
+            font-weight: 600;
             line-height: 22px;
             color: var(--rex-sidebar-text);
             text-decoration: none;
@@ -460,6 +486,82 @@
         width: 20px;
         margin: 0 3px 0 -28px;
         text-align: center;
+    }
+
+    /* spine: the narrow navigation from 992px */
+    @media (min-width: 992px) {
+        .rex-sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding-top: 14px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            &::before {
+                content: none;
+            }
+        }
+
+        /* the block titles stay for screen readers, a line separates the blocks */
+        .rex-sidebar-title {
+            height: 0;
+            margin: 10px 18px;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+
+            .rex-sidebar-list + & {
+                margin-block: 12px;
+            }
+        }
+
+        .rex-sidebar-list {
+            > li + li {
+                margin-top: 4px;
+            }
+
+            > li > a {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                align-items: center;
+                margin-inline: 8px;
+                padding: 9px 4px 8px;
+                border-radius: var(--rex-radius-lg);
+                font-size: 0.6875rem;
+                line-height: 1.2;
+                text-align: center;
+            }
+
+            /* an arrow on the edge points at the current page */
+            > li > a[aria-current="page"]::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: -8px;
+                border-block: 6px solid transparent;
+                border-left: 6px solid var(--rex-sidebar-active-bg);
+                transform: translateY(-50%);
+            }
+        }
+
+        .rex-sidebar-icon {
+            width: auto;
+            margin: 0;
+            font-size: 1.125rem;
+        }
+
+        .rex-sidebar-label {
+            display: -webkit-box;
+            max-width: 100%;
+            overflow: hidden;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
     }
 
     .rex-sidebar-backdrop {
@@ -486,14 +588,19 @@
 
     /* main area ----------------------------------------------------------------------------------------------- */
 
+    /* at least as high as the viewport, so that the navigation reaches the bottom on short pages */
     .rex-shell {
         display: flex;
-        min-height: 100%;
+        min-height: 100vh;
     }
 
     .rex-main {
         flex: 1;
         min-width: 0;
+        background-image:
+            linear-gradient(var(--rex-color-grid) 1px, transparent 1px),
+            linear-gradient(90deg, var(--rex-color-grid) 1px, transparent 1px);
+        background-size: var(--rex-grid-size) var(--rex-grid-size);
         padding-top: var(--rex-topbar-height);
         padding-bottom: var(--rex-gutter);
 
