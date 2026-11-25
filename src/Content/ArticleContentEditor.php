@@ -166,7 +166,6 @@ final class ArticleContentEditor extends ArticleContentBase
                 $item = [];
                 $item['label'] = I18n::msg('edit');
                 $item['url'] = $context->getUrl(['function' => 'edit']) . $fragment;
-                $item['variant'] = 'success';
                 $menuEditAction = $item;
             }
 
@@ -459,7 +458,7 @@ final class ArticleContentEditor extends ArticleContentBase
         $formElements[] = $n;
 
         $n = [];
-        $n['field'] = '<button class="rex-button" data-variant="success" data-rex-submit-shortcut type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
+        $n['field'] = '<button class="rex-button" data-rex-submit-shortcut type="submit" name="btn_update" value="1"' . Accesskey::attributes(I18n::msg('save_and_goon_tooltip'), 'apply') . '>' . I18n::msg('update_block') . '</button>';
         $formElements[] = $n;
 
         $fragment = new Fragment();

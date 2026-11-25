@@ -2,17 +2,34 @@
 
 @layer components {
     .rex-main-frame {
-        margin-inline: -15px;
-        padding: 30px 15px;
+        padding-bottom: 30px;
+    }
 
-        @media (min-width: 1200px) {
-            margin-inline: -30px;
-            padding: 45px 30px;
+    /* the editor is a card: the mode tabs as its header bar, below them the ctypes, the toolbar and the slices */
+    #rex-js-page-main-content {
+        margin-bottom: 22px;
+        padding: 0 18px 4px;
+        background: var(--rex-color-surface);
+        border: var(--rex-border-width) solid var(--rex-color-border-strong);
+        border-radius: var(--rex-radius-lg);
+
+        & > .rex-pagenav {
+            margin: 0 -18px 18px;
+            padding: 12px 18px;
+            border-bottom: var(--rex-border-width) solid var(--rex-color-border);
         }
 
-        .rex-is-logged-in & {
-            @media (min-width: 992px) {
-                margin-bottom: -30px;
+        & > .rex-pagenav > .rex-subnav {
+            margin: 12px -18px 0;
+            padding: 12px 18px 0;
+        }
+
+        /* the version bar is a quiet strip within the card, the working version only tinted */
+        & > .rex-toolbar {
+            --rex-toolbar-border: var(--rex-color-border);
+
+            &[data-variant="inverse"] {
+                --rex-toolbar-border: var(--rex-color-border-strong);
             }
         }
     }
@@ -89,19 +106,40 @@
         }
     }
 
-    /* "add block" button between the slices */
+    /* "add block" button between the slices: a small pill on a line */
+    .rex-slice-select > .rex-dropdown {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            border-top: var(--rex-border-width) solid var(--rex-color-border);
+        }
+    }
+
     .rex-slice-select > .rex-dropdown > .rex-button {
         --rex-button-color: var(--rex-color-text-muted);
-        --rex-button-bg: transparent;
+        --rex-button-bg: var(--rex-color-surface);
         --rex-button-border: var(--rex-color-border-input);
-        --rex-button-bg-hover: transparent;
-        --rex-button-border-hover: var(--rex-color-accent);
+        --rex-button-bg-hover: var(--rex-color-surface);
+        --rex-button-border-hover: var(--rex-color-text);
 
+        width: auto;
+        min-height: 0;
+        padding: 5px 14px;
         border-style: dashed;
-        border-radius: var(--rex-radius-lg);
+        border-radius: 999px;
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        line-height: 1.4;
+        text-transform: uppercase;
 
         &:hover {
-            --rex-button-color: var(--rex-color-link);
+            --rex-button-color: var(--rex-color-text);
 
             border-style: solid;
         }
