@@ -99,15 +99,6 @@
         --btn-border-hover: var(--rex-color-success-hover);
     }
 
-    /* inverted on the green header of edit sections */
-    :is(.rex-section--edit, .rex-section[data-variant="edit"]) .btn-edit {
-        --btn-color: var(--rex-color-success-text);
-        --btn-bg: var(--rex-color-surface);
-        --btn-border: var(--rex-color-surface);
-        --btn-bg-hover: var(--rex-color-success-subtle);
-        --btn-border-hover: var(--rex-color-success-subtle);
-    }
-
     .btn-group > .btn-edit:hover {
         z-index: 0;
     }

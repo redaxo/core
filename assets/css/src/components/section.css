@@ -19,9 +19,6 @@
         &[data-variant="edit"],
         &[data-variant="add"] {
             --rex-section-color: var(--rex-color-edit);
-            --rex-section-header-bg: var(--rex-section-color);
-            --rex-section-header-border: var(--rex-section-color);
-            --rex-section-header-text: var(--rex-color-on-success);
             --rex-section-body-bg: var(--rex-color-edit-subtle);
             --rex-section-footer-bg: var(--rex-color-surface-muted);
         }
@@ -118,10 +115,6 @@
             font-size: 1.5rem;
             font-weight: 500;
         }
-    }
-
-    :is([data-variant="add"], [data-variant="edit"]) > .rex-section-header mark {
-        background-color: var(--rex-color-success-hover);
     }
 
     .rex-section-footer {

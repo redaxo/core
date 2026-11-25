@@ -20,7 +20,7 @@ const pairs = [
     ['link', ['bg', 'surface', 'surface-subtle', 'surface-raised'], TEXT],
     ['link-hover', ['bg', 'surface', 'surface-muted', 'accent-subtle', 'accent-subtle-hover'], TEXT],
     ['on-accent', ['accent', 'accent-hover'], TEXT],
-    ['on-success', ['success', 'success-hover', 'edit'], TEXT],
+    ['on-success', ['success', 'success-hover'], TEXT],
     ['success-text', ['bg', 'surface', 'success-subtle'], TEXT],
     ['on-warning', ['warning', 'warning-hover'], TEXT],
     ['warning-text', ['bg', 'surface'], TEXT],

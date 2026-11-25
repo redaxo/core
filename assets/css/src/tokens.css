@@ -46,25 +46,25 @@
         --rex-color-link: light-dark(#c0260b, #ff7a5c);
         --rex-color-link-hover: light-dark(#9e1f08, #ffa48f);
 
-        /* accent: primary actions, the active navigation item. The brand red with dark text, as white text on it
-           doesn't reach 4.5:1; hover lightens since dark text needs a light background */
-        --rex-color-accent: #f5391a;
-        --rex-color-accent-hover: #ff5a3d;
-        --rex-color-on-accent: #15120e;
+        /* accent: primary actions, the active navigation item. A shade darker than the brand red so that white text
+           on it reaches 4.5:1 */
+        --rex-color-accent: #e0321a;
+        --rex-color-accent-hover: #c42a10;
+        --rex-color-on-accent: #fff;
         --rex-color-accent-subtle: light-dark(#fdeae5, #3a1a12);
         --rex-color-accent-subtle-hover: light-dark(#f8cabe, #4a2015);
 
         /* status: the plain token as filled background with `on-…` as its text, `-text` on surfaces, `-subtle` as
            tinted background */
-        --rex-color-success: light-dark(#1e7a4a, #1d6b40);
-        --rex-color-success-hover: light-dark(#18633c, #175834);
+        --rex-color-success: light-dark(#277a4c, #1f6e44);
+        --rex-color-success-hover: light-dark(#1f633e, #195a37);
         --rex-color-on-success: #fff;
-        --rex-color-success-text: light-dark(#1b6e43, #5fcb8e);
-        --rex-color-success-subtle: light-dark(#e8f3ec, #16291e);
+        --rex-color-success-text: light-dark(#277a4c, #46b377);
+        --rex-color-success-subtle: light-dark(#e7f3ec, #16291e);
 
-        /* edit and add sections: the success colors in light, muted in dark so that large green areas don't glare */
-        --rex-color-edit: light-dark(#1e7a4a, #164e37);
-        --rex-color-edit-subtle: light-dark(#eef6f0, #172620);
+        /* edit and add sections: the outline and the body of the card being edited */
+        --rex-color-edit: light-dark(#15120e, #f3efe8);
+        --rex-color-edit-subtle: light-dark(#fff, #1a1713);
 
         --rex-color-warning: light-dark(#e0a53a, #8a6516);
         --rex-color-warning-hover: light-dark(#cf942a, #765612);

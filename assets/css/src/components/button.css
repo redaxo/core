@@ -131,15 +131,6 @@
         }
     }
 
-    /* inverted on the green header of edit sections */
-    .rex-section[data-variant="edit"] .rex-section-header .rex-button[data-variant="success"] {
-        --rex-button-color: var(--rex-color-success-text);
-        --rex-button-bg: var(--rex-color-surface);
-        --rex-button-border: var(--rex-color-surface);
-        --rex-button-bg-hover: var(--rex-color-edit-subtle);
-        --rex-button-border-hover: var(--rex-color-edit-subtle);
-    }
-
     /* the current language of the language switch, an `aria-current` link */
     .rex-button[aria-current]:not([aria-current="false"]) {
         --rex-button-color: var(--rex-color-on-accent);
