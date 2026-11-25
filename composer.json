@@ -39,7 +39,7 @@
         "redaxo/composer-plugin": "^1.0@dev",
         "symfony/console": "^8.1.8",
         "symfony/dotenv": "^8.1.6",
-        "symfony/html-sanitizer": "^8.1.8",
+        "symfony/html-sanitizer": "^8.1.12",
         "symfony/http-client": "^8.1.8",
         "symfony/http-foundation": "^8.1.8",
         "symfony/mailer": "^8.1.7",
