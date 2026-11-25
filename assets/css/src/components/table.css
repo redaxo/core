@@ -45,6 +45,23 @@
             text-transform: uppercase;
         }
 
+        /* text links in ink like the rest of the row, red on hover; sort links of the column titles stay muted */
+        & > tbody a:not(.rex-button, .btn) {
+            color: var(--rex-color-text);
+
+            &:hover {
+                color: var(--rex-color-link-hover);
+            }
+        }
+
+        & > thead > tr > th a:not(.rex-button, .btn) {
+            color: inherit;
+
+            &:hover {
+                color: var(--rex-color-text);
+            }
+        }
+
         /* the footer holds controls, e.g. actions for the selected rows */
         & > tfoot > tr > :is(th, td) {
             vertical-align: middle;

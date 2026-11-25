@@ -83,12 +83,13 @@
         --rex-button-border-hover: var(--rex-color-accent-hover);
     }
 
+    /* saving is the primary action of a form, green stays a status color */
     .rex-button[data-variant="success"] {
-        --rex-button-color: var(--rex-color-on-success);
-        --rex-button-bg: var(--rex-color-success);
-        --rex-button-border: var(--rex-color-success);
-        --rex-button-bg-hover: var(--rex-color-success-hover);
-        --rex-button-border-hover: var(--rex-color-success-hover);
+        --rex-button-color: var(--rex-color-on-accent);
+        --rex-button-bg: var(--rex-color-accent);
+        --rex-button-border: var(--rex-color-accent);
+        --rex-button-bg-hover: var(--rex-color-accent-hover);
+        --rex-button-border-hover: var(--rex-color-accent-hover);
     }
 
     .rex-button[data-variant="warning"] {
@@ -99,12 +100,17 @@
         --rex-button-border-hover: var(--rex-color-warning-hover);
     }
 
+    /* outlined, filled on hover */
     .rex-button[data-variant="danger"] {
-        --rex-button-color: var(--rex-color-on-danger);
-        --rex-button-bg: var(--rex-color-danger);
-        --rex-button-border: var(--rex-color-danger);
-        --rex-button-bg-hover: var(--rex-color-danger-hover);
-        --rex-button-border-hover: var(--rex-color-danger-hover);
+        --rex-button-color: var(--rex-color-danger-text);
+        --rex-button-bg: var(--rex-color-control);
+        --rex-button-border: var(--rex-color-danger-text);
+        --rex-button-bg-hover: var(--rex-color-danger);
+        --rex-button-border-hover: var(--rex-color-danger);
+
+        &:is(:hover, :active) {
+            color: var(--rex-color-on-danger);
+        }
     }
 
     .rex-button[data-variant="field"] {

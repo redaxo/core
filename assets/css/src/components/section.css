@@ -7,7 +7,7 @@
         --rex-section-header-border: var(--rex-color-border);
         --rex-section-header-text: var(--rex-color-text);
         --rex-section-body-bg: transparent;
-        --rex-section-footer-bg: var(--rex-color-surface-muted);
+        --rex-section-footer-bg: var(--rex-color-surface);
 
         margin: 0 0 22px;
         background: var(--rex-color-surface);
@@ -20,7 +20,7 @@
         &[data-variant="add"] {
             --rex-section-color: var(--rex-color-edit);
             --rex-section-body-bg: var(--rex-color-edit-subtle);
-            --rex-section-footer-bg: var(--rex-color-surface-muted);
+            --rex-section-footer-bg: var(--rex-color-edit-subtle);
         }
 
         &[data-variant="info"] {
@@ -120,7 +120,7 @@
     .rex-section-footer {
         padding: 10px 15px;
         background: var(--rex-section-footer-bg);
-        border-top: var(--rex-border-width) solid var(--rex-section-footer-bg);
+        border-top: var(--rex-border-width) solid var(--rex-color-border);
         border-radius: 0 0 calc(var(--rex-radius-lg) - var(--rex-border-width)) calc(var(--rex-radius-lg) - var(--rex-border-width));
     }
 

@@ -92,11 +92,11 @@
     }
 
     :is(.btn-save, .btn-apply, .btn-edit, .btn-success) {
-        --btn-color: var(--rex-color-on-success);
-        --btn-bg: var(--rex-color-success);
-        --btn-border: var(--rex-color-success);
-        --btn-bg-hover: var(--rex-color-success-hover);
-        --btn-border-hover: var(--rex-color-success-hover);
+        --btn-color: var(--rex-color-on-accent);
+        --btn-bg: var(--rex-color-accent);
+        --btn-border: var(--rex-color-accent);
+        --btn-bg-hover: var(--rex-color-accent-hover);
+        --btn-border-hover: var(--rex-color-accent-hover);
     }
 
     .btn-group > .btn-edit:hover {
@@ -104,11 +104,15 @@
     }
 
     :is(.btn-delete, .btn-danger) {
-        --btn-color: var(--rex-color-on-danger);
-        --btn-bg: var(--rex-color-danger);
-        --btn-border: var(--rex-color-danger);
-        --btn-bg-hover: var(--rex-color-danger-hover);
-        --btn-border-hover: var(--rex-color-danger-hover);
+        --btn-color: var(--rex-color-danger-text);
+        --btn-bg: var(--rex-color-control);
+        --btn-border: var(--rex-color-danger-text);
+        --btn-bg-hover: var(--rex-color-danger);
+        --btn-border-hover: var(--rex-color-danger);
+
+        &:is(:hover, :active) {
+            color: var(--rex-color-on-danger);
+        }
     }
 
     .btn-warning {
