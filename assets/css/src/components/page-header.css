@@ -1,8 +1,25 @@
 /* Page header with tabs and subnavigation, breadcrumb (PageHeader, Tabs, Breadcrumb components) */
 
 @layer components {
-    .rex-pageheader-title {
+    /* the heading with the meta text on the right */
+    .rex-pageheader-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 20px;
+        align-items: center;
         margin: 36px 0 33px;
+
+        .rex-is-popup & {
+            margin: 0;
+        }
+    }
+
+    .rex-pageheader-title {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        align-items: center;
+        margin: 0;
         color: var(--rex-color-text);
         font-family: var(--rex-font-display);
         font-size: 1.75rem;
@@ -26,6 +43,32 @@
             font-size: 1.25rem;
             line-height: var(--rex-topbar-height-mobile);
         }
+    }
+
+    .rex-pageheader-eyebrow {
+        color: var(--rex-color-text-muted);
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        line-height: 1.2;
+        text-transform: uppercase;
+    }
+
+    .rex-pageheader-separator {
+        flex-shrink: 0;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--rex-color-border-input);
+    }
+
+    .rex-pageheader-meta {
+        margin: 0 0 0 auto;
+        color: var(--rex-color-text-muted);
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
+        white-space: nowrap;
     }
 
     .rex-is-popup .rex-pageheader {

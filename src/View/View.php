@@ -60,12 +60,14 @@ final class View
      * Returns the formatted title.
      *
      * @param string|array<Page>|null $subtitle
+     * @param string $meta Text on the right of the heading, e.g. the versions on the system page
      *
      * @psalm-taint-sink html $head
      * @psalm-taint-sink html $subtitle
      */
-    public static function title(string $head, string|array|null $subtitle = null): string
+    public static function title(string $head, string|array|null $subtitle = null, string $meta = ''): string
     {
+        $current = '';
         if (null === $subtitle) {
             $subtitle = Controller::getPageObject(Controller::getCurrentPagePart(1))->getSubpages();
         }
@@ -79,6 +81,9 @@ final class View
                 }
 
                 $nav->addPage($pageObj);
+                if ('' === $current && $pageObj->isActive()) {
+                    $current = $pageObj->getTitle();
+                }
             }
             $blocks = $nav->getNavigation();
             $navigation = [];
@@ -98,7 +103,12 @@ final class View
 
         $title = Extension::dispatch(new ExtensionPoint('PAGE_TITLE', $head));
 
-        return (string) new PageHeader(Html::raw($title), navigation: Html::raw($subtitle))->render() . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
+        // with subpages, the page title becomes the eyebrow of the current subpage, e.g. "System • Settings"
+        $header = '' !== $current
+            ? new PageHeader(Html::raw($current), navigation: Html::raw($subtitle), eyebrow: Html::raw($title), meta: $meta)
+            : new PageHeader(Html::raw($title), navigation: Html::raw($subtitle), meta: $meta);
+
+        return (string) $header->render() . Extension::dispatch(new ExtensionPoint('PAGE_TITLE_SHOWN', ''));
     }
 
     /** Returns a language switch. */
