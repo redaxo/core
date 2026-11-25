@@ -101,8 +101,12 @@ final class StrTest extends TestCase
     public static function provideSanitizeHtml(): iterable
     {
         yield 'safe markup' => [
-            '<p align="center" class="lead"><img src="foo.jpg" style="width: 200px" alt="Foo" /></p><a name="test" id="test"></a>',
-            '<p align=center class="lead"><img src="foo.jpg" style="width: 200px" alt="Foo"></p><a name="test" id="test"></a>',
+            '<p align="center" class="lead"><img src="foo.jpg" style="width: 200px" alt="Foo" /></p><a id="test"></a>',
+            '<p align=center class="lead"><img src="foo.jpg" style="width: 200px" alt="Foo"></p><a id="test"></a>',
+        ];
+        yield 'name attribute' => [
+            '<a id="test"></a><img src="foo.jpg" />',
+            '<a name="test" id="test"></a><img src="foo.jpg" name="cookie">',
         ];
         yield 'external urls' => [
             '<a href="https://example.org/foo">Foo</a><img src="https://example.org/foo.png" /><img src="//example.org/bar.png" />',
