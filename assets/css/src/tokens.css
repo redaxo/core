@@ -46,11 +46,11 @@
         --rex-color-link: light-dark(#c0260b, #ff7a5c);
         --rex-color-link-hover: light-dark(#9e1f08, #ffa48f);
 
-        /* accent: primary actions, the active navigation item. Darker than the brand red so that white text on it
-           reaches 4.5:1 */
-        --rex-color-accent: light-dark(#d62b0e, #c42a10);
-        --rex-color-accent-hover: light-dark(#b8240b, #a82309);
-        --rex-color-on-accent: #fff;
+        /* accent: primary actions, the active navigation item. The brand red with dark text, as white text on it
+           doesn't reach 4.5:1; hover lightens since dark text needs a light background */
+        --rex-color-accent: #f5391a;
+        --rex-color-accent-hover: #ff5a3d;
+        --rex-color-on-accent: #15120e;
         --rex-color-accent-subtle: light-dark(#fdeae5, #3a1a12);
         --rex-color-accent-subtle-hover: light-dark(#f8cabe, #4a2015);
 
@@ -71,11 +71,12 @@
         --rex-color-on-warning: light-dark(#15120e, #fff);
         --rex-color-warning-text: light-dark(#7d5300, #e0b45a);
 
-        --rex-color-danger: light-dark(#b8302a, #a3261c);
-        --rex-color-danger-hover: light-dark(#9a2620, #8a1f17);
+        /* danger: a carmine, cooler and darker than the accent so that deleting doesn't look like the primary action */
+        --rex-color-danger: light-dark(#a3123a, #9b1238);
+        --rex-color-danger-hover: light-dark(#8a0f31, #82102f);
         --rex-color-on-danger: #fff;
-        --rex-color-danger-text: light-dark(#a82a24, #ff7a6b);
-        --rex-color-danger-subtle: light-dark(#f9e4e1, #3a1714);
+        --rex-color-danger-text: light-dark(#a3123a, #ff7a95);
+        --rex-color-danger-subtle: light-dark(#fbe4ea, #3a1420);
 
         --rex-color-neutral: light-dark(#4e483f, #39342b);
         --rex-color-neutral-hover: light-dark(#3a352d, #4a443a);

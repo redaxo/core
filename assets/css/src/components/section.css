@@ -5,7 +5,7 @@
         --rex-section-color: var(--rex-color-border-strong);
         --rex-section-header-bg: var(--rex-color-surface);
         --rex-section-header-border: var(--rex-color-border);
-        --rex-section-header-text: var(--rex-color-text-muted);
+        --rex-section-header-text: var(--rex-color-text);
         --rex-section-body-bg: transparent;
         --rex-section-footer-bg: var(--rex-color-surface-muted);
 
@@ -75,12 +75,11 @@
     .rex-section-title {
         margin: 0;
         color: inherit;
-        font-family: var(--rex-font-mono);
-        font-size: 0.75rem;
+        font-family: var(--rex-font-display);
+        font-size: 1.0625rem;
         font-weight: 700;
-        letter-spacing: 0.1em;
-        line-height: 1.5;
-        text-transform: uppercase;
+        letter-spacing: -0.01em;
+        line-height: 1.25;
     }
 
     /* the title of a collapsible section, as wide as the header */
