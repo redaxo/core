@@ -35,6 +35,12 @@
             height: auto;
         }
 
+        /* a slice is a card with an ink outline and a sunken header */
+        & .rex-section:not([data-variant]) {
+            --rex-section-color: var(--rex-color-border-emphasis);
+            --rex-section-header-bg: var(--rex-color-surface-muted);
+        }
+
         & .rex-section-options {
             float: right;
         }
@@ -62,8 +68,10 @@
     .rex-slice-offline {
         opacity: 0.8;
 
-        & .rex-section {
+        & .rex-section:not([data-variant]) {
             --rex-section-color: var(--rex-color-neutral);
+            --rex-section-header-bg: var(--rex-section-color);
+            --rex-section-header-border: var(--rex-section-color);
             --rex-section-header-text: var(--rex-color-on-neutral);
         }
 
@@ -84,13 +92,20 @@
 
     /* "add block" button between the slices */
     .rex-slice-select > .rex-dropdown > .rex-button {
-        --rex-button-color: var(--rex-color-link-hover);
-        --rex-button-bg: var(--rex-color-accent-subtle);
-        --rex-button-border: var(--rex-color-accent-subtle);
-        --rex-button-bg-hover: var(--rex-color-accent-subtle-hover);
-        --rex-button-border-hover: var(--rex-color-accent-subtle-hover);
+        --rex-button-color: var(--rex-color-text-muted);
+        --rex-button-bg: transparent;
+        --rex-button-border: var(--rex-color-border-input);
+        --rex-button-bg-hover: transparent;
+        --rex-button-border-hover: var(--rex-color-accent);
 
-        border-radius: 0;
+        border-style: dashed;
+        border-radius: var(--rex-radius-lg);
+
+        &:hover {
+            --rex-button-color: var(--rex-color-link);
+
+            border-style: solid;
+        }
 
         &:is(:focus, .focus, :active, .active),
         .open > & {
@@ -98,6 +113,8 @@
             --rex-button-bg: var(--rex-color-accent);
             --rex-button-border: var(--rex-color-accent);
             --rex-button-bg-hover: var(--rex-color-accent-hover);
+
+            border-style: solid;
         }
     }
 }

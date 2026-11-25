@@ -142,8 +142,8 @@
         --rex-button-color: var(--rex-color-on-accent);
         --rex-button-bg: var(--rex-color-accent);
         --rex-button-border: var(--rex-color-accent);
-        --rex-button-bg-hover: var(--rex-color-accent-hover);
-        --rex-button-border-hover: var(--rex-color-accent-hover);
+        --rex-button-bg-hover: var(--rex-color-accent);
+        --rex-button-border-hover: var(--rex-color-accent);
 
         box-shadow: none;
     }

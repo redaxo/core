@@ -323,7 +323,7 @@ if (0 === $structureContext->categoryId) {
     $heading = I18n::msg('structure_root_level_categories_caption');
 }
 $fragment = new Fragment();
-$fragment->setVar('heading', $heading, false);
+$fragment->setVar('title', $heading, false);
 $fragment->setVar('content', $echo, false);
 echo $fragment->parse('core/page/section.php');
 
@@ -534,6 +534,6 @@ if (0 === $structureContext->categoryId) {
     $heading = I18n::msg('structure_root_level_articles_caption');
 }
 $fragment = new Fragment();
-$fragment->setVar('heading', $heading, false);
+$fragment->setVar('title', $heading, false);
 $fragment->setVar('content', $echo, false);
 echo $fragment->parse('core/page/section.php');

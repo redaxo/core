@@ -168,7 +168,7 @@
             position: sticky;
             bottom: 0;
             z-index: 1;
-            background-color: var(--rex-color-surface-muted);
+            background-color: var(--rex-color-surface);
         }
     }
 
