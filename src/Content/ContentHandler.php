@@ -82,7 +82,7 @@ final class ContentHandler
             'rex_article_slice',
             'priority',
             $where,
-            'priority, updatedate DESC',
+            'priority, id = ' . $sliceId . ' DESC, id',
         );
 
         ArticleCache::delete($articleId, $languageId);
@@ -145,7 +145,7 @@ final class ContentHandler
             'rex_article_slice',
             'priority',
             'article_id=' . $articleId . ' AND language_id=' . $languageId . ' AND content_section_id=' . $ctype . ' AND revision=' . $sliceRevision,
-            'priority, updatedate ' . $updSort,
+            'priority, id = ' . $sliceId . ' ' . $updSort . ', id',
         );
 
         // check if the slice moved at all (first cannot be moved up, last not down)
@@ -278,9 +278,9 @@ final class ContentHandler
 
         $gc = Sql::factory();
         if (null === $revision) {
-            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=?', [$fromId, $fromLanguageId]);
+            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? order by priority, id', [$fromId, $fromLanguageId]);
         } else {
-            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? and revision=?', [$fromId, $fromLanguageId, $revision]);
+            $gc->setQuery('select * from rex_article_slice where article_id=? and language_id=? and revision=? order by priority, id', [$fromId, $fromLanguageId, $revision]);
         }
 
         Extension::dispatch(new ArticleSlicesCopying(
@@ -358,7 +358,7 @@ final class ContentHandler
                     'rex_article_slice',
                     'priority',
                     'article_id=' . $toId . ' AND language_id=' . $toLanguageId . ' AND content_section_id=' . (int) $ctype . ' AND revision=' . $revision,
-                    'priority, updatedate',
+                    'priority, id',
                 );
             }
         }

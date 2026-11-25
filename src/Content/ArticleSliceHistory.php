@@ -3,9 +3,11 @@
 namespace Redaxo\Core\Content;
 
 use DateTimeInterface;
+use Redaxo\Core\Content\ExtensionPoint\ArticleContentUpdated;
 use Redaxo\Core\Core;
 use Redaxo\Core\Database\Sql;
 use Redaxo\Core\Database\Table;
+use Redaxo\Core\ExtensionPoint\Extension;
 
 use function count;
 use function in_array;
@@ -28,6 +30,19 @@ final class ArticleSliceHistory
     {
         self::checkTables();
 
+        $historyDate = date(Sql::FORMAT_DATETIME);
+
+        // Snapshots are identified by their date in seconds, so the first snapshot with rows in a second is kept
+        // instead of mixing in later states (a snapshot of an article without slices has no rows and doesn't count).
+        $sql = Sql::factory();
+        $existing = $sql->getArray(
+            'select 1 from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and language_id=? and revision=? and history_date=? limit 1',
+            [$articleId, $languageId, 0, $historyDate],
+        );
+        if ($existing) {
+            return;
+        }
+
         $slices = Sql::factory()->getArray(
             'select * from rex_article_slice where article_id=? and language_id=? and revision=?',
             [
@@ -36,8 +51,6 @@ final class ArticleSliceHistory
                 0,
             ],
         );
-
-        $historyDate = date(Sql::FORMAT_DATETIME);
 
         foreach ($slices as $slice) {
             $sql = Sql::factory();
@@ -71,6 +84,11 @@ final class ArticleSliceHistory
     public static function restoreSnapshot(string $historyDate, int $articleId, int $languageId): bool
     {
         self::checkTables();
+
+        $article = Article::get($articleId, $languageId);
+        if (!$article) {
+            return false;
+        }
 
         $sql = Sql::factory();
         $slices = $sql->getArray('select id from ' . $sql->escapeIdentifier(self::getTable()) . ' where article_id=? and language_id=? and revision=? and history_date=?', [$articleId, $languageId, 0, $historyDate]);
@@ -108,7 +126,50 @@ final class ArticleSliceHistory
             }
         }
         ArticleCache::delete($articleId, $languageId);
+
+        Extension::dispatch(new ArticleContentUpdated($article, 'snapshot_restored'));
+
         return true;
+    }
+
+    /**
+     * Query for the slices of a snapshot, in the shape of the regular slices query of the article content
+     * (`ArticleSlicesQuery`) in the frontend.
+     *
+     * The slices keep their original ids, so that the id refers to the slice and not to the history record.
+     * Like in the frontend, offline slices are left out.
+     *
+     * @internal
+     */
+    public static function getSlicesQuery(string $historyDate, int $articleId, int $languageId): string
+    {
+        self::checkTables();
+
+        $sql = Sql::factory();
+        $columns = [];
+        foreach (Table::get('rex_article_slice')->getColumns() as $column) {
+            if ('id' !== $column->name) {
+                $columns[] = $sql->escapeIdentifier($column->name);
+            }
+        }
+
+        $historyTable = $sql->escapeIdentifier(self::getTable());
+        $columns = implode(', ', $columns);
+        $historyDate = $sql->escape($historyDate);
+
+        return <<<SQL
+            SELECT
+                rex_article_slice.*,
+                rex_article.parent_id
+            FROM (
+                SELECT slice_id AS id, {$columns}
+                FROM {$historyTable}
+                WHERE history_date = {$historyDate} AND article_id = {$articleId} AND language_id = {$languageId}
+                    AND revision = 0 AND status = 1
+            ) AS rex_article_slice
+            LEFT JOIN rex_article ON rex_article_slice.article_id = rex_article.id
+            ORDER BY rex_article_slice.content_section_id, rex_article_slice.priority
+            SQL;
     }
 
     public static function clearAllHistory(): void

@@ -99,7 +99,7 @@ final class ArticleHandler
                 ->insert();
         }
 
-        self::updatePriorities($categoryId, 0, $priority);
+        self::updatePriorities($categoryId, 0, $priority, $id);
 
         ArticleCache::delete($id);
 
@@ -159,7 +159,7 @@ final class ArticleHandler
         $EA->update();
 
         if ($oldPrio != $priority) {
-            self::updatePriorities($previous->categoryId, $priority, $oldPrio);
+            self::updatePriorities($previous->categoryId, $priority, $oldPrio, $articleId);
         }
 
         ArticleCache::delete($articleId);
@@ -346,8 +346,9 @@ final class ArticleHandler
      * @internal
      *
      * @param int|null $parentId `null` for the root level
+     * @param int|null $id Id of the added or moved article, used to place it in front of or behind a article with the same priority
      */
-    public static function updatePriorities(?int $parentId, int $newPrio, int $oldPrio): void
+    public static function updatePriorities(?int $parentId, int $newPrio, int $oldPrio, ?int $id = null): void
     {
         if ($newPrio != $oldPrio) {
             if ($newPrio < $oldPrio) {
@@ -360,7 +361,7 @@ final class ArticleHandler
                 'rex_article',
                 'priority',
                 self::siblingsWhere($parentId),
-                'priority,updatedate ' . $addsql,
+                'priority, ' . (null === $id ? '' : 'id = ' . $id . ' ' . $addsql . ', ') . 'id',
             );
 
             ArticleCache::deleteLists($parentId);

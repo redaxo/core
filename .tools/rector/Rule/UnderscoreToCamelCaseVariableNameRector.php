@@ -10,7 +10,6 @@ use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Param;
 use Rector\Naming\ParamRenamer\ParamRenamer;
 use Rector\Naming\ValueObject\ParamRename;
-use Rector\Naming\ValueObjectFactory\ParamRenameFactory;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Rector\Php\ReservedKeywordAnalyzer;
 use Rector\Rector\AbstractRector;
@@ -22,7 +21,6 @@ final class UnderscoreToCamelCaseVariableNameRector extends AbstractRector
 {
     public function __construct(
         private readonly ReservedKeywordAnalyzer $reservedKeywordAnalyzer,
-        private readonly ParamRenameFactory $paramRenameFactory,
         private readonly ParamRenamer $paramRenamer,
         private readonly UnderscoreCamelCaseExpectedNameResolver $underscoreCamelCaseExpectedNameResolver,
     ) {}
@@ -133,12 +131,11 @@ final class UnderscoreToCamelCaseVariableNameRector extends AbstractRector
             return null;
         }
 
-        $paramRename = $this->paramRenameFactory->createFromResolvedExpectedName($function, $param, $resolvedExpectedName);
-        if (!$paramRename instanceof ParamRename) {
+        if (!$param->var instanceof Variable) {
             return null;
         }
 
-        $this->paramRenamer->rename($paramRename);
+        $this->paramRenamer->rename(new ParamRename($this->getName($param), $resolvedExpectedName, $param->var, $function));
 
         return $param;
     }
