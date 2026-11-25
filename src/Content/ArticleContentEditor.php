@@ -165,6 +165,9 @@ final class ArticleContentEditor extends ArticleContentBase
                 // edit
                 $item = [];
                 $item['label'] = I18n::msg('edit');
+                $item['hidden_label'] = I18n::msg('module') . ' ' . $moduleName . ' ' . I18n::msg('edit');
+                $item['icon'] = 'edit';
+                $item['attributes']['title'] = I18n::msg('edit');
                 $item['url'] = $context->getUrl(['function' => 'edit']) . $fragment;
                 $menuEditAction = $item;
             }
@@ -172,6 +175,9 @@ final class ArticleContentEditor extends ArticleContentBase
             // delete
             $item = [];
             $item['label'] = I18n::msg('delete');
+            $item['hidden_label'] = I18n::msg('module') . ' ' . $moduleName . ' ' . I18n::msg('delete');
+            $item['icon'] = 'delete';
+            $item['attributes']['title'] = I18n::msg('delete');
             $item['url'] = $context->getUrl(['function' => 'delete', 'save' => 1] + CsrfToken::factory('structure_content_slice')->getUrlParams()) . $fragment;
             $item['variant'] = 'danger';
             $item['attributes']['data-confirm'] = I18n::msg('confirm_delete_block');
