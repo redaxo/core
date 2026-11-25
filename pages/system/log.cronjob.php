@@ -133,7 +133,7 @@ if (!$cronjobs) {
     $overviewBody = I18n::msg('cronjob_no_cronjobs');
 } else {
     $overview = (string) new Table([
-        new TableColumn('', static fn (): Html => Html::raw('<i class="rex-icon rex-icon-cronjob" aria-hidden="true"></i>'), TableColumnType::Icon),
+        new TableColumn('', static fn (Cronjob $cronjob): Html => Html::raw('<i class="rex-icon rex-icon-cronjob" aria-hidden="true"></i>'), TableColumnType::Icon),
         new TableColumn(I18n::rawMsg('cronjob_name'), static fn (Cronjob $cronjob): Html => Html::raw(escape($cronjob->name) . '<br /><small class="rex-u-text-muted">' . escape($cronjob->class . '::' . $cronjob->method . '()') . '</small>')),
         new TableColumn(I18n::rawMsg('cronjob_schedule'), static fn (Cronjob $cronjob): Html => Html::raw('<code class="rex-u-nowrap">' . escape($cronjob->schedule) . '</code>')),
         new TableColumn(I18n::rawMsg('cronjob_lastrun'), static function (Cronjob $cronjob) use ($states): Html {

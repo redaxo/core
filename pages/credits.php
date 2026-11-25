@@ -63,7 +63,7 @@ $fragment->setVar('body', $content, false);
 echo $fragment->parse('core/page/section.php');
 
 $content = (string) new Table([
-    new TableColumn(Html::raw('&nbsp;'), static fn (): Html => Html::raw('<i class="rex-icon rex-icon-package-addon" aria-hidden="true"></i>'), TableColumnType::Icon),
+    new TableColumn(Html::raw('&nbsp;'), static fn (Addon $package): Html => Html::raw('<i class="rex-icon rex-icon-package-addon" aria-hidden="true"></i>'), TableColumnType::Icon),
     new TableColumn(I18n::rawMsg('credits_name'), static fn (Addon $package): string => $package->name),
     new TableColumn(I18n::rawMsg('credits_version'), static function (Addon $package): Html {
         $version = escape($package->getVersion());

@@ -133,7 +133,7 @@ if ($PERMALL) {
             }
             return Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=update_file_cat&amp;edit_id=' . $category->id . '"><i class="rex-icon rex-icon-edit" aria-hidden="true"></i> ' . I18n::msg('pool_kat_edit') . '</a>');
         }, TableColumnType::Action),
-        new TableColumn(null, static fn (MediaCategory $category): Html => Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), TableColumnType::Action),
+        new TableColumn(null, static fn (?MediaCategory $category): ?Html => null === $category ? null : Html::raw('<a class="rex-u-link-expanded" href="' . $link . $catId . '&amp;media_method=delete_file_cat&amp;edit_id=' . $category->id . '&amp;' . http_build_query($csrf->getUrlParams()) . '" data-confirm="' . I18n::msg('delete') . ' ?"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('pool_kat_delete') . '</a>'), TableColumnType::Action),
     ], [...('add_cat' == $mediaMethod ? [null] : []), ...$OOCats],
         rowAttributes: static fn (?MediaCategory $category): HtmlAttributes => new HtmlAttributes(['class' => ['rex-u-mark' => null === $category || $form($category)]]),
         attributes: new HtmlAttributes(['data-hover' => true]),
