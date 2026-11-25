@@ -328,8 +328,6 @@ async function main() {
 
     // login page
     await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-    await page.waitForSelector('.rex-background[data-state="ready"]');
-    await page.waitForTimeout(200); // wait for bg image to fade in
     await createScreenshots(page, 'login.png');
 
     // login successful
@@ -390,8 +388,7 @@ async function main() {
 
     // logout
     await page.click('a[href*="rex_logout=1"]');
-    await page.waitForSelector('.rex-background[data-state="ready"]');
-    await page.waitForTimeout(200); // wait for bg image to fade in
+    await page.waitForSelector('#rex-form-login');
     await createScreenshots(page, 'logout.png');
 
     await page.close();

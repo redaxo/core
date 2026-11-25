@@ -2,21 +2,25 @@
 
 @layer components {
     .rex-section {
-        --rex-section-color: var(--rex-color-border);
-        --rex-section-header-text: var(--rex-color-text);
+        --rex-section-color: var(--rex-color-border-strong);
+        --rex-section-header-bg: var(--rex-color-surface);
+        --rex-section-header-border: var(--rex-color-border);
+        --rex-section-header-text: var(--rex-color-text-muted);
         --rex-section-body-bg: transparent;
         --rex-section-footer-bg: var(--rex-color-surface-muted);
 
         margin: 0 0 22px;
         background: var(--rex-color-surface);
-        border: 1px solid var(--rex-section-color);
-        border-radius: 0;
+        border: var(--rex-border-width) solid var(--rex-section-color);
+        border-radius: var(--rex-radius-lg);
         box-shadow: var(--rex-shadow-sm);
         color: var(--rex-color-text);
 
         &[data-variant="edit"],
         &[data-variant="add"] {
             --rex-section-color: var(--rex-color-edit);
+            --rex-section-header-bg: var(--rex-section-color);
+            --rex-section-header-border: var(--rex-section-color);
             --rex-section-header-text: var(--rex-color-on-success);
             --rex-section-body-bg: var(--rex-color-edit-subtle);
             --rex-section-footer-bg: var(--rex-color-surface-muted);
@@ -24,21 +28,29 @@
 
         &[data-variant="info"] {
             --rex-section-color: var(--rex-color-accent);
+            --rex-section-header-bg: var(--rex-section-color);
+            --rex-section-header-border: var(--rex-section-color);
             --rex-section-header-text: var(--rex-color-on-accent);
         }
 
         &[data-variant="success"] {
             --rex-section-color: var(--rex-color-success);
+            --rex-section-header-bg: var(--rex-section-color);
+            --rex-section-header-border: var(--rex-section-color);
             --rex-section-header-text: var(--rex-color-on-success);
         }
 
         &[data-variant="warning"] {
             --rex-section-color: var(--rex-color-warning);
+            --rex-section-header-bg: var(--rex-section-color);
+            --rex-section-header-border: var(--rex-section-color);
             --rex-section-header-text: var(--rex-color-on-warning);
         }
 
         &[data-variant="danger"] {
             --rex-section-color: var(--rex-color-danger);
+            --rex-section-header-bg: var(--rex-section-color);
+            --rex-section-header-border: var(--rex-section-color);
             --rex-section-header-text: var(--rex-color-on-danger);
         }
     }
@@ -47,24 +59,28 @@
         --rex-color-focus: var(--rex-section-header-text);
 
         display: flow-root;
-        padding: 10px 15px;
-        background: var(--rex-section-color);
-        border-bottom: 1px solid var(--rex-section-color);
-        border-radius: 0;
+        padding: 12px 15px;
+        background: var(--rex-section-header-bg);
+        border-bottom: var(--rex-border-width) solid var(--rex-section-header-border);
+        border-radius: calc(var(--rex-radius-lg) - var(--rex-border-width)) calc(var(--rex-radius-lg) - var(--rex-border-width)) 0 0;
         color: var(--rex-section-header-text);
         line-height: 1.25;
 
         &:has(.rex-section-toggle:hover) {
-            background: color-mix(in srgb, var(--rex-section-color), var(--rex-color-text) 8%);
+            background: color-mix(in srgb, var(--rex-section-header-bg), var(--rex-color-text) 8%);
         }
     }
 
+    /* an eyebrow: small monospace capitals */
     .rex-section-title {
         margin: 0;
         color: inherit;
-        font-size: 1.0625rem;
-        font-weight: 400;
-        line-height: 1.25;
+        font-family: var(--rex-font-mono);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        line-height: 1.5;
+        text-transform: uppercase;
     }
 
     /* the title of a collapsible section, as wide as the header */
@@ -112,8 +128,8 @@
     .rex-section-footer {
         padding: 10px 15px;
         background: var(--rex-section-footer-bg);
-        border-top: 1px solid var(--rex-section-footer-bg);
-        border-radius: 0;
+        border-top: var(--rex-border-width) solid var(--rex-section-footer-bg);
+        border-radius: 0 0 calc(var(--rex-radius-lg) - var(--rex-border-width)) calc(var(--rex-radius-lg) - var(--rex-border-width));
     }
 
     .rex-section-header {
@@ -145,7 +161,12 @@
         margin: 0 -15px -15px;
         padding: 10px 15px;
         background: var(--rex-section-footer-bg);
-        border-top: 1px solid var(--rex-section-footer-bg);
+        border-top: var(--rex-border-width) solid var(--rex-section-footer-bg);
+    }
+
+    /* tables take the background of the section, so that they don't cover its rounded corners */
+    .rex-section :is(.table, .rex-table) {
+        background-color: transparent;
     }
 
     /* tables and lists without padding (Section::$content) run to the edges */
@@ -188,10 +209,8 @@
     #rex-page-login .rex-section {
         position: relative;
         z-index: 10;
-        background: color-mix(in srgb, var(--rex-color-inverse-bg) 97%, transparent);
-        border: 0;
-        border-radius: 5px;
-        color: var(--rex-color-inverse-text-strong);
+        border-color: var(--rex-color-border-emphasis);
+        box-shadow: var(--rex-shadow-lg);
 
         .rex-section-header,
         .rex-section-footer {
@@ -199,16 +218,12 @@
             border: 0;
         }
 
-        .rex-section-header {
-            color: var(--rex-color-inverse-text-strong);
-        }
-
         .rex-section-body {
-            padding: 25px 25px 5px;
+            padding: 30px 30px 5px;
         }
 
         .rex-section-footer {
-            padding: 5px 25px 25px;
+            padding: 5px 30px 30px;
         }
     }
 }

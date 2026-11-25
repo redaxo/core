@@ -1,6 +1,9 @@
 /*
  Backend shell: top bar, main navigation (sidebar), main area and footer.
 
+ The top bar is light like the canvas; from 992px its part above the navigation is as dark as the navigation, so the
+ logo heads the dark column. The main area shows the construction grid of the canvas.
+
  Below 992px the sidebar moves off canvas and opens via the toggle in the top bar (body class `rex-sidebar-open`,
  see js/backend.js).
  */
@@ -9,9 +12,9 @@
     :root {
         --rex-sidebar-bg: var(--rex-color-inverse-bg);
         --rex-sidebar-text: var(--rex-color-inverse-text);
-        --rex-sidebar-title: var(--rex-color-inverse-text-strong);
+        --rex-sidebar-title: var(--rex-color-inverse-text);
         --rex-sidebar-hover-bg: var(--rex-color-inverse-bg-strong);
-        --rex-sidebar-hover-text: var(--rex-color-inverse-link);
+        --rex-sidebar-hover-text: var(--rex-color-inverse-text-strong);
         --rex-sidebar-active-bg: var(--rex-color-accent);
         --rex-sidebar-active-text: var(--rex-color-on-accent);
     }
@@ -41,8 +44,8 @@
 
     .rex-topbar {
         /* on the element, so overrides of the colors (e.g. while impersonating) also change the muted text */
-        --rex-topbar-bg: var(--rex-color-accent);
-        --rex-topbar-text: var(--rex-color-on-accent);
+        --rex-topbar-bg: var(--rex-color-bg);
+        --rex-topbar-text: var(--rex-color-text);
         --rex-topbar-text-muted: color-mix(in srgb, var(--rex-topbar-text) 90%, var(--rex-topbar-bg));
         --rex-color-focus: var(--rex-topbar-text);
 
@@ -56,6 +59,7 @@
         min-height: var(--rex-topbar-height);
         padding: 0 15px;
         background: var(--rex-topbar-bg);
+        border-bottom: var(--rex-border-width) solid var(--rex-color-border);
         color: var(--rex-topbar-text);
         transition: transform var(--rex-duration) var(--rex-ease-out), box-shadow var(--rex-duration) var(--rex-ease-out);
 
@@ -67,6 +71,20 @@
 
         @media (min-width: 1200px) {
             padding-right: var(--rex-gutter);
+        }
+
+        @media (min-width: 992px) {
+            &[data-variant="fixed"] {
+                background: linear-gradient(90deg, var(--rex-sidebar-bg) var(--rex-sidebar-width), var(--rex-topbar-bg) 0);
+
+                & .rex-topbar-brand {
+                    --rex-color-focus: var(--rex-sidebar-hover-text);
+                }
+
+                & .rex-redaxo-logo :is(.rex-redaxo-logo-a, .rex-redaxo-logo-x, .rex-redaxo-logo-o, .rex-redaxo-logo-reg) {
+                    fill: var(--rex-color-inverse-text-strong);
+                }
+            }
         }
 
         @media (max-width: 991px) {
@@ -273,12 +291,16 @@
         .rex-icon {
             display: inline-block;
             vertical-align: middle;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             line-height: 20px;
         }
 
         .rex-topbar-title-name {
             max-width: 300px;
+            font-family: var(--rex-font-mono);
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
             margin-right: 8px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -416,9 +438,12 @@
         margin: 15px 0 20px;
         padding: 25px 15px 0;
         color: var(--rex-sidebar-title);
-        font-size: var(--rex-font-size-large);
-        font-weight: 500;
+        font-family: var(--rex-font-mono);
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
         line-height: 1.1;
+        text-transform: uppercase;
 
         .rex-sidebar-list + & {
             border-top: 1px solid var(--rex-color-inverse-border);
@@ -437,7 +462,10 @@
         > li > a {
             display: block;
             position: relative;
-            padding: 8px 15px 8px 45px;
+            margin-inline: 10px;
+            padding: 8px 15px 8px 35px;
+            border-radius: var(--rex-radius);
+            font-weight: 600;
             line-height: 22px;
             color: var(--rex-sidebar-text);
             text-decoration: none;
@@ -486,14 +514,19 @@
 
     /* main area ----------------------------------------------------------------------------------------------- */
 
+    /* at least as high as the viewport, so that the navigation reaches the bottom on short pages */
     .rex-shell {
         display: flex;
-        min-height: 100%;
+        min-height: 100vh;
     }
 
     .rex-main {
         flex: 1;
         min-width: 0;
+        background-image:
+            linear-gradient(var(--rex-color-grid) 1px, transparent 1px),
+            linear-gradient(90deg, var(--rex-color-grid) 1px, transparent 1px);
+        background-size: var(--rex-grid-size) var(--rex-grid-size);
         padding-top: var(--rex-topbar-height);
         padding-bottom: var(--rex-gutter);
 

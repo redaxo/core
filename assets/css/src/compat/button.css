@@ -7,20 +7,21 @@
     .btn {
         --btn-color: var(--rex-color-text);
         --btn-bg: var(--rex-color-control);
-        --btn-border: var(--rex-color-border-strong);
+        --btn-border: var(--rex-color-border-emphasis);
         --btn-bg-hover: var(--rex-color-control-hover);
-        --btn-border-hover: var(--rex-color-border-input);
+        --btn-border-hover: var(--rex-color-border-emphasis);
 
         display: inline-block;
+        min-height: var(--rex-control-height);
         margin-bottom: 0;
-        padding: 6px 12px;
-        border: 1px solid var(--btn-border);
-        border-radius: 4px;
+        padding: calc((var(--rex-control-height) - 1lh - 2 * var(--rex-border-width)) / 2) 14px;
+        border: var(--rex-border-width) solid var(--btn-border);
+        border-radius: var(--rex-radius);
         background-color: var(--btn-bg);
         background-image: none;
         color: var(--btn-color);
         font-size: var(--rex-font-size);
-        font-weight: 400;
+        font-weight: 600;
         line-height: var(--rex-line-height);
         text-align: center;
         white-space: nowrap;
@@ -184,16 +185,16 @@
 
     .btn-sm,
     .btn-group-sm > .btn {
-        padding: 5px 10px;
-        border-radius: 2px;
+        min-height: var(--rex-control-height-sm);
+        padding: calc((var(--rex-control-height-sm) - 1lh - 2 * var(--rex-border-width)) / 2) 12px;
         font-size: var(--rex-font-size-small);
         line-height: 1.5;
     }
 
     .btn-xs,
     .btn-group-xs > .btn {
-        padding: 3px 8px;
-        border-radius: 2px;
+        min-height: 24px;
+        padding: 2px 8px;
         font-size: var(--rex-font-size-small);
         line-height: 1.3334;
 
@@ -236,7 +237,7 @@
 
     .btn-group {
         & :is(.btn, .btn-group) + :is(.btn, .btn-group) {
-            margin-left: -1px;
+            margin-left: calc(var(--rex-border-width) * -1);
         }
 
         & > .btn:first-child {
@@ -275,7 +276,7 @@
         }
 
         & > :is(.btn, .btn-group) + :is(.btn, .btn-group) {
-            margin-top: -1px;
+            margin-top: calc(var(--rex-border-width) * -1);
             margin-left: 0;
         }
 

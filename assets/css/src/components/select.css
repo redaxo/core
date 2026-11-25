@@ -73,7 +73,7 @@
         max-width: min(480px, 100vw - 16px);
         margin: 0;
         padding: 0;
-        border: 1px solid var(--rex-color-border-strong);
+        border: var(--rex-border-width) solid var(--rex-color-border-emphasis);
         border-radius: var(--rex-radius);
         background: var(--rex-color-surface);
         box-shadow: var(--rex-shadow-md);

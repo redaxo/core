@@ -31,8 +31,18 @@
         }
 
         & > thead > tr > :is(th, td) {
-            border-bottom: 2px solid var(--rex-table-border);
+            border-bottom: var(--rex-border-width) solid var(--rex-color-border-strong);
             vertical-align: bottom;
+        }
+
+        /* column titles as eyebrows */
+        & > thead > tr > th {
+            color: var(--rex-color-text-muted);
+            font-family: var(--rex-font-mono);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
         /* the footer holds controls, e.g. actions for the selected rows */

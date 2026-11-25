@@ -16,20 +16,23 @@
     .rex-button {
         --rex-button-color: var(--rex-color-text);
         --rex-button-bg: var(--rex-color-control);
-        --rex-button-border: var(--rex-color-border-strong);
+        --rex-button-border: var(--rex-color-border-emphasis);
         --rex-button-bg-hover: var(--rex-color-control-hover);
-        --rex-button-border-hover: var(--rex-color-border-input);
+        --rex-button-border-hover: var(--rex-color-border-emphasis);
+        --rex-button-height: var(--rex-control-height);
 
         display: inline-block;
+        min-height: var(--rex-button-height);
         margin: 0;
-        padding: 6px 12px;
-        border: 1px solid var(--rex-button-border);
+        /* centers one line of text in the control height */
+        padding: calc((var(--rex-button-height) - 1lh - 2 * var(--rex-border-width)) / 2) 14px;
+        border: var(--rex-border-width) solid var(--rex-button-border);
         border-radius: var(--rex-radius);
         background: var(--rex-button-bg);
         color: var(--rex-button-color);
         font: inherit;
         font-size: var(--rex-font-size);
-        font-weight: 400;
+        font-weight: 600;
         line-height: var(--rex-line-height);
         text-align: center;
         text-decoration: none;
@@ -164,8 +167,9 @@
 
     .rex-button[data-size="sm"],
     .rex-button-group[data-size="sm"] > .rex-button {
-        min-height: 30px;
-        padding: 4px 10px;
+        --rex-button-height: var(--rex-control-height-sm);
+
+        padding-inline: 12px;
         font-size: var(--rex-font-size-small);
         line-height: 1.5;
     }
@@ -208,7 +212,7 @@
             }
 
             &:not(:first-child) {
-                margin-left: -1px;
+                margin-left: calc(var(--rex-border-width) * -1);
                 border-start-start-radius: 0;
                 border-end-start-radius: 0;
             }
@@ -226,7 +230,7 @@
                 width: 100%;
 
                 &:not(:first-child) {
-                    margin-top: -1px;
+                    margin-top: calc(var(--rex-border-width) * -1);
                     margin-left: 0;
                     border-radius: 0 0 var(--rex-radius) var(--rex-radius);
                 }

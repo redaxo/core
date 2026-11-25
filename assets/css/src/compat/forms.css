@@ -8,9 +8,10 @@
     .form-control {
         display: block;
         width: 100%;
-        padding: 6px 12px;
-        border: 1px solid var(--rex-color-border-input);
-        border-radius: 0;
+        min-height: var(--rex-control-height);
+        padding: calc((var(--rex-control-height) - 1lh - 2 * var(--rex-border-width)) / 2) 12px;
+        border: var(--rex-border-width) solid var(--rex-color-border-input);
+        border-radius: var(--rex-radius);
         background-color: var(--rex-color-surface-subtle);
         background-image: none;
         box-shadow: var(--rex-shadow-inset);
@@ -47,7 +48,7 @@
         /* date and time fields are as high as the other fields in WebKit */
         &:is([type="date"], [type="time"], [type="datetime-local"], [type="month"]) {
             display: inline-flex;
-            height: 36px;
+            height: var(--rex-control-height);
             padding-left: 10px;
             line-height: inherit;
         }
@@ -109,17 +110,17 @@
     /* sizes */
 
     .input-sm {
-        height: 30px;
+        min-height: 0;
+        height: var(--rex-control-height-sm);
         padding: 5px 10px;
-        border-radius: 0;
         font-size: var(--rex-font-size-small);
         line-height: 1.5;
     }
 
     :is(.input-xs, .input-group-xs > .form-control, .input-group-xs > .input-group-addon, .input-group-xs > .input-group-btn > :is(.btn, .rex-button)) {
+        min-height: 0;
         height: 24px;
         padding: 3px 8px;
-        border-radius: 0;
         font-size: var(--rex-font-size-small);
         line-height: 1.3334;
     }

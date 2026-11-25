@@ -9,10 +9,11 @@
     .rex-input {
         display: block;
         width: 100%;
+        min-height: var(--rex-control-height);
         margin: 0;
-        padding: 6px 12px;
-        border: 1px solid var(--rex-color-border-input);
-        border-radius: 0;
+        padding: calc((var(--rex-control-height) - 1lh - 2 * var(--rex-border-width)) / 2) 12px;
+        border: var(--rex-border-width) solid var(--rex-color-border-input);
+        border-radius: var(--rex-radius);
         background: var(--rex-color-surface-subtle);
         box-shadow: var(--rex-shadow-inset);
         color: var(--rex-color-text);
@@ -51,19 +52,21 @@
         /* date and time fields are as high as the other fields in WebKit */
         &:is([type="date"], [type="time"], [type="datetime-local"], [type="month"]) {
             display: inline-flex;
-            height: 36px;
+            height: var(--rex-control-height);
             padding-left: 10px;
             line-height: inherit;
         }
 
         &[data-size="sm"] {
-            height: 30px;
+            min-height: 0;
+            height: var(--rex-control-height-sm);
             padding: 5px 10px;
             font-size: var(--rex-font-size-small);
             line-height: 1.5;
         }
 
         &[data-size="xs"] {
+            min-height: 0;
             height: 24px;
             padding: 3px 8px;
             font-size: var(--rex-font-size-small);
@@ -94,7 +97,7 @@
         }
 
         & > :not(:first-child) {
-            margin-left: -1px;
+            margin-left: calc(var(--rex-border-width) * -1);
         }
 
         /* inner corners stay square */
@@ -122,7 +125,7 @@
         display: flex;
         align-items: center;
         padding: 6px 12px;
-        border: 1px solid var(--rex-color-border-input);
+        border: var(--rex-border-width) solid var(--rex-color-border-input);
         border-radius: var(--rex-radius);
         background: var(--rex-color-surface-muted);
         color: var(--rex-color-text);
@@ -146,7 +149,7 @@
             position: relative;
 
             &:not(:first-child) {
-                margin-left: -1px;
+                margin-left: calc(var(--rex-border-width) * -1);
                 border-start-start-radius: 0;
                 border-end-start-radius: 0;
             }

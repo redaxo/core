@@ -32,6 +32,7 @@ const pairs = [
     ['inverse-link', ['inverse-bg', 'inverse-bg-strong'], TEXT],
     ['inverse-bg-strong', ['inverse-text', 'inverse-text-strong'], TEXT],
     ['border-input', ['bg', 'surface', 'surface-subtle', 'edit-subtle'], UI],
+    ['border-emphasis', ['bg', 'surface', 'surface-raised', 'canvas'], UI],
     ['focus', ['bg', 'surface', 'surface-subtle', 'edit-subtle'], UI],
 ];
 
