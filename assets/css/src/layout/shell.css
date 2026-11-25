@@ -1,11 +1,12 @@
 /*
  Backend shell: top bar, main navigation (sidebar), main area and footer.
 
- The top bar is light like the canvas; from 992px its part above the navigation is as dark as the navigation, so the
- logo heads the dark column. The main area shows the construction grid of the canvas.
+ The top bar is light like the canvas. From 992px the navigation is the spine: a narrow dark column of icons with
+ short labels beside the top bar, the full titles show as tooltips. The main area shows the construction grid of the
+ canvas.
 
- Below 992px the sidebar moves off canvas and opens via the toggle in the top bar (body class `rex-sidebar-open`,
- see js/backend.js).
+ Below 992px the sidebar moves off canvas with full labels and opens via the toggle in the top bar (body class
+ `rex-sidebar-open`, see js/backend.js).
  */
 
 @layer components {
@@ -17,6 +18,10 @@
         --rex-sidebar-hover-text: var(--rex-color-inverse-text-strong);
         --rex-sidebar-active-bg: var(--rex-color-accent);
         --rex-sidebar-active-text: var(--rex-color-on-accent);
+
+        @media (min-width: 992px) {
+            --rex-sidebar-width: 88px;
+        }
     }
 
     .rex-app {
@@ -70,20 +75,13 @@
         }
 
         @media (min-width: 1200px) {
-            padding-right: var(--rex-gutter);
+            padding-inline: var(--rex-gutter);
         }
 
+        /* beside the spine, which runs up to the top of the viewport */
         @media (min-width: 992px) {
-            &[data-variant="fixed"] {
-                background: linear-gradient(90deg, var(--rex-sidebar-bg) var(--rex-sidebar-width), var(--rex-topbar-bg) 0);
-
-                & .rex-topbar-brand {
-                    --rex-color-focus: var(--rex-sidebar-hover-text);
-                }
-
-                & .rex-redaxo-logo :is(.rex-redaxo-logo-a, .rex-redaxo-logo-x, .rex-redaxo-logo-o, .rex-redaxo-logo-reg) {
-                    fill: var(--rex-color-inverse-text-strong);
-                }
+            :root:has(.rex-sidebar) &[data-variant="fixed"] {
+                left: var(--rex-sidebar-width);
             }
         }
 
@@ -263,7 +261,7 @@
     .rex-topbar-title {
         position: absolute;
         top: 50%;
-        left: 250px;
+        left: 215px;
         transform: translateY(-50%);
         margin: 0;
         font-size: 2.25rem;
@@ -271,8 +269,8 @@
         line-height: 0;
         white-space: nowrap;
 
-        @media (max-width: 1199px) {
-            left: 235px;
+        @media (min-width: 1200px) {
+            left: 230px;
         }
 
         a {
@@ -488,6 +486,82 @@
         width: 20px;
         margin: 0 3px 0 -28px;
         text-align: center;
+    }
+
+    /* spine: the narrow navigation from 992px */
+    @media (min-width: 992px) {
+        .rex-sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding-top: 14px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            &::before {
+                content: none;
+            }
+        }
+
+        /* the block titles stay for screen readers, a line separates the blocks */
+        .rex-sidebar-title {
+            height: 0;
+            margin: 10px 18px;
+            padding: 0;
+            overflow: hidden;
+            border: 0;
+
+            .rex-sidebar-list + & {
+                margin-block: 12px;
+            }
+        }
+
+        .rex-sidebar-list {
+            > li + li {
+                margin-top: 4px;
+            }
+
+            > li > a {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                align-items: center;
+                margin-inline: 8px;
+                padding: 9px 4px 8px;
+                border-radius: var(--rex-radius-lg);
+                font-size: 0.6875rem;
+                line-height: 1.2;
+                text-align: center;
+            }
+
+            /* an arrow on the edge points at the current page */
+            > li > a[aria-current="page"]::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: -8px;
+                border-block: 6px solid transparent;
+                border-left: 6px solid var(--rex-sidebar-active-bg);
+                transform: translateY(-50%);
+            }
+        }
+
+        .rex-sidebar-icon {
+            width: auto;
+            margin: 0;
+            font-size: 1.125rem;
+        }
+
+        .rex-sidebar-label {
+            display: -webkit-box;
+            max-width: 100%;
+            overflow: hidden;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+        }
     }
 
     .rex-sidebar-backdrop {
