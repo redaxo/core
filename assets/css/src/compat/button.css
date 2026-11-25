@@ -87,7 +87,7 @@
 
     /* aligned with the input fields */
     :is(.btn-popup, .btn-view) {
-        --btn-bg: var(--rex-color-surface-subtle);
+        --btn-bg: var(--rex-color-surface);
         --btn-border: var(--rex-color-border-input);
     }
 

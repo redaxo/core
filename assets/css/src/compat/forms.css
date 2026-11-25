@@ -12,7 +12,7 @@
         padding: calc((var(--rex-control-height) - 1lh - 2 * var(--rex-border-width)) / 2) 12px;
         border: var(--rex-border-width) solid var(--rex-color-border-input);
         border-radius: var(--rex-radius);
-        background-color: var(--rex-color-surface-subtle);
+        background-color: var(--rex-color-surface);
         background-image: none;
         box-shadow: var(--rex-shadow-inset);
         color: var(--rex-color-text);

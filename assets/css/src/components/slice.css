@@ -4,7 +4,6 @@
     .rex-main-frame {
         margin-inline: -15px;
         padding: 30px 15px;
-        background-color: var(--rex-color-canvas);
 
         @media (min-width: 1200px) {
             margin-inline: -30px;

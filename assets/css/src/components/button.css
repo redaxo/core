@@ -114,7 +114,7 @@
     }
 
     .rex-button[data-variant="field"] {
-        --rex-button-bg: var(--rex-color-surface-subtle);
+        --rex-button-bg: var(--rex-color-surface);
         --rex-button-border: var(--rex-color-border-input);
     }
 
