@@ -17,100 +17,100 @@
 @layer tokens {
     :root {
         /* surfaces */
-        --rex-color-bg: light-dark(#f1f0ec, #100e0b);
-        --rex-color-surface: light-dark(#fff, #1a1713);
-        --rex-color-surface-subtle: light-dark(#faf9f6, #16130f);
-        --rex-color-surface-muted: light-dark(#e9e7e0, #0d0b09);
-        --rex-color-surface-strong: light-dark(#d3cdc1, #39342b);
-        --rex-color-surface-raised: light-dark(#fff, #221e19);
-        --rex-color-canvas: light-dark(#cbc5b8, #0a0907);
+        --rex-color-bg: light-dark(#f1f0ec, #151310);
+        --rex-color-surface: light-dark(#fff, #1e1b17);
+        --rex-color-surface-subtle: light-dark(#faf9f6, #1b1814);
+        --rex-color-surface-muted: light-dark(#e9e7e0, #191612);
+        --rex-color-surface-strong: light-dark(#d3cdc1, #433c33);
+        --rex-color-surface-raised: light-dark(#fff, #26221d);
+        --rex-color-canvas: light-dark(#cbc5b8, #0f0d0b);
         /* headers of the boxes and inactive tabs on the canvas */
-        --rex-color-canvas-header: light-dark(#e9e7e0, #2a2620);
+        --rex-color-canvas-header: light-dark(#e9e7e0, #2b2722);
         /* frontend previews keep the white page background of the frontend */
         --rex-color-preview-bg: #fff;
         /* the construction grid drawn on the canvas */
-        --rex-color-grid: light-dark(rgb(21 18 14 / 0.035), rgb(255 255 255 / 0.035));
+        --rex-color-grid: light-dark(rgb(21 18 14 / 0.035), rgb(255 255 255 / 0.03));
 
         /* controls: buttons and similar raised elements */
-        --rex-color-control: light-dark(#fff, #2a2620);
-        --rex-color-control-hover: light-dark(#e9e7e0, #39342b);
+        --rex-color-control: light-dark(#fff, #2b2722);
+        --rex-color-control-hover: light-dark(#e9e7e0, #36312a);
 
         /* borders */
-        --rex-color-border: light-dark(#e2ded5, #2a2620);
-        --rex-color-border-strong: light-dark(#d3cdc1, #39342b);
+        --rex-color-border: light-dark(#e2ded5, #322d26);
+        --rex-color-border-strong: light-dark(#d3cdc1, #433c33);
         --rex-color-border-input: #857e72;
 
         /* text */
-        --rex-color-text: light-dark(#15120e, #f3efe8);
-        --rex-color-text-muted: light-dark(#5e574d, #b6afa3);
-        --rex-color-link: light-dark(#c0260b, #ff7a5c);
-        --rex-color-link-hover: light-dark(#9e1f08, #ffa48f);
+        --rex-color-text: light-dark(#15120e, #ece6dc);
+        --rex-color-text-muted: light-dark(#5e574d, #ada597);
+        --rex-color-link: light-dark(#c0260b, #eb9a84);
+        --rex-color-link-hover: light-dark(#9e1f08, #f3bba9);
 
         /* accent: primary actions, the active navigation item, the top bar */
-        --rex-color-accent: #e0321a;
-        --rex-color-accent-hover: #c42a10;
+        --rex-color-accent: light-dark(#e0321a, #b8361f);
+        --rex-color-accent-hover: light-dark(#c42a10, #a32f1b);
         --rex-color-on-accent: #fff;
-        --rex-color-accent-subtle: light-dark(#fdeae5, #3a1a12);
-        --rex-color-accent-subtle-hover: light-dark(#f8cabe, #4a2015);
+        --rex-color-accent-subtle: light-dark(#fdeae5, #3a241c);
+        --rex-color-accent-subtle-hover: light-dark(#f8cabe, #4a2c21);
 
         /* status: the plain token as filled background with `on-…` as its text, `-text` on surfaces, `-subtle` as
            tinted background */
         --rex-color-success: light-dark(#277a4c, #1f6e44);
         --rex-color-success-hover: light-dark(#1f633e, #195a37);
         --rex-color-on-success: #fff;
-        --rex-color-success-text: light-dark(#277a4c, #46b377);
-        --rex-color-success-subtle: light-dark(#e7f3ec, #16291e);
+        --rex-color-success-text: light-dark(#277a4c, #5bbd86);
+        --rex-color-success-subtle: light-dark(#e7f3ec, #1a2b20);
 
         /* edit and add sections: a header in the accent color on a neutral card */
-        --rex-color-edit: #e0321a;
-        --rex-color-edit-subtle: light-dark(#fff, #1a1713);
+        --rex-color-edit: light-dark(#e0321a, #a8331e);
+        --rex-color-edit-subtle: light-dark(#fff, #1e1b17);
 
         --rex-color-warning: light-dark(#e0a53a, #8a6516);
         --rex-color-warning-hover: light-dark(#cf942a, #765612);
         --rex-color-on-warning: light-dark(#15120e, #fff);
-        --rex-color-warning-text: light-dark(#7d5300, #e0b45a);
+        --rex-color-warning-text: light-dark(#7d5300, #e3b866);
 
         --rex-color-danger: light-dark(#a82009, #9c1f0a);
         --rex-color-danger-hover: light-dark(#8c1a07, #821a08);
         --rex-color-on-danger: #fff;
-        --rex-color-danger-text: light-dark(#a82009, #ff8a70);
-        --rex-color-danger-subtle: light-dark(#fbe6e1, #3a1812);
+        --rex-color-danger-text: light-dark(#a82009, #f08e78);
+        --rex-color-danger-subtle: light-dark(#fbe6e1, #3a1d17);
 
-        --rex-color-neutral: light-dark(#4e483f, #39342b);
-        --rex-color-neutral-hover: light-dark(#3a352d, #4a443a);
-        --rex-color-on-neutral: light-dark(#fff, #f3efe8);
+        --rex-color-neutral: light-dark(#4e483f, #433c33);
+        --rex-color-neutral-hover: light-dark(#3a352d, #544b40);
+        --rex-color-on-neutral: light-dark(#fff, #ece6dc);
 
         /* inverse: the dark chrome (main navigation, login page, inverse toolbar) in both color schemes */
-        --rex-color-inverse-bg: light-dark(#15120e, #050403);
-        --rex-color-inverse-bg-strong: light-dark(#2a2620, #1a1713);
+        --rex-color-inverse-bg: light-dark(#15120e, #0c0a08);
+        --rex-color-inverse-bg-strong: light-dark(#2a2620, #1e1b17);
         --rex-color-inverse-text: #c9c3b8;
         --rex-color-inverse-text-strong: #f5f2ec;
-        --rex-color-inverse-link: #ff8a70;
+        --rex-color-inverse-link: light-dark(#ff8a70, #eb9a84);
         --rex-color-inverse-border: rgb(245 242 236 / 0.14);
 
         /* brand */
-        --rex-color-brand: #f5391a;
+        --rex-color-brand: light-dark(#f5391a, #a8331e);
         --rex-color-brand-grid: rgb(255 255 255 / 0.09);
-        --rex-color-logo-primary: #f5391a;
-        --rex-color-logo-secondary: light-dark(#15120e, #f3efe8);
+        --rex-color-logo-primary: light-dark(#f5391a, #e04a2f);
+        --rex-color-logo-secondary: light-dark(#15120e, #ece6dc);
         --rex-color-devmode: light-dark(#c2851a, #e0a53a);
         --rex-color-devmode-hover: light-dark(#a8720f, #f0b955);
 
         /* states */
-        --rex-color-focus: light-dark(#d62b0e, #ff6a50);
-        --rex-color-selection: light-dark(#f8cabe, #5a2417);
+        --rex-color-focus: light-dark(#d62b0e, #e5806a);
+        --rex-color-selection: light-dark(#f8cabe, #5c2a1d);
         --rex-color-highlight: light-dark(#fff4d6, #3d331f);
-        --rex-color-mark: light-dark(#fbd9cf, rgb(255 77 46 / 0.25));
+        --rex-color-mark: light-dark(#fbd9cf, rgb(229 128 106 / 0.25));
         --rex-color-backdrop: light-dark(rgb(21 18 14 / 0.42), rgb(0 0 0 / 0.6));
 
         /* code */
-        --rex-color-code-bg: light-dark(#f4efe6, #16130f);
-        --rex-color-code-text: light-dark(#a82a24, #ff8a70);
-        --rex-color-code-string: light-dark(#b8302a, #d9c16c);
-        --rex-color-code-comment: light-dark(#8a5a00, #9d96e6);
-        --rex-color-code-keyword: light-dark(#1e6b3a, #5fcb8e);
-        --rex-color-code-default: light-dark(#15120e, #f3efe8);
-        --rex-color-code-html: light-dark(#4e483f, #b6afa3);
+        --rex-color-code-bg: light-dark(#f4efe6, #1b1814);
+        --rex-color-code-text: light-dark(#a82a24, #eb9a84);
+        --rex-color-code-string: light-dark(#b8302a, #d6c07a);
+        --rex-color-code-comment: light-dark(#8a5a00, #a8987a);
+        --rex-color-code-keyword: light-dark(#1e6b3a, #6cc496);
+        --rex-color-code-default: light-dark(#15120e, #ece6dc);
+        --rex-color-code-html: light-dark(#4e483f, #ada597);
 
         /* shadows */
         --rex-shadow-sm: 0 1px 1px rgb(0 0 0 / 0.05);
