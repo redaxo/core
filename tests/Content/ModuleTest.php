@@ -167,6 +167,33 @@ final class ModuleTest extends TestCase
         yield 'rejected by validate()' => [false, [], ['Rejected'], ['headline' => 'reject']];
     }
 
+    /**
+     * @param list<string> $expectedFieldErrors
+     * @param list<string> $expectedFormErrors
+     * @param array<string, string> $submitted
+     */
+    #[DataProvider('provideSubmitForm')]
+    public function testSubmitValues(bool $expected, array $expectedFieldErrors, array $expectedFormErrors, array $submitted): void
+    {
+        $module = TestFieldsModule::of($this->createSlice('test_fields', ['headline' => 'Old']));
+        $form = $module->createForm();
+
+        self::assertSame($expected, $module->submitValues($submitted, $form));
+        self::assertSame($expectedFieldErrors, array_keys($form->getFieldErrors()));
+        self::assertSame($expectedFormErrors, $form->getFormErrors());
+        self::assertSame([] === $expectedFieldErrors ? $submitted['headline'] : 'Old', $module->headline);
+    }
+
+    public function testStoredValues(): void
+    {
+        $module = TestFieldsModule::of($this->createSlice('test_fields'));
+        $module->headline = 'Grüße/1';
+        $module->itemCount = 2;
+
+        self::assertSame(['headline' => 'Grüße/1', 'item_count' => 2, 'hl' => false, 'image' => null, 'gallery' => [], 'link' => null, 'items' => []], $module->storedValues());
+        self::assertSame([], TestNoFieldsModule::of($this->createSlice('test_no_fields'))->storedValues());
+    }
+
     public function testOutputFromArticleCache(): void
     {
         $this->createSlice('testmodule1');
