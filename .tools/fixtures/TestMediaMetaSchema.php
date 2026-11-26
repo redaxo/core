@@ -17,5 +17,5 @@ final class TestMediaMetaSchema extends MetaSchema
 
     #[Text('Alternative text')]
     #[Translated]
-    public string $alt = '';
+    public string $altText = '';
 }

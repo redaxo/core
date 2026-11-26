@@ -37,7 +37,7 @@ REPLACE INTO `rex_cronjob` (`name`, `last_run`, `last_success`, `execution_start
 INSERT IGNORE INTO `rex_media` (`id`, `category_id`, `filetype`, `filename`, `originalname`, `filesize`, `width`, `height`, `meta_ai_generated`, `createdate`, `createuser`, `updatedate`, `updateuser`) VALUES
 (1,NULL,'image/jpeg','redaxo_2018_berlin_sticker.jpg','redaxo_2018_berlin_sticker.jpg','78410',1200,900,1,'2021-01-01 11:37:20','myusername','2021-01-01 11:37:20','myusername');
 
-INSERT IGNORE INTO `rex_media_translation` (`media_id`, `language_id`, `title`, `meta_alt`) VALUES
+INSERT IGNORE INTO `rex_media_translation` (`media_id`, `language_id`, `title`, `meta_alt_text`) VALUES
 (1,1,'Sticker','REDAXO-Sticker auf einem Laptop'),
 (1,2,'Sticker','REDAXO sticker on a laptop');
 

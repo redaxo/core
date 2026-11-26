@@ -16,18 +16,18 @@ final class MetaValuesTest extends TestCase
 {
     public function testForTable(): void
     {
-        $values = new MetaValues(MetaEntity::Media, ['ai_generated' => true, 'alt' => 'Alt text']);
+        $values = new MetaValues(MetaEntity::Media, ['ai_generated' => true, 'alt_text' => 'Alt text']);
 
         self::assertSame(['meta_ai_generated' => 1], $values->forTable('rex_media'));
-        self::assertSame(['meta_alt' => 'Alt text'], $values->forTable('rex_media_translation'));
+        self::assertSame(['meta_alt_text' => 'Alt text'], $values->forTable('rex_media_translation'));
     }
 
     public function testOnlyGivenValues(): void
     {
-        $values = new MetaValues(MetaEntity::Media, ['alt' => 'Alt text']);
+        $values = new MetaValues(MetaEntity::Media, ['alt_text' => 'Alt text']);
 
         self::assertSame([], $values->forTable('rex_media'));
-        self::assertSame(['meta_alt' => 'Alt text'], $values->forTable('rex_media_translation'));
+        self::assertSame(['meta_alt_text' => 'Alt text'], $values->forTable('rex_media_translation'));
     }
 
     public function testUnknownKey(): void
@@ -42,6 +42,6 @@ final class MetaValuesTest extends TestCase
     {
         $this->expectException(TypeError::class);
 
-        new MetaValues(MetaEntity::Media, ['alt' => ['no', 'string']]);
+        new MetaValues(MetaEntity::Media, ['alt_text' => ['no', 'string']]);
     }
 }

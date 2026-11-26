@@ -298,19 +298,19 @@ final class MediaHandlerTest extends TestCase
             'category_id' => null,
             'title' => 'test',
             'file' => new SymfonyFile($srcFile),
-        ], ['ai_generated' => true, 'alt' => 'old alt'], subindexing: false)->fileName;
+        ], ['ai_generated' => true, 'alt_text' => 'old alt'], subindexing: false)->fileName;
 
         try {
             $meta = TestMediaMetaSchema::of(Type::notNull(Media::get($filename)));
             self::assertTrue($meta->aiGenerated);
-            self::assertSame('old alt', $meta->alt);
+            self::assertSame('old alt', $meta->altText);
 
             // values missing in the array are kept
-            $media = MediaHandler::edit($filename, 1, [], ['alt' => 'new alt']);
+            $media = MediaHandler::edit($filename, 1, [], ['alt_text' => 'new alt']);
 
             $meta = TestMediaMetaSchema::of($media);
             self::assertTrue($meta->aiGenerated);
-            self::assertSame('new alt', $meta->alt);
+            self::assertSame('new alt', $meta->altText);
         } finally {
             MediaHandler::delete($filename);
         }
