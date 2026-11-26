@@ -23,7 +23,9 @@
         --rex-color-surface-muted: light-dark(#e9e7e0, #0d0b09);
         --rex-color-surface-strong: light-dark(#d3cdc1, #39342b);
         --rex-color-surface-raised: light-dark(#fff, #221e19);
-        --rex-color-canvas: light-dark(#e2ded5, #0a0907);
+        --rex-color-canvas: light-dark(#cbc5b8, #0a0907);
+        /* headers of the boxes and inactive tabs on the canvas */
+        --rex-color-canvas-header: light-dark(#e9e7e0, #2a2620);
         /* frontend previews keep the white page background of the frontend */
         --rex-color-preview-bg: #fff;
         /* the construction grid drawn on the canvas */

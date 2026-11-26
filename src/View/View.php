@@ -153,7 +153,7 @@ final class View
             }
         }
 
-        return '<div class="rex-button-toolbar">' . (string) new ButtonGroup($buttons)->render() . '</div>';
+        return '<div class="rex-button-toolbar rex-language">' . (string) new ButtonGroup($buttons)->render() . '</div>';
     }
 
     /** Returns a language switch. */
