@@ -142,19 +142,19 @@ $fragment->setVar('body', $content, false);
 $sideContent[] = $fragment->parse('core/page/section.php');
 
 // table of properties: the label as header of each row
-$properties = static fn (array $rows): string => (string) new Table([
+$propertyColumns = [
     TableColumn::forKey('', 0, attributes: new HtmlAttributes(['class' => ['rex-table-width-3']]), rowHeader: true),
     TableColumn::forKey('', 1),
-], $rows)->render();
+];
 
-$content = $properties([
+$content = (string) new Table($propertyColumns, [
     ['REDAXO', Html::raw($rexVersion)],
     [I18n::rawMsg('mode'), Html::raw(Core::getMode()->value)],
     ['PHP', Html::raw(PHP_VERSION . ' <a class="rex-u-link-expanded" href="' . Url::backendPage('system/phpinfo') . '" title="phpinfo" target="_blank" rel="noopener"><i class="rex-icon rex-icon-phpinfo" aria-hidden="true"></i></a>')],
     [I18n::rawMsg('base_url'), Html::raw('<span class="rex-u-word-break">' . escape(Url::absoluteBase()) . '</span>')],
     [I18n::rawMsg('error_email'), Html::raw('<span class="rex-u-word-break">' . escape(Env::get('REX_ERROR_EMAIL') ?? I18n::rawMsg('deactivated')) . '</span>')],
     [I18n::rawMsg('path'), Html::raw('<div class="rex-u-word-break">' . escape(Path::base()) . '</div>')],
-]);
+])->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::rawMsg('installation'));
@@ -163,11 +163,11 @@ $sideContent[] = $fragment->parse('core/page/section.php');
 
 $sql = Sql::factory();
 
-$content = $properties([
+$content = (string) new Table($propertyColumns, [
     [I18n::rawMsg('version'), $sql->getDbType() . ' ' . $sql->getDbVersion()],
     [I18n::rawMsg('name'), Html::raw('<span class="rex-u-word-break">' . escape($dbconfig->name) . '</span>')],
     [I18n::rawMsg('host'), $dbconfig->host],
-]);
+])->render();
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('database'));
@@ -177,13 +177,13 @@ $sideContent[] = $fragment->parse('core/page/section.php');
 $addresses = static fn (array $addresses): string => escape(implode(', ', array_map(static fn (Address $address) => $address->toString(), $addresses)));
 
 if ($mailer instanceof Mailer) {
-    $content = $properties([
+    $content = (string) new Table($propertyColumns, [
         [I18n::rawMsg('mailer_transport'), Html::raw('<span class="rex-u-word-break">' . escape((string) $mailer->transport) . '</span>')],
         [I18n::rawMsg('mailer_from'), Html::raw('<span class="rex-u-word-break">' . (null === $mailer->defaultFrom ? '-' : $addresses([$mailer->defaultFrom])) . '</span>')],
         [I18n::rawMsg('mailer_detour'), Html::raw('<span class="rex-u-word-break">' . ($mailer->detourRecipients ? '<span class="rex-u-text-danger">' . $addresses($mailer->detourRecipients) . '</span>' : I18n::msg('deactivated')) . '</span>')],
         [I18n::rawMsg('mailer_log'), Html::raw($mailer->logMode->value)],
         [I18n::rawMsg('mailer_archive'), Html::raw(I18n::msg($mailer->archive ? 'activated' : 'deactivated'))],
-    ]);
+    ])->render();
 
     $fragment = new Fragment();
     $fragment->setVar('title', I18n::msg('mailer'));

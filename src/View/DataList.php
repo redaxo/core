@@ -51,7 +51,7 @@ final class DataList implements Renderable, UrlProviderInterface
 
     /** @var array<string, string|int> */
     private array $params = [];
-    /** @var array<string, array{TableColumn, 'asc'|'desc'|null}> */
+    /** @var array<string, array{TableColumn<array<string, scalar|null>>, 'asc'|'desc'|null}> */
     private array $columns = [];
 
     /**

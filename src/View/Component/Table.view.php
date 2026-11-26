@@ -23,7 +23,7 @@ return static function (Table $table): void {
     $filled = static fn (string|Renderable|null $value): bool => $value instanceof Renderable || (null !== $value && '' !== $value);
 
     // a header without label joins the previous one
-    /** @var list<array{TableColumn, int}> $headers */
+    /** @var list<array{TableColumn<mixed>, int}> $headers */
     $headers = [];
     foreach ($table->columns as $column) {
         $last = count($headers) - 1;
@@ -40,7 +40,7 @@ return static function (Table $table): void {
         $cell = $value instanceof TableCell ? $value : new TableCell($value);
         $html = $content($cell->content);
 
-        $url = '' === $html || null === $column->link ? null : ($column->link)($row);
+        $url = null === $column->link || '' === $html ? null : ($column->link)($row);
         if (null !== $url) {
             $html = '<a ' . new HtmlAttributes(['href' => $url] + $column->linkAttributes + ['class' => 'rex-u-link-expanded'])->toString() . '>' . $html . '</a>';
         }
