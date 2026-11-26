@@ -134,7 +134,7 @@ $sideContent = [];
 $content = '
     <h3>' . I18n::msg('delete_cache') . '</h3>
     <p>' . I18n::msg('delete_cache_description') . '</p>
-    <p><a class="rex-button" data-variant="danger" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '">' . I18n::msg('delete_cache') . '</a></p>';
+    <p><a class="rex-button" data-variant="danger" href="' . Url::currentBackendPage(['func' => 'generate'] + $csrfToken->getUrlParams()) . '"><i class="rex-icon rex-icon-delete" aria-hidden="true"></i> ' . I18n::msg('delete_cache') . '</a></p>';
 
 $fragment = new Fragment();
 $fragment->setVar('title', I18n::msg('system_features'));

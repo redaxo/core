@@ -80,12 +80,13 @@
         --rex-button-border-hover: var(--rex-color-accent-hover);
     }
 
+    /* saving is the primary action of a form, green stays a status color */
     .rex-button[data-variant="success"] {
-        --rex-button-color: var(--rex-color-on-success);
-        --rex-button-bg: var(--rex-color-success);
-        --rex-button-border: var(--rex-color-success);
-        --rex-button-bg-hover: var(--rex-color-success-hover);
-        --rex-button-border-hover: var(--rex-color-success-hover);
+        --rex-button-color: var(--rex-color-on-accent);
+        --rex-button-bg: var(--rex-color-accent);
+        --rex-button-border: var(--rex-color-accent);
+        --rex-button-bg-hover: var(--rex-color-accent-hover);
+        --rex-button-border-hover: var(--rex-color-accent-hover);
     }
 
     .rex-button[data-variant="warning"] {
@@ -128,13 +129,13 @@
         }
     }
 
-    /* inverted on the green header of edit sections */
+    /* inverted on the red header of edit sections */
     .rex-section[data-variant="edit"] .rex-section-header .rex-button[data-variant="success"] {
-        --rex-button-color: var(--rex-color-success-text);
+        --rex-button-color: var(--rex-color-link);
         --rex-button-bg: var(--rex-color-surface);
         --rex-button-border: var(--rex-color-surface);
-        --rex-button-bg-hover: var(--rex-color-edit-subtle);
-        --rex-button-border-hover: var(--rex-color-edit-subtle);
+        --rex-button-bg-hover: var(--rex-color-accent-subtle);
+        --rex-button-border-hover: var(--rex-color-accent-subtle);
     }
 
     /* the current language of the language switch, an `aria-current` link */

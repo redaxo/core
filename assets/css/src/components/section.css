@@ -95,6 +95,11 @@
         background: var(--rex-section-body-bg);
     }
 
+    /* the first heading or paragraph starts at the padding of the body */
+    .rex-section-body > :first-child {
+        margin-top: 0;
+    }
+
     .rex-section h3 {
         font-size: 1.0625rem;
         font-weight: 700;
@@ -179,6 +184,17 @@
         }
     }
 
+    /* the first and the last column align with the title of the section, icon columns keep their centered cell */
+    .rex-section > .rex-table > :is(thead, tbody, tfoot) > tr {
+        & > :first-child:not(.rex-table-icon) {
+            padding-left: 15px;
+        }
+
+        & > :last-child:not(.rex-table-icon, .rex-table-action) {
+            padding-right: 15px;
+        }
+    }
+
     .rex-section-body + :is(.table, .rex-table),
     .rex-section > :is(.table, .rex-table) + .rex-section-body {
         border-top: 1px solid var(--rex-color-border);
@@ -188,10 +204,10 @@
     #rex-page-login .rex-section {
         position: relative;
         z-index: 10;
-        background: color-mix(in srgb, var(--rex-color-inverse-bg) 97%, transparent);
-        border: 0;
+        border: 1px solid var(--rex-color-text);
         border-radius: 5px;
-        color: var(--rex-color-inverse-text-strong);
+        background: var(--rex-color-surface);
+        box-shadow: 8px 8px 0 var(--rex-color-brand);
 
         .rex-section-header,
         .rex-section-footer {
@@ -199,16 +215,12 @@
             border: 0;
         }
 
-        .rex-section-header {
-            color: var(--rex-color-inverse-text-strong);
-        }
-
         .rex-section-body {
-            padding: 25px 25px 5px;
+            padding: 30px 30px 5px;
         }
 
         .rex-section-footer {
-            padding: 5px 25px 25px;
+            padding: 5px 30px 30px;
         }
     }
 }

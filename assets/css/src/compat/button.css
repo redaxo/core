@@ -91,20 +91,20 @@
     }
 
     :is(.btn-save, .btn-apply, .btn-edit, .btn-success) {
-        --btn-color: var(--rex-color-on-success);
-        --btn-bg: var(--rex-color-success);
-        --btn-border: var(--rex-color-success);
-        --btn-bg-hover: var(--rex-color-success-hover);
-        --btn-border-hover: var(--rex-color-success-hover);
+        --btn-color: var(--rex-color-on-accent);
+        --btn-bg: var(--rex-color-accent);
+        --btn-border: var(--rex-color-accent);
+        --btn-bg-hover: var(--rex-color-accent-hover);
+        --btn-border-hover: var(--rex-color-accent-hover);
     }
 
-    /* inverted on the green header of edit sections */
+    /* inverted on the red header of edit sections */
     :is(.rex-section--edit, .rex-section[data-variant="edit"]) .btn-edit {
-        --btn-color: var(--rex-color-success-text);
+        --btn-color: var(--rex-color-link);
         --btn-bg: var(--rex-color-surface);
         --btn-border: var(--rex-color-surface);
-        --btn-bg-hover: var(--rex-color-success-subtle);
-        --btn-border-hover: var(--rex-color-success-subtle);
+        --btn-bg-hover: var(--rex-color-accent-subtle);
+        --btn-border-hover: var(--rex-color-accent-subtle);
     }
 
     .btn-group > .btn-edit:hover {
