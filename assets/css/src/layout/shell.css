@@ -550,6 +550,19 @@
         .rex-is-popup & {
             padding-inline: 15px;
         }
+
+        /* space above the footer, whatever the page ends with: the margin collapses with the one of the last element */
+        &::after {
+            content: "";
+            display: block;
+            clear: both;
+            margin-top: 22px;
+        }
+
+        /* the frame of the content editor reaches the end of the page itself */
+        &:has(> .rex-main-frame:last-child)::after {
+            margin-top: 0;
+        }
     }
 
     /* footer -------------------------------------------------------------------------------------------------- */
