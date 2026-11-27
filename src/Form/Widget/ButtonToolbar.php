@@ -15,5 +15,7 @@ final class ButtonToolbar implements Renderable
         /** @var list<Button> */
         public array $buttons,
         public ?CancelLink $cancelLink = null,
+        /** Whether the first button starts at the fields of a form with labels beside them */
+        public bool $aligned = true,
     ) {}
 }

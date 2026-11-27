@@ -207,6 +207,11 @@
         max-width: 1012px;
         margin-inline: auto;
 
+        /* the first heading starts at the top of the content */
+        & > :first-child {
+            margin-top: 0;
+        }
+
         /* links within text must be recognizable without their color */
         & :is(p, li, dd, td, th, blockquote) a {
             text-decoration: underline;

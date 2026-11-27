@@ -386,6 +386,7 @@ final class Form implements Renderable
         return new ButtonToolbar(
             array_map($this->createButton(...), $this->buttons),
             null === $this->cancelUrl ? null : new CancelLink($this->cancelUrl),
+            !$this->vertical,
         )->render();
     }
 

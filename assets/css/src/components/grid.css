@@ -83,6 +83,11 @@
             margin-bottom: 0;
         }
 
+        /* a grid followed by more content keeps the distance that the sections in its columns gave up */
+        &:not(:last-child) {
+            margin-bottom: 22px;
+        }
+
         & > [data-align="end"] {
             text-align: end;
         }

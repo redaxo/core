@@ -21,7 +21,6 @@
             right: 15px;
             z-index: 1030;
             margin: 0;
-            color: var(--rex-color-on-accent);
             line-height: var(--rex-topbar-height-mobile);
         }
     }
@@ -217,6 +216,16 @@
             float: right;
             margin-left: 30px;
             padding-top: 2px;
+
+            /* as buttons next to the breadcrumb: as high as its bar */
+            &.rex-button-toolbar {
+                margin-left: 10px;
+                padding-top: 0;
+
+                & .rex-button {
+                    min-height: 36px;
+                }
+            }
 
             & :is(.dropdown-menu, .rex-dropdown-menu) {
                 right: 0;

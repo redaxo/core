@@ -87,8 +87,8 @@ use function Redaxo\Core\View\escape;
     <link rel="icon" type="image/png" sizes="32x32" href="<?= Url::coreAssets('icons/favicon-32x32.png') ?>">
     <link rel="icon" type="image/png" sizes="16x16" href="<?= Url::coreAssets('icons/favicon-16x16.png') ?>">
     <link rel="manifest" href="<?= Url::coreAssets('icons/site.webmanifest') ?>">
-    <link rel="mask-icon" href="<?= Url::coreAssets('icons/safari-pinned-tab.svg') ?>" color="<?= escape(Appearance::getInstanceColor() ?? '#4d99d3') ?>">
-    <meta name="msapplication-TileColor" content="#2d89ef">
+    <link rel="mask-icon" href="<?= Url::coreAssets('icons/safari-pinned-tab.svg') ?>" color="<?= escape(Appearance::getInstanceColor() ?? '#f5391a') ?>">
+    <meta name="msapplication-TileColor" content="#e0321a">
 
     <?= $this->pageHeader ?>
 

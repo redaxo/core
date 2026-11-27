@@ -18,6 +18,19 @@
         }
     }
 
+    /* on the canvas the headers of the slices and of the sidebar boxes and the inactive tabs are lighter than the frame */
+    .rex-main-frame {
+        & .rex-section:not([data-variant]) {
+            --rex-section-color: var(--rex-color-canvas-header);
+
+            box-shadow: none;
+        }
+
+        & .rex-pagenav .rex-tabs {
+            --rex-tab-bg: var(--rex-color-canvas-header);
+        }
+    }
+
     .rex-collapse-content {
         width: 100%;
     }
@@ -62,7 +75,7 @@
     .rex-slice-offline {
         opacity: 0.8;
 
-        & .rex-section {
+        & .rex-section:not([data-variant]) {
             --rex-section-color: var(--rex-color-neutral);
             --rex-section-header-text: var(--rex-color-on-neutral);
         }
@@ -82,15 +95,38 @@
         }
     }
 
-    /* "add block" button between the slices */
-    .rex-slice-select > .rex-dropdown > .rex-button {
-        --rex-button-color: var(--rex-color-link-hover);
-        --rex-button-bg: var(--rex-color-accent-subtle);
-        --rex-button-border: var(--rex-color-accent-subtle);
-        --rex-button-bg-hover: var(--rex-color-accent-subtle-hover);
-        --rex-button-border-hover: var(--rex-color-accent-subtle-hover);
+    /* "add block" button between the slices: a small button on a line */
+    .rex-slice-select > .rex-dropdown {
+        display: flex;
+        gap: 12px;
+        align-items: center;
 
-        border-radius: 0;
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            border-top: 1px solid color-mix(in srgb, var(--rex-color-text) 22%, transparent);
+        }
+    }
+
+    .rex-slice-select > .rex-dropdown > .rex-button {
+        --rex-button-color: var(--rex-color-text);
+        --rex-button-bg: var(--rex-color-surface);
+        --rex-button-border: var(--rex-color-border-input);
+        --rex-button-bg-hover: var(--rex-color-surface);
+        --rex-button-border-hover: var(--rex-color-text);
+
+        width: auto;
+        min-height: 0;
+        padding: 5px 14px;
+        border-style: dashed;
+        border-radius: var(--rex-radius);
+        font-size: 0.8125rem;
+        line-height: 1.4;
+
+        &:hover {
+            border-style: solid;
+        }
 
         &:is(:focus, .focus, :active, .active),
         .open > & {
@@ -98,6 +134,8 @@
             --rex-button-bg: var(--rex-color-accent);
             --rex-button-border: var(--rex-color-accent);
             --rex-button-bg-hover: var(--rex-color-accent-hover);
+
+            border-style: solid;
         }
     }
 }

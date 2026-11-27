@@ -210,6 +210,7 @@ final class FormTest extends TestCase
         $form = new Form(new Settings(), csrf: false, vertical: true);
         self::assertStringContainsString('data-layout="vertical"', (string) $form->row('title'));
         self::assertStringContainsString('data-layout="vertical"', (string) $form->row('active'), 'checkbox rows as well');
+        self::assertStringNotContainsString('rex-form-aligned', (string) $form->buttons(), 'no label column to align the buttons with');
     }
 
     public function testUnknownField(): void

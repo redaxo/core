@@ -109,10 +109,22 @@ async function processScreenshot(page, screenshotName) {
         document.documentElement.setAttribute('spellcheck', 'false');
         // hide blinking cursor/icon
         // disable animations / transitions
-        // disable box-shadow on navbar to prevent visual noise by https://github.com/redaxo/core/blob/120950020f35e9158030513744835c936e527bc6/assets/js/redaxo.js#L211-L222
         // render sticky footers in place, a full page screenshot would show them over the content at viewport height
-
-        document.body.insertAdjacentHTML('beforeend', `<style type="text/css">input { caret-color: transparent !important; } * { animation: initial !important; transition: none !important; mix-blend-mode: unset !important;} .navbar {box-shadow: none !important; } body {font-family: sans-serif;} #rex-js-main-sidebar{opacity: 1 !important;} #rex-js-nav-top{position: absolute; transform: none !important;} #rex-js-ajax-loader{display: none !important;} .rex-slice .panel-footer, .rex-sticky-table-footer, .rex-sticky-table-footer th, .rex-sticky-table-footer td {position: static !important;}</style>`);
+        // pin the top bar to the top, a full page screenshot of a scrolled page would show it at the scroll position
+        // stretch the sidebar over the full page, a full page screenshot keeps its 100vh at the viewport height
+        const style = document.createElement('style');
+        // the backend CSP blocks inline styles without the nonce of the page
+        style.nonce = document.querySelector('[nonce]')?.nonce ?? '';
+        style.textContent = `
+            input { caret-color: transparent !important; }
+            * { animation: initial !important; transition: none !important; }
+            #rex-js-nav-top { position: absolute !important; transform: none !important; box-shadow: none !important; }
+            @media (min-width: 992px) {
+                .rex-sidebar { position: static !important; height: auto !important; }
+            }
+            .rex-slice .rex-section-footer, .rex-sticky-table-footer, .rex-sticky-table-footer th, .rex-sticky-table-footer td { position: static !important; }
+        `;
+        document.body.append(style);
     });
 
     // mask dynamic content, to make it not appear like change (visual noise)
@@ -328,8 +340,6 @@ async function main() {
 
     // login page
     await goToUrlOrThrow(page, START_URL, { waitUntil: 'load' });
-    await page.waitForSelector('.rex-background[data-state="ready"]');
-    await page.waitForTimeout(200); // wait for bg image to fade in
     await createScreenshots(page, 'login.png');
 
     // login successful
@@ -390,8 +400,7 @@ async function main() {
 
     // logout
     await page.click('a[href*="rex_logout=1"]');
-    await page.waitForSelector('.rex-background[data-state="ready"]');
-    await page.waitForTimeout(200); // wait for bg image to fade in
+    await page.waitForSelector('#rex-form-login');
     await createScreenshots(page, 'logout.png');
 
     await page.close();

@@ -5,7 +5,7 @@ use Redaxo\Core\Form\Widget\ButtonToolbar;
 
 return static function (ButtonToolbar $toolbar): void {
     $buttons = $toolbar->buttons;
-    if ([] !== $buttons) {
+    if ($toolbar->aligned && [] !== $buttons) {
         /** @var Button $first */
         $first = clone ($buttons[0], ['attributes' => $buttons[0]->attributes->with(['class' => ['rex-form-aligned']])]);
         $buttons[0] = $first;
