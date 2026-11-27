@@ -110,6 +110,7 @@ async function processScreenshot(page, screenshotName) {
         // hide blinking cursor/icon
         // disable animations / transitions
         // render sticky footers in place, a full page screenshot would show them over the content at viewport height
+        // pin the top bar to the top, a full page screenshot of a scrolled page would show it at the scroll position
         // stretch the sidebar over the full page, a full page screenshot keeps its 100vh at the viewport height
         const style = document.createElement('style');
         // the backend CSP blocks inline styles without the nonce of the page
@@ -117,7 +118,10 @@ async function processScreenshot(page, screenshotName) {
         style.textContent = `
             input { caret-color: transparent !important; }
             * { animation: initial !important; transition: none !important; }
-            .rex-sidebar { position: static !important; height: auto !important; }
+            #rex-js-nav-top { position: absolute !important; transform: none !important; box-shadow: none !important; }
+            @media (min-width: 992px) {
+                .rex-sidebar { position: static !important; height: auto !important; }
+            }
             .rex-slice .rex-section-footer, .rex-sticky-table-footer, .rex-sticky-table-footer th, .rex-sticky-table-footer td { position: static !important; }
         `;
         document.body.append(style);
