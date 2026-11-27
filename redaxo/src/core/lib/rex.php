@@ -169,6 +169,7 @@ class rex
      *     ($key is 'theme' ? string :
      *     ($key is 'start_page' ? non-empty-string :
      *     ($key is 'socket_proxy' ? non-empty-string|null :
+     *     ($key is 'socket_proxy_ignore' ? string[] :
      *     ($key is 'password_policy' ? array<string, scalar> :
      *     ($key is 'backend_login_policy' ? array<string, bool|int> :
      *     ($key is 'db' ? array<int, string[]> :
@@ -176,7 +177,7 @@ class rex
      *     ($key is 'system_addons' ? non-empty-string[] :
      *     ($key is 'setup_addons' ? non-empty-string[] :
      *     mixed|null
-     *     ))))))))))))))))))))))))))))
+     *     )))))))))))))))))))))))))))))
      * ) The value for $key or $default if $key cannot be found
      */
     public static function getProperty($key, $default = null)

@@ -311,6 +311,13 @@
             "description": "Proxy used for all rex_socket connections",
             "type": ["null", "string"]
         },
+        "socket_proxy_ignore": {
+            "description": "Hosts that are connected directly, even if a socket_proxy is set",
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
         "setup_addons": {
             "description": "Addons loaded in setup and in safe mode",
             "type": "array",

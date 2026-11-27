@@ -85,11 +85,21 @@ class rex_socket
      */
     public static function factory($host, $port = 80, $ssl = false)
     {
-        if (self::class === static::class && ($proxy = rex::getProperty('socket_proxy'))) {
+        if (self::class === static::class && ($proxy = rex::getProperty('socket_proxy')) && !self::ignoresProxy($host)) {
             return rex_socket_proxy::factoryUrl($proxy)->setDestination($host, $port, $ssl);
         }
 
         return new static($host, $port, $ssl);
+    }
+
+    /**
+     * Returns whether the host is listed in `socket_proxy_ignore` and therefore has to be connected directly.
+     */
+    private static function ignoresProxy(string $host): bool
+    {
+        $ignore = array_map(strtolower(...), rex::getProperty('socket_proxy_ignore', []));
+
+        return in_array(strtolower($host), $ignore, true);
     }
 
     /**
