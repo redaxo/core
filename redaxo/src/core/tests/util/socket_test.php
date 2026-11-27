@@ -8,16 +8,21 @@ use PHPUnit\Framework\TestCase;
 final class rex_socket_test extends TestCase
 {
     private ?string $proxy = null;
+    /** @var string[] */
+    private array $proxyIgnore = [];
 
     protected function setUp(): void
     {
         $this->proxy = rex::getProperty('socket_proxy');
+        $this->proxyIgnore = rex::getProperty('socket_proxy_ignore', []);
         rex::setProperty('socket_proxy', null);
+        rex::setProperty('socket_proxy_ignore', []);
     }
 
     protected function tearDown(): void
     {
         rex::setProperty('socket_proxy', $this->proxy);
+        rex::setProperty('socket_proxy_ignore', $this->proxyIgnore);
     }
 
     public function testFactory(): rex_socket
@@ -34,6 +39,29 @@ final class rex_socket_test extends TestCase
         $socket = rex_socket::factory('www.example.com');
         $socket->setOptions([]);
         self::assertEquals(rex_socket_proxy::class, $socket::class);
+    }
+
+    /** @param class-string<rex_socket> $expectedClass */
+    #[DataProvider('provideFactoryProxyIgnore')]
+    public function testFactoryProxyIgnore(string $url, string $expectedClass): void
+    {
+        rex::setProperty('socket_proxy', 'proxy.example.com:8888');
+        rex::setProperty('socket_proxy_ignore', ['www.example.com', 'LOCALHOST']);
+        $socket = rex_socket::factoryUrl($url);
+        $socket->setOptions([]);
+        self::assertEquals($expectedClass, $socket::class);
+    }
+
+    /** @return list<array{string, class-string<rex_socket>}> */
+    public static function provideFactoryProxyIgnore(): array
+    {
+        return [
+            ['www.example.com', rex_socket::class],
+            ['https://WWW.Example.com/path', rex_socket::class],
+            ['http://localhost:8080', rex_socket::class],
+            ['example.com', rex_socket_proxy::class],
+            ['sub.www.example.com', rex_socket_proxy::class],
+        ];
     }
 
     public function testFactoryUrl(): void

@@ -69,6 +69,7 @@ use_directory_protection_check: true
 start_page: structure
 timezone: Europe/Berlin
 socket_proxy: null
+socket_proxy_ignore: []
 setup_addons:
     - backup
     - be_style
